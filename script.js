@@ -1236,8 +1236,9 @@ $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.datas
 var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"]];
 function buildFnav(){
   var full={};[].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent});
-  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"}).map(function(x){
+  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"}).map(function(x){
     if(x[0]==="p4")x=["p4","🎓","និទស្សន៍·សង្កេត"];
+    if(x[0]==="p5")x=["p5","📊","លទ្ធផលសិក្សា"];
     return "<button type=button class=nav-item data-p='"+x[0]+"' title='"+esc(full[x[0]]||x[2])+"' aria-label='"+esc(full[x[0]]||x[2])+"'><span class=ni-ico aria-hidden=true>"+x[1]+"</span><span class=ni-lbl>"+x[2]+"</span></button>";
   }).join("");
   $("fnav").insertAdjacentHTML("afterbegin","<button type=button class='nav-item nav-more' id=fnMore aria-haspopup=dialog aria-label='ម៉ឺនុយមុខងារទាំងអស់'><span class=ni-ico aria-hidden=true>☰</span><span class=ni-lbl>ទាំងអស់</span></button>");
@@ -1252,7 +1253,7 @@ $("fnav").onclick=function(e){
   var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 function syncNav(p){
   [].forEach.call(document.querySelectorAll("#fnav button"),function(b){
-    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6");b.classList.toggle("active",on);
+    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6")||(b.dataset.p==="p5"&&p==="p7");b.classList.toggle("active",on);
     if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
   });
 }
