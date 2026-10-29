@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=9">
 <link rel="stylesheet" href="modern.css?v=3">
 
 </head>
@@ -397,9 +397,14 @@
 <p class="note" style="margin:0">ជ្រើសរើសឈ្មោះក្នុងឯកសារ aSc (20/10/2026)។ កាលវិភាគចាស់របស់គ្រូនេះនឹងត្រូវជំនួស។</p>
 <select id="ascN"></select>
 <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" id="cxAsc">បោះបង់</button><button class="primary" type="button" id="okAsc">នាំចូល</button></div></div></dialog>
+<input type="file" id="sgFile" accept="image/*" hidden>
+<dialog id="dlgSg"><div style="padding:18px;display:grid;gap:8px"><h2 style="margin:0">✍️ គូរហត្ថលេខា</h2>
+<p class="note" style="margin:0">គូរដោយកណ្ដុរ ឬម្រាមដៃ (លើទូរស័ព្ទ/ថេប្លេត) នៅក្នុងប្រអប់ខាងក្រោម។</p>
+<canvas id="sgCv" width="520" height="190" style="width:100%;max-width:520px;border:1px dashed var(--line);border-radius:8px;background:#fff;touch-action:none"></canvas>
+<div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=1"></script>
 <script src="script.js?v=3"></script>
-<script src="sched.js?v=4"></script>
+<script src="sched.js?v=5"></script>
 </body>
 </html>

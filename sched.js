@@ -31,6 +31,13 @@ MAP.ts={
   docs:function(){var o={};Object.keys(tsd.r).forEach(function(k){o["ts/"+k]=encO(k.split("_")[0],tsd.r[k])});return o},
   load:function(c){var r={},m=pick(c,"ts/");Object.keys(m).forEach(function(k){var v=decO(m[k]);if(v)r[k]=v});tsd={r:r}}
 };
+var sigs={r:{}};
+MAP.sig={
+  docs:function(){var o={};Object.keys(sigs.r).forEach(function(id){o["sig/"+id]=encO(id,sigs.r[id])});return o},
+  load:function(c){var r={},m=pick(c,"sig/");Object.keys(m).forEach(function(id){var v=decO(m[id]);if(v)r[id]=v});sigs={r:r}}
+};
+function getSig(id){return sigs.r[id]&&sigs.r[id].d||""}
+function saveSg(){push("sig")}
 function saveS(){push("sched")}
 function saveT(){push("ts")}
 function canEd(id){return isAdm()||(who&&who.id===id)}
@@ -162,7 +169,7 @@ function getRec(create){
   var k=recKey(),r=tsd.r[k];
   if(!r&&create){
     var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),t=teacherOf(tsT);
-    r=tsd.r[k]={m:tsMo,fr:iso(y,m,1),to:iso(y,m,dim(y,m)),rl:"",sb:t.sub||"គណិតវិទ្យា",ex:"",days:{},rc:"",wn:"",ft:{pl:"ភ្នំពេញ",d:"",kt:"",mn:"",md:"",mk:""}};
+    r=tsd.r[k]={m:tsMo,fr:iso(y,m,1),to:iso(y,m,dim(y,m)),rl:"",sb:t.sub||"គណិតវិទ្យា",ex:"",days:{},rc:"",wn:"",ft:{pl:"រាជធានីភ្នំពេញ",d:"",kt:"",mn:"",md:"",mk:""}};
   }
   return r||null;
 }
@@ -206,7 +213,7 @@ function renderTS(){
   if(!tsT||(!adm&&tsT!==who.id)||!data.some(function(t){return t.id===tsT}))tsT=who.id;
   $("tsT").innerHTML=data.filter(function(t){return adm||t.id===who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===tsT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   $("tsM").value=tsMo;
-  var ro=!canEd(tsT),y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false),t=teacherOf(tsT),ft=(rec&&rec.ft)||{pl:"ភ្នំពេញ"};
+  var ro=!canEd(tsT),y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false),t=teacherOf(tsT),ft=(rec&&rec.ft)||{pl:"រាជធានីភ្នំពេញ"};
   $("tsFill").style.display=ro?"none":"";
   var h="<div class=tsh>"+
    "<div><label>ឈ្មោះអង្គភាព</label><input value='"+esc(inf().school)+"' readonly></div>"+
@@ -236,7 +243,12 @@ function renderTS(){
     "<fieldset><legend>ហត្ថលេខាគណៈគ្រប់គ្រង</legend>"+
     "<div><label>ឈ្មោះគណៈគ្រប់គ្រង</label><input data-f='ft.mn' value='"+esc(ft.mn||"")+"' "+(ro?"readonly":"")+"></div>"+
     "<div><label>កាលបរិច្ឆេទ (គ្រិស្តសករាជ)</label><input type=date data-f='ft.md' value='"+esc(ft.md||"")+"' "+(ro?"readonly":"")+"></div>"+
-    khDateHtml("m",ft.md,ft.mk,ro)+"</fieldset></div>";
+    khDateHtml("m",ft.md,ft.mk,ro)+"</fieldset>"+
+    "<fieldset><legend>ហត្ថលេខារបស់ខ្ញុំ (រូបភាព)</legend>"+
+    "<div style='min-height:64px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--line);border-radius:8px;background:#fff;padding:4px'>"+(getSig(tsT)?"<img src='"+getSig(tsT)+"' alt='' style='max-height:60px;max-width:100%'>":"<span class=note style='margin:0;color:#666'>មិនទាន់មានហត្ថលេខា</span>")+"</div>"+
+    "<div class=kh-row><button type=button data-sg=up "+(ro?"disabled":"")+">📤 ផ្ទុករូបហត្ថលេខា</button><button type=button data-sg=draw "+(ro?"disabled":"")+">✍️ គូរហត្ថលេខា</button>"+(getSig(tsT)?"<button type=button class=danger data-sg=del "+(ro?"disabled":"")+">លុប</button>":"")+"</div>"+
+    "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-sgo "+(ft.sgo==="0"?"":"checked")+" "+(ro?"disabled":"")+" style='width:auto;margin:0'> បោះពុម្ពជាមួយហត្ថលេខា</label>"+
+    "<p class=note style='margin:0'>ហត្ថលេខាត្រូវរក្សាទុកម្ដង ហើយប្រើរាល់ខែ។ រូបដែលមានផ្ទៃសខ្មៅ ឬរូបថតក្រដាសសអាចប្រើបាន (ផ្ទៃសត្រូវបានលុបឱ្យថ្លា)។</p></fieldset></div>";
   $("tsBody").innerHTML=h;updTot();
 }
 window.renderTS=renderTS;
@@ -275,11 +287,58 @@ function onEdit(e,full){
 }
 $("tsBody").oninput=function(e){if(e.target.type==="date")return;onEdit(e,false)};
 $("tsBody").onchange=function(e){
+  if(e.target.hasAttribute("data-sgo")){if(!canEd(tsT))return;var r1=getRec(true);r1.ft=r1.ft||{};r1.ft.sgo=e.target.checked?"1":"0";saveT();return}
   if(e.target.dataset.kh)return;
   onEdit(e,e.target.type==="date"||e.target.dataset.f==="st"||e.target.dataset.f==="fr"||e.target.dataset.f==="to");
 };
 /* ហៅ «រកថ្ងៃ» តាមប្រតិទិនខ្មែរ */
+function procSig(src,cb){
+  var im=new Image();
+  im.onload=function(){
+    var k=Math.min(1,420/im.width,200/im.height),out="";
+    for(var tr=0;tr<4;tr++){
+      var cv=document.createElement("canvas");cv.width=Math.max(1,Math.round(im.width*k));cv.height=Math.max(1,Math.round(im.height*k));
+      var cx=cv.getContext("2d");cx.drawImage(im,0,0,cv.width,cv.height);
+      var id=cx.getImageData(0,0,cv.width,cv.height),d=id.data;
+      for(var i=0;i<d.length;i+=4){var lum=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];if(d[i+3]<20||lum>225)d[i+3]=0;else if(lum>170)d[i+3]=Math.round(d[i+3]*(225-lum)/55)}
+      cx.putImageData(id,0,0);out=cv.toDataURL("image/png");
+      if(out.length<70000)break;k*=0.75;
+    }
+    cb(out);
+  };
+  im.onerror=function(){notify("មិនអាចអានរូបភាពនេះបានទេ")};
+  im.src=src;
+}
+function setSig(d){sigs.r[tsT]={d:d};saveSg();renderTS();notify("បានរក្សាទុកហត្ថលេខា")}
+$("sgFile").onchange=function(e){
+  var f=e.target.files[0];e.target.value="";if(!f||!canEd(tsT))return;
+  var r=new FileReader();r.onload=function(ev){procSig(ev.target.result,setSig)};r.readAsDataURL(f);
+};
+var sgDraw=false,sgCtx=null;
+function sgPos(e){var cv=$("sgCv"),r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]}
+(function(){
+  var cv=$("sgCv");sgCtx=cv.getContext("2d");
+  cv.addEventListener("pointerdown",function(e){sgDraw=true;cv.setPointerCapture(e.pointerId);var p=sgPos(e);sgCtx.lineWidth=2.6;sgCtx.lineCap="round";sgCtx.lineJoin="round";sgCtx.strokeStyle="#000";sgCtx.beginPath();sgCtx.moveTo(p[0],p[1]);e.preventDefault()});
+  cv.addEventListener("pointermove",function(e){if(!sgDraw)return;var p=sgPos(e);sgCtx.lineTo(p[0],p[1]);sgCtx.stroke()});
+  ["pointerup","pointercancel"].forEach(function(n){cv.addEventListener(n,function(){sgDraw=false})});
+})();
+function sgBlank(){sgCtx.fillStyle="#fff";sgCtx.fillRect(0,0,520,190)}
+$("sgClr").onclick=sgBlank;
+$("cxSg").onclick=function(){$("dlgSg").close()};
+$("okSg").onclick=function(){
+  var cv=$("sgCv"),id=sgCtx.getImageData(0,0,cv.width,cv.height).data,any=false;
+  for(var i=0;i<id.length;i+=4)if(id[i]<128){any=true;break}
+  if(!any){notify("សូមគូរហត្ថលេខាជាមុន");return}
+  $("dlgSg").close();procSig(cv.toDataURL("image/png"),setSig);
+};
 $("tsBody").onclick=function(e){
+  var sb=e.target.closest("button[data-sg]");
+  if(sb&&canEd(tsT)){
+    if(sb.dataset.sg==="up")$("sgFile").click();
+    else if(sb.dataset.sg==="draw"){sgBlank();$("dlgSg").showModal()}
+    else if(sb.dataset.sg==="del"&&confirm("លុបហត្ថលេខាដែលបានរក្សាទុក?")){delete sigs.r[tsT];saveSg();renderTS()}
+    return;
+  }
   var tb=e.target.closest("button[data-khtd]");
   if(tb&&canEd(tsT)){var n0=new Date(),r0=getRec(true);r0.ft=r0.ft||{};r0.ft[tb.dataset.khtd==="d"?"d":"md"]=iso(n0.getFullYear(),n0.getMonth()+1,n0.getDate());r0.ft[tb.dataset.khtd==="d"?"kt":"mk"]="";saveT();renderTS();return}
   var b=e.target.closest("button[data-khgo]");if(!b||!canEd(tsT))return;
@@ -354,6 +413,7 @@ function tsPrintHTML(){
     "<tr class=hr><td class='lab l'>អនុសាសន៍</td><td class=bg colspan="+(n+1)+" style='text-align:left;padding-left:6px'>"+esc((rec&&rec.rc)||"")+"</td></tr>";
   var dOf=function(iso1,ov){return{g:dEn(iso1),k:khDateText(iso1,ov)}};
   var tdy=new Date(),tdIso=iso(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate());
+  var sigT=(ft.sgo==="0")?"":getSig(tsT);
   var fdate=ft.d||tdIso,fk=ft.d?ft.kt:"";
   var sd=dOf(fdate,fk),md=dOf(ft.md,ft.mk);
   var ts="<div class='pg land tsx'>"+
@@ -365,7 +425,7 @@ function tsPrintHTML(){
    "</div>"+
    "<table class=tsx-g><tbody>"+body+"</tbody></table>"+
    "<div class=tsx-c><b class=moul style='font-size:10.5pt'>សូមបញ្ជាក់ថា ព័ត៌មានខាងលើនេះ ពិតជាត្រឹមត្រូវប្រាកដមែន</b><div class=en style='font-size:7.5pt;font-weight:700;margin-top:3px'>I declare that the above information is correct and true to the best of my knowledge</div></div>"+
-   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0></i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=ul>"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k?"<div class=khl>"+esc(ft.pl||"ភ្នំពេញ")+" · "+esc(sd.k)+"</div>":"")+"</div>"+
+   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0>"+(sigT?"<img src='"+sigT+"' class=sgi alt=''>":"")+"</i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=ul>"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k?"<div class=khl>"+esc(sd.k)+"</div>":"")+"</div>"+
    "<div><div class=sr><span>ហត្ថលេខាគណៈគ្រប់គ្រង ៖</span><i class=sg0></i></div><div class=sr><span>ឈ្មោះគណៈគ្រប់គ្រង ៖</span><b class=ul>"+esc(ft.mn||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(md.g)+"</span></div>"+(md.k?"<div class=khl>"+esc(md.k)+"</div>":"")+"</div></div>"+
   "</div>";
   /* ===== Workplan ===== */
@@ -373,6 +433,8 @@ function tsPrintHTML(){
   for(var c=new Date(start);c<=last;c.setDate(c.getDate()+7))weeks.push(new Date(c));
   var HB=["nv","gd","gd","gd","ol","nv","nv"];
   var tdy2=new Date(),tdIso=iso(tdy2.getFullYear(),tdy2.getMonth()+1,tdy2.getDate());
+  var sig=(ft.sgo==="0")?"":getSig(tsT),plc=(ft.pl&&ft.pl!=="ភ្នំពេញ")?ft.pl:"រាជធានីភ្នំពេញ",wdv=ft.d||tdIso,wa=wdv.split("-").map(Number);
+  var wg="ថ្ងៃទី "+kh(wa[2])+" ខែ "+M[wa[1]-1]+" ឆ្នាំ"+kh(wa[0]),wl=(ft.d&&ft.kt)?ft.kt:KhCal.fmt(wa[0],wa[1],wa[2]);
   var wp="<div class='pg land wpx'><table class=wpt><tbody>"+
    "<tr class=wh1><td colspan=4 class=tl><span class=moul style='font-size:13pt;color:#fff'>ផែនការសកម្មភាពការងារជាក់ស្តែង</span></td><td class=mn>"+["January","February","March","April","May","June","July","August","September","October","November","December"][m-1]+"</td><td class=bl></td><td class=yr>"+y+"</td></tr>"+
    "<tr class=wh2>"+EDN.map(function(x,i){return"<td class="+HB[i]+">"+x+"</td>"}).join("")+"</tr>";
@@ -388,7 +450,8 @@ function tsPrintHTML(){
   });
   wp+="<tr class=wn><td colspan=7><b>Notes:</b> "+esc((rec&&rec.wn)||"")+"</td></tr></tbody></table>"+
    "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
-   "<div style='text-align:center;font-size:9.5pt'>"+esc(ft.pl||"ភ្នំពេញ")+" "+esc(khDateText(ft.d||tdIso,ft.d?ft.kt:"")||"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"<br><span class=moul style='font-size:9.5pt'>ហត្ថលេខា និងឈ្មោះ៖</span><br><br><br><b>"+esc(t.name||"")+"</b></div></div></div>";
+   "<div class=wpr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+(wg?esc(wg):"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ៖</div>"+
+   "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
   return ts+wp;
 }
 $("tsPr").onclick=function(){(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){printFit(tsPrintHTML())})};

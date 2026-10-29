@@ -1630,13 +1630,13 @@ var LEG={
 
 function subsFor(k){
   return({teachers:[{doc:"app/teachers"}],tasks:[{col:"tasks"}],rs:[{col:"rs"},{doc:"cfg/rs"}],ex:[{col:"exrows"},{doc:"cfg/ex"}],
-    obs:[{col:"obsrows"},{doc:"cfg/obs"}],wr:[{col:"wr",own:1}],ah:[{col:"ah",own:1}],lib:[{col:"lib"}],sched:[{col:"sched"}],ts:[{col:"ts",own:1}]})[k];
+    obs:[{col:"obsrows"},{doc:"cfg/obs"}],wr:[{col:"wr",own:1}],ah:[{col:"ah",own:1}],lib:[{col:"lib"}],sched:[{col:"sched"}],ts:[{col:"ts",own:1}],sig:[{col:"sig",own:1}]})[k];
 }
 function canWrite(p,d,isNew){
   if(isAdm())return true;
   var m=p.split("/"),c=m[0],id=m[1],me=who.id;
   if(c==="tasks"||c==="rs"||c==="wr"||c==="ah")return id===me;
-  if(c==="sched")return id===me;
+  if(c==="sched"||c==="sig")return id===me;
   if(c==="ts")return String(id).split("_")[0]===me;
   if(c==="lib")return !!d&&d.o===me;
   if(c==="exrows")return !isNew&&!!d&&d.t===me;

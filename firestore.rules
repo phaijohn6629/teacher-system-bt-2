@@ -89,6 +89,14 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ===================== ហត្ថលេខារបស់គ្រូ (រូបភាព PNG តូច) =====================
+    // doc ID = លេខសម្គាល់គ្រូ · ម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ អាន/សរសេរ
+    match /sig/{tid} {
+      allow read: if isAdmin() || isOwner(resource.data.o);
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow delete: if isAdmin() || isOwner(tid);
+    }
+
     // ===================== ប្រវត្តិរូបគ្រូ (រូបថត + ព័ត៌មានផ្ទាល់ខ្លួន) =====================
     // doc ID = លេខសម្គាល់គ្រូ។ ម្ចាស់ ឬ Admin សរសេរ · គ្រូទាំងអស់អាន
     // កំណត់វាលដែលអនុញ្ញាត និងទំហំ (រូបថត JPEG តូច ≤ ~70 KB ជា data URL)
