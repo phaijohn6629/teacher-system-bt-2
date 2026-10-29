@@ -140,7 +140,7 @@ $("stClr").onclick=function(){
 };
 function schedPrint(){
   var s=sumSched(stT),h="<div class='pg land'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-  "<h2 class=moul style='font-size:13pt;margin:6px 0'>កាលវិភាគបង្រៀនរបស់ "+esc(tname(stT))+" · "+esc(inf().school)+"</h2>"+
+  "<div style='display:flex;align-items:center;gap:10px'><img src='"+LOGO2+"' style='width:20mm;height:20mm;object-fit:contain' alt=''><h2 class=moul style='font-size:13pt;margin:6px 0;flex:1'>កាលវិភាគបង្រៀនរបស់ "+esc(tname(stT))+" · "+esc(inf().school)+"</h2></div>"+
   "<table class='ct tp' style='width:100%'><thead><tr><th>ម៉ោង</th>"+DK.map(function(d){return"<th>"+d+"</th>"}).join("")+"</tr></thead><tbody>",skip={};
   for(var p=1;p<=11;p++){
     h+="<tr><td><b>"+kh(p)+"</b> "+kh(PT[p])+"</td>";
@@ -303,46 +303,63 @@ $("tsFill").onclick=function(){
   saveT();renderTS();notify("បានបំពេញម៉ោងតាមកាលវិភាគ");
 };
 
-/* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) ---------- */
+/* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) តាមទម្រង់ដើមរបស់សាលា ---------- */
+var LOGO2=new URL("logo-ngs.jpg",location.href).href;try{(new Image()).src=LOGO2}catch(x){}
+var EN3=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],EMN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],EDN=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+function dEn(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s||""))return"";var a=s.split("-");return a[2]+"-"+EMN[+a[1]-1]+"-"+a[0]}
+function h2(v){return v?(Math.round(v*100)/100).toFixed(2):""}
+function hT(v){v=Math.round(v*100)/100;return String(v===Math.floor(v)?v:v.toFixed(1))}
 function tsPrintHTML(){
-  var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false),t=teacherOf(tsT),ft=(rec&&rec.ft)||{},I=inf();
-  var head="<div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:10pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>";
+  var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false),t=teacherOf(tsT),ft=(rec&&rec.ft)||{},I=inf(),S=sumSched(tsT);
+  var fr=rec?rec.fr:iso(y,m,1),to=rec?rec.to:iso(y,m,n);
   var T={};HC.forEach(function(c){T[c[0]]=0});
-  var days="<tr><td class=l><b>កាលបរិច្ឆេទ</b></td><td class=l>សរុប</td>",wdr="<tr><td class=l></td><td></td>",st="<tr><td class=l><b>បរិយាយ</b></td><td></td>";
-  var rows=HC.map(function(){return""});
+  var r1="",r2="",r3="",rows=HC.map(function(){return""});
   for(var d=1;d<=n;d++){
-    var cd=curDay(rec,y,m,d),on=inRange(rec,y,m,d),wd=new Date(y,m-1,d).getDay(),rest=on&&(cd.st==="ឈប់សម្រាក"||cd.st==="បុណ្យជាតិ"),cls=on?(rest?" class=x":""):" class=x";
-    days+="<td"+cls+">"+kh(d)+"</td>";wdr+="<td"+cls+">"+KhCal.WD[wd].slice(0,2)+"</td>";
-    st+="<td"+cls+">"+(on?STS[cd.st]:"")+"</td>";
-    HC.forEach(function(c,i){var v=on?num(cd.h[c[0]]):0;T[c[0]]+=v;rows[i]+="<td"+cls+">"+(v?fmtN(v):"")+"</td>"});
+    var cd=curDay(rec,y,m,d),on=inRange(rec,y,m,d),wd=new Date(y,m-1,d).getDay(),we=wd===0||wd===6;
+    r1+="<td class=dn>"+d+"</td>";
+    r2+="<td class='wd"+(we?" we":"")+"'>"+EN3[wd]+"</td>";
+    var sc="";
+    if(on){if(cd.st==="បុណ្យជាតិ")sc="hol";else if(cd.st==="សកម្មភាពផ្សេងៗ")sc="act";else if(cd.st==="ឈប់សម្រាក")sc="rst"}
+    r3+="<td class='st "+sc+(we?" we":"")+"'>"+(on?"<span>"+esc(cd.st)+"</span>":"")+"</td>";
+    HC.forEach(function(c,i){var v=on?num(cd.h[c[0]]):0;T[c[0]]+=v;rows[i]+="<td>"+h2(v)+"</td>"});
   }
-  days+="</tr>";wdr+="</tr>";st+="</tr>";
-  var body=days+wdr+st+HC.map(function(c,i){return"<tr><td class=l>"+esc(c[1])+"</td><td><b>"+(fmtN(T[c[0]])||"០")+"</b></td>"+rows[i]+"</tr>"}).join("");
-  var all=0;HC.forEach(function(c){all+=T[c[0]]});
-  var dOf=function(iso1,ov){var tx=khDateText(iso1,ov);return tx||"ថ្ងៃទី......ខែ......ឆ្នាំ......"};
-  var ts="<div class='pg land'>"+head+
-   "<div style='display:flex;justify-content:space-between;align-items:center;margin:4px 0'><div class=moul style='text-align:left'>"+esc(I.school)+"<br><span style='font-size:9pt'>សាលារៀនជំនាន់ថ្មី · New Generation School</span></div><h2 class=moul style='font-size:13pt;margin:0'>តារាងពេលវេលា (Timesheet)<br><span style='font-size:10pt'>ខែ"+M[m-1]+" ឆ្នាំ"+kh(y)+"</span></h2><div style='width:30mm'></div></div>"+
-   "<table style='width:100%;font-size:9pt;margin-bottom:4px'><tr><td>បុគ្គលិកឈ្មោះ៖ <b>"+esc(t.name||"")+"</b></td><td>មុខវិជ្ជា៖ "+esc((rec&&rec.sb)||t.sub||"គណិតវិទ្យា")+"</td><td>តួនាទី/ភារៈកិច្ច៖ "+esc((rec&&rec.rl)||((t.rl||"សមាជិក")+"ក្រុមបច្ចេកទេស"))+"</td><td>ចាប់ពី "+esc(fdd(rec?rec.fr:iso(y,m,1)))+" រហូតដល់ "+esc(fdd(rec?rec.to:iso(y,m,n)))+"</td></tr></table>"+
-   "<table class='tp'>"+body+"<tr><td class=l colspan="+(n+2)+" style='text-align:left'><b>អនុសាសន៍៖</b> "+esc((rec&&rec.rc)||"")+(rec&&rec.ex?" · ផ្សេងៗ៖ "+esc(rec.ex):"")+"</td></tr></table>"+
-   "<p style='font-size:7.5pt;margin:2px 0'>បរិយាយ៖ ប = បង្រៀន · ឈ = ឈប់សម្រាក · បុ = បុណ្យជាតិ · សក = សកម្មភាពផ្សេងៗ · ម៉ោងសរុបក្នុងខែ <b>"+kh(Math.round(all*100)/100)+"</b> ម៉ោង</p>"+
-   "<p style='font-size:9pt;margin:2px 0'>សូមបញ្ជាក់ថា ព័ត៌មានខាងលើនេះ ពិតជាត្រឹមត្រូវប្រាកដមែន</p>"+
-   "<div class=sig style='font-size:9pt;margin-top:6px'><div>ហត្ថលេខារបស់បុគ្គលិក<br><br><br>ឈ្មោះបុគ្គលិក៖ <b>"+esc(t.name||"")+"</b><br>ធ្វើនៅ"+esc(ft.pl||"ភ្នំពេញ")+" "+esc(dOf(ft.d,ft.kt))+"</div>"+
-   "<div>ហត្ថលេខាគណៈគ្រប់គ្រង<br><br><br>ឈ្មោះគណៈគ្រប់គ្រង៖ <b>"+esc(ft.mn||"")+"</b><br>"+esc(dOf(ft.md,ft.mk))+"</div></div></div>";
-  /* Workplan */
+  var body="<tr><td class=lab rowspan=2>កាលបរិច្ឆេទ</td><td class='lab sm' rowspan=3>សរុប</td>"+r1+"</tr><tr>"+r2+"</tr><tr><td class=lab>បរិយាយ</td>"+r3+"</tr>"+
+    HC.map(function(c,i){return"<tr class=hr><td class='lab l'>"+esc(c[1])+"</td><td class=tt><b>"+hT(T[c[0]])+"</b></td>"+rows[i]+"</tr>"}).join("")+
+    "<tr class=hr><td class='lab l'>អនុសាសន៍</td><td class=bg colspan="+(n+1)+" style='text-align:left;padding-left:6px'>"+esc((rec&&rec.rc)||"")+"</td></tr>";
+  var dOf=function(iso1,ov){return{g:dEn(iso1),k:khDateText(iso1,ov)}};
+  var sd=dOf(ft.d,ft.kt),md=dOf(ft.md,ft.mk);
+  var ts="<div class='pg land tsx'>"+
+   "<div class=tsx-h><img src='"+LOGO2+"' class=tsx-logo alt=''><div class=tsx-t><div class=moul style='font-size:13pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:11pt;margin:3px 0 6px'>New Generation School</div><div class=moul style='font-size:13pt'>តារាងពេលវេលា</div></div></div>"+
+   "<div class=tsx-i>"+
+    "<div><div class=ir><span>ឈ្មោះអង្គភាព៖</span><b class=v>"+esc(I.school)+"</b></div><div class=ir><span>បុគ្គលិកឈ្មោះ៖</span><b class=v>"+esc(t.name||"")+"</b></div><div class=ir><span>មុខវិជ្ជា៖</span><b class=v>"+esc((rec&&rec.sb)||t.sub||"គណិតវិទ្យា")+"</b></div></div>"+
+    "<div><div class=ir><span>តួនាទី/ភារៈកិច្ច៖</span><b class=v>"+esc((rec&&rec.rl)||((t.rl||"សមាជិក")+"ក្រុមបច្ចេកទេស"))+"</b></div><div class=ir><span>ម៉ោងសរុប/សប្ដាហ៍៖</span><span class='v gy'>(ម៉ោងបង្រៀនមូលដ្ឋាន "+kh(S.b||NORM)+" ម៉ោង)</span></div><div class=ir><span>ផ្សេងៗ៖</span><span class=v>"+esc((rec&&rec.ex)||"គ្មាន")+" <small>(បើមានសូមបញ្ជាក់)</small></span></div></div>"+
+    "<div><div class=ir><span>ឆ្នាំសិក្សា</span><span class='v ct'>"+y+"</span></div><div class=ir><span>ចាប់ពី</span><span class='v ct'>"+esc(dEn(fr))+"</span></div><div class=ir><span>រហូតដល់</span><span class='v ct'>"+esc(dEn(to))+"</span></div></div>"+
+   "</div>"+
+   "<table class=tsx-g><tbody>"+body+"</tbody></table>"+
+   "<div class=tsx-c><b class=moul style='font-size:10.5pt'>សូមបញ្ជាក់ថា ព័ត៌មានខាងលើនេះ ពិតជាត្រឹមត្រូវប្រាកដមែន</b><div class=en style='font-size:7.5pt;font-weight:700;margin-top:3px'>I declare that the above information is correct and true to the best of my knowledge</div></div>"+
+   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0></i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=ul>"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k?"<div class=khl>"+esc(ft.pl||"ភ្នំពេញ")+" · "+esc(sd.k)+"</div>":"")+"</div>"+
+   "<div><div class=sr><span>ហត្ថលេខាគណៈគ្រប់គ្រង ៖</span><i class=sg0></i></div><div class=sr><span>ឈ្មោះគណៈគ្រប់គ្រង ៖</span><b class=ul>"+esc(ft.mn||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(md.g)+"</span></div>"+(md.k?"<div class=khl>"+esc(md.k)+"</div>":"")+"</div></div>"+
+  "</div>";
+  /* ===== Workplan ===== */
   var first=new Date(y,m-1,1),start=new Date(y,m-1,1-first.getDay()),last=new Date(y,m-1,n),weeks=[];
   for(var c=new Date(start);c<=last;c.setDate(c.getDate()+7))weeks.push(new Date(c));
-  var wp="<div class='pg land'>"+head+"<h2 class=moul style='font-size:13pt;margin:4px 0'>ផែនការសកម្មភាពការងារជាក់ស្តែង · ខែ"+M[m-1]+" ឆ្នាំ"+kh(y)+" · "+esc(t.name||"")+"</h2>"+
-   "<table class='tp wp'><thead><tr>"+["អាទិត្យ","ច័ន្ទ","អង្គារ","ពុធ","ព្រហស្បតិ៍","សុក្រ","សៅរ៍"].map(function(x){return"<th>"+x+"</th>"}).join("")+"</tr></thead><tbody>";
+  var HB=["nv","gd","gd","gd","ol","nv","nv"];
+  var wp="<div class='pg land wpx'><table class=wpt><tbody>"+
+   "<tr class=wh1><td colspan=4 class=tl><span class=moul style='font-size:13pt;color:#fff'>ផែនការសកម្មភាពការងារជាក់ស្តែង</span></td><td class=mn>"+["January","February","March","April","May","June","July","August","September","October","November","December"][m-1]+"</td><td class=bl></td><td class=yr>"+y+"</td></tr>"+
+   "<tr class=wh2>"+EDN.map(function(x,i){return"<td class="+HB[i]+">"+x+"</td>"}).join("")+"</tr>";
   weeks.forEach(function(w0){
-    wp+="<tr>";
+    var ds="<tr class=ws>",cs="<tr class=wc>";
     for(var k=0;k<7;k++){
       var dt=new Date(w0.getFullYear(),w0.getMonth(),w0.getDate()+k),inM=dt.getMonth()===m-1,dd=dt.getDate(),cdy=inM?curDay(rec,y,m,dd):null;
-      var txt=inM&&cdy?(cdy.w||""):"",holi=inM&&cdy&&(cdy.st==="បុណ្យជាតិ")?"បុណ្យជាតិ":"";
-      wp+="<td"+(inM?"":" class=x")+"><span class=dd>"+kh(dd)+"</span><span class=lk>"+khShort(dt.getFullYear(),dt.getMonth()+1,dd)+"</span>"+(holi?"<div><b>"+holi+"</b></div>":"")+(txt?"<div>"+esc(txt)+"</div>":"")+"</td>";
+      var txt=inM&&cdy?(cdy.w||""):"",holi=inM&&cdy&&inRange(rec,y,m,dd)&&cdy.st==="បុណ្យជាតិ";
+      ds+="<td><span class=dd>"+p2(dd)+"</span><span class=lk>"+khShort(dt.getFullYear(),dt.getMonth()+1,dd)+"</span></td>";
+      cs+="<td>"+(txt?esc(txt):"")+(holi?"<div class=hl>"+(txt?"":"")+"បុណ្យជាតិ</div>":"")+"</td>";
     }
-    wp+="</tr>";
+    wp+=ds+"</tr>"+cs+"</tr>";
   });
-  wp+="</tbody></table>"+(rec&&rec.wn?"<p style='font-size:8.5pt;white-space:pre-wrap'><b>Notes:</b> "+esc(rec.wn)+"</p>":"")+"</div>";
+  wp+="<tr class=wn><td colspan=7><b>Notes:</b> "+esc((rec&&rec.wn)||"")+"</td></tr></tbody></table>"+
+   "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
+   "<div style='text-align:center;font-size:9.5pt'>"+esc(ft.pl||"ភ្នំពេញ")+" "+esc(khDateText(ft.d,ft.kt)||"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"<br><span class=moul style='font-size:9.5pt'>ហត្ថលេខា និងឈ្មោះ៖</span><br><br><br><b>"+esc(t.name||"")+"</b></div></div></div>";
   return ts+wp;
 }
 $("tsPr").onclick=function(){doPrint(tsPrintHTML())};

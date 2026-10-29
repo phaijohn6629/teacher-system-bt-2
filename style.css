@@ -145,3 +145,47 @@ table.tp{border-collapse:collapse;width:100%}table.tp th,table.tp td{border:1px 
 table.tp td.l{text-align:left;white-space:nowrap;padding:1px 4px}table.tp td.x{background:#e6e6e6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 table.wp td{vertical-align:top;height:21mm;width:14.28%;text-align:left;font-size:7.5pt;white-space:pre-wrap}
 table.wp td .dd{font-weight:700;font-size:9pt}table.wp td .lk{font-size:6.5pt;color:#555;float:right}
+
+/* ===== ទម្រង់បោះពុម្ពតាមគំរូសាលា (Timesheet + Workplan) ===== */
+.tsx{font-family:"Kantumruy Pro","Khmer OS Battambang",serif;color:#000}
+.tsx .en,.wpx .en{font-family:Georgia,"Times New Roman",serif;text-align:center}
+.tsx-h{display:flex;align-items:center;position:relative;min-height:26mm;margin-bottom:3mm}
+.tsx-logo{width:25mm;height:25mm;object-fit:contain;position:absolute;left:14mm;top:0}
+.tsx-t{flex:1;text-align:center}
+.tsx-i{display:grid;grid-template-columns:1.1fr 1.15fr .8fr;gap:8mm;margin:0 6mm 4mm;font-size:8.5pt}
+.tsx-i .ir{display:flex;align-items:flex-end;gap:6px;margin-bottom:2px}
+.tsx-i .ir>span:first-child{flex:0 0 31mm;text-align:right}
+.tsx-i .v{flex:1;border-bottom:1px solid #000;padding:1px 4px;min-height:5mm;font-size:9pt}
+.tsx-i .v.gy{background:#e7e7e7;font-size:8pt;text-align:center}.tsx-i .v.ct{text-align:center;font-family:Georgia,serif;font-weight:700}
+table.tsx-g{border-collapse:collapse;width:100%;table-layout:fixed;border:1.6px solid #000}
+.tsx-g td{border:1px solid #000;text-align:center;padding:0;font-size:7pt;background:#fff;color:#000;font-family:Georgia,serif;height:6.6mm}
+.tsx-g td.lab{width:19%;background:#f0f0f0;font-family:"Kantumruy Pro",serif;font-size:9pt;border-width:1.4px}
+.tsx-g td.lab.sm{width:5%}.tsx-g td.lab.l{text-align:left;padding-left:2mm;background:#fff;font-weight:700;font-size:8.6pt}
+.tsx-g td.dn{font-weight:700;height:5mm}.tsx-g td.wd{font-weight:700;height:5mm;border-bottom:1.4px solid #000}
+.tsx-g td.we{background:#d9d9d9!important;color:#d00;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tsx-g td.st{height:19mm;padding:0}.tsx-g td.st span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);font-family:"Kantumruy Pro",serif;font-size:6.4pt;margin:auto;white-space:nowrap}
+.tsx-g td.st.we span{color:#d00}.tsx-g td.st.hol{background:#f00!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.tsx-g td.st.act{background:#d9d9d9;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tsx-g tr.hr td{border-top:1.4px solid #000;height:7.2mm}.tsx-g td.tt{font-size:8pt}
+.tsx-g td.bg{background:#f1eedd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-family:"Kantumruy Pro",serif;font-size:8.5pt}
+.tsx-c{text-align:center;margin:2.5mm 0 1mm}
+.tsx-s{display:grid;grid-template-columns:1fr 1fr;gap:30mm;font-size:8.5pt;margin:0 18mm}
+.tsx-s .sr{display:flex;align-items:flex-end;gap:6px;margin-bottom:2px;min-height:6mm}.tsx-s .sr>span:first-child{flex:1;text-align:right}
+.tsx-s .ul{flex:0 0 42mm;border-bottom:1px solid #000;text-align:center;font-family:Georgia,"Kantumruy Pro",serif;font-size:8.5pt}
+.tsx-s .sg0{flex:0 0 42mm;height:9mm;border-bottom:1.4px solid #000}
+.tsx-s .khl{text-align:right;font-size:7.5pt;color:#333;margin-top:1px}
+.wpx{font-family:"Kantumruy Pro",serif;color:#000}
+table.wpt{border-collapse:collapse;width:100%;table-layout:fixed}
+.wpt td{border:1px solid #bbb;padding:0;font-size:7.4pt;background:#fff;color:#000;vertical-align:top;text-align:center}
+.wpt tr.wh1 td{height:9mm;border:0;vertical-align:middle;font-family:Georgia,serif;font-weight:700;color:#fff}
+.wpt td.tl{background:#3b8ca6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;text-align:center}
+.wpt td.mn,.wpt td.yr{background:#756a26!important;font-size:13pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.wpt td.bl{background:#fff!important;border:1px solid #444!important}
+.wpt tr.wh2 td{height:5.5mm;font-family:Georgia,serif;font-weight:700;font-size:8pt;color:#fff;border:0;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.wpt td.nv{background:#2a3d78!important}.wpt td.gd{background:#b69a3c!important}.wpt td.ol{background:#756a26!important}
+.wpt tr.ws td{background:#d9d9d9!important;height:4.4mm;text-align:left;padding:0 1mm;font-family:Georgia,serif;font-size:7pt;color:#666;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.wpt tr.ws .lk{float:right;font-family:"Kantumruy Pro",serif;font-size:6pt;color:#777}
+.wpt tr.wc td{height:21mm;padding:1mm 1.4mm;text-align:center;vertical-align:middle;white-space:pre-wrap;line-height:1.35}
+.wpt .hl{color:#d00;font-weight:700;margin-top:1mm}
+.wpt tr.wn td{height:11mm;text-align:left;padding:1mm 1.4mm;border:1px solid #bbb;font-size:7.4pt;white-space:pre-wrap}
+.wpf{display:flex;justify-content:space-between;align-items:flex-start;margin:6mm 10mm 0}
+table.tsx-g,table.wpt{width:99.4%}
