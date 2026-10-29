@@ -410,7 +410,7 @@ function schedPrep(){
 setTimeout(function(){try{document.fonts.load('10pt "Moul"',"សាលារៀនជំនាន់ថ្មី");document.fonts.load('10pt "Kantumruy Pro"',"សាលារៀន");document.fonts.load('700 10pt "Kantumruy Pro"',"សាលារៀន")}catch(x){}},1200);
 
 /* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) តាមទម្រង់ដើមរបស់សាលា ---------- */
-var LOGO2=new URL("logo-ngs.jpg",location.href).href;try{(new Image()).src=LOGO2}catch(x){}
+var LOGO2=(document.querySelector(".brand-logo")||{}).src||new URL("logo-ngs.jpg",location.href).href;try{(new Image()).src=LOGO2}catch(x){}
 var EN3=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],EMN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],EDN=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
 function dEn(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s||""))return"";var a=s.split("-");return a[2]+"-"+EMN[+a[1]-1]+"-"+a[0]}
 function h2(v){return v?(Math.round(v*100)/100).toFixed(2):""}
