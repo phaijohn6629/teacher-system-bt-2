@@ -453,7 +453,7 @@ function xdate(i){var r=ex.r[i];if(r.dt){var p=r.dt.split("-"),d=new Date(+p[0],
 function pd(d){function z(n){return(n<10?"0":"")+n}return z(d.getDate())+"/"+z(d.getMonth()+1)+"/"+z(d.getFullYear()%100)}
 function tn(id){var t=data.filter(function(x){return x.id===id})[0];return t?t.name:""}
 
-var CL="7NGS-B,7NGS-C,7NGS-P,7NGS-BO,7NGS-CO,7NGS-PO,8NGS-B,8NGS-C,8NGS-P1,8NGS-P2,8NGS-P3,8NGS-BO,9NGS-B1,9NGS-B2,9NGS-C1,9NGS-C2,9NGS-P1,9NGS-P2,9NGS-P3,9NGS-BO,9NGS-CO,10NGS-B,10NGS-C,10NGS-P1,10NGS-P2,10NGS-P3,11NGS-C,11NGS-P,12NGS-A,12NGS-B".split(",").map(function(c){return"M-"+c});
+var CL="7NGS-B,7NGS-C,7NGS-P,7NGS-BO,7NGS-CO,7NGS-PO,8NGS-B,8NGS-C,8NGS-P1,8NGS-P2,8NGS-P3,8NGS-BO,9NGS-B1,9NGS-B2,9NGS-C1,9NGS-C2,9NGS-P1,9NGS-P2,9NGS-P3,9NGS-BO,9NGS-CO,10NGS-B,10NGS-C,10NGS-P1,10NGS-P2,10NGS-P3,11NGS-C,11NGS-P,12NGS-A,12NGS-B,10GT-Ele/Electro-Y1,10GT-ICT-Y1,11GT-ICT-Y2".split(",").map(function(c){return"M-"+c});
 function sop(v){var o=["<option value=''>— ជ្រើសរើសថ្នាក់ —</option>"];CL.forEach(function(x){o.push("<option"+(x===v?" selected":"")+">"+x+"</option>")});if(v&&CL.indexOf(v)<0)o.push("<option selected>"+esc(v)+"</option>");return o.join("")}
 var TM=["7:30 - 8:15","8:20 - 9:05","9:25 - 10:10","10:15 - 11:00","12:30 - 13:15","13:20 - 14:05","14:25 - 15:10","15:15 - 16:00","16:10 - 16:55","17:10 - 17:55","18:10 - 18:55"].map(function(t,i){return"ម៉ោង "+(i+1)+" ("+t+")"});
 function tmop(v){var o=["<option value=''>— ជ្រើសរើសម៉ោង —</option>"];TM.forEach(function(x){o.push("<option"+(x===v?" selected":"")+">"+x+"</option>")});if(v&&TM.indexOf(v)<0)o.push("<option selected>"+esc(v)+"</option>");return o.join("")}
