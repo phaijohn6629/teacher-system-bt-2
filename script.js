@@ -1052,7 +1052,7 @@ $("wfile").onchange=function(e){
   });
   notify("បានភ្ជាប់រូបភាពសម្រាប់ការបោះពុម្ព (មិនរក្សាទុកក្នុង Cloud)");
 };
-var LOGO=(document.querySelector(".brand-logo")||{}).src||new URL("logo-ngs.jpg",location.href).href;
+var LOGO=(document.getElementById("ngsLogo")||{}).src||new URL("logo-ngs.jpg",location.href).href;
 function reportHTML(){
   var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"";
   var role=(t.rl||"សមាជិក")+"ក្រុមបច្ចេកទេស";
