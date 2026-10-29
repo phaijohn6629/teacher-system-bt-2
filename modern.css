@@ -302,3 +302,19 @@ header { z-index: 200; }
     .profile-menu { margin-left: auto; }
 }
 @media print { header { z-index: auto; } }
+
+/* ប៊ូតុង ☰ + ម៉ឺនុយបង្ហាញមុខងារទាំងអស់ */
+.nav-more { position: sticky; left: 0; z-index: 2; background: var(--nav-bg, rgba(15,16,32,.95)); border-right: 1px solid var(--nav-line, rgba(255,255,255,.15)) !important; color: var(--ink); }
+.nav-more .ni-ico { font-size: 1.4rem; }
+#allMenu { position: fixed; inset: 0; z-index: 3000; background: rgba(8,9,20,.65); backdrop-filter: blur(4px); display: flex; align-items: flex-end; justify-content: center; }
+#allMenu[hidden] { display: none; }
+.am-box { width: min(560px, 100%); max-height: 85vh; overflow-y: auto; background: var(--panel, #1b1d36); border: 1px solid var(--border-glow); border-radius: 22px 22px 0 0; padding: 14px 14px 22px; color: var(--ink); }
+.am-h { display: flex; justify-content: space-between; align-items: center; padding: 2px 6px 10px; }
+.am-x { background: var(--soft); border: 1px solid var(--border-glow); border-radius: 50%; width: 34px; height: 34px; color: var(--ink); cursor: pointer; }
+.am-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.am-g button { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 6px; background: var(--soft); border: 1px solid var(--border-glow); border-radius: 16px; color: var(--ink); cursor: pointer; font-family: inherit; }
+.am-g button span { font-size: 1.6rem; }
+.am-g button em { font-style: normal; font-size: .8rem; text-align: center; line-height: 1.35; }
+.am-g button:hover { background: rgba(168,85,247,.2); }
+@media (min-width: 701px) { #allMenu { align-items: center; } .am-box { border-radius: 22px; } }
+@media print { #allMenu { display: none !important; } }

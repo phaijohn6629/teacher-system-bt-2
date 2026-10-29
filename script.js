@@ -1239,8 +1239,15 @@ function buildFnav(){
   $("fnav").innerHTML=FN.map(function(x){
     return "<button type=button class=nav-item data-p='"+x[0]+"' title='"+esc(full[x[0]]||x[2])+"' aria-label='"+esc(full[x[0]]||x[2])+"'><span class=ni-ico aria-hidden=true>"+x[1]+"</span><span class=ni-lbl>"+x[2]+"</span></button>";
   }).join("");
+  $("fnav").insertAdjacentHTML("afterbegin","<button type=button class='nav-item nav-more' id=fnMore aria-haspopup=dialog aria-label='ម៉ឺនុយមុខងារទាំងអស់'><span class=ni-ico aria-hidden=true>☰</span><span class=ni-lbl>ទាំងអស់</span></button>");
+  var m=$("allMenu");if(!m){m=document.createElement("div");m.id="allMenu";m.hidden=true;m.setAttribute("role","dialog");m.setAttribute("aria-label","មុខងារទាំងអស់");document.body.appendChild(m);
+    m.onclick=function(e){var b=e.target.closest("button[data-p]");if(b){m.hidden=true;show(b.dataset.p);return}if(e.target===m||e.target.closest(".am-x"))m.hidden=true};
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")m.hidden=true})}
+  m.innerHTML="<div class=am-box><div class=am-h><b>មុខងារទាំងអស់</b><button type=button class=am-x aria-label='បិទ'>✕</button></div><div class=am-g>"+FN.map(function(x){return"<button type=button data-p='"+x[0]+"'><span aria-hidden=true>"+x[1]+"</span><em>"+esc(full[x[0]]||x[2])+"</em></button>"}).join("")+"</div></div>";
 }
-$("fnav").onclick=function(e){var b=e.target.closest("button");if(b)show(b.dataset.p)};
+$("fnav").onclick=function(e){
+  if(e.target.closest("#fnMore")){$("allMenu").hidden=false;return}
+  var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 function syncNav(p){
   [].forEach.call(document.querySelectorAll("#fnav button"),function(b){
     var on=b.dataset.p===p;b.classList.toggle("active",on);
