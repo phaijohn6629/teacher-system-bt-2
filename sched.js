@@ -250,7 +250,7 @@ function renderTS(){
     "<div class=kh-row><button type=button data-sg=up "+(ro?"disabled":"")+">📤 ផ្ទុករូបហត្ថលេខា</button><button type=button data-sg=draw "+(ro?"disabled":"")+">✍️ គូរហត្ថលេខា</button>"+(getSig(tsT)?"<button type=button class=danger data-sg=del "+(ro?"disabled":"")+">លុប</button>":"")+"</div>"+
     "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-sgo "+(ft.sgo==="0"?"":"checked")+" "+(ro?"disabled":"")+" style='width:auto;margin:0'> បោះពុម្ពជាមួយហត្ថលេខា</label>"+
     "<p class=note style='margin:0'>ហត្ថលេខាត្រូវរក្សាទុកម្ដង ហើយប្រើរាល់ខែ។ រូបដែលមានផ្ទៃសខ្មៅ ឬរូបថតក្រដាសសអាចប្រើបាន (ផ្ទៃសត្រូវបានលុបឱ្យថ្លា)។</p></fieldset></div>";
-  $("tsBody").innerHTML=h;updTot();
+  $("tsBody").innerHTML=h;updTot();schedPrep();
 }
 window.renderTS=renderTS;
 function updTot(){
@@ -284,7 +284,7 @@ function onEdit(e,full){
   var rec=getRec(true),n=+e.target.dataset.n||0,v=e.target.value;
   setPath(rec,f,v,n);saveT();
   if(f==="ft.d"||f==="ft.md"){renderTS();return}
-  if(full||f==="fr"||f==="to"||f==="st")renderTS();else updTot();
+  if(full||f==="fr"||f==="to"||f==="st")renderTS();else{updTot();schedPrep()}
 }
 $("tsBody").oninput=function(e){if(e.target.type==="date")return;onEdit(e,false)};
 $("tsBody").onchange=function(e){
@@ -369,7 +369,7 @@ $("tsFill").onclick=function(){
 
 /* បោះពុម្ពដោយបង្រួមស្វ័យប្រវត្តិឱ្យចូលតែមួយទំព័រ (ទោះមានព័ត៌មានច្រើនប៉ុណ្ណាក៏ដោយ) */
 function fontsOk(){return Promise.race([(document.fonts&&document.fonts.ready)||Promise.resolve(),new Promise(function(r){setTimeout(r,600)})])}
-function printFit(html){
+function fitHtml(html){
   var p=$("prt");p.innerHTML=html;
   p.style.cssText="display:block;position:absolute;left:-10000px;top:0;width:281mm";
   [].forEach.call(p.querySelectorAll(".pg.land"),function(pg){
@@ -387,9 +387,27 @@ function printFit(html){
     }
     inner.style.width=(100/z)+"%";inner.style.transform="scale("+(z*0.995)+")";
   });
-  p.style.cssText="";document.body.classList.add("pm");
+  var out=p.innerHTML;p.style.cssText="";p.innerHTML="";return out;
+}
+function doPrintNow(out){
+  $("prt").innerHTML=out;document.body.classList.add("pm");
   requestAnimationFrame(function(){requestAnimationFrame(function(){window.print()})});
 }
+function printFit(html){fontsOk().then(function(){doPrintNow(fitHtml(html))})}
+/* រៀបចំទំព័របោះពុម្ពទុកជាមុន (ពេលគ្រូកំពុងមើល/កែ) ដើម្បីឱ្យពេលចុចបោះពុម្ពចេញភ្លាម */
+var pcache={k:"",h:""},prepT=null;
+function pkey(){var t=teacherOf(tsT);return JSON.stringify([tsT,tsMo,getRec(false),getSig(tsT).length,schOf(tsT),t.name,t.sub,t.rl,inf().school])}
+function schedPrep(){
+  clearTimeout(prepT);
+  prepT=setTimeout(function(){
+    if(!who||$("p13").hidden||document.body.classList.contains("pm")||!tsT)return;
+    fontsOk().then(function(){
+      if($("p13").hidden||document.body.classList.contains("pm"))return;
+      try{var k=pkey();if(pcache.k!==k)pcache={k:k,h:fitHtml(tsPrintHTML())}}catch(x){}
+    });
+  },900);
+}
+setTimeout(function(){try{document.fonts.load('10pt "Moul"',"សាលារៀនជំនាន់ថ្មី");document.fonts.load('10pt "Kantumruy Pro"',"សាលារៀន");document.fonts.load('700 10pt "Kantumruy Pro"',"សាលារៀន")}catch(x){}},1200);
 
 /* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) តាមទម្រង់ដើមរបស់សាលា ---------- */
 var LOGO2=new URL("logo-ngs.jpg",location.href).href;try{(new Image()).src=LOGO2}catch(x){}
@@ -457,7 +475,11 @@ function tsPrintHTML(){
    "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
   return ts+wp;
 }
-$("tsPr").onclick=function(){fontsOk().then(function(){printFit(tsPrintHTML())})};
+$("tsPr").onclick=function(){
+  var k=pkey();
+  if(pcache.k===k&&pcache.h){doPrintNow(pcache.h);return}
+  printFit(tsPrintHTML());
+};
 $("tsCsv").onclick=function(){
   var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false);
   var rows=[["ថ្ងៃទី","ថ្ងៃ","ថ្ងៃខ្មែរ","បរិយាយ"].concat(HC.map(function(c){return c[1]})).concat(["Workplan"])];
