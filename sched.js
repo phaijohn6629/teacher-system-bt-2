@@ -452,7 +452,7 @@ function tsPrintHTML(){
   });
   wp+="<tr class=wn><td colspan=7><b>Notes:</b> "+esc((rec&&rec.wn)||"")+"</td></tr></tbody></table>"+
    "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
-   "<div class=wpr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+(wg?esc(wg):"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ៖</div>"+
+   "<div class=wpr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+(wg?esc(wg):"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
    "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
   return ts+wp;
 }
