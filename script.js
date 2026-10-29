@@ -1236,7 +1236,8 @@ $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.datas
 var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"]];
 function buildFnav(){
   var full={};[].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent});
-  $("fnav").innerHTML=FN.map(function(x){
+  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"}).map(function(x){
+    if(x[0]==="p4")x=["p4","🎓","និទស្សន៍·សង្កេត"];
     return "<button type=button class=nav-item data-p='"+x[0]+"' title='"+esc(full[x[0]]||x[2])+"' aria-label='"+esc(full[x[0]]||x[2])+"'><span class=ni-ico aria-hidden=true>"+x[1]+"</span><span class=ni-lbl>"+x[2]+"</span></button>";
   }).join("");
   $("fnav").insertAdjacentHTML("afterbegin","<button type=button class='nav-item nav-more' id=fnMore aria-haspopup=dialog aria-label='ម៉ឺនុយមុខងារទាំងអស់'><span class=ni-ico aria-hidden=true>☰</span><span class=ni-lbl>ទាំងអស់</span></button>");
@@ -1245,12 +1246,13 @@ function buildFnav(){
     document.addEventListener("keydown",function(e){if(e.key==="Escape")m.hidden=true})}
   m.innerHTML="<div class=am-box><div class=am-h><b>មុខងារទាំងអស់</b><button type=button class=am-x aria-label='បិទ'>✕</button></div><div class=am-g>"+FN.map(function(x){return"<button type=button data-p='"+x[0]+"'><span aria-hidden=true>"+x[1]+"</span><em>"+esc(full[x[0]]||x[2])+"</em></button>"}).join("")+"</div></div>";
 }
+document.addEventListener("click",function(e){var g=e.target.closest(".gseg button[data-go]");if(g)show(g.dataset.go)});
 $("fnav").onclick=function(e){
   if(e.target.closest("#fnMore")){$("allMenu").hidden=false;return}
   var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 function syncNav(p){
   [].forEach.call(document.querySelectorAll("#fnav button"),function(b){
-    var on=b.dataset.p===p;b.classList.toggle("active",on);
+    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6");b.classList.toggle("active",on);
     if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
   });
 }
