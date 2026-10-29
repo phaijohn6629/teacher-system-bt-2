@@ -239,7 +239,8 @@ function renderTS(){
     "<div><label>ឈ្មោះបុគ្គលិក</label><input value='"+esc(t.name||"")+"' readonly></div>"+
     "<div><label>ធ្វើនៅ</label><input data-f='ft.pl' value='"+esc(ft.pl||"")+"' "+(ro?"readonly":"")+"></div>"+
     "<div><label>កាលបរិច្ឆេទ (គ្រិស្តសករាជ)</label><input type=date data-f='ft.d' value='"+esc(ft.d||"")+"' "+(ro?"readonly":"")+"></div>"+
-    khDateHtml("d",ft.d,ft.kt,ro)+"</fieldset>"+
+    khDateHtml("d",ft.d,ft.kt,ro)+
+    "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-klu "+(ft.klu==="1"?"checked":"")+" "+(ro?"disabled":"")+" style='width:auto;margin:0'> បង្ហាញថ្ងៃតាមចន្ទគតិខ្មែរក្នុងការបោះពុម្ពជើងក្រោម</label></fieldset>"+
     "<fieldset><legend>ហត្ថលេខាគណៈគ្រប់គ្រង</legend>"+
     "<div><label>ឈ្មោះគណៈគ្រប់គ្រង</label><input data-f='ft.mn' value='"+esc(ft.mn||"")+"' "+(ro?"readonly":"")+"></div>"+
     "<div><label>កាលបរិច្ឆេទ (គ្រិស្តសករាជ)</label><input type=date data-f='ft.md' value='"+esc(ft.md||"")+"' "+(ro?"readonly":"")+"></div>"+
@@ -287,6 +288,7 @@ function onEdit(e,full){
 }
 $("tsBody").oninput=function(e){if(e.target.type==="date")return;onEdit(e,false)};
 $("tsBody").onchange=function(e){
+  if(e.target.hasAttribute("data-klu")){if(!canEd(tsT))return;var r2=getRec(true);r2.ft=r2.ft||{};r2.ft.klu=e.target.checked?"1":"0";saveT();return}
   if(e.target.hasAttribute("data-sgo")){if(!canEd(tsT))return;var r1=getRec(true);r1.ft=r1.ft||{};r1.ft.sgo=e.target.checked?"1":"0";saveT();return}
   if(e.target.dataset.kh)return;
   onEdit(e,e.target.type==="date"||e.target.dataset.f==="st"||e.target.dataset.f==="fr"||e.target.dataset.f==="to");
@@ -425,7 +427,7 @@ function tsPrintHTML(){
    "</div>"+
    "<table class=tsx-g><tbody>"+body+"</tbody></table>"+
    "<div class=tsx-c><b class=moul style='font-size:10.5pt'>សូមបញ្ជាក់ថា ព័ត៌មានខាងលើនេះ ពិតជាត្រឹមត្រូវប្រាកដមែន</b><div class=en style='font-size:7.5pt;font-weight:700;margin-top:3px'>I declare that the above information is correct and true to the best of my knowledge</div></div>"+
-   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0>"+(sigT?"<img src='"+sigT+"' class=sgi alt=''>":"")+"</i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=ul>"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k?"<div class=khl>"+esc(sd.k)+"</div>":"")+"</div>"+
+   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0>"+(sigT?"<img src='"+sigT+"' class=sgi alt=''>":"")+"</i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=\"ul nm\">"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k&&ft.klu==="1"?"<div class=khl>"+esc(sd.k)+"</div>":"")+"</div>"+
    "<div><div class=sr><span>ហត្ថលេខាគណៈគ្រប់គ្រង ៖</span><i class=sg0></i></div><div class=sr><span>ឈ្មោះគណៈគ្រប់គ្រង ៖</span><b class=ul>"+esc(ft.mn||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(md.g)+"</span></div>"+(md.k?"<div class=khl>"+esc(md.k)+"</div>":"")+"</div></div>"+
   "</div>";
   /* ===== Workplan ===== */
@@ -434,7 +436,7 @@ function tsPrintHTML(){
   var HB=["nv","gd","gd","gd","ol","nv","nv"];
   var tdy2=new Date(),tdIso=iso(tdy2.getFullYear(),tdy2.getMonth()+1,tdy2.getDate());
   var sig=(ft.sgo==="0")?"":getSig(tsT),plc=(ft.pl&&ft.pl!=="ភ្នំពេញ")?ft.pl:"រាជធានីភ្នំពេញ",wdv=ft.d||tdIso,wa=wdv.split("-").map(Number);
-  var wg="ថ្ងៃទី "+kh(wa[2])+" ខែ "+M[wa[1]-1]+" ឆ្នាំ"+kh(wa[0]),wl=(ft.d&&ft.kt)?ft.kt:KhCal.fmt(wa[0],wa[1],wa[2]);
+  var wg="ថ្ងៃទី "+kh(wa[2])+" ខែ "+M[wa[1]-1]+" ឆ្នាំ"+kh(wa[0]),wl=ft.klu==="1"?((ft.d&&ft.kt)?ft.kt:KhCal.fmt(wa[0],wa[1],wa[2])):"";
   var wp="<div class='pg land wpx'><table class=wpt><tbody>"+
    "<tr class=wh1><td colspan=4 class=tl><span class=moul style='font-size:13pt;color:#fff'>ផែនការសកម្មភាពការងារជាក់ស្តែង</span></td><td class=mn>"+["January","February","March","April","May","June","July","August","September","October","November","December"][m-1]+"</td><td class=bl></td><td class=yr>"+y+"</td></tr>"+
    "<tr class=wh2>"+EDN.map(function(x,i){return"<td class="+HB[i]+">"+x+"</td>"}).join("")+"</tr>";
