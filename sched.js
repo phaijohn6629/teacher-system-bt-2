@@ -159,7 +159,7 @@ function schedPrint(){
     h+="</tr>";if(BRK[p])h+="<tr><td colspan=7 style='background:#eee;font-size:7pt'>"+kh(BRK[p])+"</td></tr>";
   }
   h+="</tbody></table><p style='font-size:9pt'>ម៉ោងបង្រៀនមូលដ្ឋាន "+kh(s.b)+" ម៉ោង/សប្ដាហ៍"+(s.o?" · ម៉ោងលើស (O/OE) "+kh(s.o)+" ម៉ោង/សប្ដាហ៍":"")+"</p></div>";
-  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){printFit(h)});
+  fontsOk().then(function(){printFit(h)});
 }
 $("stPr").onclick=schedPrint;
 
@@ -368,6 +368,7 @@ $("tsFill").onclick=function(){
 
 
 /* បោះពុម្ពដោយបង្រួមស្វ័យប្រវត្តិឱ្យចូលតែមួយទំព័រ (ទោះមានព័ត៌មានច្រើនប៉ុណ្ណាក៏ដោយ) */
+function fontsOk(){return Promise.race([(document.fonts&&document.fonts.ready)||Promise.resolve(),new Promise(function(r){setTimeout(r,600)})])}
 function printFit(html){
   var p=$("prt");p.innerHTML=html;
   p.style.cssText="display:block;position:absolute;left:-10000px;top:0;width:281mm";
@@ -387,7 +388,7 @@ function printFit(html){
     inner.style.width=(100/z)+"%";inner.style.transform="scale("+(z*0.995)+")";
   });
   p.style.cssText="";document.body.classList.add("pm");
-  setTimeout(function(){window.print()},120);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){window.print()})});
 }
 
 /* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) តាមទម្រង់ដើមរបស់សាលា ---------- */
@@ -456,7 +457,7 @@ function tsPrintHTML(){
    "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
   return ts+wp;
 }
-$("tsPr").onclick=function(){(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){printFit(tsPrintHTML())})};
+$("tsPr").onclick=function(){fontsOk().then(function(){printFit(tsPrintHTML())})};
 $("tsCsv").onclick=function(){
   var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false);
   var rows=[["ថ្ងៃទី","ថ្ងៃ","ថ្ងៃខ្មែរ","បរិយាយ"].concat(HC.map(function(c){return c[1]})).concat(["Workplan"])];
