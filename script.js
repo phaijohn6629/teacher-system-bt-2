@@ -551,7 +551,9 @@ function renderR(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   $("rt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   var cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
-  $("rc").innerHTML=cl.length?cl.map(function(c,i){return"<option value="+i+(i===rc?" selected":"")+">"+esc(c.n)+" ("+c.st.length+" នាក់)</option>"}).join(""):"<option>— គ្មានថ្នាក់ —</option>";
+  var have=cl.map(function(c){return c.n}),canAdd=canM();
+  $("rc").innerHTML=(cl.length?cl.map(function(c,i){return"<option value="+i+(i===rc?" selected":"")+">"+esc(c.n)+" ("+c.st.length+" នាក់)</option>"}).join(""):"<option value=''>— "+(canAdd?"ជ្រើសថ្នាក់ដើម្បីបន្ថែម":"គ្មានថ្នាក់")+" —</option>")+
+    (canAdd?"<optgroup label='＋ បន្ថែមថ្នាក់ថ្មី (ចុចជ្រើស = បន្ថែមភ្លាម)'>"+CL.map(function(x){return x.slice(2)}).filter(function(n){return have.indexOf(n)<0}).map(function(n){return"<option value='n:"+esc(n)+"'>"+esc(n)+"</option>"}).join("")+"</optgroup>":"");
   $("rp").value=rp;
   if(!$("rn").options.length)$("rn").innerHTML=CL.map(function(c){return"<option>"+c.slice(2)+"</option>"}).join("");
 
@@ -590,7 +592,17 @@ function renderR(){
 }
 
 $("rt").onchange=function(){rt=this.value;rc=0;renderR()};
-$("rc").onchange=function(){rc=+this.value;renderR()};
+$("rc").onchange=function(){
+  var v=this.value;
+  if(v.slice(0,2)==="n:"){
+    if(!canM()){renderR();return}
+    var n=v.slice(2),l=rs.c[rt]=rs.c[rt]||[],i=l.map(function(c){return c.n}).indexOf(n);
+    if(i<0){l.push({n:n,st:[]});i=l.length-1;notify("បានបន្ថែមថ្នាក់ "+n)}
+    rc=i;savR();renderR();return;
+  }
+  if(v===""){renderR();return}
+  rc=+v;renderR();
+};
 $("rp").onchange=function(){rp=+this.value;renderR()};
 $("rso").onchange=function(){rsort=this.checked;renderR()};
 $("rac").onclick=function(){
