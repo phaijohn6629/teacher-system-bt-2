@@ -201,7 +201,7 @@ main { padding-bottom: 120px; }
 .nav-item.active { background: rgba(236, 72, 153, .14); font-weight: 700; }
 .nav-item:hover { background: rgba(255, 255, 255, .06); opacity: 1; }
 @media (max-width: 700px) {
-    header { position: static; }
+    header { position: relative; z-index: 200; }
     .welcome-banner { padding: 18px; border-radius: 16px; }
     .welcome-banner h2 { font-size: 19px; }
     .nav-item { min-width: 54px; padding: 6px 8px; }
@@ -292,3 +292,13 @@ header .brand-sub { display: block; margin: 0; font-family: inherit; font-weight
 .pf-btns{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 @media (max-width:700px){.wb-av{width:60px;height:60px;font-size:1.5rem}.wb-left{gap:12px}}
 @media print{#p0{display:none!important}}
+
+/* ម៉ឺនុយ Profile៖ ទៅស្ដាំ និងមិនត្រូវបាំងដោយកាតខាងក្រោម (ទូរស័ព្ទ) */
+header { z-index: 200; }
+.profile-menu { margin-left: auto; }
+.profile-dropdown { z-index: 2000; max-width: calc(100vw - 24px); }
+@media (max-width: 700px) {
+    .hdr-acts { width: 100%; }
+    .profile-menu { margin-left: auto; }
+}
+@media print { header { z-index: auto; } }
