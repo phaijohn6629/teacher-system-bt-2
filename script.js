@@ -546,6 +546,21 @@ function renderRStats(){
   $("rall").innerHTML=H.replace("រយៈពេល","ថ្នាក់")+"<tbody>"+(cl.length?cl.map(function(x){var o=cnt(x,rp);for(var g in o)tot[g]+=o[g];return crow(x.n,o)}).join("")+crow("សរុបទាំងអស់",tot):"<tr><td colspan=8 class=empty>គ្មានទិន្នន័យ</td></tr>")+"</tbody>";
 }
 
+function clsOpts(cl,cnt){
+  var have=cl.map(function(c){return c.n}),add=canM();
+  return(cl.length?cl.map(function(c,i){return"<option value="+i+(i===rc?" selected":"")+">"+esc(c.n)+(cnt?" ("+c.st.length+" នាក់)":"")+"</option>"}).join(""):"<option value=''>— "+(add?"ជ្រើសថ្នាក់ដើម្បីបន្ថែម":"គ្មានថ្នាក់")+" —</option>")+
+    (add?"<optgroup label='＋ បន្ថែមថ្នាក់ថ្មី (ចុចជ្រើស = បន្ថែមភ្លាម)'>"+CL.map(function(x){return x.slice(2)}).filter(function(n){return have.indexOf(n)<0}).map(function(n){return"<option value='n:"+esc(n)+"'>"+esc(n)+"</option>"}).join("")+"</optgroup>":"");
+}
+function clsPick(v,fn){
+  if(v.slice(0,2)==="n:"){
+    if(!canM()){fn();return}
+    var n=v.slice(2),l=rs.c[rt]=rs.c[rt]||[],i=l.map(function(c){return c.n}).indexOf(n);
+    if(i<0){l.push({n:n,st:[]});i=l.length-1;notify("បានបន្ថែមថ្នាក់ "+n)}
+    rc=i;savR();fn();return;
+  }
+  if(v!==""&&!isNaN(+v))rc=+v;
+  fn();
+}
 var rsort=false;
 function renderR(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
@@ -891,7 +906,7 @@ function renderV(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   var isAdmin=(isAdm()),cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
   $("vt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
-  $("vc").innerHTML=cl.length?cl.map(function(c,i){return"<option value="+i+(i===rc?" selected":"")+">"+esc(c.n)+"</option>"}).join(""):"<option>— គ្មានថ្នាក់ —</option>";
+  $("vc").innerHTML=clsOpts(cl,false);
   $("vp").value=rp;
   var PN=["","ឆមាសទី១","ឆមាសទី២","ប្រចាំឆ្នាំ"][rp],c=cl[rc],h="";
   /* ទិដ្ឋភាពទូទៅ */
@@ -919,7 +934,7 @@ function renderV(){
   $("vbody").innerHTML=h;
 }
 $("vt").onchange=function(){rt=this.value;rc=0;renderV()};
-$("vc").onchange=function(){rc=+this.value;renderV()};
+$("vc").onchange=function(){clsPick(this.value,renderV)};
 $("vp").onchange=function(){rp=+this.value;renderV()};
 
 /* ===== ផ្ទាំងទី ៧៖ បញ្ជីសិស្ស និងអវត្តមាន ===== */
@@ -928,7 +943,7 @@ function renderP(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   var cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
   $("pt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
-  $("pc").innerHTML=cl.length?cl.map(function(c,i){return"<option value="+i+(i===rc?" selected":"")+">"+esc(c.n)+" ("+c.st.length+" នាក់)</option>"}).join(""):"<option>— គ្មានថ្នាក់ —</option>";
+  $("pc").innerHTML=clsOpts(cl,true);
   $("pmo").innerHTML=MK.map(function(m,i){return"<option value="+i+(i===pmo?" selected":"")+">"+m+"</option>"}).join("");
   $("pmo").hidden=pv!==2;
   [].forEach.call($("pseg").children,function(b){b.setAttribute("aria-selected",+b.dataset.pv===pv)});
@@ -953,7 +968,7 @@ function renderP(){
   }
 }
 $("pt").onchange=function(){rt=this.value;rc=0;renderP()};
-$("pc").onchange=function(){rc=+this.value;renderP()};
+$("pc").onchange=function(){clsPick(this.value,renderP)};
 $("pmo").onchange=function(){pmo=+this.value;renderP()};
 $("pseg").onclick=function(e){var b=e.target.closest("button");if(b){pv=+b.dataset.pv;renderP()}};
 $("ptb").oninput=function(e){
