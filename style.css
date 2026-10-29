@@ -225,3 +225,11 @@ body.pm .pg.land{page-break-inside:avoid}
 .wpf>div.wpr .sb b{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:10.5pt;line-height:1.7}
 .tsx-s b.ul.nm{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:9pt}
 .tsx-i b.v{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:8pt;line-height:1.5}
+
+/* ជៀសវាងទំព័រទទេ៖ កម្ពស់ទំព័រ ១៧៨ម.ម (សុវត្ថិភាពទោះរឹម Print ធំប៉ុណ្ណាក៏ដោយ) */
+.pg.land{height:170mm!important;overflow:hidden}
+@media print{
+  body.pm #prt{margin:0;padding:0;height:auto}
+  body.pm .pg.land{break-after:page;page-break-after:always;break-inside:avoid}
+  body.pm #prt>.pg.land:last-child{break-after:avoid!important;page-break-after:avoid!important}
+}
