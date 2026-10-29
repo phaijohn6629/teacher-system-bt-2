@@ -189,3 +189,21 @@ table.wpt{border-collapse:collapse;width:100%;table-layout:fixed}
 .wpt tr.wn td{height:11mm;text-align:left;padding:1mm 1.4mm;border:1px solid #bbb;font-size:7.4pt;white-space:pre-wrap}
 .wpf{display:flex;justify-content:space-between;align-items:flex-start;margin:6mm 10mm 0}
 table.tsx-g,table.wpt{width:99.4%}
+
+/* ===== បង្រួមឱ្យចូលតែមួយទំព័រ ក្នុងមួយផ្នែក (A4 ផ្ដេក) ===== */
+.pg.land{height:192mm;overflow:hidden;padding:0;line-height:1.2;box-sizing:border-box}
+body.pm .pg.land{page-break-inside:avoid}
+.tsx-h{min-height:20mm;margin-bottom:1.5mm}.tsx-logo{width:19mm;height:19mm;left:12mm}
+.tsx-t .moul{font-size:11.5pt!important}.tsx-t .en{font-size:9.5pt!important;margin:1px 0 2px!important}
+.tsx-i{margin:0 6mm 2mm;gap:6mm;font-size:7.8pt}.tsx-i .ir{margin-bottom:0}.tsx-i .v{min-height:4.2mm;font-size:8pt;padding:0 4px}.tsx-i .v.gy{font-size:7pt}
+.tsx-g td{height:5.4mm;font-size:6.6pt}
+.tsx-g td.lab{font-size:7.6pt;line-height:1.1}.tsx-g td.lab.l{font-size:7.4pt}
+.tsx-g td.dn,.tsx-g td.wd{height:4.2mm}
+.tsx-g td.st{height:14mm}.tsx-g td.st span{font-size:5.8pt}
+.tsx-g tr.hr td{height:5.4mm}
+.tsx-c{margin:1.5mm 0 .5mm}.tsx-c .moul{font-size:8.5pt!important}.tsx-c .en{font-size:6.5pt!important;margin-top:1px!important}
+.tsx-s{font-size:7.5pt;margin:0 16mm;gap:26mm}.tsx-s .sr{min-height:4.6mm;margin-bottom:0}
+.tsx-s .sg0{height:7mm}.tsx-s .ul{font-size:7.5pt;font-weight:400}.tsx-s b.ul{font-weight:400}.tsx-s .khl{font-size:6.5pt;font-weight:400}
+.wpt tr.wh1 td{height:7.5mm}.wpt tr.wh2 td{height:4.8mm}
+.wpt tr.ws td{height:4mm}.wpt tr.wc td{height:16.5mm}.wpt tr.wn td{height:9mm}
+.wpf{margin:3mm 10mm 0}.wpf .moul{font-size:8.5pt!important;line-height:1.5!important}.wpf>div:last-child{font-size:8pt!important;font-weight:400}.wpf>div:last-child b{font-weight:400}

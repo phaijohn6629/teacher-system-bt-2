@@ -196,7 +196,7 @@ function khDateHtml(prefix,dv,ov,ro){
   var hs="<select data-kh='"+prefix+"|h' "+(ro?"disabled":"")+"><option value=0"+(c&&!c.half?" selected":"")+">កើត</option><option value=1"+(c&&c.half?" selected":"")+">រោច</option></select>";
   var ds="<select data-kh='"+prefix+"|d' "+(ro?"disabled":"")+">";for(var i=1;i<=15;i++)ds+="<option value="+i+(c&&c.day===i?" selected":"")+">"+kh(i)+"</option>";ds+="</select>";
   var ms="<select data-kh='"+prefix+"|m' "+(ro?"disabled":"")+">"+KhCal.MONTHS.map(function(n,i){return"<option value="+i+(c&&c.month===i?" selected":"")+">ខែ"+n+"</option>"}).join("")+"</select>";
-  return"<div class=kh-row><span class=note style='margin:0'>កំណត់តាមប្រតិទិនខ្មែរ៖</span>"+hs+ds+ms+"<button type=button data-khgo='"+prefix+"' "+(ro?"disabled":"")+">រកថ្ងៃ</button></div>"+
+  return"<div class=kh-row><span class=note style='margin:0'>កំណត់តាមប្រតិទិនខ្មែរ៖</span>"+hs+ds+ms+"<button type=button data-khgo='"+prefix+"' "+(ro?"disabled":"")+">រកថ្ងៃ</button><button type=button data-khtd='"+prefix+"' "+(ro?"disabled":"")+">ថ្ងៃនេះ</button></div>"+
     "<div class=kh-txt id='kht-"+prefix+"'>"+esc(khDateText(dv,""))+"</div>"+
     "<label>កែអត្ថបទកាលបរិច្ឆេទខ្មែរដោយដៃ (ទុកទទេ = ស្វ័យប្រវត្តិ)</label><input data-f='ft."+prefix+"k' value='"+esc(ov||"")+"' "+(ro?"readonly":"")+">";
 }
@@ -280,6 +280,8 @@ $("tsBody").onchange=function(e){
 };
 /* ហៅ «រកថ្ងៃ» តាមប្រតិទិនខ្មែរ */
 $("tsBody").onclick=function(e){
+  var tb=e.target.closest("button[data-khtd]");
+  if(tb&&canEd(tsT)){var n0=new Date(),r0=getRec(true);r0.ft=r0.ft||{};r0.ft[tb.dataset.khtd==="d"?"d":"md"]=iso(n0.getFullYear(),n0.getMonth()+1,n0.getDate());r0.ft[tb.dataset.khtd==="d"?"kt":"mk"]="";saveT();renderTS();return}
   var b=e.target.closest("button[data-khgo]");if(!b||!canEd(tsT))return;
   var p=b.dataset.khgo,box=b.parentNode,h=+box.querySelector("[data-kh='"+p+"|h']").value,d=+box.querySelector("[data-kh='"+p+"|d']").value,mo=+box.querySelector("[data-kh='"+p+"|m']").value;
   var rec=getRec(true),y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),near=new Date(y,m-1,dim(y,m)),best=null,bd=1e9;
@@ -327,7 +329,9 @@ function tsPrintHTML(){
     HC.map(function(c,i){return"<tr class=hr><td class='lab l'>"+esc(c[1])+"</td><td class=tt><b>"+hT(T[c[0]])+"</b></td>"+rows[i]+"</tr>"}).join("")+
     "<tr class=hr><td class='lab l'>អនុសាសន៍</td><td class=bg colspan="+(n+1)+" style='text-align:left;padding-left:6px'>"+esc((rec&&rec.rc)||"")+"</td></tr>";
   var dOf=function(iso1,ov){return{g:dEn(iso1),k:khDateText(iso1,ov)}};
-  var sd=dOf(ft.d,ft.kt),md=dOf(ft.md,ft.mk);
+  var tdy=new Date(),tdIso=iso(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate());
+  var fdate=ft.d||tdIso,fk=ft.d?ft.kt:"";
+  var sd=dOf(fdate,fk),md=dOf(ft.md,ft.mk);
   var ts="<div class='pg land tsx'>"+
    "<div class=tsx-h><img src='"+LOGO2+"' class=tsx-logo alt=''><div class=tsx-t><div class=moul style='font-size:13pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:11pt;margin:3px 0 6px'>New Generation School</div><div class=moul style='font-size:13pt'>តារាងពេលវេលា</div></div></div>"+
    "<div class=tsx-i>"+
@@ -344,6 +348,7 @@ function tsPrintHTML(){
   var first=new Date(y,m-1,1),start=new Date(y,m-1,1-first.getDay()),last=new Date(y,m-1,n),weeks=[];
   for(var c=new Date(start);c<=last;c.setDate(c.getDate()+7))weeks.push(new Date(c));
   var HB=["nv","gd","gd","gd","ol","nv","nv"];
+  var tdy2=new Date(),tdIso=iso(tdy2.getFullYear(),tdy2.getMonth()+1,tdy2.getDate());
   var wp="<div class='pg land wpx'><table class=wpt><tbody>"+
    "<tr class=wh1><td colspan=4 class=tl><span class=moul style='font-size:13pt;color:#fff'>ផែនការសកម្មភាពការងារជាក់ស្តែង</span></td><td class=mn>"+["January","February","March","April","May","June","July","August","September","October","November","December"][m-1]+"</td><td class=bl></td><td class=yr>"+y+"</td></tr>"+
    "<tr class=wh2>"+EDN.map(function(x,i){return"<td class="+HB[i]+">"+x+"</td>"}).join("")+"</tr>";
@@ -359,7 +364,7 @@ function tsPrintHTML(){
   });
   wp+="<tr class=wn><td colspan=7><b>Notes:</b> "+esc((rec&&rec.wn)||"")+"</td></tr></tbody></table>"+
    "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
-   "<div style='text-align:center;font-size:9.5pt'>"+esc(ft.pl||"ភ្នំពេញ")+" "+esc(khDateText(ft.d,ft.kt)||"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"<br><span class=moul style='font-size:9.5pt'>ហត្ថលេខា និងឈ្មោះ៖</span><br><br><br><b>"+esc(t.name||"")+"</b></div></div></div>";
+   "<div style='text-align:center;font-size:9.5pt'>"+esc(ft.pl||"ភ្នំពេញ")+" "+esc(khDateText(ft.d||tdIso,ft.d?ft.kt:"")||"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"<br><span class=moul style='font-size:9.5pt'>ហត្ថលេខា និងឈ្មោះ៖</span><br><br><br><b>"+esc(t.name||"")+"</b></div></div></div>";
   return ts+wp;
 }
 $("tsPr").onclick=function(){doPrint(tsPrintHTML())};
