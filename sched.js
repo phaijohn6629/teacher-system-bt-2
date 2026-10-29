@@ -152,7 +152,7 @@ function schedPrint(){
     h+="</tr>";if(BRK[p])h+="<tr><td colspan=7 style='background:#eee;font-size:7pt'>"+kh(BRK[p])+"</td></tr>";
   }
   h+="</tbody></table><p style='font-size:9pt'>ម៉ោងបង្រៀនមូលដ្ឋាន "+kh(s.b)+" ម៉ោង/សប្ដាហ៍"+(s.o?" · ម៉ោងលើស (O/OE) "+kh(s.o)+" ម៉ោង/សប្ដាហ៍":"")+"</p></div>";
-  doPrint(h);
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){printFit(h)});
 }
 $("stPr").onclick=schedPrint;
 
@@ -305,6 +305,30 @@ $("tsFill").onclick=function(){
   saveT();renderTS();notify("បានបំពេញម៉ោងតាមកាលវិភាគ");
 };
 
+
+/* បោះពុម្ពដោយបង្រួមស្វ័យប្រវត្តិឱ្យចូលតែមួយទំព័រ (ទោះមានព័ត៌មានច្រើនប៉ុណ្ណាក៏ដោយ) */
+function printFit(html){
+  var p=$("prt");p.innerHTML=html;
+  p.style.cssText="display:block;position:absolute;left:-10000px;top:0;width:281mm";
+  [].forEach.call(p.querySelectorAll(".pg.land"),function(pg){
+    var inner=document.createElement("div");inner.className="fit";
+    while(pg.firstChild)inner.appendChild(pg.firstChild);pg.appendChild(inner);
+    var H=pg.clientHeight,z=1;
+    inner.style.cssText="transform-origin:0 0";
+    for(var i=0;i<6;i++){
+      inner.style.width=(100/z)+"%";inner.style.transform="scale("+z+")";
+      var h=inner.offsetHeight;
+      if(h*z<=H+0.5&&(i>0||z===1))break;
+      var nz=Math.max(0.35,Math.min(1,H/h));
+      if(Math.abs(nz-z)<0.003)break;
+      z=nz;
+    }
+    inner.style.width=(100/z)+"%";inner.style.transform="scale("+(z*0.995)+")";
+  });
+  p.style.cssText="";document.body.classList.add("pm");
+  setTimeout(function(){window.print()},120);
+}
+
 /* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) តាមទម្រង់ដើមរបស់សាលា ---------- */
 var LOGO2=new URL("logo-ngs.jpg",location.href).href;try{(new Image()).src=LOGO2}catch(x){}
 var EN3=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],EMN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],EDN=["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
@@ -367,7 +391,7 @@ function tsPrintHTML(){
    "<div style='text-align:center;font-size:9.5pt'>"+esc(ft.pl||"ភ្នំពេញ")+" "+esc(khDateText(ft.d||tdIso,ft.d?ft.kt:"")||"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"<br><span class=moul style='font-size:9.5pt'>ហត្ថលេខា និងឈ្មោះ៖</span><br><br><br><b>"+esc(t.name||"")+"</b></div></div></div>";
   return ts+wp;
 }
-$("tsPr").onclick=function(){doPrint(tsPrintHTML())};
+$("tsPr").onclick=function(){(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){printFit(tsPrintHTML())})};
 $("tsCsv").onclick=function(){
   var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false);
   var rows=[["ថ្ងៃទី","ថ្ងៃ","ថ្ងៃខ្មែរ","បរិយាយ"].concat(HC.map(function(c){return c[1]})).concat(["Workplan"])];
