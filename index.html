@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
+<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="modern.css?v=3">
+
+</head>
+<body>
+
+<!-- ផ្ទាំង Login -->
+<div id="loginSection" class="login-box" hidden>
+  <h2>🔐 ចូលប្រើប្រាស់ប្រព័ន្ធ</h2>
+  <p class="note">សូមបញ្ចូលលេខសម្គាល់គ្រូ (ឧ. T001) និងលេខសម្ងាត់ផ្ទាល់ខ្លួន.</p>
+  <label for="loginId">លេខសម្គាល់គ្រូ (Teacher ID)</label>
+  <input id="loginId" placeholder="ឧ. T001" autocomplete="username" autocapitalize="characters">
+  <label for="loginPass">លេខសម្ងាត់ (Password)</label>
+  <input id="loginPass" type="password" autocomplete="current-password">
+  <button class="primary" id="btnLogin" style="width:150px;margin-top:6px">ចូលប្រព័ន្ធ</button>
+  <p class="note" style="text-align:center;margin-top:12px">បើភ្លេចលេខសម្ងាត់ សូមទាក់ទងអ្នកគ្រប់គ្រងប្រព័ន្ធ។</p>
+</div>
+
+<!-- ផ្ទាំងកម្មវិធីគោល -->
+<div id="appSection" hidden>
+<header>
+  <div class="brand">
+    <img class="brand-logo" src="logo.png" alt="ស្លាកសញ្ញាវិទ្យាល័យបឹងត្របែក" width="48" height="48">
+    <div class="brand-txt">
+      <div class="brand-name">វិទ្យាល័យបឹងត្របែក</div>
+      <h1 class="brand-sub">សាលារៀនជំនាន់ថ្មី (NGS) · ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</h1>
+    </div>
+  </div>
+  <div class="hdr-acts">
+    <button id="btnBackup" title="ទាញយកទិន្នន័យទាំងអស់ទុកក្នុងកុំព្យូទ័រ">💾 បម្រុងទុក (Backup)</button>
+    <button id="btnPrint" title="បោះពុម្ព ឬរក្សាទុកជា PDF">🖨️ បោះពុម្ព</button>
+    <button id="btnTheme" title="ប្ដូរពណ៌ផ្ទៃ">🌓 ពណ៌ផ្ទៃ</button>
+    <div class="profile-menu">
+      <button type="button" id="profileTrigger" class="profile-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="profileDropdown">
+        <span class="avatar" id="profileAvatar" aria-hidden="true">?</span>
+        <span class="pname" id="profileNameDisplay">—</span>
+        <span class="caret" aria-hidden="true">▾</span>
+      </button>
+      <div id="profileDropdown" class="profile-dropdown" role="menu" hidden>
+        <div class="pd-head">
+          <div class="pd-name" id="dropUserName">—</div>
+          <div class="pd-sub" id="userInfo">ក្រុមបច្ចេកទេសគណិតវិទ្យា</div>
+        </div>
+        <button type="button" id="btnProf" class="drop-item" role="menuitem"><span aria-hidden="true">👤</span> ប្រវត្តិរូបរបស់ខ្ញុំ</button>
+        <button type="button" id="btnPass" class="drop-item" role="menuitem" title="ប្ដូរលេខសម្ងាត់ផ្ទាល់ខ្លួន"><span aria-hidden="true">🔑</span> ប្ដូរលេខសម្ងាត់</button>
+        <button type="button" id="btnRestore" class="drop-item" role="menuitem" title="បញ្ចូលឯកសារទិន្នន័យដែលបានបម្រុងទុកមកវិញ"><span aria-hidden="true">📂</span> បញ្ចូលទិន្នន័យវិញ</button>
+        <input type="file" id="fileRestore" accept=".json" hidden>
+        <div class="pd-sep"></div>
+        <button type="button" id="btnLogout" class="drop-item danger" role="menuitem"><span aria-hidden="true">🚪</span> ចាកចេញ (Logout)</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<nav class="tabs" id="tabs">
+  <button data-p="p0" aria-selected="true">០. ទំព័រដើម</button>
+  <button data-p="p1" aria-selected="false">១. ទិន្នន័យគ្រូ</button>
+  <button data-p="p2" aria-selected="false">២. ចំនួនកិច្ចតែងការ</button>
+  <button data-p="p4" aria-selected="false">៣. ថ្នាក់និទស្សន៍</button>
+  <button data-p="p5" aria-selected="false">៤. លទ្ធផលសិក្សា</button>
+  <button data-p="p6" aria-selected="false">៥. សង្កេតថ្នាក់</button>
+  <button data-p="p7" aria-selected="false">៦. ក្រាហ្វិក និងវិភាគ</button>
+  <button data-p="p8" aria-selected="false">៧. សិស្ស និងអវត្តមាន</button>
+  <button data-p="p9" aria-selected="false">៨. របាយការណ៍ការងារ</button>
+  <button data-p="p10" aria-selected="false">៩. ស្នាដៃគ្រូបង្រៀន</button>
+  <button data-p="p11" aria-selected="false">១០. ឯកសារជំនួយការបង្រៀន</button>
+  <button data-p="p12" aria-selected="false">១១. កាលវិភាគបង្រៀន</button>
+  <button data-p="p13" aria-selected="false">១២. Timesheet &amp; Workplan</button>
+</nav>
+
+<!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
+<!-- ទំព័រដើម (Dashboard) -->
+<section id="p0">
+  <div class="welcome-banner">
+    <div class="wb-left">
+      <button type="button" id="wbAvatar" class="wb-av" title="កែប្រវត្តិរូប / ដាក់រូបថត" aria-label="កែប្រវត្តិរូប"></button>
+      <div style="min-width:0">
+        <h2 id="wbName">Welcome</h2>
+        <p id="wbDate" style="color:rgba(255,255,255,.85);font-size:14px"></p>
+        <p style="color:rgba(255,255,255,.8);font-size:13px">ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន · វិទ្យាល័យបឹងត្របែក (NGS)</p>
+      </div>
+    </div>
+    <div id="wbBadge" class="wb-badge"></div>
+  </div>
+  <div class="bento-grid" id="dKpi"></div>
+  <h3 class="dh">ចូលរហ័ស</h3>
+  <div class="qa-grid" id="dQa"></div>
+  <div class="dash-cols">
+    <div class="card" id="dRes"></div>
+    <div class="card" id="dUp"></div>
+  </div>
+  <div class="dash-cols">
+    <div class="card" id="dAch"></div>
+    <div class="card" id="dLib"></div>
+  </div>
+  <div class="card" id="dAdm" hidden></div>
+</section>
+
+<section id="p1" hidden>
+  <div class="stats" id="stats"></div>
+  <div class="bar">
+    <input id="q" type="search" placeholder="ស្វែងរកឈ្មោះ លេខសម្គាល់ ថ្នាក់ ឬលេខទូរស័ព្ទ…" aria-label="ស្វែងរក">
+    <select id="fs" aria-label="ច្រោះតាមស្ថានភាព">
+      <option value="">ស្ថានភាពទាំងអស់</option>
+      <option>កំពុងបម្រើការងារ</option>
+      <option>ច្បាប់ឈប់សម្រាក</option>
+      <option>ឈប់បម្រើការងារ</option>
+    </select>
+    <button class="primary" id="add">+ បន្ថែមគ្រូ</button>
+    <button id="mkAll" title="បង្កើតគណនី Login សម្រាប់គ្រូដែលមិនទាន់មាន" style="display:none">🔐 បង្កើតគណនីដែលមិនទាន់មាន</button>
+    <button id="exp">នាំចេញជា Excel (CSV)</button>
+  </div>
+  <div class="wrap">
+    <table>
+      <thead>
+        <tr><th>លេខសម្គាល់</th><th>ឈ្មោះ</th><th>តួនាទី</th><th>ភេទ</th><th>ថ្ងៃខែឆ្នាំកំណើត</th><th>ទូរស័ព្ទ / អាសយដ្ឋាន</th><th>ថ្នាក់បង្រៀន</th><th>កម្រិតវប្បធម៌</th><th>ចូលបម្រើការងារ</th><th>ស្ថានភាព</th><th>អនុញ្ញាតឱ្យប្រើ</th><th>សកម្មភាព</th></tr>
+      </thead>
+      <tbody id="tb"></tbody>
+    </table>
+  </div>
+  <p class="note">💡 ទិន្នន័យរក្សាទុកដោយស្វ័យប្រវត្តិក្នុង Cloud (Firebase Real-time Sync)។</p>
+</section>
+
+<!-- ផ្ទាំងទី ២៖ ចំនួនកិច្ចតែងការ -->
+<section id="p2" hidden>
+  <div class="bar">
+    <label for="mo">ជ្រើសរើសខែ៖</label>
+    <select id="mo" aria-label="ជ្រើសរើសខែ"></select>
+    <button id="kexp">នាំចេញជា Excel (CSV)</button>
+  </div>
+  <div class="wrap"><table id="kt"></table></div>
+  <h3 style="margin:18px 0 8px">តារាងចំណាត់ថ្នាក់ និងសង្ខេបលទ្ធផល</h3>
+  <div class="wrap"><table id="sm"></table></div>
+  <div class="wrap" style="margin-top:14px"><table id="mm"></table></div>
+  <p class="note">💡 វាយលេខក្នុងប្រអប់ពណ៌លឿងតាមសប្តាហ៍ (ស.១–ស.៤)។</p>
+</section>
+
+<!-- ផ្ទាំងទី ៣៖ ថ្នាក់និទស្សន៍ -->
+<section id="p4" hidden>
+  <div class="bar">
+    <label for="xd">ថ្ងៃប្រចាំខែ៖</label><select id="xd"></select>
+    <label for="xw">សប្ដាហ៍ក្នុងខែ៖</label><select id="xw"></select>
+    <label for="xy">ឆ្នាំចាប់ផ្ដើម៖</label><input id="xy" type="number" style="flex:0 0 95px;width:95px">
+    <button id="xexp">នាំចេញជា Excel (CSV)</button>
+  </div>
+  <div class="wrap"><table id="xt"></table></div>
+  <h3 style="margin:18px 0 8px">តារាងសង្ខេបកាលបរិច្ឆេទតាមគ្រូ</h3>
+  <div class="wrap"><table id="xs"></table></div>
+</section>
+
+<!-- ផ្ទាំងទី ៤៖ លទ្ធផលសិក្សា -->
+<section id="p5" hidden>
+  <div class="bar">
+    <label for="rt">គ្រូ៖</label><select id="rt"></select>
+    <label for="rc">ថ្នាក់៖</label><select id="rc"></select>
+    <label for="rp">រយៈពេល៖</label>
+    <select id="rp">
+      <option value="1">ឆមាសទី១ (តុលា–កុម្ភៈ + ប្រឡង)</option>
+      <option value="2">ឆមាសទី២ (មីនា–មិថុនា + ប្រឡង)</option>
+      <option value="3">ប្រចាំឆ្នាំ (សរុបឆមាសទាំងពីរ)</option>
+    </select>
+  </div>
+  <div class="bar">
+    <select id="rn" aria-label="ជ្រើសរើសថ្នាក់ថ្មី"></select>
+    <button id="rac">+ បន្ថែមថ្នាក់នេះ</button>
+    <button id="rdc" class="danger">លុបថ្នាក់នេះ</button>
+    <button id="ras" class="primary">+ បន្ថែមសិស្ស</button>
+    <button id="rnm" title="បិទភ្ជាប់ ID និងឈ្មោះសិស្ស">📋 បិទភ្ជាប់ ID/ឈ្មោះ</button>
+    <button id="rim" title="នាំចូលពិន្ទុពីឯកសារ .xlsx">📥 នាំចូលពី Excel</button>
+    <button id="rpa" title="បោះពុម្ពប័ណ្ណពិន្ទុទាំងថ្នាក់">🧾 ប័ណ្ណពិន្ទុទាំងថ្នាក់</button>
+    <button id="rex">នាំចេញជា Excel (CSV)</button>
+    <label style="display:flex;gap:5px;align-items:center"><input type="checkbox" class="chk" id="rso"> តម្រៀបតាមចំណាត់ថ្នាក់</label>
+    <input type="file" id="fileImp" accept=".xlsx,.xls" hidden>
+  </div>
+  <div class="wrap"><table id="rtb"></table></div>
+  <h3 style="margin:18px 0 8px">ស្ថិតិនិទ្ទេសថ្នាក់នេះ</h3>
+  <div class="wrap"><table id="rst"></table></div>
+  <h3 id="rah" style="margin:18px 0 8px"></h3>
+  <div class="wrap"><table id="rall"></table></div>
+  <details style="margin-top:14px">
+    <summary style="cursor:pointer;font-weight:700;color:var(--brand)">⚙️ ការកំណត់ស្តង់ដារពិន្ទុ និងនិទ្ទេស</summary>
+    <div id="rset" style="padding:10px 0"></div>
+  </details>
+  <p class="note">💡 ប្រព័ន្ធការពារការបញ្ចូលពិន្ទុលើសកម្រិតអតិបរមាដោយស្វ័យប្រវត្តិ។</p>
+</section>
+
+<section id="p6" hidden>
+<div class="seg" id="oseg"><button data-ov="1" aria-selected="true">កាលវិភាគសង្កេត</button><button data-ov="2" aria-selected="false">ទម្រង់សង្កេត</button><button data-ov="3" aria-selected="false">សង្ខេប</button></div>
+<div id="ov1"><div class="bar"><label for="od">ថ្ងៃសង្កេត៖</label><select id="od"></select><label for="oy">ឆ្នាំចាប់ផ្ដើម៖</label><input id="oy" type="number" style="flex:0 0 90px;width:90px"><label for="om">ខែ៖</label><select id="om"></select></div><div class="wrap"><table id="ov1t"></table></div></div>
+<div id="ov2" hidden><div class="bar"><button id="opv">‹ មុន</button><select id="oi" aria-label="ជ្រើសការសង្កេត"></select><button id="onx">បន្ទាប់ ›</button></div><div id="of"></div></div>
+<div id="ov3" hidden><div class="wrap"><table id="o3t"></table></div><details style="margin-top:14px"><summary>កម្រិតនិទ្ទេស (ភាគរយនៃ ១៦៥)</summary><div id="oth" style="padding:10px 0"></div></details></div>
+</section>
+
+<section id="p7" hidden>
+  <div class="bar">
+    <label for="vt">គ្រូ៖</label><select id="vt"></select>
+    <label for="vc">ថ្នាក់៖</label><select id="vc"></select>
+    <label for="vp">រយៈពេល៖</label>
+    <select id="vp"><option value="1">ឆមាសទី១</option><option value="2">ឆមាសទី២</option><option value="3">ប្រចាំឆ្នាំ</option></select>
+  </div>
+  <div id="vbody"></div>
+</section>
+
+<section id="p8" hidden>
+  <div class="seg" id="pseg"><button data-pv="1" aria-selected="true">បញ្ជីសិស្ស</button><button data-pv="2" aria-selected="false">អវត្តមានប្រចាំខែ</button></div>
+  <div class="bar">
+    <label for="pt">គ្រូ៖</label><select id="pt"></select>
+    <label for="pc">ថ្នាក់៖</label><select id="pc"></select>
+    <select id="pmo" aria-label="ខែ" hidden></select>
+    <button id="pex">នាំចេញជា Excel (CSV)</button>
+  </div>
+  <div class="wrap"><table id="ptb"></table></div>
+  <p class="note" id="pnote"></p>
+</section>
+
+<section id="p9" hidden>
+  <div class="bar">
+    <label for="wt">អ្នករៀបចំ៖</label><select id="wt"></select>
+    <label for="wm">ខែ៖</label><input type="month" id="wm" style="flex:0 0 160px;width:160px">
+    <button class="primary" id="wadd">+ បន្ថែមសកម្មភាព</button>
+    <button id="wpr">🖨️ បោះពុម្ពរបាយការណ៍</button>
+    <button id="wex">នាំចេញជា Excel (CSV)</button>
+    <input type="file" id="wfile" accept="image/*" multiple hidden>
+  </div>
+  <div class="wrap"><table id="wtb" style="min-width:700px"></table></div>
+  <p class="note">💡 បញ្ចូលសកម្មភាពតាមថ្ងៃ ប្រព័ន្ធគណនារយៈពេលដោយស្វ័យប្រវត្តិ ហើយបោះពុម្ពតាមទម្រង់របាយការណ៍ប្រចាំខែ។ រូបភាពដែលភ្ជាប់ត្រូវបានប្រើតែពេលបោះពុម្ពប៉ុណ្ណោះ (មិនរក្សាទុកក្នុង Cloud ទេ)។</p>
+</section>
+
+<section id="p10" hidden>
+  <div class="bar">
+    <label for="ahT">គ្រូ៖</label><select id="ahT"></select>
+    <label for="ahF">ពីថ្ងៃ៖</label><input type="date" id="ahF" style="flex:0 0 150px;width:150px">
+    <label for="ahG">ដល់ថ្ងៃ៖</label><input type="date" id="ahG" style="flex:0 0 150px;width:150px">
+    <button class="primary" id="ahA">+ បន្ថែមស្នាដៃ</button>
+    <button id="ahP">🖨️ បោះពុម្ព</button>
+    <button id="ahX">នាំចេញជា Excel (CSV)</button>
+  </div>
+  <h3 style="margin:6px 0 8px">តារាងសង្ខេបស្នាដៃតាមប្រភេទ និងកម្រិត</h3>
+  <div class="wrap"><table id="ahM" style="min-width:640px"></table></div>
+  <div id="ahSW" hidden><h3 style="margin:18px 0 8px">សង្ខេបតាមគ្រូ (លេខ = ប្រភេទស្នាដៃ ១–១០ តាមតារាងខាងលើ)</h3><div class="wrap"><table id="ahS" style="min-width:700px"></table></div></div>
+  <h3 style="margin:18px 0 8px">បញ្ជីស្នាដៃលម្អិត</h3>
+  <div class="bar"><label for="ahK">ប្រភេទ៖</label><select id="ahK"></select><label for="ahL">កម្រិត៖</label><select id="ahL"></select></div>
+  <div class="wrap"><table id="ahL2" style="min-width:760px"></table></div>
+  <p class="note">💡 កត់ត្រាស្នាដៃនីមួយៗជាមួយកាលបរិច្ឆេទ កម្រិត និងតំណភស្តុតាង (Google Drive ។ល។) ចំនួនក្នុងតារាងសង្ខេបគណនាដោយស្វ័យប្រវត្តិ។</p>
+</section>
+
+<section id="p11" hidden>
+  <div class="bar">
+    <input id="lbQ" type="search" placeholder="ស្វែងរកចំណងជើង ឬឈ្មោះគ្រូ…" aria-label="ស្វែងរក">
+    <select id="lbL" aria-label="កម្រិតថ្នាក់"></select>
+    <button class="primary" id="lbA">+ បន្ថែមឯកសារ</button>
+  </div>
+  <div class="seg" id="lbS"></div>
+  <div class="lgrid" id="lbG"></div>
+  <p class="note">💡 ប្រព័ន្ធរក្សាទុក «តំណ (Link)» ទៅកាន់ឯកសារ (Google Drive, YouTube...) មិនមែនរក្សាទុកឯកសារផ្ទាល់ទេ។ ត្រូវកំណត់ការចែករំលែកឯកសារដែលគ្រូដទៃអាចបើកបាន។ គ្រូគ្រប់គ្នាមើលបាន បន្ថែមបាន តែកែ/លុបបានតែឯកសាររបស់ខ្លួន (Admin កែបានទាំងអស់)។</p>
+</section>
+
+<!-- ផ្ទាំងទី ១១៖ កាលវិភាគបង្រៀន -->
+<section id="p12" hidden>
+  <div class="bar">
+    <label for="stT">គ្រូ៖</label><select id="stT"></select>
+    <button class="primary" id="stImp">📥 នាំចូលពី aSc</button>
+    <button id="stAll">📥 នាំចូលគ្រូទាំងអស់ (Admin)</button>
+    <button id="stPr">🖨️ បោះពុម្ព</button>
+    <button class="danger" id="stClr">សម្អាតទាំងអស់</button>
+  </div>
+  <div id="stSum" class="note"></div>
+  <div class="wrap"><table id="stTb" class="tt"></table></div>
+  <p class="note">💡 ចុចលើប្រអប់ណាមួយដើម្បីកែ (ថ្នាក់ · បន្ទប់ · ប្រភេទ)។ កាលវិភាគដែលនាំចូលពី aSc (20/10/2026) ជាការចាប់ផ្ដើម គ្រូម្នាក់ៗផ្ទៀងផ្ទាត់ និងកែបានដោយខ្លួនឯង។ ប្រភេទ «O / OE» = ម៉ោងលើស (OE = ម៉ោងលើសពេលល្ងាច) ហើយចូលទៅក្នុងជួរ «ម៉ោងលើស» ក្នុង Timesheet ដោយស្វ័យប្រវត្តិ។ ម៉ោងមួយ = ១ ម៉ោងបង្រៀន។</p>
+</section>
+
+<!-- ផ្ទាំងទី ១២៖ Timesheet & Workplan -->
+<section id="p13" hidden>
+  <div class="bar">
+    <label for="tsT">គ្រូ៖</label><select id="tsT"></select>
+    <label for="tsM">ខែ៖</label><input type="month" id="tsM" style="flex:0 0 160px;width:160px">
+    <button id="tsFill">⚡ បំពេញម៉ោងពីកាលវិភាគ</button>
+    <button class="primary" id="tsPr">🖨️ បោះពុម្ព TS + WP</button>
+    <button id="tsCsv">នាំចេញ CSV</button>
+  </div>
+  <div id="tsBody"></div>
+  <p class="note">💡 ម៉ោងបង្រៀនមូលដ្ឋាន និងម៉ោងលើស ត្រូវបានបំពេញតាមកាលវិភាគរបស់គ្រូនោះ (តាមថ្ងៃក្នុងសប្ដាហ៍) រហូតដល់គ្រូកែដោយខ្លួនឯង។ ជួរ «ផែនការសកម្មភាព» គឺ Workplan ប្រចាំថ្ងៃ។ កាលបរិច្ឆេទជើងក្រោមអាចកំណត់តាមប្រតិទិនខ្មែរ។ ថ្ងៃបុណ្យជាតិដែលមានកាលបរិច្ឆេទថេរត្រូវបានដាក់ជាមុន (ថ្ងៃបុណ្យតាមចន្ទគតិ ដូចភ្ជុំបិណ្ឌ គ្រូកំណត់ដោយខ្លួនឯង)។</p>
+</section>
+</main>
+<nav class="floating-nav" id="fnav" aria-label="ម៉ឺនុយរហ័ស"></nav>
+</div>
+
+<!-- Modal ប្ដូរលេខសម្ងាត់ -->
+<dialog id="dlgPass">
+  <form id="fPass" method="dialog">
+    <h2>🔑 ប្ដូរលេខសម្ងាត់ផ្ទាល់ខ្លួន</h2>
+    <p class="note full" id="passNote" hidden style="margin:0">⚠️ នេះជាការចូលប្រើលើកដំបូង (ឬលេខសម្ងាត់ត្រូវបានកំណត់ឡើងវិញ)។ សូមប្ដូរលេខសម្ងាត់ជាមុនសិន ទើបអាចបន្តប្រើប្រាស់បាន។</p>
+    <div class="full"><label for="oldPass">លេខសម្ងាត់បច្ចុប្បន្ន</label><input id="oldPass" type="password" required autocomplete="current-password"></div>
+    <div class="full"><label for="newPass">លេខសម្ងាត់ថ្មី (យ៉ាងតិច ៨តួ)</label><input id="newPass" type="password" required autocomplete="new-password" minlength="8"></div>
+    <div class="full"><label for="confPass">បញ្ជាក់លេខសម្ងាត់ថ្មី</label><input id="confPass" type="password" required autocomplete="new-password" minlength="8"></div>
+    <div class="foot">
+      <button type="button" id="cxPass">បោះបង់</button>
+      <button class="primary" type="submit">រក្សាទុក</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlg">
+  <form id="f" method="dialog">
+    <h2 id="ft">បន្ថែមគ្រូ</h2>
+    <div><label for="id">លេខសម្គាល់គ្រូ *</label><input id="id" required></div>
+    <div><label for="name">ឈ្មោះគោត្តនាម និងនាម *</label><input id="name" required></div>
+    <div><label for="g">ភេទ</label><select id="g"><option value="">មិនបញ្ជាក់</option><option>ប្រុស</option><option>ស្រី</option></select></div>
+    <div><label for="dob">ថ្ងៃខែឆ្នាំកំណើត</label><input id="dob" type="date"></div>
+    <div><label for="ph">លេខទូរស័ព្ទ</label><input id="ph" inputmode="tel"></div>
+    <div><label for="ad">អាសយដ្ឋាន</label><input id="ad"></div>
+    <div><label for="sub">មុខវិជ្ជាបង្រៀន</label><input id="sub" value="គណិតវិទ្យា"></div>
+    <div><label for="deg">កម្រិតវប្បធម៌</label><select id="deg"><option>គ្រូបង្រៀនកម្រិតឧត្តម</option><option>គ្រូបង្រៀនកម្រិតមូលដ្ឋាន</option><option>គ្រូកិច្ចសន្យា</option></select></div>
+    <div><label for="rl">តួនាទី</label><select id="rl"><option>ប្រធាន</option><option>អនុប្រធាន</option><option selected>សមាជិក</option></select></div>
+    <div class="full"><label for="cl">ថ្នាក់បង្រៀន (ញែកដោយសញ្ញាក្បៀស ,)</label><input id="cl" placeholder="10NGS-C, 11GT-ICT Y2, 12NGS-B"></div>
+    <div><label for="sd">ថ្ងៃចូលបម្រើការងារ</label><input id="sd" type="date"></div>
+    <div><label for="stt">ស្ថានភាព</label><select id="stt"><option>កំពុងបម្រើការងារ</option><option>ច្បាប់ឈប់សម្រាក</option><option>ឈប់បម្រើការងារ</option></select></div>
+    <div class="full"><label for="nt">កំណត់សម្គាល់</label><textarea id="nt" rows="2"></textarea></div>
+    <div class="foot">
+      <button type="button" id="cx">បោះបង់</button>
+      <button class="primary" id="sv" type="submit">រក្សាទុក</button>
+    </div>
+  </form>
+</dialog>
+
+
+<dialog id="dlgProf">
+  <form id="fProf" method="dialog">
+    <h2>👤 ប្រវត្តិរូបរបស់ខ្ញុំ</h2>
+    <div class="full pf-top">
+      <div id="pfPhoto" class="pf-photo" aria-label="រូបថតប្រវត្តិរូប"></div>
+      <div class="pf-btns">
+        <button type="button" id="pfPick" class="primary">📷 ជ្រើសរូបថត</button>
+        <button type="button" id="pfDel" class="danger" hidden>លុបរូបថត</button>
+        <input type="file" id="pfFile" accept="image/*" hidden>
+        <span class="note" style="margin:0">រូបភាពត្រូវកាត់ជាការ៉េ ហើយបង្រួមដោយស្វ័យប្រវត្តិ</span>
+      </div>
+    </div>
+    <div><label for="pfId">លេខសម្គាល់គ្រូ</label><input id="pfId" readonly></div>
+    <div><label for="pfRole">តួនាទី</label><input id="pfRole" readonly></div>
+    <div class="full"><label for="pfName">ឈ្មោះ (កែបានតាមរយៈអ្នកគ្រប់គ្រង)</label><input id="pfName" readonly></div>
+    <div><label for="pfG">ភេទ</label><select id="pfG"><option value="">មិនបញ្ជាក់</option><option>ប្រុស</option><option>ស្រី</option></select></div>
+    <div><label for="pfDob">ថ្ងៃខែឆ្នាំកំណើត</label><input id="pfDob" type="date"></div>
+    <div><label for="pfPh">លេខទូរស័ព្ទ</label><input id="pfPh" inputmode="tel" maxlength="40"></div>
+    <div><label for="pfAd">អាសយដ្ឋាន</label><input id="pfAd" maxlength="200"></div>
+    <div class="full"><label for="pfBio">ពីខ្ញុំ (សង្ខេប ≤ ៥០០ តួ)</label><textarea id="pfBio" rows="3" maxlength="500"></textarea></div>
+    <div class="foot">
+      <button type="button" id="cxProf">បោះបង់</button>
+      <button class="primary" id="okProf" type="submit">រក្សាទុក</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgImp" class="wide"><div class="dlgb"><h2 style="margin-top:0">📥 នាំចូលពិន្ទុពី Excel</h2><p class="note" id="impt"></p><p class="note"><b>ប្រព័ន្ធផ្គូផ្គងសិស្សតាម ID ប៉ុណ្ណោះ (មិនមែនតាមលំដាប់ ឬឈ្មោះទេ)</b>៖ ត្រូវមានជួរក្បាលតារាង «ID» ឬ «លេខសម្គាល់»។ ជួរដែលគ្មាន ID នឹងត្រូវរំលង។ ប្រព័ន្ធស្គាល់ជួរពិន្ទុតាមក្បាលតារាង៖ October, November, December, January, (February), S_1, March, April, May, June, S_2។ ជួរណាដែលគ្មាននឹងត្រូវបិទដោយស្វ័យប្រវត្តិសម្រាប់ថ្នាក់នោះ។</p><div id="impl"></div></div><div class="dlgf"><button type="button" id="cxImp">បោះបង់</button><button class="primary" type="button" id="okImp">នាំចូល</button></div></dialog>
+<dialog id="dlgNm"><div style="padding:18px"><h2 style="margin-top:0">📋 បិទភ្ជាប់ ID និងឈ្មោះសិស្ស</h2><label for="nmt">មួយសិស្សក្នុងមួយបន្ទាត់៖ ID [Tab ឬក្បៀស] ឈ្មោះ (ចម្លងពីរជួរពី Excel បិទភ្ជាប់បានតែម្ដង)</label><textarea id="nmt" rows="10" placeholder="S001&#9;សុខ ចាន់ដារ៉ា&#10;S002&#9;ចាន់ សុភា"></textarea><p class="note">ផ្គូផ្គងតាម ID ប៉ុណ្ណោះ៖ ID ដែលមានរួចហើយ នឹងកែឈ្មោះ ហើយ ID ថ្មីនឹងបន្ថែមជាសិស្សថ្មី។</p><div class="foot" style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button type="button" id="cxNm">បោះបង់</button><button class="primary" type="button" id="okNm">រក្សាទុក</button></div></div></dialog>
+<dialog id="dlgCard" class="wide"><div class="dlgb" id="cardBody"></div><div class="dlgf"><button type="button" id="cxCard">បិទ</button><button class="primary" type="button" id="prCard">🖨️ បោះពុម្ព / PDF</button></div></dialog>
+
+<dialog id="dlgAh"><div style="padding:18px;display:grid;gap:8px"><h2 id="dAhH" style="margin:0"></h2>
+<div><label for="dAhC">ប្រភេទស្នាដៃ</label><select id="dAhC"></select></div>
+<div><label for="dAhL">កម្រិតថ្នាក់</label><select id="dAhL"></select></div>
+<div><label for="dAhD">កាលបរិច្ឆេទ</label><input id="dAhD" type="date"></div>
+<div><label for="dAhT">ចំណងជើង / ខ្លឹមសារ *</label><input id="dAhT" placeholder="ឧ. កិច្ចតែងការមេរៀនសមីការដឺក្រេទី១"></div>
+<div><label for="dAhK">តំណភស្តុតាង (Link) — មិនចាំបាច់</label><input id="dAhK" placeholder="https://drive.google.com/..."></div>
+<div><label for="dAhN">កំណត់សម្គាល់</label><textarea id="dAhN" rows="2"></textarea></div>
+<div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" id="cxAh">បោះបង់</button><button class="primary" type="button" id="okAh">រក្សាទុក</button></div></div></dialog>
+<dialog id="dlgLb"><div style="padding:18px;display:grid;gap:8px"><h2 id="dLbH" style="margin:0"></h2>
+<div><label for="dLbC">ប្រភេទឯកសារ</label><select id="dLbC"></select></div>
+<div><label for="dLbL">កម្រិតថ្នាក់</label><select id="dLbL"></select></div>
+<div><label for="dLbT">ចំណងជើង *</label><input id="dLbT" placeholder="ឧ. កិច្ចតែងការ ថ្នាក់ទី៨ មេរៀនទី១"></div>
+<div><label for="dLbK">តំណឯកសារ (Google Drive / YouTube ...) *</label><input id="dLbK" placeholder="https://..."></div>
+<div><label for="dLbN">កំណត់សម្គាល់</label><textarea id="dLbN" rows="2"></textarea></div>
+<div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" id="cxLb">បោះបង់</button><button class="primary" type="button" id="okLb">រក្សាទុក</button></div></div></dialog>
+<dialog id="dlgCreds"><div style="padding:18px"><h2 style="margin-top:0">🔐 លេខសម្ងាត់បណ្ដោះអាសន្ន</h2>
+<p class="note">ចម្លង ឬថតរក្សាទុកឥឡូវនេះ ព្រោះ<b>នឹងមិនបង្ហាញម្ដងទៀតទេ</b>។ ប្រគល់ឱ្យគ្រូម្នាក់ៗ ហើយពួកគាត់នឹងត្រូវប្ដូរលេខសម្ងាត់ពេលចូលលើកដំបូង។</p>
+<textarea id="credsT" rows="10" readonly aria-label="បញ្ជីលេខសម្ងាត់បណ្ដោះអាសន្ន"></textarea>
+<div class="foot" style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button type="button" id="credsCopy">📋 ចម្លង</button><button type="button" class="primary" id="credsClose">បិទ</button></div></div></dialog>
+<div id="prt"></div>
+<div id="toast" class="toast"></div>
+
+
+<dialog id="dlgSt"><div style="padding:18px;display:grid;gap:8px"><h2 id="dStH" style="margin:0"></h2>
+<div><label for="dStC">ថ្នាក់ (ទទេ = លុប)</label><input id="dStC" list="dStCl" placeholder="ឧ. 10NGS-C"><datalist id="dStCl"></datalist></div>
+<div><label for="dStN">ចំនួនម៉ោងជាប់គ្នា (ចាប់ពីម៉ោងនេះ)</label><select id="dStN"><option value="1">១ ម៉ោង</option><option value="2">២ ម៉ោង</option><option value="3">៣ ម៉ោង</option></select></div>
+<div><label for="dStR">បន្ទប់</label><input id="dStR" placeholder="ឧ. F-M1, H-M4, HT-IT2"></div>
+<div><label for="dStT">ប្រភេទម៉ោង</label><select id="dStT"><option value="">ម៉ោងបង្រៀនធម្មតា</option><option value="O">O — ម៉ោងលើស</option><option value="OE">OE — ម៉ោងលើសពេលល្ងាច</option></select></div>
+<div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" id="cxSt">បោះបង់</button><button class="primary" type="button" id="okSt">រក្សាទុក</button></div></div></dialog>
+<dialog id="dlgAsc"><div style="padding:18px;display:grid;gap:8px"><h2 style="margin:0">📥 នាំចូលកាលវិភាគពី aSc</h2>
+<p class="note" style="margin:0">ជ្រើសរើសឈ្មោះក្នុងឯកសារ aSc (20/10/2026)។ កាលវិភាគចាស់របស់គ្រូនេះនឹងត្រូវជំនួស។</p>
+<select id="ascN"></select>
+<div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" id="cxAsc">បោះបង់</button><button class="primary" type="button" id="okAsc">នាំចូល</button></div></div></dialog>
+<script src="khcal.js?v=1"></script>
+<script src="asc_seed.js?v=1"></script>
+<script src="script.js?v=3"></script>
+<script src="sched.js?v=1"></script>
+</body>
+</html>

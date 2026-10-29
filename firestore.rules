@@ -1,0 +1,152 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===================== ជំនួយ =====================
+    function signedIn() { return request.auth != null; }
+    function profilePath() { return /databases/$(database)/documents/users/$(request.auth.uid); }
+    function active() {
+      return signedIn()
+        && exists(profilePath())
+        && get(profilePath()).data.enabled == true;
+    }
+    function myId() { return get(profilePath()).data.id; }          // ឧ. "T002"
+    function isAdmin() { return active() && get(profilePath()).data.role == 'admin'; }
+    function isOwner(ownerId) { return active() && ownerId == myId(); }
+    function changedOnly(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    // ===================== users/{uid} =====================
+    // តួនាទី + សិទ្ធិប្រើ។ មានតែ Admin ទេអាចកែ។
+    match /users/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create, delete: if isAdmin();
+      // គ្រូម្នាក់ៗអាចកែបានតែ mustChange: true -> false (បន្ទាប់ពីប្ដូរលេខសម្ងាត់)
+      allow update: if isAdmin()
+        || (request.auth.uid == uid && changedOnly(['mustChange'])
+            && request.resource.data.mustChange == false);
+    }
+
+    // ===================== បញ្ជីគ្រូ =====================
+    match /app/teachers {
+      allow read: if active();
+      allow write: if isAdmin();
+    }
+    // ទិន្នន័យចាស់ (document ធំ) → Admin អានបានតែដើម្បីបំលែង មិនអាចសរសេរ
+    match /app/{legacy} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ===================== ការកំណត់ទូទៅ (Admin សរសេរ) =====================
+    match /cfg/{key} {
+      allow read: if active();
+      allow write: if isAdmin();
+    }
+
+    // ===================== ទិន្នន័យរបស់គ្រូម្នាក់ៗ =====================
+    // doc ID = លេខសម្គាល់គ្រូ (ឧ. T002) ហើយ field "o" = ម្ចាស់ (ត្រូវដូច doc ID)
+    // កិច្ចការ និងលទ្ធផលសិក្សា៖ គ្រូគ្រប់គ្នាអានបាន ម្ចាស់ ឬ Admin សរសេរ
+    match /tasks/{tid} {
+      allow read: if active();
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow delete: if isAdmin();
+    }
+    match /rs/{tid} {
+      allow read: if active();
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow delete: if isAdmin();
+    }
+    // របាយការណ៍ និងស្នាដៃ៖ ម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ អាន/សរសេរ
+    // (ការ Query របស់គ្រូត្រូវមាន where("o","==", ID ខ្លួនឯង) — កម្មវិធីធ្វើរួចហើយ)
+    match /wr/{tid} {
+      allow read: if isAdmin() || isOwner(resource.data.o);
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow delete: if isAdmin();
+    }
+    match /ah/{tid} {
+      allow read: if isAdmin() || isOwner(resource.data.o);
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow delete: if isAdmin();
+    }
+
+    // ===================== កាលវិភាគបង្រៀន (ផ្ទាំង ១១) =====================
+    // doc ID = លេខសម្គាល់គ្រូ · គ្រូទាំងអស់អាន · ម្ចាស់ ឬ Admin សរសេរ
+    match /sched/{tid} {
+      allow read: if active();
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow delete: if isAdmin();
+    }
+
+    // ===================== Timesheet & Workplan ប្រចាំខែ (ផ្ទាំង ១២) =====================
+    // doc ID = "<ID គ្រូ>_<YYYY-MM>" (ឧ. T002_2026-10) · ម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ អាន/សរសេរ
+    match /ts/{key} {
+      allow read: if isAdmin() || isOwner(resource.data.o);
+      allow create, update: if (isAdmin() || isOwner(request.resource.data.o))
+        && key.split('_')[0] == request.resource.data.o;
+      allow delete: if isAdmin();
+    }
+
+    // ===================== ប្រវត្តិរូបគ្រូ (រូបថត + ព័ត៌មានផ្ទាល់ខ្លួន) =====================
+    // doc ID = លេខសម្គាល់គ្រូ។ ម្ចាស់ ឬ Admin សរសេរ · គ្រូទាំងអស់អាន
+    // កំណត់វាលដែលអនុញ្ញាត និងទំហំ (រូបថត JPEG តូច ≤ ~70 KB ជា data URL)
+    match /profiles/{tid} {
+      allow read: if active();
+      allow create, update: if (isAdmin() || isOwner(tid))
+        && request.resource.data.o == tid
+        && request.resource.data.keys().hasOnly(['o','g','dob','ph','ad','bio','photo','u'])
+        && request.resource.data.get('photo','').size() < 70000
+        && request.resource.data.get('bio','').size() <= 500
+        && request.resource.data.get('ph','').size() <= 40
+        && request.resource.data.get('ad','').size() <= 200;
+      allow delete: if isAdmin();
+    }
+
+    // ===================== ឯកសារជំនួយ (ម្ចាស់ o ម្នាក់ៗ) =====================
+    match /lib/{u} {
+      allow read: if active();
+      allow create: if isAdmin() || (isOwner(request.resource.data.o));
+      allow update: if isAdmin()
+        || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
+
+    // ===================== កាលវិភាគថ្នាក់និទស្សន៍ =====================
+    // Admin ៖ គ្រប់យ៉ាង។ គ្រូដែលត្រូវបានកំណត់ក្នុងជួរ (t) ៖ កែបានតែ ខែ/ថ្ងៃ/ម៉ោង/មុខវិជ្ជា/ចំណាំ
+    match /exrows/{id} {
+      allow read: if active();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (isOwner(resource.data.t) && changedOnly(['m','dt','tm','sc','nt']));
+    }
+
+    // ===================== សង្កេតថ្នាក់រៀន =====================
+    // Admin ៖ គ្រប់យ៉ាង (t = គ្រូត្រូវសង្កេត, o = អ្នកសង្កេត, dt = ថ្ងៃ)
+    // អ្នកសង្កេត (o) ៖ កែពិន្ទុ កំណត់ត្រា និងព័ត៌មានផ្សេងៗ លើកលែង t, o, dt
+    // គ្រូត្រូវសង្កេត (t) ៖ កែបានតែប្រអប់ចំណាំរបស់ខ្លួន (g[2], g[4]) និងវាលព័ត៌មានទូទៅ
+    function teacherNotesOnly() {
+      return request.resource.data.g.size() == resource.data.g.size()
+        && request.resource.data.g[0] == resource.data.g[0]
+        && request.resource.data.g[1] == resource.data.g[1]
+        && request.resource.data.g[3] == resource.data.g[3]
+        && request.resource.data.g[5] == resource.data.g[5];
+    }
+    match /obsrows/{id} {
+      allow read: if active();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (isOwner(resource.data.o)
+            && changedOnly(['sub','cl','tm','rm','n','ab','ch','ls','ct','sc','cm','g']))
+        || (isOwner(resource.data.t)
+            && changedOnly(['sub','rm','n','ab','ch','ls','ct','g'])
+            && teacherNotesOnly());
+    }
+
+    // ហាមផ្សេងទៀតទាំងអស់
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

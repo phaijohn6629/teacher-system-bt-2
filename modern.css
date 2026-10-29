@@ -1,0 +1,294 @@
+/* ==========================================================================
+   modern.css — ស្ទីល Dashboard ទំនើប (Glassmorphism + Bento Grid + Floating Nav)
+   ចង់ត្រឡប់ទៅរចនាបថដើមវិញ៖ លុបបន្ទាត់ <link ... modern.css> ក្នុង index.html
+   ========================================================================== */
+
+/* --- កូដស្ទីល Dashboard ទំនើប និងប្លែកជាងគេ --- */
+:root {
+    --bg-main: #0f1020;
+    --card-bg: rgba(30, 31, 55, 0.7);
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    --text-main: #ffffff;
+    --text-muted: #94a3b8;
+    --border-glow: rgba(255, 255, 255, 0.1);
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Kantumruy Pro', sans-serif;
+}
+
+/* ផ្ទាំងស្វាគមន៍ផ្នែកខាងលើ (Welcome Header Banner) */
+.welcome-banner {
+    background: var(--primary-gradient);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-banner h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* កាតស្ថិតិ និងមុខងាររចនាបែប Bento Grid */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.modern-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glow);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.modern-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow: 0 12px 40px rgba(168, 85, 247, 0.2);
+}
+
+/* របារម៉ឺនុយអណ្តែតនៅខាងក្រោម (Floating Bottom Nav Bar) */
+.floating-nav {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 16, 32, 0.85);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 12px 24px;
+    border-radius: 40px;
+    display: flex;
+    gap: 25px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.nav-item {
+    color: var(--text-muted);
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    transition: color 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: #ec4899;
+}
+
+/* ==========================================================================
+   ផ្នែកបន្ថែម៖ ភ្ជាប់ស្ទីលខាងលើជាមួយផ្ទាំងទាំង ១០ ដែលមានស្រាប់
+   ========================================================================== */
+
+/* ១. ផ្ទៃងងឹត (លំនាំដើម) — ផ្គូផ្គង variable របស់ប្រព័ន្ធចាស់ទៅពណ៌ថ្មី */
+:root:not([data-theme="light"]),
+:root[data-theme="dark"] {
+    --bg: var(--bg-main);
+    --panel: #1a1b33;
+    --ink: var(--text-main);
+    --mute: var(--text-muted);
+    --line: var(--border-glow);
+    --brand: #8b5cf6;
+    --brand-ink: #ffffff;
+    --accent: #ec4899;
+    --soft: rgba(255, 255, 255, 0.06);
+    --danger: #f87171;
+    --nav-bg: rgba(15, 16, 32, 0.85);
+    --nav-line: rgba(255, 255, 255, 0.15);
+}
+/* ២. ផ្ទៃភ្លឺ (ប៊ូតុង 🌓 ពណ៌ផ្ទៃ) — ស្ទីលដូចគ្នា ពណ៌ភ្លឺ */
+:root[data-theme="light"] {
+    --bg-main: #f2f3fb;
+    --card-bg: rgba(255, 255, 255, 0.88);
+    --text-main: #1e1b3a;
+    --text-muted: #5b5f7a;
+    --border-glow: rgba(99, 102, 241, 0.18);
+    --bg: var(--bg-main);
+    --panel: #ffffff;
+    --ink: var(--text-main);
+    --mute: var(--text-muted);
+    --line: var(--border-glow);
+    --brand: #6366f1;
+    --brand-ink: #ffffff;
+    --accent: #ec4899;
+    --soft: #eef0ff;
+    --danger: #b3372d;
+    --nav-bg: rgba(255, 255, 255, 0.9);
+    --nav-line: rgba(99, 102, 241, 0.25);
+}
+:root[data-theme="light"] .modern-card,
+:root[data-theme="light"] .stat { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12); }
+:root[data-theme="light"] .floating-nav { box-shadow: 0 12px 30px rgba(99, 102, 241, 0.2); }
+
+.floating-nav { background: var(--nav-bg, rgba(15,16,32,.85)); border-color: var(--nav-line, rgba(255,255,255,.15)); }
+
+/* ៣. ក្បាលទំព័រ */
+header {
+    background: var(--card-bg);
+    color: var(--text-main);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-glow);
+    position: sticky; top: 0; z-index: 60;
+}
+header h1 { display: inline-block; font-family: "Moul", "Kantumruy Pro", sans-serif; font-weight: 400; font-size: 1.05rem;
+    background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header p { color: var(--text-muted); opacity: 1; }
+
+/* ៤. ប៊ូតុង ប្រអប់បញ្ចូល តារាង */
+.hdr-acts button { background: var(--soft); color: var(--ink); border: 1px solid var(--border-glow); }
+.hdr-acts button:hover { background: rgba(168, 85, 247, .18); }
+button { border-radius: 10px; background: var(--soft); border: 1px solid var(--border-glow); }
+button.primary { background: var(--primary-gradient); border: 0; color: #fff; font-weight: 700;
+    box-shadow: 0 6px 16px rgba(168, 85, 247, 0.3); }
+input, select, textarea { border-radius: 10px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid #a855f7; outline-offset: 2px; }
+.wrap, .card { background: var(--card-bg); backdrop-filter: blur(10px); border-radius: 16px; border: 1px solid var(--border-glow); }
+th { background: rgba(99, 102, 241, 0.18); color: var(--text-main); }
+tbody tr:hover td { background: rgba(168, 85, 247, 0.08); }
+dialog { border-radius: 18px; background: var(--panel); border: 1px solid var(--border-glow);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .5); }
+dialog::backdrop { background: rgba(8, 9, 20, .65); backdrop-filter: blur(4px); }
+.login-box { background: var(--card-bg); backdrop-filter: blur(14px); border-radius: 20px; border: 1px solid var(--border-glow);
+    box-shadow: 0 20px 50px rgba(99, 102, 241, .25); }
+.login-box h2 { display: inline-block; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.toast { background: var(--primary-gradient); color: #fff; border-radius: 14px; bottom: 96px; }
+
+/* ៥. កាតស្ថិតិក្នុងផ្ទាំងទី ១ ក្លាយជាកាតកញ្ចក់ */
+.stats { gap: 16px; }
+.stat { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-glow); border-left: 1px solid var(--border-glow);
+    border-radius: 16px; padding: 14px 18px; transition: all .3s ease; box-shadow: 0 8px 32px rgba(0, 0, 0, .25); }
+.stat:hover { transform: translateY(-4px); border-color: rgba(168, 85, 247, .5); }
+.stat b { width: fit-content; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ៦. បដាស្វាគមន៍ និងកាត Bento (ចំណែកខាងក្នុង) */
+.welcome-banner { color: #fff; gap: 16px; flex-wrap: wrap; }
+.welcome-banner::after { content: ""; position: absolute; right: -50px; top: -70px; width: 200px; height: 200px;
+    border-radius: 50%; background: rgba(255, 255, 255, .13); pointer-events: none; }
+.welcome-banner::before { content: ""; position: absolute; right: 120px; bottom: -80px; width: 140px; height: 140px;
+    border-radius: 50%; background: rgba(255, 255, 255, .08); pointer-events: none; }
+.welcome-banner > * { position: relative; z-index: 1; }
+.welcome-banner h2 { margin: 0 0 5px; }
+.welcome-banner p { margin: 0; }
+.bento-grid h3 { margin: 0 0 4px; line-height: 1.2; }
+.bento-grid p { margin: 0; font-size: .92rem; }
+.bento-grid { margin-bottom: 25px; }
+
+/* ៧. ម៉ឺនុយអណ្ដែត៖ ជំនួសផ្ទាំង Tab ខាងលើ (ប៉ុន្តែ Tab ដើមនៅមាន សម្រាប់ដំណើរការ) */
+.tabs { display: none; }
+main { padding-bottom: 120px; }
+.floating-nav { max-width: calc(100vw - 20px); overflow-x: auto; scrollbar-width: none; gap: 6px; padding: 8px 12px; }
+.floating-nav::-webkit-scrollbar { display: none; }
+.nav-item { flex: 0 0 auto; background: none; border: 0; border-radius: 28px; padding: 6px 12px; min-width: 62px; cursor: pointer; font-family: inherit; line-height: 1.35; }
+.nav-item .ni-ico { display: block; font-size: 1.25rem; }
+.nav-item .ni-lbl { display: block; font-size: 12px; white-space: nowrap; }
+.nav-item.active { background: rgba(236, 72, 153, .14); font-weight: 700; }
+.nav-item:hover { background: rgba(255, 255, 255, .06); opacity: 1; }
+@media (max-width: 700px) {
+    header { position: static; }
+    .welcome-banner { padding: 18px; border-radius: 16px; }
+    .welcome-banner h2 { font-size: 19px; }
+    .nav-item { min-width: 54px; padding: 6px 8px; }
+    .bento-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .modern-card, .stat, .nav-item { transition: none; }
+    .modern-card:hover, .stat:hover { transform: none; }
+}
+
+/* ៨. បោះពុម្ព៖ លាក់ធាតុតុបតែង ហើយប្រើពណ៌ស */
+@media print {
+    .welcome-banner, .bento-grid, .floating-nav { display: none !important; }
+    body { background: #fff !important; color: #000 !important; }
+    header { position: static; background: #fff; color: #000; backdrop-filter: none; }
+    header h1 { color: #000; background: none; -webkit-background-clip: initial; }
+    .wrap, .card, .stat { background: #fff; backdrop-filter: none; box-shadow: none; }
+}
+
+/* ==========================================================================
+   ក្បាលទំព័រថ្មី៖ Logo + ឈ្មោះសាលា + ម៉ឺនុយ Profile
+   ========================================================================== */
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
+header .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand-logo { width: 48px; height: 48px; object-fit: contain; border-radius: 50%; background: #fff; padding: 2px; flex: 0 0 auto; box-shadow: 0 2px 10px rgba(0, 0, 0, .25); }
+.brand-name { font-family: "Moul", "Kantumruy Pro", sans-serif; font-size: 1rem; line-height: 1.5; width: fit-content;
+    background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header .brand-sub { display: block; margin: 0; font-family: inherit; font-weight: 400; font-size: .78rem; line-height: 1.4;
+    background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--text-muted); }
+.hdr-acts { align-items: center; }
+.profile-menu { position: relative; margin-left: 4px; }
+.hdr-acts .profile-trigger { display: flex; align-items: center; gap: 8px; padding: 4px 12px 4px 4px; border-radius: 30px;
+    background: var(--soft); border: 1px solid var(--border-glow); color: var(--ink); font-size: .85rem; font-weight: 700; cursor: pointer; }
+.profile-trigger .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--primary-gradient); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem; }
+.profile-trigger .pname { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.profile-trigger .caret { font-size: .75rem; opacity: .7; transition: transform .2s; }
+.profile-trigger[aria-expanded="true"] .caret { transform: rotate(180deg); }
+.profile-dropdown { position: absolute; right: 0; top: calc(100% + 8px); width: 250px; padding: 6px; z-index: 1000;
+    background: var(--panel); border: 1px solid var(--border-glow); border-radius: 16px; box-shadow: 0 14px 34px rgba(0, 0, 0, .35); }
+.pd-head { padding: 10px 12px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+.pd-name { font-weight: 700; font-size: .95rem; word-break: break-word; }
+.pd-sub { color: var(--mute); font-size: .8rem; }
+.pd-sep { height: 1px; background: var(--line); margin: 4px 0; }
+.hdr-acts .drop-item { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 9px 12px;
+    background: none; border: 0; border-radius: 8px; color: var(--ink); font-size: .88rem; cursor: pointer; }
+.hdr-acts .drop-item:hover, .hdr-acts .drop-item:focus-visible { background: var(--soft); }
+.hdr-acts .drop-item.danger { color: var(--danger); }
+@media (max-width: 700px) {
+    header .brand-sub { display: none; }
+    .brand-logo { width: 40px; height: 40px; }
+}
+@media (max-width: 520px) {
+    .profile-trigger .pname { display: none; }
+    .hdr-acts .profile-trigger { padding-right: 8px; }
+}
+
+/* ==========================================================================
+   Dashboard ទំព័រដើម + ប្រវត្តិរូប (Avatar)
+   ========================================================================== */
+.av{border-radius:50%;object-fit:cover;vertical-align:middle;flex:0 0 auto;background:#fff}
+.av-i{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--primary-gradient);color:#fff;font-weight:700;flex:0 0 auto}
+.nmw{display:inline-flex;align-items:center;gap:8px}
+.profile-trigger .avatar{overflow:hidden}
+.profile-trigger .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.wb-left{display:flex;align-items:center;gap:16px;min-width:0}
+.wb-av{width:76px;height:76px;border-radius:50%;border:3px solid rgba(255,255,255,.75);background:rgba(255,255,255,.2);padding:0;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.9rem;font-weight:700;color:#fff;flex:0 0 auto;position:relative}
+.wb-av img{width:100%;height:100%;object-fit:cover;display:block}
+.wb-av::after{content:"✎";position:absolute;right:2px;bottom:2px;width:22px;height:22px;border-radius:50%;background:rgba(15,16,32,.75);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+.wb-badge{background:rgba(255,255,255,.2);padding:10px 18px;border-radius:30px;font-weight:700;color:#fff}
+.welcome-banner h2{line-height:1.4;word-break:break-word}
+.dh{margin:6px 0 10px}
+.qa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px}
+.qa{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:14px 16px;border-radius:16px;background:var(--card-bg);border:1px solid var(--border-glow);color:var(--ink);cursor:pointer;transition:all .25s ease}
+.qa:hover{transform:translateY(-3px);border-color:rgba(168,85,247,.5);opacity:1}
+.qa .qi{font-size:1.6rem;line-height:1.2}.qa b{font-size:.95rem}.qa .qs{color:var(--mute);font-size:.78rem}
+.dash-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px;margin-bottom:0}
+.dash-cols .card h3,#dAdm h3{font-size:1.02rem}
+.up-row{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.up-row:last-child{border-bottom:0}
+.up-row[data-go]{cursor:pointer}.up-row[data-go]:hover{background:rgba(168,85,247,.06)}
+.up-d{min-width:54px;text-align:center;border-radius:12px;background:var(--soft);padding:5px 6px;line-height:1.25;flex:0 0 auto}
+.up-d b{display:block;font-size:1.15rem}.up-d span{font-size:.75rem;color:var(--mute)}
+.attn{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.pf-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pf-photo{width:104px;height:104px;border-radius:50%;overflow:hidden;background:var(--primary-gradient);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:700;flex:0 0 auto;border:3px solid var(--border-glow)}
+.pf-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.pf-btns{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+@media (max-width:700px){.wb-av{width:60px;height:60px;font-size:1.5rem}.wb-left{gap:12px}}
+@media print{#p0{display:none!important}}
