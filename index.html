@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=15">
 <link rel="stylesheet" href="modern.css?v=5">
 
 </head>
@@ -75,6 +75,7 @@
   <button data-p="p11" aria-selected="false">១០. ឯកសារជំនួយការបង្រៀន</button>
   <button data-p="p12" aria-selected="false">១១. កាលវិភាគបង្រៀន</button>
   <button data-p="p13" aria-selected="false">១២. Timesheet &amp; Workplan</button>
+  <button data-p="p14" aria-selected="false">១៣. សម្រង់អត្ថបទ</button>
 </nav>
 
 <!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
@@ -274,6 +275,7 @@
 
 <!-- ផ្ទាំងទី ១១៖ កាលវិភាគបង្រៀន -->
 <section id="p12" hidden>
+<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="true">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="false">📖 សម្រង់អត្ថបទ</button></div>
   <div class="bar">
     <label for="stT">គ្រូ៖</label><select id="stT"></select>
     <button class="primary" id="stImp">📥 នាំចូលពី aSc</button>
@@ -299,6 +301,26 @@
   <div id="tsBody"></div>
   <p class="note">💡 ម៉ោងបង្រៀនមូលដ្ឋាន និងម៉ោងលើស ត្រូវបានបំពេញតាមកាលវិភាគរបស់គ្រូនោះ (តាមថ្ងៃក្នុងសប្ដាហ៍) រហូតដល់គ្រូកែដោយខ្លួនឯង។ ជួរ «ផែនការសកម្មភាព» គឺ Workplan ប្រចាំថ្ងៃ។ កាលបរិច្ឆេទជើងក្រោមអាចកំណត់តាមប្រតិទិនខ្មែរ។ ថ្ងៃបុណ្យជាតិដែលមានកាលបរិច្ឆេទថេរត្រូវបានដាក់ជាមុន (ថ្ងៃបុណ្យតាមចន្ទគតិ ដូចភ្ជុំបិណ្ឌ គ្រូកំណត់ដោយខ្លួនឯង)។</p>
 </section>
+
+<!-- ផ្ទាំងទី ១៣៖ សម្រង់អត្ថបទប្រចាំខែ (គ្រប់គ្រងថ្នាក់រៀន) -->
+<section id="p14" hidden>
+<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="false">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="true">📖 សម្រង់អត្ថបទ</button></div>
+  <div class="bar">
+    <label for="cxT">គ្រូ៖</label><select id="cxT"></select>
+    <label for="cxC">ថ្នាក់៖</label><select id="cxC"></select>
+    <label for="cxM">ពីខែ៖</label><input type="month" id="cxM" style="flex:0 0 160px;width:160px">
+    <label for="cxM2">ដល់ខែ៖</label><input type="month" id="cxM2" style="flex:0 0 160px;width:160px">
+  </div>
+  <div class="bar">
+    <button id="cxFill">⚡ បង្កើតជួរតាមកាលវិភាគ</button>
+    <button id="cxAdd">＋ បន្ថែមជួរ</button>
+    <button class="primary" id="cxPr">🖨️ បោះពុម្ពសម្រង់អត្ថបទ</button>
+    <button id="cxCsv">នាំចេញជា Excel (CSV)</button>
+  </div>
+  <div id="cxBody"></div>
+  <p class="note">💡 «បង្កើតជួរតាមកាលវិភាគ» បន្ថែមថ្ងៃដែលថ្នាក់នេះមានម៉ោងបង្រៀនក្នុងកាលវិភាគ (រំលងថ្ងៃអាទិត្យ និងបុណ្យជាតិ)។ បន្ទាប់មកគ្រូវាយខ្លឹមសារមេរៀន និងអវត្តមានសិស្សក្នុងជួរនីមួយៗ។ ទិន្នន័យរក្សាទុកដោយស្វ័យប្រវត្តិ។</p>
+</section>
+
 </main>
 <nav class="floating-nav" id="fnav" aria-label="ម៉ឺនុយរហ័ស"></nav>
 </div>
@@ -413,7 +435,8 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=15"></script>
-<script src="sched.js?v=11"></script>
+<script src="script.js?v=16"></script>
+<script src="sched.js?v=12"></script>
+<script src="excerpt.js?v=1"></script>
 </body>
 </html>
