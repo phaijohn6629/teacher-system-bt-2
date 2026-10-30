@@ -398,6 +398,28 @@ function renderS(){
   $("mm").innerHTML="<thead><tr><th>ខែ</th><th>សរុបប្រចាំខែ</th></tr></thead><tbody>"+MK.map(function(m,i){return"<tr><td>"+m+"</td><td><b>"+mt(i)+"</b></td></tr>"}).join("")+"</tbody>";
 }
 
+/* បោះពុម្ពរបាយការណ៍ចំនួនកិច្ចតែងការប្រចាំខែ · ជើងក្រោមតាមគម្រូ Workplan */
+function kPrintHTML(){
+  var X=window.SCHX,y0=parseInt(syStart()),yr=cur<3?y0:y0+1,cs=[0,0,0,0],b="";
+  data.forEach(function(t){
+    var k=gk(t.id);
+    k.lv.forEach(function(lv,l){
+      var w=gw(t.id,cur,l);w.forEach(function(v,i){cs[i]+=+v||0});
+      b+="<tr>"+(l?"":"<td rowspan="+k.lv.length+" style='text-align:left'>"+esc(t.name)+"</td>")+"<td>"+esc(kn(lv))+"</td>"+w.map(function(v){return"<td>"+kn(+v||0)+"</td>"}).join("")+"<td><b>"+kn(sm(w))+"</b></td><td>"+kn(lt(t.id,l))+"</td></tr>";
+    });
+  });
+  var tdy=new Date(),wg="ថ្ងៃទី "+kn(tdy.getDate())+" ខែ "+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
+  var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(who.id):"";
+  return"<div class='pg cxp'>"+
+   "<div class=cxh><img src='"+LOGO+"' class=cxlogo alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
+    "<div class=moul style='font-size:13pt'>របាយការណ៍ចំនួនកិច្ចតែងការ</div><div class=cxper>ខែ"+esc(MK[cur])+" ឆ្នាំ"+kn(yr)+"</div></div></div>"+
+   "<table class='cxg kpg'><thead><tr><th style='width:24%'>ឈ្មោះសមាជិក</th><th>កម្រិតថ្នាក់</th>"+WK.map(function(x){return"<th>"+x+"</th>"}).join("")+"<th>សរុបខែ</th><th>សរុបទាំងអស់</th></tr></thead><tbody>"+b+
+   "<tr><th colspan=2>សរុប</th>"+cs.map(function(c){return"<th>"+kn(c)+"</th>"}).join("")+"<th>"+kn(sm(cs))+"</th><th></th></tr></tbody></table>"+
+   "<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
+   "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
+   "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(who.name||"")+"</b></div></div></div></div>";
+}
+$("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
 $("mo").innerHTML=MK.map(function(m,i){return"<option value="+i+">"+m+"</option>"}).join("");
 $("mo").onchange=function(){cur=+this.value;renderK()};
 
