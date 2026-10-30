@@ -112,7 +112,7 @@ $("cxM2").onchange=function(){
 $("cxFill").onclick=cxFill;
 $("cxCur").onclick=function(){
   if(!canEd(cxT)){alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
-  if(!window.CURX||!CURX.has(cxC)){alert("មិនទាន់មានកម្មវិធីសិក្សាសម្រាប់ថ្នាក់ «"+cxC+"» ទេ (បច្ចុប្បន្នមានថ្នាក់ទី៧ និងទី៨)");return}
+  if(!window.CURX||!CURX.has(cxC)){alert("មិនទាន់មានកម្មវិធីសិក្សាសម្រាប់ថ្នាក់ «"+cxC+"» ទេ (បច្ចុប្បន្នមានថ្នាក់ទី៧ ដល់ទី១១)");return}
   var rec=cxRec(false);if(!rec||!rec.rows.length){alert("សូមបង្កើតជួរតាមកាលវិភាគជាមុន (⚡ បង្កើតជួរតាមកាលវិភាគ)");return}
   var grp={},keys=[];
   rec.rows.forEach(function(r,i){
