@@ -331,3 +331,23 @@ header { z-index: 200; }
 .nt-item small{display:block;color:var(--mute);font-size:.78rem}
 .nt-empty{padding:14px 10px;color:var(--mute);text-align:center}
 @media (max-width:600px){.nt-panel{right:0;left:0;margin:0 auto;width:auto}}
+/* ម៉ឺនុយចំហៀងខាងឆ្វេង (អេក្រង់ធំ)៖ ស្លាយចេញ/ចូល */
+.snav{display:none}
+@media (min-width:1200px){
+  .snav{display:block;position:fixed;left:0;top:0;bottom:0;width:240px;z-index:150;background:var(--nav-bg,rgba(15,16,32,.85));backdrop-filter:blur(14px);border-right:1px solid var(--border-glow);transition:transform .3s ease}
+  .sn-list{height:100%;overflow-y:auto;padding:14px 10px 40px;box-sizing:border-box;scrollbar-width:thin}
+  .sn-g{margin-bottom:10px}
+  .sn-h{font-size:.75rem;color:var(--mute);padding:4px 10px;font-weight:700}
+  .sn-i{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border:0;border-radius:12px;background:none;color:var(--ink);font:inherit;font-size:.9rem;text-align:left;cursor:pointer}
+  .sn-i span{font-size:1.15rem;flex:0 0 auto}.sn-i em{font-style:normal;min-width:0}
+  .sn-i:hover{background:rgba(168,85,247,.1)}
+  .sn-i.active{background:rgba(236,72,153,.14);font-weight:700}
+  .sn-tog{position:absolute;top:16px;right:-30px;width:30px;height:44px;padding:0;border:1px solid var(--border-glow);border-left:0;border-radius:0 12px 12px 0;background:var(--nav-bg,rgba(15,16,32,.85));color:var(--ink);font-size:1.3rem;line-height:1;cursor:pointer}
+  body.sn-off .snav{transform:translateX(-240px)}
+  /* ពេលបើក៖ រុញមាតិកាឱ្យផុតម៉ឺនុយ (នៅកណ្ដាលដដែល ពេលអេក្រង់ធំគ្រប់គ្រាន់) · លាក់ម៉ឺនុយខាងក្រោម */
+  main{transition:margin .3s ease}
+  body:not(.sn-off) main{margin-left:max(256px,calc((100vw - 1160px) / 2))}
+  body:not(.sn-off) .floating-nav{display:none}
+}
+@media (min-width:1200px) and (prefers-reduced-motion:reduce){.snav,main{transition:none}}
+@media print{.snav{display:none!important}body:not(.sn-off) main{margin-left:auto!important}}

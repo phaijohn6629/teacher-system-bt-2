@@ -1256,7 +1256,26 @@ document.addEventListener("click",function(e){var g=e.target.closest(".gseg butt
 $("fnav").onclick=function(e){
   if(e.target.closest("#fnMore")){$("allMenu").hidden=false;return}
   var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
+/* ម៉ឺនុយចំហៀងខាងឆ្វេង (អេក្រង់ធំ ≥1200px)៖ ស្លាយចេញ/ចូល · ចងចាំស្ថានភាពក្នុង localStorage */
+var SNG=[["ទូទៅ",["p0","p1"]],["ការងាររដ្ឋបាល",["p2","p9","p13"]],["និទស្សន៍ · សង្កេត",["p4","p6"]],["លទ្ធផលសិក្សា",["p5","p7","p8"]],["គ្រប់គ្រងថ្នាក់រៀន",["p12","p14","p15"]],["ឯកសារ",["p10","p11"]]];
+function buildSnav(){
+  var ic={},full={};FN.forEach(function(x){ic[x[0]]=x[1]});
+  [].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent.replace(/^[០-៩]+\.\s*/,"")});
+  $("snList").innerHTML=SNG.map(function(g){
+    return"<div class=sn-g><div class=sn-h>"+esc(g[0])+"</div>"+g[1].map(function(p){return"<button type=button class=sn-i data-p='"+p+"'><span aria-hidden=true>"+ic[p]+"</span><em>"+esc(full[p]||"")+"</em></button>"}).join("")+"</div>"}).join("");
+}
+function snTop(){var h=document.querySelector("#appSection header");$("snav").style.top=Math.max(0,h?h.getBoundingClientRect().bottom:0)+"px"}
+(function(){
+  var open=true;try{open=localStorage.getItem("snav")!=="0"}catch(x){}
+  function set(o){open=o;document.body.classList.toggle("sn-off",!o);$("snTog").setAttribute("aria-expanded",String(o));$("snTog").textContent=o?"‹":"›";try{localStorage.setItem("snav",o?"1":"0")}catch(x){}}
+  set(open);snTop();
+  window.addEventListener("resize",snTop);window.addEventListener("scroll",snTop,{passive:true});
+  $("snTog").onclick=function(){set(!open)};
+  $("snList").onclick=function(e){var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
+})();
 function syncNav(p){
+  snTop();
+  [].forEach.call(document.querySelectorAll("#snList button"),function(b){var on=b.dataset.p===p;b.classList.toggle("active",on);if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   [].forEach.call(document.querySelectorAll("#fnav button"),function(b){
     var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6")||(b.dataset.p==="p5"&&p==="p7")||(b.dataset.p==="p2"&&(p==="p9"||p==="p13"))||(b.dataset.p==="p10"&&p==="p11")||(b.dataset.p==="p12"&&(p==="p14"||p==="p15"));b.classList.toggle("active",on);
     if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
@@ -1454,7 +1473,7 @@ $("p0").addEventListener("keydown",function(e){
   if(e.key!=="Enter"&&e.key!==" ")return;var b=e.target.closest(".up-row[data-go]");if(b){e.preventDefault();show(b.dataset.go)}
 });
 
-buildFnav();
+buildFnav();buildSnav();
 
 /* មុខងារ Backup, Restore, Print និង Theme */
 function validBackup(o){
