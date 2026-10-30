@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=17">
 <link rel="stylesheet" href="modern.css?v=5">
 
 </head>
@@ -335,6 +335,19 @@
     <button id="cuNow">📍 សប្ដាហ៍នេះ</button>
     <button class="primary" id="cuPr">🖨️ បោះពុម្ព</button>
   </div>
+  <details class="cuf-d" style="margin:0 0 10px"><summary>✍️ ជើងក្រោមសម្រាប់បោះពុម្ព (អ្នករៀបចំកម្មវិធី · កាលបរិច្ឆេទ)</summary>
+    <div class="tsh" style="margin-top:8px">
+      <div><label for="cuFp">អ្នករៀបចំកម្មវិធី (សមាជិក)</label><select id="cuFp"></select></div>
+      <div id="cuFpxw" hidden><label for="cuFpx">ឈ្មោះអ្នករៀបចំ (វាយដោយដៃ)</label><input id="cuFpx"></div>
+      <div><label for="cuFh">ប្រធានក្រុមបច្ចេកទេស</label><input id="cuFh"></div>
+      <div><label for="cuFd">ព.នាយកវិទ្យាល័យ / នាយករងទទួលបន្ទុកសាលា</label><input id="cuFd"></div>
+      <div><label for="cuFpl">ធ្វើនៅ</label><input id="cuFpl"></div>
+      <div><label for="cuFdt">កាលបរិច្ឆេទ (ទុកទទេ = ចំណុចចំហ)</label><input type="date" id="cuFdt"></div>
+      <div><label for="cuFkt">អត្ថបទចន្ទគតិដោយដៃ (ទុកទទេ = ស្វ័យប្រវត្តិ)</label><input id="cuFkt" placeholder="ឧ. ថ្ងៃ ១០កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៦៩"></div>
+    </div>
+    <div class="bar" style="margin-top:6px"><button type="button" id="cuFtd">ថ្ងៃនេះ</button><button type="button" id="cuFcl">សម្អាតកាលបរិច្ឆេទ</button></div>
+    <p class="note" id="cuFpv" style="margin:6px 0 0"></p>
+  </details>
   <p class="note" id="cuInfo" style="margin:0 0 8px"></p>
   <div id="cuBody"></div>
   <p class="note">💡 ទិន្នន័យតាមឯកសារ «ចំណែងចែកកម្មវិធីសិក្សាគោល» ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧ (សប្ដាហ៍ទី ១ ចាប់ពី ១៩ តុលា ២០២៦)។ ក្នុងទំព័រ «សម្រង់អត្ថបទ» ប៊ូតុង «📖 បំពេញខ្លឹមសារពីកម្មវិធីសិក្សា» នឹងដាក់មេរៀនតាមសប្ដាហ៍ចូលក្នុងជួរនីមួយៗដោយស្វ័យប្រវត្តិ។</p>
@@ -458,7 +471,7 @@
 <script src="script.js?v=17"></script>
 <script src="sched.js?v=12"></script>
 <script src="curriculum7.js?v=2"></script>
-<script src="curriculum.js?v=1"></script>
+<script src="curriculum.js?v=2"></script>
 <script src="excerpt.js?v=2"></script>
 </body>
 </html>

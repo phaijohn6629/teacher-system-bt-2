@@ -120,7 +120,7 @@ function render(){
   $("cuM").style.display=cuV==="b"?"none":"";
   $("cuQ").style.display=cuV==="d"?"":"none";
   var cw=curWeek(),info="កម្មវិធីសិក្សា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧ · សប្ដាហ៍នេះ៖ "+(cw>=0?"សប្ដាហ៍ទី "+kh(cw+1)+" ("+wkLabel(cw)+")":"ក្រៅកាលវិភាគកម្មវិធី");
-  $("cuInfo").textContent=info;
+  $("cuInfo").textContent=info;renderFoot();
   var h="";
   if(cuV==="b")h=baseHtml();
   else if(cuV==="s")h="<h3 style='margin:0 0 8px'>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));
@@ -136,11 +136,50 @@ $("cuNow").onclick=function(){
   cuV=cuV==="b"?"d":cuV;cuM="";cuQ="";render();
   var r=document.querySelector("#cuBody tr[data-wk='"+w+"']");if(r)r.scrollIntoView({behavior:"smooth",block:"center"});
 };
+/* ---------- ជើងក្រោម (រក្សាទុកក្នុងកម្មវិធីរុករក) ---------- */
+var FK="cuFt-v1",FT={pl:"រាជធានីភ្នំពេញ",d:"",kt:"",pre:"",pc:"",hd:"ផៃ ចន",dr:"សម្ប កំសាន្ត"};
+try{var sv=JSON.parse(localStorage.getItem(FK)||"null");if(sv)for(var k in sv)FT[k]=sv[k]}catch(x){}
+function saveFT(){try{localStorage.setItem(FK,JSON.stringify(FT))}catch(x){}}
+function ftDates(){
+  var t=FT.d&&/^\d{4}-\d{2}-\d{2}$/.test(FT.d)?FT.d.split("-").map(Number):null,n=new Date(),ref=t||[n.getFullYear(),n.getMonth()+1,n.getDate()];
+  var c=KhCal.convert(ref[0],ref[1],ref[2]);
+  var lun=FT.kt?FT.kt:"ថ្ងៃ"+(t?KhCal.kn(c.day)+(c.half?"រោច":"កើត"):"……………………")+" ខែ"+(c.leap?"ទុតិយ":"")+KhCal.MONTHS[c.month]+" ឆ្នាំ"+c.animal+" "+c.sak+" ព.ស."+KhCal.kn(c.be);
+  var gre=(FT.pl||"រាជធានីភ្នំពេញ")+" ថ្ងៃទី "+(t?KhCal.kn(ref[2]):"………………")+" ខែ "+M[ref[1]-1]+" ឆ្នាំ"+KhCal.kn(ref[0]);
+  return{lun:lun,gre:gre};
+}
+function preName(){var p=FT.pre||teacherNameOf(window.who&&who.id);return p==="__x"?(FT.pc||""):(p||"")}
+function footHtml(){
+  var D=ftDates();
+  return"<div class=cuf><div class=cuf1>"+esc2(D.lun)+"</div><div class=cuf1>"+esc2(D.gre)+"</div>"+
+   "<div class=cuk>"+
+   "<div class=cuk3><div class=cuh3>បានឃើញ និងឯកភាព<br><b>ព.នាយកវិទ្យាល័យ</b><br><b>នាយករងទទួលបន្ទុកសាលារៀនជំនាន់ថ្មី</b></div><div class=cugp style='height:22mm'></div><b class=cunm>"+esc2(FT.dr)+"</b></div>"+
+   "<div class=cuk2><div class=cuh3>បានឃើញ និងពិនិត្យ<br><b>ប្រធានក្រុមបច្ចេកទេស</b></div><div class=cugp style='height:20mm'></div><b class=cunm>"+esc2(FT.hd)+"</b></div>"+
+   "<div class=cuk1><div class=cuh3><b>អ្នករៀបចំកម្មវិធី</b></div><div class=cugp style='height:17mm'></div><b class=cunm>"+esc2(preName())+"</b></div>"+
+   "</div></div>";
+}
+function renderFoot(){
+  var ts=window.data||[],names=ts.map(function(t){return t.name});
+  var cur=FT.pre||teacherNameOf(window.who&&who.id);
+  $("cuFp").innerHTML="<option value=''>— ជ្រើសឈ្មោះសមាជិក —</option>"+names.map(function(n){return"<option"+(n===cur?" selected":"")+">"+esc2(n)+"</option>"}).join("")+"<option value='__x'"+(FT.pre==="__x"?" selected":"")+">ផ្សេងៗ (វាយដោយដៃ)…</option>";
+  $("cuFpxw").hidden=FT.pre!=="__x";$("cuFpx").value=FT.pc||"";
+  $("cuFh").value=FT.hd||"";$("cuFd").value=FT.dr||"";$("cuFpl").value=FT.pl||"";$("cuFdt").value=FT.d||"";$("cuFkt").value=FT.kt||"";
+  var D=ftDates();$("cuFpv").textContent="បោះពុម្ពជាអត្ថបទ៖ "+D.lun+" · "+D.gre;
+}
+function teacherNameOf(id){var t=(window.data||[]).filter(function(x){return x.id===id})[0];return t?t.name:""}
+function bindFoot(){
+  var m={cuFp:["pre"],cuFpx:["pc"],cuFh:["hd"],cuFd:["dr"],cuFpl:["pl"],cuFdt:["d"],cuFkt:["kt"]};
+  Object.keys(m).forEach(function(id){
+    $(id).addEventListener(id==="cuFp"||id==="cuFdt"?"change":"input",function(){FT[m[id][0]]=this.value;saveFT();if(id==="cuFp")renderFoot();else{var D=ftDates();$("cuFpv").textContent="បោះពុម្ពជាអត្ថបទ៖ "+D.lun+" · "+D.gre}});
+  });
+  $("cuFtd").onclick=function(){var n=new Date();FT.d=n.getFullYear()+"-"+pad(n.getMonth()+1)+"-"+pad(n.getDate());saveFT();renderFoot()};
+  $("cuFcl").onclick=function(){FT.d="";FT.kt="";saveFT();renderFoot()};
+}
+bindFoot();
 function printHtml(){
   var body="";
   if(cuV==="b")body=baseHtml();else if(cuV==="s")body="<h3>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));else body=planHtml(weeksFor(cuM),cuQ).html;
   var bt=(document.querySelector(".brand-logo")||{}).src||"";
-  return"<div class='pg cup'><div class=cuh>"+(bt?"<img src='"+bt+"' class=cul alt=''>":"")+"<div class=cuc><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី (NGS)</div><div class=moul style='font-size:12pt;margin-top:2mm'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</div><div style='margin-top:1mm'>មុខវិជ្ជា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧</div></div>"+(LOGO2?"<img src='"+LOGO2+"' class=cur2 alt=''>":"")+"</div>"+body+"</div>";
+  return"<div class='pg cup'><div class=cuh>"+(bt?"<img src='"+bt+"' class=cul alt=''>":"")+"<div class=cuc><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី (NGS)</div><div class=moul style='font-size:12pt;margin-top:2mm'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</div><div style='margin-top:1mm'>មុខវិជ្ជា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧</div></div>"+(LOGO2?"<img src='"+LOGO2+"' class=cur2 alt=''>":"")+"</div>"+body+footHtml()+"</div>";
 }
 $("cuPr").onclick=function(){fontsOk().then(function(){doPrintNow(printHtml())})};
 /* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */

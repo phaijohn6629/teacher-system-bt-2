@@ -271,3 +271,12 @@ body.pm .pg.land{page-break-inside:avoid}
 .cup .cut thead{display:table-header-group}.cup .cut tr{break-inside:avoid;page-break-inside:avoid}
 .cup .cut tr.cur td{outline:0}
 .cup h3,.cup h4{font-size:11pt;margin:2mm 0}
+
+.cuf{margin-top:7mm;break-inside:avoid;page-break-inside:avoid;color:#000}
+.cuf1{text-align:right;font-size:10.5pt;line-height:1.55;margin-right:2mm}
+.cuk{display:flex;justify-content:space-between;align-items:flex-start;margin-top:2mm}
+.cuk>div{text-align:center;font-size:10.5pt;line-height:1.5}
+.cuk3{width:37%;margin-top:11mm}.cuk2{width:30%;margin-top:2mm}.cuk1{width:30%}
+.cuk b{font-weight:700}
+.cuk .cunm{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:11pt;display:block}
+.cuh3{display:block}
