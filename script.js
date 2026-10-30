@@ -1737,6 +1737,17 @@ function obsPrintHTML(i){
    "<h4>ផ្នែកទី៣ ៖ កំណត់ហេតុនៃការសង្កេត</h4><table class='ct opn'><tbody>"+GL.map(function(l,j){return"<tr><th>"+l+"</th><td>"+esc(r.g[j]||"").replace(/\n/g,"<br>")+"</td></tr>"}).join("")+"</tbody></table>"+
    "<div class=sig><div>បានឃើញ និងពិនិត្យ<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b><br><br><br><br>&nbsp;</div><div>&nbsp;<br>គ្រូត្រូវសង្កេត<br><br><br><br><b>"+esc(tn(r.t))+"</b></div><div>រាជធានីភ្នំពេញ ថ្ងៃទី "+kn(d.getDate())+" ខែ "+M[d.getMonth()]+" ឆ្នាំ"+kn(d.getFullYear())+"<br>អ្នកសង្កេត<br><br><br><br><b>"+esc(tn(r.o))+"</b></div></div></div>";
 }
+/* បោះពុម្ពតារាងសង្ខេបការសង្កេត (A4 ផ្ដេក) */
+function obsSumHTML(){
+  renderO3();var I=inf(),y=ob.y;
+  return"<div class='pg opr osum'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+   "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
+   "<h2 class=moul style='text-align:center;font-size:14pt;margin:6px 0 10px'>របាយការណ៍សង្ខេបការសង្កេតថ្នាក់រៀន</h2>"+
+   "<table class='ct ost'>"+$("o3t").innerHTML+"</table>"+
+   "<p style='font-size:9pt;margin:4px 0 0'>កម្រិតនិទ្ទេស (ភាគរយនៃ ១៦៥)៖ "+[0,1,2].map(function(k){return esc(OL[k])+" ≥ "+kn(ob.th[k])+"%"}).join(" · ")+" · "+esc(OL[3])+" ក្រោម "+kn(ob.th[2])+"%</p>"+
+   wpFoot(who.id,who.name,"អ្នករៀបចំ")+"</div>";
+}
+$("o3pr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsSumHTML())})};
 $("opr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsPrintHTML(oc))})};
 $("oi").onchange=function(){oc=+this.value;renderO2()};
 $("opv").onclick=function(){oc=(oc+35)%36;renderO2()};

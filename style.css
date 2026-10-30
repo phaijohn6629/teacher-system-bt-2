@@ -310,3 +310,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .opr .opn th{width:30%;text-align:left;vertical-align:top}.opr .opn td{text-align:left;vertical-align:top;height:9mm}
 .opr tr{break-inside:avoid;page-break-inside:avoid}
 .opr .sig{margin-top:10px;break-inside:avoid;page-break-inside:avoid}
+.pg.osum{page:land}
+.osum table.ost{table-layout:auto}.osum table.ost th{white-space:normal;font-size:8.5pt}.osum table.ost td{font-size:9pt}
+.osum table.ost td.nm{text-align:left;font-weight:700}
+.osum table.ost tr.tr td{background:#eee!important;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
