@@ -351,3 +351,14 @@ header { z-index: 200; }
 }
 @media (min-width:1200px) and (prefers-reduced-motion:reduce){.snav,main{transition:none}}
 @media print{.snav{display:none!important}body:not(.sn-off) main{margin-left:auto!important}}
+/* ពណ៌ផ្ទៃម៉ឺនុយចំហៀង (gradient ស៊ីនឹងបដាស្វាគមន៍) */
+:root:not([data-theme="light"]),:root[data-theme="dark"]{--sn-bg:linear-gradient(180deg,#1e1b4b 0%,#2e1065 55%,#4a044e 100%);--sn-tg:#1e1b4b;--sn-h:#c4b5fd;--sn-hv:rgba(255,255,255,.08);--sn-bd:rgba(196,181,253,.18)}
+:root[data-theme="light"]{--sn-bg:linear-gradient(180deg,#e0e7ff 0%,#f3e8ff 55%,#fce7f3 100%);--sn-tg:#e0e7ff;--sn-h:#7c3aed;--sn-hv:rgba(255,255,255,.6);--sn-bd:rgba(139,92,246,.22)}
+@media (min-width:1200px){
+  .snav{background:var(--sn-bg);border-right-color:var(--sn-bd);box-shadow:4px 0 24px rgba(99,102,241,.12)}
+  .sn-h{color:var(--sn-h);letter-spacing:.02em}
+  .sn-i{transition:background .2s ease,transform .2s ease}
+  .sn-i:hover{background:var(--sn-hv);transform:translateX(3px)}
+  .sn-i.active{background:var(--primary-gradient);color:#fff;box-shadow:0 6px 16px rgba(168,85,247,.35)}
+  .sn-tog{background:var(--sn-tg);border-color:var(--sn-bd)}
+}
