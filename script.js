@@ -1364,7 +1364,6 @@ function renderDash(){
   /* បដាស្វាគមន៍ */
   $("wbName").textContent=g[0]+", "+who.name+"! "+g[1];
   $("wbDate").textContent="ថ្ងៃ"+DAYF[now.getDay()]+" ទី"+kn(now.getDate())+" ខែ"+M[now.getMonth()]+" ឆ្នាំ"+kn(now.getFullYear());
-  $("wbBadge").textContent=(adm?"Admin":(who.rl||"Member"))+" · "+who.id;
   $("wbAvatar").innerHTML=avInner(me,who.name);
   var ids=adm?data.map(function(t){return t.id}):[me],cls=allCls(ids),stu=cls.reduce(function(s,x){return s+x.c.st.length},0);
   var mk=curMK(),tk=0;
@@ -1425,7 +1424,28 @@ function renderDash(){
     function chips(a,empty){return a.length?a.map(function(t){return"<span class=tag>"+esc(t.name)+"</span>"}).join(""):"<span class=note style='margin:0'>"+empty+"</span>"}
     A.innerHTML="<h3>⚠️ ចំណុចត្រូវយកចិត្តទុកដាក់ (Admin)</h3><div class=attn><div><b>មិនទាន់មានគណនី Login ("+noAcc.length+")</b><div>"+chips(noAcc,"✅ គ្រប់គ្នាមានគណនីរួចហើយ")+"</div></div><div><b>មិនទាន់មានរបាយការណ៍ខែនេះ ("+noRep.length+")</b><div>"+chips(noRep,"✅ គ្រប់គ្នាមានរបាយការណ៍")+"</div></div><div><b>មិនទាន់មានថ្នាក់ក្នុងប្រព័ន្ធពិន្ទុ ("+noCls.length+")</b><div>"+chips(noCls,"✅ គ្រប់គ្នាមានថ្នាក់")+"</div></div></div>";
   }
+  /* ការជូនដំណឹង (🔔)៖ កាលវិភាគក្នុង ៧ ថ្ងៃខាងមុខ + ការងារដែលនៅខ្វះ */
+  var nt=[],t7=new Date(t0);t7.setDate(t7.getDate()+7);
+  ev.forEach(function(e){if(e.d<t7)nt.push(["🗓️",e.k,"ថ្ងៃ"+DAYF[e.d.getDay()]+" "+kn(e.d.getDate())+" "+M[e.d.getMonth()]+(e.tm?" · "+e.tm:"")+(e.w?" · "+e.w:""),e.go])});
+  if(adm){
+    if(noAcc.length)nt.push(["🔐","គ្រូ "+kn(noAcc.length)+" នាក់មិនទាន់មានគណនី Login","ទិន្នន័យគ្រូ","p1"]);
+    if(noRep.length)nt.push(["📝","គ្រូ "+kn(noRep.length)+" នាក់មិនទាន់មានរបាយការណ៍ខែនេះ","របាយការណ៍ការងារ","p9"]);
+    if(noCls.length)nt.push(["📊","គ្រូ "+kn(noCls.length)+" នាក់មិនទាន់មានថ្នាក់ក្នុងប្រព័ន្ធពិន្ទុ","លទ្ធផលសិក្សា","p5"]);
+  }else if(!rep)nt.push(["📝","អ្នកមិនទាន់មានរបាយការណ៍ខែនេះ","របាយការណ៍ការងារ","p9"]);
+  var nc=$("ntCount");nc.hidden=!nt.length;nc.textContent=nt.length>9?"9+":kn(nt.length);
+  $("ntBell").setAttribute("aria-label","ការជូនដំណឹង ("+nt.length+")");
+  $("ntPanel").innerHTML="<h4>🔔 ការជូនដំណឹង</h4>"+(nt.length?nt.map(function(x){
+    return"<button type=button class=nt-item role=menuitem data-go='"+x[3]+"'><span class=ni aria-hidden=true>"+x[0]+"</span><span><b>"+esc(x[1])+"</b><small>"+esc(x[2])+"</small></span></button>"}).join(""):"<div class=nt-empty>✅ មិនមានការជូនដំណឹងថ្មីទេ</div>");
 }
+/* ប៊ូតុង 🔔៖ បើក/បិទបញ្ជី · ចុចក្រៅ ឬ Esc ដើម្បីបិទ */
+(function(){
+  var bt=$("ntBell"),pn=$("ntPanel");
+  function close(f){pn.hidden=true;bt.setAttribute("aria-expanded","false");if(f)bt.focus()}
+  bt.addEventListener("click",function(e){e.stopPropagation();var open=pn.hidden;pn.hidden=!open;bt.setAttribute("aria-expanded",String(open))});
+  pn.addEventListener("click",function(e){if(e.target.closest("[data-go]"))close()});
+  document.addEventListener("click",function(e){if(!pn.hidden&&!pn.contains(e.target)&&!bt.contains(e.target))close()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pn.hidden)close(true)});
+})();
 $("p0").addEventListener("click",function(e){
   var b=e.target.closest("[data-go]");if(!b)return;
   if(b.dataset.go==="prof")openProfile();else show(b.dataset.go);

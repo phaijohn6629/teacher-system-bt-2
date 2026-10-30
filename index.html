@@ -7,7 +7,7 @@
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
 <link rel="stylesheet" href="style.css?v=19">
-<link rel="stylesheet" href="modern.css?v=5">
+<link rel="stylesheet" href="modern.css?v=6">
 
 </head>
 <body>
@@ -82,6 +82,7 @@
 <!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
 <!-- ទំព័រដើម (Dashboard) -->
 <section id="p0">
+  <div class="wb-wrap">
   <div class="welcome-banner">
     <div class="wb-left">
       <button type="button" id="wbAvatar" class="wb-av" title="កែប្រវត្តិរូប / ដាក់រូបថត" aria-label="កែប្រវត្តិរូប"></button>
@@ -91,7 +92,9 @@
         <p style="color:rgba(255,255,255,.8);font-size:13px">ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន · វិទ្យាល័យបឹងត្របែក (NGS)</p>
       </div>
     </div>
-    <div id="wbBadge" class="wb-badge"></div>
+    <button type="button" id="ntBell" class="nt-bell" aria-haspopup="true" aria-expanded="false" aria-controls="ntPanel" title="ការជូនដំណឹង" aria-label="ការជូនដំណឹង">🔔<span id="ntCount" class="nt-count" hidden></span></button>
+  </div>
+  <div id="ntPanel" class="nt-panel" role="menu" hidden></div>
   </div>
   <div class="bento-grid" id="dKpi"></div>
   <h3 class="dh">ចូលរហ័ស</h3>
@@ -468,7 +471,7 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=17"></script>
+<script src="script.js?v=18"></script>
 <script src="sched.js?v=12"></script>
 <script src="curriculum7.js?v=4"></script>
 <script src="curriculum8.js?v=1"></script>
