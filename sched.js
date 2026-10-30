@@ -234,12 +234,41 @@ function khDateHtml(prefix,dv,ov,ro){
     "<div class=kh-txt id='kht-"+prefix+"'>"+esc(khDateText(dv,""))+"</div>"+
     "<label>កែអត្ថបទកាលបរិច្ឆេទខ្មែរដោយដៃ (ទុកទទេ = ស្វ័យប្រវត្តិ)</label><input data-f='ft."+prefix+"k' value='"+esc(ov||"")+"' "+(ro?"readonly":"")+">";
 }
+/* ម៉ោងពី «របាយការណ៍ការងារ» → ជួរ «ប្រធានក្រុម» (h.l) និង Workplan នៃថ្ងៃដូចគ្នា
+   la/wa = តម្លៃដែលបំពេញស្វ័យប្រវត្តិ (ដើម្បីដឹងថា Workplan មិនមែនគ្រូវាយដោយដៃ ហើយដកចេញវិញពេលលុបសកម្មភាព) */
+function wrSync(){
+  if(!canEd(tsT)||typeof wr==="undefined")return;
+  var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),by={},ch=false;
+  (wr.r[tsT]||[]).forEach(function(e){
+    if((e.d||"").slice(0,7)!==tsMo)return;
+    var d=+e.d.slice(8,10),o=by[d]||(by[d]={h:0,t:[]}),mi=tmin(e.b)-tmin(e.a),f=(e.c||"").split(/\r?\n/).filter(Boolean)[0];
+    if(mi>0)o.h+=mi/60;if(f)o.t.push(f.trim());
+  });
+  var rec=getRec(false);
+  if(!rec){if(!Object.keys(by).length)return;rec=getRec(true);ch=true}
+  rec.days=rec.days||{};
+  for(var d=1;d<=n;d++){
+    var b=by[d],cd=rec.days[d];
+    if(b){
+      var hh=Math.round(b.h*100)/100,tx=b.t.join("; ");
+      if(!cd){cd=rec.days[d]=defDay(tsT,y,m,d);ch=true}
+      if(cd.h.l!==hh||cd.la!==hh){cd.h.l=hh;cd.la=hh;ch=true}
+      if(tx&&(!cd.w||cd.w===cd.wa)&&(cd.w!==tx||cd.wa!==tx)){cd.w=tx;cd.wa=tx;ch=true}
+    }else if(cd&&cd.la!=null){
+      if(cd.h.l===cd.la)cd.h.l=0;delete cd.la;
+      if(cd.wa!=null){if(cd.w===cd.wa)cd.w="";delete cd.wa}
+      ch=true;
+    }
+  }
+  if(ch)saveT();
+}
 function renderTS(){
   if(!who)return;
   var adm=isAdm();
   if(!tsT||(!adm&&tsT!==who.id)||!data.some(function(t){return t.id===tsT}))tsT=who.id;
   $("tsT").innerHTML=data.filter(function(t){return adm||t.id===who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===tsT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   $("tsM").value=tsMo;
+  wrSync();
   var ro=!canEd(tsT),y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),n=dim(y,m),rec=getRec(false),t=teacherOf(tsT),ft=(rec&&rec.ft)||{pl:"រាជធានីភ្នំពេញ"};
   $("tsFill").style.display=ro?"none":"";
   var h="<div class=tsh>"+
@@ -251,6 +280,7 @@ function renderTS(){
    "<div><label>រហូតដល់</label><input type=date data-f='to' value='"+esc(rec?rec.to:iso(y,m,n))+"' "+(ro?"readonly":"")+"></div>"+
    "<div><label>ផ្សេងៗ (បើមានសូមបញ្ជាក់)</label><input data-f='ex' value='"+esc((rec&&rec.ex)||"")+"' "+(ro?"readonly":"")+"></div>"+
    "</div>";
+  h+="<p class=note style='margin:4px 0 8px'>💡 ម៉ោង «ប្រធានក្រុម» និង Workplan នៃថ្ងៃដែលមានក្នុង «របាយការណ៍ការងារ» ត្រូវបានបំពេញដោយស្វ័យប្រវត្តិ (Workplan ដែលបានវាយដោយដៃមិនត្រូវជំនួសទេ)។</p>";
   h+="<div class=wrap><table class=tsg id=tsG><thead><tr><th>ថ្ងៃទី</th><th>បរិយាយ</th>"+HC.map(function(c){return"<th title='"+esc(c[1])+"'>"+c[2]+"</th>"}).join("")+"<th style='min-width:240px'>ផែនការសកម្មភាព (Workplan)</th></tr></thead><tbody>";
   for(var d=1;d<=n;d++){
     var cd=curDay(rec,y,m,d),on=inRange(rec,y,m,d),wd=new Date(y,m-1,d).getDay(),rest=cd.st==="ឈប់សម្រាក"||cd.st==="បុណ្យជាតិ";
