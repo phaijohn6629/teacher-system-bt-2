@@ -550,7 +550,16 @@ function loadR(){
 function savR(){try{sessionStorage.setItem(RK,JSON.stringify(rs));push("rs");}catch(e){}}
 function ss(a){return a.reduce(function(x,y){return x+(+y||0)},0)}
 /* ===== ជំនួយ៖ ជួរដែលប្រើក្នុងថ្នាក់នីមួយៗ, ការគណនានិទ្ទេស, ចំណាត់ថ្នាក់, អវត្តមាន ===== */
-function inf(){var i=rs.info||{};return{school:i.school||"វិទ្យាល័យបឹងត្របែក",year:i.year||""}}
+function inf(){var i=rs.info||{};return{school:i.school||"វិទ្យាល័យបឹងត្របែក",year:i.year||syLabel(parseInt(syStart()))}}
+/* ឆ្នាំសិក្សា៖ ចាប់ពីខែតុលា (ឧ. ២០២៦-២០២៧) · ទុកទទេ = ស្វ័យប្រវត្តិតាមកាលបរិច្ឆេទថ្ងៃនេះ */
+function syLabel(y){return kn(y)+"-"+kn(y+1)}
+function renderSY(){
+  var y0=parseInt(syStart()),cur=(rs.info&&rs.info.year)||"",o="<option value=''>ស្វ័យប្រវត្តិ ("+syLabel(y0)+")</option>";
+  for(var y=y0+1;y>=y0-4;y--){var v=syLabel(y);o+="<option"+(v===cur?" selected":"")+">"+v+"</option>"}
+  if(cur&&o.indexOf(">"+cur+"<")<0)o+="<option selected>"+esc(cur)+"</option>";   /* តម្លៃចាស់ដែលវាយដោយដៃ */
+  $("rsy").innerHTML=o;$("rsy").disabled=!isAdm();
+  $("rsy").title=isAdm()?"ជ្រើសឆ្នាំសិក្សាសម្រាប់ប័ណ្ណពិន្ទុ និងរបាយការណ៍":"មានតែ Admin ទេដែលអាចប្ដូរឆ្នាំសិក្សា";
+}
 function ccf(c,p){return(c&&c.cf&&c.cf[p])||(p===1?[1,1,1,1,1,1]:[1,1,1,1,1])}
 function ac(c,p){var f=ccf(c,p),o=[];for(var i=0;i<f.length;i++)if(f[i])o.push(i);return o}
 function sa(s,k,c){var p=k==="a"?1:2;return ac(c,p).reduce(function(x,j){return x+(+s[k][j]||0)},0)}
@@ -600,6 +609,7 @@ function clsPick(v,fn){
 }
 var rsort=false;
 function renderR(){
+  renderSY();
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   $("rt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   var cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
@@ -639,11 +649,15 @@ function renderR(){
     [[1,SM1],[2,SM2]].forEach(function(x){h+="<div class=bar><label style='min-width:70px'>ឆមាសទី"+x[0]+"</label>"+x[1].map(function(n,j){return"<label style='display:flex;gap:4px;align-items:center'><input type=checkbox class=chk data-s='k|"+x[0]+"|"+j+"'"+(ccf(c,x[0])[j]?" checked":"")+(manage?"":" disabled")+"> "+n+"</label>"}).join("")+"</div>"});
   }
   var I=inf();
-  h+="<p class=note style='margin:8px 0'>ព័ត៌មានសាលា (សម្រាប់ប័ណ្ណពិន្ទុ និងរបាយការណ៍)៖</p><div class=bar><label>សាលា</label><input data-s='i|school' value='"+esc(I.school)+"' style='flex:1 1 220px' "+(isAdmin?"":"disabled")+"><label>ឆ្នាំសិក្សា</label><input data-s='i|year' value='"+esc(I.year)+"' placeholder='២០២៥-២០២៦' style='flex:0 0 130px;width:130px' "+(isAdmin?"":"disabled")+"></div>";
+  h+="<p class=note style='margin:8px 0'>ព័ត៌មានសាលា (សម្រាប់ប័ណ្ណពិន្ទុ និងរបាយការណ៍)៖</p><div class=bar><label>សាលា</label><input data-s='i|school' value='"+esc(I.school)+"' style='flex:1 1 220px' "+(isAdmin?"":"disabled")+"></div>";
   $("rset").innerHTML=h;
 }
 
 $("rt").onchange=function(){rt=this.value;rc=0;renderR()};
+$("rsy").onchange=function(){
+  if(!isAdm()){renderSY();return}
+  rs.info=rs.info||{};rs.info.year=this.value;savR();notify("ឆ្នាំសិក្សា៖ "+inf().year);
+};
 $("rc").onchange=function(){
   var v=this.value;
   if(v.slice(0,2)==="n:"){
