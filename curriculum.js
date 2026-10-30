@@ -178,8 +178,13 @@ bindFoot();
 function printHtml(){
   var body="";
   if(cuV==="b")body=baseHtml();else if(cuV==="s")body="<h3>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));else body=planHtml(weeksFor(cuM),cuQ).html;
+  body=body.replace(/<div class=wrap[^>]*>/g,"<div>");
+  var ftr=footHtml();
+  if(cuV==="b")body+="<table class='cut cuft'><tbody><tr class=cuftr><td>"+ftr+"</td></tr></tbody></table>";
+  else{var cs=cuV==="d"?6:5,e="</tbody></table></div>",ix=body.lastIndexOf(e);
+    body=ix>=0?body.slice(0,ix)+"<tr class=cuftr><td colspan="+cs+">"+ftr+"</td></tr>"+body.slice(ix):body+ftr}
   var bt=(document.querySelector(".brand-logo")||{}).src||"";
-  return"<div class='pg cup'><div class=cuh>"+(bt?"<img src='"+bt+"' class=cul alt=''>":"")+"<div class=cuc><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី (NGS)</div><div class=moul style='font-size:12pt;margin-top:2mm'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</div><div style='margin-top:1mm'>មុខវិជ្ជា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧</div></div>"+(LOGO2?"<img src='"+LOGO2+"' class=cur2 alt=''>":"")+"</div>"+body+footHtml()+"</div>";
+  return"<div class='pg cup'><div class=cuh>"+(bt?"<img src='"+bt+"' class=cul alt=''>":"")+"<div class=cuc><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី (NGS)</div><div class=moul style='font-size:12pt;margin-top:2mm'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</div><div style='margin-top:1mm'>មុខវិជ្ជា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧</div></div>"+(LOGO2?"<img src='"+LOGO2+"' class=cur2 alt=''>":"")+"</div>"+body+"</div>";
 }
 $("cuPr").onclick=function(){fontsOk().then(function(){doPrintNow(printHtml())})};
 /* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */

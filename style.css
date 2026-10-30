@@ -280,3 +280,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .cuk b{font-weight:700}
 .cuk .cunm{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:11pt;display:block}
 .cuh3{display:block}
+
+.cup .cut tr.cuftr td{border:0!important;padding:5mm 0 0!important;background:#fff!important}
+.cup .cut tr.cuftr{break-inside:avoid;page-break-inside:avoid}
+.cup .cuf{margin-top:0}
