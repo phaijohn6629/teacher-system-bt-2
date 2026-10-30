@@ -60,7 +60,7 @@ function renderCx(){
   $("cxM").value=cxMo;
   var rec=cxRec(false),ro=!canEd(cxT),t=teacherOf(cxT),ft=(rec&&rec.ft)||{pl:"រាជធានីភ្នំពេញ"};
   $("cxM2").value=cxMonthEnd();
-  ["cxFill","cxAdd"].forEach(function(i){$(i).style.display=ro?"none":""});
+  ["cxFill","cxAdd","cxCur"].forEach(function(i){$(i).style.display=ro?"none":""});
   var rows=(rec&&rec.rows)||[],h="<div class=tsh><div><label>បុគ្គលិកឈ្មោះ</label><input value='"+esc(t.name||"")+"' readonly></div>"+
     "<div><label>មុខវិជ្ជា</label><input data-cf='sb' value='"+esc((rec&&rec.sb)||t.sub||"គណិតវិទ្យា")+"' "+(ro?"readonly":"")+"></div>"+
     "<div><label>ថ្នាក់</label><input value='"+esc(cxC)+"' readonly></div></div>";
@@ -110,6 +110,28 @@ $("cxM2").onchange=function(){
   cxMo2=this.value||cxMo;if(cxMo2<cxMo)cxMo2=cxMo;
   var r=cxRec(false);if(r&&canEd(cxT)){r.m2=cxMo2;saveCx()}renderCx()};
 $("cxFill").onclick=cxFill;
+$("cxCur").onclick=function(){
+  if(!canEd(cxT)){alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
+  if(!window.CURX||!CURX.has(cxC)){alert("មិនទាន់មានកម្មវិធីសិក្សាសម្រាប់ថ្នាក់ «"+cxC+"» ទេ (បច្ចុប្បន្នមានតែថ្នាក់ទី៧)");return}
+  var rec=cxRec(false);if(!rec||!rec.rows.length){alert("សូមបង្កើតជួរតាមកាលវិភាគជាមុន (⚡ បង្កើតជួរតាមកាលវិភាគ)");return}
+  var grp={},keys=[];
+  rec.rows.forEach(function(r,i){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(r.d||""))return;
+    var a=r.d.split("-").map(Number),dt=new Date(a[0],a[1]-1,a[2]);dt.setDate(dt.getDate()-((dt.getDay()+6)%7));
+    var k=dt.getFullYear()+"-"+dt.getMonth()+"-"+dt.getDate();if(!grp[k]){grp[k]=[];keys.push(k)}grp[k].push(i);
+  });
+  var done=0,skip=0;
+  keys.forEach(function(k){
+    var idx=grp[k],S=CURX.sessions(rec.rows[idx[0]].d);if(!S.length)return;
+    idx.forEach(function(ri,j){
+      var r=rec.rows[ri];if(r.c){skip++;return}
+      var part=j===idx.length-1?S.slice(j):S.slice(j,j+1);if(!part.length)return;
+      r.c=part.map(function(s){return CURX.text(s)}).join("\n");done++;
+    });
+  });
+  saveCx();renderCx();notify("បានបំពេញ "+done+" ជួរពីកម្មវិធីសិក្សា"+(skip?" (រំលង "+skip+" ជួរដែលមានអត្ថបទរួច)":""));
+};
+
 $("cxAdd").onclick=function(){
   if(!canEd(cxT)||!cxC)return;
   var rec=cxRec(true),last=rec.rows.length?rec.rows[rec.rows.length-1].d:iso(+cxMo.slice(0,4),+cxMo.slice(5,7),1);

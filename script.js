@@ -1214,7 +1214,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 function show(p){
-  ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14"].forEach(function(x){$(x).hidden=x!==p});
+  ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15"].forEach(function(x){$(x).hidden=x!==p});
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){b.setAttribute("aria-selected",b.dataset.p===p)});
   if(p==="p1")render();
   if(p==="p2"){renderK();renderS()}
@@ -1229,15 +1229,16 @@ function show(p){
   if(p==="p12"&&window.renderSched)renderSched();
   if(p==="p13"&&window.renderTS)renderTS();
   if(p==="p14"&&window.renderCx)renderCx();
+  if(p==="p15"&&window.renderCur)renderCur();
   if(p==="p0")renderDash();syncNav(p);
 }
 $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.dataset.p)};
 
 /* ===== Dashboard ទំនើប៖ បដាស្វាគមន៍ + កាតស្ថិតិ (Bento) + ម៉ឺនុយអណ្ដែត (modern.css) ===== */
-var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"],["p14","📖","សម្រង់អត្ថបទ"]];
+var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"],["p14","📖","សម្រង់អត្ថបទ"],["p15","📘","កម្មវិធីសិក្សា"]];
 function buildFnav(){
   var full={};[].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent});
-  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"&&x[0]!=="p9"&&x[0]!=="p11"&&x[0]!=="p13"&&x[0]!=="p14"}).map(function(x){
+  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"&&x[0]!=="p9"&&x[0]!=="p11"&&x[0]!=="p13"&&x[0]!=="p14"&&x[0]!=="p15"}).map(function(x){
     if(x[0]==="p4")x=["p4","🎓","និទស្សន៍·សង្កេត"];
     if(x[0]==="p5")x=["p5","📊","លទ្ធផលសិក្សា"];
     if(x[0]==="p2")x=["p2","📋","ការងាររដ្ឋបាល"];
@@ -1257,7 +1258,7 @@ $("fnav").onclick=function(e){
   var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 function syncNav(p){
   [].forEach.call(document.querySelectorAll("#fnav button"),function(b){
-    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6")||(b.dataset.p==="p5"&&p==="p7")||(b.dataset.p==="p2"&&(p==="p9"||p==="p13"))||(b.dataset.p==="p10"&&p==="p11")||(b.dataset.p==="p12"&&p==="p14");b.classList.toggle("active",on);
+    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6")||(b.dataset.p==="p5"&&p==="p7")||(b.dataset.p==="p2"&&(p==="p9"||p==="p13"))||(b.dataset.p==="p10"&&p==="p11")||(b.dataset.p==="p12"&&(p==="p14"||p==="p15"));b.classList.toggle("active",on);
     if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
   });
 }
@@ -1281,7 +1282,7 @@ function avHtml(id,name,sz){
   if(p&&okPhoto(p.photo))return"<img class=av src='"+p.photo+"' alt='' width="+s+" height="+s+" style='width:"+s+"px;height:"+s+"px'>";
   return"<span class=av-i style='width:"+s+"px;height:"+s+"px;font-size:"+Math.round(s*.48)+"px'>"+esc(Array.from(String(name||id).trim())[0]||"?")+"</span>";
 }
-function curPage(){return["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14"].filter(function(x){return !$(x).hidden})[0]||"p0"}
+function curPage(){return["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15"].filter(function(x){return !$(x).hidden})[0]||"p0"}
 function subProfiles(){
   try{
     var un=window.FB.onSnapshot(window.FB.collection(window.db,"profiles"),function(sn){
@@ -1736,7 +1737,7 @@ function finishMig(k,ok){
 
 function refreshView(){
   if($("appSection").hidden)return;
-  var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14"].filter(function(x){return !$(x).hidden})[0]||"p0";
+  var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15"].filter(function(x){return !$(x).hidden})[0]||"p0";
   show(c);
 }
 function ensureSelf(){

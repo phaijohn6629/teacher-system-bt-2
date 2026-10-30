@@ -250,3 +250,24 @@ body.pm .pg.land{page-break-inside:avoid}
 .cxr .sb{display:flex;align-items:flex-end;justify-content:center;gap:6mm;margin-top:1mm;min-height:16mm}
 .cxr .sb b{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:10.5pt;line-height:1.7;padding-bottom:1.5mm}
 .cxp .sgi{max-height:15mm;max-width:38mm}
+
+/* ===== កម្មវិធីសិក្សា ===== */
+.cut{width:100%;border-collapse:collapse}
+.cut th{background:#fbe3d6;color:#000;text-align:center;font-weight:700}
+.cut td,.cut th{border:1px solid var(--line);padding:6px 8px;vertical-align:top}
+.cut td.c{text-align:center}.cut small{display:block;color:var(--mute);font-size:.72rem}
+.cut .cuy{background:#fff3c4;text-align:center;color:#000}
+.cut .cux{background:var(--soft);font-style:italic}.cut .cus td{font-weight:700;background:var(--soft)}
+.cut tr.cur td{outline:2px solid #ec4899;outline-offset:-2px}
+.cut b.cut2{display:block;text-align:center;margin-bottom:3px}
+.cus3{font-size:.88rem;line-height:1.5}.cus3 .sub{padding-left:10px}
+.cud td:nth-child(n){font-size:.9rem}
+.cup{font-size:10.5pt}
+.cuh{position:relative;min-height:24mm;margin-bottom:3mm}.cuc{text-align:center}.cuc .moul{text-align:center}
+.cul{position:absolute;left:0;top:0;width:22mm;height:22mm;object-fit:contain;border-radius:50%}.cur2{position:absolute;right:0;top:0;width:22mm;height:22mm;object-fit:contain}
+.cup .cut{table-layout:auto}.cup .cut th{background:#fbe3d6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cup .cut td,.cup .cut th{border:1px solid #000!important;padding:1.4mm 2mm;font-size:9.5pt;color:#000}
+.cup .cut .cuy{background:#fff3c4!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cup .cut thead{display:table-header-group}.cup .cut tr{break-inside:avoid;page-break-inside:avoid}
+.cup .cut tr.cur td{outline:0}
+.cup h3,.cup h4{font-size:11pt;margin:2mm 0}

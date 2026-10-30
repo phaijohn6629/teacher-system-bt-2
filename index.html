@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=15">
+<link rel="stylesheet" href="style.css?v=16">
 <link rel="stylesheet" href="modern.css?v=5">
 
 </head>
@@ -76,6 +76,7 @@
   <button data-p="p12" aria-selected="false">១១. កាលវិភាគបង្រៀន</button>
   <button data-p="p13" aria-selected="false">១២. Timesheet &amp; Workplan</button>
   <button data-p="p14" aria-selected="false">១៣. សម្រង់អត្ថបទ</button>
+  <button data-p="p15" aria-selected="false">១៤. កម្មវិធីសិក្សា</button>
 </nav>
 
 <!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
@@ -275,7 +276,7 @@
 
 <!-- ផ្ទាំងទី ១១៖ កាលវិភាគបង្រៀន -->
 <section id="p12" hidden>
-<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="true">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="false">📖 សម្រង់អត្ថបទ</button></div>
+<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="true">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="false">📖 សម្រង់អត្ថបទ</button><button type="button" data-go="p15" aria-selected="false">📘 កម្មវិធីសិក្សា</button></div>
   <div class="bar">
     <label for="stT">គ្រូ៖</label><select id="stT"></select>
     <button class="primary" id="stImp">📥 នាំចូលពី aSc</button>
@@ -304,7 +305,7 @@
 
 <!-- ផ្ទាំងទី ១៣៖ សម្រង់អត្ថបទប្រចាំខែ (គ្រប់គ្រងថ្នាក់រៀន) -->
 <section id="p14" hidden>
-<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="false">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="true">📖 សម្រង់អត្ថបទ</button></div>
+<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="false">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="true">📖 សម្រង់អត្ថបទ</button><button type="button" data-go="p15" aria-selected="false">📘 កម្មវិធីសិក្សា</button></div>
   <div class="bar">
     <label for="cxT">គ្រូ៖</label><select id="cxT"></select>
     <label for="cxC">ថ្នាក់៖</label><select id="cxC"></select>
@@ -314,12 +315,31 @@
   <div class="bar">
     <button id="cxFill">⚡ បង្កើតជួរតាមកាលវិភាគ</button>
     <button id="cxAdd">＋ បន្ថែមជួរ</button>
+    <button id="cxCur">📖 បំពេញខ្លឹមសារពីកម្មវិធីសិក្សា</button>
     <button class="primary" id="cxPr">🖨️ បោះពុម្ពសម្រង់អត្ថបទ</button>
     <button id="cxCsv">នាំចេញជា Excel (CSV)</button>
   </div>
   <div id="cxBody"></div>
   <p class="note">💡 «បង្កើតជួរតាមកាលវិភាគ» បន្ថែមថ្ងៃដែលថ្នាក់នេះមានម៉ោងបង្រៀនក្នុងកាលវិភាគ (រំលងថ្ងៃអាទិត្យ និងបុណ្យជាតិ)។ បន្ទាប់មកគ្រូវាយខ្លឹមសារមេរៀន និងអវត្តមានសិស្សក្នុងជួរនីមួយៗ។ ទិន្នន័យរក្សាទុកដោយស្វ័យប្រវត្តិ។</p>
 </section>
+
+<!-- ផ្ទាំងទី ១៤៖ កម្មវិធីសិក្សាគោល និងលម្អិត (គ្រប់គ្រងថ្នាក់រៀន) -->
+<section id="p15" hidden>
+<div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="false">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="false">📖 សម្រង់អត្ថបទ</button><button type="button" data-go="p15" aria-selected="true">📘 កម្មវិធីសិក្សា</button></div>
+  <div class="bar">
+    <label for="cuG">ថ្នាក់៖</label><select id="cuG"><option value="7">ថ្នាក់ទី៧ · គណិតវិទ្យា</option></select>
+    <label for="cuV">បង្ហាញ៖</label>
+    <select id="cuV"><option value="d">កម្មវិធីលម្អិត (មេរៀន · លទ្ធផលរំពឹងទុក)</option><option value="s">តារាងម៉ោងប្រចាំសប្ដាហ៍</option><option value="b">កម្មវិធីគោល (ចំណែងចែកមេរៀន)</option></select>
+    <select id="cuM" aria-label="ខែ"></select>
+    <input id="cuQ" type="search" placeholder="ស្វែងរកមេរៀន ឬលទ្ធផលរំពឹងទុក…" style="min-width:200px">
+    <button id="cuNow">📍 សប្ដាហ៍នេះ</button>
+    <button class="primary" id="cuPr">🖨️ បោះពុម្ព</button>
+  </div>
+  <p class="note" id="cuInfo" style="margin:0 0 8px"></p>
+  <div id="cuBody"></div>
+  <p class="note">💡 ទិន្នន័យតាមឯកសារ «ចំណែងចែកកម្មវិធីសិក្សាគោល» ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧ (សប្ដាហ៍ទី ១ ចាប់ពី ១៩ តុលា ២០២៦)។ ក្នុងទំព័រ «សម្រង់អត្ថបទ» ប៊ូតុង «📖 បំពេញខ្លឹមសារពីកម្មវិធីសិក្សា» នឹងដាក់មេរៀនតាមសប្ដាហ៍ចូលក្នុងជួរនីមួយៗដោយស្វ័យប្រវត្តិ។</p>
+</section>
+
 
 </main>
 <nav class="floating-nav" id="fnav" aria-label="ម៉ឺនុយរហ័ស"></nav>
@@ -435,8 +455,10 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=16"></script>
+<script src="script.js?v=17"></script>
 <script src="sched.js?v=12"></script>
-<script src="excerpt.js?v=1"></script>
+<script src="curriculum7.js?v=2"></script>
+<script src="curriculum.js?v=1"></script>
+<script src="excerpt.js?v=2"></script>
 </body>
 </html>

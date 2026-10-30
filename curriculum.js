@@ -1,0 +1,154 @@
+/* ========================================================================
+   គ្រប់គ្រងថ្នាក់រៀន › កម្មវិធីសិក្សា (គោល + លម្អិត) — ថ្នាក់ទី៧
+   ត្រូវផ្ទុកបន្ទាប់ពី sched.js, curriculum7.js
+   ======================================================================== */
+(function(){
+"use strict";
+var X=window.SCHX,C=window.CUR,kh=X.kh,doPrintNow=X.doPrintNow,fontsOk=X.fontsOk,LOGO2=X.LOGO2;
+var cuV="d",cuM="",cuQ="",cuG=7;
+var BR={"ព":"ពីជគណិត","ធ":"ធរណីមាត្រ"};
+var SEM=[
+ {t:"សម្រាប់ឆមាស ០១ ៖ គ្រូបង្រៀន",rows:[1,2,12,13,3,14,"ប្រឡងពាក់កណ្ដាលឆមាសទី១៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។",4,15,5,6,16,17,7,"ប្រឡងឆមាសទី១៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារនៃមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។"]},
+ {t:"សម្រាប់ឆមាស ០២ ៖ គ្រូបង្រៀន",rows:[8,18,19,9,10,"ប្រឡងពាក់កណ្ដាលឆមាសទី២៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារនៃមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។",11,20,21,22,"ប្រឡងឆមាសទី២៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារនៃមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។"]}
+];
+function esc2(s){return esc(String(s==null?"":s))}
+function pad(n){return(n<10?"0":"")+n}
+function wkLabel(i){
+  var a=C.weekStart(i),b=new Date(a);b.setDate(b.getDate()+6);
+  return a.getMonth()===b.getMonth()?kh(a.getDate())+"–"+kh(b.getDate())+" "+M[b.getMonth()]:kh(a.getDate())+" "+M[a.getMonth()]+" – "+kh(b.getDate())+" "+M[b.getMonth()];
+}
+function curWeek(){var i=C.weekIdx(new Date());return(i>=0&&i<C[7].W.length)?i:-1}
+function hasQ(s,q){
+  if(!q)return true;q=q.toLowerCase();
+  var t=[C.sTitle(s)].concat(s.s||[],s.o||[],[s.ti||""]).join(" ").toLowerCase();return t.indexOf(q)>=0;
+}
+/* ---------- ក. កម្មវិធីគោល ---------- */
+function baseHtml(){
+  var LS=C[7].LS,tot=0,h="<h3 style='margin:0 0 8px'>ក. ចំណែងចែកមេរៀន៖ សិក្សា ៦ ម៉ោងក្នុង ១ សប្ដាហ៍ (ពីជគណិត និង ធរណីមាត្រ)</h3>";
+  SEM.forEach(function(S){
+    var sub=0;
+    h+="<h4 style='margin:14px 0 6px'>• "+esc2(S.t)+"</h4><div class=wrap><table class='cut cub'><thead><tr><th>មេរៀនទី</th><th>ចំណងជើងមេរៀន</th><th>ម៉ោង</th><th>ផ្នែក</th></tr></thead><tbody>";
+    S.rows.forEach(function(r){
+      if(typeof r==="string"){h+="<tr class=cux><td colspan=4>"+esc2(r)+"</td></tr>";return}
+      var l=LS[r];sub+=l[1];h+="<tr><td class=c>"+pad2(r)+"</td><td>"+esc2(l[0])+"</td><td class=c>"+pad2(l[1])+" ម៉ោង</td><td class=c>"+BR[l[2]]+"</td></tr>";
+    });
+    tot+=sub;
+    h+="<tr class=cus><td colspan=2>សរុបមេរៀន</td><td class=c>"+kh(sub)+" ម៉ោង</td><td></td></tr></tbody></table></div>";
+  });
+  h+="<div class=wrap style='margin-top:12px'><table class='cut cub'><tbody><tr><td>លំហាត់អនុវត្តន៍ + PISA + ហិរញ្ញវត្ថុ</td><td class=c>៣០ ម៉ោង</td><td class=c>ពីជគណិត+ធរណីមាត្រ</td></tr></tbody></table></div>";
+  return h;
+}
+function pad2(n){return KhCal.kn(pad(n))}
+/* ---------- ខ. តារាងម៉ោងប្រចាំសប្ដាហ៍ ---------- */
+function groupWk(w){
+  var g=[];w.x.forEach(function(s){
+    if(s.t==="B")return;
+    var k=s.t==="L"?"L"+s.n:s.t+s.ti,l=g[g.length-1];
+    if(l&&l.k===k){l.h+=s.h;l.s=s}else g.push({k:k,h:s.h,s:s});
+  });
+  return g;
+}
+function sumHtml(weeks){
+  var h="<div class=wrap><table class='cut cus2'><thead><tr><th>ខែ</th><th>សប្ដាហ៍</th><th>ចំណងជើងមេរៀន</th><th>ចំ.ម៉ោង</th><th>ផ្សេងៗ</th></tr></thead><tbody>",tot=0;
+  var months=[];weeks.forEach(function(wi){var w=C[7].W[wi];if(!months.length||months[months.length-1].m!==w.m)months.push({m:w.m,l:[]});months[months.length-1].l.push(wi)});
+  months.forEach(function(mo){
+    var n=0;mo.l.forEach(function(wi){var w=C[7].W[wi];n+=Math.max(1,(w.pre?1:0)+(w.x[0]&&w.x[0].t==="B"?1:groupWk(w).length))});
+    var first=true;
+    mo.l.forEach(function(wi){
+      var w=C[7].W[wi],g=groupWk(w),rows=[],cur=wi===curWeek();
+      if(w.pre)rows.push("<td colspan=3 class=cuy>"+esc2(w.pre)+"</td><td></td>");
+      if(w.x[0]&&w.x[0].t==="B")rows.push("<td colspan=3 class=cuy>"+esc2(w.x[0].ti)+"</td><td></td>");
+      else g.forEach(function(q,k){
+        tot+=q.h;
+        var t=q.s.t==="L"?esc2(C.sTitle(q.s)):esc2(q.s.ti);
+        rows.push("<td class='"+(q.s.t==="X"?"cuy":"")+"'>"+(q.s.t==="X"?"<b>"+t+"</b>":t)+"</td><td class=c>"+pad2(q.h)+"</td><td>"+(k===0?esc2(w.note):"")+"</td>");
+      });
+      rows.forEach(function(r,k){
+        h+="<tr"+(cur?" class=cur":"")+" data-wk='"+wi+"'>"+(first?"<td class=c rowspan="+n+">"+esc2(mo.m)+"</td>":"")+(k===0?"<td class=c rowspan="+rows.length+">"+(wi+1)+"<small>"+esc2(wkLabel(wi))+"</small></td>":"")+r+"</tr>";
+        first=false;
+      });
+    });
+  });
+  h+="<tr class=cus><td colspan=3>ចំនួនម៉ោងសរុប</td><td class=c>"+kh(tot)+" ម៉ោង</td><td></td></tr></tbody></table></div>";
+  return h;
+}
+/* ---------- គ. កម្មវិធីលម្អិត ---------- */
+function planHtml(weeks,q){
+  var W=C[7].W,h="<div class=wrap><table class='cut cud'><thead><tr><th style='width:9%'>ខែ</th><th style='width:11%'>សប្ដាហ៍</th><th style='width:7%'>ចំ.ម៉ោង</th><th style='width:34%'>ចំណងជើងមេរៀន</th><th style='width:29%'>លទ្ធផលរំពឹងទុក</th><th>ផ្សេងៗ</th></tr></thead><tbody>",shown=0;
+  var months=[];
+  weeks.forEach(function(wi){
+    var w=W[wi],rows=[];
+    if(w.pre)rows.push({b:w.pre});
+    w.x.forEach(function(s){
+      if(s.t==="B"){rows.push({b:s.ti});return}
+      if(!hasQ(s,q))return;rows.push({s:s});
+    });
+    if(!rows.length)return;
+    if(!months.length||months[months.length-1].m!==w.m)months.push({m:w.m,w:[]});
+    months[months.length-1].w.push({wi:wi,rows:rows,w:w});
+  });
+  months.forEach(function(mo){
+    var first=true,n=0;mo.w.forEach(function(k){n+=k.rows.length});
+    mo.w.forEach(function(k){
+      k.rows.forEach(function(r,i){
+        var tr="<tr"+(k.wi===curWeek()?" class=cur":"")+" data-wk='"+k.wi+"'>";
+        if(first){tr+="<td class=c rowspan="+n+"><b>"+esc2(mo.m)+"</b></td>";first=false}
+        if(i===0)tr+="<td class=c rowspan="+k.rows.length+">"+kh(k.w.w)+"<small>"+esc2(wkLabel(k.wi))+"</small></td>";
+        if(r.b)tr+="<td colspan=4 class=cuy><b>"+esc2(r.b)+"</b></td>";
+        else{
+          var s=r.s;shown++;
+          if(s.t==="X")tr+="<td class=c>"+pad2(s.h)+"</td><td colspan=2 class=cuy><b>"+esc2(s.ti)+"</b></td><td>"+(i===0?esc2(k.w.note):"")+"</td>";
+          else{
+            var tt=s.t==="L"?"<b class=cut2>មេរៀនទី"+KhCal.kn(s.n)+"<br>"+esc2(C[7].LS[s.n][0]+(s.mk?" "+C[7].MK[s.mk]:""))+"</b>":"<b class=cut2>"+esc2(s.ti)+"</b>";
+            tr+="<td class=c>"+pad2(s.h)+"</td><td>"+tt+(s.s.length?"<div class=cus3>"+s.s.map(function(a){return"<div class='"+(/^\d+\.\d/.test(a)?"sub":"")+"'>"+esc2(a)+"</div>"}).join("")+"</div>":"")+"</td><td>"+(s.o.length?s.o.map(function(a){return"<div>- "+esc2(a)+"</div>"}).join(""):"")+"</td><td>"+(i===0?esc2(k.w.note):"")+"</td>";
+          }
+        }
+        h+=tr+"</tr>";
+      });
+    });
+  });
+  h+="</tbody></table></div>";
+  return{html:h,n:shown};
+}
+function weeksFor(m){
+  var W=C[7].W,a=[];W.forEach(function(w,i){if(!m||w.m===m)a.push(i)});return a;
+}
+function render(){
+  if(!window.who)return;
+  $("cuM").innerHTML="<option value=''>គ្រប់ខែ</option>"+["តុលា","វិច្ឆិកា","ធ្នូ","មករា","កុម្ភៈ","មីនា","មេសា","ឧសភា","មិថុនា","កក្កដា"].map(function(m){return"<option"+(m===cuM?" selected":"")+">"+m+"</option>"}).join("");
+  $("cuV").value=cuV;$("cuQ").value=cuQ;
+  $("cuM").style.display=cuV==="b"?"none":"";
+  $("cuQ").style.display=cuV==="d"?"":"none";
+  var cw=curWeek(),info="កម្មវិធីសិក្សា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧ · សប្ដាហ៍នេះ៖ "+(cw>=0?"សប្ដាហ៍ទី "+kh(cw+1)+" ("+wkLabel(cw)+")":"ក្រៅកាលវិភាគកម្មវិធី");
+  $("cuInfo").textContent=info;
+  var h="";
+  if(cuV==="b")h=baseHtml();
+  else if(cuV==="s")h="<h3 style='margin:0 0 8px'>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));
+  else{var p=planHtml(weeksFor(cuM),cuQ);h=p.n||!cuQ?p.html:"<p class=empty>រកមិនឃើញ «"+esc2(cuQ)+"»</p>"}
+  $("cuBody").innerHTML=h;
+}
+window.renderCur=render;
+$("cuV").onchange=function(){cuV=this.value;render()};
+$("cuM").onchange=function(){cuM=this.value;render()};
+var qt=null;$("cuQ").oninput=function(){var v=this.value;clearTimeout(qt);qt=setTimeout(function(){cuQ=v.trim();render();var e=$("cuQ");e.focus();try{e.setSelectionRange(e.value.length,e.value.length)}catch(x){}},250)};
+$("cuNow").onclick=function(){
+  var w=curWeek();if(w<0){alert("ថ្ងៃនេះនៅក្រៅរយៈពេលនៃកម្មវិធីសិក្សា (១៩ តុលា ២០២៦ – ០១ សីហា ២០២៧)");return}
+  cuV=cuV==="b"?"d":cuV;cuM="";cuQ="";render();
+  var r=document.querySelector("#cuBody tr[data-wk='"+w+"']");if(r)r.scrollIntoView({behavior:"smooth",block:"center"});
+};
+function printHtml(){
+  var body="";
+  if(cuV==="b")body=baseHtml();else if(cuV==="s")body="<h3>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));else body=planHtml(weeksFor(cuM),cuQ).html;
+  var bt=(document.querySelector(".brand-logo")||{}).src||"";
+  return"<div class='pg cup'><div class=cuh>"+(bt?"<img src='"+bt+"' class=cul alt=''>":"")+"<div class=cuc><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី (NGS)</div><div class=moul style='font-size:12pt;margin-top:2mm'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</div><div style='margin-top:1mm'>មុខវិជ្ជា គណិតវិទ្យា ថ្នាក់ទី៧ ឆ្នាំសិក្សា ២០២៦-២០២៧</div></div>"+(LOGO2?"<img src='"+LOGO2+"' class=cur2 alt=''>":"")+"</div>"+body+"</div>";
+}
+$("cuPr").onclick=function(){fontsOk().then(function(){doPrintNow(printHtml())})};
+/* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */
+window.CURX={
+  level:function(cls){var n=parseInt(String(cls||""));return n},
+  has:function(cls){return parseInt(String(cls||""))===7},
+  /* ផ្ដល់ម៉ោងបង្រៀនតាមកាលបរិច្ឆេទ (ISO) → អត្ថបទមេរៀនសម្រាប់សប្ដាហ៍នោះ */
+  sessions:function(iso){var a=iso.split("-").map(Number);return C.sessionsFor(new Date(a[0],a[1]-1,a[2]))},
+  text:function(s){return C.sText(s,true)}
+};
+})();
