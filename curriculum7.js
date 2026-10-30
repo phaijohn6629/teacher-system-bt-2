@@ -17,7 +17,7 @@ function R(h,ti,o){return{h:h,t:"R",ti:ti,s:[],o:sp(o)}}
 function P(h,ti,o){return{h:h,t:"P",ti:ti,s:[],o:sp(o)}}
 function B(ti){return{h:0,t:"B",ti:ti}}
 var W=[];
-function wk(m,w,note,x,pre){W.push({m:m,w:w,note:note||"",pre:pre||"",x:x})}
+function wk(m,w,note,x,pre){x.forEach(function(s){s.g=7});W.push({m:m,w:w,note:note||"",pre:pre||"",x:x})}
 var MX="ប្រឡងប្រចាំខែ";
 /* ===== តុលា ===== */
 wk("តុលា",4,"",[
@@ -200,7 +200,7 @@ function monday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.se
 function weekIdx(d){return Math.round((monday(d)-START)/604800000)}
 function weekStart(i){var x=new Date(START);x.setDate(x.getDate()+7*i);return x}
 function sTitle(s){
-  if(s.t==="L")return"មេរៀនទី"+KhCal.kn(s.n)+" "+LS[s.n][0]+(s.mk?" "+MK[s.mk]:"");
+  if(s.t==="L"){var G=window.CUR[s.g||7];return"មេរៀនទី"+KhCal.kn(s.n)+" "+G.LS[s.n][0]+(s.mk?" "+G.MK[s.mk]:"")}
   return s.ti;
 }
 function sText(s,withSec){
@@ -208,12 +208,20 @@ function sText(s,withSec){
   if(withSec&&s.t==="L"){var top=s.s.filter(function(a){return/^\d+\.\s/.test(a)});if(top.length)t+=" — "+top.join("; ")}
   return t;
 }
-function sessionsFor(dt){
-  var i=weekIdx(dt);if(i<0||i>=W.length)return[];
-  return W[i].x.filter(function(s){return s.t!=="B"});
+function sessionsFor(dt,g){
+  var Wg=window.CUR[g||7].W,i=weekIdx(dt);if(i<0||i>=Wg.length)return[];
+  return Wg[i].x.filter(function(s){return s.t!=="B"});
 }
+var KE=" និងនវានុវត្តន៍។",TX=" វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារ";
 window.CUR={
-  7:{name:"គណិតវិទ្យា ថ្នាក់ទី៧",year:"២០២៦-២០២៧",weeksPerYear:W.length,hoursPerWeek:6,totalDoc:214,LS:LS,MK:MK,W:W},
+  7:{name:"គណិតវិទ្យា ថ្នាក់ទី៧",year:"២០២៦-២០២៧",weeksPerYear:W.length,hoursPerWeek:6,totalDoc:214,LS:LS,MK:MK,W:W,
+    SEM:[
+     {t:"សម្រាប់ឆមាស ០១ ៖ គ្រូបង្រៀន",rows:[1,2,12,13,3,14,"ប្រឡងពាក់កណ្ដាលឆមាសទី១៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។",4,15,5,6,16,17,7,"ប្រឡងឆមាសទី១៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារនៃមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។"]},
+     {t:"សម្រាប់ឆមាស ០២ ៖ គ្រូបង្រៀន",rows:[8,18,19,9,10,"ប្រឡងពាក់កណ្ដាលឆមាសទី២៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារនៃមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។",11,20,21,22,"ប្រឡងឆមាសទី២៖ វិញ្ញាសាត្រូវជ្រើសរើសខ្លឹមសារនៃមេរៀនដែលបានសិក្សារួចប្រកបដោយភាពច្នៃប្រឌិត និងនវានុវត្តន៍។"]}
+    ],
+    extra:["លំហាត់អនុវត្តន៍ + PISA + ហិរញ្ញវត្ថុ","៣០ ម៉ោង"]},
   weekIdx:weekIdx,weekStart:weekStart,sTitle:sTitle,sText:sText,sessionsFor:sessionsFor,monday:monday
 };
+/* ជំនួយសម្រាប់ថ្នាក់ផ្សេងទៀត (curriculum8.js …) */
+window.CURH={sp:sp,EX:EX,OX:OX,MK:MK};
 })();

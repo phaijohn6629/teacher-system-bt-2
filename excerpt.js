@@ -112,7 +112,7 @@ $("cxM2").onchange=function(){
 $("cxFill").onclick=cxFill;
 $("cxCur").onclick=function(){
   if(!canEd(cxT)){alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
-  if(!window.CURX||!CURX.has(cxC)){alert("មិនទាន់មានកម្មវិធីសិក្សាសម្រាប់ថ្នាក់ «"+cxC+"» ទេ (បច្ចុប្បន្នមានតែថ្នាក់ទី៧)");return}
+  if(!window.CURX||!CURX.has(cxC)){alert("មិនទាន់មានកម្មវិធីសិក្សាសម្រាប់ថ្នាក់ «"+cxC+"» ទេ (បច្ចុប្បន្នមានថ្នាក់ទី៧ និងទី៨)");return}
   var rec=cxRec(false);if(!rec||!rec.rows.length){alert("សូមបង្កើតជួរតាមកាលវិភាគជាមុន (⚡ បង្កើតជួរតាមកាលវិភាគ)");return}
   var grp={},keys=[];
   rec.rows.forEach(function(r,i){
@@ -122,7 +122,7 @@ $("cxCur").onclick=function(){
   });
   var done=0,skip=0;
   keys.forEach(function(k){
-    var idx=grp[k],S=CURX.sessions(rec.rows[idx[0]].d);if(!S.length)return;
+    var idx=grp[k],S=CURX.sessions(rec.rows[idx[0]].d,cxC);if(!S.length)return;
     idx.forEach(function(ri,j){
       var r=rec.rows[ri];if(r.c){skip++;return}
       var part=j===idx.length-1?S.slice(j):S.slice(j,j+1);if(!part.length)return;
