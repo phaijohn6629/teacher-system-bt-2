@@ -29,7 +29,8 @@ function baseHtml(){
     h+="<h4 style='margin:14px 0 6px'>• "+esc2(S.t)+"</h4><div class=wrap><table class='cut cub'><thead><tr><th>មេរៀនទី</th><th>ចំណងជើងមេរៀន</th><th>ម៉ោង</th><th>ផ្នែក</th></tr></thead><tbody>";
     S.rows.forEach(function(r){
       if(typeof r==="string"){h+="<tr class=cux><td colspan=4>"+esc2(r)+"</td></tr>";return}
-      var ar=Array.isArray(r),n=ar?r[0]:r,l=LS[n],hh=ar?r[1]:l[1];sub+=hh;h+="<tr><td class=c>"+pad2(n)+"</td><td>"+esc2(l[0]+(ar?r[2]:""))+"</td><td class=c>"+pad2(hh)+" ម៉ោង</td><td class=c>"+BR[l[2]]+"</td></tr>";
+      if(r&&r.h){h+="<tr class=cux><td colspan=4><b>"+esc2(r.h)+"</b></td></tr>";return}
+      var ar=Array.isArray(r),n=ar?r[0]:r,l=LS[n],hh=ar?r[1]:l[1];sub+=hh;h+="<tr><td class=c>"+pad2(l[5]||n)+"</td><td>"+esc2(l[0]+(ar?r[2]:""))+"</td><td class=c>"+pad2(hh)+" ម៉ោង</td><td class=c>"+(BR[l[2]]||(l[3]?"ជំពូក "+pad2(l[3]):""))+"</td></tr>";
     });
     tot+=sub;
     h+="<tr class=cus><td colspan=2>សរុបមេរៀន</td><td class=c>"+kh(sub)+" ម៉ោង</td><td></td></tr></tbody></table></div>";
@@ -98,8 +99,8 @@ function planHtml(weeks,q){
           var s=r.s;shown++;
           if(s.t==="X")tr+="<td class=c>"+pad2(s.h)+"</td><td colspan=2 class=cuy><b>"+esc2(s.ti)+"</b></td><td>"+(i===0?esc2(k.w.note):"")+"</td>";
           else{
-            var tt=s.t==="L"?"<b class=cut2>មេរៀនទី"+KhCal.kn(s.n)+"<br>"+esc2(C[cuG].LS[s.n][0]+(s.mk?" "+C[cuG].MK[s.mk]:""))+"</b>":"<b class=cut2>"+esc2(s.ti)+"</b>";
-            tr+="<td class=c>"+pad2(s.h)+"</td><td>"+tt+(s.s.length?"<div class=cus3>"+s.s.map(function(a){return"<div class='"+(/^\d+\.\d/.test(a)?"sub":"")+"'>"+esc2(a)+"</div>"}).join("")+"</div>":"")+"</td><td>"+(s.o.length?s.o.map(function(a){return"<div>- "+esc2(a)+"</div>"}).join(""):"")+"</td><td>"+(i===0?esc2(k.w.note):"")+"</td>";
+            var tt=s.t==="L"?(C[cuG].lhtml?C[cuG].lhtml(s,esc2):"<b class=cut2>មេរៀនទី"+KhCal.kn(s.n)+"<br>"+esc2(C[cuG].LS[s.n][0]+(s.mk?" "+C[cuG].MK[s.mk]:""))+"</b>"):"<b class=cut2>"+esc2(s.ti)+"</b>";
+            tr+="<td class=c>"+pad2(s.h)+"</td><td>"+tt+(s.s.length?"<div class=cus3>"+s.s.map(function(a){return"<div class='"+(/^\d+\.\d/.test(a)||/^[ក-ឣ]\.\s/.test(a)||/^\+/.test(a)?"sub":"")+"'>"+esc2(a)+"</div>"}).join("")+"</div>":"")+"</td><td>"+(s.o.length?s.o.map(function(a){return"<div>- "+esc2(a)+"</div>"}).join(""):"")+"</td><td>"+(i===0?esc2(k.w.note):"")+"</td>";
           }
         }
         h+=tr+"</tr>";

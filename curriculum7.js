@@ -200,7 +200,7 @@ function monday(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.se
 function weekIdx(d){return Math.round((monday(d)-START)/604800000)}
 function weekStart(i){var x=new Date(START);x.setDate(x.getDate()+7*i);return x}
 function sTitle(s){
-  if(s.t==="L"){var G=window.CUR[s.g||7];return"មេរៀនទី"+KhCal.kn(s.n)+" "+G.LS[s.n][0]+(s.mk?" "+G.MK[s.mk]:"")}
+  if(s.t==="L"){var G=window.CUR[s.g||7];if(G.fmt)return G.fmt(s);return"មេរៀនទី"+KhCal.kn(s.n)+" "+G.LS[s.n][0]+(s.mk?" "+G.MK[s.mk]:"")}
   return s.ti;
 }
 function sText(s,withSec){
