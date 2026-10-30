@@ -1713,6 +1713,31 @@ $("oy").onchange=function(){
   ob.y=+this.value||2026;saveO();renderO();
 };
 $("om").onchange=function(){om=+this.value;renderO1()};
+/* បោះពុម្ពទម្រង់សង្កេតថ្នាក់មួយ (A4 បញ្ឈរ) */
+function obsPrintHTML(i){
+  var r=ob.r[i],I=inf(),d=odt(i),T=gt(i),k0=0,rows="";
+  function cell(l,v){return"<td><span class=opl>"+l+"៖</span> <b>"+esc(v==null||v===""?"—":v)+"</b></td>"}
+  OC.forEach(function(g,gi){
+    var s=gs(i,gi);rows+="<tr class=og><td colspan=2>"+(gi+1)+". "+esc(g.t)+"</td><td>"+(s===""?"—":s)+" / "+g.max+"</td><td></td></tr>";
+    g.items.forEach(function(q,j){var k=k0+j,v=r.sc[k];rows+="<tr><td>"+(k+1)+"</td><td class=oq>"+esc(q)+"</td><td><b>"+(v==null||v===""?"":v)+"</b></td><td class=oq>"+esc(r.cm[k]||"")+"</td></tr>"});
+    k0+=g.items.length;
+  });
+  var GL=["ដំណើរការទូទៅនៃការបង្រៀន","១. ចំណុចល្អ — អ្នកសង្កេត","១. ចំណុចល្អ — គ្រូបង្រៀន","២. ចំណុចគួរអភិវឌ្ឍ — អ្នកសង្កេត","២. ចំណុចគួរអភិវឌ្ឍ — គ្រូបង្រៀន","៣. ផែនការកែលម្អសម្រាប់បង្រៀនពេលក្រោយ"];
+  return"<div class='pg opr'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+   "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
+   "<h2 class=moul style='text-align:center;font-size:14pt;margin:6px 0 10px'>ទម្រង់សង្កេតថ្នាក់រៀន</h2>"+
+   "<h4>ផ្នែកទី១ ៖ សាវតាទូទៅ</h4><table class='ct opi'><tbody>"+
+    "<tr>"+cell("គ្រូត្រូវសង្កេត",tn(r.t))+cell("អ្នកសង្កេត",tn(r.o))+cell("មុខវិជ្ជា",r.sub)+"</tr>"+
+    "<tr>"+cell("ថ្នាក់",r.cl)+cell("កាលបរិច្ឆេទ","ថ្ងៃ"+DAYF[d.getDay()]+" "+kn(d.getDate())+" "+M[d.getMonth()]+" "+kn(d.getFullYear()))+cell("ម៉ោង",r.tm)+"</tr>"+
+    "<tr>"+cell("បន្ទប់",r.rm)+cell("សិស្សសរុប (នាក់)",r.n)+cell("អវត្តមាន (នាក់)",r.ab)+"</tr>"+
+    "<tr>"+cell("ជំពូកទី",r.ch)+cell("មេរៀនទី",r.ls)+cell("ខ្លឹមសារ",r.ct)+"</tr></tbody></table>"+
+   "<h4>ផ្នែកទី២ ៖ លក្ខណៈវិនិច្ឆ័យការសង្កេត <span style='font-weight:400;font-size:9pt'>(០ = គ្មាន · ១ = មិនទាន់បានល្អ · ២–៤ = មធ្យម · ៥ = បានល្អប្រសើរ)</span></h4>"+
+   "<table class='ct ops'><colgroup><col style='width:6%'><col style='width:52%'><col style='width:12%'><col style='width:30%'></colgroup><thead><tr><th>ល.រ</th><th>លក្ខណៈវិនិច្ឆ័យ</th><th>ពិន្ទុ (០–៥)</th><th>កំណត់ត្រា / យោបល់</th></tr></thead><tbody>"+rows+
+   "<tr class=og><td colspan=2>សរុប</td><td>"+(T===""?"—":T)+" / 165</td><td>"+(T===""?"":(T/165*100).toFixed(1)+"% · និទ្ទេស៖ "+lvl(T/165))+"</td></tr></tbody></table>"+
+   "<h4>ផ្នែកទី៣ ៖ កំណត់ហេតុនៃការសង្កេត</h4><table class='ct opn'><tbody>"+GL.map(function(l,j){return"<tr><th>"+l+"</th><td>"+esc(r.g[j]||"").replace(/\n/g,"<br>")+"</td></tr>"}).join("")+"</tbody></table>"+
+   "<div class=sig><div>បានឃើញ និងពិនិត្យ<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b><br><br><br><br>&nbsp;</div><div>&nbsp;<br>គ្រូត្រូវសង្កេត<br><br><br><br><b>"+esc(tn(r.t))+"</b></div><div>រាជធានីភ្នំពេញ ថ្ងៃទី "+kn(d.getDate())+" ខែ "+M[d.getMonth()]+" ឆ្នាំ"+kn(d.getFullYear())+"<br>អ្នកសង្កេត<br><br><br><br><b>"+esc(tn(r.o))+"</b></div></div></div>";
+}
+$("opr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsPrintHTML(oc))})};
 $("oi").onchange=function(){oc=+this.value;renderO2()};
 $("opv").onclick=function(){oc=(oc+35)%36;renderO2()};
 $("onx").onclick=function(){oc=(oc+1)%36;renderO2()};
