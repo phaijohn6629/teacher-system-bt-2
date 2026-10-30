@@ -69,10 +69,18 @@ function fd(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return"";var p=s.split("-")
 function selOpts(arr,val){return arr.map(function(o){return"<option"+(o===val?" selected":"")+">"+esc(o)+"</option>"}).join("")}
 
 var data=load(),editing=null,tasks=loadK(),cur=0,who=null;
+/* កែលំដាប់អក្សរខ្មែរ៖ ស្រៈ/សញ្ញា (៉ ៊ ុ ...) ដែលវាយមុនជើង (្រ ្ក ...) → ដាក់ក្រោយជើង
+   (ឧ. «ស៊្រុន» → «ស្រ៊ុន») · ទូរស័ព្ទបង្ហាញ ◌ បើលំដាប់ខុស ទោះកុំព្យូទ័របង្ហាញត្រឹមត្រូវ */
+function khNorm(v){
+  if(typeof v!=="string")return v;
+  for(var i=0,o;i<3&&o!==v;i++){o=v;v=v.replace(/([\u17B6-\u17D1\u17D3\u17DD]+)((?:\u17D2[\u1780-\u17B3])+)/g,"$2$1")}
+  return v;
+}
+function normNames(a){(a||[]).forEach(function(t){if(t&&t.name)t.name=khNorm(t.name)});return a}
 function load(){
   try{
     var s=sessionStorage.getItem(KEY);
-    if(s){var d=JSON.parse(s);if(Array.isArray(d)&&d.length)return d}
+    if(s){var d=JSON.parse(s);if(Array.isArray(d)&&d.length)return normNames(d)}
   }catch(e){}
   return JSON.parse(JSON.stringify(SEED));
 }
@@ -130,7 +138,7 @@ function enterApp(user){
     var p=sn.exists()?sn.data():null;
     if(!p){alert("គណនីនេះមិនទាន់ត្រូវបានកំណត់សិទ្ធិក្នុងប្រព័ន្ធទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
     if(p.enabled!==true){alert("គណនីរបស់អ្នកមិនទាន់បើកសិទ្ធិប្រើប្រាស់ទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
-    prof={uid:user.uid,id:String(p.id||"").toUpperCase(),name:p.name||p.id,role:p.role==="admin"?"admin":"member",mustChange:p.mustChange===true};
+    prof={uid:user.uid,id:String(p.id||"").toUpperCase(),name:khNorm(p.name||p.id),role:p.role==="admin"?"admin":"member",mustChange:p.mustChange===true};
     who={id:prof.id,name:prof.name,role:prof.role,rl:""};
     rt=who.id;
     $("loginSection").hidden=true;$("appSection").hidden=false;
@@ -1755,7 +1763,7 @@ function pick(c,pre){var o={};Object.keys(c).forEach(function(p){if(p.indexOf(pr
 var MAP={
   teachers:{
     docs:function(){return{"app/teachers":{v:jcl(data)}}},
-    load:function(c){var x=c["app/teachers"];if(x&&Array.isArray(x.v)&&x.v.length)data=x.v}
+    load:function(c){var x=c["app/teachers"];if(x&&Array.isArray(x.v)&&x.v.length)data=normNames(x.v)}
   },
   tasks:{
     docs:function(){var o={};Object.keys(tasks).forEach(function(id){o["tasks/"+id]=encO(id,tasks[id])});return o},

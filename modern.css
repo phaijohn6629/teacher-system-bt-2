@@ -393,3 +393,20 @@ header { z-index: 200; }
 @keyframes svPulse{0%,100%{box-shadow:0 4px 14px rgba(168,85,247,.45)}50%{box-shadow:0 4px 22px rgba(236,72,153,.75)}}
 @media (prefers-reduced-motion:reduce){.save-btn[data-st="dirty"]{animation:none}}
 @media print{.save-btn{display:none!important}}
+/* ===== ទូរស័ព្ទ (≤600px)៖ បដា កាត និងក្បាលទំព័រឱ្យតូចល្មម ===== */
+@media (max-width:600px){
+  header .hdr-acts{gap:6px;flex-wrap:nowrap}
+  header .hdr-acts>button{padding:6px 9px;font-size:.74rem;white-space:nowrap}
+  .profile-trigger .pname{display:none}
+  .wb-wrap .welcome-banner{padding:16px 64px 16px 16px;align-items:flex-start}
+  .welcome-banner h2{font-size:17px}
+  .welcome-banner p{font-size:12px!important}
+  .wb-av{width:54px;height:54px}
+  .nt-bell{position:absolute;top:14px;right:14px;width:42px;height:42px;font-size:1.2rem}
+  .nt-panel{top:calc(100% - 14px)}
+  .bento-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+  .bento-grid .modern-card{padding:12px 14px;border-radius:14px}
+  .bento-grid .modern-card h3{font-size:22px!important;margin:0 0 2px;line-height:1.3}
+  .bento-grid .modern-card p{font-size:12.5px;margin:0;line-height:1.45}
+  .bento-grid .modern-card:last-child:nth-child(odd){grid-column:1/-1}
+}
