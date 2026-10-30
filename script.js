@@ -879,7 +879,7 @@ function cardHTML(c,i,RK){
   }
   var t1=sa(s,"a",c),t2=sa(s,"b",c),n=ac(c,1).length+ac(c,2).length,ok=!!gof(s,c,3),a1=abp(s,1),a2=abp(s,2);
   return"<div class='pg card-pr'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGO+"' class=logo alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year||"............")+"</b></div></div>"+
+    "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year||"............")+"</b></div></div>"+
     "<h2 class=moul style='text-align:center;font-size:14pt;margin:10px 0'>ប័ណ្ណពិន្ទុសិស្ស</h2>"+
     "<table class=ct style='margin-bottom:10px'><tbody><tr><td style='text-align:left'>ឈ្មោះសិស្ស៖ <b>"+esc(s.n)+"</b></td><td style='text-align:left'>លេខសម្គាល់៖ "+esc(s.id||"—")+"</td><td style='text-align:left'>ភេទ៖ "+esc(s.g||"—")+"</td></tr><tr><td style='text-align:left'>ថ្នាក់៖ <b>"+esc(c.n)+"</b></td><td style='text-align:left'>មុខវិជ្ជា៖ គណិតវិទ្យា</td><td style='text-align:left'>គ្រូបង្រៀន៖ "+esc(t.name||"")+"</td></tr></tbody></table>"+
     sem(1)+"<div style='height:8px'></div>"+sem(2)+"<div style='height:8px'></div>"+
@@ -1153,6 +1153,7 @@ $("wfile").onchange=function(e){
   notify("បានភ្ជាប់រូបភាពសម្រាប់ការបោះពុម្ព (មិនរក្សាទុកក្នុង Cloud)");
 };
 var LOGO=(document.getElementById("ngsLogo")||{}).src||new URL("logo-ngs.jpg",location.href).href;
+function LOGOBT(){return(document.querySelector(".brand-logo")||{}).src||new URL("logo-bt.jpg",location.href).href}
 function reportHTML(){
   var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"";
   var role=(t.rl||"សមាជិក")+"ក្រុមបច្ចេកទេស";
