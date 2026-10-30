@@ -1,6 +1,6 @@
 /* ========================================================================
    គ្រប់គ្រងថ្នាក់រៀន › កម្មវិធីសិក្សា (គោល + លម្អិត) — ថ្នាក់ទី៧
-   ត្រូវផ្ទុកបន្ទាប់ពី sched.js, curriculum7.js, curriculum8.js
+   ត្រូវផ្ទុកបន្ទាប់ពី sched.js, curriculum7.js, curriculum8.js, curriculum9.js
    ======================================================================== */
 (function(){
 "use strict";
@@ -29,7 +29,7 @@ function baseHtml(){
     h+="<h4 style='margin:14px 0 6px'>• "+esc2(S.t)+"</h4><div class=wrap><table class='cut cub'><thead><tr><th>មេរៀនទី</th><th>ចំណងជើងមេរៀន</th><th>ម៉ោង</th><th>ផ្នែក</th></tr></thead><tbody>";
     S.rows.forEach(function(r){
       if(typeof r==="string"){h+="<tr class=cux><td colspan=4>"+esc2(r)+"</td></tr>";return}
-      var l=LS[r];sub+=l[1];h+="<tr><td class=c>"+pad2(r)+"</td><td>"+esc2(l[0])+"</td><td class=c>"+pad2(l[1])+" ម៉ោង</td><td class=c>"+BR[l[2]]+"</td></tr>";
+      var ar=Array.isArray(r),n=ar?r[0]:r,l=LS[n],hh=ar?r[1]:l[1];sub+=hh;h+="<tr><td class=c>"+pad2(n)+"</td><td>"+esc2(l[0]+(ar?r[2]:""))+"</td><td class=c>"+pad2(hh)+" ម៉ោង</td><td class=c>"+BR[l[2]]+"</td></tr>";
     });
     tot+=sub;
     h+="<tr class=cus><td colspan=2>សរុបមេរៀន</td><td class=c>"+kh(sub)+" ម៉ោង</td><td></td></tr></tbody></table></div>";
