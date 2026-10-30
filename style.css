@@ -188,7 +188,7 @@ table.wpt{border-collapse:collapse;width:100%;table-layout:fixed}
 .wpt .hl{color:#d00;font-weight:700;margin-top:1mm}
 .wpt tr.wn td{height:11mm;text-align:left;padding:1mm 1.4mm;border:1px solid #bbb;font-size:7.4pt;white-space:pre-wrap}
 .wpf{display:flex;justify-content:space-between;align-items:flex-start;margin:6mm 10mm 0}
-table.tsx-g,table.wpt{width:99.4%}
+table.tsx-g,table.wpt{width:99.4%}.rpt table.ct{width:99.4%!important}
 
 /* ===== បង្រួមឱ្យចូលតែមួយទំព័រ ក្នុងមួយផ្នែក (A4 ផ្ដេក) ===== */
 .pg.land{height:192mm;overflow:hidden;padding:0;line-height:1.2;box-sizing:border-box}

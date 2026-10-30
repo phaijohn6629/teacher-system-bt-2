@@ -410,17 +410,21 @@ function kPrintHTML(){
     });
     b+="</tbody>";
   });
-  var tdy=new Date(),wg="ថ្ងៃទី "+kn(tdy.getDate())+" ខែ "+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
-  var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(who.id):"";
   return"<div class='pg cxp'>"+
    "<div class=cxh><img src='"+((document.querySelector(".brand-logo")||{}).src||LOGO)+"' class='cxlogo kplogo' alt=''><div class=cxt><div class=moul style='font-size:12pt'>វិទ្យាល័យបឹងត្របែក</div><div style='font-size:10.5pt;margin:2px 0 4px'>សាលារៀនជំនាន់ថ្មី (NGS) · ក្រុមបច្ចេកទេសគណិតវិទ្យា</div>"+
     "<div class=moul style='font-size:13pt'>របាយការណ៍ចំនួនកិច្ចតែងការ</div><div class=cxper>ខែ"+esc(MK[cur])+" ឆ្នាំ"+kn(yr)+"</div></div></div>"+
    "<table class='cxg kpg'><colgroup><col style='width:6%'><col style='width:22%'><col style='width:11%'><col span=4 style='width:9%'><col span=2 style='width:12%'></colgroup>"+
    "<thead><tr><th>ល.រ</th><th>ឈ្មោះសមាជិក</th><th>កម្រិតថ្នាក់</th>"+WK.map(function(x){return"<th>"+x+"</th>"}).join("")+"<th>សរុបខែ</th><th>សរុបទាំងអស់</th></tr></thead>"+b+
    "<tfoot><tr><td colspan=3>សរុបរួម</td>"+cs.map(function(c){return"<td>"+kn(c)+"</td>"}).join("")+"<td>"+kn(sm(cs))+"</td><td>"+kn(ga)+"</td></tr></tfoot></table>"+
-   "<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
-   "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
-   "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(who.name||"")+"</b></div></div></div></div>";
+   wpFoot(who.id,who.name)+"</div>";
+}
+/* ជើងក្រោមតាមគម្រូ Workplan៖ ឆ្វេង = គណៈគ្រប់គ្រង · ស្ដាំ = ថ្ងៃចន្ទគតិ + ទីកន្លែង/ថ្ងៃទី + ហត្ថលេខា និងឈ្មោះ */
+function wpFoot(id,name,lbl){
+  var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី "+kn(tdy.getDate())+" ខែ "+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
+  var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
+  return"<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
+   "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>"+esc(lbl||"ហត្ថលេខា និងឈ្មោះ")+"</div>"+
+   "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(name||"")+"</b></div></div></div>";
 }
 $("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
 $("mo").innerHTML=MK.map(function(m,i){return"<option value="+i+">"+m+"</option>"}).join("");
@@ -1090,9 +1094,9 @@ function reportHTML(){
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>របាយការណ៍ការងារ"+esc(role)+"គណិតវិទ្យា ប្រចាំខែ"+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
     "<p style='text-indent:1.2cm;margin:6px 0'>គោរពជម្រាបជូនគណៈគ្រប់គ្រង សូមជូនរបាយការណ៍ការងារក្រុមបច្ចេកទេសគណិតវិទ្យា នៅ"+esc(I.school)+" សាលារៀនជំនាន់ថ្មី (NGS) មានដូចតទៅ៖</p>"+
     "<table class=ct style='width:100%'><thead><tr><th style='width:16%'>កាលបរិច្ឆេទ</th><th style='width:18%'>រយៈពេល</th><th>ខ្លឹមសារសកម្មភាព</th><th style='width:24%'>សកម្មភាព (រូបភាព...)</th></tr></thead><tbody>"+(rows||"<tr><td colspan=4>—</td></tr>")+"</tbody></table>"+
-    "<div class=sig><div>&nbsp;<br>បានឃើញ និងពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី<br><br><br><br>&nbsp;</div><div>ធ្វើនៅភ្នំពេញ ថ្ងៃទី......ខែ......ឆ្នាំ......<br>អ្នករៀបចំរបាយការណ៍<br><br><br><br><b>"+esc(t.name||"")+"</b></div></div></div>";
+    wpFoot(wt,t.name,"អ្នករៀបចំរបាយការណ៍")+"</div>";
 }
-$("wpr").onclick=function(){if(!wlist().length){alert("មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។");return}doPrint(reportHTML())};
+$("wpr").onclick=function(){if(!wlist().length){alert("មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។");return}window.SCHX.fontsOk().then(function(){doPrint(reportHTML())})};
 $("wex").onclick=function(){
   var rows=[["កាលបរិច្ឆេទ","ម៉ោងចាប់ផ្ដើម","ម៉ោងបញ្ចប់","រយៈពេល","ខ្លឹមសារសកម្មភាព"]].concat(wlist().map(function(e){return[fdd(e.d),e.a||"",e.b||"",dur(e.a,e.b),(e.c||"").replace(/\r?\n/g," | ")]}));
   dlCSV(rows,"work-report-"+wmo+".csv");
