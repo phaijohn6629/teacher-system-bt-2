@@ -984,6 +984,16 @@ function renderV(){
   }
   $("vbody").innerHTML=h;
 }
+/* បោះពុម្ពក្រាហ្វិក និងវិភាគ (ប្រើមាតិកាដែលបង្ហាញនៅលើអេក្រង់) */
+$("vpr").onclick=function(){
+  renderV();var I=inf(),PN=["","ឆមាសទី១","ឆមាសទី២","ប្រចាំឆ្នាំ"],c=curCls();
+  var h="<div class='pg opr vpr'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+   "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
+   "<h2 class=moul style='text-align:center;font-size:14pt;margin:6px 0 2px'>ក្រាហ្វិក និងវិភាគលទ្ធផលសិក្សា</h2>"+
+   "<p style='text-align:center;margin:0 0 8px'>គ្រូ៖ <b>"+esc(tn(rt))+"</b>"+(c?" · ថ្នាក់៖ <b>"+esc(c.n)+"</b>":"")+" · "+PN[rp]+"</p>"+
+   $("vbody").innerHTML+wpFoot(who.id,who.name,"អ្នករៀបចំ")+"</div>";
+  window.SCHX.fontsOk().then(function(){doPrint(h)});
+};
 $("vt").onchange=function(){rt=this.value;rc=0;renderV()};
 $("vc").onchange=function(){clsPick(this.value,renderV)};
 $("vp").onchange=function(){rp=+this.value;renderV()};

@@ -314,3 +314,14 @@ body.pm .pg.land{page-break-inside:avoid}
 .osum table.ost{table-layout:auto}.osum table.ost th{white-space:normal;font-size:8.5pt}.osum table.ost td{font-size:9pt}
 .osum table.ost td.nm{text-align:left;font-weight:700}
 .osum table.ost tr.tr td{background:#eee!important;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+/* បោះពុម្ពក្រាហ្វិក៖ បង្ខំពណ៌ភ្លឺ (ទោះអេក្រង់ជាផ្ទៃងងឹត) */
+.vpr{--ink:#000;--panel:#fff;--line:#bbb;--soft:#f1f1f1;--mute:#444;--card-bg:#fff;--border-glow:#ccc;--brand:#4f46e5;color:#000}
+.vpr .card{background:#fff!important;border:1px solid #ccc!important;box-shadow:none!important;padding:8px 10px;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid}
+.vpr .card h3{font-size:11pt;margin:0 0 6px;color:#000}
+.vpr .note{display:block!important;color:#444}
+.vpr .wrap{overflow:visible!important;border:0!important;background:none!important}
+.vpr table{min-width:0!important;width:100%}
+.vpr th,.vpr td{font-size:9pt!important;padding:2px 5px!important;color:#000!important;background:#fff!important;border:1px solid #bbb!important;position:static!important}
+.vpr th{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.vpr .sbt .sg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.vpr svg{max-height:200px}
