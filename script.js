@@ -1020,6 +1020,69 @@ $("pex").onclick=function(){
   dlCSV(rows,"students-"+c.n+".csv");
 };
 
+/* នាំចូលបញ្ជីសិស្សពី Excel/CSV៖ រកក្បាលតារាងស្វ័យប្រវត្តិ · ផ្គូផ្គងតាម ID (បើគ្មាន ID ផ្គូផ្គងតាមឈ្មោះ) · ធ្វើបច្ចុប្បន្នភាពតែជួរឈរដែលមានក្នុងឯកសារ */
+var PCOL={id:/^(id|studentid|stuid|លេខសម្គាល់|លេខសម្កាល់|លេខសំគាល់|អត្តលេខ)/,n:/^(name|studentname|fullname|ឈ្មោះ|គោត្តនាម)/,g:/^(gender|sex|ភេទ)/,dob:/^(dob|birth|dateofbirth|birthday|ថ្ងៃខែឆ្នាំកំណើត|ថ្ងៃកំណើត)/,ph:/^(phone|tel|mobile|guardian|parent|ទូរស័ព្ទ|លេខទូរស័ព្ទ)/};
+function pGender(v){v=hn(v);return/^(ប្រុស|ប|m|male|boy)$/.test(v)?"ប្រុស":/^(ស្រី|ស|f|female|girl)$/.test(v)?"ស្រី":""}
+function pDate(v){
+  if(v===""||v==null)return"";
+  if(typeof v==="number"&&v>0){var d=new Date(Math.round((v-25569)*864e5));return d.getUTCFullYear()+"-"+pad2(d.getUTCMonth()+1)+"-"+pad2(d.getUTCDate())}
+  v=String(v).trim().replace(/[០-៩]/g,function(c){return"០១២៣៤៥៦៧៨៩".indexOf(c)});
+  var m=/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/.exec(v);if(m)return m[1]+"-"+pad2(+m[2])+"-"+pad2(+m[3]);
+  m=/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/.exec(v);if(m)return m[3]+"-"+pad2(+m[2])+"-"+pad2(+m[1]);
+  return"";
+}
+function pParse(wb){
+  for(var k=0;k<wb.SheetNames.length;k++){
+    var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[k]],{header:1,defval:"",raw:true});
+    for(var r=0;r<Math.min(10,rows.length);r++){
+      var map={};rows[r].forEach(function(h,ci){var x=hn(h);Object.keys(PCOL).forEach(function(f){if(map[f]==null&&PCOL[f].test(x))map[f]=ci})});
+      if(map.n==null)continue;
+      var out=[],bad=0;
+      for(var i=r+1;i<rows.length;i++){
+        var row=rows[i],cell=function(f){return map[f]==null?"":String(row[map[f]]==null?"":row[map[f]]).trim()},o={n:cell("n")};
+        if(!o.n){if(cell("id"))bad++;continue}
+        if(map.id!=null)o.id=cell("id");
+        if(map.g!=null)o.g=pGender(cell("g"));
+        if(map.dob!=null){o.dob=pDate(row[map.dob]);if(!o.dob&&cell("dob"))bad++}
+        if(map.ph!=null){o.ph=cell("ph");if(typeof row[map.ph]==="number"&&o.ph.charAt(0)!=="0")o.ph="0"+o.ph}   /* Excel លុបលេខ 0 ខាងមុខលេខទូរស័ព្ទ */
+        out.push(o);
+      }
+      return{sn:wb.SheetNames[k],cols:Object.keys(map),st:out,bad:bad};
+    }
+  }
+  return null;
+}
+$("pim").onclick=function(){
+  if(!canM()){alert("គ្មានសិទ្ធិនាំចូលទិន្នន័យទៅគ្រូដទៃទេ!");return}
+  if(!curCls()){alert("សូមបង្កើតថ្នាក់ជាមុនសិន (ផ្ទាំង «លទ្ធផលសិក្សា»)។");return}
+  $("pfile").click();
+};
+$("pfile").onchange=function(e){
+  var f=e.target.files[0];e.target.value="";if(!f)return;
+  loadXL(function(){
+    var r=new FileReader();
+    r.onload=function(ev){
+      var x;try{x=pParse(XLSX.read(ev.target.result,{type:"array",codepage:65001,raw:/\.csv$/i.test(f.name)}))}catch(er){console.error(er);alert("មិនអាចអានឯកសារនេះបានទេ!");return}
+      if(!x||!x.st.length){alert("រកមិនឃើញបញ្ជីសិស្សក្នុងឯកសារនេះទេ។ ជួរក្បាលតារាងត្រូវមាន «ឈ្មោះសិស្ស» ហើយអាចមាន «លេខសម្គាល់», «ភេទ», «ថ្ងៃខែឆ្នាំកំណើត», «ទូរស័ព្ទ»។ ចុច «📄 ទាញយកគំរូ» ដើម្បីមើលទម្រង់។");return}
+      var c=curCls(),add=[],upd=0;
+      x.st.forEach(function(o){
+        var t=c.st.filter(function(q){return o.id?String(q.id||"").toLowerCase()===o.id.toLowerCase():q.n===o.n})[0];
+        if(t)upd++;else add.push(o);
+      });
+      var L={id:"លេខសម្គាល់",n:"ឈ្មោះ",g:"ភេទ",dob:"ថ្ងៃកំណើត",ph:"ទូរស័ព្ទ"};
+      if(!confirm("នាំចូលទៅថ្នាក់ «"+c.n+"» (សន្លឹក «"+x.sn+"»)\n\n• សិស្សថ្មី៖ "+add.length+" នាក់\n• ធ្វើបច្ចុប្បន្នភាព (មានរួចហើយ)៖ "+upd+" នាក់\n• ជួរឈរ៖ "+x.cols.map(function(k){return L[k]}).join(", ")+(x.bad?"\n• ⚠️ "+x.bad+" ជួរមានទិន្នន័យមិនត្រឹមត្រូវ (គ្មានឈ្មោះ ឬថ្ងៃខែមិនស្គាល់) ត្រូវរំលង":"")+"\n\nពិន្ទុ និងអវត្តមានដែលមានស្រាប់ នឹងនៅដដែល។ បន្តទេ?"))return;
+      x.st.forEach(function(o){
+        var t=c.st.filter(function(q){return o.id?String(q.id||"").toLowerCase()===o.id.toLowerCase():q.n===o.n})[0];
+        if(!t){t={id:"",n:o.n,a:["","","","","",""],b:["","","","",""]};c.st.push(t)}
+        Object.keys(o).forEach(function(k){if(o[k]!==""||k==="n")t[k]=o[k]});
+      });
+      savR();renderP();notify("បាននាំចូល៖ ថ្មី "+add.length+" នាក់ · ធ្វើបច្ចុប្បន្នភាព "+upd+" នាក់");
+    };
+    r.readAsArrayBuffer(f);
+  });
+};
+$("ptpl").onclick=function(){dlCSV([["លេខសម្គាល់","ឈ្មោះសិស្ស","ភេទ","ថ្ងៃខែឆ្នាំកំណើត","ទូរស័ព្ទអាណាព្យាបាល"],["S001","សុខ ដារ៉ា","ប្រុស","15/03/2012","012345678"],["S002","ចាន់ ស្រីពៅ","ស្រី","2012-07-21","098765432"]],"គំរូ-បញ្ជីសិស្ស.csv")};
+
 /* ===== ផ្ទាំងទី ៨៖ របាយការណ៍ការងារប្រចាំខែ ===== */
 var WKEY=KEY+"-w",wr=loadW(),wmo=(function(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)})(),wt="",wimg={};
 function loadW(){try{var s=sessionStorage.getItem(WKEY);if(s){var o=JSON.parse(s);if(o&&o.r)return o}}catch(e){}return{r:{}}}
