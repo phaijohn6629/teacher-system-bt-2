@@ -38,7 +38,31 @@ MAP.sig={
 };
 function getSig(id){return sigs.r[id]&&sigs.r[id].d||""}
 function saveSg(){push("sig")}
-function saveS(){push("sched")}
+function saveS(){push("sched");stWatch()}
+/* ប៊ូតុង 💾 រក្សាទុក៖ បង្ហាញស្ថានភាពពិត (មិនទាន់/កំពុង/បាន/បរាជ័យ) · ចុចដើម្បីរក្សាទុកភ្លាម (ក្រៅពីរក្សាទុកស្វ័យប្រវត្តិ) */
+var stPoll=null;
+function stUI(st){
+  var b=$("stSave");if(!b)return;b.dataset.st=st;b.disabled=st==="busy";
+  b.innerHTML={dirty:"💾 រក្សាទុក",busy:"⏳ កំពុងរក្សាទុក…",ok:"✅ បានរក្សាទុក",err:"⚠️ មិនបានរក្សាទុក · ចុចម្ដងទៀត"}[st];
+  b.title=st==="ok"&&stUI.at?"រក្សាទុកចុងក្រោយ "+stUI.at:"";
+}
+function stWatch(){
+  stUI("dirty");clearInterval(stPoll);
+  stPoll=setInterval(function(){
+    if(sy.busy.sched){stUI("busy");return}
+    if(sy.dirty.sched)return;
+    clearInterval(stPoll);
+    if(sy.fail&&sy.fail.sched)stUI("err");
+    else{var n=new Date();stUI.at=p2(n.getHours())+":"+p2(n.getMinutes());stUI("ok")}
+  },250);
+}
+$("stSave").onclick=function(){
+  if(!canEd(stT))return;
+  var st=$("stSave").dataset.st;
+  if(st==="ok"){notify("កាលវិភាគបានរក្សាទុករួចហើយ");return}
+  clearTimeout(sy.t.sched);sy.dirty.sched=1;flush("sched");stWatch();stUI("busy");
+};
+window.addEventListener("beforeunload",function(e){if(sy.dirty.sched||sy.busy.sched){e.preventDefault();e.returnValue=""}});
 function saveT(){push("ts")}
 function canEd(id){return isAdm()||(who&&who.id===id)}
 function tname(id){var t=teacherOf(id);return t.name||id}
@@ -60,26 +84,29 @@ function renderSched(){
   if(!stT||!data.some(function(t){return t.id===stT}))stT=data.some(function(t){return t.id===who.id})?who.id:(data[0]&&data[0].id)||"";
   $("stT").innerHTML=teachersOpt(stT);
   var ed=canEd(stT);
-  $("stImp").style.display=ed?"":"none";$("stClr").style.display=ed?"":"none";$("stAll").style.display=isAdm()?"":"none";
+  $("stImp").style.display=ed?"":"none";$("stSave").style.display=ed?"":"none";if(!$("stSave").dataset.st)stUI("ok");$("stClr").style.display=ed?"":"none";$("stAll").style.display=isAdm()?"":"none";
   var S=sumSched(stT);
   $("stSum").innerHTML="<b>"+esc(tname(stT))+"</b> · ម៉ោងបង្រៀនមូលដ្ឋាន <b>"+kh(S.b)+"</b> ម៉ោង/សប្ដាហ៍ (ស្តង់ដារ "+kh(NORM)+")"+(S.o?" · ម៉ោងលើស (O/OE) <b>"+kh(S.o)+"</b>":"")+" · តាមថ្ងៃ៖ "+DK.map(function(d,i){return d+" "+kh(S.per[i])}).join(" · ");
-  var h="<thead><tr><th style='width:120px'>ម៉ោង</th>"+DK.map(function(d){return"<th>"+d+"</th>"}).join("")+"</tr></thead><tbody>",skip={};
+  var td0=new Date().getDay()-1;   /* ថ្ងៃនេះ (ច័ន្ទ = 0) */
+  var h="<thead><tr><th style='width:120px'>ម៉ោង</th>"+DK.map(function(d,i){return"<th"+(i===td0?" class=today":"")+">"+d+(i===td0?"<small>ថ្ងៃនេះ</small>":"")+"</th>"}).join("")+"</tr></thead><tbody>",skip={};
   for(var p=1;p<=11;p++){
-    h+="<tr><td class=tm><b>"+kh(p)+"</b><br>"+kh(PT[p]).replace(/ - /g," – ")+"</td>";
+    h+="<tr><td class=tm><b>"+kh(p)+"</b><span>"+kh(PT[p]).replace(/ - /g," – ")+"</span></td>";
     for(var d=0;d<6;d++){
       if(skip[d+"_"+p])continue;
       var s=slotAt(stT,d,p),span=1;
       if(s){
         while(p+span<=11&&!BRK[p+span-1]&&sameSlot(s,slotAt(stT,d,p+span))){skip[d+"_"+(p+span)]=1;span++}
-        h+="<td class='cell"+(s[4]==="OE"?" oe":s[4]?" ob":"")+"' rowspan="+span+" data-d="+d+" data-p="+p+"><b>"+esc(s[2])+"</b><small>"+esc(s[3]||"")+(s[4]?" · "+s[4]:"")+"</small></td>";
-      }else h+="<td class=cell data-d="+d+" data-p="+p+"></td>";
+        h+="<td class='cell on"+(s[4]==="OE"?" oe":s[4]?" ob":"")+(d===td0?" today":"")+"' rowspan="+span+" data-d="+d+" data-p="+p+"><div class=chip style='--h:"+clsHue(s[2])+"'><b>"+esc(s[2])+"</b><small>"+(s[3]?"📍 "+esc(s[3]):"")+"</small>"+(s[4]?"<i class=ot>"+s[4]+"</i>":"")+"</div></td>";
+      }else h+="<td class='cell"+(d===td0?" today":"")+"' data-d="+d+" data-p="+p+"></td>";
     }
     h+="</tr>";
-    if(BRK[p])h+="<tr class=brk><td colspan=7>"+kh(BRK[p])+"</td></tr>";
+    if(BRK[p])h+="<tr class=brk><td colspan=7>☕ "+kh(BRK[p])+"</td></tr>";
   }
   $("stTb").innerHTML=h+"</tbody>";
   $("stTb").classList.toggle("ro",!ed);
 }
+/* ពណ៌តាមថ្នាក់ (ថ្នាក់ដូចគ្នា = ពណ៌ដូចគ្នា) */
+function clsHue(c){var h=0;String(c||"").split("").forEach(function(ch){h=(h*31+ch.charCodeAt(0))%360});return h}
 window.renderSched=renderSched;
 $("stT").onchange=function(){stT=this.value;renderSched()};
 var cellDP=null;

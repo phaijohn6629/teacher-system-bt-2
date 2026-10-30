@@ -1852,7 +1852,7 @@ async function flush(k){
     }
   }catch(e){ok=false;console.error("Sync error:",e)}
   finally{
-    sy.busy[k]=0;
+    sy.busy[k]=0;(sy.fail||(sy.fail={}))[k]=!ok;
     if(!sy.dirty[k]&&sy.pending[k]){delete sy.pending[k];applyCloud(k)}
     finishMig(k,ok);
   }

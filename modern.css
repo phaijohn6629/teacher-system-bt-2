@@ -362,3 +362,34 @@ header { z-index: 200; }
   .sn-i.active{background:var(--primary-gradient);color:#fff;box-shadow:0 6px 16px rgba(168,85,247,.35)}
   .sn-tog{background:var(--sn-tg);border-color:var(--sn-bd)}
 }
+/* ===== កាលវិភាគបង្រៀន (ផ្ទាំង ១១)៖ តារាងទាក់ទាញ ងាយមើល ===== */
+#stTb{border-collapse:separate;border-spacing:0;border:1px solid var(--border-glow);border-radius:16px;overflow:hidden}
+#stTb th,#stTb td{border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+#stTb tr>*:last-child{border-right:0}
+#stTb thead th{background:var(--primary-gradient);color:#fff;font-size:.92rem;padding:10px 6px;border-color:rgba(255,255,255,.18)}
+#stTb thead th small{display:block;font-size:.68rem;font-weight:400;opacity:.9}
+#stTb thead th.today{background:linear-gradient(135deg,#f59e0b,#ec4899);box-shadow:inset 0 -3px 0 #fff}
+#stTb td.tm{background:var(--soft);padding:6px 4px}
+#stTb td.tm b{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--primary-gradient);color:#fff;font-size:.8rem}
+#stTb td.tm span{display:block;font-size:.74rem;color:var(--mute);margin-top:2px}
+#stTb td.cell{height:58px;padding:4px;transition:background .15s ease}
+#stTb td.cell.today{background:rgba(245,158,11,.07)}
+#stTb:not(.ro) td.cell:not(.on):hover{background:rgba(168,85,247,.1)}
+#stTb:not(.ro) td.cell:not(.on):hover::after{content:"＋";color:var(--brand);font-weight:700}
+#stTb .chip{position:relative;height:100%;min-height:48px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:2px;padding:6px 8px;border-radius:10px;text-align:center;
+  background:hsla(var(--h),85%,60%,.16);border-left:4px solid hsl(var(--h),70%,52%);transition:transform .15s ease,box-shadow .15s ease}
+#stTb .chip b{font-size:.92rem;color:var(--ink)}#stTb .chip small{font-size:.72rem;color:var(--mute)}
+#stTb:not(.ro) td.cell.on:hover .chip{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.15)}
+#stTb .chip .ot{position:absolute;top:3px;right:4px;font-style:normal;font-size:.62rem;font-weight:700;padding:0 5px;border-radius:6px;background:#ec4899;color:#fff}
+#stTb td.oe .chip .ot{background:#6366f1}
+#stTb td.ob,#stTb td.oe{background:none}
+#stTb tr.brk td{background:repeating-linear-gradient(135deg,var(--soft) 0 8px,transparent 8px 16px);color:var(--mute);font-size:.74rem;padding:3px}
+/* ប៊ូតុង 💾 រក្សាទុក */
+.save-btn{border:0;border-radius:24px;padding:8px 20px;font-weight:700;font-family:inherit;cursor:pointer;color:#fff;background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,.35);transition:transform .15s ease,box-shadow .15s ease}
+.save-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(16,185,129,.45)}
+.save-btn[data-st="dirty"]{background:var(--primary-gradient);box-shadow:0 4px 14px rgba(168,85,247,.45);animation:svPulse 1.6s ease-in-out infinite}
+.save-btn[data-st="busy"]{background:#64748b;box-shadow:none;cursor:wait}
+.save-btn[data-st="err"]{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.4)}
+@keyframes svPulse{0%,100%{box-shadow:0 4px 14px rgba(168,85,247,.45)}50%{box-shadow:0 4px 22px rgba(236,72,153,.75)}}
+@media (prefers-reduced-motion:reduce){.save-btn[data-st="dirty"]{animation:none}}
+@media print{.save-btn{display:none!important}}
