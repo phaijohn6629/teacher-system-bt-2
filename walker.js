@@ -105,9 +105,11 @@ function setOwn(file,cb){
   if(!/^image\//.test(file.type)){alert("សូមជ្រើសរើសឯកសាររូបភាព!");return}
   var r=new FileReader();r.onload=function(e){
     var im=new Image();im.onload=function(){
-      var s=Math.min(im.width,im.height),cv=document.createElement("canvas");cv.width=cv.height=160;
-      cv.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,160,160);
-      try{localStorage.setItem(toonKey(),cv.toDataURL("image/png"))}catch(x){alert("មិនអាចរក្សាទុករូបបានទេ (browser ពេញ)");return}
+      var W=im.width,H=im.height,s,x0,y0,cv=document.createElement("canvas");cv.width=cv.height=200;
+      if(H>W*1.1){s=W*.8;x0=(W-s)/2;y0=H*.06}   /* រូបបញ្ឈរ (selfie)៖ មុខនៅផ្នែកខាងលើ → កាត់យកក្បាល */
+      else{s=Math.min(W,H);x0=(W-s)/2;y0=(H-s)/2}
+      cv.getContext("2d").drawImage(im,x0,y0,s,s,0,0,200,200);
+      try{localStorage.setItem(toonKey(),cv.toDataURL("image/jpeg",.9))}catch(x){alert("មិនអាចរក្សាទុករូបបានទេ (browser ពេញ)");return}
       paint();cb&&cb();
     };im.src=e.target.result;
   };r.readAsDataURL(file);
