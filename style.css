@@ -326,4 +326,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .vpr .sbt .sg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .vpr svg{max-height:200px}
 .cxg td.cp{text-align:center;white-space:nowrap;font-size:10pt}.cxg td.cp small{font-size:8.5pt;color:#333}
-.cxg td.cd{vertical-align:middle}
+.cxg td.cd{vertical-align:middle;white-space:normal}
+#cxG tr.cxday td{background:var(--soft);padding:6px 8px}
+.cxdh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.cxdh input[type=date]{width:auto;margin:0}.cxdh b{font-size:.95rem}.cxdh button{margin-left:auto;padding:4px 12px;font-size:.85rem}
+#cxG select{width:100%;margin:0 0 4px}
