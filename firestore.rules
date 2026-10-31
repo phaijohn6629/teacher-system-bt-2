@@ -106,18 +106,22 @@ service cloud.firestore {
       allow delete: if isAdmin() || isOwner(tid);
     }
 
-    // ===================== ប្រវត្តិរូបគ្រូ (រូបថត + ព័ត៌មានផ្ទាល់ខ្លួន) =====================
+    // ===================== ប្រវត្តិរូបគ្រូ (រូបថត + ព័ត៌មានផ្ទាល់ខ្លួន · គ្រូកែខ្លួនឯង) =====================
     // doc ID = លេខសម្គាល់គ្រូ។ ម្ចាស់ ឬ Admin សរសេរ · គ្រូទាំងអស់អាន
     // កំណត់វាលដែលអនុញ្ញាត និងទំហំ (រូបថត JPEG តូច ≤ ~70 KB ជា data URL)
     match /profiles/{tid} {
       allow read: if active();
       allow create, update: if (isAdmin() || isOwner(tid))
         && request.resource.data.o == tid
-        && request.resource.data.keys().hasOnly(['o','g','dob','ph','ad','bio','photo','u'])
+        && request.resource.data.keys().hasOnly(['o','g','dob','ph','ad','bio','photo','u','nm','sub','deg','sd'])
         && request.resource.data.get('photo','').size() < 70000
         && request.resource.data.get('bio','').size() <= 500
         && request.resource.data.get('ph','').size() <= 40
-        && request.resource.data.get('ad','').size() <= 200;
+        && request.resource.data.get('ad','').size() <= 200
+        && request.resource.data.get('nm','').size() <= 100
+        && request.resource.data.get('sub','').size() <= 60
+        && request.resource.data.get('deg','').size() <= 80
+        && request.resource.data.get('sd','').size() <= 10;
       allow delete: if isAdmin();
     }
 

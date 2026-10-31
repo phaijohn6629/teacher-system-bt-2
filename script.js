@@ -315,6 +315,9 @@ $("f").onsubmit=function(e){
     data.push(o);
   }
   save();$("dlg").close();render();notify("រក្សាទុកព័ត៌មានគ្រូរួចរាល់!");if(isNewT)createAccounts([o]);
+  var pp=profs[o.id];   /* ប្រវត្តិរូបដែលគ្រូបានកែ → ធ្វើបច្ចុប្បន្នភាពតាម Admin កុំឱ្យជាន់គ្នា */
+  if(!isNewT&&pp&&window.FB){var np=Object.assign({},pp,{nm:o.name,g:o.g,dob:o.dob,ph:o.ph.slice(0,40),ad:o.ad.slice(0,200),sub:o.sub.slice(0,60),deg:o.deg.slice(0,80),sd:o.sd,u:new Date().toISOString()});
+    window.FB.setDoc(window.FB.doc(window.db,"profiles",o.id),np).then(function(){profs[o.id]=np}).catch(function(e){console.error(e)})}
 };
 
 $("tb").onclick=function(e){
@@ -322,7 +325,10 @@ $("tb").onclick=function(e){
   if(b.dataset.mk){if(!isAdm())return;createAccounts(data.filter(function(x){return x.id===b.dataset.mk}));return}
   if(b.dataset.e){
     var t = data.find(x => x.id === b.dataset.e);
-    if(!isAdm()) { alert("មានតែអ្នកគ្រប់គ្រង (Admin) ទេដែលអាចកែប្រែព័ត៌មានគ្រូ!"); return; }
+    if(!isAdm()){
+      if(who&&b.dataset.e===who.id){openProfile();return}
+      alert("អ្នកកែបានតែព័ត៌មានរបស់ខ្លួនឯងប៉ុណ្ណោះ!");return;
+    }
     openForm(t);
   }
   if(b.dataset.d){
@@ -924,6 +930,8 @@ function realPrint(html){
 /* ជម្រើសបោះពុម្ព៖ «🖨️ បោះពុម្ព» (ផ្ទាំងបោះពុម្ពរបស់ប្រព័ន្ធ) ឬ «📄 ទាញយក PDF» (បង្កើតក្នុង browser ភ្លាម មិនឆ្លងកាត់ម៉ាស៊ីនបោះពុម្ព) */
 var H2P_URL="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
 function outChoose(html){
+  var pm="";try{pm=localStorage.getItem("pmode")||""}catch(x){}
+  if(pm==="pdf")return savePdf(html);if(pm==="print")return realPrint(html);
   var m=$("pchoose");
   if(!m){
     m=document.createElement("div");m.id="pchoose";m.setAttribute("role","dialog");m.setAttribute("aria-label","ជ្រើសរបៀបបោះពុម្ព");
@@ -1451,6 +1459,7 @@ function buildSnav(){
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent.replace(/^[០-៩]+\.\s*/,"")});
   $("snList").innerHTML=SNG.map(function(g){
     return"<div class=sn-g><div class=sn-h>"+esc(g[0])+"</div>"+g[1].map(function(p){return"<button type=button class=sn-i data-p='"+p+"'><span aria-hidden=true>"+ic[p]+"</span><em>"+esc(full[p]||"")+"</em></button>"}).join("")+"</div>"}).join("");
+  $("snList").insertAdjacentHTML("beforeend","<div class=sn-g><button type=button class=sn-i id=snSet><span aria-hidden=true>⚙️</span><em>ការកំណត់</em></button></div>");
 }
 function snTop(){var h=document.querySelector("#appSection header");$("snav").style.top=Math.max(0,h?h.getBoundingClientRect().bottom:0)+"px"}
 (function(){
@@ -1459,7 +1468,7 @@ function snTop(){var h=document.querySelector("#appSection header");$("snav").st
   set(open);snTop();
   window.addEventListener("resize",snTop);window.addEventListener("scroll",snTop,{passive:true});
   $("snTog").onclick=function(){set(!open)};
-  $("snList").onclick=function(e){var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
+  $("snList").onclick=function(e){if(e.target.closest("#snSet"))return openSettings();var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 })();
 function syncNav(p){
   snTop();
@@ -1477,7 +1486,7 @@ var PHOTO_RE=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
 function okPhoto(s){return typeof s==="string"&&s.length<90000&&PHOTO_RE.test(s)}
 function tinfo(t){
   var p=profs[String(t.id).toUpperCase()];if(!p)return t;
-  var o=Object.assign({},t);["ph","ad","dob","g"].forEach(function(k){if(p[k])o[k]=p[k]});return o;
+  var o=Object.assign({},t);["ph","ad","dob","g","sub","deg","sd"].forEach(function(k){if(p[k])o[k]=p[k]});if(p.nm)o.name=p.nm;return o;
 }
 function avInner(id,name){
   var p=profs[String(id).toUpperCase()];
@@ -1494,24 +1503,35 @@ function subProfiles(){
   try{
     var un=window.FB.onSnapshot(window.FB.collection(window.db,"profiles"),function(sn){
       var o={};sn.forEach(function(d){var v=d.data();if(v&&v.o)o[String(v.o).toUpperCase()]=v});
-      profs=o;updateUserInfo();
+      profs=o;applyProfNames();updateUserInfo();
       var c=curPage();if(c==="p0")renderDash();else if(c==="p1")render();
     },function(err){console.error("profiles:",err)});
     unsubs.push(un);
   }catch(e){console.error(e)}
 }
+/* ឈ្មោះដែលគ្រូកែខ្លួនឯង (profiles.nm) → បង្ហាញគ្រប់កន្លែង */
+function applyProfNames(){
+  data.forEach(function(t){var p=profs[String(t.id).toUpperCase()];if(p&&p.nm)t.name=khNorm(p.nm)});
+  if(who){var q=profs[who.id];if(q&&q.nm)who.name=khNorm(q.nm)}
+}
+var pfFor="";   /* គ្រូដែលកំពុងកែប្រវត្តិរូប (ខ្លួនឯង ឬ Admin កែអ្នកផ្សេង) */
 function paintPf(){
-  var box=$("pfPhoto"),nm=($("pfName").value||who.id);
+  var box=$("pfPhoto"),nm=($("pfName").value||pfFor);
   box.innerHTML=pfPhoto&&okPhoto(pfPhoto)?"<img src='"+pfPhoto+"' alt=''>":"<span>"+esc(Array.from(nm.trim())[0]||"?")+"</span>";
   $("pfDel").hidden=!pfPhoto;
 }
-function openProfile(){
+function openProfile(id){
   if(!who)return;
-  var t=data.filter(function(x){return x.id===who.id})[0]||{},p=profs[who.id]||{};
-  $("pfId").value=who.id;$("pfName").value=who.name||t.name||who.id;
-  $("pfRole").value=isAdm()?"អ្នកគ្រប់គ្រង":(who.rl||t.rl||"សមាជិក");
+  id=(typeof id==="string"&&id)?id:who.id;
+  if(id!==who.id&&!isAdm()){alert("អ្នកកែបានតែព័ត៌មានរបស់ខ្លួនឯងប៉ុណ្ណោះ!");return}
+  pfFor=id;
+  var t=data.filter(function(x){return x.id===id})[0]||{},p=profs[id]||{},me=id===who.id;
+  $("pfH").textContent=me?"👤 ប្រវត្តិរូបរបស់ខ្ញុំ":"👤 ប្រវត្តិរូប — "+(t.name||id);
+  $("pfId").value=id;$("pfName").value=p.nm||t.name||(me?who.name:"")||id;
+  $("pfRole").value=(me&&isAdm())?"អ្នកគ្រប់គ្រង":(t.rl||"សមាជិក");
   $("pfG").value=p.g||t.g||"";$("pfDob").value=p.dob||t.dob||"";
   $("pfPh").value=p.ph||t.ph||"";$("pfAd").value=p.ad||t.ad||"";$("pfBio").value=p.bio||"";
+  $("pfSub").value=p.sub||t.sub||"";$("pfDeg").value=p.deg||t.deg||"";$("pfSd").value=p.sd||t.sd||"";
   pfPhoto=okPhoto(p.photo)?p.photo:"";paintPf();
   $("dlgProf").showModal();
 }
@@ -1533,8 +1553,8 @@ function shrinkPhoto(file,cb){
   };
   r.readAsDataURL(file);
 }
-$("btnProf").onclick=openProfile;
-$("wbAvatar").onclick=openProfile;
+$("btnProf").onclick=function(){openProfile()};
+$("wbAvatar").onclick=function(){openProfile()};
 $("pfPick").onclick=function(){$("pfFile").click()};
 $("pfFile").onchange=function(e){
   var f=e.target.files[0];e.target.value="";if(!f)return;
@@ -1545,14 +1565,19 @@ $("cxProf").onclick=function(){$("dlgProf").close()};
 $("fProf").onsubmit=function(e){
   e.preventDefault();
   if(!who||!window.FB)return;
-  var dob=$("pfDob").value.trim();
+  var id=pfFor||who.id;if(id!==who.id&&!isAdm())return;
+  var dob=$("pfDob").value.trim(),sd=$("pfSd").value.trim(),nm=khNorm($("pfName").value.trim().slice(0,100));
+  if(!nm){alert("សូមបញ្ចូលឈ្មោះ!");return}
   if(dob&&!/^\d{4}-\d{2}-\d{2}$/.test(dob)){alert("ថ្ងៃខែឆ្នាំកំណើតមិនត្រឹមត្រូវ!");return}
-  var rec={o:who.id,g:$("pfG").value,dob:dob,ph:$("pfPh").value.trim().slice(0,40),ad:$("pfAd").value.trim().slice(0,200),bio:$("pfBio").value.trim().slice(0,500),photo:pfPhoto,u:new Date().toISOString()};
+  if(sd&&!/^\d{4}-\d{2}-\d{2}$/.test(sd)){alert("ថ្ងៃចូលបម្រើការងារមិនត្រឹមត្រូវ!");return}
+  var rec={o:id,nm:nm,g:$("pfG").value,dob:dob,ph:$("pfPh").value.trim().slice(0,40),ad:$("pfAd").value.trim().slice(0,200),
+    sub:$("pfSub").value.trim().slice(0,60),deg:$("pfDeg").value.trim().slice(0,80),sd:sd,bio:$("pfBio").value.trim().slice(0,500),photo:pfPhoto,u:new Date().toISOString()};
   var btn=$("okProf");btn.disabled=true;
-  window.FB.setDoc(window.FB.doc(window.db,"profiles",who.id),rec).then(function(){
-    profs[who.id]=rec;$("dlgProf").close();updateUserInfo();
+  window.FB.setDoc(window.FB.doc(window.db,"profiles",id),rec).then(function(){
+    profs[id]=rec;applyProfNames();$("dlgProf").close();updateUserInfo();
+    if(isAdm()){var tt=data.filter(function(x){return x.id===id})[0];if(tt){["g","dob","ph","ad","sub","deg","sd"].forEach(function(k){tt[k]=rec[k]});tt.name=nm;save()}}   /* Admin៖ ធ្វើឱ្យតារាងគ្រូដូចគ្នា */
     var c=curPage();if(c==="p0")renderDash();else if(c==="p1")render();
-    notify("បានរក្សាទុកប្រវត្តិរូបរបស់អ្នក!");
+    notify(id===who.id?"បានរក្សាទុកប្រវត្តិរូបរបស់អ្នក!":"បានរក្សាទុកប្រវត្តិរូប");
   }).catch(function(e2){alert(e2&&e2.code==="permission-denied"?"គ្មានសិទ្ធិរក្សាទុកប្រវត្តិរូបទេ។ សូមប្រាប់អ្នកគ្រប់គ្រងឱ្យ Publish firestore.rules កំណែថ្មី (មាន profiles)។":authErr(e2))})
     .then(function(){btn.disabled=false});
 };
@@ -1714,10 +1739,15 @@ $("fileRestore").onchange=function(e){
 
 $("btnPrint").onclick=function(){window.print()};
 $("btnTheme").onclick=function(){
-  var curTheme=document.documentElement.getAttribute("data-theme");
-  var next=curTheme==="dark"?"light":"dark";
-  document.documentElement.setAttribute("data-theme",next);
+  var curTheme=document.documentElement.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  setTheme(curTheme==="dark"?"light":"dark");
 };
+/* ពណ៌ផ្ទៃ៖ "light" · "dark" · "" (តាមកុំព្យូទ័រ) · ចងចាំក្នុង browser */
+function setTheme(v){
+  if(v)document.documentElement.setAttribute("data-theme",v);else document.documentElement.removeAttribute("data-theme");
+  try{localStorage.setItem("theme",v||"auto")}catch(x){}
+}
+(function(){try{var v=localStorage.getItem("theme");if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)}catch(x){}})();
 var OK="teachers-v4-o",OC=[{"t": "ការរៀបចំ", "q": "តើគ្រូបង្រៀន...", "items": ["រៀបចំខ្លួនសមរម្យល្អកម្រិតណា (ឯកសណ្ឋាន)?", "មានសមា្ភរៈឧបទ្ទេសដើម្បីប្រើប្រាស់បានល្អកម្រិតណា (វីដេអូ សន្លឹកកិច្ចការ កិច្ចតែងការ...)?", "ប្រើប្រាស់គម្រូថ្នាក់រៀនត្រឡប់ (Flipped-Classroom) បានល្អកម្រិតណា?", "បានរៀបចំការអង្គុយរបស់សិស្ស ស្របតាមវិធីសាស្ត្របង្រៀនល្អកម្រិតណា?"], "max": 20}, {"t": "ការបង្រៀន", "q": "តើគ្រូបង្រៀន...", "items": ["បានប្រាប់សិស្សពីអ្វីដែលពួកគេនឹងរៀនក្នុងមេរៀននេះល្អកម្រិតណា (ប្រធានបទ វត្ថុបំណង...)?", "បានប្រើវិធីបង្រៀនបែបសតវត្សទី២១ មួយណា និងល្អកម្រិតណា?", "បានប្រើប្រភេទផ្សេងគ្នានៃសំណួរតាមកម្រិត ប្លូមតាក់សូណូមីកម្រិតណា? (ឧ. ចងចាំ, យល់ដឹង, អនុវត្ត វិភាគ វាយតម្លៃ បង្កើតថ្មី)", "បានលើកឧទាហរណ៍ និងពន្យល់បន្ថែមល្អកម្រិតណា?", "បានដឹកនាំសកម្មភាពបង្រៀនដោយលើកកម្ពស់ការគិតបែបស៊ីជម្រៅកម្រិតណា?", "បានផ្ដល់មតិយោបល់វិជ្ជមាន ដើម្បីជំរុញការរៀនសូត្រ និងទំនុកចិត្តដល់សិស្សសមរម្យកម្រិតណា?", "បានជួយសិស្សម្នាក់ៗមានឱកាសបញ្ចេញសមត្ថភាពរបស់ពួកគេ និងសកម្មកម្រិតណា?", "បានផ្តល់កិច្ចការបន្ថែមដល់សិស្សរៀនលឿនល្អកម្រិតណា?", "បានបញ្ចូលល្បែងសិក្សាជំនួយដល់ការបង្រៀនល្អកម្រិតណា?", "បានប្រើប្រាស់សម្ភារៈឧបទេសក្នុងការបង្រៀនល្អកម្រិតណា?", "បានពន្យល់ខ្លឹមសារមេរៀនប្រទាក់ក្រឡាគ្នាល្អកម្រិតណា?", "បានសម្រេចវត្ថុបំណងនៃមេរៀនល្អកម្រិតណា?", "បានដើរតាមជំហាននៃកិច្ចតែងការបង្រៀនមានប្រសិទ្ធភាពកម្រិតណា?"], "max": 65}, {"t": "ការគ្រប់គ្រងថ្នាក់រៀន", "q": "តើគ្រូបង្រៀន...", "items": ["បានចាប់ផ្តើម និងបញ្ចប់ការបង្រៀនទាន់ពេលវេលាល្អកម្រិតណា?", "បានប្រើពេលឱ្យសិស្សធ្វើកិច្ចការមានប្រសិទ្ធភាពកម្រិតណា?", "បានណែនាំសិស្សឱ្យធ្វើការងារច្បាស់លាស់ល្អកម្រិតណា?", "បានប្រើពេលវេលាបង្រៀនមានប្រសិទ្ធភាពល្អកម្រិតណា? (ខ្លឹមសារមេរៀន ត្រូវនឹងរយៈពេល)", "បានគ្រប់គ្រងសកម្មភាពសិស្សក្នុងថ្នាក់ល្អកម្រិតណា?"], "max": 25}, {"t": "ឥរិយាបថ", "q": "តើគ្រូបង្រៀន...", "items": ["បានប្រើប្រាស់សម្លេងក្នុងពេលបង្រៀនលឺ និងច្បាស់លាស់ល្អកម្រិតណា?", "បានប្រើប្រាស់ពាក្យសំដីទៅកាន់សិស្សសមរម្យកម្រិតណា?", "បានប្រើប្រាស់ទឹកមុខដាក់សិស្សមានភាពទាក់ទាញកម្រិតណា?", "បានទទួលយកគំនិតខុសប្លែកគ្នារបស់សិស្សល្អកម្រិតណា?", "បានបង្ហាញពីកាយវិការដាក់សិស្សសមរម្យកម្រិតណា?"], "max": 25}, {"t": "ការរៀន", "q": "តើសិស្ស...", "items": ["មានឱកាសក្នុងការបញ្ចេញមតិផ្ទាល់ខ្លួនដល់កម្រិតណា?", "ចាប់អារម្មណ៍ និងចូលរួមនៅក្នុងការងាររបស់ពួកគេសកម្មកម្រិតណា?", "បានប្រើធនធានផ្សេងៗបន្ថែមលើសសៀវភៅសិក្សាគោលបានច្រើនល្អកម្រិតណា?"], "max": 15}, {"t": "ឥរិយាបថ", "q": "តើសិស្ស...", "items": ["មានការគោរពគ្រូ ពេលចូល ឬចេញសមរម្យកម្រិតណា?", "បានប្រើពាក្យសំដីសមរម្យទៅគ្រូរបស់ពួកគេល្អកម្រិតណា?", "បានសម្តែងអាកប្បកិរិយាពេញចិត្តក្នុងម៉ោងសិក្សាកម្រិតណា?"], "max": 15}],OL=["ល្អប្រសើរ", "ល្អ", "មធ្យម", "ត្រូវកែលម្អ"],ob=loadO(),oc=0,ov=1,om=0;
 function defO(){var ids=data.map(function(t){return t.id}),r=[];
   for(var i=0;i<36;i++){r.push({t:ids.length?ids[i%ids.length]:"",o:ids.length?ids[(i+1)%ids.length]:"",sub:"គណិតវិទ្យា",cl:"",tm:"",rm:"",n:"",ab:"",ch:"",ls:"",ct:"",dt:"",sc:[],cm:[],g:["","","","","",""]})}
@@ -2105,3 +2135,52 @@ function initProfileMenu(){
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!dd.hidden)close(true)});
 }
 initProfileMenu();
+
+/* ===== ⚙️ ការកំណត់៖ ប្រមូលការកំណត់ទាំងអស់មកកន្លែងតែមួយ (ការកំណត់ក្នុងផ្ទាំងដើមនៅប្រើបានដដែល) ===== */
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(x){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(x){}}
+function openSettings(){
+  if(!who)return;
+  var m=$("dlgSet");
+  if(!m){
+    m=document.createElement("dialog");m.id="dlgSet";m.className="wide";document.body.appendChild(m);
+    m.addEventListener("click",function(e){
+      var b=e.target.closest("[data-st]");if(!b){if(e.target===m)m.close();return}
+      var k=b.dataset.st;
+      if(k==="x")return m.close();
+      if(k==="prof"){m.close();openProfile();return}
+      if(k==="pass"){m.close();$("btnPass").click();return}
+      if(k==="sig"){m.close();show("p13");setTimeout(function(){var s=document.querySelector("#tsBody [data-sg]");if(s)s.scrollIntoView({behavior:"smooth",block:"center"})},150);return}
+      if(k==="tch"){m.close();show("p1");return}
+      if(k==="grade"){m.close();show("p5");setTimeout(function(){var d=$("rset").closest("details");if(d){d.open=true;d.scrollIntoView({behavior:"smooth"})}},150);return}
+      if(k==="obs"){m.close();ov=3;show("p6");setTimeout(function(){var d=$("oth").closest("details");if(d){d.open=true;d.scrollIntoView({behavior:"smooth"})}},150);return}
+    });
+    m.addEventListener("change",function(e){
+      var el=e.target;
+      if(el.name==="stTheme")setTheme(el.value==="auto"?"":el.value);
+      else if(el.name==="stPm")lsSet("pmode",el.value);
+      else if(el.id==="stSnav"){var off=document.body.classList.contains("sn-off");if(el.checked===off)$("snTog").click()}
+      else if(el.id==="stSchool"&&isAdm()){rs.info=rs.info||{};rs.info.school=el.value.trim();savR();notify("បានរក្សាទុកឈ្មោះសាលា")}
+      else if(el.id==="stYear"&&isAdm()){rs.info=rs.info||{};rs.info.year=el.value;savR();if(window.renderSY)renderSY();notify("ឆ្នាំសិក្សា៖ "+inf().year)}
+    });
+  }
+  var th=lsGet("theme","auto"),pm=lsGet("pmode",""),adm=isAdm(),I=inf(),sig=window.SCHX&&SCHX.getSig(who.id);
+  function rad(name,val,cur,lbl){return"<label class=st-r><input type=radio name="+name+" value='"+val+"'"+(val===cur?" checked":"")+"> "+lbl+"</label>"}
+  var y0=parseInt(syStart()),cy=(rs.info&&rs.info.year)||"",yo="<option value=''>ស្វ័យប្រវត្តិ ("+syLabel(y0)+")</option>";
+  for(var y=y0+1;y>=y0-4;y--){var v=syLabel(y);yo+="<option"+(v===cy?" selected":"")+">"+v+"</option>"}
+  m.innerHTML="<div class=dlgb><h2 style='margin:0 0 12px'>⚙️ ការកំណត់</h2>"+
+   "<section class=st-s><h3>👤 ផ្ទាល់ខ្លួន</h3><div class=st-g>"+
+    "<button type=button data-st=prof>👤 កែប្រវត្តិរូប និងព័ត៌មានផ្ទាល់ខ្លួន<small>ឈ្មោះ · រូបថត · ភេទ · ថ្ងៃកំណើត · ទូរស័ព្ទ · អាសយដ្ឋាន · មុខវិជ្ជា · កម្រិតវប្បធម៌</small></button>"+
+    "<button type=button data-st=sig>✍️ ហត្ថលេខា<small>"+(sig?"មានហត្ថលេខារួចហើយ · ប្ដូរ ឬលុប":"មិនទាន់មាន · ផ្ទុករូប ឬគូរ")+"</small></button>"+
+    "<button type=button data-st=pass>🔑 ប្ដូរលេខសម្ងាត់<small>យ៉ាងតិច ៨ តួ</small></button></div></section>"+
+   "<section class=st-s><h3>🎨 ការបង្ហាញ</h3><div class=st-row><b>ពណ៌ផ្ទៃ</b>"+rad("stTheme","light",th,"☀️ ភ្លឺ")+rad("stTheme","dark",th,"🌙 ងងឹត")+rad("stTheme","auto",th,"💻 តាមកុំព្យូទ័រ")+"</div>"+
+    "<div class=st-row><label class=st-r><input type=checkbox id=stSnav"+(document.body.classList.contains("sn-off")?"":" checked")+"> បង្ហាញម៉ឺនុយចំហៀងខាងឆ្វេង (អេក្រង់ធំ)</label></div></section>"+
+   "<section class=st-s><h3>🖨️ ការបោះពុម្ព</h3><div class=st-row><b>ពេលចុចបោះពុម្ព</b>"+rad("stPm","",pm,"❓ សួររាល់ដង")+rad("stPm","pdf",pm,"📄 ទាញយក PDF ភ្លាម")+rad("stPm","print",pm,"🖨️ បើកផ្ទាំងបោះពុម្ពភ្លាម")+"</div></section>"+
+   "<section class=st-s><h3>🏫 សាលា"+(adm?"":" <small class=note style='margin:0'>(មើលបានតែប៉ុណ្ណោះ · កែបានតែ Admin)</small>")+"</h3><div class=fg>"+
+    "<div><label for=stSchool>ឈ្មោះសាលា</label><input id=stSchool value='"+esc(I.school)+"' "+(adm?"":"disabled")+"></div>"+
+    "<div><label for=stYear>ឆ្នាំសិក្សា</label><select id=stYear "+(adm?"":"disabled")+">"+yo+"</select></div></div>"+
+    (adm?"<div class=st-g style='margin-top:10px'><button type=button data-st=tch>👥 គ្រប់គ្រងគ្រូ និងគណនី<small>បន្ថែម · កែ · តួនាទី · សិទ្ធិប្រើ</small></button><button type=button data-st=grade>📊 ស្តង់ដារពិន្ទុ និងនិទ្ទេស<small>ពិន្ទុអតិបរមា · ភាគរយ A–F</small></button><button type=button data-st=obs>🔍 កម្រិតនិទ្ទេសសង្កេត<small>ភាគរយនៃ ១៦៥</small></button></div>":"")+
+   "</section></div><div class=dlgf><button type=button data-st=x class=primary>បិទ</button></div>";
+  m.showModal();
+}
+$("btnSet").onclick=openSettings;

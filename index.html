@@ -7,7 +7,7 @@
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
 <link rel="stylesheet" href="style.css?v=31">
-<link rel="stylesheet" href="modern.css?v=11">
+<link rel="stylesheet" href="modern.css?v=12">
 
 </head>
 <body>
@@ -50,6 +50,7 @@
           <div class="pd-sub" id="userInfo">ក្រុមបច្ចេកទេសគណិតវិទ្យា</div>
         </div>
         <button type="button" id="btnProf" class="drop-item" role="menuitem"><span aria-hidden="true">👤</span> ប្រវត្តិរូបរបស់ខ្ញុំ</button>
+        <button type="button" id="btnSet" class="drop-item" role="menuitem"><span aria-hidden="true">⚙️</span> ការកំណត់</button>
         <button type="button" id="btnPass" class="drop-item" role="menuitem" title="ប្ដូរលេខសម្ងាត់ផ្ទាល់ខ្លួន"><span aria-hidden="true">🔑</span> ប្ដូរលេខសម្ងាត់</button>
         <button type="button" id="btnRestore" class="drop-item" role="menuitem" title="បញ្ចូលឯកសារទិន្នន័យដែលបានបម្រុងទុកមកវិញ"><span aria-hidden="true">📂</span> បញ្ចូលទិន្នន័យវិញ</button>
         <input type="file" id="fileRestore" accept=".json" hidden>
@@ -409,7 +410,7 @@
 
 <dialog id="dlgProf">
   <form id="fProf" method="dialog">
-    <h2>👤 ប្រវត្តិរូបរបស់ខ្ញុំ</h2>
+    <h2 id="pfH">👤 ប្រវត្តិរូបរបស់ខ្ញុំ</h2>
     <div class="full pf-top">
       <div id="pfPhoto" class="pf-photo" aria-label="រូបថតប្រវត្តិរូប"></div>
       <div class="pf-btns">
@@ -421,11 +422,15 @@
     </div>
     <div><label for="pfId">លេខសម្គាល់គ្រូ</label><input id="pfId" readonly></div>
     <div><label for="pfRole">តួនាទី</label><input id="pfRole" readonly></div>
-    <div class="full"><label for="pfName">ឈ្មោះ (កែបានតាមរយៈអ្នកគ្រប់គ្រង)</label><input id="pfName" readonly></div>
+    <div class="full"><label for="pfName">ឈ្មោះ *</label><input id="pfName" maxlength="100" required></div>
     <div><label for="pfG">ភេទ</label><select id="pfG"><option value="">មិនបញ្ជាក់</option><option>ប្រុស</option><option>ស្រី</option></select></div>
     <div><label for="pfDob">ថ្ងៃខែឆ្នាំកំណើត</label><input id="pfDob" type="date"></div>
     <div><label for="pfPh">លេខទូរស័ព្ទ</label><input id="pfPh" inputmode="tel" maxlength="40"></div>
     <div><label for="pfAd">អាសយដ្ឋាន</label><input id="pfAd" maxlength="200"></div>
+    <div><label for="pfSub">មុខវិជ្ជា</label><input id="pfSub" maxlength="60"></div>
+    <div><label for="pfDeg">កម្រិតវប្បធម៌</label><input id="pfDeg" list="pfDegL" maxlength="80"><datalist id="pfDegL"><option value="គ្រូបង្រៀនកម្រិតឧត្តម"><option value="គ្រូបង្រៀនកម្រិតមូលដ្ឋាន"><option value="គ្រូកិច្ចសន្យា"></datalist></div>
+    <div><label for="pfSd">ចូលបម្រើការងារ</label><input id="pfSd" type="date"></div>
+    <p class="note full" style="margin:0">ℹ️ លេខសម្គាល់ · តួនាទី · ស្ថានភាព · ថ្នាក់បង្រៀន កែបានតែអ្នកគ្រប់គ្រង (Admin)។</p>
     <div class="full"><label for="pfBio">ពីខ្ញុំ (សង្ខេប ≤ ៥០០ តួ)</label><textarea id="pfBio" rows="3" maxlength="500"></textarea></div>
     <div class="foot">
       <button type="button" id="cxProf">បោះបង់</button>
@@ -478,7 +483,7 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=32"></script>
+<script src="script.js?v=33"></script>
 <script src="sched.js?v=17"></script>
 <script src="curriculum7.js?v=4"></script>
 <script src="curriculum8.js?v=1"></script>

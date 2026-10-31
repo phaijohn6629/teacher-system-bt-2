@@ -420,3 +420,13 @@ header { z-index: 200; }
 .pc-btns button small{font-weight:400;font-size:.75rem;opacity:.85}
 .pc-x{background:none;border:0;color:var(--mute);cursor:pointer;padding:6px 12px}
 @media print{#pchoose{display:none!important}}
+/* ⚙️ ការកំណត់ */
+#dlgSet .st-s{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+#dlgSet .st-s h3{margin:0 0 10px;font-size:1rem}
+#dlgSet .st-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+#dlgSet .st-g button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+#dlgSet .st-g button small{font-weight:400;font-size:.75rem;color:var(--mute)}
+#dlgSet .st-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;margin:4px 0}
+#dlgSet .st-row>b{min-width:120px}
+#dlgSet .st-r{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+#dlgSet .st-r input{width:auto;margin:0}
