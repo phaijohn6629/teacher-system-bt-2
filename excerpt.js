@@ -53,17 +53,27 @@ function cxP(p){var m=/^(\d+)(?:\s*-\s*(\d+))?$/.exec(String(p||"").trim());if(!
 function cxPLabel(p){var q=cxP(p);if(!q)return esc(p||"");return"ម៉ោងទី"+kh(q[0])+(q[1]>q[0]?"–"+kh(q[1]):"")}
 function cxPTime(p){var q=cxP(p);if(!q)return"";return kh(PT[q[0]].split(" - ")[0]+"–"+PT[q[1]].split(" - ")[1])}
 /* ម៉ោងជាប់គ្នានៃថ្នាក់ cls ក្នុងថ្ងៃ di តាមកាលវិភាគ (បំបែកនៅម៉ោងសម្រាក) */
-function cxBlocks(di,cls){
-  var ps=schOf(cxT).filter(function(s){return s[0]===di&&s[2]===cls}).map(function(s){return s[1]}).sort(function(a,b){return a-b}),out=[];
+function cxBlocks(di,cls,tid){
+  var ps=schOf(tid||cxT).filter(function(s){return s[0]===di&&s[2]===cls}).map(function(s){return s[1]}).sort(function(a,b){return a-b}),out=[];
   ps.forEach(function(p){var l=out[out.length-1];if(l&&l[1]===p-1&&!BRK[p-1])l[1]=p;else out.push([p,p])});
   return out.map(function(b){return b[0]+(b[1]>b[0]?"-"+b[1]:"")});
 }
+/* ជួរត្រឹមត្រូវ = ត្រូវតាមកាលវិភាគ (ថ្នាក់ និងម៉ោងនៃថ្ងៃនោះ) ឬគ្រូបន្ថែមខ្លួនឯង (r.x = បង្រៀនបន្ថែម) */
+function onSched(r,tid){
+  if(!r.cls||!/^\d{4}-\d{2}-\d{2}$/.test(r.d||""))return false;
+  var di=di0(r.d),ps={};schOf(tid||cxT).forEach(function(s){if(s[0]===di&&s[2]===r.cls)ps[s[1]]=1});
+  if(!Object.keys(ps).length)return false;
+  var q=cxP(r.p);if(!q)return!r.p;
+  for(var p=q[0];p<=q[1];p++)if(!ps[p])return false;
+  return true;
+}
+function cxOk(r,tid){return!!r.x||onSched(r,tid)}
 function cxSort(rec){rec.rows.sort(function(a,b){var q=cxP(a.p),r=cxP(b.p);return(a.d||"9999").localeCompare(b.d||"9999")||((q?q[0]:99)-(r?r[0]:99))||String(a.cls||"").localeCompare(String(b.cls||""))})}
-function cxFill(){
+function cxFill(silent){
   /* បង្កើតជួរតាមកាលវិភាគ៖ គ្រប់ថ្នាក់ គ្រប់ម៉ោងបង្រៀន (រំលងថ្ងៃអាទិត្យ និងបុណ្យជាតិ) */
-  if(!canEd(cxT)){alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
+  if(!canEd(cxT)){if(!silent)alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
   var cls=cxClasses(cxT).mine;
-  if(!cls.length){alert("កាលវិភាគរបស់គ្រូនេះមិនទាន់មានម៉ោងបង្រៀនទេ។ សូមបញ្ចូលក្នុង «កាលវិភាគបង្រៀន» ជាមុន ឬបន្ថែមជួរដោយដៃ។");return}
+  if(!cls.length){if(silent)return;alert("កាលវិភាគរបស់គ្រូនេះមិនទាន់មានម៉ោងបង្រៀនទេ។ សូមបញ្ចូលក្នុង «កាលវិភាគបង្រៀន» ជាមុន ឬបន្ថែមជួរដោយដៃ។");return}
   var rec=cxRec(true),e=cxMonthEnd(),byD={};rec.rows.forEach(function(r){(byD[r.d]=byD[r.d]||[]).push(r)});
   var y0=+cxMo.slice(0,4),m0=+cxMo.slice(5,7),y1=+e.slice(0,4),m1=+e.slice(5,7),add=0;
   for(var y=y0,m=m0;y<y1||(y===y1&&m<=m1);){
@@ -81,7 +91,7 @@ function cxFill(){
     }
     m++;if(m>12){m=1;y++}
   }
-  cxSort(rec);saveCx();renderCx();notify("បានបន្ថែម "+add+" ជួរតាមកាលវិភាគ");
+  cxSort(rec);saveCx();if(silent)return;renderCx();notify("បានបន្ថែម "+add+" ជួរតាមកាលវិភាគ");
 }
 /* ជ្រើសជំពូក/មេរៀនតាមជួរ៖ មេរៀនតាមកម្មវិធីសិក្សាសប្ដាហ៍នោះនៅខាងលើ បន្ទាប់មកមេរៀនទាំងអស់តាមជំពូក */
 function cxG(cls){var g=parseInt(cls);return window.CUR&&window.CUR[g]&&window.CUR[g].LS?g:0}
@@ -118,6 +128,8 @@ function renderCx(){
   var adm=isAdm();
   if(!cxT||(!adm&&cxT!==who.id)||!data.some(function(t){return t.id===cxT}))cxT=who.id;
   cxMigrate();
+  var r0=cxRec(false);   /* បង្កើតជួរតាមកាលវិភាគដោយស្វ័យប្រវត្តិ ម្ដងគត់ក្នុងមួយខែ (ជួរដែលគ្រូលុបចោល មិនត្រឡប់មកវិញទេ) */
+  if((!r0||!r0.auto)&&canEd(cxT)&&cxClasses(cxT).mine.length){cxFill(true);var r1=cxRec(false);if(r1){r1.auto=1;saveCx()}}
   $("cxT").innerHTML=data.filter(function(t){return adm||t.id===who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===cxT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   $("cxM").value=cxMo;
   var rec=cxRec(false),ro=!canEd(cxT),t=teacherOf(cxT),ft=(rec&&rec.ft)||{pl:"រាជធានីភ្នំពេញ"};
@@ -125,17 +137,19 @@ function renderCx(){
   ["cxFill","cxAdd","cxCur"].forEach(function(i){$(i).style.display=ro?"none":""});
   var rows=(rec&&rec.rows)||[],h="<div class=tsh><div><label>បុគ្គលិកឈ្មោះ</label><input value='"+esc(t.name||"")+"' readonly></div>"+
     "<div><label>មុខវិជ្ជា</label><input data-cf='sb' value='"+esc((rec&&rec.sb)||t.sub||"គណិតវិទ្យា")+"' "+(ro?"readonly":"")+"></div></div>";
-  var b="";
+  var b="",bad=0;
   rows.forEach(function(r,i){
     if(!i||rows[i-1].d!==r.d)b+="<tr class=cxday><td colspan=5><div class=cxdh><input type=date data-cday='"+esc(r.d||"")+"' value='"+esc(r.d||"")+"' "+(ro?"disabled":"")+"><b>"+esc(cxDateTxt(r.d))+"</b>"+
       (ro?"":"<button type=button data-cadd='"+esc(r.d||"")+"'>＋ បន្ថែមថ្នាក់/ម៉ោង</button>")+"</div></td></tr>";
-    var g=cxG(r.cls);
-    b+="<tr><td><select data-ci="+i+" data-ck='cls' "+(ro?"disabled":"")+">"+cxClsOpts(r)+"</select></td>"+
+    var g=cxG(r.cls),ok=cxOk(r);if(!ok)bad++;
+    b+="<tr"+(ok?"":" class=cxbad")+"><td><select data-ci="+i+" data-ck='cls' "+(ro?"disabled":"")+">"+cxClsOpts(r)+"</select>"+
+      (!ok?"<small class=cxw>⚠️ មិនត្រូវកាលវិភាគ</small>":r.x&&!onSched(r)?"<small class=cxx>➕ បង្រៀនបន្ថែម</small>":"")+"</td>"+
       "<td><select data-ci="+i+" data-ck='p' "+(ro?"disabled":"")+">"+cxPOpts(r)+"</select></td>"+
       "<td>"+(g?"<select class=cxls data-ci="+i+" data-ck='ls' "+(ro?"disabled":"")+">"+cxLsOpts(g,r)+"</select>":"")+"<textarea rows=2 data-ci="+i+" data-ck='c' "+(ro?"readonly":"")+">"+esc(r.c||"")+"</textarea></td>"+
       "<td><textarea rows=2 data-ci="+i+" data-ck='a' placeholder='ឈ្មោះ/ចំនួនសិស្សអវត្តមាន' "+(ro?"readonly":"")+">"+esc(r.a||"")+"</textarea></td>"+
       "<td>"+(ro?"":"<button type=button class=danger data-cdel="+i+" title='លុបជួរ'>✕</button>")+"</td></tr>";
   });
+  if(bad)h+="<div class=cxwarn>⚠️ មាន <b>"+kh(bad)+"</b> ជួរដែលថ្នាក់/ម៉ោងមិនត្រូវតាមកាលវិភាគរបស់គ្រូ។ ជួរទាំងនេះមិនត្រូវបោះពុម្ព ហើយមិនចូល Workplan ទេ។ សូមកែថ្នាក់/ម៉ោងឱ្យត្រូវ ឬលុបចោល។"+(ro?"":" <button type=button data-cclean>🧹 លុបជួរមិនត្រូវកាលវិភាគ</button>")+"</div>";
   h+="<div class=wrap><table class=tsg id=cxG><thead><tr><th style='width:130px'>ថ្នាក់</th><th style='width:190px'>ម៉ោង</th><th>ខ្លឹមសារមេរៀន</th><th style='width:24%'>អវត្តមានសិស្ស</th><th style='width:44px'></th></tr></thead><tbody>"+
     (b||"<tr><td colspan=5 class=empty>មិនទាន់មានជួរទេ។ ចុច «⚡ បង្កើតជួរតាមកាលវិភាគ» ឬ «＋ ថ្ងៃថ្មី»។</td></tr>")+"</tbody></table></div>";
   h+="<div class=tsf><fieldset><legend>ជើងក្រោម (តាមគម្រូ Workplan)</legend>"+
@@ -154,6 +168,7 @@ window.CXDAYS=function(tid,ym){
     if(k.split("_")[0]!==tid||done[k])return;var rec=cxd.r[k];
     (rec.rows||[]).forEach(function(r){
       if((r.d||"").slice(0,7)!==ym)return;
+      if(isNew(k)&&!cxOk(r,tid))return;
       var cls=r.cls||rec.cls||"",g=parseInt(cls),t="";
       if(r.ls&&window.CUR[g]&&window.CUR[g].LS[r.ls]){var l=window.CUR[g].LS[r.ls];t="មេរៀនទី"+kh(l[5]||r.ls)+" "+l[0]}
       else t=((r.c||"").split("\n").filter(Boolean)[0]||"").replace(/\s+—.*$/,"").replace(/^ជំពូកទី\S+\s.*?·\s*/,"");
@@ -210,7 +225,12 @@ $("cxBody").onchange=function(e){
 $("cxBody").onclick=function(e){
   if(!canEd(cxT))return;
   var a=e.target.closest("[data-cadd]");
-  if(a){var rec=cxRec(true);rec.rows.push({d:a.getAttribute("data-cadd"),cls:"",p:"",c:"",a:""});cxSort(rec);saveCx();renderCx();return}
+  if(a){var rec=cxRec(true);rec.rows.push({d:a.getAttribute("data-cadd"),cls:"",p:"",c:"",a:"",x:1});cxSort(rec);saveCx();renderCx();return}
+  if(e.target.closest("[data-cclean]")){
+    var rx=cxRec(false);if(!rx)return;var n=rx.rows.filter(function(r){return!cxOk(r)}).length;
+    if(n&&confirm("លុប "+n+" ជួរដែលមិនត្រូវតាមកាលវិភាគ?")){rx.rows=rx.rows.filter(function(r){return cxOk(r)});saveCx();renderCx();notify("បានលុប "+n+" ជួរ")}
+    return;
+  }
   var b=e.target.closest("[data-cdel]");if(!b)return;
   var rc=cxRec(false);if(!rc)return;
   if(confirm("តើលុបជួរនេះមែនទេ?")){rc.rows.splice(+b.dataset.cdel,1);saveCx();renderCx()}
@@ -249,7 +269,7 @@ $("cxAdd").onclick=function(){   /* ＋ ថ្ងៃថ្មី៖ ថ្ងៃ
   var rec=cxRec(true),last=rec.rows.length?rec.rows[rec.rows.length-1].d:"",d;
   if(/^\d{4}-\d{2}-\d{2}$/.test(last)){var a=last.split("-").map(Number);d=new Date(a[0],a[1]-1,a[2]+1);if(!d.getDay())d.setDate(d.getDate()+1)}
   else d=new Date(+cxMo.slice(0,4),+cxMo.slice(5,7)-1,1);
-  rec.rows.push({d:iso(d.getFullYear(),d.getMonth()+1,d.getDate()),cls:"",p:"",c:"",a:""});cxSort(rec);saveCx();renderCx();
+  rec.rows.push({d:iso(d.getFullYear(),d.getMonth()+1,d.getDate()),cls:"",p:"",c:"",a:"",x:1});cxSort(rec);saveCx();renderCx();
 };
 function cxPrintHTML(){
   var rec=cxRec(false)||{rows:[],ft:{}},t=teacherOf(cxT),ft=rec.ft||{},y=+cxMo.slice(0,4),m=+cxMo.slice(5,7),e=cxMonthEnd(),y2=+e.slice(0,4),m2=+e.slice(5,7);
@@ -257,7 +277,7 @@ function cxPrintHTML(){
   var tdy=new Date(),tdIso=iso(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()),fd=ft.d||tdIso,wa=fd.split("-").map(Number);
   var plc=(ft.pl&&ft.pl!=="ភ្នំពេញ")?ft.pl:"រាជធានីភ្នំពេញ",wg="ថ្ងៃទី "+kh(wa[2])+" ខែ "+M[wa[1]-1]+" ឆ្នាំ"+kh(wa[0]);
   var wl=ft.klu==="1"?((ft.d&&ft.kt)?ft.kt:KhCal.fmt(wa[0],wa[1],wa[2])):"",sig=(ft.sgo==="0")?"":getSig(cxT);
-  var rows=(rec.rows||[]).slice(),cl=[];rows.forEach(function(r){if(r.cls&&cl.indexOf(r.cls)<0)cl.push(r.cls)});cl.sort();
+  var rows=(rec.rows||[]).filter(function(r){return cxOk(r)}),cl=[];rows.forEach(function(r){if(r.cls&&cl.indexOf(r.cls)<0)cl.push(r.cls)});cl.sort();
   return"<div class='pg cxp'>"+
    "<div class=cxh><img src='"+LOGO2+"' class=cxlogo alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
     "<div class=moul style='font-size:13pt'>សម្រង់អត្ថបទប្រចាំខែ</div><div class=cxper>"+esc(per)+"</div></div></div>"+

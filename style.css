@@ -330,3 +330,6 @@ body.pm .pg.land{page-break-inside:avoid}
 #cxG tr.cxday td{background:var(--soft);padding:6px 8px}
 .cxdh{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.cxdh input[type=date]{width:auto;margin:0}.cxdh b{font-size:.95rem}.cxdh button{margin-left:auto;padding:4px 12px;font-size:.85rem}
 #cxG select{width:100%;margin:0 0 4px}
+#cxG tr.cxbad td{background:rgba(239,68,68,.08)}
+#cxG small.cxw{color:#dc2626;font-weight:700}#cxG small.cxx{color:#059669;font-weight:700}
+.cxwarn{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);font-size:.9rem}.cxwarn button{margin-left:8px;padding:4px 10px}
