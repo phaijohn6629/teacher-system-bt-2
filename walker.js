@@ -6,7 +6,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var el=null,x=0,dir=1,raf=0,last=0,pause=0,face="",faceKey="",sayT=0,nag=0,REDUCE=matchMedia("(prefers-reduced-motion: reduce)").matches;
+var el=null,x=0,dir=1,raf=0,last=0,pause=0,face="",faceKey="",sayT=0,nag=0,REDUCE=false;
 function on(){try{return localStorage.getItem("walker")!=="0"}catch(e){return true}}
 function toonKey(){return"toon_"+(window.who?who.id:"")}
 function ownToon(){try{return localStorage.getItem(toonKey())||""}catch(e){return""}}
@@ -86,7 +86,8 @@ function say(text,kind,ms){
 function react(nt){
   if(!on()){off();return}
   if(!mount())return;paint();
-  if(REDUCE){el.style.transform="translateX(8px)"}else if(!raf)raf=requestAnimationFrame(step);
+  REDUCE=document.documentElement.classList.contains("no-motion");
+  if(REDUCE){if(raf)cancelAnimationFrame(raf);raf=0;el.style.transform="translateX(8px)"}else if(!raf)raf=requestAnimationFrame(step);
   clearInterval(nag);
   var warn=nt.filter(function(x){return x[0]!=="🗓️"}).length,ev=nt.length-warn;
   var go=function(){

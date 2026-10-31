@@ -1749,6 +1749,12 @@ function setTheme(v){
   try{localStorage.setItem("theme",v||"auto")}catch(x){}
 }
 (function(){try{var v=localStorage.getItem("theme");if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)}catch(x){}})();
+/* ចលនា (Logo វិល · តួអង្គ cartoon)៖ "on" = បើកជានិច្ច (លំនាំដើម) · "auto" = តាមការកំណត់ «Reduce Motion» របស់ឧបករណ៍ */
+function applyMotion(){
+  var m="on";try{m=localStorage.getItem("motion")||"on"}catch(x){}
+  document.documentElement.classList.toggle("no-motion",m==="auto"&&matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+applyMotion();
 var OK="teachers-v4-o",OC=[{"t": "ការរៀបចំ", "q": "តើគ្រូបង្រៀន...", "items": ["រៀបចំខ្លួនសមរម្យល្អកម្រិតណា (ឯកសណ្ឋាន)?", "មានសមា្ភរៈឧបទ្ទេសដើម្បីប្រើប្រាស់បានល្អកម្រិតណា (វីដេអូ សន្លឹកកិច្ចការ កិច្ចតែងការ...)?", "ប្រើប្រាស់គម្រូថ្នាក់រៀនត្រឡប់ (Flipped-Classroom) បានល្អកម្រិតណា?", "បានរៀបចំការអង្គុយរបស់សិស្ស ស្របតាមវិធីសាស្ត្របង្រៀនល្អកម្រិតណា?"], "max": 20}, {"t": "ការបង្រៀន", "q": "តើគ្រូបង្រៀន...", "items": ["បានប្រាប់សិស្សពីអ្វីដែលពួកគេនឹងរៀនក្នុងមេរៀននេះល្អកម្រិតណា (ប្រធានបទ វត្ថុបំណង...)?", "បានប្រើវិធីបង្រៀនបែបសតវត្សទី២១ មួយណា និងល្អកម្រិតណា?", "បានប្រើប្រភេទផ្សេងគ្នានៃសំណួរតាមកម្រិត ប្លូមតាក់សូណូមីកម្រិតណា? (ឧ. ចងចាំ, យល់ដឹង, អនុវត្ត វិភាគ វាយតម្លៃ បង្កើតថ្មី)", "បានលើកឧទាហរណ៍ និងពន្យល់បន្ថែមល្អកម្រិតណា?", "បានដឹកនាំសកម្មភាពបង្រៀនដោយលើកកម្ពស់ការគិតបែបស៊ីជម្រៅកម្រិតណា?", "បានផ្ដល់មតិយោបល់វិជ្ជមាន ដើម្បីជំរុញការរៀនសូត្រ និងទំនុកចិត្តដល់សិស្សសមរម្យកម្រិតណា?", "បានជួយសិស្សម្នាក់ៗមានឱកាសបញ្ចេញសមត្ថភាពរបស់ពួកគេ និងសកម្មកម្រិតណា?", "បានផ្តល់កិច្ចការបន្ថែមដល់សិស្សរៀនលឿនល្អកម្រិតណា?", "បានបញ្ចូលល្បែងសិក្សាជំនួយដល់ការបង្រៀនល្អកម្រិតណា?", "បានប្រើប្រាស់សម្ភារៈឧបទេសក្នុងការបង្រៀនល្អកម្រិតណា?", "បានពន្យល់ខ្លឹមសារមេរៀនប្រទាក់ក្រឡាគ្នាល្អកម្រិតណា?", "បានសម្រេចវត្ថុបំណងនៃមេរៀនល្អកម្រិតណា?", "បានដើរតាមជំហាននៃកិច្ចតែងការបង្រៀនមានប្រសិទ្ធភាពកម្រិតណា?"], "max": 65}, {"t": "ការគ្រប់គ្រងថ្នាក់រៀន", "q": "តើគ្រូបង្រៀន...", "items": ["បានចាប់ផ្តើម និងបញ្ចប់ការបង្រៀនទាន់ពេលវេលាល្អកម្រិតណា?", "បានប្រើពេលឱ្យសិស្សធ្វើកិច្ចការមានប្រសិទ្ធភាពកម្រិតណា?", "បានណែនាំសិស្សឱ្យធ្វើការងារច្បាស់លាស់ល្អកម្រិតណា?", "បានប្រើពេលវេលាបង្រៀនមានប្រសិទ្ធភាពល្អកម្រិតណា? (ខ្លឹមសារមេរៀន ត្រូវនឹងរយៈពេល)", "បានគ្រប់គ្រងសកម្មភាពសិស្សក្នុងថ្នាក់ល្អកម្រិតណា?"], "max": 25}, {"t": "ឥរិយាបថ", "q": "តើគ្រូបង្រៀន...", "items": ["បានប្រើប្រាស់សម្លេងក្នុងពេលបង្រៀនលឺ និងច្បាស់លាស់ល្អកម្រិតណា?", "បានប្រើប្រាស់ពាក្យសំដីទៅកាន់សិស្សសមរម្យកម្រិតណា?", "បានប្រើប្រាស់ទឹកមុខដាក់សិស្សមានភាពទាក់ទាញកម្រិតណា?", "បានទទួលយកគំនិតខុសប្លែកគ្នារបស់សិស្សល្អកម្រិតណា?", "បានបង្ហាញពីកាយវិការដាក់សិស្សសមរម្យកម្រិតណា?"], "max": 25}, {"t": "ការរៀន", "q": "តើសិស្ស...", "items": ["មានឱកាសក្នុងការបញ្ចេញមតិផ្ទាល់ខ្លួនដល់កម្រិតណា?", "ចាប់អារម្មណ៍ និងចូលរួមនៅក្នុងការងាររបស់ពួកគេសកម្មកម្រិតណា?", "បានប្រើធនធានផ្សេងៗបន្ថែមលើសសៀវភៅសិក្សាគោលបានច្រើនល្អកម្រិតណា?"], "max": 15}, {"t": "ឥរិយាបថ", "q": "តើសិស្ស...", "items": ["មានការគោរពគ្រូ ពេលចូល ឬចេញសមរម្យកម្រិតណា?", "បានប្រើពាក្យសំដីសមរម្យទៅគ្រូរបស់ពួកគេល្អកម្រិតណា?", "បានសម្តែងអាកប្បកិរិយាពេញចិត្តក្នុងម៉ោងសិក្សាកម្រិតណា?"], "max": 15}],OL=["ល្អប្រសើរ", "ល្អ", "មធ្យម", "ត្រូវកែលម្អ"],ob=loadO(),oc=0,ov=1,om=0;
 function defO(){var ids=data.map(function(t){return t.id}),r=[];
   for(var i=0;i<36;i++){r.push({t:ids.length?ids[i%ids.length]:"",o:ids.length?ids[(i+1)%ids.length]:"",sub:"គណិតវិទ្យា",cl:"",tm:"",rm:"",n:"",ab:"",ch:"",ls:"",ct:"",dt:"",sc:[],cm:[],g:["","","","","",""]})}
@@ -2162,6 +2168,7 @@ function openSettings(){
       var el=e.target;
       if(el.name==="stTheme")setTheme(el.value==="auto"?"":el.value);
       else if(el.name==="stPm")lsSet("pmode",el.value);
+      else if(el.name==="stMo"){lsSet("motion",el.value);applyMotion();if(!$("p0").hidden)renderDash()}
       else if(el.id==="stWalk"){WALKER.set(el.checked);if(el.checked&&!$("p0").hidden)renderDash()}
       else if(el.id==="stSnav"){var off=document.body.classList.contains("sn-off");if(el.checked===off)$("snTog").click()}
       else if(el.id==="stSchool"&&isAdm()){rs.info=rs.info||{};rs.info.school=el.value.trim();savR();notify("បានរក្សាទុកឈ្មោះសាលា")}
@@ -2178,6 +2185,7 @@ function openSettings(){
     "<button type=button data-st=sig>✍️ ហត្ថលេខា<small>"+(sig?"មានហត្ថលេខារួចហើយ · ប្ដូរ ឬលុប":"មិនទាន់មាន · ផ្ទុករូប ឬគូរ")+"</small></button>"+
     "<button type=button data-st=pass>🔑 ប្ដូរលេខសម្ងាត់<small>យ៉ាងតិច ៨ តួ</small></button></div></section>"+
    "<section class=st-s><h3>🎨 ការបង្ហាញ</h3><div class=st-row><b>ពណ៌ផ្ទៃ</b>"+rad("stTheme","light",th,"☀️ ភ្លឺ")+rad("stTheme","dark",th,"🌙 ងងឹត")+rad("stTheme","auto",th,"💻 តាមកុំព្យូទ័រ")+"</div>"+
+    "<div class=st-row><b>ចលនា (Logo · តួអង្គ)</b>"+rad("stMo","on",lsGet("motion","on"),"▶️ បើកជានិច្ច")+rad("stMo","auto",lsGet("motion","on"),"📱 តាមការកំណត់ឧបករណ៍ (Reduce Motion)")+"</div>"+
     "<div class=st-row><label class=st-r><input type=checkbox id=stWalk"+(window.WALKER&&WALKER.on()?" checked":"")+"> 🚶 បង្ហាញតួអង្គ cartoon ដើរលើបដាស្វាគមន៍</label>"+
       "<button type=button data-st=toonUp>🖼️ ដាក់រូប cartoon ផ្ទាល់ខ្លួន</button>"+(window.WALKER&&WALKER.hasOwn()?"<button type=button data-st=toonDel class=danger>លុបរូប cartoon</button>":"")+
       "<span class=note style='margin:0'>បើមិនដាក់ ប្រព័ន្ធប្រើរូបថតប្រវត្តិរូប + តម្រង cartoon</span></div>"+

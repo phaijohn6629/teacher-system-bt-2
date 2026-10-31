@@ -434,7 +434,7 @@ header { z-index: 200; }
 @keyframes logoSpin{to{transform:rotate(360deg)}}
 .brand-logo{animation:logoSpin 20s linear infinite}
 .brand-logo:hover{animation-play-state:paused}
-@media (prefers-reduced-motion:reduce){.brand-logo{animation:none}}
+html.no-motion .brand-logo{animation:none}
 @media print{.brand-logo{animation:none}}
 /* ===== តួអង្គ cartoon ដើរលើបដាស្វាគមន៍ ===== */
 .welcome-banner.has-wk{padding-bottom:86px}
@@ -472,5 +472,5 @@ header { z-index: 200; }
 .wk-bub.event{background:#fef3c7;color:#92400e}.wk-bub.event::after{border-right-color:#fef3c7}.wk.bl .wk-bub.event::after{border-left-color:#fef3c7}
 @keyframes wkPop{from{opacity:0;transform:scale(.7)}}
 @media (max-width:600px){.welcome-banner.has-wk{padding-bottom:70px}.wk{width:42px;height:66px}.wk-bub{bottom:36px;left:46px;font-size:11px;max-width:200px}.wk.bl .wk-bub{right:46px}}
-@media (prefers-reduced-motion:reduce){.wk *{animation:none!important}}
+html.no-motion .wk *{animation:none!important}
 @media print{.wk{display:none!important}}
