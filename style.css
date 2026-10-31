@@ -341,3 +341,9 @@ body.pm .pg.land{page-break-inside:avoid}
 /* PDF៖ html2canvas មិនគាំទ្រ writing-mode → បង្វិលដោយ transform */
 .pdfw .tsx-g td.st{position:relative;overflow:hidden}
 .pdfw .tsx-g td.st span{writing-mode:horizontal-tb;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;margin:0}
+/* Workplan៖ អក្សរតម្រៀបឆ្វេង ចុះបន្ទាត់ពេលវែង (អក្សរខ្មែរគ្មានដកឃ្លា) */
+.wpt tr.wc td{text-align:left;vertical-align:top;white-space:normal;line-height:1.3;padding:.8mm 1.2mm;overflow-wrap:anywhere;word-break:break-word}
+.wpt .wpl{padding-left:2.2mm;text-indent:-2.2mm;margin-bottom:.6mm}
+.wpt .wpl::before{content:"• ";color:#555}
+.wpt .wpl b{font-weight:700;color:#1e3a8a}
+.wpt .hl{text-align:center}

@@ -190,6 +190,13 @@ function schedPrint(){
 }
 $("stPr").onclick=schedPrint;
 
+/* Workplan៖ មួយធាតុក្នុងមួយជួរ (ចុះបន្ទាត់ពេលវែង) · «ថ្នាក់៖» ជាអក្សរដិត */
+function wpLines(txt){
+  return String(txt||"").split(/\r?\n/).filter(function(l){return l.trim()}).map(function(l){
+    var m=/^([A-Za-z0-9][A-Za-z0-9\-]*)៖\s*(.*)$/.exec(l.trim());
+    return"<div class=wpl>"+(m?"<b>"+esc(m[1])+"៖</b> "+esc(m[2]):esc(l.trim()))+"</div>";
+  }).join("");
+}
 /* ========================= Timesheet & Workplan ========================= */
 function recKey(){return tsT+"_"+tsMo}
 function getRec(create){
@@ -526,7 +533,7 @@ function tsPrintHTML(){
       var dt=new Date(w0.getFullYear(),w0.getMonth(),w0.getDate()+k),inM=dt.getMonth()===m-1,dd=dt.getDate(),cdy=inM?curDay(rec,y,m,dd):null;
       var txt=inM&&cdy?(cdy.w||""):"",holi=inM&&cdy&&inRange(rec,y,m,dd)&&cdy.st==="បុណ្យជាតិ";
       ds+="<td><span class=dd>"+p2(dd)+"</span><span class=lk>"+khShort(dt.getFullYear(),dt.getMonth()+1,dd)+"</span></td>";
-      cs+="<td>"+(txt?esc(txt):"")+(holi?"<div class=hl>"+(txt?"":"")+"បុណ្យជាតិ</div>":"")+"</td>";
+      cs+="<td>"+wpLines(txt)+(holi?"<div class=hl>បុណ្យជាតិ</div>":"")+"</td>";
     }
     wp+=ds+"</tr>"+cs+"</tr>";
   });
