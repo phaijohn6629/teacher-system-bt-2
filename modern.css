@@ -430,3 +430,9 @@ header { z-index: 200; }
 #dlgSet .st-row>b{min-width:120px}
 #dlgSet .st-r{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 #dlgSet .st-r input{width:auto;margin:0}
+/* Logo ក្បាលទំព័រ៖ វិលយឺតៗ (ឈប់ពេលដាក់ mouse លើ) · មិនវិលបើកុំព្យូទ័រកំណត់ «កាត់បន្ថយចលនា» */
+@keyframes logoSpin{to{transform:rotate(360deg)}}
+.brand-logo{animation:logoSpin 20s linear infinite}
+.brand-logo:hover{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.brand-logo{animation:none}}
+@media print{.brand-logo{animation:none}}
