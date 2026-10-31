@@ -64,7 +64,7 @@ var MK=["តុលា","វិច្ឆិកា","ធ្នូ","មករា",
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function csvSafe(v){var s=String(v==null?"":v);return(/^[=+@\t\r]/.test(s)||/^-[^0-9.]/.test(s))?"'"+s:s}
-function notify(msg){var t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove("show")},2600)}
+function notify(msg){if(window.WALKER)WALKER.toast(msg);var t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove("show")},2600)}
 function fd(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return"";var p=s.split("-");return +p[2]+" "+M[+p[1]-1]+" "+p[0]}
 function selOpts(arr,val){return arr.map(function(o){return"<option"+(o===val?" selected":"")+">"+esc(o)+"</option>"}).join("")}
 
@@ -1664,6 +1664,7 @@ function renderDash(){
     if(noRep.length)nt.push(["📝","គ្រូ "+kn(noRep.length)+" នាក់មិនទាន់មានរបាយការណ៍ខែនេះ","របាយការណ៍ការងារ","p9"]);
     if(noCls.length)nt.push(["📊","គ្រូ "+kn(noCls.length)+" នាក់មិនទាន់មានថ្នាក់ក្នុងប្រព័ន្ធពិន្ទុ","លទ្ធផលសិក្សា","p5"]);
   }else if(!rep)nt.push(["📝","អ្នកមិនទាន់មានរបាយការណ៍ខែនេះ","របាយការណ៍ការងារ","p9"]);
+  if(window.WALKER)WALKER.react(nt);
   var nc=$("ntCount");nc.hidden=!nt.length;nc.textContent=nt.length>9?"9+":kn(nt.length);
   $("ntBell").setAttribute("aria-label","ការជូនដំណឹង ("+nt.length+")");
   $("ntPanel").innerHTML="<h4>🔔 ការជូនដំណឹង</h4>"+(nt.length?nt.map(function(x){
@@ -2152,6 +2153,8 @@ function openSettings(){
       if(k==="pass"){m.close();$("btnPass").click();return}
       if(k==="sig"){m.close();show("p13");setTimeout(function(){var s=document.querySelector("#tsBody [data-sg]");if(s)s.scrollIntoView({behavior:"smooth",block:"center"})},150);return}
       if(k==="tch"){m.close();show("p1");return}
+      if(k==="toonUp"){var f=document.createElement("input");f.type="file";f.accept="image/*";f.onchange=function(){if(f.files[0])WALKER.setOwn(f.files[0],function(){openSettings();notify("បានដាក់រូប cartoon")})};f.click();return}
+      if(k==="toonDel"){WALKER.clearOwn();openSettings();return}
       if(k==="grade"){m.close();show("p5");setTimeout(function(){var d=$("rset").closest("details");if(d){d.open=true;d.scrollIntoView({behavior:"smooth"})}},150);return}
       if(k==="obs"){m.close();ov=3;show("p6");setTimeout(function(){var d=$("oth").closest("details");if(d){d.open=true;d.scrollIntoView({behavior:"smooth"})}},150);return}
     });
@@ -2159,6 +2162,7 @@ function openSettings(){
       var el=e.target;
       if(el.name==="stTheme")setTheme(el.value==="auto"?"":el.value);
       else if(el.name==="stPm")lsSet("pmode",el.value);
+      else if(el.id==="stWalk"){WALKER.set(el.checked);if(el.checked&&!$("p0").hidden)renderDash()}
       else if(el.id==="stSnav"){var off=document.body.classList.contains("sn-off");if(el.checked===off)$("snTog").click()}
       else if(el.id==="stSchool"&&isAdm()){rs.info=rs.info||{};rs.info.school=el.value.trim();savR();notify("បានរក្សាទុកឈ្មោះសាលា")}
       else if(el.id==="stYear"&&isAdm()){rs.info=rs.info||{};rs.info.year=el.value;savR();if(window.renderSY)renderSY();notify("ឆ្នាំសិក្សា៖ "+inf().year)}
@@ -2174,6 +2178,9 @@ function openSettings(){
     "<button type=button data-st=sig>✍️ ហត្ថលេខា<small>"+(sig?"មានហត្ថលេខារួចហើយ · ប្ដូរ ឬលុប":"មិនទាន់មាន · ផ្ទុករូប ឬគូរ")+"</small></button>"+
     "<button type=button data-st=pass>🔑 ប្ដូរលេខសម្ងាត់<small>យ៉ាងតិច ៨ តួ</small></button></div></section>"+
    "<section class=st-s><h3>🎨 ការបង្ហាញ</h3><div class=st-row><b>ពណ៌ផ្ទៃ</b>"+rad("stTheme","light",th,"☀️ ភ្លឺ")+rad("stTheme","dark",th,"🌙 ងងឹត")+rad("stTheme","auto",th,"💻 តាមកុំព្យូទ័រ")+"</div>"+
+    "<div class=st-row><label class=st-r><input type=checkbox id=stWalk"+(window.WALKER&&WALKER.on()?" checked":"")+"> 🚶 បង្ហាញតួអង្គ cartoon ដើរលើបដាស្វាគមន៍</label>"+
+      "<button type=button data-st=toonUp>🖼️ ដាក់រូប cartoon ផ្ទាល់ខ្លួន</button>"+(window.WALKER&&WALKER.hasOwn()?"<button type=button data-st=toonDel class=danger>លុបរូប cartoon</button>":"")+
+      "<span class=note style='margin:0'>បើមិនដាក់ ប្រព័ន្ធប្រើរូបថតប្រវត្តិរូប + តម្រង cartoon</span></div>"+
     "<div class=st-row><label class=st-r><input type=checkbox id=stSnav"+(document.body.classList.contains("sn-off")?"":" checked")+"> បង្ហាញម៉ឺនុយចំហៀងខាងឆ្វេង (អេក្រង់ធំ)</label></div></section>"+
    "<section class=st-s><h3>🖨️ ការបោះពុម្ព</h3><div class=st-row><b>ពេលចុចបោះពុម្ព</b>"+rad("stPm","",pm,"❓ សួររាល់ដង")+rad("stPm","pdf",pm,"📄 ទាញយក PDF ភ្លាម")+rad("stPm","print",pm,"🖨️ បើកផ្ទាំងបោះពុម្ពភ្លាម")+"</div></section>"+
    "<section class=st-s><h3>🏫 សាលា"+(adm?"":" <small class=note style='margin:0'>(មើលបានតែប៉ុណ្ណោះ · កែបានតែ Admin)</small>")+"</h3><div class=fg>"+

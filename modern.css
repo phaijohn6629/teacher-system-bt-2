@@ -436,3 +436,41 @@ header { z-index: 200; }
 .brand-logo:hover{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.brand-logo{animation:none}}
 @media print{.brand-logo{animation:none}}
+/* ===== តួអង្គ cartoon ដើរលើបដាស្វាគមន៍ ===== */
+.welcome-banner.has-wk{padding-bottom:86px}
+.wk{position:absolute!important;left:8px;bottom:2px;width:54px;height:84px;padding:0;border:0;background:none;cursor:pointer;z-index:2;will-change:transform}
+.wk-body{display:block;width:100%;height:100%}
+.wk-svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+.wk.left .wk-body{transform:scaleX(-1)}
+.wk-svg g path{stroke:#1f2937;stroke-width:5;stroke-linecap:round;fill:none}
+.wk-legL,.wk-legR{transform-origin:30px 70px}.wk-armL{transform-origin:18px 50px}.wk-armR{transform-origin:42px 50px}
+.wk.walk .wk-legL{animation:wkSw .5s ease-in-out infinite alternate}
+.wk.walk .wk-legR{animation:wkSw .5s ease-in-out infinite alternate-reverse}
+.wk.walk .wk-armL{animation:wkSw .5s ease-in-out infinite alternate-reverse}
+.wk.walk .wk-armR{animation:wkSw .5s ease-in-out infinite alternate}
+.wk.walk .wk-body{animation:wkBob .25s ease-in-out infinite alternate}
+.wk.walk.left .wk-body{animation-name:wkBobL}
+@keyframes wkSw{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@keyframes wkBob{to{transform:translateY(-2px)}}
+@keyframes wkBobL{from{transform:scaleX(-1)}to{transform:scaleX(-1) translateY(-2px)}}
+/* ប្រតិកម្ម */
+.wk.re-alert .wk-body,.wk.re-err .wk-body{animation:wkJump .45s ease-out 3}
+.wk.re-err .wk-body{animation:wkShake .12s linear 10}
+.wk.re-event .wk-body{animation:wkHop .5s ease-out 2}
+.wk.re-alert .wk-armL,.wk.re-err .wk-armL{transform:rotate(150deg)}.wk.re-alert .wk-armR,.wk.re-err .wk-armR{transform:rotate(-150deg)}
+.wk.re-ok .wk-armR{animation:wkWave .3s ease-in-out 6 alternate}
+.wk.re-event .wk-armR{transform:rotate(-120deg)}
+@keyframes wkJump{0%,100%{transform:translateY(0)}40%{transform:translateY(-16px) scale(1.06)}}
+@keyframes wkHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes wkShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px) rotate(-4deg)}75%{transform:translateX(3px) rotate(4deg)}}
+@keyframes wkWave{from{transform:rotate(-150deg)}to{transform:rotate(-100deg)}}
+.wk-bub{position:absolute;bottom:48px;left:58px;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis;
+  background:#fff;color:#1f2937;font-size:12.5px;font-weight:700;padding:5px 10px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.25);animation:wkPop .25s ease-out}
+.wk-bub::after{content:"";position:absolute;left:-6px;bottom:8px;border:6px solid transparent;border-right-color:#fff;border-left:0}
+.wk.bl .wk-bub{left:auto;right:58px}.wk.bl .wk-bub::after{left:auto;right:-6px;border-right:0;border-left:6px solid #fff;border-top-color:transparent}
+.wk-bub.alert,.wk-bub.err{background:#fee2e2;color:#b91c1c}.wk-bub.alert::after,.wk-bub.err::after{border-right-color:#fee2e2}.wk.bl .wk-bub.alert::after,.wk.bl .wk-bub.err::after{border-left-color:#fee2e2}
+.wk-bub.event{background:#fef3c7;color:#92400e}.wk-bub.event::after{border-right-color:#fef3c7}.wk.bl .wk-bub.event::after{border-left-color:#fef3c7}
+@keyframes wkPop{from{opacity:0;transform:scale(.7)}}
+@media (max-width:600px){.welcome-banner.has-wk{padding-bottom:70px}.wk{width:42px;height:66px}.wk-bub{bottom:36px;left:46px;font-size:11px;max-width:200px}.wk.bl .wk-bub{right:46px}}
+@media (prefers-reduced-motion:reduce){.wk *{animation:none!important}}
+@media print{.wk{display:none!important}}
