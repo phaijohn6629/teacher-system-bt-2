@@ -188,9 +188,11 @@ window.CXDAYS=function(tid,ym){
       var cls=r.cls||rec.cls||"",g=parseInt(cls),t="";
       if(r.ls&&window.CUR[g]&&window.CUR[g].LS[r.ls]){var l=window.CUR[g].LS[r.ls];t="មេរៀនទី"+kh(l[5]||r.ls)+" "+l[0]}
       else t=((r.c||"").split("\n").filter(Boolean)[0]||"").replace(/\s+—.*$/,"").replace(/^ជំពូកទី\S+\s.*?·\s*/,"");
-      if(!t)return;var d=+r.d.slice(8,10),v=(cls?cls+"៖ ":"")+t;o[d]=o[d]||[];if(o[d].indexOf(v)<0)o[d].push(v);
+      if(!t)return;var d=+r.d.slice(8,10),v=(cls?cls+"៖ ":"")+t,q=cxP(r.p);o[d]=o[d]||[];
+      if(!o[d].some(function(x){return x.v===v}))o[d].push({v:v,p:q?q[0]:99});
     });
   });
+  Object.keys(o).forEach(function(d){o[d]=o[d].sort(function(a,b){return a.p-b.p}).map(function(x){return x.v})});   /* តាមលំដាប់ម៉ោង */
   return o;
 };
 window.cxPrintHTML=function(){return cxPrintHTML()};

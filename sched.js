@@ -246,14 +246,14 @@ function wrSync(){
   });
   /* ខ្លឹមសារបង្រៀនពី «សម្រង់អត្ថបទ» → Workplan (មិនប៉ះម៉ោង) */
   var cx=window.CXDAYS?window.CXDAYS(tsT,tsMo):{};
-  Object.keys(cx).forEach(function(d){var o=by[d]||(by[d]={h:0,t:[],cx:1});o.t=o.t.concat(cx[d])});
+  Object.keys(cx).forEach(function(d){var o=by[d]||(by[d]={h:0,t:[],cx:1});o.t=cx[d].concat(o.t)});   /* សម្រង់អត្ថបទ (តាមម៉ោង) នៅខាងលើ · របាយការណ៍ការងារនៅខាងក្រោម */
   var rec=getRec(false);
   if(!rec){if(!Object.keys(by).length)return;rec=getRec(true);ch=true}
   rec.days=rec.days||{};
   for(var d=1;d<=n;d++){
     var b=by[d],cd=rec.days[d];
     if(b){
-      var hh=Math.round(b.h*100)/100,tx=b.t.join("; ");
+      var hh=Math.round(b.h*100)/100,tx=b.t.join("\n");
       if(!cd){cd=rec.days[d]=defDay(tsT,y,m,d);ch=true}
       if(hh||cd.la!=null){if(cd.h.l!==hh||cd.la!==hh){cd.h.l=hh;cd.la=hh;ch=true}if(!hh&&cd.la===0){delete cd.la;ch=true}}
       if(tx&&(!cd.w||cd.w===cd.wa)&&(cd.w!==tx||cd.wa!==tx)){cd.w=tx;cd.wa=tx;ch=true}
