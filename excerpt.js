@@ -67,9 +67,13 @@ function onSched(r,tid){
   for(var p=q[0];p<=q[1];p++)if(!ps[p])return false;
   return true;
 }
-function cxOk(r,tid){return!!r.x||onSched(r,tid)}
+/* r.s = បង្កើតពីកាលវិភាគនៅពេលនោះ (ត្រឹមត្រូវជានិច្ច ទោះកាលវិភាគប្ដូរក្រោយ) · r.x = គ្រូបន្ថែមខ្លួនឯង */
+function cxOk(r,tid){return!!(r.x||r.s)||onSched(r,tid)}
+function cxToday(){var t=new Date();return iso(t.getFullYear(),t.getMonth()+1,t.getDate())}
+function cxEmpty(r){return!(r.c||"").trim()&&!r.ls&&!(r.a||"").trim()}
+function cxSkipKey(r){return r.d+"|"+r.cls+"|"+r.p}
 function cxSort(rec){rec.rows.sort(function(a,b){var q=cxP(a.p),r=cxP(b.p);return(a.d||"9999").localeCompare(b.d||"9999")||((q?q[0]:99)-(r?r[0]:99))||String(a.cls||"").localeCompare(String(b.cls||""))})}
-function cxFill(silent){
+function cxFill(silent,from){   /* from = "YYYY-MM-DD" → បំពេញតែថ្ងៃចាប់ពីនេះទៅ */
   /* បង្កើតជួរតាមកាលវិភាគ៖ គ្រប់ថ្នាក់ គ្រប់ម៉ោងបង្រៀន (រំលងថ្ងៃអាទិត្យ និងបុណ្យជាតិ) */
   if(!canEd(cxT)){if(!silent)alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
   var cls=cxClasses(cxT).mine;
@@ -80,13 +84,13 @@ function cxFill(silent){
     for(var d=1;d<=dim(y,m);d++){
       var wd=new Date(y,m-1,d).getDay(),i=(wd+6)%7;
       if(wd===0||FIXHOL[p2(m)+"-"+p2(d)])continue;
-      var k=iso(y,m,d),ex=byD[k]||[];
+      var k=iso(y,m,d),ex=byD[k]||[],skip=rec.skip||[];if(from&&k<from)continue;
       cls.forEach(function(c){
         var bl=cxBlocks(i,c);if(!bl.length)return;
         var mine=ex.filter(function(r){return r.cls===c}),used={};
         mine.forEach(function(r){if(r.p)used[r.p]=1});
         mine.forEach(function(r){if(!r.p){var f=bl.filter(function(b){return!used[b]})[0];if(f){r.p=f;used[f]=1}}});   /* ជួរចាស់គ្មានម៉ោង */
-        bl.forEach(function(b){if(!used[b]){rec.rows.push({d:k,cls:c,p:b,c:"",a:""});add++}});
+        bl.forEach(function(b){if(!used[b]&&skip.indexOf(k+"|"+c+"|"+b)<0){rec.rows.push({d:k,cls:c,p:b,c:"",a:"",s:1});add++}});
       });
     }
     m++;if(m>12){m=1;y++}
@@ -123,6 +127,17 @@ function cxPOpts(r){
   if(v&&all.indexOf(v)<0)o+="<option value='"+esc(v)+"' selected>"+cxPLabel(v)+"</option>";
   return o;
 }
+/* ថ្ងៃនេះ និងថ្ងៃខាងមុខ ធ្វើតាមកាលវិភាគបច្ចុប្បន្ន (កាលវិភាគប្រែប្រួលតាមសិស្ស/គ្រូ)៖
+   ដកជួរពីកាលវិភាគដែលលែងត្រូវ (តែជួរទទេ) ហើយបន្ថែមម៉ោង/ថ្នាក់ថ្មី · ថ្ងៃកន្លងហើយមិនប៉ះ */
+function cxSyncFuture(){
+  var rec=cxRec(false);if(!rec||!rec.auto||!canEd(cxT))return;
+  var td=cxToday(),n0=rec.rows.length,up=0;
+  rec.rows.forEach(function(r){if(!r.s&&!r.x&&onSched(r)){r.s=1;up++}});   /* ជួរចាស់ដែលត្រូវកាលវិភាគ → ចងចាំថាត្រឹមត្រូវ */
+  rec.rows=rec.rows.filter(function(r){return!(r.s&&r.d>=td&&cxEmpty(r)&&!onSched(r))});
+  var removed=n0-rec.rows.length,n1=rec.rows.length;
+  cxFill(true,td);
+  if((removed||up)&&rec.rows.length===n1)saveCx();
+}
 function renderCx(){
   if(!who)return;
   var adm=isAdm();
@@ -130,6 +145,7 @@ function renderCx(){
   cxMigrate();
   var r0=cxRec(false);   /* បង្កើតជួរតាមកាលវិភាគដោយស្វ័យប្រវត្តិ ម្ដងគត់ក្នុងមួយខែ (ជួរដែលគ្រូលុបចោល មិនត្រឡប់មកវិញទេ) */
   if((!r0||!r0.auto)&&canEd(cxT)&&cxClasses(cxT).mine.length){cxFill(true);var r1=cxRec(false);if(r1){r1.auto=1;saveCx()}}
+  cxSyncFuture();
   $("cxT").innerHTML=data.filter(function(t){return adm||t.id===who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===cxT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   $("cxM").value=cxMo;
   var rec=cxRec(false),ro=!canEd(cxT),t=teacherOf(cxT),ft=(rec&&rec.ft)||{pl:"រាជធានីភ្នំពេញ"};
@@ -233,7 +249,11 @@ $("cxBody").onclick=function(e){
   }
   var b=e.target.closest("[data-cdel]");if(!b)return;
   var rc=cxRec(false);if(!rc)return;
-  if(confirm("តើលុបជួរនេះមែនទេ?")){rc.rows.splice(+b.dataset.cdel,1);saveCx();renderCx()}
+  if(confirm("តើលុបជួរនេះមែនទេ?")){
+    var dr=rc.rows.splice(+b.dataset.cdel,1)[0];
+    if(dr&&dr.s){rc.skip=rc.skip||[];rc.skip.push(cxSkipKey(dr))}   /* កុំបន្ថែមវិញដោយស្វ័យប្រវត្តិ */
+    saveCx();renderCx();
+  }
 };
 $("cxT").onchange=function(){cxT=this.value;renderCx()};
 $("cxM").onchange=function(){cxMo=this.value||cxMo;if(cxMo2<cxMo)cxMo2=cxMo;renderCx()};
