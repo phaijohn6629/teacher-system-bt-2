@@ -240,7 +240,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .cxh{position:relative;min-height:24mm;margin-bottom:3mm}.cxlogo{position:absolute;left:0;top:0;width:22mm;height:22mm;object-fit:contain}
 .cxt{text-align:center}.cxt .moul{text-align:center}.cxper{font-size:11pt;margin-top:2px}
 .cxi{display:flex;flex-wrap:wrap;gap:2mm 8mm;justify-content:space-between;margin:0 0 3mm;font-size:10.5pt}.cxi span{font-weight:400}.cxi b{font-weight:700}
-.cxg{width:100%;border-collapse:collapse;table-layout:fixed}
+.cxg{width:99.4%;border-collapse:collapse;table-layout:fixed}
 .cxg th,.cxg td{border:1px solid #000!important;padding:1.6mm 2mm;font-size:10.5pt;vertical-align:top;color:#000}
 .cxg th{background:#eee!important;text-align:center;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cxg thead{display:table-header-group}.cxg tr{break-inside:avoid;page-break-inside:avoid}
