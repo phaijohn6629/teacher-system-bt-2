@@ -948,8 +948,9 @@ function savePdf(html){
     var t=(document.querySelector("#tabs button[aria-selected=true]")||{}).textContent||"ឯកសារ",d=new Date();
     var name=t.replace(/^[០-៩]+\.\s*/,"").replace(/[\\/:*?"<>|&]+/g,"-").trim()+"-"+d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+".pdf";
     var done=function(){hold.remove()};
+    pdfPaginate(w,land?194:277,land?281:190);
     window.html2pdf().set({margin:land?8:10,filename:name,image:{type:"jpeg",quality:0.95},html2canvas:{scale:2,backgroundColor:"#ffffff",useCORS:true},
-      jsPDF:{unit:"mm",format:"a4",orientation:land?"landscape":"portrait"},pagebreak:{mode:["css"],avoid:["tr","tbody",".cxf",".sig",".card",".tsx-s",".wpf"]}})
+      jsPDF:{unit:"mm",format:"a4",orientation:land?"landscape":"portrait"},pagebreak:{mode:[]}})
       .from(w).save().then(function(){done();notify("បានទាញយក PDF៖ "+name)},function(e){done();console.error(e);alert("មិនអាចបង្កើត PDF បានទេ។ សូមប្រើ «🖨️ បោះពុម្ព» ជំនួសវិញ។")});
   }
   if(window.html2pdf)return (document.fonts?document.fonts.ready:Promise.resolve()).then(go);
@@ -958,6 +959,30 @@ function savePdf(html){
   document.head.appendChild(s);
 }
 window.outChoose=outChoose;
+/* PDF៖ រុញផ្នែកដែលធ្លាក់ត្រង់បន្ទាត់ទំព័រ (ជួរ · ក្រុមជួរថ្ងៃតែមួយ · ជើងក្រោម · ហត្ថលេខា) ទៅទំព័របន្ទាប់
+   pageH/contentW = កម្ពស់/ទទឹងផ្ទៃសរសេរនៃទំព័រ (mm) · .pg នីមួយៗចាប់ផ្ដើមទំព័រថ្មី */
+function pdfPaginate(w,pageH,contentW){
+  var H=pageH*w.getBoundingClientRect().width/contentW;
+  [].forEach.call(w.querySelectorAll(".pg"),function(pg){
+    var items=pg.querySelectorAll("tbody,tr,.cxf,.sig,.card,.tsx-s,.wpf,.tsx-c,h3,h4,.og");
+    [].forEach.call(items,function(el){
+      if(el.closest(".pdfpad"))return;
+      var r=el.getBoundingClientRect(),top=r.top-pg.getBoundingClientRect().top,h=r.height;
+      if(!h||h>=H)return;
+      var p=Math.floor(top/H);if(Math.floor((top+h-1)/H)===p)return;
+      var pad=(p+1)*H-top+2;
+      if(el.tagName==="TR"||el.tagName==="TBODY"){
+        var tbl=el.closest("table"),r0=tbl&&tbl.rows[0],nc=0;if(r0)[].forEach.call(r0.cells,function(c){nc+=c.colSpan});   /* colspan ត្រូវតែស្មើចំនួនជួរឈរ បើមិនដូច្នោះទទឹងជួរឈរប្រែប្រួល */
+        var tr=document.createElement("tr");tr.innerHTML="<td colspan="+(nc||1)+" style='height:"+pad+"px;padding:0;border:0!important;background:none!important'></td>";
+        if(el.tagName==="TR")el.parentNode.insertBefore(tr,el);
+        else{var tb=document.createElement("tbody");tb.className="pdfpad";tb.appendChild(tr);el.parentNode.insertBefore(tb,el)}
+        tr.classList.add("pdfpad");
+      }else el.style.marginTop=(parseFloat(getComputedStyle(el).marginTop)||0)+pad+"px";
+    });
+    var ph=pg.getBoundingClientRect().height;pg.style.setProperty("height",Math.max(1,Math.ceil((ph-1)/H))*H+"px","important");   /* .pg បន្ទាប់ចាប់ផ្ដើមទំព័រថ្មី */
+    pg.style.overflow="hidden";pg.style.boxSizing="border-box";
+  });
+}
 window.addEventListener("afterprint",function(){document.body.classList.remove("pm");$("prt").innerHTML=""});
 
 
