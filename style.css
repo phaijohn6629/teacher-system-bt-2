@@ -333,3 +333,11 @@ body.pm .pg.land{page-break-inside:avoid}
 #cxG tr.cxbad td{background:rgba(239,68,68,.08)}
 #cxG small.cxw{color:#dc2626;font-weight:700}#cxG small.cxx{color:#059669;font-weight:700}
 .cxwarn{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);font-size:.9rem}.cxwarn button{margin-left:8px;padding:4px 10px}
+.cxg td.ccl{white-space:normal;overflow-wrap:anywhere;font-size:9.5pt}
+.cxg tbody{break-inside:avoid;page-break-inside:avoid}
+/* PDF (html2pdf)៖ ទំព័រនីមួយៗចាប់ផ្ដើមទំព័រថ្មី */
+.pdfhold{position:fixed;left:-10000px;top:0}.pdfw{background:#fff;color:#000}
+.pdfw .pg{break-after:page;page-break-after:always;border:0;padding:0}.pdfw .pg:last-child{break-after:auto;page-break-after:auto}
+/* PDF៖ html2canvas មិនគាំទ្រ writing-mode → បង្វិលដោយ transform */
+.pdfw .tsx-g td.st{position:relative;overflow:hidden}
+.pdfw .tsx-g td.st span{writing-mode:horizontal-tb;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;margin:0}

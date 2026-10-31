@@ -916,10 +916,48 @@ function showCards(idx){
 $("rpa").onclick=function(){var c=curCls();if(!c||!c.st.length){alert("មិនទាន់មានសិស្សក្នុងថ្នាក់នេះទេ។");return}showCards(null)};
 $("cxCard").onclick=function(){$("dlgCard").close()};
 $("prCard").onclick=function(){doPrint($("cardBody").innerHTML)};
-function doPrint(html){
+function doPrint(html){outChoose(html)}
+function realPrint(html){
   $("prt").innerHTML=html;document.body.classList.add("pm");
   setTimeout(function(){window.print()},60);
 }
+/* ជម្រើសបោះពុម្ព៖ «🖨️ បោះពុម្ព» (ផ្ទាំងបោះពុម្ពរបស់ប្រព័ន្ធ) ឬ «📄 ទាញយក PDF» (បង្កើតក្នុង browser ភ្លាម មិនឆ្លងកាត់ម៉ាស៊ីនបោះពុម្ព) */
+var H2P_URL="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+function outChoose(html){
+  var m=$("pchoose");
+  if(!m){
+    m=document.createElement("div");m.id="pchoose";m.setAttribute("role","dialog");m.setAttribute("aria-label","ជ្រើសរបៀបបោះពុម្ព");
+    m.innerHTML="<div class=pc-box><b>តើចង់ធ្វើអ្វី?</b><div class=pc-btns><button type=button data-pc=pdf class=primary>📄 ទាញយក PDF<small>លឿន · មិនត្រូវការម៉ាស៊ីនបោះពុម្ព</small></button><button type=button data-pc=print>🖨️ បោះពុម្ព<small>បើកផ្ទាំងបោះពុម្ព</small></button></div><button type=button data-pc=x class=pc-x>បោះបង់</button></div>";
+    document.body.appendChild(m);
+    m.onclick=function(e){
+      var b=e.target.closest("[data-pc]");if(!b&&e.target!==m)return;
+      var k=b?b.dataset.pc:"x",h=m._html;m.hidden=true;m._html="";
+      if(k==="print")realPrint(h);else if(k==="pdf")savePdf(h);
+    };
+    document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden){m.hidden=true;m._html=""}});
+  }
+  m._html=html;m.hidden=false;
+  var b=m.querySelector("[data-pc=pdf]");if(b)b.focus();
+}
+function savePdf(html){
+  notify("កំពុងបង្កើត PDF…");
+  function go(){
+    var land=/class=["']?pg\b[^"'>]*\b(land|osum)\b/.test(html),w=document.createElement("div");
+    var hold=document.createElement("div");hold.className="pdfhold";   /* ទុកនៅក្រៅអេក្រង់ · html2pdf ចម្លងតែ w */
+    w.className="pdfw";w.style.width=land?"281mm":"190mm";w.innerHTML=html;hold.appendChild(w);document.body.appendChild(hold);
+    var t=(document.querySelector("#tabs button[aria-selected=true]")||{}).textContent||"ឯកសារ",d=new Date();
+    var name=t.replace(/^[០-៩]+\.\s*/,"").replace(/[\\/:*?"<>|&]+/g,"-").trim()+"-"+d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+".pdf";
+    var done=function(){hold.remove()};
+    window.html2pdf().set({margin:land?8:10,filename:name,image:{type:"jpeg",quality:0.95},html2canvas:{scale:2,backgroundColor:"#ffffff",useCORS:true},
+      jsPDF:{unit:"mm",format:"a4",orientation:land?"landscape":"portrait"},pagebreak:{mode:["css"],avoid:["tr","tbody",".cxf",".sig",".card",".tsx-s",".wpf"]}})
+      .from(w).save().then(function(){done();notify("បានទាញយក PDF៖ "+name)},function(e){done();console.error(e);alert("មិនអាចបង្កើត PDF បានទេ។ សូមប្រើ «🖨️ បោះពុម្ព» ជំនួសវិញ។")});
+  }
+  if(window.html2pdf)return (document.fonts?document.fonts.ready:Promise.resolve()).then(go);
+  var s=document.createElement("script");s.src=H2P_URL;s.onload=function(){(document.fonts?document.fonts.ready:Promise.resolve()).then(go)};
+  s.onerror=function(){alert("មិនអាចទាញយកកម្មវិធីបង្កើត PDF បានទេ។ សូមពិនិត្យអ៊ីនធឺណិត ឬប្រើ «🖨️ បោះពុម្ព»។")};
+  document.head.appendChild(s);
+}
+window.outChoose=outChoose;
 window.addEventListener("afterprint",function(){document.body.classList.remove("pm");$("prt").innerHTML=""});
 
 

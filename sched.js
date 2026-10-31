@@ -450,6 +450,7 @@ function fitHtml(html){
   var out=p.innerHTML;p.style.cssText="";p.innerHTML="";return out;
 }
 function doPrintNow(out){
+  if(window.outChoose)return outChoose(out);   /* ជម្រើស PDF ឬបោះពុម្ព (script.js) */
   $("prt").innerHTML=out;document.body.classList.add("pm");
   requestAnimationFrame(function(){requestAnimationFrame(function(){window.print()})});
 }
