@@ -546,5 +546,5 @@ $("tsCsv").onclick=function(){
   for(var d=1;d<=n;d++){if(!inRange(rec,y,m,d))continue;var cd=curDay(rec,y,m,d);rows.push([iso(y,m,d),KhCal.WD[new Date(y,m-1,d).getDay()],khShort(y,m,d),cd.st].concat(HC.map(function(c){return cd.h[c[0]]||0})).concat([(cd.w||"").replace(/\r?\n/g," | ")]))}
   dlCSV(rows,"timesheet-"+tsT+"-"+tsMo+".csv");
 };
-window.SCHX={schOf:schOf,canEd:canEd,getSig:getSig,fontsOk:fontsOk,doPrintNow:doPrintNow,LOGO2:LOGO2,iso:iso,dim:dim,kh:kh,p2:p2,FIXHOL:FIXHOL,tsMo:function(){return tsMo}};
+window.SCHX={PT:PT,BRK:BRK,schOf:schOf,canEd:canEd,getSig:getSig,fontsOk:fontsOk,doPrintNow:doPrintNow,LOGO2:LOGO2,iso:iso,dim:dim,kh:kh,p2:p2,FIXHOL:FIXHOL,tsMo:function(){return tsMo}};
 })();

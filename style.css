@@ -325,3 +325,5 @@ body.pm .pg.land{page-break-inside:avoid}
 .vpr th{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .vpr .sbt .sg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .vpr svg{max-height:200px}
+.cxg td.cp{text-align:center;white-space:nowrap;font-size:10pt}.cxg td.cp small{font-size:8.5pt;color:#333}
+.cxg td.cd{vertical-align:middle}

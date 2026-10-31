@@ -5,7 +5,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var X=window.SCHX,schOf=X.schOf,canEd=X.canEd,getSig=X.getSig,fontsOk=X.fontsOk,doPrintNow=X.doPrintNow,LOGO2=X.LOGO2,iso=X.iso,dim=X.dim,kh=X.kh,p2=X.p2,FIXHOL=X.FIXHOL,tsMo=X.tsMo();
+var X=window.SCHX,PT=X.PT,BRK=X.BRK,schOf=X.schOf,canEd=X.canEd,getSig=X.getSig,fontsOk=X.fontsOk,doPrintNow=X.doPrintNow,LOGO2=X.LOGO2,iso=X.iso,dim=X.dim,kh=X.kh,p2=X.p2,FIXHOL=X.FIXHOL,tsMo=X.tsMo();
 var cxd={r:{}},cxT="",cxC="",cxMo=tsMo,cxMo2="";
 MAP.cx={
   docs:function(){var o={};Object.keys(cxd.r).forEach(function(k){o["cx/"+k]=encO(k.split("_")[0],cxd.r[k])});return o},
@@ -30,20 +30,33 @@ function cxDateTxt(s){
   var a=s.split("-").map(Number),wd=new Date(a[0],a[1]-1,a[2]).getDay();
   return KhCal.WD[wd]+" "+kh(a[2])+"/"+kh(a[1])+"/"+kh(a[0]);
 }
-function cxSort(rec){rec.rows.sort(function(a,b){return(a.d||"9999").localeCompare(b.d||"9999")})}
+/* ម៉ោង៖ r.p = "1-2" (ម៉ោងទី១ ដល់ទី២ ក្នុងកាលវិភាគ) */
+function cxP(p){var m=/^(\d+)(?:\s*-\s*(\d+))?$/.exec(String(p||"").trim());if(!m)return null;var a=+m[1],b=+(m[2]||m[1]);return a>=1&&b<=11&&a<=b?[a,b]:null}
+function cxPLabel(p){var q=cxP(p);if(!q)return esc(p||"");return"ម៉ោងទី"+kh(q[0])+(q[1]>q[0]?"–"+kh(q[1]):"")}
+function cxPTime(p){var q=cxP(p);if(!q)return"";return kh(PT[q[0]].split(" - ")[0]+"–"+PT[q[1]].split(" - ")[1])}
+/* ម៉ោងជាប់គ្នានៃថ្នាក់ cxC ក្នុងថ្ងៃ di (ច័ន្ទ = 0) តាមកាលវិភាគ (បំបែកនៅម៉ោងសម្រាក) */
+function cxBlocks(di){
+  var ps=schOf(cxT).filter(function(s){return s[0]===di&&s[2]===cxC}).map(function(s){return s[1]}).sort(function(a,b){return a-b}),out=[];
+  ps.forEach(function(p){var l=out[out.length-1];if(l&&l[1]===p-1&&!BRK[p-1])l[1]=p;else out.push([p,p])});
+  return out.map(function(b){return b[0]+(b[1]>b[0]?"-"+b[1]:"")});
+}
+function cxSort(rec){rec.rows.sort(function(a,b){var q=cxP(a.p),r=cxP(b.p);return(a.d||"9999").localeCompare(b.d||"9999")||((q?q[0]:99)-(r?r[0]:99))})}
 function cxFill(){
   /* បង្កើតជួរតាមកាលវិភាគ៖ ថ្ងៃដែលថ្នាក់នេះមានម៉ោងបង្រៀន (រំលងបុណ្យជាតិ និងថ្ងៃអាទិត្យ) */
   if(!canEd(cxT)){alert("គ្មានសិទ្ធិកែទិន្នន័យគ្រូនេះ");return}
   if(!cxC){alert("សូមជ្រើសថ្នាក់ជាមុន");return}
   var di={};schOf(cxT).forEach(function(s){if(s[2]===cxC)di[s[0]]=1});
   if(!Object.keys(di).length){alert("កាលវិភាគរបស់គ្រូនេះមិនមានថ្នាក់ «"+cxC+"» ទេ។ សូមបញ្ចូលក្នុងកាលវិភាគជាមុន ឬបន្ថែមជួរដោយដៃ។");return}
-  var rec=cxRec(true),e=cxMonthEnd(),have={};rec.rows.forEach(function(r){have[r.d]=1});
+  var rec=cxRec(true),e=cxMonthEnd(),byD={};rec.rows.forEach(function(r){(byD[r.d]=byD[r.d]||[]).push(r)});
   var y0=+cxMo.slice(0,4),m0=+cxMo.slice(5,7),y1=+e.slice(0,4),m1=+e.slice(5,7),add=0;
   for(var y=y0,m=m0;y<y1||(y===y1&&m<=m1);){
     for(var d=1;d<=dim(y,m);d++){
       var wd=new Date(y,m-1,d).getDay(),i=(wd+6)%7;
       if(wd===0||!di[i]||FIXHOL[p2(m)+"-"+p2(d)])continue;
-      var k=iso(y,m,d);if(have[k])continue;rec.rows.push({d:k,c:"",a:""});add++;
+      var k=iso(y,m,d),bl=cxBlocks(i),ex=byD[k]||[],used={};
+      ex.forEach(function(r){if(r.p)used[r.p]=1});
+      ex.forEach(function(r){if(!r.p){var f=bl.filter(function(b){return!used[b]})[0];if(f){r.p=f;used[f]=1}}});   /* ជួរចាស់គ្មានម៉ោង */
+      bl.forEach(function(b){if(!used[b]){rec.rows.push({d:k,p:b,c:"",a:""});add++}});
     }
     m++;if(m>12){m=1;y++}
   }
@@ -80,13 +93,14 @@ function renderCx(){
   var rows=(rec&&rec.rows)||[],h="<div class=tsh><div><label>បុគ្គលិកឈ្មោះ</label><input value='"+esc(t.name||"")+"' readonly></div>"+
     "<div><label>មុខវិជ្ជា</label><input data-cf='sb' value='"+esc((rec&&rec.sb)||t.sub||"គណិតវិទ្យា")+"' "+(ro?"readonly":"")+"></div>"+
     "<div><label>ថ្នាក់</label><input value='"+esc(cxC)+"' readonly></div></div>";
-  h+="<div class=wrap><table class=tsg id=cxG><thead><tr><th style='width:150px'>កាលបរិច្ឆេទ</th><th>ខ្លឹមសារមេរៀន</th><th style='width:32%'>អវត្តមានសិស្ស</th><th style='width:44px'></th></tr></thead><tbody>"+
+  h+="<div class=wrap><table class=tsg id=cxG><thead><tr><th style='width:150px'>កាលបរិច្ឆេទ</th><th style='width:110px'>ម៉ោង</th><th>ខ្លឹមសារមេរៀន</th><th style='width:32%'>អវត្តមានសិស្ស</th><th style='width:44px'></th></tr></thead><tbody>"+
     (rows.length?rows.map(function(r,i){
       return"<tr><td><input type=date data-ci="+i+" data-ck='d' value='"+esc(r.d||"")+"' "+(ro?"disabled":"")+"><small>"+esc(cxDateTxt(r.d))+"</small></td>"+
+        "<td><input data-ci="+i+" data-ck='p' value='"+esc(r.p||"")+"' placeholder='ឧ. 1-2' "+(ro?"readonly":"")+"><small>"+cxPLabel(r.p)+(cxPTime(r.p)?"<br>"+cxPTime(r.p):"")+"</small></td>"+
         "<td>"+(cxG()?"<select class=cxls data-ci="+i+" data-ck='ls' "+(ro?"disabled":"")+">"+cxLsOpts(cxG(),r)+"</select>":"")+"<textarea rows=2 data-ci="+i+" data-ck='c' "+(ro?"readonly":"")+">"+esc(r.c||"")+"</textarea></td>"+
         "<td><textarea rows=2 data-ci="+i+" data-ck='a' placeholder='ឈ្មោះ/ចំនួនសិស្សអវត្តមាន' "+(ro?"readonly":"")+">"+esc(r.a||"")+"</textarea></td>"+
         "<td>"+(ro?"":"<button type=button class=danger data-cdel="+i+" title='លុបជួរ'>✕</button>")+"</td></tr>";
-    }).join(""):"<tr><td colspan=4 class=empty>មិនទាន់មានជួរទេ។ ចុច «⚡ បង្កើតជួរតាមកាលវិភាគ» ឬ «＋ បន្ថែមជួរ»។</td></tr>")+"</tbody></table></div>";
+    }).join(""):"<tr><td colspan=5 class=empty>មិនទាន់មានជួរទេ។ ចុច «⚡ បង្កើតជួរតាមកាលវិភាគ» ឬ «＋ បន្ថែមជួរ»។</td></tr>")+"</tbody></table></div>";
   h+="<div class=tsf><fieldset><legend>ជើងក្រោម (តាមគម្រូ Workplan)</legend>"+
     "<div><label>ធ្វើនៅ</label><input data-cf='ft.pl' value='"+esc(ft.pl||"")+"' "+(ro?"readonly":"")+"></div>"+
     "<div><label>កាលបរិច្ឆេទ (ទុកទទេ = ថ្ងៃនេះ)</label><input type=date data-cf='ft.d' value='"+esc(ft.d||"")+"' "+(ro?"readonly":"")+"></div>"+
@@ -105,7 +119,7 @@ window.CXDAYS=function(tid,ym){
       var t="";
       if(r.ls&&window.CUR[g]&&window.CUR[g].LS[r.ls]){var l=window.CUR[g].LS[r.ls];t="មេរៀនទី"+kh(l[5]||r.ls)+" "+l[0]}
       else t=((r.c||"").split("\n").filter(Boolean)[0]||"").replace(/\s+—.*$/,"").replace(/^ជំពូកទី\S+\s.*?·\s*/,"");
-      if(!t)return;var d=+r.d.slice(8,10);(o[d]=o[d]||[]).push(rec.cls+"៖ "+t);
+      if(!t)return;var d=+r.d.slice(8,10),v=rec.cls+"៖ "+t;o[d]=o[d]||[];if(o[d].indexOf(v)<0)o[d].push(v);
     });
   });
   return o;
@@ -138,7 +152,8 @@ $("cxBody").onchange=function(e){
   }
   if(el.type==="date"){
     cxEdit(e);var rec=cxRec(false);if(rec&&el.dataset.ck==="d")cxSort(rec);saveCx();renderCx();
-  }else cxEdit(e);
+  }else if(el.dataset.ck==="p"){cxEdit(e);var rp=cxRec(false);if(rp)cxSort(rp);saveCx();renderCx()}
+  else cxEdit(e);
 };
 $("cxBody").onclick=function(e){
   var b=e.target.closest("[data-cdel]");if(!b||!canEd(cxT))return;
@@ -191,8 +206,10 @@ function cxPrintHTML(){
    "<div class=cxh><img src='"+LOGO2+"' class=cxlogo alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
     "<div class=moul style='font-size:13pt'>សម្រង់អត្ថបទប្រចាំខែ</div><div class=cxper>"+esc(per)+"</div></div></div>"+
    "<div class=cxi><div><span>បុគ្គលិកឈ្មោះ៖</span> <b>"+esc(t.name||"")+"</b></div><div><span>មុខវិជ្ជា៖</span> <b>"+esc(rec.sb||t.sub||"គណិតវិទ្យា")+"</b></div><div><span>ថ្នាក់៖</span> <b>"+esc(cxC)+"</b></div></div>"+
-   "<table class=cxg><thead><tr><th style='width:27%'>កាលបរិច្ឆេទ</th><th>ខ្លឹមសារមេរៀន</th><th style='width:24%'>អវត្តមានសិស្ស</th></tr></thead><tbody>"+
-   (rows.length?rows.map(function(r){return"<tr><td class=cd>"+esc(cxDateTxt(r.d))+"</td><td class=cc>"+esc(r.c||"").replace(/\n/g,"<br>")+"</td><td class=ca>"+esc(r.a||"").replace(/\n/g,"<br>")+"</td></tr>"}).join(""):"<tr><td>&nbsp;</td><td></td><td></td></tr>")+
+   "<table class=cxg><thead><tr><th style='width:22%'>កាលបរិច្ឆេទ</th><th style='width:15%'>ម៉ោង</th><th>ខ្លឹមសារមេរៀន</th><th style='width:20%'>អវត្តមានសិស្ស</th></tr></thead><tbody>"+
+   (rows.length?rows.map(function(r,i){
+     var n=0;if(i&&rows[i-1].d===r.d)n=-1;else while(i+n<rows.length&&rows[i+n].d===r.d)n++;   /* ថ្ងៃដូចគ្នា → បញ្ចូលក្រឡាកាលបរិច្ឆេទ */
+     return"<tr"+(n>1?" class=cxs":"")+">"+(n<0?"":"<td class=cd"+(n>1?" rowspan="+n:"")+">"+esc(cxDateTxt(r.d))+"</td>")+"<td class=cp>"+cxPLabel(r.p)+(cxPTime(r.p)?"<br><small>"+cxPTime(r.p)+"</small>":"")+"</td><td class=cc>"+esc(r.c||"").replace(/\n/g,"<br>")+"</td><td class=ca>"+esc(r.a||"").replace(/\n/g,"<br>")+"</td></tr>"}).join(""):"<tr><td>&nbsp;</td><td></td><td></td><td></td></tr>")+
    "</tbody></table>"+
    "<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
    "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+esc(wg)+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
@@ -204,7 +221,7 @@ $("cxPr").onclick=function(){
 };
 $("cxCsv").onclick=function(){
   var rec=cxRec(false),rows=(rec&&rec.rows)||[],q=function(s){return'"'+String(s||"").replace(/"/g,'""')+'"'};
-  var csv="﻿"+["កាលបរិច្ឆេទ","ខ្លឹមសារមេរៀន","អវត្តមានសិស្ស"].map(q).join(",")+"\n"+rows.map(function(r){return[r.d,r.c,r.a].map(q).join(",")}).join("\n");
+  var csv="﻿"+["កាលបរិច្ឆេទ","ម៉ោង","ខ្លឹមសារមេរៀន","អវត្តមានសិស្ស"].map(q).join(",")+"\n"+rows.map(function(r){return[r.d,r.p,r.c,r.a].map(q).join(",")}).join("\n");
   var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="សម្រង់អត្ថបទ-"+cxC+"-"+cxMo+".csv";a.click();
 };
 })();
