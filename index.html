@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=47">
+<link rel="stylesheet" href="style.css?v=48">
 <link rel="stylesheet" href="modern.css?v=17">
 
 </head>
@@ -82,6 +82,7 @@
   <button data-p="p16" aria-selected="false">១៥. រចនាសម្ព័ន្ធថ្នាក់</button>
   <button data-p="p17" aria-selected="false">១៦. តេស្ត</button>
   <button data-p="p18" aria-selected="false">១៧. ពិន្ទុប្រចាំខែ</button>
+  <button data-p="p19" aria-selected="false">១៨. កំណត់ហេតុប្រជុំ</button>
 </nav>
 
 <!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
@@ -142,7 +143,7 @@
 
 <!-- ផ្ទាំងទី ២៖ ចំនួនកិច្ចតែងការ -->
 <section id="p2" hidden>
-<div class="seg gseg" role="tablist" aria-label="កិច្ចការ និងរបាយការណ៍"><button type="button" data-go="p2" aria-selected="true">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="false">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="false">⏱️ Timesheet &amp; Workplan</button></div>
+<div class="seg gseg" role="tablist" aria-label="កិច្ចការ និងរបាយការណ៍"><button type="button" data-go="p2" aria-selected="true">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="false">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="false">⏱️ Timesheet &amp; Workplan</button><button type="button" data-go="p19" aria-selected="false">🤝 កំណត់ហេតុប្រជុំ</button></div>
   <div class="bar">
     <label for="mo">ជ្រើសរើសខែ៖</label>
     <select id="mo" aria-label="ជ្រើសរើសខែ"></select>
@@ -248,6 +249,17 @@
   </div>
   <div id="msBody"></div>
 </section>
+<section id="p19" hidden>
+<div class="seg gseg" role="tablist" aria-label="ការងាររដ្ឋបាល"><button type="button" data-go="p2" aria-selected="false">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="false">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="false">⏱️ Timesheet &amp; Workplan</button><button type="button" data-go="p19" aria-selected="true">🤝 កំណត់ហេតុប្រជុំ</button></div>
+  <div class="bar">
+    <label for="mtSel">កំណត់ហេតុ៖</label><select id="mtSel"></select>
+    <button id="mtNew" class="primary">➕ ប្រជុំថ្មី</button>
+    <button id="mtEd">✏️ កែ</button>
+    <button id="mtPr">🖨️ បោះពុម្ព</button>
+    <button id="mtDel">🗑️ លុប</button>
+  </div>
+  <div id="mtBody"></div>
+</section>
 
 
 
@@ -267,7 +279,7 @@
 </section>
 
 <section id="p9" hidden>
-<div class="seg gseg" role="tablist" aria-label="កិច្ចការ និងរបាយការណ៍"><button type="button" data-go="p2" aria-selected="false">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="true">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="false">⏱️ Timesheet &amp; Workplan</button></div>
+<div class="seg gseg" role="tablist" aria-label="កិច្ចការ និងរបាយការណ៍"><button type="button" data-go="p2" aria-selected="false">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="true">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="false">⏱️ Timesheet &amp; Workplan</button><button type="button" data-go="p19" aria-selected="false">🤝 កំណត់ហេតុប្រជុំ</button></div>
   <div class="bar">
     <label for="wt">អ្នករៀបចំ៖</label><select id="wt"></select>
     <label for="wm">ខែ៖</label><input type="month" id="wm" style="flex:0 0 160px;width:160px">
@@ -329,7 +341,7 @@
 
 <!-- ផ្ទាំងទី ១២៖ Timesheet & Workplan -->
 <section id="p13" hidden>
-<div class="seg gseg" role="tablist" aria-label="ការងាររដ្ឋបាល"><button type="button" data-go="p2" aria-selected="false">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="false">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="true">⏱️ Timesheet &amp; Workplan</button></div>
+<div class="seg gseg" role="tablist" aria-label="ការងាររដ្ឋបាល"><button type="button" data-go="p2" aria-selected="false">📋 កិច្ចតែងការ</button><button type="button" data-go="p9" aria-selected="false">📝 របាយការណ៍ការងារ</button><button type="button" data-go="p13" aria-selected="true">⏱️ Timesheet &amp; Workplan</button><button type="button" data-go="p19" aria-selected="false">🤝 កំណត់ហេតុប្រជុំ</button></div>
   <div class="bar">
     <label for="tsT">គ្រូ៖</label><select id="tsT"></select>
     <label for="tsM">ខែ៖</label><input type="month" id="tsM" style="flex:0 0 160px;width:160px">
@@ -523,7 +535,7 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=41"></script>
+<script src="script.js?v=42"></script>
 <script src="walker.js?v=4"></script>
 <script src="sched.js?v=19"></script>
 <script src="curriculum7.js?v=4"></script>
@@ -535,6 +547,7 @@
 <script src="curriculum.js?v=6"></script>
 <script src="quiz.js?v=5"></script>
 <script src="monthly.js?v=3"></script>
+<script src="meetings.js?v=1"></script>
 <script src="classorg.js?v=8"></script>
 <script src="excerpt.js?v=12"></script>
 </body>
