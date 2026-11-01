@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=37">
+<link rel="stylesheet" href="style.css?v=38">
 <link rel="stylesheet" href="modern.css?v=16">
 
 </head>
@@ -367,11 +367,12 @@
 
 <section id="p16" hidden>
 <div class="seg gseg" role="tablist" aria-label="គ្រប់គ្រងថ្នាក់រៀន"><button type="button" data-go="p12" aria-selected="false">🗓️ កាលវិភាគបង្រៀន</button><button type="button" data-go="p14" aria-selected="false">📖 សម្រង់អត្ថបទ</button><button type="button" data-go="p15" aria-selected="false">📘 កម្មវិធីសិក្សា</button><button type="button" data-go="p16" aria-selected="true">🏛️ រចនាសម្ព័ន្ធថ្នាក់</button></div>
+  <div class="seg" id="ogSeg"><button type="button" data-ov="org" aria-selected="true">🏛️ រចនាសម្ព័ន្ធ</button><button type="button" data-ov="seat" aria-selected="false">🪑 ប្លង់តុ</button></div>
   <div class="bar">
     <label for="ogT">គ្រូទីប្រឹក្សា៖</label><select id="ogT"></select>
     <label for="ogC">ថ្នាក់៖</label><select id="ogC"></select>
-    <label for="ogN">ចំនួនក្រុម៖</label><select id="ogN"></select>
-    <button id="ogAuto">⚡ បែងចែកក្រុមស្វ័យប្រវត្តិ</button>
+    <span id="ogOrgCtl" style="display:contents"><label for="ogN">ចំនួនក្រុម៖</label><select id="ogN"></select>
+    <button id="ogAuto">⚡ បែងចែកក្រុមស្វ័យប្រវត្តិ</button></span>
     <button class="primary" id="ogPr">🖨️ បោះពុម្ព</button>
   </div>
   <div id="ogBody"></div>
@@ -507,7 +508,7 @@
 <script src="curriculum11.js?v=1"></script>
 <script src="curriculum12.js?v=1"></script>
 <script src="curriculum.js?v=6"></script>
-<script src="classorg.js?v=5"></script>
+<script src="classorg.js?v=6"></script>
 <script src="excerpt.js?v=12"></script>
 </body>
 </html>

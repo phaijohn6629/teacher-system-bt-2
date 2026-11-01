@@ -6,7 +6,7 @@
 (function(){
 "use strict";
 var RO={h:"ប្រធានថ្នាក់",v1:"អនុប្រធានទី១",v2:"អនុប្រធានទី២",gl:"ប្រធានក្រុម"};
-var ogT="",ogI=0;
+var ogT="",ogI=0,ogV="org",seatSel=null;
 function cls(){var cl=rs.c[ogT]||[];if(ogI>=cl.length)ogI=0;return cl[ogI]}
 function key(s){return s.id?"i:"+s.id:"n:"+s.n}
 function org(c){c.org=c.org||{n:6,r:{}};c.org.r=c.org.r||{};return c.org}
@@ -53,6 +53,8 @@ function printHTML(c){
 /* ---------- ផ្ទាំងកែ ---------- */
 function renderOrg(){
   if(!who)return;
+  [].forEach.call($("ogSeg").children,function(b){b.setAttribute("aria-selected",b.dataset.ov===ogV)});
+  $("ogOrgCtl").style.display=ogV==="org"?"contents":"none";
   if(!ogT||!data.some(function(t){return t.id===ogT}))ogT=data.some(function(t){return t.id===who.id})?who.id:(data[0]&&data[0].id)||"";
   $("ogT").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===ogT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   var cl=rs.c[ogT]||[],c=cls(),ed=canE();
@@ -62,6 +64,7 @@ function renderOrg(){
   ["ogN","ogAuto"].forEach(function(i){$(i).disabled=!ed||!c});
   if(!c){$("ogBody").innerHTML="<p class=note>គ្រូនេះមិនទាន់មានថ្នាក់ទេ។ សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សនៅផ្ទាំង «លទ្ធផលសិក្សា» ឬ «សិស្ស និងអវត្តមាន» ជាមុន។</p>";return}
   if(!c.st.length){$("ogBody").innerHTML="<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានសិស្សទេ។ សូមបញ្ចូលសិស្សជាមុន (អាចនាំចូលពី Excel នៅផ្ទាំង «សិស្ស និងអវត្តមាន»)។</p>";return}
+  if(ogV==="seat")return renderSeat(c,ed);
   var gOpt=function(v){var o="<option value=0>—</option>";for(var k=1;k<=n;k++)o+="<option value="+k+(k===v?" selected":"")+">ក្រុមទី"+kn(k)+"</option>";return o};
   var rOpt=function(v){return"<option value=''>—</option>"+Object.keys(RO).map(function(k){return"<option value="+k+(k===v?" selected":"")+">"+RO[k]+"</option>"}).join("")};
   var rows=c.st.map(function(s,i){var r=rOf(c,s);
@@ -140,5 +143,91 @@ $("ogBody").addEventListener("click",function(e){
   if(x){var c=cls();if(!c||!canE())return;var o=org(c);if(o.ph)delete o.ph[x.dataset.ogdel];savR();renderOrg();return}
   var b=e.target.closest("[data-ogph]");if(b)setPhoto(b.dataset.ogph);
 });
-$("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}window.SCHX.fontsOk().then(function(){doPrint(printHTML(c))})};
+$("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}window.SCHX.fontsOk().then(function(){doPrint(ogV==="seat"?seatPrint(c):printHTML(c))})};
+$("ogSeg").onclick=function(e){var b=e.target.closest("button[data-ov]");if(b){ogV=b.dataset.ov;seatSel=null;renderOrg()}};
+
+/* ===================== 🪑 ប្លង់តុ =====================
+   d2 = តុ ២ នាក់ · ៤ ជួរឈរ × ៦ ជួរដេក (៤៨ កៅអី) · d1 = តុ ១ នាក់ · ៦ × ៦ (៣៦ កៅអី)
+   តុគ្រូនៅខាងលើឆ្វេងជានិច្ច · c.seat = {lay, s:[គន្លឹះសិស្សតាមលេខកៅអី]} */
+var LAY={d2:{cols:4,rows:6,per:2,lbl:"តុ ២ នាក់ (៤ × ៦)"},d1:{cols:6,rows:6,per:1,lbl:"តុ ១ នាក់ (៦ × ៦)"}};
+function seat(c){c.seat=c.seat||{lay:"d2",s:[]};if(!LAY[c.seat.lay])c.seat.lay="d2";return c.seat}
+function nSeats(L){return L.cols*L.rows*L.per}
+function byKey(c){var o={};c.st.forEach(function(s){o[key(s)]=s});return o}
+function cleanSeat(c){   /* ដកសិស្សដែលលែងមាន ឬស្ទួន */
+  var S=seat(c),m=byKey(c),seen={},N=nSeats(LAY[S.lay]);
+  S.s=S.s.slice(0,N).map(function(k){if(!k||!m[k]||seen[k])return"";seen[k]=1;return k});
+  while(S.s.length<N)S.s.push("");return S;
+}
+function fillSeats(c,order){var S=seat(c),N=nSeats(LAY[S.lay]);S.s=[];for(var i=0;i<N;i++)S.s.push(order[i]?key(order[i]):"")}
+function seatGrid(c,edit){
+  var S=cleanSeat(c),L=LAY[S.lay],m=byKey(c),h="",i=0;
+  for(var r=0;r<L.rows;r++){
+    h+="<div class=st-row2 style='grid-template-columns:repeat("+L.cols+",minmax(0,1fr))'>";
+    for(var col=0;col<L.cols;col++){
+      h+="<div class='desk p"+L.per+"'>";
+      for(var k=0;k<L.per;k++,i++){
+        var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)];
+        h+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":""):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+">"+
+          "<span class=sn>"+kn(i+1)+"</span>"+(s?(ph?"<img src='"+ph+"' alt=''>":"")+"<b>"+esc(s.n)+"</b>":"<i>ទំនេរ</i>")+"</div>";
+      }
+      h+="</div>";
+    }
+    h+="</div>";
+  }
+  var t=teacherOf(ogT);
+  return"<div class=room><div class=room-front><div class=tdesk>👩‍🏫 តុគ្រូ<small>"+esc(t.name||"")+"</small></div><div class=board>ក្ដារខៀន</div><div class=door>🚪 ទ្វារ</div></div>"+
+    "<div class=room-seats>"+h+"</div></div>";
+}
+function renderSeat(c,ed){
+  var S=cleanSeat(c),L=LAY[S.lay],N=nSeats(L),placed={};S.s.forEach(function(k){if(k)placed[k]=1});
+  var free=c.st.filter(function(s){return!placed[key(s)]});
+  var over=c.st.length>N;
+  $("ogBody").innerHTML="<div class=bar style='margin-top:4px'>"+
+    "<label>ប្លង់៖</label><select id=seLay "+(ed?"":"disabled")+">"+Object.keys(LAY).map(function(k){return"<option value="+k+(k===S.lay?" selected":"")+">"+LAY[k].lbl+"</option>"}).join("")+"</select>"+
+    (ed?"<button type=button data-sa=rand>🎲 ចៃដន្យ</button><button type=button data-sa=mix>🎲 ចៃដន្យ (ឆ្លាស់ប្រុស-ស្រី)</button><button type=button data-sa=abc>🔤 តាមអក្ខរក្រម</button><button type=button class=danger data-sa=clr>សម្អាត</button>":"")+
+    "</div>"+
+    (over?"<p class=cxwarn>⚠️ សិស្ស "+kn(c.st.length)+" នាក់ ច្រើនជាងកៅអី "+kn(N)+"។ សូមជ្រើសប្លង់តុ ២ នាក់។</p>":"")+
+    (ed?"<p class=note style='margin:0 0 8px'>✋ <b>រៀបដោយដៃ</b>៖ ចុចលើសិស្សក្នុងបញ្ជីខាងក្រោម (ឬលើកៅអី) រួចចុចកៅអីដែលចង់ដាក់ — បើកៅអីនោះមានសិស្ស នឹងប្ដូរកន្លែងគ្នា។ ចុចកៅអីដដែលពីរដង ដើម្បីដកសិស្សចេញ។</p>":"")+
+    "<div class=og-card>"+seatGrid(c,ed)+"</div>"+
+    "<div class=st-free><b>មិនទាន់មានកៅអី ("+kn(free.length)+")៖</b> "+(free.length?free.map(function(s){var sel=seatSel&&seatSel.t==="f"&&seatSel.k===key(s);return"<button type=button class='chip"+(sel?" sel":"")+(s.g==="ស្រី"?" f":"")+"'"+(ed?" data-free='"+esc(key(s))+"'":" disabled")+">"+esc(s.n)+"</button>"}).join(""):"<span class=note style='margin:0'>✅ គ្រប់គ្នាមានកៅអីហើយ</span>")+"</div>"+
+    "<p class=note>សិស្សសរុប "+kn(c.st.length)+" នាក់ · កៅអី "+kn(N)+" · ទំនេរ "+kn(Math.max(0,N-c.st.length))+" · <span class=lg-f>■</span> ស្រី <span class=lg-m>■</span> ប្រុស</p>";
+}
+function kmSort(a,b){return String(a.n).localeCompare(String(b.n),"km")}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+$("ogBody").addEventListener("change",function(e){
+  if(e.target.id!=="seLay")return;var c=cls();if(!c||!canE())return;
+  var S=seat(c),order=S.s.map(function(k){return byKey(c)[k]}).filter(Boolean);
+  S.lay=e.target.value;fillSeats(c,order);savR();renderOrg();
+});
+$("ogBody").addEventListener("click",function(e){
+  if(ogV!=="seat")return;var c=cls();if(!c||!canE())return;
+  var a=e.target.closest("[data-sa]");
+  if(a){
+    var k=a.dataset.sa,S=seat(c),has=S.s.some(Boolean);
+    if(k==="clr"){if(has&&confirm("សម្អាតកៅអីទាំងអស់?")){S.s=[];savR();renderOrg()}return}
+    if(has&&!confirm("រៀបកៅអីឡើងវិញ? ការរៀបចាស់នឹងត្រូវជំនួស។"))return;
+    var st=c.st.slice();
+    if(k==="abc")st.sort(kmSort);
+    else if(k==="rand")st=shuffle(st);
+    else{var f=shuffle(st.filter(function(s){return s.g==="ស្រី"})),m=shuffle(st.filter(function(s){return s.g!=="ស្រី"}));st=[];while(f.length||m.length){if(m.length)st.push(m.shift());if(f.length)st.push(f.shift())}}
+    fillSeats(c,st);seatSel=null;savR();renderOrg();notify(k==="abc"?"បានរៀបតាមអក្ខរក្រម":"បានរៀបដោយចៃដន្យ");return;
+  }
+  var fr=e.target.closest("[data-free]");
+  if(fr){var fk=fr.getAttribute("data-free");seatSel=(seatSel&&seatSel.k===fk)?null:{t:"f",k:fk};renderOrg();return}
+  var se=e.target.closest("[data-seat]");if(!se)return;
+  var i=+se.dataset.seat,S2=cleanSeat(c);
+  if(!seatSel){if(S2.s[i]){seatSel={t:"s",i:i};renderOrg()}return}
+  if(seatSel.t==="s"){
+    if(seatSel.i===i){S2.s[i]=""}else{var tmp=S2.s[i];S2.s[i]=S2.s[seatSel.i];S2.s[seatSel.i]=tmp}
+  }else{
+    var old=S2.s[i];S2.s[i]=seatSel.k;   /* សិស្សចាស់នៃកៅអីនោះ → ត្រឡប់ទៅបញ្ជីមិនទាន់មានកៅអី */
+  }
+  seatSel=null;savR();renderOrg();
+});
+function seatPrint(c){
+  var I=inf(),S=cleanSeat(c);
+  return"<div class='pg land orgp seatp'><span class='og-cn tl'></span><span class='og-cn tr'></span><span class='og-cn bl'></span><span class='og-cn br'></span>"+
+   "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
+   "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>";
+}
 })();
