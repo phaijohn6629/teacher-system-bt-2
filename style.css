@@ -554,3 +554,64 @@ body.pm .pg.land{page-break-inside:avoid}
 .mt-lun{margin:8px 0;color:var(--muted,#666);font-size:13px}
 .mt-ar{display:flex;gap:6px;align-items:center;margin:4px 0;flex-wrap:wrap}.mt-ar span{width:24px;text-align:right}.mt-ar select{flex:0 0 96px}.mt-ar input{flex:1 1 150px;min-width:0}
 .mt-x{padding:2px 8px}
+/* ===== មេរៀនសង្ខេប (ស្លាយមានចលនា) ===== */
+.ls-hero{background:linear-gradient(120deg,#0b5d4b,#13a37f 60%,#3ec9a7);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:0 6px 18px rgba(11,93,75,.25)}
+.ls-hero h2{margin:0 0 4px;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:20px}.ls-hero p{margin:0;opacity:.9}
+.ls-g{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.ls-g button{flex:0 0 auto}
+.ls-g button[aria-selected=true]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.ls-ch h3{margin:14px 0 10px;font-size:16px}.ls-ch h3 small{color:var(--mute);font-weight:400}
+.ls-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.ls-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;min-height:120px}
+.ls-card::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:hsl(var(--h),60%,40%)}
+.ls-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.12)}
+.ls-card b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:hsl(var(--h),60%,38%);color:#fff;font-size:15px}
+.ls-card span{font-weight:700;line-height:1.5}.ls-card em{font-style:normal;font-size:12px;color:var(--mute);margin-top:auto}
+.ls-empty{text-align:center;padding:40px 16px;border:2px dashed var(--line);border-radius:14px;color:var(--mute);line-height:2}
+body.ls-open{overflow:hidden}
+.ls-view{position:fixed;inset:0;z-index:2000;background:#0c1f1a;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 8px) 12px calc(env(safe-area-inset-bottom,0px) + 8px);outline:none}
+.ls-top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#e5f3ee;font-size:13px}
+.ls-top #lsTt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ls-tools{display:flex;gap:6px;flex:0 0 auto}.ls-tools button{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);padding:5px 10px}
+.ls-prog{height:4px;background:rgba(255,255,255,.12);border-radius:3px;margin:8px 0;overflow:hidden}.ls-prog i{display:block;height:100%;background:linear-gradient(90deg,#3ec9a7,#e2a93a);transition:width .4s}
+.ls-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ls-sl{width:min(100%,1000px);max-height:100%;overflow:auto;background:#fff;color:#1c2b27;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.4);padding:0 0 18px}
+.ls-sh{margin:0 0 14px;padding:14px 22px;background:linear-gradient(90deg,#0b5d4b,#13a37f);color:#fff;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:18px;border-radius:16px 16px 0 0}
+.ls-grid2{display:grid;gap:12px;padding:0 18px}.ls-2c .ls-grid2{grid-template-columns:1fr 1fr;align-items:start}
+.ls-blk{border-radius:12px;border:1px solid;overflow:hidden;animation:lsUp .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--d)*.18s + .15s)}
+.ls-bh{padding:7px 12px;color:#fff;font-weight:700}.ls-bb{padding:8px 14px;line-height:1.85;font-size:15px}.ls-bb p{margin:2px 0}.ls-bb ul{margin:2px 0;padding-left:20px}
+.ls-def{border-color:#1f5fae;background:#eef3fb}.ls-def .ls-bh{background:#1f5fae}
+.ls-ex{border-color:#d9731a;background:#fdf4ec}.ls-ex .ls-bh{background:#d9731a}
+.ls-sol{border-color:#0f6b55;background:#ecf6f2}.ls-sol .ls-bh{background:#0f6b55}
+.ls-tip{border-color:#b58a00;background:#f8f4e6}.ls-tip .ls-bh{background:#b58a00}
+.ls-warn{border-color:#b83a2e;background:#fbeeec}.ls-warn .ls-bh{background:#b83a2e}
+.ls-sum{border-color:#5b3fb5;background:#f2effb}.ls-sum .ls-bh{background:#5b3fb5}
+.ls-plotb{border:0;background:transparent;text-align:center}.ls-cap{font-size:13px;color:#4a5a55;margin-top:2px}
+.ls-plot{position:relative;width:min(100%,300px);margin:0 auto}.ls-svg{width:100%;display:block}
+.ls-grid{stroke:#e3e9e6;stroke-width:1}.ls-ax{stroke:#333;stroke-width:1.4}.ls-lb{font-size:10px;fill:#333}.ls-cir{fill:none;stroke:#999;stroke-dasharray:4 4}
+.ls-draw{stroke-dasharray:400;stroke-dashoffset:400;animation:lsDraw .9s ease forwards;animation-delay:calc(var(--i)*.25s + .5s)}
+.ls-draw[stroke-dasharray="4 3"]{stroke-dashoffset:0;animation:lsFade .6s both;animation-delay:calc(var(--i)*.25s + .5s)}
+.ls-pt,.ls-pl{animation:lsPop .4s both;animation-delay:calc(var(--i)*.25s + 1s)}
+.ls-pl{position:absolute;font-size:13px;white-space:nowrap;pointer-events:none}
+.ls-title{text-align:center;padding:40px 24px;background:linear-gradient(135deg,#f3fbf8,#fff 55%,#fdf6e7)}
+.ls-title h2{font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:clamp(20px,4vw,30px);color:#0b5d4b;margin:18px 0;border:0;background:none;line-height:1.8}
+.ls-chip{display:inline-block;background:#0b5d4b;color:#fff;padding:6px 16px;border-radius:20px;animation:lsUp .5s both}
+.ls-meta{border:0;background:none;color:#4a5a55;margin:6px 0}
+.ls-recap{border:0;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}.ls-recap button{background:#e6f3ee;border:1px solid #bcdcd0;color:#0b5d4b}
+.ls-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.ls-nav>button{flex:0 0 auto;min-width:96px}.ls-nav>button:first-child{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+.ls-dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:1}.ls-dots button{width:10px;height:10px;padding:0;border-radius:50%;border:0;background:rgba(255,255,255,.3);min-width:0}.ls-dots button.on{background:#3ec9a7;transform:scale(1.3)}
+.ls-cnt{color:#cfe5dd;font-size:13px;flex:0 0 auto}
+.ls-inR{animation:lsInR .5s cubic-bezier(.2,.8,.2,1)}.ls-inL{animation:lsInL .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes lsInR{from{opacity:0;transform:translateX(60px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes lsInL{from{opacity:0;transform:translateX(-60px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes lsUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes lsDraw{to{stroke-dashoffset:0}}
+@keyframes lsFade{from{opacity:0}to{opacity:1}}
+@keyframes lsPop{from{opacity:0;transform:scale(.3)}to{opacity:1}}
+.ls-pl{animation-name:lsFade}
+.no-motion .ls-blk,.no-motion .ls-draw,.no-motion .ls-pt,.no-motion .ls-pl,.no-motion .ls-inR,.no-motion .ls-inL,.no-motion .ls-chip{animation:none!important;stroke-dashoffset:0}
+@media (max-width:700px){.ls-2c .ls-grid2{grid-template-columns:1fr}.ls-sh{font-size:15px;padding:12px 16px}.ls-grid2{padding:0 10px}.ls-bb{font-size:14px}.ls-nav>button{min-width:0}.ls-dots{display:none}}
+.ls-2c .ls-grid2{grid-auto-flow:row dense}.ls-2c .ls-grid2>.ls-blk:not(.ls-plotb){grid-column:1}.ls-2c .ls-grid2>.ls-plotb{grid-column:2;grid-row:1/span 6}
+@media (max-width:700px){.ls-2c .ls-grid2>.ls-blk:not(.ls-plotb),.ls-2c .ls-grid2>.ls-plotb{grid-column:auto;grid-row:auto}}
+.ls-top #lsTt{flex:1;min-width:0}.ls-grid2{grid-template-columns:minmax(0,1fr)}.ls-2c .ls-grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.ls-bb{overflow-x:auto}.ls-view{overflow:hidden}
+@media (max-width:700px){.ls-2c .ls-grid2{grid-template-columns:minmax(0,1fr)}.ls-tools button{padding:5px 8px}#lsAuto{font-size:0}#lsAuto::first-letter{font-size:14px}}

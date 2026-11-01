@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=48">
+<link rel="stylesheet" href="style.css?v=49">
 <link rel="stylesheet" href="modern.css?v=17">
 
 </head>
@@ -83,6 +83,7 @@
   <button data-p="p17" aria-selected="false">១៦. តេស្ត</button>
   <button data-p="p18" aria-selected="false">១៧. ពិន្ទុប្រចាំខែ</button>
   <button data-p="p19" aria-selected="false">១៨. កំណត់ហេតុប្រជុំ</button>
+  <button data-p="p20" aria-selected="false">១៩. មេរៀនសង្ខេប</button>
 </nav>
 
 <!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
@@ -259,6 +260,17 @@
     <button id="mtDel">🗑️ លុប</button>
   </div>
   <div id="mtBody"></div>
+</section>
+<section id="p20" hidden>
+  <div class="ls-hero"><h2>📖 មេរៀនសង្ខេប</h2><p>សង្ខេបខ្លី ងាយយល់ គ្រប់ខ្លឹមសារ · បង្ហាញជាស្លាយមានចលនា</p></div>
+  <div class="seg ls-g" id="lsG" role="tablist" aria-label="កម្រិតថ្នាក់"></div>
+  <div id="lsBody"></div>
+  <div id="lsView" class="ls-view" hidden tabindex="-1" role="dialog" aria-modal="true" aria-label="ស្លាយមេរៀន">
+    <div class="ls-top"><span id="lsTt"></span><span class="ls-tools"><button type="button" id="lsAuto">▶ ចាក់ស្វ័យប្រវត្តិ</button><button type="button" id="lsFull" title="ពេញអេក្រង់">⛶</button><button type="button" id="lsClose" title="បិទ">✕</button></span></div>
+    <div class="ls-prog"><i id="lsBar"></i></div>
+    <div id="lsStage" class="ls-stage"></div>
+    <div class="ls-nav"><button type="button" id="lsPrev">◀ មុន</button><span id="lsDots" class="ls-dots"></span><span id="lsCnt" class="ls-cnt"></span><button type="button" id="lsNext" class="primary">បន្ទាប់ ▶</button></div>
+  </div>
 </section>
 
 
@@ -535,7 +547,7 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=42"></script>
+<script src="script.js?v=43"></script>
 <script src="walker.js?v=4"></script>
 <script src="sched.js?v=19"></script>
 <script src="curriculum7.js?v=4"></script>
@@ -548,6 +560,7 @@
 <script src="quiz.js?v=5"></script>
 <script src="monthly.js?v=3"></script>
 <script src="meetings.js?v=2"></script>
+<script src="lessons.js?v=1"></script>
 <script src="classorg.js?v=8"></script>
 <script src="excerpt.js?v=12"></script>
 </body>
