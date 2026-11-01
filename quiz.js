@@ -421,6 +421,16 @@ function renderQuiz(){
   else{if(!tests.length&&!renderQuiz.tl){renderQuiz.tl=1;loadTests().then(renderQuiz);return}renderRes()}
 }
 window.renderQuiz=renderQuiz;
+/* សម្រាប់ «ពិន្ទុប្រចាំខែ» (monthly.js)៖ បញ្ជីតេស្តរបស់គ្រូ និងពិន្ទុតាមសិស្ស */
+window.QUIZ={
+  list:function(tid){var FB=window.FB;return FB.getDocs(FB.query(FB.collection(window.db,"tests"),FB.where("o","==",tid))).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});return a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")})})},
+  scores:function(t){var FB=window.FB;
+    return Promise.all([FB.getDoc(FB.doc(window.db,"tkeys",t.id)),FB.getDocs(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)))]).then(function(r){
+      var K={};try{K=JSON.parse(r[0].data().a)}catch(x){}var by={};
+      r[1].forEach(function(d){var s=d.data(),sc=0;t.items.forEach(function(q){var k=K[q.id];if(k&&correct({t:k.t,a:k.a},s.a&&s.a[q.id]))sc++});by[s.sid]=sc});
+      return{n:t.items.length,by:by};
+    })}
+};
 $("qzSeg").onclick=function(e){
   if(e.target.closest("#qzDrive"))return driveClick();
   var b=e.target.closest("[data-qv]");if(!b)return;QV=b.dataset.qv;
