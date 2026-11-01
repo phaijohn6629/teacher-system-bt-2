@@ -3,6 +3,7 @@
    - ពិន្ទុអតិបរមាសរុបតាមថ្នាក់ = rs.mx (ដូចផ្ទាំងលទ្ធផលសិក្សា)
    - ភាគរយ និងកម្រិតនិទ្ទេស = rs.ms (Admin កែ · cfg/rs)
    - ពិន្ទុរបស់ថ្នាក់ = c.ms["YYYY-MM"] = {f:{ពិន្ទុពេញ}, r:{គន្លឹះសិស្ស:{a,t1,t2,h,b,c,o}}} (rs/{ID គ្រូ})
+   - តេស្តលើកទី១/ទី២ យកពីផ្នែក «📝 តេស្ត» (ប្រភេទ លើកទី១/ទី២ និងខែ) ដោយស្វ័យប្រវត្តិ · តេស្តទូទៅមិនរាប់
    ពិន្ទុដើម × មេគុណ (អតិបរមា ÷ ពិន្ទុពេញ) → ពិន្ទុសកម្មភាព · តេស្ត = មធ្យមនៃតេស្តដែលបានបញ្ចូល
    ======================================================================== */
 (function(){
@@ -50,24 +51,51 @@ function renderMs(){
   var cl=rs.c[mT]||[],c=cls(),ed=canE();
   $("msC").innerHTML=cl.length?cl.map(function(x,i){return"<option value="+i+(i===mI?" selected":"")+">"+esc(x.n)+" ("+x.st.length+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>";
   $("msM").value=mM;
-  ["msQz","msImp"].forEach(function(i){$(i).style.display=ed?"":"none"});
+  $("msImp").style.display=ed?"":"none";
   if(!c){$("msBody").innerHTML="<p class=note>គ្រូនេះមិនទាន់មានថ្នាក់ទេ។ សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សនៅផ្ទាំង «លទ្ធផលសិក្សា» ជាមុន។</p>";return}
   var X=maxes(c),R=rec(c,false),F=R.f||{},W=cfg().w,pc=function(x){return Math.round(x*100)+"%"};
   var h="<div class='wrap ms-wrap'><table class=ms-tb><thead>"+
     "<tr><th rowspan=2>ល.រ</th><th rowspan=2>ឈ្មោះសិស្ស</th><th rowspan=2>ភេទ</th><th colspan=5 class=ms-in>ពិន្ទុដើមដែលបញ្ចូល</th><th colspan=5 class=ms-auto>ពិន្ទុសកម្មភាព "+pc(W.a+W.t+W.h+W.b)+" (ស្វ័យប្រវត្តិ)</th><th colspan=2 class=ms-in>ប្រឡង "+pc(W.c+W.o)+"</th><th rowspan=2>សរុប<br><small>/"+fmt(X.T)+"</small></th><th rowspan=2>និទ្ទេស</th></tr>"+
-    "<tr>"+COL.map(function(x){return"<th class=ms-in>"+x[1].replace("\n","<br>")+"</th>"}).join("")+
+    "<tr>"+COL.map(function(x){var q=x[0]==="t1"||x[0]==="t2";return"<th class="+(q?"ms-tqh":"ms-in")+">"+x[1].replace("\n","<br>")+(q?"<br><small>📝 ពីតេស្ត</small>":"")+"</th>"}).join("")+
       "<th class=ms-auto>សកម្មភាព<br><small>/"+fmt(X.a)+"</small></th><th class=ms-auto>តេស្ត (មធ្យម)<br><small>/"+fmt(X.t)+"</small></th><th class=ms-auto>ស្រាវជ្រាវ<br><small>/"+fmt(X.h)+"</small></th><th class=ms-auto>សៀវភៅ<br><small>/"+fmt(X.b)+"</small></th><th class=ms-auto>សរុបសកម្មភាព<br><small>/"+fmt(X.act)+"</small></th>"+
       "<th class=ms-in>បិទ<br><small>/"+fmt(X.c)+"</small></th><th class=ms-in>បើក<br><small>/"+fmt(X.o)+"</small></th></tr>"+
-    "<tr class=ms-full><td colspan=3>ពិន្ទុពេញ <small>(ទុកទទេ = អតិបរមា)</small></td>"+COL.map(function(x){var M=x[0][0]==="t"?X.t:X[x[0]];return"<td><input data-mf="+x[0]+" value='"+esc(F[x[0]]==null?"":F[x[0]])+"' placeholder='"+fmt(M)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+"<td colspan=9></td></tr>"+
+    "<tr class=ms-full><td colspan=3>ពិន្ទុពេញ <small>(ទុកទទេ = អតិបរមា)</small></td>"+COL.map(function(x){var M=x[0][0]==="t"?X.t:X[x[0]];
+      if(x[0]==="t1"||x[0]==="t2")return"<td class=ms-tq>"+(F[x[0]]?"<b>"+fmt(F[x[0]])+"</b>":"")+"</td>";return"<td><input data-mf="+x[0]+" value='"+esc(F[x[0]]==null?"":F[x[0]])+"' placeholder='"+fmt(M)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+"<td colspan=9></td></tr>"+
     "</thead><tbody>"+c.st.map(function(s,i){
       var r=(R.r||{})[key(s)]||{},o=calc(c,r,F);
       return"<tr data-mi="+i+"><td>"+kn(i+1)+"</td><td class=nm>"+esc(s.n)+"</td><td>"+esc((s.g||"").slice(0,1))+"</td>"+
-        COL.map(function(x){return"<td class=ms-in><input data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+
+        COL.map(function(x){if(x[0]==="t1"||x[0]==="t2")return"<td class=ms-tq>"+(r[x[0]]==null?(R.src&&R.src[x[0]]?"<span class=note style='margin:0'>—</span>":""):"<b>"+fmt(r[x[0]])+"</b>")+"</td>";
+          return"<td class=ms-in><input data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+
         "<td class=ms-auto data-o=a>"+fmt(o.a)+"</td><td class=ms-auto data-o=t>"+fmt(o.t)+"</td><td class=ms-auto data-o=h>"+fmt(o.h)+"</td><td class=ms-auto data-o=b>"+fmt(o.b)+"</td><td class='ms-auto ms-b' data-o=act>"+fmt(o.act)+"</td>"+
         "<td class=ms-in><input data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+"></td><td class=ms-in><input data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
         "<td class=ms-b data-o=tot>"+fmt(o.tot)+"</td><td data-o=g>"+gbadge(o.g)+"</td></tr>"}).join("")+"</tbody></table></div>";
-  h+=summary(c)+settingsHtml();
+  h=testInfo(R)+h+summary(c)+settingsHtml();
   $("msBody").innerHTML=h;
+  if(ed&&!syncing)syncTests(c);
+}
+/* តេស្តលើកទី១/ទី២ ពីផ្នែកតេស្ត */
+function testInfo(R){
+  var S=R.src||{};
+  return"<div class=ms-tests>"+["t1","t2"].map(function(k){var x=S[k],L=k==="t1"?"តេស្តលើកទី១":"តេស្តលើកទី២";
+    return"<div class='ms-tc"+(x?" on":"")+"'><b>📝 "+L+"</b>"+(x?"<span>«"+esc(x.title)+"» · "+kn(x.n)+" លំហាត់ · ធ្វើរួច "+kn(x.cnt)+" នាក់</span>":"<span class=note style='margin:0'>មិនទាន់មានតេស្ត «"+L+"» សម្រាប់ខែនេះ — បង្កើតនៅ «📝 តេស្ត → 🧪 បង្កើតតេស្ត» ដោយជ្រើសប្រភេទ «"+L+"»</span>")+"</div>"}).join("")+
+    "<button type=button data-msync>🔄 ធ្វើបច្ចុប្បន្នភាព</button></div>";
+}
+var syncing=false,lastSync="";
+function syncTests(c,manual){
+  if(!window.QUIZ||!window.FB)return;
+  var sk=mT+"|"+mI+"|"+mM;if(!manual&&lastSync===sk)return;lastSync=sk;syncing=true;
+  var cmo=mM,ct=mT;
+  QUIZ.forMonth(mT,c.n,mM).then(function(O){
+    if(cmo!==mM||ct!==mT)return;
+    var R=rec(c,true),before=JSON.stringify([R.f,R.r,R.src||{}]);R.src=R.src||{};
+    ["t1","t2"].forEach(function(k){
+      var x=O[k];
+      c.st.forEach(function(s,i){var kk=key(s),r=R.r[kk];var v=x?x.by[sidOf(s,i)]:null;
+        if(v!=null){r=R.r[kk]=r||{};r[k]=v}else if(r){delete r[k];if(!Object.keys(r).length)delete R.r[kk]}});
+      if(x){R.f[k]=x.n;R.src[k]={id:x.t.id,title:x.t.title,n:x.n,cnt:Object.keys(x.by).length}}else{delete R.f[k];delete R.src[k]}
+    });
+    if(JSON.stringify([R.f,R.r,R.src])!==before){savR();renderMs()}else if(manual)notify("ពិន្ទុតេស្តត្រឹមត្រូវហើយ");
+  }).catch(function(e){console.error("ms sync:",e);if(manual)alert("មិនអាចយកពិន្ទុតេស្តបានទេ")}).then(function(){syncing=false});
 }
 window.renderMs=renderMs;
 function summary(c){
@@ -108,6 +136,7 @@ $("msBody").addEventListener("change",function(e){
   else{var g=C.gr.slice();g[+el.dataset.mg]=Math.max(0,+el.value||0)/100;rs.ms.gr=g}
   savR();renderMs();notify("បានរក្សាទុកការកំណត់");
 });
+$("msBody").addEventListener("click",function(e){if(e.target.closest("[data-msync]")){var c=cls();if(c&&canE())syncTests(c,true)}});
 /* ចុច Enter → ចុះក្រោម */
 $("msBody").addEventListener("keydown",function(e){
   if(e.key!=="Enter"||!e.target.dataset.mk)return;e.preventDefault();
@@ -117,32 +146,8 @@ $("msT").onchange=function(){mT=this.value;mI=0;renderMs()};
 $("msC").onchange=function(){mI=+this.value||0;renderMs()};
 $("msM").onchange=function(){mM=this.value||mM;renderMs()};
 
-/* ---------- 📝 យកពិន្ទុពីតេស្តអនឡាញ ---------- */
+/* លេខសម្គាល់សិស្សក្នុងតេស្ត (ដូច quiz.js) */
 function sidOf(s,i){return String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_")}
-$("msQz").onclick=function(){
-  var c=cls();if(!c||!canE())return;
-  if(!window.QUIZ){alert("មុខងារតេស្តមិនទាន់ផ្ទុក");return}
-  QUIZ.list(mT).then(function(L){
-    L=L.filter(function(t){return t.cls===c.n});
-    if(!L.length){alert("មិនទាន់មានតេស្តអនឡាញសម្រាប់ថ្នាក់ «"+c.n+"» ទេ។ បង្កើតនៅ «📝 តេស្ត → 🧪 បង្កើតតេស្ត»។");return}
-    var d=$("msQzD");if(!d){d=document.createElement("dialog");d.id="msQzD";document.body.appendChild(d)}
-    d.innerHTML="<div class=dlgb style='min-width:320px'><h2 style='margin:0 0 10px'>📝 យកពិន្ទុពីតេស្តអនឡាញ</h2>"+
-      "<label>តេស្ត</label><select id=mqT>"+L.map(function(t,i){return"<option value="+i+">"+esc(t.title)+" · "+esc((t.cr||"").slice(0,10))+" ("+kn(t.items.length)+" លំហាត់)</option>"}).join("")+"</select>"+
-      "<label style='margin-top:8px'>ដាក់ចូល</label><select id=mqK><option value=t1>តេស្តលើកទី១</option><option value=t2>តេស្តលើកទី២</option></select>"+
-      "<p class=note>ពិន្ទុពេញនៃតេស្តនោះ = ចំនួនលំហាត់ ហើយប្រព័ន្ធបំប្លែងតាមមេគុណដោយស្វ័យប្រវត្តិ។ សិស្សដែលមិនបានធ្វើ មិនត្រូវប៉ះពាល់ទេ។</p></div>"+
-      "<div class=dlgf><button type=button id=mqX>បោះបង់</button><button type=button class=primary id=mqOK>📥 យកពិន្ទុ</button></div>";
-    $("mqX").onclick=function(){d.close()};
-    $("mqOK").onclick=function(){
-      var t=L[+$("mqT").value],k=$("mqK").value,btn=$("mqOK");btn.disabled=true;
-      QUIZ.scores(t).then(function(S){
-        var R=rec(c,true),n=0;R.f[k]=S.n;
-        c.st.forEach(function(s,i){var v=S.by[sidOf(s,i)];if(v==null)return;var r=R.r[key(s)]=R.r[key(s)]||{};r[k]=v;n++});
-        savR();d.close();renderMs();notify("បានយកពិន្ទុ "+n+" នាក់ ចូល «"+(k==="t1"?"តេស្តលើកទី១":"តេស្តលើកទី២")+"»");
-      }).catch(function(e){console.error(e);btn.disabled=false;alert("មិនអាចយកពិន្ទុបានទេ")});
-    };
-    d.showModal();
-  }).catch(function(e){console.error(e);alert("មិនអាចផ្ទុកបញ្ជីតេស្តបានទេ")});
-};
 
 /* ---------- 📥 នាំចូលពីឯកសារ Excel គំរូ (ជួរ ៨ ឡើង · B គោត្តនាម · C នាម · E–I ពិន្ទុដើម · O–P ប្រឡង · ជួរ ៤ ពិន្ទុពេញ) ---------- */
 function nk(s){return String(s||"").replace(/\s+/g,"").replace(/[\u200b-\u200d]/g,"")}
@@ -153,7 +158,7 @@ $("msImp").onclick=function(){
     var wb;try{wb=XLSX.read(ev.target.result,{type:"array"})}catch(x){alert("មិនអាចអានឯកសារនេះបានទេ");return}
     var g=parseInt(c.n),pick=wb.SheetNames.filter(function(n){var ws=wb.Sheets[n],v=ws&&ws.C2&&ws.C2.v;return String(v)===String(g)||n.indexOf("ទី"+kn(g))>=0})[0]||wb.SheetNames.filter(function(n){return!/កំណត់/.test(n)})[0];
     var ws=wb.Sheets[pick],A=XLSX.utils.sheet_to_json(ws,{header:1,defval:"",raw:true});
-    var COLS={a:4,t1:5,t2:6,h:7,b:8,c:14,o:15},map={};c.st.forEach(function(s){map[nk(s.n)]=s});
+    var COLS={a:4,h:7,b:8,c:14,o:15}   /* តេស្តលើកទី១/ទី២ យកពីផ្នែកតេស្តតែប៉ុណ្ណោះ */,map={};c.st.forEach(function(s){map[nk(s.n)]=s});
     var rows=A.slice(7).filter(function(r){return nk(r[1]+r[2])}),hit=0,miss=[],R=rec(c,true);
     var full=A[3]||[];Object.keys(COLS).forEach(function(k){if(k==="c"||k==="o")return;var v=num(full[COLS[k]]);if(v!=null)R.f[k]=v});
     rows.forEach(function(r){

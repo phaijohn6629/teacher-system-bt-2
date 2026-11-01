@@ -9,7 +9,12 @@
 (function(){
 "use strict";
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},qbLoaded=false,fG=0,fL="",fV=0,mine=false;
-var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,title:"",items:null},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
+var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
+/* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
+var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២"};
+function curMo(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)}
+function kindBadge(t){var k=t.kind||"g";return"<span class='qz-kind k-"+k+"'>"+KIND[k]+(k!=="g"&&t.mo?" · "+moName(t.mo):"")+"</span>"}
+function moName(m){var p=String(m||"").split("-");return p.length===2?"ខែ"+M[+p[1]-1]+" "+kn(p[0]):""}
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/";
 var KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};   /* ម៉ាក្រូដែលគ្រូប្រើញឹកញាប់ */
 /* កម្រិត Bloom (មតិយោបល់ % ចងចាំ …) → កម្រិតលំបាក */
@@ -258,7 +263,9 @@ function renderMake(){
   var h="<div class=bar>"+(adm?"<label>គ្រូ៖</label><select id=qmT>"+data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===mk.tid?" selected":"")+">"+esc(t.name)+"</option>"}).join("")+"</select>":"")+
     "<label>ថ្នាក់៖</label><select id=qmC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===mk.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
     "<label>ចំណងជើង៖</label><input id=qmTi value='"+esc(mk.title||("តេស្ត "+(c?c.n:"")))+"' style='flex:1 1 220px'>"+
-    "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>";
+    "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
+    "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
+    (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"</div>";
   if(!c){$("qzBody").innerHTML=h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>";return}
   if(!C){$("qzBody").innerHTML=h+"<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានកម្មវិធីសិក្សា។</p>";return}
   var cnt={};pool.forEach(function(q){var k=q.ls+"_"+q.lv;cnt[k]=(cnt[k]||0)+1});
@@ -290,12 +297,17 @@ function doShuffle(){
   if(short.length)notify("⚠️ "+short.join(" · "));
   mk.items=out;renderMake();
 }
-function openTest(){
+function openTest(){loadTests().then(openTest2)}
+function openTest2(){
   var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return;
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;return o}),keys={};
   mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)}});
   var names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
-  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:+$("qmD").value||0,open:true,names:names,items:items,cr:new Date().toISOString()};
+  var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
+  var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
+  if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return;
+  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:+$("qmD").value||0,open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
+  if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
   Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
     mk.items=null;QV="res";curTest=Object.assign({id:id},T);loadTests().then(function(){renderQuiz();showLink(id)});notify("បានបើកតេស្ត");
@@ -337,7 +349,7 @@ function watchSubs(t){
 function renderRes(){
   var h="";
   if(!curTest){
-    h=tests.length?"<div class=qr-list>"+tests.map(function(t){return"<div class=qr-card><div><b>"+esc(t.title)+"</b><small>"+esc(t.cls)+" · "+kn(t.items.length)+" លំហាត់ · "+esc((t.cr||"").slice(0,10))+(isAdm()?" · "+esc(tn(t.o)):"")+"</small></div>"+
+    h=tests.length?"<div class=qr-list>"+tests.map(function(t){return"<div class=qr-card><div><b>"+esc(t.title)+"</b><small>"+kindBadge(t)+" "+esc(t.cls)+" · "+kn(t.items.length)+" លំហាត់ · "+esc((t.cr||"").slice(0,10))+(isAdm()?" · "+esc(tn(t.o)):"")+"</small></div>"+
       "<span class='qr-st "+(t.open?"on":"")+"'>"+(t.open?"🟢 កំពុងបើក":"⚪ បានបិទ")+"</span><button type=button class=primary data-qo="+t.id+">មើលលទ្ធផល</button></div>"}).join("")+"</div>"
       :"<p class=note>មិនទាន់មានតេស្តទេ។ ចូល «🧪 បង្កើតតេស្ត» ដើម្បីបង្កើត។</p>";
     $("qzBody").innerHTML=h;return;
@@ -345,6 +357,8 @@ function renderRes(){
   var t=curTest,R=grade(t),n=t.items.length,avg=R.length?R.reduce(function(s,r){return s+r.sc},0)/R.length:0,K=keyOf[t.id]||{};
   var done={};R.forEach(function(r){done[r.s.sid]=1});var miss=(t.names||[]).filter(function(x){return!done[x.k]});
   h="<div class=bar><button type=button data-qa=back>‹ តេស្តទាំងអស់</button><b style='font-size:1.05rem'>"+esc(t.title)+"</b><span class=note style='margin:0'>"+esc(t.cls)+"</span>"+
+    "<select id=qrK title='ប្រភេទតេស្ត' style='width:auto;margin:0'>"+Object.keys(KIND).map(function(k){return"<option value="+k+((t.kind||"g")===k?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
+    ((t.kind||"g")!=="g"?"<input id=qrM type=month value='"+(t.mo||curMo())+"' style='width:150px;margin:0'>":"")+
     "<button type=button data-qa=link>🔗 តំណ/QR</button><button type=button data-qa=toggle>"+(t.open?"🔒 បិទតេស្ត":"🔓 បើកតេស្តវិញ")+"</button>"+
     "<button type=button data-qa=csv>⬇️ Excel</button><button type=button class=primary data-qa=drive>💾 រក្សាទុកក្នុង Drive</button><button type=button class=danger data-qa=del>🗑️</button></div>"+
     "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div><div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
@@ -423,6 +437,13 @@ function renderQuiz(){
 window.renderQuiz=renderQuiz;
 /* សម្រាប់ «ពិន្ទុប្រចាំខែ» (monthly.js)៖ បញ្ជីតេស្តរបស់គ្រូ និងពិន្ទុតាមសិស្ស */
 window.QUIZ={
+  KIND:KIND,
+  forMonth:function(tid,cls,mo){   /* {t1:{t,n,by}, t2:{…}} · ប្រសិនបើមានច្រើន យកតេស្តថ្មីបំផុត */
+    var self=this;return self.list(tid).then(function(L){
+      var out={},pick={};L.forEach(function(t){if(t.cls===cls&&t.mo===mo&&(t.kind==="t1"||t.kind==="t2")&&!pick[t.kind])pick[t.kind]=t});
+      return Promise.all(Object.keys(pick).map(function(k){return self.scores(pick[k]).then(function(S){out[k]={t:pick[k],n:S.n,by:S.by}})})).then(function(){return out});
+    });
+  },
   list:function(tid){var FB=window.FB;return FB.getDocs(FB.query(FB.collection(window.db,"tests"),FB.where("o","==",tid))).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});return a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")})})},
   scores:function(t){var FB=window.FB;
     return Promise.all([FB.getDoc(FB.doc(window.db,"tkeys",t.id)),FB.getDocs(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)))]).then(function(r){
@@ -442,6 +463,13 @@ $("qzBody").addEventListener("change",function(e){
   if(id==="qfG"){fG=+el.value;fL="";renderBank()}else if(id==="qfL"){fL=el.value;renderBank()}else if(id==="qfV"){fV=+el.value;renderBank()}else if(id==="qfM"){mine=el.checked;renderBank()}
   else if(id==="qmT"){mk.tid=el.value;mk.ci=0;mk.ls={};mk.items=null;renderMake()}else if(id==="qmC"){mk.ci=+el.value;mk.ls={};mk.items=null;renderMake()}
   else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;
+  else if(id==="qmK"){mk.kind=el.value;mk.title=($("qmTi")||{}).value||mk.title;renderMake()}else if(id==="qmM")mk.mo=el.value;
+  else if((id==="qrK"||id==="qrM")&&curTest){
+    var t=curTest,k=$("qrK").value,mo=k==="g"?"":(($("qrM")||{}).value||t.mo||curMo()),FB=window.FB,ops=[FB.updateDoc(FB.doc(window.db,"tests",t.id),{kind:k,mo:mo})];
+    var dup=k==="g"?null:tests.filter(function(x){return x.id!==t.id&&x.o===t.o&&x.cls===t.cls&&x.kind===k&&x.mo===mo})[0];
+    if(dup){if(!confirm("មាន «"+KIND[k]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។ ប្ដូរតេស្តនោះទៅ «តេស្តទូទៅ» ហើយប្រើតេស្តនេះជំនួស?")){renderRes();return}ops.push(FB.updateDoc(FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}));dup.kind="g";dup.mo=""}
+    Promise.all(ops).then(function(){t.kind=k;t.mo=mo;renderRes();notify(k==="g"?"ប្ដូរទៅ «តេស្តទូទៅ»":"ពិន្ទុនឹងចូល «"+KIND[k]+"» "+moName(mo))}).catch(function(){alert("មិនអាចប្ដូរបានទេ")});
+  }
   else if(el.dataset.ml){mk.ls[el.dataset.ml]=el.checked;mk.items=null;renderMake()}
   else if(el.dataset.mn){mk.n[el.dataset.mn]=Math.max(0,+el.value||0)}
 });
