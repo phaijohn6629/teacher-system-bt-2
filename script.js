@@ -1423,7 +1423,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 function show(p){
-  ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16"].forEach(function(x){$(x).hidden=x!==p});
+  ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17"].forEach(function(x){$(x).hidden=x!==p});
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){b.setAttribute("aria-selected",b.dataset.p===p)});
   if(p==="p1")render();
   if(p==="p2"){renderK();renderS()}
@@ -1440,15 +1440,16 @@ function show(p){
   if(p==="p14"&&window.renderCx)renderCx();
   if(p==="p15"&&window.renderCur)renderCur();
   if(p==="p16"&&window.renderOrg)renderOrg();
+  if(p==="p17"&&window.renderQuiz)renderQuiz();
   if(p==="p0")renderDash();syncNav(p);
 }
 $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.dataset.p)};
 
 /* ===== Dashboard ទំនើប៖ បដាស្វាគមន៍ + កាតស្ថិតិ (Bento) + ម៉ឺនុយអណ្ដែត (modern.css) ===== */
-var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"],["p14","📖","សម្រង់អត្ថបទ"],["p15","📘","កម្មវិធីសិក្សា"],["p16","🏛️","រចនាសម្ព័ន្ធថ្នាក់"]];
+var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"],["p14","📖","សម្រង់អត្ថបទ"],["p15","📘","កម្មវិធីសិក្សា"],["p16","🏛️","រចនាសម្ព័ន្ធថ្នាក់"],["p17","📝","តេស្ត"]];
 function buildFnav(){
   var full={};[].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent});
-  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"&&x[0]!=="p9"&&x[0]!=="p11"&&x[0]!=="p13"&&x[0]!=="p14"&&x[0]!=="p15"&&x[0]!=="p16"}).map(function(x){
+  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"&&x[0]!=="p9"&&x[0]!=="p11"&&x[0]!=="p13"&&x[0]!=="p14"&&x[0]!=="p15"&&x[0]!=="p16"&&x[0]!=="p17"}).map(function(x){
     if(x[0]==="p4")x=["p4","🎓","និទស្សន៍·សង្កេត"];
     if(x[0]==="p5")x=["p5","📊","លទ្ធផលសិក្សា"];
     if(x[0]==="p2")x=["p2","📋","ការងាររដ្ឋបាល"];
@@ -1467,7 +1468,7 @@ $("fnav").onclick=function(e){
   if(e.target.closest("#fnMore")){$("allMenu").hidden=false;return}
   var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 /* ម៉ឺនុយចំហៀងខាងឆ្វេង (អេក្រង់ធំ ≥1200px)៖ ស្លាយចេញ/ចូល · ចងចាំស្ថានភាពក្នុង localStorage */
-var SNG=[["ទូទៅ",["p0","p1"]],["ការងាររដ្ឋបាល",["p2","p9","p13"]],["និទស្សន៍ · សង្កេត",["p4","p6"]],["លទ្ធផលសិក្សា",["p5","p7","p8"]],["គ្រប់គ្រងថ្នាក់រៀន",["p12","p14","p15","p16"]],["ឯកសារ",["p10","p11"]]];
+var SNG=[["ទូទៅ",["p0","p1"]],["ការងាររដ្ឋបាល",["p2","p9","p13"]],["និទស្សន៍ · សង្កេត",["p4","p6"]],["លទ្ធផលសិក្សា",["p5","p7","p17","p8"]],["គ្រប់គ្រងថ្នាក់រៀន",["p12","p14","p15","p16"]],["ឯកសារ",["p10","p11"]]];
 function buildSnav(){
   var ic={},full={};FN.forEach(function(x){ic[x[0]]=x[1]});
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent.replace(/^[០-៩]+\.\s*/,"")});
@@ -1488,7 +1489,7 @@ function syncNav(p){
   snTop();
   [].forEach.call(document.querySelectorAll("#snList button"),function(b){var on=b.dataset.p===p;b.classList.toggle("active",on);if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
   [].forEach.call(document.querySelectorAll("#fnav button"),function(b){
-    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6")||(b.dataset.p==="p5"&&p==="p7")||(b.dataset.p==="p2"&&(p==="p9"||p==="p13"))||(b.dataset.p==="p10"&&p==="p11")||(b.dataset.p==="p12"&&(p==="p14"||p==="p15"||p==="p16"));b.classList.toggle("active",on);
+    var on=b.dataset.p===p||(b.dataset.p==="p4"&&p==="p6")||(b.dataset.p==="p5"&&(p==="p7"||p==="p17"))||(b.dataset.p==="p2"&&(p==="p9"||p==="p13"))||(b.dataset.p==="p10"&&p==="p11")||(b.dataset.p==="p12"&&(p==="p14"||p==="p15"||p==="p16"));b.classList.toggle("active",on);
     if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");
   });
 }
@@ -1512,7 +1513,7 @@ function avHtml(id,name,sz){
   if(p&&okPhoto(p.photo))return"<img class=av src='"+p.photo+"' alt='' width="+s+" height="+s+" style='width:"+s+"px;height:"+s+"px'>";
   return"<span class=av-i style='width:"+s+"px;height:"+s+"px;font-size:"+Math.round(s*.48)+"px'>"+esc(Array.from(String(name||id).trim())[0]||"?")+"</span>";
 }
-function curPage(){return["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16"].filter(function(x){return !$(x).hidden})[0]||"p0"}
+function curPage(){return["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17"].filter(function(x){return !$(x).hidden})[0]||"p0"}
 function subProfiles(){
   try{
     var un=window.FB.onSnapshot(window.FB.collection(window.db,"profiles"),function(sn){
@@ -2051,7 +2052,7 @@ function finishMig(k,ok){
 
 function refreshView(){
   if($("appSection").hidden)return;
-  var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16"].filter(function(x){return !$(x).hidden})[0]||"p0";
+  var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17"].filter(function(x){return !$(x).hidden})[0]||"p0";
   show(c);
 }
 function ensureSelf(){
@@ -2186,6 +2187,7 @@ function openSettings(){
       else if(el.id==="stWalk"){WALKER.set(el.checked);if(el.checked&&!$("p0").hidden)renderDash()}
       else if(el.id==="stSnav"){var off=document.body.classList.contains("sn-off");if(el.checked===off)$("snTog").click()}
       else if(el.id==="stSchool"&&isAdm()){rs.info=rs.info||{};rs.info.school=el.value.trim();savR();notify("បានរក្សាទុកឈ្មោះសាលា")}
+      else if(el.id==="stDrive"&&isAdm()){var cid=el.value.trim();window.FB.setDoc(window.FB.doc(window.db,"cfg","drive"),{cid:cid}).then(function(){notify("បានរក្សាទុក Client ID")}).catch(function(){alert("មិនអាចរក្សាទុកបានទេ")})}
       else if(el.id==="stYear"&&isAdm()){rs.info=rs.info||{};rs.info.year=el.value;savR();if(window.renderSY)renderSY();notify("ឆ្នាំសិក្សា៖ "+inf().year)}
     });
   }
@@ -2207,9 +2209,11 @@ function openSettings(){
    "<section class=st-s><h3>🖨️ ការបោះពុម្ព</h3><div class=st-row><b>ពេលចុចបោះពុម្ព</b>"+rad("stPm","",pm,"❓ សួររាល់ដង")+rad("stPm","pdf",pm,"📄 ទាញយក PDF ភ្លាម")+rad("stPm","print",pm,"🖨️ បើកផ្ទាំងបោះពុម្ពភ្លាម")+"</div></section>"+
    "<section class=st-s><h3>🏫 សាលា"+(adm?"":" <small class=note style='margin:0'>(មើលបានតែប៉ុណ្ណោះ · កែបានតែ Admin)</small>")+"</h3><div class=fg>"+
     "<div><label for=stSchool>ឈ្មោះសាលា</label><input id=stSchool value='"+esc(I.school)+"' "+(adm?"":"disabled")+"></div>"+
-    "<div><label for=stYear>ឆ្នាំសិក្សា</label><select id=stYear "+(adm?"":"disabled")+">"+yo+"</select></div></div>"+
+    "<div><label for=stYear>ឆ្នាំសិក្សា</label><select id=stYear "+(adm?"":"disabled")+">"+yo+"</select></div>"+
+    (adm?"<div class=full><label for=stDrive>Google Drive Client ID (សម្រាប់រក្សាលទ្ធផលតេស្តចូល Drive របស់គ្រូ)</label><input id=stDrive placeholder='xxxxxxxx.apps.googleusercontent.com'></div>":"")+"</div>"+
     (adm?"<div class=st-g style='margin-top:10px'><button type=button data-st=tch>👥 គ្រប់គ្រងគ្រូ និងគណនី<small>បន្ថែម · កែ · តួនាទី · សិទ្ធិប្រើ</small></button><button type=button data-st=grade>📊 ស្តង់ដារពិន្ទុ និងនិទ្ទេស<small>ពិន្ទុអតិបរមា · ភាគរយ A–F</small></button><button type=button data-st=obs>🔍 កម្រិតនិទ្ទេសសង្កេត<small>ភាគរយនៃ ១៦៥</small></button></div>":"")+
    "</section></div><div class=dlgf><button type=button data-st=x class=primary>បិទ</button></div>";
   m.showModal();
+  if(adm&&window.FB)window.FB.getDoc(window.FB.doc(window.db,"cfg","drive")).then(function(d){var i=$("stDrive");if(i&&d.exists())i.value=d.data().cid||""}).catch(function(){});
 }
 $("btnSet").onclick=openSettings;

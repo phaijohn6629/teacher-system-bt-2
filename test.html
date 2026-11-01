@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>តេស្ត · វិទ្យាល័យបឹងត្របែក</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#7c3aed;--g:linear-gradient(135deg,#6366f1,#a855f7,#ec4899)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Kantumruy Pro",system-ui,sans-serif;background:#f4f3ff;color:var(--ink);line-height:1.6}
+.top{background:var(--g);color:#fff;padding:18px 16px 46px;text-align:center}
+.top h1{margin:0;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:1.15rem;line-height:1.8}
+.top p{margin:2px 0 0;opacity:.9;font-size:.9rem}
+.wrap{max-width:720px;margin:-30px auto 40px;padding:0 14px}
+.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(99,102,241,.15);margin-bottom:14px}
+label{display:block;font-weight:700;margin:6px 0}
+select,input,button{font:inherit}
+select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:700;cursor:pointer;background:var(--g);color:#fff;width:100%;font-size:1rem;margin-top:12px}
+.btn:disabled{opacity:.5}
+.q{border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;background:#fff}
+.q.done{border-color:#c4b5fd}
+.qn{font-size:.8rem;font-weight:700;color:var(--brand);margin-bottom:4px}
+.qt{font-size:1rem;margin-bottom:8px}
+.ch{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;margin-top:8px;cursor:pointer;transition:all .15s}
+.ch input{width:20px;height:20px;margin:0;accent-color:var(--brand)}
+.ch b{color:var(--brand)}
+.ch:has(input:checked){border-color:var(--brand);background:#f5f3ff}
+.num{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px}
+.bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:12px;font-weight:700}
+.timer{font-variant-numeric:tabular-nums;color:#b91c1c}
+.prog{flex:1;height:8px;background:#ede9fe;border-radius:6px;overflow:hidden}.prog i{display:block;height:100%;background:var(--g);transition:width .2s}
+.msg{text-align:center;padding:30px 10px}.msg .big{font-size:3rem}
+.note{color:var(--mute);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="top"><h1 id="tt">តេស្ត</h1><p id="ts">វិទ្យាល័យបឹងត្របែក · សាលារៀនជំនាន់ថ្មី</p></div>
+<div class="wrap" id="app"><div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script type="module">
+/* ទំព័រសិស្សធ្វើតេស្ត (គ្មាន Login)៖ អាន tests/{id} · ផ្ញើ subs/{id}_{សិស្ស} តែម្ដង */
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",
+  storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
+const $=id=>document.getElementById(id),app=$("app"),id=new URLSearchParams(location.search).get("t")||"";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const tx=s=>esc(s).replace(/\n/g,"<br>"),kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);
+const math=el=>{try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false})}catch(e){}};
+const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</div><h2>${t}</h2><p class=note>${s||""}</p></div>`};
+/* ក្រឡុកតាមគ្រាប់ពូជ (សិស្សម្នាក់ៗលំដាប់ខុសគ្នា ប៉ុន្តែដដែលពេលបើកឡើងវិញ) */
+function rng(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
+  return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}}
+function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let T=null,me=null,ans={},t0=0,tick=0,sent=false;
+async function start(){
+  if(!id)return msg("⚠️","តំណមិនត្រឹមត្រូវ","សូមសួរគ្រូរបស់អ្នកម្ដងទៀត");
+  try{const d=await getDoc(doc(db,"tests",id));if(!d.exists())return msg("🔍","រកមិនឃើញតេស្ត","តេស្តនេះអាចត្រូវបានលុប");T=d.data()}
+  catch(e){return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ")}
+  if(!T.open)return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
+  $("tt").textContent=T.title;$("ts").textContent="ថ្នាក់ "+T.cls+" · "+kn(T.items.length)+" លំហាត់"+(T.dur?" · "+kn(T.dur)+" នាទី":"");document.title=T.title;
+  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${T.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
+    <p class=note>• ធ្វើបានតែម្ដងគត់ · ផ្ញើហើយមិនអាចកែវិញបានទេ${T.dur?"<br>• មានរយៈពេល "+kn(T.dur)+" នាទី · អស់ម៉ោងនឹងផ្ញើដោយស្វ័យប្រវត្តិ":""}</p>
+    <button class=btn id=go disabled>ចាប់ផ្ដើមធ្វើតេស្ត</button></div>`;
+  $("nm").onchange=e=>$("go").disabled=!e.target.value;
+  $("go").onclick=()=>{const k=$("nm").value;me=T.names.find(x=>x.k===k);
+    try{if(localStorage.getItem("sent_"+id+"_"+k))return msg("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ")}catch(e){}
+    try{ans=JSON.parse(localStorage.getItem("ans_"+id+"_"+k)||"{}")}catch(e){ans={}}
+    take()};
+}
+function take(){
+  const r=rng(id+"|"+me.k),items=shuffle(T.items,r);t0=Date.now();
+  let h=`<div class=bar><span>${esc(me.n)}</span><div class=prog><i id=pg></i></div><span id=cnt></span>${T.dur?"<span class=timer id=tm></span>":""}</div>`;
+  items.forEach((q,i)=>{
+    h+=`<div class=q id="q_${q.id}"><div class=qn>លំហាត់ទី${kn(i+1)}</div><div class=qt>${tx(q.q)}</div>`;
+    if(q.t==="mc"){const ord=shuffle(q.ch.map((c,j)=>j).filter(j=>q.ch[j]),r);
+      h+=ord.map((j,x)=>`<label class=ch><input type=radio name="a_${q.id}" value=${j}${String(ans[q.id])===String(j)?" checked":""}><b>${"កខគឃ"[x]}.</b><span>${tx(q.ch[j])}</span></label>`).join("")}
+    else h+=`<input class=num inputmode=decimal name="a_${q.id}" placeholder="សរសេរចម្លើយ (លេខ)" value="${esc(ans[q.id]??"")}">`;
+    h+="</div>"});
+  h+=`<button class=btn id=sub>📤 ផ្ញើចម្លើយ</button><p class=note style="text-align:center">ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ ទោះបិទទំព័រក៏មិនបាត់ (រហូតដល់ផ្ញើ)</p>`;
+  app.innerHTML=h;math(app);prog();
+  app.oninput=app.onchange=e=>{const n=e.target.name;if(!n||!n.startsWith("a_"))return;ans[n.slice(2)]=e.target.value;
+    try{localStorage.setItem("ans_"+id+"_"+me.k,JSON.stringify(ans))}catch(x){}prog()};
+  $("sub").onclick=()=>{const left=T.items.filter(q=>ans[q.id]==null||ans[q.id]==="").length;
+    if(left&&!confirm("នៅសល់ "+left+" លំហាត់មិនទាន់ឆ្លើយ។ ផ្ញើឥឡូវ?"))return;send()};
+  if(T.dur){const end=t0+T.dur*60000;tick=setInterval(()=>{const s=Math.max(0,Math.round((end-Date.now())/1000));$("tm").textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));if(!s){clearInterval(tick);send(true)}},1000)}
+}
+function prog(){const n=T.items.length,d=T.items.filter(q=>ans[q.id]!=null&&ans[q.id]!=="").length;$("pg").style.width=(n?d/n*100:0)+"%";$("cnt").textContent=kn(d)+"/"+kn(n);
+  T.items.forEach(q=>{const el=$("q_"+q.id);if(el)el.classList.toggle("done",ans[q.id]!=null&&ans[q.id]!=="")})}
+async function send(auto){
+  if(sent)return;sent=true;clearInterval(tick);const b=$("sub");if(b){b.disabled=true;b.textContent="កំពុងផ្ញើ…"}
+  const a={};T.items.forEach(q=>{if(ans[q.id]!=null&&ans[q.id]!=="")a[q.id]=String(ans[q.id]).slice(0,40)});
+  try{await setDoc(doc(db,"subs",id+"_"+me.k),{t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.round((Date.now()-t0)/1000)});
+    try{localStorage.setItem("sent_"+id+"_"+me.k,"1");localStorage.removeItem("ans_"+id+"_"+me.k)}catch(e){}
+    msg("🎉",(auto?"អស់ម៉ោង · ":"")+"បានផ្ញើចម្លើយរួចរាល់!","អរគុណ "+esc(me.n)+" · សូមរង់ចាំលទ្ធផលពីគ្រូ")}
+  catch(e){sent=false;if(b){b.disabled=false;b.textContent="📤 ផ្ញើចម្លើយ"}
+    msg("⚠️","មិនអាចផ្ញើបានទេ","អ្នកប្រហែលបានផ្ញើរួចហើយ ឬតេស្តត្រូវបានបិទ។ បើមិនទាន់ផ្ញើ សូមពិនិត្យអ៊ីនធឺណិត ហើយបើកតំណម្ដងទៀត (ចម្លើយនៅរក្សាទុក)។")}
+}
+start();
+</script>
+</body>
+</html>
