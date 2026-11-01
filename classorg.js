@@ -149,6 +149,7 @@ $("ogSeg").onclick=function(e){var b=e.target.closest("button[data-ov]");if(b){o
 /* ===================== 🪑 ប្លង់តុ =====================
    d2 = តុ ២ នាក់ · ៤ ជួរឈរ × ៦ ជួរដេក (៤៨ កៅអី) · d1 = តុ ១ នាក់ · ៦ × ៦ (៣៦ កៅអី)
    តុគ្រូនៅខាងលើឆ្វេងជានិច្ច · c.seat = {lay, s:[គន្លឹះសិស្សតាមលេខកៅអី]} */
+var seatAnim=false;
 var LAY={d2:{cols:4,rows:6,per:2,lbl:"តុ ២ នាក់ (៤ × ៦)"},d1:{cols:6,rows:6,per:1,lbl:"តុ ១ នាក់ (៦ × ៦)"}};
 function seat(c){c.seat=c.seat||{lay:"d2",s:[]};if(!LAY[c.seat.lay])c.seat.lay="d2";return c.seat}
 function nSeats(L){return L.cols*L.rows*L.per}
@@ -159,24 +160,29 @@ function cleanSeat(c){   /* ដកសិស្សដែលលែងមាន ឬ
   while(S.s.length<N)S.s.push("");return S;
 }
 function fillSeats(c,order){var S=seat(c),N=nSeats(LAY[S.lay]);S.s=[];for(var i=0;i<N;i++)S.s.push(order[i]?key(order[i]):"")}
-function seatGrid(c,edit){
+function seatGrid(c,edit,anim){
   var S=cleanSeat(c),L=LAY[S.lay],m=byKey(c),h="",i=0;
   for(var r=0;r<L.rows;r++){
-    h+="<div class=st-row2 style='grid-template-columns:repeat("+L.cols+",minmax(0,1fr))'>";
+    h+="<div class=st-line><div class=st-rl>ជួរ<b>"+kn(r+1)+"</b></div><div class=st-row2 style='grid-template-columns:repeat("+L.cols+",minmax(0,1fr))'>";
     for(var col=0;col<L.cols;col++){
-      h+="<div class='desk p"+L.per+"'>";
+      h+="<div class='desk p"+L.per+"'><div class=desk-top>";
       for(var k=0;k<L.per;k++,i++){
-        var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)];
-        h+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":""):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+">"+
-          "<span class=sn>"+kn(i+1)+"</span>"+(s?(ph?"<img src='"+ph+"' alt=''>":"")+"<b>"+esc(s.n)+"</b>":"<i>ទំនេរ</i>")+"</div>";
+        var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)],ro=s&&rOf(c,s).ro;
+        var badge=ro==="h"?"<em class=sb-h title='ប្រធានថ្នាក់'>👑</em>":ro==="v1"||ro==="v2"?"<em class=sb-v title='អនុប្រធាន'>⭐</em>":ro==="gl"?"<em class=sb-g title='ប្រធានក្រុម'>★</em>":"";
+        h+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":" u"):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+(anim&&s?" style='animation-delay:"+(i*18)+"ms'":"")+">"+
+          "<span class=sn>"+kn(i+1)+"</span>"+badge+
+          (s?"<span class=sav>"+(ph?"<img src='"+ph+"' alt=''>":ini(s.n))+"</span><b>"+esc(s.n)+"</b>":"<span class='sav e'>＋</span><i>ទំនេរ</i>")+"</div>";
       }
-      h+="</div>";
+      h+="</div><div class=desk-legs></div></div>";
     }
-    h+="</div>";
+    h+="</div></div>";
   }
   var t=teacherOf(ogT);
-  return"<div class=room><div class=room-front><div class=tdesk>👩‍🏫 តុគ្រូ<small>"+esc(t.name||"")+"</small></div><div class=board>ក្ដារខៀន</div><div class=door>🚪 ទ្វារ</div></div>"+
-    "<div class=room-seats>"+h+"</div></div>";
+  return"<div class='room"+(anim?" anim":"")+"'><div class=room-front>"+
+    "<div class=tdesk><span class=t-av>"+avHtml(ogT,t.name,40)+"</span><span><b>តុគ្រូ</b><small>"+esc(t.name||"")+"</small></span></div>"+
+    "<div class=board><span class=chalk>ក្ដារខៀន</span><span class=tray></span></div>"+
+    "<div class=door><span>🚪</span>ទ្វារ</div></div>"+
+    "<div class=room-seats>"+h+"</div><div class=room-back>ខាងក្រោយថ្នាក់</div></div>";
 }
 function renderSeat(c,ed){
   var S=cleanSeat(c),L=LAY[S.lay],N=nSeats(L),placed={};S.s.forEach(function(k){if(k)placed[k]=1});
@@ -188,9 +194,10 @@ function renderSeat(c,ed){
     "</div>"+
     (over?"<p class=cxwarn>⚠️ សិស្ស "+kn(c.st.length)+" នាក់ ច្រើនជាងកៅអី "+kn(N)+"។ សូមជ្រើសប្លង់តុ ២ នាក់។</p>":"")+
     (ed?"<p class=note style='margin:0 0 8px'>✋ <b>រៀបដោយដៃ</b>៖ ចុចលើសិស្សក្នុងបញ្ជីខាងក្រោម (ឬលើកៅអី) រួចចុចកៅអីដែលចង់ដាក់ — បើកៅអីនោះមានសិស្ស នឹងប្ដូរកន្លែងគ្នា។ ចុចកៅអីដដែលពីរដង ដើម្បីដកសិស្សចេញ។</p>":"")+
-    "<div class=og-card>"+seatGrid(c,ed)+"</div>"+
+    "<div class='og-card room-card'>"+seatGrid(c,ed,seatAnim)+"</div>"+
     "<div class=st-free><b>មិនទាន់មានកៅអី ("+kn(free.length)+")៖</b> "+(free.length?free.map(function(s){var sel=seatSel&&seatSel.t==="f"&&seatSel.k===key(s);return"<button type=button class='chip"+(sel?" sel":"")+(s.g==="ស្រី"?" f":"")+"'"+(ed?" data-free='"+esc(key(s))+"'":" disabled")+">"+esc(s.n)+"</button>"}).join(""):"<span class=note style='margin:0'>✅ គ្រប់គ្នាមានកៅអីហើយ</span>")+"</div>"+
-    "<p class=note>សិស្សសរុប "+kn(c.st.length)+" នាក់ · កៅអី "+kn(N)+" · ទំនេរ "+kn(Math.max(0,N-c.st.length))+" · <span class=lg-f>■</span> ស្រី <span class=lg-m>■</span> ប្រុស</p>";
+    "<div class=st-legend><span class=lgi><b>"+kn(c.st.length)+"</b>សិស្ស</span><span class=lgi><b>"+kn(N)+"</b>កៅអី</span><span class=lgi><b>"+kn(Math.max(0,N-c.st.length))+"</b>ទំនេរ</span>"+
+     "<span class='lgc f'>ស្រី</span><span class='lgc m'>ប្រុស</span><span class=lgc>👑 ប្រធាន</span><span class=lgc>⭐ អនុប្រធាន</span><span class=lgc>★ ប្រធានក្រុម</span></div>";
 }
 function kmSort(a,b){return String(a.n).localeCompare(String(b.n),"km")}
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
@@ -210,7 +217,7 @@ $("ogBody").addEventListener("click",function(e){
     if(k==="abc")st.sort(kmSort);
     else if(k==="rand")st=shuffle(st);
     else{var f=shuffle(st.filter(function(s){return s.g==="ស្រី"})),m=shuffle(st.filter(function(s){return s.g!=="ស្រី"}));st=[];while(f.length||m.length){if(m.length)st.push(m.shift());if(f.length)st.push(f.shift())}}
-    fillSeats(c,st);seatSel=null;savR();renderOrg();notify(k==="abc"?"បានរៀបតាមអក្ខរក្រម":"បានរៀបដោយចៃដន្យ");return;
+    fillSeats(c,st);seatSel=null;savR();seatAnim=true;renderOrg();seatAnim=false;notify(k==="abc"?"បានរៀបតាមអក្ខរក្រម":"បានរៀបដោយចៃដន្យ");return;
   }
   var fr=e.target.closest("[data-free]");
   if(fr){var fk=fr.getAttribute("data-free");seatSel=(seatSel&&seatSel.k===fk)?null:{t:"f",k:fk};renderOrg();return}
