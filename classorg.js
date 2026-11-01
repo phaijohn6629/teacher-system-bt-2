@@ -161,21 +161,25 @@ function cleanSeat(c){   /* ដកសិស្សដែលលែងមាន ឬ
 }
 function fillSeats(c,order){var S=seat(c),N=nSeats(LAY[S.lay]);S.s=[];for(var i=0;i<N;i++)S.s.push(order[i]?key(order[i]):"")}
 function seatGrid(c,edit,anim){
-  var S=cleanSeat(c),L=LAY[S.lay],m=byKey(c),h="",i=0;
+  var S=cleanSeat(c),L=LAY[S.lay],m=byKey(c),h="",i=0,rn=0;
+  /* លាក់តុទំនេរទាំងស្រុង · បង្ហាញវិញពេលកំពុងជ្រើសសិស្សដែលមិនទាន់មានកៅអី (ដើម្បីដាក់) ឬមិនទាន់រៀប */
+  var showEmpty=(edit&&seatSel&&seatSel.t==="f")||!S.s.some(Boolean);
   for(var r=0;r<L.rows;r++){
-    h+="<div class=st-line><div class=st-rl>ជួរ<b>"+kn(r+1)+"</b></div><div class=st-row2 style='grid-template-columns:repeat("+L.cols+",minmax(0,1fr))'>";
+    var row="",nd=0;
     for(var col=0;col<L.cols;col++){
-      h+="<div class='desk p"+L.per+"'><div class=desk-top>";
+      var d="",any=false;
       for(var k=0;k<L.per;k++,i++){
-        var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)],ro=s&&rOf(c,s).ro;
+        var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)],ro=s&&rOf(c,s).ro;if(s)any=true;
         var badge=ro==="h"?"<em class=sb-h title='ប្រធានថ្នាក់'>👑</em>":ro==="v1"||ro==="v2"?"<em class=sb-v title='អនុប្រធាន'>⭐</em>":ro==="gl"?"<em class=sb-g title='ប្រធានក្រុម'>★</em>":"";
-        h+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":" u"):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+(anim&&s?" style='animation-delay:"+(i*18)+"ms'":"")+">"+
+        d+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":" u"):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+(anim&&s?" style='animation-delay:"+(i*18)+"ms'":"")+">"+
           "<span class=sn>"+kn(i+1)+"</span>"+badge+
           (s?"<span class=sav>"+(ph?"<img src='"+ph+"' alt=''>":ini(s.n))+"</span><b>"+esc(s.n)+"</b>":"<span class='sav e'>＋</span><i>ទំនេរ</i>")+"</div>";
       }
-      h+="</div><div class=desk-legs></div></div>";
+      if(!any&&!showEmpty)continue;
+      row+="<div class='desk p"+L.per+"'><div class=desk-top>"+d+"</div><div class=desk-legs></div></div>";nd++;
     }
-    h+="</div></div>";
+    if(!nd)continue;
+    rn++;h+="<div class=st-line><div class=st-rl>ជួរ<b>"+kn(rn)+"</b></div><div class=st-row2 style='--cols:"+L.cols+"'>"+row+"</div></div>";   /* ជួរខ្វះតុ → នៅកណ្ដាល */
   }
   var t=teacherOf(ogT);
   return"<div class='room"+(anim?" anim":"")+"'><div class=room-front>"+

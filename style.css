@@ -470,3 +470,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .seatp .desk-top{padding:3px;gap:3px;box-shadow:0 3px 0 #a0743a}.seatp .desk{padding-bottom:4px}.seatp .desk-legs{height:4px}
 .seatp .room-back{display:none}.seatp .room-front{margin-bottom:6px}.seatp .board{min-height:40px;border-width:5px}.seatp .tdesk{padding:5px 10px 5px 5px}
 .seatp .og-hd{margin-bottom:1.5mm}.seatp .og-ttl .moul{font-size:18pt}.seatp .st-rl b{font-size:.8rem}
+/* ប្លង់តុ៖ ជួរតុជា flex — ជួរដែលមានតុតិច (ជួរក្រោយគេ) នៅកណ្ដាល */
+.st-row2{display:flex!important;justify-content:center;gap:18px}
+.st-row2>.desk{flex:0 0 calc((100% - (var(--cols) - 1) * 18px) / var(--cols))}
+.seatp .st-row2>.desk{flex-basis:calc((100% - (var(--cols) - 1) * 12px) / var(--cols))}
