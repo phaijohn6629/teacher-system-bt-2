@@ -11,6 +11,9 @@
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},qbLoaded=false,fG=0,fL="",fV=0,mine=false;
 var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,title:"",items:null},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/";
+var KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};   /* ម៉ាក្រូដែលគ្រូប្រើញឹកញាប់ */
+/* កម្រិត Bloom (មតិយោបល់ % ចងចាំ …) → កម្រិតលំបាក */
+var BLOOM={"ចងចាំ":1,"យល់":1,"អនុវត្ត":2,"វិភាគ":2,"វាយតម្លៃ":3,"បង្កើត":3};
 
 /* ---------- ជំនួយ ---------- */
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
@@ -22,7 +25,7 @@ function katexReady(){
   kxP=loadJs(KX+"katex.min.js").then(function(){return loadJs(KX+"contrib/auto-render.min.js")});
   return kxP;
 }
-function math(el){if(!el)return;katexReady().then(function(){try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false})}catch(x){}})}
+function math(el){if(!el)return;katexReady().then(function(){try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false,macros:KXM})}catch(x){}})}
 function tx(s){return esc(String(s||"")).replace(/\n/g,"<br>")}
 function grades(){return[7,8,9,10,11,12]}
 function lsName(g,n){var C=window.CUR&&window.CUR[g],l=C&&C.LS[n];if(!l)return"";return l[3]?"ជំពូកទី"+kn(l[3])+" · មេរៀនទី"+kn(l[5])+" "+l[0]:"មេរៀនទី"+kn(+n)+" "+l[0]}
@@ -64,7 +67,7 @@ function renderBank(){
     "<p class=note style='margin:0 0 10px'>សរុប <b>"+kn(list.length)+"</b> លំហាត់ · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
-    return"<div class=qz-q><div class=qz-qh><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span><span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span><span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
+    return"<div class=qz-q><div class=qz-qh><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span><span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
       (own?"<button type=button data-qe='"+q.by+"|"+q.id+"'>✏️</button><button type=button class=danger data-qd='"+q.by+"|"+q.id+"'>🗑️</button>":"")+"</div>"+
       "<div class=qz-qt>"+tx(q.q)+"</div>"+
       (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"
@@ -143,6 +146,19 @@ function parseTex(src){
   src=String(src).replace(/\r/g,"");
   var b=src.indexOf("\\begin{document}");if(b>=0)src=src.slice(b+16);var e=src.indexOf("\\end{document}");if(e>=0)src=src.slice(0,e);
   var out=[],m;
+  /* ០. \mcq{សំណួរ}{ក}{ខ}{គ}{ឃ}{ចម្លើយ ក/ខ/គ/ឃ} · មតិយោបល់ % ចងចាំ/យល់/អនុវត្ត/វិភាគ/វាយតម្លៃ/បង្កើត ពីលើ = កម្រិត */
+  if(/\\mcq\s*\{/.test(src)){
+    var reM=/\\mcq\s*(?=\{)/g,bl="";
+    while((m=reM.exec(src))){
+      var before=src.slice(0,m.index),cm=/%\s*([^\n%]+?)\s*\n[\s]*$/.exec(before);if(cm)bl=cm[1].trim();
+      var i=reM.lastIndex,gs=[];
+      while(gs.length<6){while(/\s/.test(src[i]||""))i++;if(src[i]!=="{")break;var g=grp(src,i);gs.push(g[0]);i=g[1]}
+      reM.lastIndex=i;if(gs.length<5)continue;
+      var key=String(gs[5]||"").trim(),ai="កខគឃ".indexOf(key);if(ai<0)ai="ABCD".indexOf(key.toUpperCase());if(ai<0&&/^[1-4]$/.test(key))ai=+key-1;
+      var q=mkQ(gs[0],gs.slice(1,5),ai,null);q.bl=bl;q.lv=BLOOM[bl]||1;out.push(q);
+    }
+    return out;
+  }
   /* ១. ex_test៖ \begin{ex} … \end{ex} */
   var reEx=/\\begin\{(ex|bt|vd)\}([\s\S]*?)\\end\{\1\}/g;
   while((m=reEx.exec(src))){
@@ -186,12 +202,15 @@ function parseTex(src){
   return out;
 }
 function texImport(){
-  var f=document.createElement("input");f.type="file";f.accept=".tex,.txt,text/plain";
-  f.onchange=function(){var file=f.files[0];if(!file)return;var r=new FileReader();r.onload=function(){
-    var Q=parseTex(r.result).filter(function(q){return q.q});
+  var f=document.createElement("input");f.type="file";f.accept=".tex,.txt,text/plain";f.multiple=true;
+  f.onchange=function(){
+    var files=[].slice.call(f.files||[]);if(!files.length)return;
+    Promise.all(files.map(function(file){return new Promise(function(ok){var r=new FileReader();r.onload=function(){ok(parseTex(r.result).map(function(q){q.src=file.name;return q}))};r.onerror=function(){ok([])};r.readAsText(file,"utf-8")})})).then(function(all){
+    var Q=[].concat.apply([],all).filter(function(q){return q.q});
+    var file={name:files.length>1?files.length+" ឯកសារ":files[0].name};
     if(!Q.length){alert("រកមិនឃើញលំហាត់ក្នុងឯកសារនេះទេ។\n\nទម្រង់ដែលគាំទ្រ៖\n• \\question … \\choice … \\CorrectChoice … (exam class)\n• \\begin{ex} … \\choice{\\True A}{B}{C}{D} \\end{ex}\n• \\begin{enumerate} \\item … \\end{enumerate}");return}
     texPreview(Q,file.name);
-  };r.readAsText(file,"utf-8")};
+  })};
   f.click();
 }
 function texPreview(Q,fname){
@@ -201,7 +220,7 @@ function texPreview(Q,fname){
     var miss=Q.filter(function(q){return q.t==="mc"?q.a<0:!q.a}).length;
     return Q.map(function(q,i){
       return"<div class='qz-q"+((q.t==="mc"?q.a<0:!q.a)?" qz-miss":"")+"'><div class=qz-qh><label style='display:flex;gap:6px;align-items:center;margin:0'><input type=checkbox data-ti="+i+(q.skip?"":" checked")+" style='width:auto;margin:0'> <b>លំហាត់ទី"+kn(i+1)+"</b></label>"+
-        "<select data-tv="+i+" style='width:auto;margin:0'>"+[1,2,3].map(function(v){return"<option value="+v+((q.lv||1)===v?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
+        (q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+(q.src?"<span class=qz-ls>"+esc(q.src)+"</span>":"")+"<select data-tv="+i+" style='width:auto;margin:0'>"+[1,2,3].map(function(v){return"<option value="+v+((q.lv||1)===v?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
         (q.t==="mc"?(q.a<0?"<span class=qz-warn>⚠️ ចុចជម្រើសត្រូវ</span>":""):"<span>ចម្លើយ៖ <input data-tn="+i+" value='"+esc(q.a)+"' style='width:110px;margin:0'></span>"+(q.a?"":"<span class=qz-warn>⚠️ បញ្ចូលចម្លើយ</span>"))+"</div>"+
         "<div class=qz-qt>"+tx(q.q)+"</div>"+
         (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,j){return c?"<li class='pick"+(j===q.a?" ok":"")+"' data-tc='"+i+"|"+j+"'>"+tx(c)+"</li>":""}).join("")+"</ol>":"")+"</div>"}).join("")+
@@ -224,7 +243,7 @@ function texPreview(Q,fname){
     var G=+$("txG").value,L=+$("txL").value;if(!L){alert("សូមជ្រើសមេរៀន");return}
     var ok=Q.filter(function(q){return!q.skip&&(q.t==="mc"?q.a>=0:q.a)});if(!ok.length){alert("គ្មានលំហាត់ដែលរួចរាល់សម្រាប់នាំចូលទេ");return}
     var arr=qb[who.id]=qb[who.id]||[];
-    ok.forEach(function(q){var o={id:uid(),g:G,ls:L,lv:q.lv||1,t:q.t,q:q.q};if(q.t==="mc"){o.ch=q.ch;o.a=q.a}else o.a=q.a;arr.push(o)});
+    ok.forEach(function(q){var o={id:uid(),g:G,ls:L,lv:q.lv||1,t:q.t,q:q.q};if(q.bl)o.bl=q.bl;if(q.t==="mc"){o.ch=q.ch;o.a=q.a}else o.a=q.a;arr.push(o)});
     saveQB(who.id).then(function(){d.close();fG=G;fL=L;renderQuiz();notify("បាននាំចូល "+ok.length+" លំហាត់")});
   };
   d.showModal();math($("txB"));

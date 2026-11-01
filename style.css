@@ -501,3 +501,4 @@ body.pm .pg.land{page-break-inside:avoid}
 .qz-q.qz-miss{border-color:#fca5a5;background:rgba(254,226,226,.35)}
 .qz-warn{color:#dc2626;font-size:.8rem;font-weight:700}
 .qz-ch li.pick{cursor:pointer;border-radius:6px;padding:1px 4px}.qz-ch li.pick:hover{background:rgba(124,58,237,.1)}
+.qz-bl{font-size:.72rem;padding:1px 8px;border-radius:10px;background:#ede9fe;color:#5b21b6}
