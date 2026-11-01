@@ -60,7 +60,7 @@ function renderBank(){
     (fG?"<label>មេរៀន៖</label><select id=qfL style='max-width:320px'>"+lsOpts(fG,fL,true)+"</select>":"")+
     "<label>កម្រិត៖</label><select id=qfV><option value=0>ទាំងអស់</option>"+[1,2,3].map(function(v){return"<option value="+v+(v===fV?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
     "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox id=qfM "+(mine?"checked":"")+" style='width:auto;margin:0'> តែរបស់ខ្ញុំ</label>"+
-    "<button type=button class=primary data-qa=new>＋ បន្ថែមលំហាត់</button></div>"+
+    "<button type=button class=primary data-qa=new>＋ បន្ថែមលំហាត់</button><button type=button data-qa=tex>📥 នាំចូលពី LaTeX (.tex)</button></div>"+
     "<p class=note style='margin:0 0 10px'>សរុប <b>"+kn(list.length)+"</b> លំហាត់ · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
@@ -111,6 +111,123 @@ function qDialog(q){
     saveQB(owner).then(function(){d.close();fG=o.g;fL=o.ls;renderQuiz();notify("បានរក្សាទុកលំហាត់")});
   };
   d.showModal();prev();
+}
+
+/* ===================== 📥 នាំចូលពីឯកសារ LaTeX =====================
+   គាំទ្រ៖ exam class (\question · \choice · \CorrectChoice) · ex_test (\begin{ex} · \choice{\True A}{B}{C}{D})
+          enumerate (\item … ជម្រើស A. B. C. D. ឬ \begin{enumerate} ខាងក្នុង) · ចម្លើយសម្គាល់ដោយ \True \CorrectChoice \correct ឬ * */
+function grp(str,i){   /* អាន {…} ដែលមានតុល្យភាព ចាប់ពី i (str[i]==="{") → [ខ្លឹមសារ, ទីតាំងបន្ទាប់] */
+  var d=0,j=i;for(;j<str.length;j++){var c=str[j];if(c==="\\"){j++;continue}if(c==="{")d++;else if(c==="}"){d--;if(!d)return[str.slice(i+1,j),j+1]}}
+  return[str.slice(i+1),str.length];
+}
+function texClean(t){
+  t=String(t||"");
+  t=t.replace(/(^|[^\\])%.*$/gm,"$1");                          /* មតិយោបល់ */
+  t=t.replace(/\\\[([\s\S]*?)\\\]/g,"$$$$$1$$$$").replace(/\\begin\{(equation|align|gather)\*?\}([\s\S]*?)\\end\{\1\*?\}/g,"$$$$$2$$$$");
+  t=t.replace(/\\(textbf|textit|emph|underline|text|mbox|textrm)\{([^{}]*)\}/g,function(m,c,x,o,all){return inMath(all,o)?m:x});
+  t=t.replace(/\\includegraphics(\[[^\]]*\])?\{[^}]*\}/g,"[រូបភាព]").replace(/\\begin\{(tikzpicture|center|figure)\}[\s\S]*?\\end\{\1\}/g,function(m,k){return k==="center"?m.replace(/\\(begin|end)\{center\}/g,""):"[រូបភាព]"});
+  t=t.replace(/\\(vspace|hspace)\*?\{[^}]*\}|\\(noindent|hfill|medskip|bigskip|smallskip|centering|par|newline)\b/g," ");
+  t=t.replace(/\\\\(\[[^\]]*\])?/g,"\n").replace(/~/g," ");
+  return t.replace(/[ \t]+/g," ").replace(/\n\s*\n+/g,"\n").trim();
+}
+function inMath(all,o){var n=0;for(var i=0;i<o;i++){if(all[i]==="\\"){i++;continue}if(all[i]==="$")n++}return n%2===1}
+function isTrue(c){return/\\(True|CorrectChoice|correct)\b|^\s*\*/.test(c)}
+function stripTrue(c){return c.replace(/\\(True|CorrectChoice|correct)\b\s*/g,"").replace(/^\s*\*\s*/,"")}
+function mkQ(text,ch,ans,num){
+  var q={q:texClean(text),t:ch.length>=2?"mc":"num",ch:[],a:""};
+  if(q.t==="mc"){q.ch=ch.slice(0,4).map(function(c){return texClean(stripTrue(c))});while(q.ch.length<4)q.ch.push("");q.a=ans>=0&&ans<4?ans:-1}
+  else q.a=num!=null?String(num).trim():"";
+  return q;
+}
+function parseTex(src){
+  src=String(src).replace(/\r/g,"");
+  var b=src.indexOf("\\begin{document}");if(b>=0)src=src.slice(b+16);var e=src.indexOf("\\end{document}");if(e>=0)src=src.slice(0,e);
+  var out=[],m;
+  /* ១. ex_test៖ \begin{ex} … \end{ex} */
+  var reEx=/\\begin\{(ex|bt|vd)\}([\s\S]*?)\\end\{\1\}/g;
+  while((m=reEx.exec(src))){
+    var body=m[2].replace(/\\loigiai\s*\{[\s\S]*$/,""),k=body.search(/\\choice(TF)?\b/),ch=[],ans=-1,num=null;
+    if(k>=0){var i=k+body.slice(k).indexOf("{");
+      while(i<body.length&&body[i]==="{"&&ch.length<6){var g=grp(body,i);if(isTrue(g[0]))ans=ch.length;ch.push(g[0]);i=g[1];while(/\s/.test(body[i]||""))i++}
+      body=body.slice(0,k)}
+    var sh=/\\shortans(\[[^\]]*\])?\{([^}]*)\}/.exec(body);if(sh){num=sh[2];body=body.replace(sh[0],"")}
+    out.push(mkQ(body,ch,ans,num));
+  }
+  if(out.length)return out;
+  /* ២. exam class៖ \question … */
+  if(/\\question\b/.test(src)){
+    src.split(/\\question\b(?:\[[^\]]*\])?/).slice(1).forEach(function(part){
+      part=part.replace(/\\end\{questions\}[\s\S]*$/,"").replace(/\\begin\{solution\}[\s\S]*?\\end\{solution\}/g,"");
+      var c0=part.search(/\\begin\{(choices|oneparchoices|checkboxes)\}/),ch=[],ans=-1;
+      var text=c0>=0?part.slice(0,c0):part;
+      if(c0>=0){part.slice(c0).replace(/\\end\{(choices|oneparchoices|checkboxes)\}[\s\S]*$/,"").split(/\\(?=choice\b|CorrectChoice\b)/).slice(1).forEach(function(x){
+        var cor=/^CorrectChoice/.test(x);x=x.replace(/^(choice|CorrectChoice)\b/,"");if(cor)ans=ch.length;ch.push(x)})}
+      out.push(mkQ(text,ch,ans,null));
+    });
+    return out;
+  }
+  /* ៣. enumerate៖ \item នៅកម្រិតខាងក្រៅ */
+  var en=/\\begin\{enumerate\}(\[[^\]]*\])?/.exec(src);
+  if(en){
+    var s2=src.slice(en.index+en[0].length),depth=0,items=[],cur="",re=/\\begin\{(enumerate|itemize)\}|\\end\{(enumerate|itemize)\}|\\item\b(\[[^\]]*\])?/g,last=0;
+    while((m=re.exec(s2))){
+      cur+=s2.slice(last,m.index);last=re.lastIndex;
+      if(m[1]){depth++;cur+=m[0]}else if(m[2]){if(!depth){break}depth--;cur+=m[0]}
+      else if(!depth){if(cur.trim())items.push(cur);cur=""}else cur+=m[0];
+    }
+    if(cur.trim())items.push(cur);
+    items.forEach(function(it){
+      var ch=[],ans=-1,text=it,inner=/\\begin\{(enumerate|itemize|tasks)\}[\s\S]*?\\end\{\1\}/.exec(it);
+      if(inner){text=it.slice(0,inner.index);inner[0].replace(/^\\begin\{\w+\}(\[[^\]]*\]|\(\d\))?|\\end\{\w+\}$/g,"").split(/\\item\b|\\task\b/).slice(1).forEach(function(x){if(isTrue(x))ans=ch.length;ch.push(x)})}
+      else{var mm=it.split(/\s(?=\(?[A-Dក-ឃ][\.\)]\s)/);if(mm.length>=3){text=mm[0];mm.slice(1).forEach(function(x){x=x.replace(/^\(?[A-Dក-ឃ][\.\)]\s*/,"");if(isTrue(x))ans=ch.length;ch.push(x)})}}
+      out.push(mkQ(text,ch,ans,null));
+    });
+  }
+  return out;
+}
+function texImport(){
+  var f=document.createElement("input");f.type="file";f.accept=".tex,.txt,text/plain";
+  f.onchange=function(){var file=f.files[0];if(!file)return;var r=new FileReader();r.onload=function(){
+    var Q=parseTex(r.result).filter(function(q){return q.q});
+    if(!Q.length){alert("រកមិនឃើញលំហាត់ក្នុងឯកសារនេះទេ។\n\nទម្រង់ដែលគាំទ្រ៖\n• \\question … \\choice … \\CorrectChoice … (exam class)\n• \\begin{ex} … \\choice{\\True A}{B}{C}{D} \\end{ex}\n• \\begin{enumerate} \\item … \\end{enumerate}");return}
+    texPreview(Q,file.name);
+  };r.readAsText(file,"utf-8")};
+  f.click();
+}
+function texPreview(Q,fname){
+  var d=$("qzTex");if(!d){d=document.createElement("dialog");d.id="qzTex";d.className="wide";document.body.appendChild(d)}
+  var g=fG||10;
+  function body(){
+    var miss=Q.filter(function(q){return q.t==="mc"?q.a<0:!q.a}).length;
+    return Q.map(function(q,i){
+      return"<div class='qz-q"+((q.t==="mc"?q.a<0:!q.a)?" qz-miss":"")+"'><div class=qz-qh><label style='display:flex;gap:6px;align-items:center;margin:0'><input type=checkbox data-ti="+i+(q.skip?"":" checked")+" style='width:auto;margin:0'> <b>លំហាត់ទី"+kn(i+1)+"</b></label>"+
+        "<select data-tv="+i+" style='width:auto;margin:0'>"+[1,2,3].map(function(v){return"<option value="+v+((q.lv||1)===v?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
+        (q.t==="mc"?(q.a<0?"<span class=qz-warn>⚠️ ចុចជម្រើសត្រូវ</span>":""):"<span>ចម្លើយ៖ <input data-tn="+i+" value='"+esc(q.a)+"' style='width:110px;margin:0'></span>"+(q.a?"":"<span class=qz-warn>⚠️ បញ្ចូលចម្លើយ</span>"))+"</div>"+
+        "<div class=qz-qt>"+tx(q.q)+"</div>"+
+        (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,j){return c?"<li class='pick"+(j===q.a?" ok":"")+"' data-tc='"+i+"|"+j+"'>"+tx(c)+"</li>":""}).join("")+"</ol>":"")+"</div>"}).join("")+
+      (miss?"<p class=qz-warn style='margin-top:8px'>មាន "+kn(miss)+" លំហាត់មិនទាន់មានចម្លើយត្រូវ — លំហាត់ទាំងនោះនឹងមិនត្រូវនាំចូលទេ</p>":"");
+  }
+  d.innerHTML="<div class=dlgb><h2 style='margin:0 0 6px'>📥 នាំចូលពី «"+esc(fname)+"»</h2><p class=note style='margin:0 0 8px'>រកឃើញ <b>"+kn(Q.length)+"</b> លំហាត់។ ពិនិត្យ ជ្រើសចម្លើយត្រូវ (ចុចលើជម្រើស) និងកម្រិត មុននាំចូល។</p>"+
+    "<div class=fg><div><label>ថ្នាក់</label><select id=txG>"+grades().map(function(x){return"<option value="+x+(x===g?" selected":"")+">ថ្នាក់ទី"+kn(x)+"</option>"}).join("")+"</select></div>"+
+    "<div><label>មេរៀន (សម្រាប់លំហាត់ទាំងអស់)</label><select id=txL>"+lsOpts(g,fL,false)+"</select></div></div>"+
+    "<div id=txB class=qz-list style='margin-top:10px'>"+body()+"</div></div>"+
+    "<div class=dlgf><button type=button id=txX>បោះបង់</button><button type=button class=primary id=txOK>📥 នាំចូល</button></div>";
+  function re(){$("txB").innerHTML=body();math($("txB"))}
+  d.onchange=function(e){var el=e.target;
+    if(el.id==="txG")$("txL").innerHTML=lsOpts(+el.value,"",false);
+    else if(el.dataset.ti)Q[+el.dataset.ti].skip=!el.checked;
+    else if(el.dataset.tv)Q[+el.dataset.tv].lv=+el.value;
+    else if(el.dataset.tn){Q[+el.dataset.tn].a=el.value.trim();re()}};
+  d.onclick=function(e){var li=e.target.closest("[data-tc]");if(!li)return;var p=li.dataset.tc.split("|");Q[+p[0]].a=+p[1];re()};
+  $("txX").onclick=function(){d.close()};
+  $("txOK").onclick=function(){
+    var G=+$("txG").value,L=+$("txL").value;if(!L){alert("សូមជ្រើសមេរៀន");return}
+    var ok=Q.filter(function(q){return!q.skip&&(q.t==="mc"?q.a>=0:q.a)});if(!ok.length){alert("គ្មានលំហាត់ដែលរួចរាល់សម្រាប់នាំចូលទេ");return}
+    var arr=qb[who.id]=qb[who.id]||[];
+    ok.forEach(function(q){var o={id:uid(),g:G,ls:L,lv:q.lv||1,t:q.t,q:q.q};if(q.t==="mc"){o.ch=q.ch;o.a=q.a}else o.a=q.a;arr.push(o)});
+    saveQB(who.id).then(function(){d.close();fG=G;fL=L;renderQuiz();notify("បាននាំចូល "+ok.length+" លំហាត់")});
+  };
+  d.showModal();math($("txB"));
 }
 
 /* ===================== 🧪 បង្កើតតេស្ត ===================== */
@@ -306,6 +423,7 @@ $("qzBody").addEventListener("click",function(e){
   if(b.dataset.qo){curTest=tests.filter(function(t){return t.id===b.dataset.qo})[0];watchSubs(curTest);renderRes();return}
   var a=b.dataset.qa,t=curTest;
   if(a==="new")qDialog();
+  else if(a==="tex")texImport();
   else if(a==="shuffle"){mk.title=($("qmTi")||{}).value||mk.title;mk.dur=+(($("qmD")||{}).value)||mk.dur;doShuffle()}
   else if(a==="open")openTest();
   else if(a==="back"){curTest=null;watchSubs(null);loadTests().then(renderRes)}
