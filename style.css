@@ -349,30 +349,70 @@ body.pm .pg.land{page-break-inside:avoid}
 .wpt .hl{text-align:center}
 /* ===== រចនាសម្ព័ន្ធថ្នាក់ ===== */
 .og-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
-@media(min-width:1100px){.og-wrap{grid-template-columns:minmax(380px,.8fr) minmax(0,1.2fr)}}
+@media(min-width:1200px){.og-wrap{grid-template-columns:minmax(380px,.75fr) minmax(0,1.25fr)}}
 .og-ed h3,.og-pv h3{margin:0 0 8px}
 .og-tb{min-width:0}.og-tb select{width:auto;margin:0}
-.og-card{background:#fff;color:#000;border-radius:12px;padding:12px;border:1px solid var(--line)}
-.og{--ob:#c0392b;--ol:#1e3a8a;color:#000;font-size:10pt}
-.og-box,.og-g{border:1.6px solid var(--ob);background:#fff;text-align:center;padding:6px 6px 8px;position:relative}
-.og-t{font-family:"Moul","Kantumruy Pro",serif;color:var(--ol);font-size:10.5pt;line-height:1.7}
-.og-n{font-weight:700;margin-top:4px;color:var(--ol)}.og-dot{color:#999;font-weight:400}
-.og-ph{width:46px;height:58px;margin:4px auto 0;background:var(--ol);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18pt;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.og-av{display:flex;justify-content:center;margin-top:4px}.og-av .av,.og-av .av-i{border-radius:8px!important;width:52px!important;height:64px!important;object-fit:cover}
-.og-r1{display:grid;grid-template-columns:1fr 46px 1.1fr 1fr;align-items:center}
-.og-link{height:8px;border-top:2px solid var(--ol);border-bottom:2px solid var(--ol)}
-.og-r1 .head{position:relative}.og-r1 .head::after{content:"";position:absolute;left:50%;bottom:-20px;height:18px;border-left:2px solid var(--ol)}
-.og-r2{display:grid;grid-template-columns:1fr 1fr;gap:28%;margin:20px 8% 0;position:relative;padding-top:18px}
-.og-r2::before{content:"";position:absolute;top:0;left:16%;right:16%;border-top:2px solid var(--ol)}
-.og-r2 .vice::before{content:"";position:absolute;left:50%;top:-20px;height:18px;border-left:2px solid var(--ol)}
-.og-r2 .vice::after{content:"";position:absolute;left:50%;bottom:-20px;height:18px;border-left:2px solid var(--ol)}
-.og-r3{display:grid;gap:8px;margin-top:20px;position:relative;padding-top:16px}
-.og-r3::before{content:"";position:absolute;top:0;left:6%;right:6%;border-top:2px solid var(--ol)}
-.og-g::before{content:"";position:absolute;left:50%;top:-18px;height:16px;border-left:2px solid var(--ol)}
-.og-g ol{margin:4px 0 0;padding:0 0 0 18px;text-align:left;font-size:9pt;line-height:1.55}
-.og-g li.gl{font-weight:700;color:var(--ol)}.og-g li small{font-weight:400;color:#555}.og-g li.e{list-style:none;color:#999}
+.og-card{background:linear-gradient(180deg,#f8faff,#fff);color:#0f172a;border-radius:16px;padding:16px;border:1px solid var(--line);overflow-x:auto}
+.og{--ol:#1e3a8a;--ln:#94a3b8;color:#0f172a;font-size:10pt;min-width:640px}
+.og *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+/* ប្រអប់តួនាទី */
+.og-box{--c1:#6366f1;--c2:#8b5cf6;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(30,58,138,.12);border:1px solid rgba(30,58,138,.12);position:relative}
+.og-box.adv{--c1:#7c3aed;--c2:#db2777}.og-box.head{--c1:#d97706;--c2:#f59e0b}.og-box.v1{--c1:#0284c7;--c2:#06b6d4}.og-box.v2{--c1:#059669;--c2:#10b981}
+.og-bar{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-family:"Moul","Kantumruy Pro",serif;font-size:10.5pt;line-height:1.9;text-align:center;padding:2px 8px}
+.og-ic{margin-right:5px;font-family:system-ui,sans-serif}
+.og-in{padding:8px 10px 10px;text-align:center}
+.og-av{width:60px;height:60px;margin:0 auto;border-radius:50%;padding:3px;background:linear-gradient(135deg,var(--c1),var(--c2))}
+.og-av>span{display:flex;width:100%;height:100%;border-radius:50%;background:#fff;color:var(--c1);align-items:center;justify-content:center;font-size:20pt;font-weight:700}
+.og-av.adv{width:70px;height:70px}.og-av.adv .av,.og-av.adv .av-i{width:64px!important;height:64px!important;border-radius:50%!important;border:2px solid #fff}
+.og-n{font-weight:700;margin-top:6px;color:#0f172a;font-size:10.5pt}.og-dot{color:#94a3b8;font-weight:400}
+.og-sub{font-size:8pt;color:#64748b;margin-top:1px}
+/* ជួរ */
+.og-r1{display:grid;grid-template-columns:1fr 50px 1.15fr 1fr;align-items:center;gap:0}
+.og-link{display:flex;flex-direction:column;gap:4px}.og-link i{display:block;height:2.5px;background:linear-gradient(90deg,#db2777,#f59e0b);border-radius:2px}
+.og-r1 .head::after{content:"";position:absolute;left:50%;bottom:-22px;height:22px;border-left:2.5px solid var(--ln)}
+.og-r1 .head{overflow:visible}.og-r1 .head .og-bar{border-radius:14px 14px 0 0}
+.og-stat{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-left:14px}
+.og-stat div{background:#fff;border:1px solid rgba(30,58,138,.12);border-radius:10px;text-align:center;padding:5px 4px;font-size:8pt;color:#64748b;box-shadow:0 2px 6px rgba(30,58,138,.06)}
+.og-stat b{display:block;font-size:14pt;color:var(--ol);line-height:1.3}
+.og-r2{display:grid;grid-template-columns:1fr 1fr;gap:26%;margin:22px 9% 0;position:relative;padding-top:20px}
+.og-r2::before{content:"";position:absolute;top:0;left:18%;right:18%;border-top:2.5px solid var(--ln);border-radius:2px}
+.og-r2 .vice{overflow:visible}.og-r2 .vice .og-bar{border-radius:14px 14px 0 0}
+.og-r2 .vice::before{content:"";position:absolute;left:50%;top:-22px;height:22px;border-left:2.5px solid var(--ln)}
+.og-r2 .vice::after{content:"";position:absolute;left:50%;bottom:-22px;height:22px;border-left:2.5px solid var(--ln)}
+.og-r3{display:grid;gap:10px;margin-top:22px;position:relative;padding-top:18px}
+.og-r3::before{content:"";position:absolute;top:0;left:7%;right:7%;border-top:2.5px solid var(--ln)}
+/* ក្រុម */
+.og-g{background:#fff;border-radius:12px;overflow:visible;position:relative;box-shadow:0 4px 12px rgba(30,58,138,.1);border:1px solid hsla(var(--h),70%,45%,.25)}
+.og-g::before{content:"";position:absolute;left:50%;top:-20px;height:18px;border-left:2.5px solid var(--ln)}
+.og-gh{display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,hsl(var(--h),70%,45%),hsl(calc(var(--h) + 25),75%,55%));color:#fff;font-family:"Moul","Kantumruy Pro",serif;font-size:9.5pt;line-height:1.9;padding:2px 8px;border-radius:12px 12px 0 0}
+.og-gn{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#fff;color:hsl(var(--h),70%,40%);align-items:center;justify-content:center;font-family:"Kantumruy Pro",sans-serif;font-weight:700;font-size:9pt}
+.og-gc{margin-left:auto;font-family:"Kantumruy Pro",sans-serif;font-size:7.5pt;background:rgba(255,255,255,.25);border-radius:8px;padding:0 6px}
+.og-g ol{list-style:none;margin:0;padding:6px 8px 8px;counter-reset:m}
+.og-g li{counter-increment:m;display:flex;align-items:center;gap:5px;font-size:9pt;line-height:1.5;padding:2px 0;border-bottom:1px dashed #e2e8f0}
+.og-g li:last-child{border-bottom:0}
+.og-g li::before{content:counter(m);flex:0 0 auto;width:16px;height:16px;border-radius:50%;background:hsla(var(--h),70%,45%,.12);color:hsl(var(--h),70%,35%);font-size:7.5pt;font-weight:700;display:flex;align-items:center;justify-content:center}
+.og-g li.gl{font-weight:700;color:hsl(var(--h),70%,30%)}
+.og-g li.gl::before{background:hsl(var(--h),70%,45%);color:#fff}
+.og-nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.og-star{margin-left:auto;flex:0 0 auto;font-size:7pt;font-weight:700;color:#b45309;background:#fef3c7;border-radius:6px;padding:0 4px}
+.og-g li.e{color:#94a3b8;border:0}.og-g li.e::before{display:none}
 /* បោះពុម្ព */
-.orgp{border:3px double #1e3a8a;padding:4mm 5mm!important}
-.og-hd{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px;margin-bottom:3mm}
-.og-logo{width:18mm;height:18mm;border-radius:50%}.og-sch{font-size:9pt;line-height:1.5}
-.og-ttl{text-align:center;padding-right:30mm}.og-ttl .moul{font-size:20pt;color:#1e3a8a;line-height:1.5}
+.orgp{position:relative;border:2.5px solid #1e3a8a!important;outline:1px solid #1e3a8a;outline-offset:-6px;padding:6mm 7mm!important;background:linear-gradient(180deg,#f5f8ff,#fff 30%)!important}
+.og-cn{position:absolute;width:16mm;height:16mm;border:3px solid #d97706;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.og-cn.tl{left:2.5mm;top:2.5mm;border-right:0;border-bottom:0;border-radius:6mm 0 0 0}.og-cn.tr{right:2.5mm;top:2.5mm;border-left:0;border-bottom:0;border-radius:0 6mm 0 0}
+.og-cn.bl{left:2.5mm;bottom:2.5mm;border-right:0;border-top:0;border-radius:0 0 0 6mm}.og-cn.br{right:2.5mm;bottom:2.5mm;border-left:0;border-top:0;border-radius:0 0 6mm 0}
+.orgp .og{min-width:0}
+.og-hd{display:grid;grid-template-columns:auto auto 1fr;align-items:center;gap:8px;margin-bottom:4mm}
+.og-logo{width:19mm;height:19mm;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.2)}.og-sch{font-size:9pt;line-height:1.5;color:#1e3a8a}
+.og-ttl{text-align:center;padding-right:32mm}.og-ttl .moul{font-size:21pt;line-height:1.5;background:linear-gradient(90deg,#1e3a8a,#7c3aed);-webkit-background-clip:text;background-clip:text;color:transparent}
+.og-yr{display:inline-block;margin-top:1mm;background:#1e3a8a;color:#fff;border-radius:20px;padding:0 12px;font-size:9.5pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.orgp .og-in{padding:5px 8px 7px}.orgp .og-av{width:50px;height:50px}.orgp .og-av.adv{width:58px;height:58px}.orgp .og-av.adv .av,.orgp .og-av.adv .av-i{width:52px!important;height:52px!important}
+.orgp .og-av>span{font-size:16pt}.orgp .og-r2{margin-top:16px;padding-top:16px}.orgp .og-r3{margin-top:16px}.orgp .og-hd{margin-bottom:2mm}
+.orgp .og-r1 .head::after,.orgp .og-r2 .vice::after{bottom:-16px;height:16px}.orgp .og-r2 .vice::before{top:-16px;height:16px}
+/* រចនាសម្ព័ន្ធថ្នាក់៖ គំនូសតាងពេញទទឹងនៅលើ · តារាងនៅក្រោម */
+.og-wrap{grid-template-columns:minmax(0,1fr)!important}
+.og-ed .wrap{max-width:760px}
+/* PDF/បោះពុម្ព៖ គ្មានស្រមោល/អក្សរ gradient (កម្មវិធីមើល PDF ខ្លះបង្ហាញខុស) */
+.orgp .og-box,.orgp .og-g,.orgp .og-stat div,.orgp .og-logo{box-shadow:none!important}
+.orgp .og-ttl .moul{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#1e3a8a}
+.orgp{background:#fff!important}

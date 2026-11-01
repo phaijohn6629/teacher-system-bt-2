@@ -23,22 +23,30 @@ function nm(s){return s?s.n:""}
 function ini(t){return esc(Array.from(String(t||"?").trim())[0]||"?")}
 
 /* ---------- គំនូសតាង ---------- */
+var GH=[230,330,160,28,195,280,100,0];   /* ពណ៌ក្រុម (hue) */
 function chart(c){
-  var t=teacherOf(ogT),h=holder(c,"h"),v1=holder(c,"v1"),v2=holder(c,"v2"),G=groups(c),n=G.length;
-  function box(cls2,title,inner,name){return"<div class='og-box "+cls2+"'><div class=og-t>"+title+"</div>"+inner+"<div class=og-n>"+(name?esc(name):"<span class=og-dot>……………………</span>")+"</div></div>"}
-  function ph(s){return"<div class=og-ph>"+(s?ini(s.n):"")+"</div>"}
-  var adv="<div class=og-av>"+avHtml(ogT,t.name,64)+"</div>";
+  var t=teacherOf(ogT),h=holder(c,"h"),v1=holder(c,"v1"),v2=holder(c,"v2"),G=groups(c),n=G.length,tot=c.st.length;
+  function av(s){return"<div class=og-av><span>"+(s?ini(s.n):"?")+"</span></div>"}
+  function box(cls2,ico,title,inner,name,sub){
+    return"<div class='og-box "+cls2+"'><div class=og-bar><span class=og-ic>"+ico+"</span>"+title+"</div><div class=og-in>"+inner+
+      "<div class=og-n>"+(name?esc(name):"<span class=og-dot>……………………</span>")+"</div>"+(sub?"<div class=og-sub>"+sub+"</div>":"")+"</div></div>"}
+  var adv="<div class='og-av adv'>"+avHtml(ogT,t.name,64)+"</div>";
   var gs=G.map(function(a,i){
-    return"<div class=og-g><div class=og-t>ក្រុមទី"+kn(i+1)+"</div><ol>"+(a.length?a.map(function(s){var gl=rOf(c,s).ro==="gl";return"<li"+(gl?" class=gl":"")+">"+esc(s.n)+(gl?" <small>(ប្រធានក្រុម)</small>":"")+"</li>"}).join(""):"<li class=e>……………………</li>")+"</ol></div>"}).join("");
+    var hue=GH[i%GH.length];
+    return"<div class=og-g style='--h:"+hue+"'><div class=og-gh><span class=og-gn>"+kn(i+1)+"</span>ក្រុមទី"+kn(i+1)+"<span class=og-gc>"+kn(a.length)+" នាក់</span></div><ol>"+
+      (a.length?a.map(function(s){var gl=rOf(c,s).ro==="gl";return"<li"+(gl?" class=gl":"")+"><span class=og-nm>"+esc(s.n)+"</span>"+(gl?"<span class=og-star>★ ប្រធាន</span>":"")+"</li>"}).join(""):"<li class=e>……………………</li>")+"</ol></div>"}).join("");
+  var m=c.st.filter(function(s){return s.g==="ប្រុស"}).length,f=c.st.filter(function(s){return s.g==="ស្រី"}).length;
   return"<div class=og>"+
-   "<div class=og-r1>"+box("adv","គ្រូទីប្រឹក្សា",adv,t.name)+"<div class=og-link></div>"+box("head","ប្រធានថ្នាក់",ph(h),nm(h))+"<div class=og-sp></div></div>"+
-   "<div class=og-r2>"+box("vice","អនុប្រធានទី១",ph(v1),nm(v1))+box("vice","អនុប្រធានទី២",ph(v2),nm(v2))+"</div>"+
+   "<div class=og-r1>"+box("adv","🎓","គ្រូទីប្រឹក្សា",adv,t.name,esc(t.sub||"គណិតវិទ្យា"))+"<div class=og-link><i></i><i></i></div>"+box("head","👑","ប្រធានថ្នាក់",av(h),nm(h),"ថ្នាក់ "+esc(c.n))+
+     "<div class=og-stat><div><b>"+kn(tot)+"</b>សិស្សសរុប</div><div><b>"+kn(f)+"</b>ស្រី</div><div><b>"+kn(m)+"</b>ប្រុស</div><div><b>"+kn(n)+"</b>ក្រុម</div></div></div>"+
+   "<div class=og-r2>"+box("vice v1","⭐","អនុប្រធានទី១",av(v1),nm(v1),"ទទួលបន្ទុកការសិក្សា")+box("vice v2","⭐","អនុប្រធានទី២",av(v2),nm(v2),"ទទួលបន្ទុកវិន័យ និងអនាម័យ")+"</div>"+
    "<div class=og-r3 style='grid-template-columns:repeat("+n+",minmax(0,1fr))'>"+gs+"</div></div>";
 }
 function printHTML(c){
   var I=inf();
-  return"<div class='pg land orgp'><div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
-   "<div class=og-ttl><div class=moul>រចនាសម្ព័ន្ធថ្នាក់ "+esc(c.n)+"</div><div>ឆ្នាំសិក្សា "+esc(I.year)+"</div></div></div>"+chart(c)+"</div>";
+  return"<div class='pg land orgp'><span class='og-cn tl'></span><span class='og-cn tr'></span><span class='og-cn bl'></span><span class='og-cn br'></span>"+
+   "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
+   "<div class=og-ttl><div class=moul>រចនាសម្ព័ន្ធថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+"</div></div></div>"+chart(c)+"</div>";
 }
 
 /* ---------- ផ្ទាំងកែ ---------- */
@@ -61,9 +69,9 @@ function renderOrg(){
       "<td><select data-og='"+i+"|g' "+(ed?"":"disabled")+">"+gOpt(r.g||0)+"</select></td></tr>"}).join("");
   var none=c.st.filter(function(s){return!(rOf(c,s).g>=1)}).length;
   $("ogBody").innerHTML="<div class=og-wrap>"+
+   "<div class=og-pv><h3>គំនូសតាង</h3><div class=og-card>"+chart(c)+"</div></div>"+
    "<div class=og-ed><h3>កំណត់តួនាទី និងក្រុម</h3>"+(none?"<p class=note style='margin:0 0 6px'>ℹ️ សិស្ស "+kn(none)+" នាក់មិនទាន់មានក្រុម។ ចុច «⚡ បែងចែកក្រុមស្វ័យប្រវត្តិ» ឬជ្រើសម្ដងម្នាក់ៗ។</p>":"")+
-    "<div class=wrap><table class=og-tb><thead><tr><th>ល.រ</th><th>ឈ្មោះសិស្ស</th><th>ភេទ</th><th>តួនាទី</th><th>ក្រុម</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>"+
-   "<div class=og-pv><h3>គំនូសតាង</h3><div class=og-card>"+chart(c)+"</div></div></div>";
+    "<div class=wrap><table class=og-tb><thead><tr><th>ល.រ</th><th>ឈ្មោះសិស្ស</th><th>ភេទ</th><th>តួនាទី</th><th>ក្រុម</th></tr></thead><tbody>"+rows+"</tbody></table></div></div>"+"</div>";
 }
 window.renderOrg=renderOrg;
 $("ogT").onchange=function(){ogT=this.value;ogI=0;renderOrg()};
