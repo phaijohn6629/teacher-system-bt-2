@@ -80,7 +80,7 @@ function save(id){
 function ymd(s){var a=String(s||"").split("-").map(Number);return a.length===3&&a[0]?a:null}
 function lunar(s,noWd){var a=ymd(s);return a&&window.KhCal?KhCal.fmt(a[0],a[1],a[2],{noWd:noWd}):""}
 function greg(s){var a=ymd(s);return a?"ត្រូវនឹងថ្ងៃទី"+kn(a[2])+" ខែ"+M[a[1]-1]+" ឆ្នាំ"+kn(a[0]):""}
-function tm(s){return kn(String(s||"").replace(":","ៈ"))}
+function tm(s){return kn(String(s||""))}
 function n2(n){return kn((n<10?"០":"")+n)}
 function prHtml(s){
   return String(s||"").split("\n").map(function(l){
