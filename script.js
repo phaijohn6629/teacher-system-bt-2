@@ -1084,9 +1084,10 @@ function renderP(){
   if(pv===1){
     c.st.forEach(function(s,i){
       var a=abp(s,3);
-      b+="<tr><td>"+(i+1)+"</td><td><input data-p='"+i+"|id' value='"+esc(s.id||"")+"' style='width:100px' "+(ro?"readonly":"")+"></td><td><input data-p='"+i+"|n' value='"+esc(s.n)+"' style='min-width:150px' "+(ro?"readonly":"")+"></td><td><select data-p='"+i+"|g' style='width:auto;margin:0' "+(ro?"disabled":"")+"><option value=''>—</option>"+["ប្រុស","ស្រី"].map(function(x){return"<option"+(s.g===x?" selected":"")+">"+x+"</option>"}).join("")+"</select></td><td><input type=date data-p='"+i+"|dob' value='"+esc(s.dob||"")+"' style='width:150px' "+(ro?"readonly":"")+"></td><td><input data-p='"+i+"|ph' value='"+esc(s.ph||"")+"' inputmode=tel style='width:140px' "+(ro?"readonly":"")+"></td><td>"+(a[0]+a[1])+"</td></tr>";
+      b+="<tr><td>"+(i+1)+"</td><td><input data-p='"+i+"|id' value='"+esc(s.id||"")+"' style='width:100px' "+(ro?"readonly":"")+"></td><td><input data-p='"+i+"|n' value='"+esc(s.n)+"' style='min-width:150px' "+(ro?"readonly":"")+"></td><td><select data-p='"+i+"|g' style='width:auto;margin:0' "+(ro?"disabled":"")+"><option value=''>—</option>"+["ប្រុស","ស្រី"].map(function(x){return"<option"+(s.g===x?" selected":"")+">"+x+"</option>"}).join("")+"</select></td><td><input type=date data-p='"+i+"|dob' value='"+esc(s.dob||"")+"' style='width:150px' "+(ro?"readonly":"")+"></td><td><input data-p='"+i+"|ph' value='"+esc(s.ph||"")+"' inputmode=tel style='width:140px' "+(ro?"readonly":"")+"></td><td>"+(a[0]+a[1])+"</td>"+(ro?"":"<td><button type=button class=danger data-pdel='"+i+"' title='លុបសិស្សនេះ'>🗑️</button></td>")+"</tr>";
     });
-    $("ptb").innerHTML="<thead><tr><th>ល.រ</th><th>លេខសម្គាល់</th><th>ឈ្មោះសិស្ស</th><th>ភេទ</th><th>ថ្ងៃខែឆ្នាំកំណើត</th><th>ទូរស័ព្ទអាណាព្យាបាល</th><th>អវត្តមានសរុប (ថ្ងៃ)</th></tr></thead><tbody>"+(b||"<tr><td colspan=7 class=empty>មិនទាន់មានសិស្សទេ។</td></tr>")+"</tbody>";
+    $("ptb").innerHTML="<thead><tr><th>ល.រ</th><th>លេខសម្គាល់</th><th>ឈ្មោះសិស្ស</th><th>ភេទ</th><th>ថ្ងៃខែឆ្នាំកំណើត</th><th>ទូរស័ព្ទអាណាព្យាបាល</th><th>អវត្តមានសរុប (ថ្ងៃ)</th>"+(ro?"":"<th></th>")+"</tr></thead><tbody>"+(b||"<tr><td colspan=8 class=empty>មិនទាន់មានសិស្សទេ។</td></tr>")+"</tbody>"+
+      (ro?"":"<tfoot><tr><td colspan=8><button type=button class=primary data-padd>＋ បន្ថែមសិស្ស</button></td></tr></tfoot>");
     var m=c.st.filter(function(s){return s.g==="ប្រុស"}).length,f=c.st.filter(function(s){return s.g==="ស្រី"}).length;
     $("pnote").textContent="សិស្សសរុប "+c.st.length+" នាក់ · ប្រុស "+m+" · ស្រី "+f;
   }else{
@@ -1116,6 +1117,18 @@ $("ptb").oninput=function(e){
   savR();
 };
 $("ptb").onchange=function(e){if(e.target.dataset.p&&e.target.dataset.p.indexOf("|ab|")>0)renderP()};
+/* បន្ថែម/លុបសិស្ស (ពិន្ទុ អវត្តមាន និងក្រុមរបស់សិស្សនោះត្រូវលុបជាមួយ) */
+$("ptb").addEventListener("click",function(e){
+  if(!canM())return;var c=curCls();if(!c)return;
+  if(e.target.closest("[data-padd]")){
+    c.st.push({id:"",n:"",g:"",a:["","","","","",""],b:["","","","",""]});savR();renderP();
+    var ins=$("ptb").querySelectorAll("input[data-p$='|n']");if(ins.length)ins[ins.length-1].focus();return;
+  }
+  var d=e.target.closest("[data-pdel]");if(!d)return;
+  var i=+d.dataset.pdel,st=c.st[i];if(!st)return;
+  if(!confirm("លុបសិស្ស «"+(st.n||"(គ្មានឈ្មោះ)")+"» ចេញពីថ្នាក់ "+c.n+"?\n\nពិន្ទុ និងអវត្តមានរបស់សិស្សនេះនឹងត្រូវលុបផងដែរ។"))return;
+  c.st.splice(i,1);savR();renderP();notify("បានលុបសិស្ស "+(st.n||""));
+});
 $("pex").onclick=function(){
   var c=curCls();if(!c)return;
   var rows=[["ល.រ","លេខសម្គាល់","ឈ្មោះ","ភេទ","ថ្ងៃកំណើត","ទូរស័ព្ទអាណាព្យាបាល"].concat(MK.map(function(m){return"អវត្តមាន "+m})).concat(["សរុបមានច្បាប់","សរុបគ្មានច្បាប់"])];
