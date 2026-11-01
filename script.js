@@ -149,6 +149,8 @@ function enterApp(user){
     if(isAdm()){loadUsers().then(function(){render()});migrateLegacy().then(startSync,startSync)}
     else startSync();
     if(prof.mustChange)openPass(true);
+    else if(window._justLogin)loginPop();
+    window._justLogin=false;
   }).catch(function(e){alert(authErr(e));doLogout()});
 }
 function loadUsers(){
@@ -158,12 +160,26 @@ function loadUsers(){
   }).catch(function(e){console.error("users:",e)});
 }
 
+/* Popup «ចូលប្រព័ន្ធជោគជ័យ» (តែពេលចុច Login · មិនមែនពេល Reload) */
+function loginPop(){
+  var old=$("loginPop");if(old)old.remove();
+  var hr=new Date().getHours(),gr=hr<12?"អរុណសួស្ដី":hr<17?"ទិវាសួស្ដី":"សាយណ្ហសួស្ដី",ic=hr<12?"☀️":hr<17?"🌤️":"🌙";
+  var d=document.createElement("div");d.id="loginPop";d.setAttribute("role","status");d.setAttribute("aria-live","polite");
+  d.innerHTML="<div class=lp-card><div class=lp-burst>"+new Array(12).join("<i></i>")+"</div>"+
+    "<div class=lp-check><svg viewBox='0 0 52 52'><circle cx=26 cy=26 r=24 /><path d='M14 27 l8 8 l16 -17' /></svg></div>"+
+    "<h2>ចូលប្រព័ន្ធជោគជ័យ!</h2><p class=lp-hi>"+gr+" "+ic+"</p>"+
+    "<div class=lp-user>"+avHtml(who.id,who.name,40)+"<span><b>"+esc(who.name)+"</b><small>"+(isAdm()?"អ្នកគ្រប់គ្រង":"គ្រូបង្រៀន")+" · "+esc(who.id)+"</small></span></div>"+
+    "<div class=lp-bar><i></i></div></div>";
+  document.body.appendChild(d);
+  var close=function(){if(!d.isConnected)return;d.classList.add("out");setTimeout(function(){d.remove()},350)};
+  d.onclick=close;setTimeout(close,2800);
+}
 $("btnLogin").onclick=function(){
   var id=$("loginId").value.trim().toUpperCase(),pass=$("loginPass").value,btn=$("btnLogin");
   if(!id||!pass){alert("សូមបញ្ចូលលេខសម្គាល់ និងលេខសម្ងាត់!");return}
   btn.disabled=true;
   window.FBREADY.then(function(){return window.FB.signInWithEmailAndPassword(window.FB.auth,idEmail(id),pass)})
-    .then(function(){$("loginPass").value=""})
+    .then(function(){$("loginPass").value="";window._justLogin=true})
     .catch(function(e){alert(authErr(e))})
     .then(function(){btn.disabled=false});
 };

@@ -474,3 +474,33 @@ html.no-motion .brand-logo{animation:none}
 @media (max-width:600px){.welcome-banner.has-wk{padding-bottom:70px}.wk{width:42px;height:66px}.wk-bub{bottom:36px;left:46px;font-size:11px;max-width:200px}.wk.bl .wk-bub{right:46px}}
 html.no-motion .wk *{animation:none!important}
 @media print{.wk{display:none!important}}
+/* ===== Popup ចូលប្រព័ន្ធជោគជ័យ ===== */
+#loginPop{position:fixed;inset:0;z-index:5000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,16,32,.45);backdrop-filter:blur(6px);animation:lpFade .3s ease both;cursor:pointer}
+#loginPop.out{animation:lpFadeOut .35s ease both}
+.lp-card{position:relative;width:min(360px,100%);background:var(--panel,#fff);color:var(--ink);border-radius:26px;padding:30px 24px 22px;text-align:center;overflow:hidden;
+  box-shadow:0 30px 80px rgba(99,102,241,.35),0 0 0 1px rgba(168,85,247,.25);animation:lpPop .55s cubic-bezier(.2,1.5,.4,1) both}
+.lp-card::before{content:"";position:absolute;inset:0 0 auto;height:110px;background:var(--primary-gradient);opacity:.14}
+.lp-check{position:relative;width:84px;height:84px;margin:0 auto 10px;border-radius:50%;background:var(--primary-gradient);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(168,85,247,.45);animation:lpRing 1.6s ease-out .4s}
+.lp-check svg{width:56px;height:56px;fill:none;stroke:#fff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.lp-check circle{stroke-dasharray:151;stroke-dashoffset:151;opacity:.5;animation:lpDraw .6s ease .15s forwards}
+.lp-check path{stroke-dasharray:40;stroke-dashoffset:40;animation:lpDraw .45s ease .55s forwards}
+.lp-card h2{position:relative;margin:4px 0 2px;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:1.15rem;line-height:1.8;background:var(--primary-gradient);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lp-hi{margin:0 0 12px;color:var(--mute);font-size:.95rem}
+.lp-user{display:inline-flex;align-items:center;gap:10px;text-align:left;background:var(--soft);border:1px solid var(--border-glow);border-radius:16px;padding:8px 14px}
+.lp-user .av,.lp-user .av-i{width:40px!important;height:40px!important}
+.lp-user b{display:block;font-size:.95rem}.lp-user small{display:block;color:var(--mute);font-size:.75rem}
+.lp-bar{height:4px;border-radius:4px;background:var(--soft);margin-top:18px;overflow:hidden}.lp-bar i{display:block;height:100%;background:var(--primary-gradient);animation:lpBar 2.8s linear both}
+.lp-burst{position:absolute;left:50%;top:72px;width:0;height:0}
+.lp-burst i{position:absolute;width:8px;height:8px;border-radius:2px;background:#f59e0b;opacity:0;animation:lpConf 1s ease-out .5s both}
+.lp-burst i:nth-child(3n){background:#ec4899}.lp-burst i:nth-child(3n+1){background:#6366f1}.lp-burst i:nth-child(4n){background:#10b981;border-radius:50%}
+.lp-burst i:nth-child(1){--x:-120px;--y:-40px}.lp-burst i:nth-child(2){--x:120px;--y:-50px}.lp-burst i:nth-child(3){--x:-90px;--y:-90px}.lp-burst i:nth-child(4){--x:95px;--y:-95px}
+.lp-burst i:nth-child(5){--x:-140px;--y:10px}.lp-burst i:nth-child(6){--x:140px;--y:5px}.lp-burst i:nth-child(7){--x:-40px;--y:-110px}.lp-burst i:nth-child(8){--x:45px;--y:-115px}
+.lp-burst i:nth-child(9){--x:-110px;--y:60px}.lp-burst i:nth-child(10){--x:110px;--y:60px}.lp-burst i:nth-child(11){--x:0;--y:-125px}
+@keyframes lpFade{from{opacity:0}}@keyframes lpFadeOut{to{opacity:0}}
+@keyframes lpPop{from{opacity:0;transform:scale(.7) translateY(20px)}}
+@keyframes lpDraw{to{stroke-dashoffset:0}}
+@keyframes lpRing{0%{box-shadow:0 10px 28px rgba(168,85,247,.45),0 0 0 0 rgba(168,85,247,.5)}100%{box-shadow:0 10px 28px rgba(168,85,247,.45),0 0 0 26px rgba(168,85,247,0)}}
+@keyframes lpBar{from{width:100%}to{width:0}}
+@keyframes lpConf{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(320deg)}}
+html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!important}
+@media print{#loginPop{display:none!important}}
