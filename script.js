@@ -600,7 +600,7 @@ function met(s,c,p){if(!gof(s,c,p))return"";return p===1?sa(s,"a",c):p===2?sa(s,
 function ranks(c,p){var m=c.st.map(function(s){return met(s,c,p)});return m.map(function(v){if(v==="")return"";var r=1;m.forEach(function(x){if(x!==""&&x>v)r++});return r})}
 function nranked(rk){return rk.filter(function(x){return x!==""}).length}
 function abr(p){return p===1?[0,4]:p===2?[5,10]:[0,10]}
-function abp(s,p){var r=abr(p),e=0,u=0,a=s.ab||{};for(var m=r[0];m<=r[1];m++){var v=a[m];if(v){e+=+v[0]||0;u+=+v[1]||0}}return[e,u]}
+function abp(s,p){var r=abr(p),e=0,u=0,l=0,a=s.ab||{};for(var m=r[0];m<=r[1];m++){var v=a[m];if(v){e+=+v[0]||0;u+=+v[1]||0;l+=+v[2]||0}}return[e,u,l]}
 function gbadge(g){return g?"<span class='gr-badge gr-"+g+"'>"+g+"</span>":"—"}
 function cnt(c,p){var o={A:0,B:0,C:0,D:0,E:0,F:0};c.st.forEach(function(s){var g=gof(s,c,p);if(g)o[g]++});return o}
 function crow(l,o){var t=0,G="ABCDEF".split("");G.forEach(function(g){t+=o[g]});return"<tr><td class=nm>"+esc(l)+"</td>"+G.map(function(g){return"<td>"+o[g]+(t?" <span style='color:var(--mute);font-size:.8rem'>("+(o[g]/t*100).toFixed(1)+"%)</span>":"")+"</td>"}).join("")+"<td><b>"+t+"</b></td></tr>"}
@@ -1107,14 +1107,74 @@ function renderP(){
     var m=c.st.filter(function(s){return s.g==="ប្រុស"}).length,f=c.st.filter(function(s){return s.g==="ស្រី"}).length;
     $("pnote").textContent="សិស្សសរុប "+c.st.length+" នាក់ · ប្រុស "+m+" · ស្រី "+f;
   }else{
-    var te=0,tu=0;
     c.st.forEach(function(s,i){
-      var v=(s.ab&&s.ab[pmo])||[0,0],y=abp(s,3);te+=+v[0]||0;tu+=+v[1]||0;
-      b+="<tr><td>"+(i+1)+"</td><td class=nm>"+esc(s.n)+"</td><td><input class=n type=number min=0 max=31 data-p='"+i+"|ab|0' value='"+(v[0]||"")+"' "+(ro?"readonly":"")+"></td><td><input class=n type=number min=0 max=31 data-p='"+i+"|ab|1' value='"+(v[1]||"")+"' "+(ro?"readonly":"")+"></td><td id='pms-"+i+"'>"+((+v[0]||0)+(+v[1]||0))+"</td><td"+(y[1]>=5?" style='color:var(--danger);font-weight:700'":"")+">"+y[0]+" / "+y[1]+"</td></tr>";
+      var v=(s.ab&&s.ab[pmo])||[0,0,0],y=abp(s,3);
+      b+="<tr data-abr="+i+"><td>"+(i+1)+"</td><td class=nm>"+esc(s.n)+"</td>"+ABK.map(function(k){return"<td>"+abCell(i,k,v,ro)+"</td>"}).join("")+
+        "<td class=ab-tot id='pms-"+i+"'>"+((+v[0]||0)+(+v[1]||0))+"</td><td class=ab-yr id='pyr-"+i+"'>"+abYr(y)+"</td></tr>";
     });
-    $("ptb").innerHTML="<thead><tr><th>ល.រ</th><th>ឈ្មោះសិស្ស</th><th>មានច្បាប់</th><th>គ្មានច្បាប់</th><th>សរុបខែ "+MK[pmo]+"</th><th>ប្រចាំឆ្នាំ (ច្បាប់ / គ្មានច្បាប់)</th></tr></thead><tbody>"+(b||"<tr><td colspan=6 class=empty>មិនទាន់មានសិស្សទេ។</td></tr>")+"<tr class=tr><td></td><td>សរុបខែនេះ</td><td>"+te+"</td><td>"+tu+"</td><td>"+(te+tu)+"</td><td></td></tr></tbody>";
-    $("pnote").textContent="💡 បញ្ចូលចំនួនថ្ងៃអវត្តមាននៃខែនីមួយៗ។ អវត្តមានគ្មានច្បាប់ចាប់ពី ៥ ថ្ងៃ នឹងបង្ហាញពណ៌ក្រហម ហើយចូលក្នុងបញ្ជី «សិស្សត្រូវការការជួយជំនួយ»។";
+    $("ptb").innerHTML="<thead><tr><th>ល.រ</th><th>ឈ្មោះសិស្ស</th>"+ABK.map(function(k){return"<th>"+k.t+"</th>"}).join("")+"<th>អវត្តមានខែ "+MK[pmo]+"</th><th>ប្រចាំឆ្នាំ<br><small>យឺត · ច្បាប់ · ឥតច្បាប់</small></th></tr></thead><tbody>"+(b||"<tr><td colspan=7 class=empty>មិនទាន់មានសិស្សទេ។</td></tr>")+"</tbody>";
+    $("pnote").textContent="💡 ចុចប៊ូតុង «មកយឺត» «ច្បាប់» ឬ «ឥតច្បាប់» ដើម្បីបូក ១ ដង (ចុច − ដើម្បីដក) ឬវាយលេខក្នុងប្រអប់ផ្ទាល់។ អវត្តមានឥតច្បាប់ចាប់ពី ៥ ថ្ងៃក្នុងមួយឆ្នាំ នឹងចូលក្នុងបញ្ជី «សិស្សត្រូវការការជួយជំនួយ»។";
   }
+  abSum(c);
+}
+/* អវត្តមាន៖ s.ab[ខែ] = [ច្បាប់, ឥតច្បាប់, មកយឺត] */
+var ABK=[{i:2,t:"មកយឺត",ic:"⏰",c:"late"},{i:0,t:"ច្បាប់",ic:"📝",c:"exc"},{i:1,t:"ឥតច្បាប់",ic:"❌",c:"une"}];
+function abCell(i,k,v,ro){
+  var n=+v[k.i]||0;
+  return"<div class='ab-cell ab-"+k.c+"'><button type=button class=ab-b data-ab='"+i+"|"+k.i+"|1'"+(ro?" disabled":"")+"><span>"+k.ic+"</span>"+k.t+"</button>"+
+    "<input class='ab-box"+(n?" on":"")+"' type=number min=0 max=31 inputmode=numeric data-p='"+i+"|ab|"+k.i+"' value='"+(n||"")+"' placeholder=0 aria-label='"+k.t+"' "+(ro?"readonly":"")+">"+
+    (ro?"":"<button type=button class=ab-m data-ab='"+i+"|"+k.i+"|-1' title='ដក ១' aria-label='ដក ១'>−</button>")+"</div>";
+}
+function abYr(y){return"<span class=ab-late>"+y[2]+"</span> · <span class=ab-exc>"+y[0]+"</span> · <span class='ab-une"+(y[1]>=5?" hot":"")+"'>"+y[1]+"</span>"}
+function abSet(s,k,n){
+  s.ab=s.ab||{};var x=s.ab[pmo]=s.ab[pmo]||[0,0,0];
+  while(x.length<3)x.push(0);x[k]=Math.min(31,Math.max(0,n));
+  if(!x[0]&&!x[1]&&!x[2])delete s.ab[pmo];
+  return x;
+}
+function abRow(i,s){
+  var v=(s.ab&&s.ab[pmo])||[0,0,0],t=$("pms-"+i),y=$("pyr-"+i);
+  if(t)t.textContent=(+v[0]||0)+(+v[1]||0);
+  if(y)y.innerHTML=abYr(abp(s,3));
+}
+/* ចលនា «+១» លោតពីប៊ូតុង ចូលប្រអប់ចំនួន */
+function abFly(btn,box,d){
+  box.classList.remove("pop");void box.offsetWidth;
+  var nm=document.documentElement.classList.contains("no-motion")||!box.animate;
+  if(nm){box.classList.add("pop");return}
+  var a=btn.getBoundingClientRect(),b=box.getBoundingClientRect(),f=document.createElement("span");
+  f.className="ab-fly "+btn.parentNode.className.split(" ")[1];f.textContent=d>0?"+1":"−1";
+  f.style.left=(a.left+a.width/2)+"px";f.style.top=(a.top+a.height/2)+"px";document.body.appendChild(f);
+  var dx=b.left+b.width/2-a.left-a.width/2,dy=b.top+b.height/2-a.top-a.height/2;
+  f.animate([{transform:"translate(-50%,-50%) scale(.6)",opacity:0},{transform:"translate(calc(-50% + "+dx/2+"px),calc(-50% + "+(dy/2-38)+"px)) scale(1.25)",opacity:1,offset:.45},{transform:"translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.7)",opacity:.9}],{duration:520,easing:"cubic-bezier(.3,.7,.4,1)"}).onfinish=function(){f.remove();box.classList.add("pop")};
+}
+/* សង្ខេបវត្តមានប្រចាំខែ */
+function abSum(c){
+  var el=$("pabs");if(!el)return;
+  if(pv!==2||!c||!c.st.length){el.innerHTML="";el.hidden=true;return}
+  el.hidden=false;
+  var T=[0,0,0],lst=[],n=c.st.length,ok=0,hot=[];
+  c.st.forEach(function(s){
+    var v=(s.ab&&s.ab[pmo])||[0,0,0],e=+v[0]||0,u=+v[1]||0,l=+v[2]||0;T[0]+=e;T[1]+=u;T[2]+=l;
+    if(e+u+l)lst.push({n:s.n,e:e,u:u,l:l,t:e+u+l});else ok++;
+    var y=abp(s,3);if(y[1]>=5)hot.push({n:s.n,u:y[1]});
+  });
+  lst.sort(function(a,b){return b.t-a.t||b.u-a.u});hot.sort(function(a,b){return b.u-a.u});
+  var mx=lst.length?lst[0].t:1,all=T[0]+T[1]+T[2]||1;
+  function card(k,v,lb){return"<div class='ab-st ab-"+k+"'><b data-cnt="+v+">0</b><span>"+lb+"</span></div>"}
+  var h="<h3>📊 សង្ខេបវត្តមាន ខែ"+MK[pmo]+" — "+esc(c.n)+"</h3><div class=ab-sts>"+
+    card("late",T[2],"⏰ មកយឺត (ដង)")+card("exc",T[0],"📝 ច្បាប់ (ថ្ងៃ)")+card("une",T[1],"❌ ឥតច្បាប់ (ថ្ងៃ)")+card("ok",ok,"✅ វត្តមានពេញ (នាក់)")+"</div>"+
+    "<div class=ab-mix title='សមាមាត្រ'>"+[["late",2],["exc",0],["une",1]].map(function(k){return"<i class=ab-"+k[0]+" style='width:"+(T[k[1]]/all*100)+"%'></i>"}).join("")+"</div>"+
+    "<div class=ab-legend><span class=ab-late>មកយឺត</span><span class=ab-exc>ច្បាប់</span><span class=ab-une>ឥតច្បាប់</span><span>សិស្សសរុប "+n+" នាក់ · មានអវត្តមាន/យឺត "+lst.length+" នាក់</span></div>"+
+    "<div class=ab-cols><div><h4>សិស្សអវត្តមាន ឬមកយឺតច្រើនជាងគេ</h4>"+(lst.length?lst.slice(0,8).map(function(x){
+      return"<div class=ab-rk><span class=nm>"+esc(x.n)+"</span><span class=ab-bar>"+[["late","l"],["exc","e"],["une","u"]].map(function(k){return x[k[1]]?"<i class=ab-"+k[0]+" style='width:"+(x[k[1]]/mx*100)+"%' title='"+x[k[1]]+"'>"+x[k[1]]+"</i>":""}).join("")+"</span><b>"+x.t+"</b></div>"}).join(""):"<p class=empty>ខែនេះសិស្សទាំងអស់មានវត្តមានពេញ 🎉</p>")+"</div>"+
+    "<div><h4>⚠️ ឥតច្បាប់ចាប់ពី ៥ ថ្ងៃ (ប្រចាំឆ្នាំ)</h4>"+(hot.length?hot.map(function(x){return"<div class=ab-hot><span class=nm>"+esc(x.n)+"</span><b>"+x.u+" ថ្ងៃ</b></div>"}).join(""):"<p class=empty>មិនមានទេ ✅</p>")+"</div></div>";
+  el.innerHTML=h;
+  [].forEach.call(el.querySelectorAll("[data-cnt]"),function(b){
+    var t=+b.dataset.cnt,t0=performance.now();
+    if(!t||document.documentElement.classList.contains("no-motion")){b.textContent=t;return}
+    (function st(now){var k=Math.max(0,Math.min(1,(now-t0)/600));b.textContent=Math.round(t*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(st)})(t0);
+  });
 }
 $("pt").onchange=function(){rt=this.value;rc=0;renderP()};
 $("pc").onchange=function(){clsPick(this.value,renderP)};
@@ -1125,14 +1185,20 @@ $("ptb").oninput=function(e){
   if(!canM()){renderP();return}
   var a=p.split("|"),c=curCls(),s=c&&c.st[+a[0]];if(!s)return;
   if(a[1]==="ab"){
-    var v=e.target.value===""?0:Math.min(31,Math.max(0,Math.round(+e.target.value)||0));
-    s.ab=s.ab||{};var x=s.ab[pmo]=s.ab[pmo]||[0,0];x[+a[2]]=v;
-    if(!x[0]&&!x[1])delete s.ab[pmo];
-    var el=$("pms-"+a[0]);if(el)el.textContent=(+x[0]||0)+(+x[1]||0);
+    abSet(s,+a[2],e.target.value===""?0:Math.round(+e.target.value)||0);
+    e.target.classList.toggle("on",+e.target.value>0);abRow(+a[0],s);abSum(c);
   }else s[a[1]]=e.target.value;
   savR();
 };
 $("ptb").onchange=function(e){if(e.target.dataset.p&&e.target.dataset.p.indexOf("|ab|")>0)renderP()};
+/* ចុចប៊ូតុងអវត្តមាន៖ បូក/ដក ១ */
+$("ptb").addEventListener("click",function(e){
+  var bt=e.target.closest("[data-ab]");if(!bt)return;
+  if(!canM())return;var c=curCls(),a=bt.dataset.ab.split("|"),i=+a[0],k=+a[1],d=+a[2],s=c&&c.st[i];if(!s)return;
+  var cur=+(((s.ab||{})[pmo]||[])[k])||0;if(d<0&&!cur)return;
+  var x=abSet(s,k,cur+d),box=bt.parentNode.querySelector(".ab-box"),n=+((s.ab[pmo]||x)[k])||0;
+  box.value=n||"";box.classList.toggle("on",n>0);abFly(bt,box,d);abRow(i,s);abSum(c);savR();
+});
 /* បន្ថែម/លុបសិស្ស (ពិន្ទុ អវត្តមាន និងក្រុមរបស់សិស្សនោះត្រូវលុបជាមួយ) */
 $("ptb").addEventListener("click",function(e){
   if(!canM())return;var c=curCls();if(!c)return;
