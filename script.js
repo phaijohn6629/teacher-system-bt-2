@@ -645,6 +645,7 @@ function renderR(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   $("rt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   var cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
+  pxFill(rt);
   var have=cl.map(function(c){return c.n}),canAdd=canM();
   $("rc").innerHTML=(cl.length?cl.map(function(c,i){return"<option value="+i+(i===rc?" selected":"")+">"+esc(c.n)+" ("+c.st.length+" នាក់)</option>"}).join(""):"<option value=''>— "+(canAdd?"ជ្រើសថ្នាក់ដើម្បីបន្ថែម":"គ្មានថ្នាក់")+" —</option>")+
     (canAdd?"<optgroup label='＋ បន្ថែមថ្នាក់ថ្មី (ចុចជ្រើស = បន្ថែមភ្លាម)'>"+CL.map(function(x){return x.slice(2)}).filter(function(n){return have.indexOf(n)<0}).map(function(n){return"<option value='n:"+esc(n)+"'>"+esc(n)+"</option>"}).join("")+"</optgroup>":"");
@@ -1100,6 +1101,7 @@ var pv=1,pmo=0;
 function renderP(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   var cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
+  pxFill(rt);
   $("pt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   $("pc").innerHTML=clsOpts(cl,true);
   $("pmo").innerHTML=MK.map(function(m,i){return"<option value="+i+(i===pmo?" selected":"")+">"+m+"</option>"}).join("");
@@ -1143,6 +1145,19 @@ function pxGroups(){
     var st=g.main.c.st;g.tot=st.length;g.m=st.filter(function(s){return s.g==="ប្រុស"}).length;g.f=st.filter(function(s){return s.g==="ស្រី"}).length;
     return g;
   }).sort(function(a,b){return(parseInt(a.n)||99)-(parseInt(b.n)||99)||a.n.localeCompare(b.n)});
+}
+/* ថ្នាក់ទទេរបស់គ្រូ (០ នាក់) ដែលគ្រូផ្សេងបានបញ្ចូលសិស្សរួច → ចម្លងបញ្ជីសិស្សមក (ឈ្មោះ · ID · ភេទ · ថ្ងៃកំណើត · ទូរស័ព្ទ · មិនយកពិន្ទុ/អវត្តមាន) */
+function pxFill(tid){
+  if(!who||who.role==="monitor"||!(isAdm()||who.id===tid))return;
+  var own=rs.c[tid]||[],empty=own.filter(function(c){return c&&(!c.st||!c.st.length)});if(!empty.length)return;
+  var best={};
+  Object.keys(rs.c||{}).forEach(function(t){if(t===tid)return;(rs.c[t]||[]).forEach(function(c){var k=pkey(c&&c.n);if(k&&c.st&&c.st.length&&(!best[k]||c.st.length>best[k].c.st.length))best[k]={t:t,c:c}})});
+  var done=[];
+  empty.forEach(function(c){var b=best[pkey(c.n)];if(!b)return;
+    c.st=b.c.st.map(function(s){var o={id:s.id||"",n:s.n||"",g:s.g||"",a:["","","","","",""],b:["","","","",""]};if(s.dob)o.dob=s.dob;if(s.ph)o.ph=s.ph;return o});
+    done.push(c.n+" ("+c.st.length+" នាក់ ពី "+(teacherOf(b.t).name||b.t)+")");
+  });
+  if(done.length){savR();notify("បានចម្លងបញ្ជីសិស្ស៖ "+done.join(" · "))}
 }
 function renderPAll(){
   var L=pxGroups(),T=0,Mb=0,F=0,nc=0,nd=0,b="",gr=null;
