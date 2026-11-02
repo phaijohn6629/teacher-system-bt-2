@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=55">
-<link rel="stylesheet" href="modern.css?v=17">
+<link rel="stylesheet" href="style.css?v=56">
+<link rel="stylesheet" href="modern.css?v=18">
 
 </head>
 <body>
@@ -365,7 +365,7 @@
     <button id="tsCsv">នាំចេញ CSV</button>
   </div>
   <div id="tsBody"></div>
-  <p class="note">💡 ម៉ោងត្រូវបានបំពេញស្វ័យប្រវត្តិតាមកាលវិភាគ៖ ម៉ោងបង្រៀនមូលដ្ឋាន ត្រឹម ១៨ ម៉ោង/សប្ដាហ៍ (រាប់ពីថ្ងៃច័ន្ទ) · ម៉ោងនៅសល់ → ម៉ោងលើសក្នុង · ម៉ោងចាប់ពី 4pm (16:10) → ម៉ោងលើសក្រៅ។ គ្រូនៅតែអាចកែដោយខ្លួនឯងបាន។ ជួរ «ផែនការសកម្មភាព» គឺ Workplan ប្រចាំថ្ងៃ។ កាលបរិច្ឆេទជើងក្រោមអាចកំណត់តាមប្រតិទិនខ្មែរ។ ថ្ងៃបុណ្យជាតិដែលមានកាលបរិច្ឆេទថេរត្រូវបានដាក់ជាមុន (ថ្ងៃបុណ្យតាមចន្ទគតិ ដូចភ្ជុំបិណ្ឌ គ្រូកំណត់ដោយខ្លួនឯង)។</p>
+  <p class="note">💡 ម៉ោងត្រូវបានបំពេញស្វ័យប្រវត្តិតាមកាលវិភាគ៖ ម៉ោងបង្រៀនមូលដ្ឋាន ត្រឹម ១៨ ម៉ោង/សប្ដាហ៍ (រាប់ពីថ្ងៃច័ន្ទ) · ម៉ោងនៅសល់ → ម៉ោងលើសក្នុង · ម៉ោងចាប់ពី 4pm (16:10) → ម៉ោងលើសក្រៅ · ម៉ោងប្រចាំការ (D) បំពេញម៉ោងមូលដ្ឋានឱ្យគ្រប់ ១៨ (លើសពីនោះចូលជួរ «ប្រចាំការ»)។ គ្រូនៅតែអាចកែដោយខ្លួនឯងបាន។ ជួរ «ផែនការសកម្មភាព» គឺ Workplan ប្រចាំថ្ងៃ។ កាលបរិច្ឆេទជើងក្រោមអាចកំណត់តាមប្រតិទិនខ្មែរ។ ថ្ងៃបុណ្យជាតិដែលមានកាលបរិច្ឆេទថេរត្រូវបានដាក់ជាមុន (ថ្ងៃបុណ្យតាមចន្ទគតិ ដូចភ្ជុំបិណ្ឌ គ្រូកំណត់ដោយខ្លួនឯង)។</p>
 </section>
 
 <!-- ផ្ទាំងទី ១៣៖ សម្រង់អត្ថបទប្រចាំខែ (គ្រប់គ្រងថ្នាក់រៀន) -->
@@ -538,7 +538,7 @@
 <div><label for="dStC">ថ្នាក់ (ទទេ = លុប)</label><input id="dStC" list="dStCl" placeholder="ឧ. 10NGS-C"><datalist id="dStCl"></datalist></div>
 <div><label for="dStN">ចំនួនម៉ោងជាប់គ្នា (ចាប់ពីម៉ោងនេះ)</label><select id="dStN"><option value="1">១ ម៉ោង</option><option value="2">២ ម៉ោង</option><option value="3">៣ ម៉ោង</option></select></div>
 <div><label for="dStR">បន្ទប់</label><input id="dStR" placeholder="ឧ. F-M1, H-M4, HT-IT2"></div>
-<div><label for="dStT">ប្រភេទម៉ោង</label><select id="dStT"><option value="">ម៉ោងបង្រៀនធម្មតា</option><option value="O">O — ម៉ោងលើស</option><option value="OE">OE — ម៉ោងលើសពេលល្ងាច</option></select></div>
+<div><label for="dStT">ប្រភេទម៉ោង</label><select id="dStT"><option value="">ម៉ោងបង្រៀនធម្មតា</option><option value="O">O — ម៉ោងលើស</option><option value="OE">OE — ម៉ោងលើសពេលល្ងាច</option><option value="D">D — ម៉ោងប្រចាំការ (រាប់ចូលម៉ោងមូលដ្ឋាន)</option></select></div>
 <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" id="cxSt">បោះបង់</button><button class="primary" type="button" id="okSt">រក្សាទុក</button></div></div></dialog>
 <dialog id="dlgAsc"><div style="padding:18px;display:grid;gap:8px"><h2 style="margin:0">📥 នាំចូលកាលវិភាគពី aSc</h2>
 <p class="note" style="margin:0">ជ្រើសរើសឈ្មោះក្នុងឯកសារ aSc (20/10/2026)។ កាលវិភាគចាស់របស់គ្រូនេះនឹងត្រូវជំនួស។</p>
@@ -553,7 +553,7 @@
 <script src="asc_seed.js?v=2"></script>
 <script src="script.js?v=49"></script>
 <script src="walker.js?v=4"></script>
-<script src="sched.js?v=20"></script>
+<script src="sched.js?v=21"></script>
 <script src="curriculum7.js?v=4"></script>
 <script src="curriculum8.js?v=1"></script>
 <script src="curriculum9.js?v=1"></script>
@@ -566,7 +566,7 @@
 <script src="meetings.js?v=2"></script>
 <script src="lessons.js?v=3"></script>
 <script src="classorg.js?v=8"></script>
-<script src="excerpt.js?v=13"></script>
+<script src="excerpt.js?v=14"></script>
 <script src="monitor.js?v=2"></script>
 </body>
 </html>

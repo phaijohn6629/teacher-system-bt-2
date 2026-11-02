@@ -504,3 +504,5 @@ html.no-motion .wk *{animation:none!important}
 @keyframes lpConf{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(320deg)}}
 html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!important}
 @media print{#loginPop{display:none!important}}
+#stTb td.du .chip .ot{background:#16a34a}
+#stTb td.du{background:none}

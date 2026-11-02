@@ -6,7 +6,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var X=window.SCHX,PT=X.PT,BRK=X.BRK,schOf=X.schOf,canEd=X.canEd,getSig=X.getSig,fontsOk=X.fontsOk,doPrintNow=X.doPrintNow,LOGO2=X.LOGO2,iso=X.iso,dim=X.dim,kh=X.kh,p2=X.p2,FIXHOL=X.FIXHOL,tsMo=X.tsMo();
+var X=window.SCHX,PT=X.PT,BRK=X.BRK,schOf=function(id){return X.schOf(id).filter(function(s){return s[4]!=="D"})},canEd=X.canEd,getSig=X.getSig,fontsOk=X.fontsOk,doPrintNow=X.doPrintNow,LOGO2=X.LOGO2,iso=X.iso,dim=X.dim,kh=X.kh,p2=X.p2,FIXHOL=X.FIXHOL,tsMo=X.tsMo();
 var cxd={r:{}},cxT="",cxMo=tsMo,cxMo2="";
 MAP.cx={
   docs:function(){var o={};Object.keys(cxd.r).forEach(function(k){o["cx/"+k]=encO(k.split("_")[0],cxd.r[k])});return o},

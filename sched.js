@@ -75,13 +75,20 @@ function teachersOpt(sel){
 function slotAt(id,d,p){var a=schOf(id);for(var i=0;i<a.length;i++)if(a[i][0]===d&&a[i][1]===p)return a[i];return null}
 function sameSlot(a,b){return a&&b&&a[2]===b[2]&&a[3]===b[3]&&a[4]===b[4]}
 /* បែងចែកម៉ោងប្រចាំសប្ដាហ៍៖ ចាប់ពី 4pm (ម៉ោងទី ៩ ឡើង) ឬ OE → លើសក្រៅ ·
-   ម៉ោងផ្សេងទៀតតាមលំដាប់ ច័ន្ទ→សៅរ៍ · ១៨ ម៉ោងដំបូង = មូលដ្ឋាន · នៅសល់ = លើសក្នុង */
+   ម៉ោងបង្រៀនផ្សេងទៀតតាមលំដាប់ ច័ន្ទ→សៅរ៍ · ១៨ ម៉ោងដំបូង = មូលដ្ឋាន · នៅសល់ = លើសក្នុង ·
+   ម៉ោងប្រចាំការ (D) បំពេញមូលដ្ឋានដែលនៅខ្វះ (រហូតដល់ ១៨) · លើសពីនោះ → ជួរ «ប្រចាំការ» */
 var EVE=9;
-function splitSched(id){
-  var a=schOf(id).slice().sort(function(x,y){return x[0]-y[0]||x[1]-y[1]}),r={b:0,i:0,o:0,per:[0,0,0,0,0,0],d:[]};
-  for(var k=0;k<6;k++)r.d.push({b:0,i:0,o:0});
+function splitSched(id,noDuty){
+  var a=schOf(id).slice().sort(function(x,y){return x[0]-y[0]||x[1]-y[1]}),r={b:0,i:0,o:0,u:0,db:0,dn:0,per:[0,0,0,0,0,0],d:[]};
+  for(var k=0;k<6;k++)r.d.push({b:0,i:0,o:0,u:0});
   a.forEach(function(s){
+    if(s[4]==="D")return;
     var t=s[1]>=EVE||s[4]==="OE"?"o":r.b<NORM?"b":"i";
+    r[t]++;r.d[s[0]][t]++;r.per[s[0]]++;
+  });
+  if(!noDuty)a.forEach(function(s){
+    if(s[4]!=="D")return;
+    var t=r.b<NORM?"b":"u";if(t==="b")r.db++;r.dn++;
     r[t]++;r.d[s[0]][t]++;r.per[s[0]]++;
   });
   return r;
@@ -94,7 +101,7 @@ function renderSched(){
   var ed=canEd(stT);
   $("stImp").style.display=ed?"":"none";$("stSave").style.display=ed?"":"none";if(!$("stSave").dataset.st)stUI("ok");$("stClr").style.display=ed?"":"none";$("stAll").style.display=isAdm()?"":"none";
   var S=sumSched(stT);
-  $("stSum").innerHTML="<b>"+esc(tname(stT))+"</b> · មូលដ្ឋាន <b>"+kh(S.b)+"</b> / "+kh(NORM)+" ម៉ោង/សប្ដាហ៍"+(S.i?" · លើសក្នុង <b>"+kh(S.i)+"</b>":"")+(S.o?" · លើសក្រៅ (ចាប់ពី 4pm) <b>"+kh(S.o)+"</b>":"")+" · តាមថ្ងៃ៖ "+DK.map(function(d,i){return d+" "+kh(S.per[i])}).join(" · ");
+  $("stSum").innerHTML="<b>"+esc(tname(stT))+"</b> · មូលដ្ឋាន <b>"+kh(S.b)+"</b> / "+kh(NORM)+" ម៉ោង/សប្ដាហ៍"+(S.db?" (ក្នុងនោះប្រចាំការ "+kh(S.db)+")":"")+(S.u?" · ប្រចាំការលើស <b>"+kh(S.u)+"</b>":"")+(S.i?" · លើសក្នុង <b>"+kh(S.i)+"</b>":"")+(S.o?" · លើសក្រៅ (ចាប់ពី 4pm) <b>"+kh(S.o)+"</b>":"")+" · តាមថ្ងៃ៖ "+DK.map(function(d,i){return d+" "+kh(S.per[i])}).join(" · ");
   var td0=new Date().getDay()-1;   /* ថ្ងៃនេះ (ច័ន្ទ = 0) */
   var h="<thead><tr><th style='width:120px'>ម៉ោង</th>"+DK.map(function(d,i){return"<th"+(i===td0?" class=today":"")+">"+d+(i===td0?"<small>ថ្ងៃនេះ</small>":"")+"</th>"}).join("")+"</tr></thead><tbody>",skip={};
   for(var p=1;p<=11;p++){
@@ -104,7 +111,7 @@ function renderSched(){
       var s=slotAt(stT,d,p),span=1;
       if(s){
         while(p+span<=11&&!BRK[p+span-1]&&sameSlot(s,slotAt(stT,d,p+span))){skip[d+"_"+(p+span)]=1;span++}
-        h+="<td class='cell on"+(s[4]==="OE"?" oe":s[4]?" ob":"")+(d===td0?" today":"")+"' rowspan="+span+" data-d="+d+" data-p="+p+"><div class=chip style='--h:"+clsHue(s[2])+"'><b>"+esc(s[2])+"</b><small>"+(s[3]?"📍 "+esc(s[3]):"")+"</small>"+(s[4]?"<i class=ot>"+s[4]+"</i>":"")+"</div></td>";
+        h+="<td class='cell on"+(s[4]==="OE"?" oe":s[4]==="D"?" du":s[4]?" ob":"")+(d===td0?" today":"")+"' rowspan="+span+" data-d="+d+" data-p="+p+"><div class=chip style='--h:"+clsHue(s[2])+"'><b>"+esc(s[2])+"</b><small>"+(s[3]?"📍 "+esc(s[3]):"")+"</small>"+(s[4]?"<i class=ot>"+s[4]+"</i>":"")+"</div></td>";
       }else h+="<td class='cell"+(d===td0?" today":"")+"' data-d="+d+" data-p="+p+"></td>";
     }
     h+="</tr>";
@@ -132,6 +139,7 @@ $("cxSt").onclick=function(){$("dlgSt").close()};
 $("okSt").onclick=function(){
   if(!cellDP)return;
   var d=cellDP[0],p=cellDP[1],c=$("dStC").value.trim(),r=$("dStR").value.trim(),t=$("dStT").value,n=+$("dStN").value||1;
+  if(t==="D"&&!c)c="ប្រចាំការ";
   var o=sch.r[stT]||(sch.r[stT]={s:[]});
   for(var i=0;i<n&&p+i<=11;i++){
     o.s=o.s.filter(function(x){return!(x[0]===d&&x[1]===p+i)});
@@ -219,20 +227,26 @@ function defDay(id,y,m,n){
   var wd=new Date(y,m-1,n).getDay(),di=(wd+6)%7,s=wd===0?null:schedPer(id,di),st;
   if(FIXHOL[p2(m)+"-"+p2(n)])st="បុណ្យជាតិ";
   else if(wd===0)st="ឈប់សម្រាក";
-  else if(wd===6&&!(s.b+s.i+s.o))st="ឈប់សម្រាក";
+  else if(wd===6&&!(s.b+s.i+s.o+s.u))st="ឈប់សម្រាក";
   else st="បង្រៀន";
   var h={b:0,i:0,o:0,l:0,v:0,c:0,u:0,x:0};
-  if(st==="បង្រៀន"&&s){h.b=s.b;h.i=s.i;h.o=s.o}
-  return{st:st,h:h,w:""};
+  if(st==="បង្រៀន"&&s){h.b=s.b;h.i=s.i;h.o=s.o;h.u=s.u}
+  return{st:st,h:h,w:"",ha:1};
 }
 function schedPer(id,di){return splitSched(id).d[di]}
 /* ថ្ងៃដែលរក្សាទុកតាមរបៀបចាស់ (O ទាំងអស់ = លើសក្នុង · គ្មានកំណត់ ១៨) ហើយមិនទាន់កែដោយដៃ → ប្ដូរតាមច្បាប់ថ្មី */
 function legacyPer(id,di){var b=0,o=0;schOf(id).forEach(function(s){if(s[0]===di){if(s[4])o++;else b++}});return{b:b,o:o}}
+/* ថ្ងៃដែលម៉ោងមកពីកាលវិភាគ (ha) → តាមកាលវិភាគបច្ចុប្បន្នជានិច្ច · កែដោយដៃ = ឈប់ធ្វើតាម */
 function fixDay(cd,y,m,n){
   if(!cd||cd.st!=="បង្រៀន"||!cd.h)return cd;
   var wd=new Date(y,m-1,n).getDay();if(!wd)return cd;
-  var di=(wd+6)%7,L=legacyPer(tsT,di),N=schedPer(tsT,di),h=cd.h;
-  if(num(h.b)===L.b&&num(h.i)===L.o&&!num(h.o)&&(L.b!==N.b||L.o!==N.i||N.o)){h.b=N.b;h.i=N.i;h.o=N.o}
+  var di=(wd+6)%7,N=schedPer(tsT,di),h=cd.h;
+  if(!cd.ha){
+    var L=legacyPer(tsT,di),P=splitSched(tsT,true).d[di];
+    if(!num(h.o)&&!num(h.u)&&num(h.b)===L.b&&num(h.i)===L.o)cd.ha=1;
+    else if(num(h.b)===P.b&&num(h.i)===P.i&&num(h.o)===P.o&&!num(h.u))cd.ha=1;
+  }
+  if(cd.ha){h.b=N.b;h.i=N.i;h.o=N.o;h.u=N.u}
   return cd;
 }
 function curDay(rec,y,m,n){
@@ -350,11 +364,11 @@ function setPath(rec,f,v,n){
   if(p[0]==="ft"){rec.ft=rec.ft||{};rec.ft[p[1]]=v;return}
   if(p[0]==="h"||f==="st"||f==="w"){
     var y=+tsMo.slice(0,4),m=+tsMo.slice(5,7),cur=fixDay(rec.days[n],y,m,n)||JSON.parse(JSON.stringify(defDay(tsT,y,m,n)));
-    if(p[0]==="h")cur.h[p[1]]=num(v);
+    if(p[0]==="h"){cur.h[p[1]]=num(v);if("biou".indexOf(p[1])>=0)delete cur.ha}
     else if(f==="st"){
       cur.st=v;
       if(v==="ឈប់សម្រាក"||v==="បុណ្យជាតិ"){HC.forEach(function(c){cur.h[c[0]]=0})}
-      else if(v==="បង្រៀន"){var dd=defDay(tsT,y,m,n);cur.h.b=dd.h.b;cur.h.i=dd.h.i;cur.h.o=dd.h.o}
+      else if(v==="បង្រៀន"){var dd=defDay(tsT,y,m,n);cur.h.b=dd.h.b;cur.h.i=dd.h.i;cur.h.o=dd.h.o;cur.h.u=dd.h.u;cur.ha=1}
     }else cur.w=v;
     rec.days[n]=cur;return;
   }
