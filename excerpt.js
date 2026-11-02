@@ -196,6 +196,28 @@ window.CXDAYS=function(tid,ym){
   return o;
 };
 window.cxPrintHTML=function(){return cxPrintHTML()};
+/* សម្រាប់គណនីប្រធានថ្នាក់ (monitor.js)៖ ជួរនៃថ្នាក់មួយ · បញ្ចូលខ្លឹមសារ/អវត្តមានដែលប្រធានថ្នាក់បានសរសេរ */
+function cxEach(tid,fn){Object.keys(cxd.r).forEach(function(k){if(k.split("_")[0]===tid&&isNew(k))(cxd.r[k].rows||[]).forEach(function(r){fn(r,cxd.r[k])})})}
+window.CXAPI={
+  rows:function(tid,cn){var o=[];cxEach(tid,function(r){if(r.cls===cn&&r.d)o.push({d:r.d,p:String(r.p||""),c:r.c||"",ls:r.ls||"",a:r.a||""})});return o},
+  apply:function(tid,cn,ed){
+    var n=0;
+    Object.keys(ed||{}).forEach(function(key){
+      var q=key.split("|"),d=q[0],p=q[1]||"",v=ed[key]||{},hit=null;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(d))return;
+      cxEach(tid,function(r){if(!hit&&r.d===d&&r.cls===cn&&String(r.p||"")===p)hit=r});
+      if(!hit){
+        var k=tid+"_"+d.slice(0,7),rec=cxd.r[k];
+        if(!rec)rec=cxd.r[k]={m:d.slice(0,7),m2:d.slice(0,7),sb:teacherOf(tid).sub||"គណិតវិទ្យា",rows:[],ft:{pl:"រាជធានីភ្នំពេញ",d:"",kt:"",klu:"0",sgo:"1"},mig:[]};
+        hit={d:d,cls:cn,p:p,c:"",a:"",s:1};rec.rows.push(hit);cxSort(rec);
+      }
+      if(hit.c===(v.c||"")&&hit.a===(v.a||"")&&(hit.ls||"")===(v.ls||""))return;
+      hit.c=v.c||"";hit.a=v.a||"";if(v.ls)hit.ls=v.ls;else delete hit.ls;n++;
+    });
+    if(n)saveCx();
+    return n;
+  }
+};
 function cxEdit(e){
   var el=e.target,f=el.dataset.cf,i=el.dataset.ci;
   if(!canEd(cxT))return;

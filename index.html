@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=52">
+<link rel="stylesheet" href="style.css?v=53">
 <link rel="stylesheet" href="modern.css?v=17">
 
 </head>
@@ -63,6 +63,7 @@
 
 <aside id="snav" class="snav" aria-label="ម៉ឺនុយចំហៀង"><button type="button" id="snTog" class="sn-tog" aria-controls="snav" aria-expanded="true" title="បិទ/បើកម៉ឺនុយចំហៀង" aria-label="បិទ/បើកម៉ឺនុយចំហៀង">‹</button><nav id="snList" class="sn-list"></nav></aside>
 <main>
+<nav id="monNav" class="mon-nav" hidden></nav>
 <nav class="tabs" id="tabs">
   <button data-p="p0" aria-selected="true">០. ទំព័រដើម</button>
   <button data-p="p1" aria-selected="false">១. ទិន្នន័យគ្រូ</button>
@@ -286,6 +287,7 @@
     <input type="file" id="pfile" accept=".xlsx,.xls,.csv" hidden>
     <button id="pex">នាំចេញជា Excel (CSV)</button>
   </div>
+  <div id="monBox"></div>
   <div class="wrap"><table id="ptb"></table></div>
   <p class="note" id="pnote"></p>
   <div id="pabs" class="ab-sum" hidden></div>
@@ -382,6 +384,7 @@
     <button id="cxCsv">នាំចេញជា Excel (CSV)</button>
   </div>
   <div id="cxBody"></div>
+  <div id="monCx"></div>
   <p class="note">💡 មួយសន្លឹកសម្រាប់គ្រប់ថ្នាក់របស់គ្រូ។ «⚡ បង្កើតជួរតាមកាលវិភាគ» បន្ថែមគ្រប់ថ្នាក់ និងម៉ោងបង្រៀនតាមកាលវិភាគ (រំលងថ្ងៃអាទិត្យ និងបុណ្យជាតិ)។ ក្នុងថ្ងៃនីមួយៗ ចុច «＋ បន្ថែមថ្នាក់/ម៉ោង» ដើម្បីបន្ថែមថ្នាក់ ឬម៉ោងផ្សេង រួចចុច «＋ ថ្ងៃថ្មី» ដើម្បីទៅថ្ងៃបន្ទាប់។ ទិន្នន័យរក្សាទុកដោយស្វ័យប្រវត្តិ។</p>
 </section>
 
@@ -548,7 +551,7 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=45"></script>
+<script src="script.js?v=46"></script>
 <script src="walker.js?v=4"></script>
 <script src="sched.js?v=20"></script>
 <script src="curriculum7.js?v=4"></script>
@@ -563,6 +566,7 @@
 <script src="meetings.js?v=2"></script>
 <script src="lessons.js?v=3"></script>
 <script src="classorg.js?v=8"></script>
-<script src="excerpt.js?v=12"></script>
+<script src="excerpt.js?v=13"></script>
+<script src="monitor.js?v=1"></script>
 </body>
 </html>

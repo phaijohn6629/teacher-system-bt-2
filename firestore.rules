@@ -5,10 +5,23 @@ service cloud.firestore {
     // ===================== ជំនួយ =====================
     function signedIn() { return request.auth != null; }
     function profilePath() { return /databases/$(database)/documents/users/$(request.auth.uid); }
-    function active() {
+    function active() {   // គ្រូ ឬ Admin (មិនរាប់គណនីប្រធានថ្នាក់)
       return signedIn()
         && exists(profilePath())
-        && get(profilePath()).data.enabled == true;
+        && get(profilePath()).data.enabled == true
+        && get(profilePath()).data.get('role', 'member') != 'monitor';
+    }
+    // គណនីប្រធានថ្នាក់ (role "monitor") ដែលមានសិទ្ធិលើ mc/{k} តែមួយគត់
+    function isMonitorOf(k) {
+      return signedIn()
+        && exists(profilePath())
+        && get(profilePath()).data.enabled == true
+        && get(profilePath()).data.get('role', '') == 'monitor'
+        && get(profilePath()).data.k == k;
+    }
+    // គ្រូជាម្ចាស់គណនីប្រធានថ្នាក់នេះ
+    function ownsMonitor(d) {
+      return active() && d.get('role', '') == 'monitor' && d.t == myId();
     }
     function myId() { return get(profilePath()).data.id; }          // ឧ. "T002"
     function isAdmin() { return active() && get(profilePath()).data.role == 'admin'; }
@@ -22,11 +35,18 @@ service cloud.firestore {
     match /users/{uid} {
       allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
       allow list: if isAdmin();
-      allow create, delete: if isAdmin();
+      // គ្រូបង្កើតគណនីប្រធានថ្នាក់បាន (role "monitor" · t = ខ្លួនឯង · k ចាប់ផ្ដើមដោយ ID ខ្លួន)
+      allow create: if isAdmin()
+        || (ownsMonitor(request.resource.data)
+            && request.resource.data.keys().hasOnly(['id','name','role','enabled','mustChange','t','k','c'])
+            && request.resource.data.k.split('_')[0] == myId());
+      allow delete: if isAdmin() || ownsMonitor(resource.data);
       // គ្រូម្នាក់ៗអាចកែបានតែ mustChange: true -> false (បន្ទាប់ពីប្ដូរលេខសម្ងាត់)
+      // គ្រូបិទ/បើកគណនីប្រធានថ្នាក់របស់ខ្លួនបាន (enabled តែប៉ុណ្ណោះ)
       allow update: if isAdmin()
         || (request.auth.uid == uid && changedOnly(['mustChange'])
-            && request.resource.data.mustChange == false);
+            && request.resource.data.mustChange == false)
+        || (ownsMonitor(resource.data) && changedOnly(['enabled']));
     }
 
     // ===================== បញ្ជីគ្រូ =====================
@@ -96,6 +116,20 @@ service cloud.firestore {
       allow create, update: if (isAdmin() || isOwner(request.resource.data.o))
         && key.split('_')[0] == request.resource.data.o;
       allow delete: if isAdmin();
+    }
+
+    // ===================== គណនីប្រធានថ្នាក់ (មួយក្នុងមួយថ្នាក់) =====================
+    // doc ID = "<ID គ្រូ>_<ថ្នាក់>" · គ្រូម្ចាស់ ឬ Admin គ្រប់គ្រង · ប្រធានថ្នាក់អាន/កែបានតែ j (វត្តមាន · ប្លង់តុ · សម្រង់អត្ថបទ)
+    match /mc/{k} {
+      allow read: if isAdmin() || (active() && resource.data.o == myId()) || isMonitorOf(k);
+      allow create: if (isAdmin() || isOwner(request.resource.data.o))
+        && k.split('_')[0] == request.resource.data.o
+        && request.resource.data.j.size() < 900000;
+      allow update: if ((isAdmin() || isOwner(resource.data.o))
+            && request.resource.data.o == resource.data.o
+            && request.resource.data.j.size() < 900000)
+        || (isMonitorOf(k) && changedOnly(['j']) && request.resource.data.j.size() < 900000);
+      allow delete: if isAdmin() || isOwner(resource.data.o);
     }
 
     // ===================== ហត្ថលេខារបស់គ្រូ (រូបភាព PNG តូច) =====================

@@ -675,3 +675,25 @@ body.ls-open{overflow:hidden}
 @keyframes abUp{from{opacity:0;transform:translateY(10px)}}
 @media (max-width:700px){.ab-cols{grid-template-columns:minmax(0,1fr)}.ab-cell .ab-b{padding:5px 8px;font-size:.78rem}}
 .no-motion .ab-sum,.no-motion .ab-bar i,.no-motion .ab-box.pop{animation:none!important}
+/* គណនីប្រធានថ្នាក់ */
+.mon-box{margin:0 0 12px;padding:12px 16px;border:1px dashed color-mix(in srgb,var(--brand) 45%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--brand) 5%,var(--panel))}
+.mon-box p{margin:4px 0 8px;font-size:.88rem;color:var(--mute)}
+.mon-h{font-weight:700;margin-bottom:6px}
+.mon-cred{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;margin-bottom:8px}
+.mon-cred button{padding:2px 8px;font-size:.8rem;margin:0}
+.mon-id{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1rem;letter-spacing:.03em;background:var(--soft);padding:1px 8px;border-radius:6px}
+.mon-st{font-weight:700;color:var(--mute)}.mon-st.on{color:#1f8a5b}
+.mon-acts{display:flex;flex-wrap:wrap;gap:6px}.mon-acts button{margin:0}
+.mon-nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}
+.mon-nav[hidden]{display:none}
+.mon-title{font-size:1.05rem}
+.mon-nav .seg{margin:0}
+.mon-td{background:var(--brand);color:var(--brand-ink);border-radius:99px;padding:0 8px;font-size:.75rem;margin-left:6px}
+.mon-cx td small{display:block;color:var(--mute);font-size:.75rem}
+.mon-cx textarea{width:100%;margin:0}
+#monCx:empty{display:none}
+body:not(.mon) #monCx{display:none}
+body.mon .snav,body.mon #tabs,body.mon #fnav,body.mon .floating-nav,body.mon .gseg,body.mon #pseg,body.mon #pim,body.mon #ptpl,body.mon #pex,
+body.mon label[for=pt],body.mon #pt,body.mon label[for=pc],body.mon #pc,body.mon #ogSeg,body.mon #ogOrgCtl,body.mon label[for=ogT],body.mon #ogT,body.mon label[for=ogC],body.mon #ogC,
+body.mon #p14>.bar,body.mon #cxBody,body.mon #p14>.note,body.mon #btnBackup,body.mon #btnProf,body.mon #btnSet,body.mon #btnPass,body.mon #btnRestore{display:none!important}
+body.mon main{margin-left:auto!important}

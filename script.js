@@ -41,7 +41,7 @@
       signInWithEmailAndPassword: AU.signInWithEmailAndPassword, signOut: AU.signOut,
       onAuthStateChanged: AU.onAuthStateChanged,
       createUserWithEmailAndPassword: AU.createUserWithEmailAndPassword,
-      updatePassword: AU.updatePassword, reauthenticateWithCredential: AU.reauthenticateWithCredential,
+      updatePassword: AU.updatePassword, deleteUser: AU.deleteUser, reauthenticateWithCredential: AU.reauthenticateWithCredential,
       EmailAuthProvider: AU.EmailAuthProvider
     };
     /* Session តែប៉ុណ្ណោះ៖ បិទ Tab ត្រូវ Login ឡើងវិញ */
@@ -120,7 +120,7 @@ function updateUserInfo(){
   if(!who)return;
   var role=isAdm()?"អ្នកគ្រប់គ្រង":(who.rl||"សមាជិក"),nm=who.name||who.id;
   var set=function(id,t){var e=$(id);if(e)e.textContent=t};
-  set("userInfo",role+" · "+who.id);
+  set("userInfo",role+" · "+(who.role==="monitor"&&prof?prof.id:who.id));
   set("dropUserName",nm);set("profileNameDisplay",nm);
   var av=$("profileAvatar");if(av)av.innerHTML=avInner(who.id,nm);
 }
@@ -138,6 +138,16 @@ function enterApp(user){
     var p=sn.exists()?sn.data():null;
     if(!p){alert("គណនីនេះមិនទាន់ត្រូវបានកំណត់សិទ្ធិក្នុងប្រព័ន្ធទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
     if(p.enabled!==true){alert("គណនីរបស់អ្នកមិនទាន់បើកសិទ្ធិប្រើប្រាស់ទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
+    if(p.role==="monitor"){   /* គណនីប្រធានថ្នាក់៖ ចូលបានតែ វត្តមាន · ប្លង់តុ · សម្រង់អត្ថបទ នៃថ្នាក់ខ្លួន (monitor.js) */
+      prof={uid:user.uid,id:String(p.id||"").toUpperCase(),name:p.name||p.id,role:"monitor",mustChange:false};
+      who={id:String(p.t||"").toUpperCase(),name:p.name||p.id,role:"monitor",rl:"ប្រធានថ្នាក់",mk:p.k,mc:p.c};
+      rt=who.id;data=[];rs={c:{}};
+      $("loginSection").hidden=true;$("appSection").hidden=false;
+      updateUserInfo();if(window.MONUI)MONUI.enter();
+      startSync();
+      if(window._justLogin)loginPop();window._justLogin=false;
+      return;
+    }
     prof={uid:user.uid,id:String(p.id||"").toUpperCase(),name:khNorm(p.name||p.id),role:p.role==="admin"?"admin":"member",mustChange:p.mustChange===true};
     who={id:prof.id,name:prof.name,role:prof.role,rl:""};
     rt=who.id;
@@ -168,7 +178,7 @@ function loginPop(){
   d.innerHTML="<div class=lp-card><div class=lp-burst>"+new Array(12).join("<i></i>")+"</div>"+
     "<div class=lp-check><svg viewBox='0 0 52 52'><circle cx=26 cy=26 r=24 /><path d='M14 27 l8 8 l16 -17' /></svg></div>"+
     "<h2>ចូលប្រព័ន្ធជោគជ័យ!</h2><p class=lp-hi>"+gr+" "+ic+"</p>"+
-    "<div class=lp-user>"+avHtml(who.id,who.name,40)+"<span><b>"+esc(who.name)+"</b><small>"+(isAdm()?"អ្នកគ្រប់គ្រង":"គ្រូបង្រៀន")+" · "+esc(who.id)+"</small></span></div>"+
+    "<div class=lp-user>"+avHtml(who.id,who.name,40)+"<span><b>"+esc(who.name)+"</b><small>"+(isAdm()?"អ្នកគ្រប់គ្រង":who.role==="monitor"?"ប្រធានថ្នាក់ "+esc(who.mc||""):"គ្រូបង្រៀន")+" · "+esc(who.role==="monitor"?prof.id:who.id)+"</small></span></div>"+
     "<div class=lp-bar><i></i></div></div>";
   document.body.appendChild(d);
   var close=function(){if(!d.isConnected)return;d.classList.add("out");setTimeout(function(){d.remove()},350)};
@@ -2072,13 +2082,16 @@ var LEG={
 
 function subsFor(k){
   return({teachers:[{doc:"app/teachers"}],tasks:[{col:"tasks"}],rs:[{col:"rs"},{doc:"cfg/rs"}],ex:[{col:"exrows"},{doc:"cfg/ex"}],
-    obs:[{col:"obsrows"},{doc:"cfg/obs"}],wr:[{col:"wr",own:1}],ah:[{col:"ah",own:1}],lib:[{col:"lib"}],sched:[{col:"sched"}],ts:[{col:"ts",own:1}],sig:[{col:"sig",own:1}],cx:[{col:"cx",own:1}]})[k];
+    obs:[{col:"obsrows"},{doc:"cfg/obs"}],wr:[{col:"wr",own:1}],ah:[{col:"ah",own:1}],lib:[{col:"lib"}],sched:[{col:"sched"}],ts:[{col:"ts",own:1}],sig:[{col:"sig",own:1}],cx:[{col:"cx",own:1}],
+    mc:who&&who.role==="monitor"?[{doc:"mc/"+who.mk}]:[{col:"mc",own:1}]})[k];
 }
 function canWrite(p,d,isNew){
   if(isAdm())return true;
   var m=p.split("/"),c=m[0],id=m[1],me=who.id;
   if(c==="tasks"||c==="rs"||c==="wr"||c==="ah")return id===me;
   if(c==="sched"||c==="sig")return id===me;
+  if(c==="mc")return who.role==="monitor"?id===who.mk:String(id).split("_")[0]===me;
+  if(who.role==="monitor")return false;
   if(c==="ts"||c==="cx")return String(id).split("_")[0]===me;
   if(c==="lib")return !!d&&d.o===me;
   if(c==="exrows")return !isNew&&!!d&&d.t===me;
