@@ -145,6 +145,17 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    // ===================== មេរៀនសង្ខេបដែលគ្រូបង្កើត (CMS) =====================
+    // គ្រូទាំងអស់អាន · ម្ចាស់ (o) ឬ Admin បង្កើត/កែ/លុប
+    match /lsn/{id} {
+      allow read: if active();
+      allow create: if (isAdmin() || isOwner(request.resource.data.o))
+        && request.resource.data.j is string && request.resource.data.j.size() < 950000;
+      allow update: if (isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o))
+        && request.resource.data.j is string && request.resource.data.j.size() < 950000;
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
+
     // ===================== ហត្ថលេខារបស់គ្រូ (រូបភាព PNG តូច) =====================
     // doc ID = លេខសម្គាល់គ្រូ · ម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ អាន/សរសេរ
     match /sig/{tid} {

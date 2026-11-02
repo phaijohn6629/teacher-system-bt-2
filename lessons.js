@@ -307,9 +307,11 @@ function body(t){
   });
   return out+(ul?"</ul>":"");
 }
-var KI={def:["📘","និយមន័យ"],ex:["✏️","ឧទាហរណ៍"],sol:["✅","ចម្លើយ"],tip:["💡","គន្លឹះ"],warn:["⚠️","ប្រយ័ត្ន"],sum:["📌","សង្ខេប"],plot:["📈",""]};
+var KI={def:["📘","និយមន័យ"],ex:["✏️","ឧទាហរណ៍"],sol:["✅","ចម្លើយ"],tip:["💡","គន្លឹះ"],warn:["⚠️","ប្រយ័ត្ន"],sum:["📌","សង្ខេប"],plot:["📈",""],img:["🖼️",""]};
 function blk(b,i){
   var ki=KI[b.k]||KI.def,h=b.h!=null?b.h:ki[1];
+  if(b.k==="img")return"<figure class='ls-blk ls-imgb' style='--d:"+i+"'>"+(/^data:image\//.test(b.b||"")?"<img src='"+b.b+"' alt=''>":"<div class=ls-noimg>🖼️ គ្មានរូបភាព</div>")+(h?"<figcaption class=ls-cap>"+esc(ds(h))+"</figcaption>":"")+"</figure>";
+  if(b.k==="plot"&&(!b.b||typeof b.b!=="object"))return"<div class='ls-blk ls-warn' style='--d:"+i+"'><div class=ls-bb><p>⚠️ ទិន្នន័យក្រាហ្វមិនត្រឹមត្រូវ</p></div></div>";
   if(b.k==="plot")return"<div class='ls-blk ls-plotb' style='--d:"+i+"'>"+plot(b.b)+(h?"<div class=ls-cap>"+esc(ds(h))+"</div>":"")+"</div>";
   return"<div class='ls-blk ls-"+b.k+"' style='--d:"+i+"'><div class=ls-bh><span aria-hidden=true>"+ki[0]+"</span> "+esc(ds(h||ki[1]))+"</div><div class=ls-bb>"+body(b.b)+"</div></div>";
 }
@@ -318,25 +320,38 @@ function slides(ls,ch){
 }
 function slideHtml(ls,ch,s,n,tot){
   if(s.title)return"<div class='ls-sl ls-title'><div class=ls-chip>ជំពូកទី"+kn(ch.ch)+" · "+esc(ch.t)+"</div><h2 class=ls-blk style='--d:0'>"+esc(ls.t)+"</h2>"+
-    "<div class='ls-blk ls-meta' style='--d:1'>🎯 វិធីសាស្ត្រ ៖ "+esc(ls.m)+"</div><div class='ls-blk ls-meta' style='--d:2'>📑 "+kn(ls.s.length)+" ចំណុចសំខាន់ · ចុច ➜ ដើម្បីបន្ត</div></div>";
+    "<div class='ls-blk ls-meta' style='--d:1'>"+(ls.m?"🎯 វិធីសាស្ត្រ ៖ "+esc(ls.m):"✍️ "+esc(ls.by||""))+"</div><div class='ls-blk ls-meta' style='--d:2'>📑 "+kn(ls.s.length)+" ចំណុចសំខាន់ · ចុច ➜ ដើម្បីបន្ត</div></div>";
   if(s.end)return"<div class='ls-sl ls-title ls-end'><h2 class=ls-blk style='--d:0'>✅ ចប់មេរៀន</h2><div class='ls-blk ls-meta' style='--d:1'>"+esc(ls.t)+"</div>"+
     "<div class='ls-blk ls-recap' style='--d:2'>"+ls.s.map(function(x,i){return"<button type=button data-go-sl="+(i+1)+">"+kn(i+1)+". "+esc(x.h)+"</button>"}).join("")+"</div></div>";
-  var cols=s.b.length>1&&s.b.some(function(b){return b.k==="plot"})?" ls-2c":"";
+  var cols=s.b.length>1&&s.b.some(function(b){return b.k==="plot"||b.k==="img"})?" ls-2c":"";
   return"<div class='ls-sl"+cols+"'><h3 class=ls-sh>"+esc(s.h)+"</h3><div class=ls-grid2>"+s.b.map(blk).join("")+"</div></div>";
+}
+/* មេរៀនភ្ជាប់មកស្រាប់ + មេរៀនដែលគ្រូបង្កើត (lessonedit.js · Firestore lsn/) តាមជំពូក */
+var MG={};
+function mg(g){
+  var chs=LSUM[g].map(function(c){return{ch:c.ch,t:c.t,ls:c.ls.slice()}});
+  (window.LSC?LSC.list(g):[]).forEach(function(x){
+    var c=chs.filter(function(c){return c.ch===x.ch})[0];
+    if(!c){c={ch:x.ch,t:x.cht||"",ls:[]};chs.push(c)}else if(!c.t&&x.cht)c.t=x.cht;
+    c.ls.push(x);
+  });
+  chs.sort(function(a,b){return a.ch-b.ch});
+  return MG[g]=chs;
 }
 function render(){
   var host=$("lsBody");if(!host)return;
-  $("lsG").innerHTML=[7,8,9,10,11,12].map(function(g){var n=LSUM[g].reduce(function(a,c){return a+c.ls.length},0);
+  if(window.LSC)LSC.tools();
+  $("lsG").innerHTML=[7,8,9,10,11,12].map(function(g){var n=mg(g).reduce(function(a,c){return a+c.ls.length},0);
     return"<button type=button data-g="+g+" aria-selected="+(g===gSel)+">ថ្នាក់ទី"+kn(g)+(n?" <small>("+kn(n)+")</small>":"")+"</button>"}).join("");
-  var chs=LSUM[gSel];
-  if(!chs.length){host.innerHTML="<div class=ls-empty>📭 ថ្នាក់ទី"+kn(gSel)+" មិនទាន់មានមេរៀនសង្ខេបនៅឡើយ ។<br><small>ផ្ញើស្លាយ ឬឯកសារមេរៀនមក ដើម្បីបន្ថែម ។</small></div>";return}
+  var chs=mg(gSel);
+  if(!chs.length){host.innerHTML="<div class=ls-empty>📭 ថ្នាក់ទី"+kn(gSel)+" មិនទាន់មានមេរៀនសង្ខេបនៅឡើយ ។<br><small>ចុច «＋ បង្កើតមេរៀនថ្មី» ដើម្បីបន្ថែម ។</small></div>";return}
   host.innerHTML=chs.map(function(ch,ci){
     return"<section class=ls-ch><h3>📚 ជំពូកទី"+kn(ch.ch)+" · "+esc(ch.t)+" <small>("+kn(ch.ls.length)+" មេរៀន)</small></h3><div class=ls-cards>"+
-      ch.ls.map(function(l,li){return"<button type=button class=ls-card data-ls='"+ci+"|"+li+"' style='--h:"+(150+li*17)%360+"'><b>"+kn(li+1)+"</b><span>"+esc(l.t)+"</span><em>"+kn(l.s.length+2)+" ស្លាយ · "+esc(l.m.split("·")[0])+"</em></button>"}).join("")+"</div></section>"}).join("");
+      ch.ls.map(function(l,li){return"<div class=ls-cw><button type=button class=ls-card data-ls='"+ci+"|"+li+"' style='--h:"+(150+li*17)%360+"'><b>"+kn(li+1)+"</b><span>"+esc(l.t)+"</span><em>"+kn(l.s.length+2)+" ស្លាយ · "+esc(String(l.m||"").split("·")[0])+"</em></button>"+(window.LSC?LSC.acts(l,gSel,ch):"")+"</div>"}).join("")+"</div></section>"}).join("");
   math(host);
 }
 function open(ci,li){
-  var ch=LSUM[gSel][ci];cur={ch:ch,ls:ch.ls[li],li:li,ci:ci,list:slides(ch.ls[li])};idx=0;
+  var ch=(MG[gSel]||mg(gSel))[ci];cur={ch:ch,ls:ch.ls[li],li:li,ci:ci,list:slides(ch.ls[li])};idx=0;
   $("lsView").hidden=false;document.body.classList.add("ls-open");show1(0);
   try{$("lsView").focus()}catch(x){}
 }
@@ -376,4 +391,5 @@ function bind(){
 }
 if($("lsBody"))bind();
 window.renderLs=render;
+window.LSX={slideHtml:slideHtml,math:math,KI:KI,render:render,LSUM:LSUM,gSel:function(){return gSel}};
 })();
