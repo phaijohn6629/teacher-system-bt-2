@@ -38,6 +38,7 @@
       doc: FS.doc, collection: FS.collection, getDoc: FS.getDoc, getDocs: FS.getDocs,
       setDoc: FS.setDoc, updateDoc: FS.updateDoc, deleteDoc: FS.deleteDoc,
       query: FS.query, where: FS.where, onSnapshot: FS.onSnapshot,
+      runTransaction: FS.runTransaction, addDoc: FS.addDoc, serverTimestamp: FS.serverTimestamp,
       signInWithEmailAndPassword: AU.signInWithEmailAndPassword, signOut: AU.signOut,
       onAuthStateChanged: AU.onAuthStateChanged,
       createUserWithEmailAndPassword: AU.createUserWithEmailAndPassword,
@@ -140,7 +141,8 @@ function enterApp(user){
     if(p.enabled!==true){alert("គណនីរបស់អ្នកមិនទាន់បើកសិទ្ធិប្រើប្រាស់ទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
     if(p.role==="monitor"){   /* គណនីប្រធានថ្នាក់៖ ចូលបានតែ វត្តមាន · ប្លង់តុ · សម្រង់អត្ថបទ នៃថ្នាក់ខ្លួន (monitor.js) */
       prof={uid:user.uid,id:String(p.id||"").toUpperCase(),name:p.name||p.id,role:"monitor",mustChange:false};
-      who={id:String(p.t||"").toUpperCase(),name:p.name||p.id,role:"monitor",rl:"ប្រធានថ្នាក់",mk:p.k,mc:p.c};
+      var RL={h:"ប្រធានថ្នាក់",v1:"អនុប្រធានទី១",v2:"អនុប្រធានទី២"},mr=RL[p.r]?p.r:"h";
+      who={id:String(p.t||"").toUpperCase(),name:p.name||p.id,role:"monitor",rl:RL[mr],mk:p.k,mc:p.c,mr:mr,msn:p.sn||""};
       rt=who.id;data=[];rs={c:{}};
       $("loginSection").hidden=true;$("appSection").hidden=false;
       updateUserInfo();if(window.MONUI)MONUI.enter();
@@ -178,7 +180,7 @@ function loginPop(){
   d.innerHTML="<div class=lp-card><div class=lp-burst>"+new Array(12).join("<i></i>")+"</div>"+
     "<div class=lp-check><svg viewBox='0 0 52 52'><circle cx=26 cy=26 r=24 /><path d='M14 27 l8 8 l16 -17' /></svg></div>"+
     "<h2>ចូលប្រព័ន្ធជោគជ័យ!</h2><p class=lp-hi>"+gr+" "+ic+"</p>"+
-    "<div class=lp-user>"+avHtml(who.id,who.name,40)+"<span><b>"+esc(who.name)+"</b><small>"+(isAdm()?"អ្នកគ្រប់គ្រង":who.role==="monitor"?"ប្រធានថ្នាក់ "+esc(who.mc||""):"គ្រូបង្រៀន")+" · "+esc(who.role==="monitor"?prof.id:who.id)+"</small></span></div>"+
+    "<div class=lp-user>"+avHtml(who.id,who.name,40)+"<span><b>"+esc(who.name)+"</b><small>"+(isAdm()?"អ្នកគ្រប់គ្រង":who.role==="monitor"?esc(who.rl+" "+(who.mc||"")):"គ្រូបង្រៀន")+" · "+esc(who.role==="monitor"?prof.id:who.id)+"</small></span></div>"+
     "<div class=lp-bar><i></i></div></div>";
   document.body.appendChild(d);
   var close=function(){if(!d.isConnected)return;d.classList.add("out");setTimeout(function(){d.remove()},350)};

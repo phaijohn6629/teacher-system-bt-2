@@ -38,7 +38,7 @@ service cloud.firestore {
       // គ្រូបង្កើតគណនីប្រធានថ្នាក់បាន (role "monitor" · t = ខ្លួនឯង · k ចាប់ផ្ដើមដោយ ID ខ្លួន)
       allow create: if isAdmin()
         || (ownsMonitor(request.resource.data)
-            && request.resource.data.keys().hasOnly(['id','name','role','enabled','mustChange','t','k','c'])
+            && request.resource.data.keys().hasOnly(['id','name','role','enabled','mustChange','t','k','c','r','sk','sn'])
             && request.resource.data.k.split('_')[0] == myId());
       allow delete: if isAdmin() || ownsMonitor(resource.data);
       // គ្រូម្នាក់ៗអាចកែបានតែ mustChange: true -> false (បន្ទាប់ពីប្ដូរលេខសម្ងាត់)
@@ -130,6 +130,19 @@ service cloud.firestore {
             && request.resource.data.j.size() < 900000)
         || (isMonitorOf(k) && changedOnly(['j']) && request.resource.data.j.size() < 900000);
       allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
+
+    // ===================== ប្រវត្តិសកម្មភាពប្រធាន/អនុប្រធានថ្នាក់ =====================
+    // បន្ថែមបានតែដោយគណនីប្រធានថ្នាក់ខ្លួនឯង (by = ID ខ្លួន · at = ម៉ោង Server) · កែ/លុបមិនបាន (លើកលែង Admin)
+    match /mclog/{id} {
+      allow create: if isMonitorOf(request.resource.data.k)
+        && request.resource.data.keys().hasOnly(['k','o','by','r','sn','at','a'])
+        && request.resource.data.k.split('_')[0] == request.resource.data.o
+        && request.resource.data.by == myId()
+        && request.resource.data.at == request.time
+        && request.resource.data.a is list && request.resource.data.a.size() <= 50;
+      allow read: if isAdmin() || (active() && resource.data.o == myId());
+      allow update, delete: if isAdmin();
     }
 
     // ===================== ហត្ថលេខារបស់គ្រូ (រូបភាព PNG តូច) =====================
