@@ -2138,7 +2138,23 @@ function finishMig(k,ok){
 function refreshView(){
   if($("appSection").hidden)return;
   var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].filter(function(x){return !$(x).hidden})[0]||"p0";
-  show(c);
+  keepFocus(function(){show(c)});
+}
+/* គូរទំព័រឡើងវិញ ដោយរក្សាប្រអប់ដែលកំពុងសរសេរ (focus · cursor · អក្សរដែលទើបវាយ) */
+function keepFocus(fn){
+  var a=document.activeElement,sel=null,val,ss,se,y=window.scrollY;
+  if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){
+    var q=[].filter.call(a.attributes,function(x){return x.name==="id"||x.name.indexOf("data-")===0}).map(function(x){return"["+x.name+"='"+String(x.value).replace(/'/g,"\\'")+"']"}).join("");
+    if(q){sel=a.tagName+q;val=a.value;try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}}
+  }
+  fn();
+  if(!sel)return;
+  var b;try{b=document.querySelector(sel)}catch(e){}
+  if(!b||b===a)return;
+  if(b.tagName!=="SELECT"&&b.value!==val&&!b.readOnly){b.value=val;b.dispatchEvent(new Event("input",{bubbles:true}))}
+  b.focus({preventScroll:true});
+  try{if(ss!=null)b.setSelectionRange(ss,se)}catch(e){}
+  window.scrollTo(0,y);
 }
 function ensureSelf(){
   if(!who||data.some(function(t){return t.id===who.id}))return;
@@ -2167,8 +2183,14 @@ function trySeed(k){      /* មានតែ Admin ទេដែលបង្ក�
   if(k==="obs"&&!Object.keys(sy.cache.obs||{}).length&&!sy.legacy.obs)ob=defO();
   push(k);
 }
+function sameAsSynced(k){   /* Cloud បញ្ជូនមកវិញនូវអ្វីដែលយើងទើបរក្សាទុក → គ្មានអ្វីថ្មី */
+  var cache=sy.cache[k]||{},syn=sy.synced[k],ks=Object.keys(cache);
+  if(!sy.first[k]||!syn||ks.length!==Object.keys(syn).length)return false;
+  return ks.every(function(p){return syn[p]===sj(cache[p])});
+}
 function applyCloud(k){
   var cache=sy.cache[k]||{},has=Object.keys(cache).length>0;
+  if(sameAsSynced(k))return;   /* កុំគូរទំព័រឡើងវិញ (មិនឱ្យបាត់ cursor ពេលកំពុងសរសេរ) */
   if(has){
     MAP[k].load(cache);
     var s={};Object.keys(cache).forEach(function(p){s[p]=sj(cache[p])});sy.synced[k]=s;
@@ -2177,8 +2199,7 @@ function applyCloud(k){
   if(k==="teachers")afterTeachers();
   if(k==="rs"&&isAdm())migrateRs();
   trySeed(k);
-  var a=document.activeElement;
-  if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))setTimeout(refreshView,200);else refreshView();
+  refreshView();
 }
 function onData(k){
   if(Object.keys(sy.got[k]).length<sy.need[k])return;   /* រង់ចាំរហូតទាំងអស់បានមកដល់ */
