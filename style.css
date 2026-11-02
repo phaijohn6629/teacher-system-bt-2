@@ -615,3 +615,15 @@ body.ls-open{overflow:hidden}
 @media (max-width:700px){.ls-2c .ls-grid2>.ls-blk:not(.ls-plotb),.ls-2c .ls-grid2>.ls-plotb{grid-column:auto;grid-row:auto}}
 .ls-top #lsTt{flex:1;min-width:0}.ls-grid2{grid-template-columns:minmax(0,1fr)}.ls-2c .ls-grid2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.ls-bb{overflow-x:auto}.ls-view{overflow:hidden}
 @media (max-width:700px){.ls-2c .ls-grid2{grid-template-columns:minmax(0,1fr)}.ls-tools button{padding:5px 8px}#lsAuto{font-size:0}#lsAuto::first-letter{font-size:14px}}
+/* ពង្រីកស្លាយឲ្យពេញអេក្រង់ · អក្សរធំតាមទំហំអេក្រង់ */
+.ls-sl{width:100%;max-width:none;height:100%;display:flex;flex-direction:column}
+.ls-sh{font-size:clamp(17px,2.1vw,40px);padding:clamp(12px,1.4vw,26px) clamp(18px,2vw,40px)}
+.ls-grid2{flex:1;align-content:center;gap:clamp(12px,1.4vw,28px);padding:0 clamp(16px,2.2vw,48px)}
+.ls-bh{font-size:clamp(15px,1.5vw,30px);padding:clamp(7px,.7vw,14px) clamp(12px,1.2vw,22px)}
+.ls-bb{font-size:clamp(15px,1.75vw,34px);line-height:1.75;padding:clamp(8px,.9vw,18px) clamp(14px,1.4vw,28px)}
+.ls-plot{width:min(100%,46vh,560px)}.ls-cap{font-size:clamp(13px,1.2vw,24px)}.ls-pl{font-size:clamp(13px,1.3vw,26px)}
+.ls-title{justify-content:center}
+.ls-title h2{font-size:clamp(24px,4.2vw,72px)}.ls-meta{font-size:clamp(15px,1.6vw,30px)}.ls-chip{font-size:clamp(14px,1.4vw,26px);padding:.4em 1.1em}
+.ls-recap button{font-size:clamp(13px,1.2vw,22px)}
+.ls-view{padding-left:8px;padding-right:8px}.ls-stage{align-items:stretch}
+.ls-view:fullscreen{padding:10px 14px}
