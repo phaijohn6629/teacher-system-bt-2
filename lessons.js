@@ -199,16 +199,57 @@ $(1+i)^{10}=32i$ , $(\sqrt3+i)^6=-64$`),
   B("plot",R`គុណនឹង $z=\cos\frac\pi6+i\sin\frac\pi6$ ម្ដង = វិល $30^\circ$`,{p:[[2.6,1.5,"z",BL],[1.5,2.6,"z^2",BL],[0,3,"z^3",BL],[-1.5,2.6,"z^4",BL],[-2.6,1.5,"z^5",BL],[-3,0,"z^6",RD]],v:true,c:3}))
 ]),
 L("ឫសទី $n$ នៃចំនួនកុំផ្លិច","Student-Centered · GeoGebra",[
- S("រូបមន្ត",
-  B("def",R`ឫសទី $n$ នៃ $z=r(\cos\theta+i\sin\theta)$`,R`$$w_k=\sqrt[n]r\left[\cos\frac{\theta+2k\pi}n+i\sin\frac{\theta+2k\pi}n\right]$$
-$k=0,1,\dots,n-1$ (មាន $n$ ឫសខុសគ្នា)`),
-  B("sum","ធរណីមាត្រ",R`ឫសទាំង $n$ នៅលើរង្វង់ផ្ចិត $O$ កាំ $\sqrt[n]r$ ឃ្លាតគ្នា $\frac{2\pi}n$ → ពហុកោណនិយ័ត $n$ ជ្រុង`)),
- S("ឧទាហរណ៍",
-  B("ex","ឫសទី៣ នៃ $8$",R`$w_0=2,\ w_1=-1+i\sqrt3,\ w_2=-1-i\sqrt3$`),
-  B("plot","ត្រីកោណសម័ង្ស",{p:[[2,0,"w_0",RD],[-1,1.73,"w_1",RD],[-1,-1.73,"w_2",RD]],l:[[2,0,-1,1.73,OR,0],[-1,1.73,-1,-1.73,OR,0],[-1,-1.73,2,0,OR,0]],c:2}),
-  B("ex","ផ្សេងទៀត",R`$\sqrt i$ ៖ $\pm\frac{\sqrt2}2(1+i)$
-$z^3=1$ ៖ $1,\ -\frac12\pm\frac{\sqrt3}2 i$
-$\sqrt[4]{-16}$ ៖ $\pm\sqrt2\pm\sqrt2 i$`))
+ S("គំនិត ៖ ពីស្វ័យគុណ ទៅឫស",
+  B("tip","សំណួរបើក",R`ក្នុង $\R$ ៖ $x^2=4 \Rightarrow x=\pm2$ (មានឫសពីរ)
+ក្នុង $\C$ ៖ $w^2=i$ ⇒ $w=?$ · $w^3=8$ ⇒ $w=?$
+គន្លឹះ ៖ ប្រើទម្រង់ត្រីកោណមាត្រ និងរូបមន្តដឺម័រ $w^n=\rho^n(\cos n\varphi+i\sin n\varphi)$`),
+  B("def","ស្វែងរក $w$ ដែល $w^n=z$",R`តាង $z=r(\cos\theta+i\sin\theta)$ និង $w=\rho(\cos\varphi+i\sin\varphi)$
+$w^n=z \iff \rho^n(\cos n\varphi+i\sin n\varphi)=r(\cos\theta+i\sin\theta)$
+- ផ្ទឹមម៉ូឌុល ៖ $\rho^n=r \Rightarrow \rho=\sqrt[n]r$
+- ផ្ទឹមអាគុយម៉ង់ ៖ $n\varphi=\theta+2k\pi \Rightarrow \varphi=\frac{\theta+2k\pi}n$`)),
+ S("រូបមន្តឫសទី $n$",
+  B("def","ចំពោះ $z=r(\cos\theta+i\sin\theta)\ne0$",R`$$w_k=\sqrt[n]r\left[\cos\frac{\theta+2k\pi}n+i\sin\frac{\theta+2k\pi}n\right],\quad k=0,1,\dots,n-1$$`),
+  B("warn","ហេតុអ្វីមានតែ $n$ ឫស?",R`ពេល $k=n$ មុំកើនឡើង $\frac{2n\pi}n=2\pi$ (មួយជុំពេញ) ⇒ $w_n=w_0$ ៖ ឫសចាប់ផ្ដើមដដែលៗ
+ដូច្នេះ យក $k=0,1,\dots,n-1$ គ្រប់គ្រាន់`),
+  B("tip","ជំហានគណនា",R`- ១. សរសេរ $z$ ជាទម្រង់ត្រីកោណមាត្រ (រក $r$ និង $\theta$)
+- ២. គណនា $\sqrt[n]r$ (ម៉ូឌុលរួមនៃឫសទាំងអស់)
+- ៣. គណនាមុំ $\varphi_k=\frac{\theta+2k\pi}n$ ចំពោះ $k=0,\dots,n-1$
+- ៤. សរសេរ $w_k$ រួចបម្លែងជា $a+bi$`)),
+ S("ឧទាហរណ៍ ១ ៖ ឫសទី៣ នៃ $8$ (ជំហានៗ)",
+  B("ex","ជំហាន ១–២",R`$8=8(\cos0+i\sin0)$ ⇒ $r=8,\ \theta=0,\ n=3$
+$\sqrt[3]8=2$ · មុំ $\varphi_k=\frac{0+2k\pi}3=\frac{2k\pi}3$`),
+  B("sol","ជំហាន ៣–៤",R`$k=0$ ៖ $w_0=2(\cos0+i\sin0)=2$
+$k=1$ ៖ $w_1=2\left(\cos\frac{2\pi}3+i\sin\frac{2\pi}3\right)=2\left(-\frac12+i\frac{\sqrt3}2\right)=-1+i\sqrt3$
+$k=2$ ៖ $w_2=2\left(\cos\frac{4\pi}3+i\sin\frac{4\pi}3\right)=2\left(-\frac12-i\frac{\sqrt3}2\right)=-1-i\sqrt3$`),
+  B("tip","ផ្ទៀងផ្ទាត់",R`$w_1^3=2^3\left(\cos2\pi+i\sin2\pi\right)=8$ ✓`)),
+ S("បកស្រាយរូប ៖ ឫសទី៣ នៃ $8$",
+  B("sum","អានរូបដូចម្ដេច?",R`- រង្វង់ដាច់ៗ ៖ ផ្ចិត $O$ កាំ $\sqrt[3]8=2$ — ឫសទាំងបីនៅលើរង្វង់នេះ ព្រោះ $|w_k|=2$
+- ព្រួញ ៖ វ៉ិចទ័ររូបភាព $\overrightarrow{OW_k}$ នៃឫសនីមួយៗ
+- មុំ ៖ $w_0$ នៅ $0^\circ$ · $w_1$ នៅ $120^\circ$ · $w_2$ នៅ $240^\circ$
+- ឫសពីរជាប់គ្នាឃ្លាតគ្នាស្មើ $\frac{2\pi}3=120^\circ$
+- ភ្ជាប់ឫសទាំងបី ⇒ ត្រីកោណសម័ង្ស ចារឹកក្នុងរង្វង់`),
+  B("plot","ឫសទាំង៣ ៖ កំពូលត្រីកោណសម័ង្ស",{p:[[2,0,"w_0",RD],[-1,1.73,"w_1",RD],[-1,-1.73,"w_2",RD]],v:true,l:[[2,0,-1,1.73,OR,1],[-1,1.73,-1,-1.73,OR,1],[-1,-1.73,2,0,OR,1]],c:2,a:[[0,120,0.7,GR,"\\frac{2\\pi}{3}"]]})),
+ S("ឧទាហរណ៍ ២ ៖ ឫសការេនៃ $i$",
+  B("ex","ដោះស្រាយ",R`$i=1\left(\cos\frac\pi2+i\sin\frac\pi2\right)$ ⇒ $r=1,\ \theta=\frac\pi2,\ n=2$
+$\varphi_k=\frac{\frac\pi2+2k\pi}2=\frac\pi4+k\pi$
+$k=0$ ៖ $w_0=\cos\frac\pi4+i\sin\frac\pi4=\frac{\sqrt2}2+i\frac{\sqrt2}2$
+$k=1$ ៖ $w_1=\cos\frac{5\pi}4+i\sin\frac{5\pi}4=-\frac{\sqrt2}2-i\frac{\sqrt2}2$`),
+  B("plot","ឫសទាំងពីរឆ្លុះគ្នាធៀបនឹង $O$ ($w_1=-w_0$)",{p:[[0.71,0.71,"w_0",RD],[-0.71,-0.71,"w_1",RD],[0,1,"i",BL]],v:true,c:1,a:[[0,45,0.4,GR,"\\frac\\pi4"]]})),
+ S("ឧទាហរណ៍ ៣ ៖ $z^3=1$ (ឫសទី៣ នៃឯកតា)",
+  B("ex","ដោះស្រាយ",R`$1=\cos0+i\sin0$ ⇒ $r=1,\ \theta=0$
+$z_k=\cos\frac{2k\pi}3+i\sin\frac{2k\pi}3,\quad k=0,1,2$
+$z_0=1$
+$z_1=-\frac12+i\frac{\sqrt3}2$
+$z_2=-\frac12-i\frac{\sqrt3}2$`),
+  B("plot","ត្រីកោណសម័ង្ស ចារឹកក្នុងរង្វង់កាំ $1$",{p:[[1,0,"z_0",RD],[-0.5,0.87,"z_1",RD],[-0.5,-0.87,"z_2",RD]],v:true,l:[[1,0,-0.5,0.87,OR,0],[-0.5,0.87,-0.5,-0.87,OR,0],[-0.5,-0.87,1,0,OR,0]],c:1})),
+ S("ឧទាហរណ៍ ៤ ៖ ឫសទី៤ នៃ $-16$",
+  B("ex","ដោះស្រាយ",R`$-16=16(\cos\pi+i\sin\pi)$ ⇒ $r=16,\ \theta=\pi,\ n=4$
+$\sqrt[4]{16}=2$ ; $\varphi_k=\frac{\pi+2k\pi}4=\frac\pi4+\frac{k\pi}2$
+$w_0=\sqrt2+\sqrt2\,i,\quad w_1=-\sqrt2+\sqrt2\,i$
+$w_2=-\sqrt2-\sqrt2\,i,\quad w_3=\sqrt2-\sqrt2\,i$`),
+  B("plot",R`$n=4$ ⇒ ការេ ចារឹកក្នុងរង្វង់កាំ $2$ (ឃ្លាតគ្នា $90^\circ$)`,{p:[[1.41,1.41,"w_0",RD],[-1.41,1.41,"w_1",RD],[-1.41,-1.41,"w_2",RD],[1.41,-1.41,"w_3",RD]],l:[[1.41,1.41,-1.41,1.41,OR,0],[-1.41,1.41,-1.41,-1.41,OR,0],[-1.41,-1.41,1.41,-1.41,OR,0],[1.41,-1.41,1.41,1.41,OR,0]],c:2}),
+  B("sum","សេចក្ដីសន្និដ្ឋាន",R`ឫសទី $n$ មាន $n$ តម្លៃ នៅលើរង្វង់កាំ $\sqrt[n]r$
+ឃ្លាតគ្នាស្មើ $\frac{2\pi}n$ ⇒ ពហុកោណនិយ័ត $n$ ជ្រុង`))
 ])
 ];
 
@@ -236,17 +277,21 @@ function plot(d){
   var g="<svg viewBox='0 0 "+W+" "+W+"' class=ls-svg role=img aria-label='ប្លង់កុំផ្លិច'><defs><marker id=lsAr markerUnits=userSpaceOnUse markerWidth=8 markerHeight=8 refX=7 refY=4 orient=auto><path d='M0,0 L8,4 L0,8z' fill='context-stroke'/></marker></defs>";
   for(var k=-m;k<=m;k++)if(k)g+="<line x1="+X(k)+" y1=8 x2="+X(k)+" y2="+(W-8)+" class=ls-grid /><line x1=8 y1="+Y(k)+" x2="+(W-8)+" y2="+Y(k)+" class=ls-grid />";
   g+="<line x1=6 y1="+c+" x2="+(W-6)+" y2="+c+" class=ls-ax marker-end='url(#lsAr)'/><line x1="+c+" y1="+(W-6)+" x2="+c+" y2=6 class=ls-ax marker-end='url(#lsAr)'/>";
-  g+="<text x="+(W-10)+" y="+(c-6)+" class=ls-lb text-anchor=end>Re</text><text x="+(c+6)+" y=14 class=ls-lb>Im</text>";
+  g+="<text x="+(W-4)+" y="+(c-8)+" class=ls-lb text-anchor=end>Re</text><text x="+(c+6)+" y=14 class=ls-lb>Im</text>";
   if(d.c)g+="<circle cx="+c+" cy="+c+" r="+(d.c*s)+" class=ls-cir />";
   ls.forEach(function(l,i){g+="<line x1="+X(l[0])+" y1="+Y(l[1])+" x2="+X(l[2])+" y2="+Y(l[3])+" stroke='"+l[4]+"' stroke-width=2 "+(l[5]?"stroke-dasharray='4 3'":"")+" class=ls-draw style='--i:"+i+"'/>"});
+  (d.a||[]).forEach(function(q,i){var r=q[2]*s,a0=q[0]*Math.PI/180,a1=q[1]*Math.PI/180;
+    g+="<path d='M"+(c+r*Math.cos(a0))+","+(c-r*Math.sin(a0))+" A"+r+","+r+" 0 "+((q[1]-q[0])>180?1:0)+" 0 "+(c+r*Math.cos(a1))+","+(c-r*Math.sin(a1))+"' fill=none stroke='"+q[3]+"' stroke-width=1.8 class=ls-draw style='--i:"+(i+2)+"'/>"});
   pts.forEach(function(p,i){
     if(d.v)g+="<line x1="+c+" y1="+c+" x2="+X(p[0])+" y2="+Y(p[1])+" stroke='"+p[3]+"' stroke-width=2.4 marker-end='url(#lsAr)' class=ls-draw style='--i:"+i+"'/>";
     g+="<circle cx="+X(p[0])+" cy="+Y(p[1])+" r=4 fill='"+p[3]+"' class=ls-pt style='--i:"+i+"'/>";
   });
   g+="</svg>";
   /* ស្លាកជា KaTeX (HTML ពីលើ SVG) */
-  var lab=pts.map(function(p,i){var lx=(X(p[0])+(p[0]<0?-6:6))/W*100,ly=(Y(p[1])+(p[1]<0?14:-8))/W*100;
+  var lab=pts.map(function(p,i){var lx=(X(p[0])+(p[0]<0?-6:6))/W*100,ly=(Y(p[1])+(p[1]<0||p[1]===0?14:-8))/W*100;
     return"<span class=ls-pl style='left:"+lx+"%;top:"+ly+"%;color:"+p[3]+";--i:"+i+";transform:translate("+(p[0]<0?"-100%":"0")+",-50%)'>$"+p[2]+"$</span>"}).join("");
+  lab+=(d.a||[]).map(function(q,i){var m=(q[0]+q[1])/2*Math.PI/180,rr=q[2]+.45,lx=(c+rr*s*Math.cos(m))/W*100,ly=(c-rr*s*Math.sin(m))/W*100;
+    return"<span class=ls-pl style='left:"+lx+"%;top:"+ly+"%;color:"+q[3]+";--i:"+(i+2)+";transform:translate(-50%,-50%);font-size:1.1em'>$"+q[4]+"$</span>"}).join("");
   return"<div class=ls-plot>"+g+lab+"</div>";
 }
 
