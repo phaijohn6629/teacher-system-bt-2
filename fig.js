@@ -3,7 +3,9 @@
    FIG.svg(ការពិពណ៌នា) → HTML · មួយបន្ទាត់មួយពាក្យបញ្ជា (ឬបំបែកដោយ ;)
      y=x^2-2x-3            ក្រាបអនុគមន៍ (y=… [a,b] = តែលើចន្លោះ · ពណ៌នៅចុង៖ red/blue/green/orange/purple ឬ #hex)
      area y=x^2 [0,2]      ផ្ទៃក្រោមខ្សែកោង  ·  area y=x | y=x^2 [0,1]  ផ្ទៃរវាងខ្សែកោងពីរ
-     tangent y=x^2 at 1    បន្ទាត់ប៉ះ
+     tangent y=x^2 at 1    បន្ទាត់ប៉ះ  ·  normal y=x^2 at 1  បន្ទាត់កែង
+     hole (1,2)            ចំណុចចំហ (រង្វង់ទទេ)  ·  dots y=1/x [1,8]  ចំណុចស្វ៊ីត (x ជាចំនួនគត់)
+     angle A O B           មុំត្រង់ O (ធ្នូ)
      x=1 · asym y=2        បន្ទាត់ដាច់ៗ (អាស៊ីមតូត)
      x^2/9+y^2/4=1         ខ្សែកោងសមីការ (អេលីប អ៊ីពែបូល …)
      A(1,2)                ចំណុច · seg A B · line A B · vec A B · poly A B C · circle A 2 · circle A B
@@ -77,6 +79,10 @@ function svg(spec){
       if(/^noaxes$/i.test(t)){axes=false;return}
       if((m=/^window\s+(.*)$/i.exec(t))){win=win||{};var mx=/x\s*=\s*(-?[\d.]+)\s*\.\.\s*(-?[\d.]+)/i.exec(m[1]),my=/y\s*=\s*(-?[\d.]+)\s*\.\.\s*(-?[\d.]+)/i.exec(m[1]);if(mx){win.x0=+mx[1];win.x1=+mx[2]}if(my){win.y0=+my[1];win.y1=+my[2]}return}
       if((m=/^complex\s+(.*)$/i.exec(t))){cx=true;m[1].split(/\s+|,/).filter(Boolean).forEach(function(z){var q=/^([A-Za-z]\w*)\s*=\s*(.+)$/.exec(z),v=cnum(q?q[2]:z);if(!v)throw"ចំនួនកុំផ្លិច «"+z+"»";var n=q?q[1]:"";if(n)P[n]=v;items.push({k:"cpt",p:v,n:n,c:col||nextC()})});return}
+      if((m=/^normal\s+y\s*=\s*(.+?)\s+at\s+(-?[\d.]+)$/i.exec(t))){var f1=parse(m[1]),x1=+m[2],h1=1e-5,k1=(f1(x1+h1)-f1(x1-h1))/(2*h1);items.push({k:"tan",x0:x1,y0:f1(x1),m:k1?-1/k1:1e6,vert:!k1,c:col||nextC()});return}
+      if((m=/^hole\s+([A-Za-z]\w*)?\s*\(\s*([^,]+),([^)]+)\)$/i.exec(t))){var hp=[parse(m[2])(),parse(m[3])()];if(m[1])P[m[1]]=hp;items.push({k:"hole",p:hp,n:m[1]||"",c:col||"#222"});return}
+      if((m=/^dots\s+y\s*=\s*(.+?)\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\]$/i.exec(t))){var fd=parse(m[1]),da=Math.ceil(parse(m[2])()),db=Math.floor(parse(m[3])()),dc=col||nextC();for(var n=da;n<=db&&n-da<200;n++){var dv=fd(n,0);if(isFinite(dv))items.push({k:"pt",p:[n,dv],n:"",c:dc})}return}
+      if((m=/^angle\s+(\S+)\s+(\S+)\s+(\S+)(?:\s+(.+))?$/i.exec(t))){items.push({k:"ang",ns:[m[1],m[2],m[3]],lb:m[4]||"",c:col||"#d9731a"});return}
       if((m=/^text\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)\s*(.+)$/i.exec(t))){items.push({k:"text",p:[+m[1],+m[2]],n:m[3],c:col||"#222"});return}
       if((m=/^([A-Za-z]\w*)?\s*\(\s*(-?[\d.]+(?:\/[\d.]+)?)\s*,\s*(-?[\d.]+(?:\/[\d.]+)?)\s*\)$/.exec(t))&&!/^(x|y)$/i.test(m[1]||"")){
         var px=parse(m[2])(),py=parse(m[3])();if(m[1])P[m[1]]=[px,py];items.push({k:"pt",p:[px,py],n:m[1]||"",c:col||"#222"});return}
@@ -156,7 +162,11 @@ function svg(spec){
       g+="<path d='"+o+"Z' fill='"+it.c+"' fill-opacity=.22 stroke=none />"+path(it.f,[a,b],it.c)+(it.g?path(it.g,[a,b],it.c):"")+"<line x1="+sx(a)+" y1="+sy(0)+" x2="+sx(a)+" y2="+sy(it.f(a,0))+" stroke='"+it.c+"' stroke-dasharray='3 3'/><line x1="+sx(b)+" y1="+sy(0)+" x2="+sx(b)+" y2="+sy(it.f(b,0))+" stroke='"+it.c+"' stroke-dasharray='3 3'/>"}
     else if(it.k==="fn")g+=path(it.f,it.d,it.c,it.dash);
     else if(it.k==="vline")g+="<line x1="+sx(it.x)+" y1="+pad+" x2="+sx(it.x)+" y2="+(H-pad)+" stroke='"+it.c+"' stroke-width=1.6 stroke-dasharray='6 4'/>";
-    else if(it.k==="tan"){g+=path(function(x){return it.y0+it.m*(x-it.x0)},null,it.c,false)+"<circle cx="+sx(it.x0)+" cy="+sy(it.y0)+" r=3.5 fill='"+it.c+"'/>"}
+    else if(it.k==="tan"){g+=(it.vert?"<line x1="+sx(it.x0)+" y1="+pad+" x2="+sx(it.x0)+" y2="+(H-pad)+" stroke='"+it.c+"' stroke-width=2 />":path(function(x){return it.y0+it.m*(x-it.x0)},null,it.c,false))+"<circle cx="+sx(it.x0)+" cy="+sy(it.y0)+" r=3.5 fill='"+it.c+"'/>"}
+    else if(it.k==="ang"){var Pa=pt(it.ns[0]),Po=pt(it.ns[1]),Pb=pt(it.ns[2]),ux=(sx(Pa[0])-sx(Po[0])),uy=(sy(Pa[1])-sy(Po[1])),vx=(sx(Pb[0])-sx(Po[0])),vy=(sy(Pb[1])-sy(Po[1])),R=22,
+        a1=Math.atan2(uy,ux),a2=Math.atan2(vy,vx),dA=a2-a1;while(dA<=-Math.PI)dA+=2*Math.PI;while(dA>Math.PI)dA-=2*Math.PI;
+        var X=sx(Po[0]),Y=sy(Po[1]);g+="<path d='M"+(X+R*Math.cos(a1))+","+(Y+R*Math.sin(a1))+" A"+R+","+R+" 0 0 "+(dA>0?1:0)+" "+(X+R*Math.cos(a2))+","+(Y+R*Math.sin(a2))+"' fill=none stroke='"+it.c+"' stroke-width=2 />";
+        if(it.lb){var am=a1+dA/2;lab+="<text x="+(X+(R+12)*Math.cos(am))+" y="+(Y+(R+12)*Math.sin(am)+4)+" text-anchor=middle fill='"+it.c+"' font-size=12>"+E(it.lb)+"</text>"}}
     else if(it.k==="impl"){   /* marching squares */
       var NX=140,NY=Math.round(140*H/W),o2="",F=it.F,v=[];
       for(var i2=0;i2<=NX;i2++){v[i2]=[];for(var k=0;k<=NY;k++)v[i2][k]=F(X0+(X1-X0)*i2/NX,Y0+(Y1-Y0)*k/NY)}
@@ -177,23 +187,59 @@ function svg(spec){
     else if(it.k==="cpt"){g+="<line x1="+sx(0)+" y1="+sy(0)+" x2="+sx(it.p[0])+" y2="+sy(it.p[1])+" stroke='"+it.c+"' stroke-width=2.2 marker-end='url(#figA)'/><line x1="+sx(it.p[0])+" y1="+sy(it.p[1])+" x2="+sx(it.p[0])+" y2="+sy(0)+" stroke='"+it.c+"' stroke-dasharray='3 3'/><line x1="+sx(it.p[0])+" y1="+sy(it.p[1])+" x2="+sx(0)+" y2="+sy(it.p[1])+" stroke='"+it.c+"' stroke-dasharray='3 3'/>";label(it.p,it.n,it.c)}
     else if(it.k==="text")lab+="<text x="+sx(it.p[0])+" y="+sy(it.p[1])+" fill='"+it.c+"' font-size=12>"+E(it.n)+"</text>";
   }catch(e){errs.push(typeof e==="string"?e:"គូរមិនបាន")}});
-  items.forEach(function(it){if(it.k==="pt"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=3.6 fill='"+it.c+"'/>";label(it.p,it.n,it.c)}});
+  items.forEach(function(it){if(it.k==="pt"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=3.6 fill='"+it.c+"'/>";label(it.p,it.n,it.c)}
+    if(it.k==="hole"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=4 fill=#fff stroke='"+it.c+"' stroke-width=2 />";label(it.p,it.n,it.c)}});
   return"<div class=fig>"+g+lab+"</svg>"+(errs.length?"<div class=fig-err>⚠️ "+errs.map(E).join(" · ")+"</div>":"")+"</div>";
 }
 var TPL=[
-  ["ក្រាបអនុគមន៍","y=x^2-2x-3"],
-  ["អនុគមន៍សនិទាន + អាស៊ីមតូត","y=(2x+1)/(x-1)\nx=1\nasym y=2"],
-  ["ផ្ទៃក្រោមខ្សែកោង (អាំងតេក្រាល)","y=x^2\narea y=x^2 [0,2]"],
-  ["ផ្ទៃរវាងខ្សែកោងពីរ","y=x\ny=x^2\narea y=x | y=x^2 [0,1]"],
-  ["បន្ទាត់ប៉ះ","y=x^3-3x\ntangent y=x^3-3x at 2 red"],
-  ["អិចស្ប៉ូណង់ស្យែល / លោការីត","y=exp(x)\ny=ln(x) red\ny=x gray"],
-  ["អេលីប","x^2/9+y^2/4=1\nF1(-2.24,0)\nF2(2.24,0)"],
-  ["អ៊ីពែបូល","x^2/4-y^2=1\ndash y=x/2\ndash y=-x/2"],
-  ["ប៉ារ៉ាបូល","y^2=4x\nF(1,0)\nx=-1"],
-  ["ប្លង់កុំផ្លិច","complex z1=2+i z2=-1+3i"],
-  ["ឫសកុំផ្លិច (រង្វង់)","complex w0=2 w1=-1+1.73i w2=-1-1.73i\ncircle O 2 gray"],
-  ["ត្រីកោណ + រង្វង់","A(0,0)\nB(4,0)\nC(1,3)\npoly A B C\ncircle (2,1) 2.24 gray"],
-  ["វ៉ិចទ័រ","A(1,1)\nB(4,3)\nvec A B red\nvec O A"]
+  ["បន្ទាត់ y=ax+b","y=2x-1\nA(0,-1)\nB(0.5,0)","អនុគមន៍"],
+  ["ប៉ារ៉ាបូល (កំពូល · ឫស)","y=x^2-2x-3\nS(1,-4)\nA(-1,0)\nB(3,0)\ndash x=1","អនុគមន៍"],
+  ["ពហុធាដឺក្រេ ៣","y=x^3-3x+1","អនុគមន៍"],
+  ["អនុគមន៍សនិទាន + អាស៊ីមតូត","y=(2x+1)/(x-1)\nx=1\nasym y=2","អនុគមន៍"],
+  ["អាស៊ីមតូតទ្រេត","y=(x^2+1)/x\nx=0\ndash y=x","អនុគមន៍"],
+  ["តម្លៃដាច់ខាត","y=abs(x-1)-2","អនុគមន៍"],
+  ["ឫសការេ","y=sqrt(x+2) [-2,8]\nA(-2,0)","អនុគមន៍"],
+  ["អនុគមន៍ជាដុំៗ","y=x+1 [-4,1]\ny=-x+5 [1,5] red\nA(1,2)\nhole (1,4) red","អនុគមន៍"],
+  ["ក្រាបពីរ + ចំណុចប្រសព្វ","y=x^2\ny=x+2 red\nA(-1,1)\nB(2,4)","អនុគមន៍"],
+  ["e^x និង ln x (ឆ្លុះនឹង y=x)","y=exp(x)\ny=ln(x) red\ny=x gray","អិចស្ប៉ូណង់ស្យែល · លោការីត"],
+  ["ការលូតលាស់/ការថយ","y=2^x\ny=(1/2)^x red\nA(0,1)","អិចស្ប៉ូណង់ស្យែល · លោការីត"],
+  ["ln x និងអាស៊ីមតូត","y=ln(x)\nx=0\nA(1,0)\nB(2.718,1)","អិចស្ប៉ូណង់ស្យែល · លោការីត"],
+  ["sin និង cos","y=sin(x)\ny=cos(x) red\nwindow x=-6.3..6.3 y=-1.6..1.6","ត្រីកោណមាត្រ"],
+  ["tan និងអាស៊ីមតូត","y=tan(x)\nx=1.571\nx=-1.571\nwindow x=-4.7..4.7 y=-4..4","ត្រីកោណមាត្រ"],
+  ["រង្វង់ត្រីកោណមាត្រ","circle O 1 gray\nM(0.71,0.71)\nvec O M\nA(1,0)\nangle A O M α\ndash x=0.71\nwindow x=-1.5..1.5 y=-1.5..1.5","ត្រីកោណមាត្រ"],
+  ["ចំណុចចំហ (រន្ធ)","y=x+1\nhole (1,2)","លីមីត · ភាពជាប់"],
+  ["លោតដាច់ (ឆ្វេង/ស្ដាំ)","y=x [-3,1]\ny=x+2 [1,4] red\nhole (1,1)\nA(1,3)","លីមីត · ភាពជាប់"],
+  ["លីមីតនៅអនន្ត","y=1/x+1\nasym y=1\nx=0","លីមីត · ភាពជាប់"],
+  ["បន្ទាត់ប៉ះ","y=x^3-3x\ntangent y=x^3-3x at 2 red","ដេរីវេ"],
+  ["បន្ទាត់ប៉ះ + កែង","y=x^2\ntangent y=x^2 at 1 red\nnormal y=x^2 at 1 green\nwindow x=-3..4 y=-1..5","ដេរីវេ"],
+  ["អតិបរមា · អប្បបរមា","y=x^3-3x\nM(-1,2)\nm(1,-2)\ndash y=2\ndash y=-2","ដេរីវេ"],
+  ["ចំណុចរបត់","y=x^3-3x^2+2\nI(1,0)\ntangent y=x^3-3x^2+2 at 1 red","ដេរីវេ"],
+  ["ផ្ទៃក្រោមខ្សែកោង","y=x^2\narea y=x^2 [0,2]","អាំងតេក្រាល"],
+  ["ផ្ទៃរវាងខ្សែកោងពីរ","y=x\ny=x^2\narea y=x | y=x^2 [0,1]","អាំងតេក្រាល"],
+  ["ផ្ទៃក្រោមអ័ក្ស (សញ្ញា −)","y=x^2-4\narea y=x^2-4 [-2,2] red","អាំងតេក្រាល"],
+  ["ផ្ទៃ e^x","y=exp(x)\narea y=exp(x) [0,1]","អាំងតេក្រាល"],
+  ["ស្វ៊ីត uₙ=1/n","dots y=1/x [1,10]\nasym y=0\nwindow x=0..11 y=-0.2..1.2","ស្វ៊ីត"],
+  ["ស្វ៊ីតនព្វន្ត/ធរណីមាត្រ","dots y=2x+1 [0,6]\ndots y=2^x [0,4] red","ស្វ៊ីត"],
+  ["រង្វង់ (x−a)²+(y−b)²=r²","(x-1)^2+(y-2)^2=4\nI(1,2)","កោនិក"],
+  ["អេលីប (អ័ក្សធំ Ox)","x^2/9+y^2/4=1\nF1(-2.24,0)\nF2(2.24,0)","កោនិក"],
+  ["អេលីប (អ័ក្សធំ Oy)","x^2/4+y^2/9=1\nF1(0,-2.24)\nF2(0,2.24)","កោនិក"],
+  ["អ៊ីពែបូល + អាស៊ីមតូត","x^2/4-y^2=1\ndash y=x/2\ndash y=-x/2","កោនិក"],
+  ["ប៉ារ៉ាបូល y²=4px","y^2=4x\nF(1,0)\nx=-1","កោនិក"],
+  ["ប៉ារ៉ាបូល x²=4py","x^2=4y\nF(0,1)\nasym y=-1","កោនិក"],
+  ["ចំណុចលើប្លង់","complex z1=2+i z2=-1+3i","ចំនួនកុំផ្លិច"],
+  ["ផលបូក (ប្រលេឡូក្រាម)","complex z1=3+i z2=1+2i S=4+3i\nseg z1 S gray\nseg z2 S gray","ចំនួនកុំផ្លិច"],
+  ["កុំផ្លិចឆ្លាស់","complex z=2+1.5i w=2-1.5i","ចំនួនកុំផ្លិច"],
+  ["ម៉ូឌុល និងអាគុយម៉ង់","complex z=2+2i\nA(1,0)\nangle A O z θ\ncircle O 2.83 gray","ចំនួនកុំផ្លិច"],
+  ["ឫសទី ៣ (ត្រីកោណសម័ង្ស)","complex w0=2 w1=-1+1.73i w2=-1-1.73i\ncircle O 2 gray\npoly w0 w1 w2","ចំនួនកុំផ្លិច"],
+  ["ឫសទី ៤ (ការេ)","complex w0=1.41+1.41i w1=-1.41+1.41i w2=-1.41-1.41i w3=1.41-1.41i\ncircle O 2 gray\npoly w0 w1 w2 w3","ចំនួនកុំផ្លិច"],
+  ["ត្រីកោណ + រង្វង់ចារឹកក្រៅ","A(0,0)\nB(4,0)\nC(1,3)\npoly A B C\ncircle (2,1) 2.24 gray","ធរណីមាត្រ"],
+  ["ត្រីកោណកែង","A(0,0)\nB(4,0)\nC(0,3)\npoly A B C\nangle B A C 90°","ធរណីមាត្រ"],
+  ["ប្រលេឡូក្រាម","A(0,0)\nB(4,0)\nC(5,2)\nD(1,2)\npoly A B C D\nseg A C gray\nseg B D gray","ធរណីមាត្រ"],
+  ["រង្វង់ + បន្ទាត់ប៉ះ","circle O 2\nT(1.41,1.41)\nseg O T gray\nline T (2.83,0) red","ធរណីមាត្រ"],
+  ["ចម្ងាយពីចំណុចទៅបន្ទាត់","y=x/2+1\nM(3,0)\nH(1.4,1.7)\nseg M H red\nangle M H (3,2.5)","ធរណីមាត្រ"],
+  ["វ៉ិចទ័រ AB","A(1,1)\nB(4,3)\nvec A B red\nvec O A","វ៉ិចទ័រ"],
+  ["ផលបូកវ៉ិចទ័រ","A(3,1)\nB(1,2)\nC(4,3)\nvec O A\nvec O B red\nvec O C green\nseg A C gray\nseg B C gray","វ៉ិចទ័រ"],
+  ["វ៉ិចទ័រកែងគ្នា","A(2,1)\nB(-1,2)\nvec O A\nvec O B red\nangle A O B 90°","វ៉ិចទ័រ"]
 ];
 window.FIG={svg:svg,parse:parse,TPL:TPL};
 })();
