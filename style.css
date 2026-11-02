@@ -697,3 +697,8 @@ body.mon .snav,body.mon #tabs,body.mon #fnav,body.mon .floating-nav,body.mon .gs
 body.mon label[for=pt],body.mon #pt,body.mon label[for=pc],body.mon #pc,body.mon #ogSeg,body.mon #ogOrgCtl,body.mon label[for=ogT],body.mon #ogT,body.mon label[for=ogC],body.mon #ogC,
 body.mon #p14>.bar,body.mon #cxBody,body.mon #p14>.note,body.mon #btnBackup,body.mon #btnProf,body.mon #btnSet,body.mon #btnPass,body.mon #btnRestore{display:none!important}
 body.mon main{margin-left:auto!important}
+/* ថ្នាក់ទាំងអស់ (ទិន្នន័យរួម) */
+.px-dup{font-size:.78rem;color:var(--danger);margin-top:2px}
+.px-list{columns:3 200px;margin:4px 0;padding-left:28px}
+.px-list li{padding:1px 0;break-inside:avoid}
+.px-list li.f::marker{color:#c2417a}.px-list li.m::marker{color:#2f6fd0}

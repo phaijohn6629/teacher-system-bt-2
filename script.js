@@ -1105,8 +1105,11 @@ function renderP(){
   $("pmo").innerHTML=MK.map(function(m,i){return"<option value="+i+(i===pmo?" selected":"")+">"+m+"</option>"}).join("");
   $("pmo").hidden=pv!==2;
   [].forEach.call($("pseg").children,function(b){b.setAttribute("aria-selected",+b.dataset.pv===pv)});
+  ["pt","pc","pim","ptpl","pex"].forEach(function(id){$(id).style.display=pv===3?"none":""});
+  [].forEach.call(document.querySelectorAll("label[for=pt],label[for=pc]"),function(l){l.style.display=pv===3?"none":""});
+  if(pv===3){renderPAll();return}
   var c=cl[rc],ro=!canM(),b="";
-  if(!c){$("ptb").innerHTML="<tbody><tr><td class=empty>មិនទាន់មានថ្នាក់ទេ។</td></tr></tbody>";return}
+  if(!c){$("ptb").innerHTML="<tbody><tr><td class=empty>មិនទាន់មានថ្នាក់ទេ។</td></tr></tbody>";abSum(null);return}
   if(pv===1){
     c.st.forEach(function(s,i){
       var a=abp(s,3);
@@ -1127,6 +1130,44 @@ function renderP(){
   }
   abSum(c);
 }
+/* ថ្នាក់ទាំងអស់៖ ទិន្នន័យរួមពីគ្រប់គ្រូ · ថ្នាក់ដែលគ្រូច្រើននាក់បញ្ចូលស្ទួន → រាប់តែមួយ (យកបញ្ជីដែលមានសិស្សច្រើនជាងគេ) */
+var pxOpen={};
+function pkey(n){return String(n||"").toUpperCase().replace(/\s+/g,"")}
+function pxGroups(){
+  var G={};
+  Object.keys(rs.c||{}).forEach(function(tid){(rs.c[tid]||[]).forEach(function(c){
+    var k=pkey(c&&c.n);if(!k)return;(G[k]=G[k]||{k:k,src:[]}).src.push({t:tid,c:c});
+  })});
+  return Object.keys(G).map(function(k){
+    var g=G[k];g.src.sort(function(a,b){return b.c.st.length-a.c.st.length});
+    g.main=g.src[0];g.dup=g.src.slice(1);g.n=g.main.c.n;
+    var st=g.main.c.st;g.tot=st.length;g.m=st.filter(function(s){return s.g==="ប្រុស"}).length;g.f=st.filter(function(s){return s.g==="ស្រី"}).length;
+    return g;
+  }).sort(function(a,b){return(parseInt(a.n)||99)-(parseInt(b.n)||99)||a.n.localeCompare(b.n)});
+}
+function renderPAll(){
+  var L=pxGroups(),T=0,Mb=0,F=0,nc=0,nd=0,b="",gr=null;
+  L.forEach(function(g){if(g.tot)nc++;T+=g.tot;Mb+=g.m;F+=g.f;nd+=g.dup.length});
+  function tn(id){return esc(teacherOf(id).name||id)}
+  L.forEach(function(g){
+    var gd=parseInt(g.n)||0;
+    if(gd!==gr){gr=gd;var sub=L.filter(function(x){return(parseInt(x.n)||0)===gd}),st=sub.reduce(function(a,x){return a+x.tot},0);
+      b+="<tr class=tr><td colspan=6>"+(gd?"ថ្នាក់ទី"+kn(gd):"ផ្សេងៗ")+" · "+kn(sub.length)+" ថ្នាក់ · "+kn(st)+" នាក់</td></tr>"}
+    var op=pxOpen[g.k];
+    b+="<tr><td class=nm>"+esc(g.n)+"</td><td><b>"+kn(g.tot)+"</b></td><td>"+kn(g.m)+"</td><td>"+kn(g.f)+"</td><td>"+tn(g.main.t)+
+      (g.dup.length?"<div class=px-dup>⚠️ ស្ទួន (មិនរាប់)៖ "+g.dup.map(function(d){return tn(d.t)+" ("+kn(d.c.st.length)+" នាក់)"}).join(" · ")+"</div>":"")+"</td>"+
+      "<td>"+(g.tot?"<button type=button data-px='"+esc(g.k)+"'>"+(op?"🔼 បិទ":"👁️ មើលសិស្ស")+"</button>":"<span class=note>គ្មានសិស្ស</span>")+"</td></tr>";
+    if(op&&g.tot)b+="<tr class=px-row><td colspan=6><ol class=px-list>"+g.main.c.st.map(function(s){return"<li class='"+(s.g==="ស្រី"?"f":s.g==="ប្រុស"?"m":"")+"'>"+esc(s.n)+"</li>"}).join("")+"</ol></td></tr>";
+  });
+  $("ptb").innerHTML="<thead><tr><th>ថ្នាក់</th><th>សិស្សសរុប</th><th>ប្រុស</th><th>ស្រី</th><th>បញ្ចូលដោយគ្រូ</th><th></th></tr></thead><tbody>"+(b||"<tr><td colspan=6 class=empty>មិនទាន់មានគ្រូណាបញ្ចូលសិស្សទេ។</td></tr>")+"</tbody>";
+  var el=$("pabs");el.hidden=false;
+  el.innerHTML="<h3>📚 ទិន្នន័យសិស្សរួម (គ្រប់គ្រូ · គ្រប់ថ្នាក់)</h3><div class=ab-sts>"+
+    "<div class='ab-st ab-exc'><b>"+kn(nc)+"</b><span>ថ្នាក់ដែលមានសិស្ស</span></div><div class='ab-st ab-ok'><b>"+kn(T)+"</b><span>សិស្សសរុប (នាក់)</span></div>"+
+    "<div class='ab-st ab-exc'><b>"+kn(Mb)+"</b><span>ប្រុស</span></div><div class='ab-st ab-une'><b>"+kn(F)+"</b><span>ស្រី</span></div></div>"+
+    (nd?"<p class=note style='margin:10px 0 0'>⚠️ មាន "+kn(nd)+" បញ្ជីថ្នាក់ដែលគ្រូបញ្ចូលស្ទួនគ្នា — រាប់តែបញ្ជីមួយ (បញ្ជីដែលមានសិស្សច្រើនជាងគេ) ហើយមិនលុបទិន្នន័យរបស់គ្រូណាម្នាក់ទេ។</p>":"");
+  $("pnote").textContent="💡 ទិន្នន័យនេះរួមបញ្ចូលថ្នាក់ដែលគ្រូទាំងអស់បានបញ្ចូល។ ចុច «👁️ មើលសិស្ស» ដើម្បីមើលបញ្ជីឈ្មោះ។ ការកែបញ្ជីសិស្ស ធ្វើនៅផ្ទាំង «បញ្ជីសិស្ស» របស់គ្រូម្ចាស់ថ្នាក់។";
+}
+$("ptb").addEventListener("click",function(e){var b=e.target.closest("[data-px]");if(b){pxOpen[b.dataset.px]=!pxOpen[b.dataset.px];renderPAll()}});
 /* អវត្តមាន៖ s.ab[ខែ] = [ច្បាប់, ឥតច្បាប់, មកយឺត] */
 var ABK=[{i:2,t:"មកយឺត",ic:"⏰",c:"late"},{i:0,t:"ច្បាប់",ic:"📝",c:"exc"},{i:1,t:"ឥតច្បាប់",ic:"❌",c:"une"}];
 function abCell(i,k,v,ro){

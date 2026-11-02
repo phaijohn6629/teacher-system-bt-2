@@ -97,7 +97,7 @@ var busy=false,showPw={};
 function box(){
   var el=$("monBox");if(!el)return;
   var c=curCls();
-  if(isMon()||!c||!canM()||!window.db){el.innerHTML="";return}
+  if(isMon()||pv===3||!c||!canM()||!window.db){el.innerHTML="";return}
   var k=mkey(rt,c.n),d=mcd.r[k],h="<div class=mon-box><div class=mon-h>👤 គណនីប្រធានថ្នាក់ <b>"+esc(c.n)+"</b></div>";
   if(!d){
     h+="<p>ប្រធានថ្នាក់អាចចូលស្រង់អត្ថបទ បញ្ចូលវត្តមាន និងរៀបប្លង់តុ នៃថ្នាក់នេះ (មិនអាចមើល ឬកែពិន្ទុ និងទិន្នន័យផ្សេងទៀតទេ)។ មួយថ្នាក់មានបានតែ ១ គណនី។</p>"+
