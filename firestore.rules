@@ -242,6 +242,21 @@ service cloud.firestore {
         && request.resource.data.q is string && request.resource.data.q.size() < 30000;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
+    // រូបភាពលំហាត់ (ធនាគារ)៖ doc ID = ដូច qbq · គ្រូទាំងអស់អាន · ម្ចាស់ ឬ Admin សរសេរ
+    match /qimg/{id} {
+      allow read: if active();
+      allow create, update: if (isAdmin() || isOwner(request.resource.data.o))
+        && id.split('_')[0] == request.resource.data.o
+        && request.resource.data.d is string && request.resource.data.d.size() < 900000;
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
+    // រូបភាពក្នុងតេស្ត៖ doc ID = "<តេស្ត>_<លំហាត់>" · សិស្សអានបានពេលតេស្តបើក (គ្មាន Login)
+    match /timg/{id} {
+      allow get: if active() || get(/databases/$(database)/documents/tests/$(resource.data.t)).data.open == true;
+      allow create, update: if (isAdmin() || isOwner(request.resource.data.o))
+        && request.resource.data.d is string && request.resource.data.d.size() < 900000;
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
     // វិញ្ញាសា (គ្មានចម្លើយ)៖ សិស្សអានបានដោយគ្មាន Login តែពេលកំពុងបើក
     // កំណត់ហេតុប្រជុំបច្ចេកទេស៖ គ្រប់គ្រូអានបាន · អ្នកកត់ត្រា (o) ឬ Admin កែ/លុប
     match /mt/{id} {

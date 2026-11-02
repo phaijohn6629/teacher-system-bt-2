@@ -755,3 +755,11 @@ dialog.ls-ed{width:min(1280px,98vw);max-height:96vh}
 .lse-pv{flex:1;min-height:300px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px;font-size:14px}
 dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-end;padding:10px 16px;border-top:1px solid var(--line)}dialog.ls-ed .dlgf .note{margin:0 auto 0 0}
 @media (max-width:860px){.lse-wrap{grid-template-columns:1fr;overflow:auto}.lse-pv{min-height:240px}}
+/* រូបលំហាត់ (fig.js) · រូបភាព */
+.fig{margin:8px 0}.fig-svg{display:block;max-width:min(420px,100%);height:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.fig-err{color:var(--danger);font-size:.8rem;margin-top:3px}
+.qz-im{margin:8px 0}.qz-im img{display:block;max-width:min(420px,100%);border-radius:10px;border:1px solid var(--line)}
+.qd-fig textarea{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem}.qd-fig label{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.qd-fig select{width:auto;margin:0}
+.qd-imr{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.qd-imp img{max-height:90px;border-radius:8px;border:1px solid var(--line)}
+.qd-file{display:inline-block;padding:6px 12px;border:1px dashed var(--brand);border-radius:8px;cursor:pointer;color:var(--brand);font-weight:600}.qd-file input{display:none}
+.qd-imr button{margin:0}

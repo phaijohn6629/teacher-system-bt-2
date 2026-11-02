@@ -23,6 +23,7 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 .btn:disabled{opacity:.5}
 .q{border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;background:#fff}
 .q.done{border-color:#c4b5fd}
+.fig,.qim{margin:10px 0;text-align:center}.fig svg,.qim img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)}.fig svg{max-width:420px}.fig-err{color:#b3372d;font-size:13px}
 .qn{font-size:.8rem;font-weight:700;color:var(--brand);margin-bottom:4px}
 .qt{font-size:1rem;margin-bottom:8px}
 .ch{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;margin-top:8px;cursor:pointer;transition:all .15s}
@@ -42,6 +43,7 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 <div class="wrap" id="app"><div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="fig.js?v=2"></script>
 <script type="module">
 /* ទំព័រសិស្សធ្វើតេស្ត (គ្មាន Login)៖ អាន tests/{id} · ផ្ញើ subs/{id}_{សិស្ស} តែម្ដង */
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -77,13 +79,15 @@ function take(){
   const r=rng(id+"|"+me.k),items=shuffle(T.items,r);t0=Date.now();
   let h=`<div class=bar><span>${esc(me.n)}</span><div class=prog><i id=pg></i></div><span id=cnt></span>${T.dur?"<span class=timer id=tm></span>":""}</div>`;
   items.forEach((q,i)=>{
-    h+=`<div class=q id="q_${q.id}"><div class=qn>លំហាត់ទី${kn(i+1)}</div><div class=qt>${tx(q.q)}</div>`;
+    h+=`<div class=q id="q_${q.id}"><div class=qn>លំហាត់ទី${kn(i+1)}</div><div class=qt>${tx(q.q)}</div>${q.fg&&window.FIG?FIG.svg(q.fg):""}${q.im?`<div class=qim data-im="${esc(q.id)}">🖼️ …</div>`:""}`;
     if(q.t==="mc"){const ord=shuffle(q.ch.map((c,j)=>j).filter(j=>q.ch[j]),r);
       h+=ord.map((j,x)=>`<label class=ch><input type=radio name="a_${q.id}" value=${j}${String(ans[q.id])===String(j)?" checked":""}><b>${"កខគឃ"[x]}.</b><span>${tx(q.ch[j])}</span></label>`).join("")}
     else h+=`<input class=num inputmode=decimal name="a_${q.id}" placeholder="សរសេរចម្លើយ (លេខ)" value="${esc(ans[q.id]??"")}">`;
     h+="</div>"});
   h+=`<button class=btn id=sub>📤 ផ្ញើចម្លើយ</button><p class=note style="text-align:center">ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ ទោះបិទទំព័រក៏មិនបាត់ (រហូតដល់ផ្ញើ)</p>`;
   app.innerHTML=h;math(app);prog();
+  /* រូបភាពលំហាត់ (timg/{តេស្ត}_{លំហាត់}) */
+  app.querySelectorAll("[data-im]").forEach(el=>{getDoc(doc(db,"timg",id+"_"+el.dataset.im)).then(d=>{el.innerHTML=d.exists()?`<img src="${d.data().d}" alt="">`:""}).catch(()=>{el.innerHTML=""})});
   app.oninput=app.onchange=e=>{const n=e.target.name;if(!n||!n.startsWith("a_"))return;ans[n.slice(2)]=e.target.value;
     try{localStorage.setItem("ans_"+id+"_"+me.k,JSON.stringify(ans))}catch(x){}prog()};
   $("sub").onclick=()=>{const left=T.items.filter(q=>ans[q.id]==null||ans[q.id]==="").length;

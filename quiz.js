@@ -54,7 +54,24 @@ function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/
 /* ធនាគារលំហាត់៖ តាមដានផ្ទាល់ (onSnapshot) តែថ្នាក់ដែលកំពុងប្រើ · qb = {ID គ្រូ:[លំហាត់]} (គណនាពីឯកសារ qbq/ + ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ) */
 var QD={},LEG={},qgP={},qgU={},qbErr="",legP=null,GR=[7,8,9,10,11,12];
 function qid(o,id){return o+"_"+id}
-function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;return q}
+function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;if(v.fg)q.fg=v.fg;if(v.im)q.im=true;return q}
+/* រូបភាពលំហាត់៖ qimg/{ID គ្រូ}_{id} = {o, d:dataURL} (ទាញតែពេលបង្ហាញ · ចងចាំក្នុង QIM) */
+var QIM={};
+function qimg(k){
+  if(QIM[k])return QIM[k];
+  QIM[k]=FB.getDoc(FB.doc(db,"qimg",k)).then(function(d){return d.exists()?d.data().d:""},function(){delete QIM[k];return""});
+  return QIM[k];
+}
+function figHtml(q,k){return(q.fg&&window.FIG?FIG.svg(q.fg):"")+(q.im?"<div class=qz-im data-qim='"+esc(k)+"'><span class=note>🖼️ កំពុងផ្ទុករូប…</span></div>":"")}
+function loadImgs(el){[].forEach.call(el.querySelectorAll("[data-qim]"),function(b){qimg(b.dataset.qim).then(function(u){b.innerHTML=u?"<img src='"+u+"' alt=''>":"<span class=note>⚠️ រកមិនឃើញរូប</span>"})})}
+/* រូបភាព → JPEG (ទទឹងអតិបរមា ៩០០px · ≤ ~២៥០KB) */
+function shrinkImg(f,cb){
+  var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
+    var w=Math.min(900,im.width),h=Math.round(im.height*w/im.width),c=document.createElement("canvas");c.width=w;c.height=h;
+    var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+    var q=.85,u=c.toDataURL("image/jpeg",q);while(u.length>250000&&q>.35){q-=.1;u=c.toDataURL("image/jpeg",q)}cb(u);
+  };im.onerror=function(){alert("ឯកសារនេះមិនមែនជារូបភាពទេ")};im.src=r.result};r.readAsDataURL(f);
+}
 function rebuild(){
   var o={};
   Object.keys(QD).forEach(function(k){var x=QD[k];(o[x.o]=o[x.o]||[]).push(x.q)});
@@ -101,7 +118,7 @@ function ensureG(gs){
 }
 function ready(gs){return gs.every(function(g){return qgP[g]&&qgP[g].ok})&&!!(legP&&legP.ok)}
 function needG(){return QV==="bank"?(fG?[fG]:GR):QV==="make"?(function(){var c=myClasses(mk.tid||who.id)[mk.ci||0],g=c?parseInt(c.n):0;return g?[g]:[]})():[]}
-function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;return d}
+function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;if(q.fg)d.fg=q.fg;if(q.im)d.im=true;return d}
 function saveQ(o,q){return FB.setDoc(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q)).catch(function(e){alert("មិនអាចរក្សាទុកលំហាត់បានទេ · "+qErr(e));throw e})}
 function saveMany(o,list){
   var ch=[];for(var i=0;i<list.length;i+=400)ch.push(list.slice(i,i+400));
@@ -112,6 +129,7 @@ function delQ(o,id){
   var k=qid(o,id);
   var leg=!!(LEG[o]&&LEG[o].some(function(q){return q.id===id}));
   /* លុបជានិច្ច (លំហាត់ដែលទើបផ្ទេរ អាចមិនទាន់មកដល់ QD) · លំហាត់ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ → មិនទាន់មានក្នុង qbq (កំហុសគ្មានសិទ្ធិ = ធម្មតា) */
+  if(QD[k]&&QD[k].q.im)FB.deleteDoc(FB.doc(db,"qimg",k)).catch(function(){});
   return FB.deleteDoc(FB.doc(db,"qbq",k)).catch(function(e){if(!leg){alert("មិនអាចលុបបានទេ · "+qErr(e));throw e}}).then(function(){
     delete QD[k];if(leg)LEG[o]=LEG[o].filter(function(q){return q.id!==id});rebuild();
   });
@@ -134,11 +152,11 @@ function renderBank(){
     var own=q.by===who.id||isAdm();
     return"<div class=qz-q><div class=qz-qh><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span><span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
       (own?"<button type=button data-qe='"+q.by+"|"+q.id+"'>✏️</button><button type=button class=danger data-qd='"+q.by+"|"+q.id+"'>🗑️</button>":"")+"</div>"+
-      "<div class=qz-qt>"+tx(q.q)+"</div>"+
+      "<div class=qz-qt>"+tx(q.q)+"</div>"+figHtml(q,qid(q.by,q.id))+
       (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"+
       (more>0?"<button type=button class=qz-more data-qa=more>⬇️ បង្ហាញបន្ថែម ("+kn(Math.min(more,QB_PAGE))+" ក្នុងចំណោម "+kn(more)+" នៅសល់)</button>":"")
     :"<p class=note>មិនទាន់មានលំហាត់ទេ។ ចុច «＋ បន្ថែមលំហាត់» ដើម្បីចាប់ផ្ដើម។</p>";
-  $("qzBody").innerHTML=h;math($("qzBody"));
+  $("qzBody").innerHTML=h;math($("qzBody"));loadImgs($("qzBody"));
 }
 function qDialog(q){
   var d=$("qzDlg");
@@ -151,18 +169,33 @@ function qDialog(q){
     "<div><label>កម្រិត</label><select id=qdV>"+[1,2,3].map(function(v){return"<option value="+v+(v===q.lv?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select></div>"+
     "<div><label>ប្រភេទ</label><select id=qdT><option value=mc"+(q.t==="mc"?" selected":"")+">ជ្រើសរើសចម្លើយ (ក ខ គ ឃ)</option><option value=num"+(q.t==="num"?" selected":"")+">ចម្លើយជាលេខ</option></select></div>"+
     "<div class=full><label>សំណួរ (LaTeX ក្នុង $…$)</label><textarea id=qdQ rows=3 placeholder='ឧ. គណនា $\\int_0^1 x^2\\,dx$'>"+esc(q.q)+"</textarea></div>"+
+    "<div class='full qd-fig'><label>📈 រូបគូរស្វ័យប្រវត្តិ (ទុកទទេ = គ្មាន) <select id=qdFT><option value=''>＋ គំរូ…</option>"+(window.FIG?FIG.TPL.map(function(t,i){return"<option value="+i+">"+esc(t[0])+"</option>"}).join(""):"")+"</select> <a href='#' id=qdFH>❔ របៀបសរសេរ</a></label>"+
+      "<textarea id=qdF rows=3 spellcheck=false placeholder='ឧ. y=x^2-2x-3  ·  area y=x^2 [0,2]  ·  complex z1=1+i  ·  A(0,0) B(4,0) C(1,3) poly A B C'>"+esc(q.fg||"")+"</textarea>"+
+      "<div id=qdFHelp class=note hidden>មួយបន្ទាត់មួយពាក្យបញ្ជា៖ <code>y=…</code> ក្រាប · <code>y=… [a,b]</code> តែលើចន្លោះ · <code>area y=f [a,b]</code> ផ្ទៃ · <code>area y=f | y=g [a,b]</code> ផ្ទៃរវាងខ្សែកោង · <code>tangent y=f at 1</code> បន្ទាត់ប៉ះ · <code>x=1</code> ឬ <code>asym y=2</code> បន្ទាត់ដាច់ៗ · <code>x^2/9+y^2/4=1</code> សមីការខ្សែកោង · <code>A(1,2)</code> ចំណុច · <code>seg A B</code> <code>line A B</code> <code>vec A B</code> <code>poly A B C</code> <code>circle A 2</code> · <code>complex z1=1+i</code> · <code>text (1,2) ស្លាក</code> · <code>window x=-4..6 y=-3..5</code> · ពណ៌នៅចុងបន្ទាត់៖ red blue green orange purple gray</div></div>"+
+    "<div class='full qd-img'><label>🖼️ រូបភាព (ជ្រើស ឬ Ctrl+V បិទភ្ជាប់រូបថតអេក្រង់)</label><div class=qd-imr><div id=qdIm class=qd-imp></div><label class=qd-file>📷 ជ្រើសរូប<input type=file accept='image/*' id=qdIF></label><button type=button id=qdIX class=danger hidden>✕ ដករូប</button></div></div>"+
     "<div class=full id=qdMC"+(q.t==="mc"?"":" hidden")+"><label>ជម្រើស (ចុចរង្វង់ = ចម្លើយត្រូវ)</label>"+[0,1,2,3].map(function(i){return"<div class=qd-ch><input type=radio name=qdA value="+i+(q.t==="mc"&&+q.a===i?" checked":"")+"><b>"+"ABCD"[i]+".</b><input id=qdC"+i+" value='"+esc((q.ch||[])[i]||"")+"'></div>"}).join("")+"</div>"+
     "<div class=full id=qdNUM"+(q.t==="num"?"":" hidden")+"><label>ចម្លើយត្រឹមត្រូវ (លេខ ឧ. 2.5 ឬ 1/3)</label><input id=qdN value='"+esc(q.t==="num"?q.a:"")+"'></div>"+
     "<div class=full><label>មើលជាមុន</label><div id=qdP class=qz-prev></div></div></div>"+
     "<div class=dlgf><button type=button id=qdX>បោះបង់</button><button type=button class=primary id=qdS>រក្សាទុក</button></div></form>";
+  var img=null,imgCh=false,k0=q.id?qid(q.by||who.id,q.id):"";
+  function imShow(){$("qdIm").innerHTML=img?"<img src='"+img+"' alt=''>":"<span class=note>គ្មានរូប</span>";$("qdIX").hidden=!img;prev()}
+  if(q.im&&k0){setTimeout(function(){qimg(k0).then(function(u){if(!imgCh){img=u||null;imShow()}})},0)}
+  function setImg(f){shrinkImg(f,function(u){img=u;imgCh=true;imShow()})}
   function prev(){
-    var t=$("qdT").value,h="<div class=qz-qt>"+tx($("qdQ").value)+"</div>";
+    var t=$("qdT").value,h="<div class=qz-qt>"+tx($("qdQ").value)+"</div>"+(window.FIG?FIG.svg($("qdF").value):"")+(img?"<div class=qz-im><img src='"+img+"' alt=''></div>":"");
     if(t==="mc")h+="<ol class=qz-ch type=A>"+[0,1,2,3].map(function(i){var ck=d.querySelector("input[name=qdA]:checked");return"<li"+(ck&&+ck.value===i?" class=ok":"")+">"+tx($("qdC"+i).value)+"</li>"}).join("")+"</ol>";
     else h+="<div class=qz-num>ចម្លើយ៖ <b>"+tx($("qdN").value)+"</b></div>";
     $("qdP").innerHTML=h;math($("qdP"));
   }
   var pt=0;d.oninput=function(){clearTimeout(pt);pt=setTimeout(prev,250)};
+  d.onpaste=function(e){var it=[].filter.call((e.clipboardData||{}).items||[],function(x){return/^image\//.test(x.type)})[0];if(it){e.preventDefault();setImg(it.getAsFile())}};
+  d.onclick=function(e){
+    if(e.target.id==="qdFH"){e.preventDefault();$("qdFHelp").hidden=!$("qdFHelp").hidden}
+    if(e.target.id==="qdIX"){img=null;imgCh=true;imShow()}
+  };
   d.onchange=function(e){
+    if(e.target.id==="qdIF"&&e.target.files[0]){setImg(e.target.files[0]);e.target.value="";return}
+    if(e.target.id==="qdFT"&&e.target.value!==""){var tp=FIG.TPL[+e.target.value][1],f=$("qdF");f.value=(f.value.trim()?f.value.trim()+"\n":"")+tp;e.target.value=""}
     if(e.target.id==="qdG")$("qdL").innerHTML=lsOpts(+e.target.value,"",false);
     if(e.target.id==="qdT"){$("qdMC").hidden=e.target.value!=="mc";$("qdNUM").hidden=e.target.value!=="num"}
     prev();
@@ -175,10 +208,15 @@ function qDialog(q){
     if(t==="mc"){o.ch=[0,1,2,3].map(function(i){return $("qdC"+i).value.trim()});var ck=d.querySelector("input[name=qdA]:checked");
       if(o.ch.filter(Boolean).length<2){alert("សូមបញ្ចូលជម្រើសយ៉ាងតិច ២");return}if(!ck||!o.ch[+ck.value]){alert("សូមចុចរង្វង់ចម្លើយត្រូវ");return}o.a=+ck.value}
     else{o.a=$("qdN").value.trim();if(!o.a){alert("សូមបញ្ចូលចម្លើយត្រឹមត្រូវ");return}}
-    var owner=q.by||who.id,sb=$("qdS");sb.disabled=true;
-    saveQ(owner,o).then(function(){d.close();fG=o.g;fL=o.ls;renderQuiz();notify("បានរក្សាទុកលំហាត់")},function(){sb.disabled=false});
+    var fg=$("qdF").value.trim();if(fg)o.fg=fg;
+    if(img)o.im=true;
+    var owner=q.by||who.id,sb=$("qdS"),k=qid(owner,o.id);sb.disabled=true;
+    var pi=!imgCh?Promise.resolve():img?FB.setDoc(FB.doc(db,"qimg",k),{o:owner,d:img}).then(function(){QIM[k]=Promise.resolve(img)})
+      :FB.deleteDoc(FB.doc(db,"qimg",k)).catch(function(){}).then(function(){delete QIM[k]});
+    pi.catch(function(e){alert("មិនអាចរក្សាទុករូបភាពបានទេ · "+qErr(e));throw e})
+      .then(function(){return saveQ(owner,o)}).then(function(){d.close();fG=o.g;fL=o.ls;renderQuiz();notify("បានរក្សាទុកលំហាត់")},function(){sb.disabled=false});
   };
-  d.showModal();prev();
+  d.showModal();imShow();
 }
 
 /* ===================== 📥 នាំចូលពីឯកសារ LaTeX =====================
@@ -362,7 +400,7 @@ function doShuffle(){
 function openTest(){loadTests().then(openTest2)}
 function openTest2(){
   var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return;
-  var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;return o}),keys={};
+  var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
   mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)}});
   var names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
   var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
@@ -372,6 +410,9 @@ function openTest2(){
   if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
   Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
+    /* រូបភាពលំហាត់ → timg/{តេស្ត}_{លំហាត់} (សិស្សអានបានពេលតេស្តបើក) */
+    return Promise.all(mk.items.filter(function(q){return q.im}).map(function(q){return qimg(qid(q.by,q.id)).then(function(u){if(u)return FB.setDoc(FB.doc(window.db,"timg",id+"_"+q.id),{t:id,o:mk.tid,d:u})})}));
+  }).then(function(){
     mk.items=null;QV="res";curTest=Object.assign({id:id},T);loadTests().then(function(){renderQuiz();showLink(id)});notify("បានបើកតេស្ត");
   }).catch(function(e){console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ។ សូមប្រាប់ Admin ឱ្យ Publish firestore.rules កំណែថ្មី។":"មិនអាចបើកតេស្តបានទេ")});
 }
@@ -556,7 +597,7 @@ $("qzBody").addEventListener("click",function(e){
   else if(a==="csv")dlCSV(resRows(t),"តេស្ត-"+t.cls+"-"+(t.cr||"").slice(0,10)+".csv");
   else if(a==="drive"){(driveTok()?Promise.resolve():driveConnect(false)).then(function(){return driveSave(t,false)}).catch(function(e){if(e==="nocid")driveClick()})}
   else if(a==="del"){if(!confirm("លុបតេស្ត «"+t.title+"» និងលទ្ធផលទាំងអស់?"))return;
-    var FB=window.FB;Promise.all(subs.map(function(s){return FB.deleteDoc(FB.doc(window.db,"subs",t.id+"_"+s.sid))}).concat([FB.deleteDoc(FB.doc(window.db,"tests",t.id)),FB.deleteDoc(FB.doc(window.db,"tkeys",t.id))]))
+    var FB=window.FB;Promise.all(subs.map(function(s){return FB.deleteDoc(FB.doc(window.db,"subs",t.id+"_"+s.sid))}).concat((t.items||[]).filter(function(q){return q.im}).map(function(q){return FB.deleteDoc(FB.doc(window.db,"timg",t.id+"_"+q.id)).catch(function(){})})).concat([FB.deleteDoc(FB.doc(window.db,"tests",t.id)),FB.deleteDoc(FB.doc(window.db,"tkeys",t.id))]))
       .then(function(){curTest=null;watchSubs(null);loadTests().then(renderRes);notify("បានលុបតេស្ត")}).catch(function(){alert("មិនអាចលុបបានទេ")})}
 });
 })();
