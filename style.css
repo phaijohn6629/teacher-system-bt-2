@@ -704,3 +704,4 @@ body.mon main{margin-left:auto!important}
 .px-list li.f::marker{color:#c2417a}.px-list li.m::marker{color:#2f6fd0}
 .px-go{background:none;border:0;padding:0;margin:0;font:inherit;font-weight:700;color:var(--brand);cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px}
 .tt td.du{background:rgba(22,163,74,.16)}
+.qz-more{display:block;width:100%;margin:12px 0 0;padding:10px;font-weight:700}

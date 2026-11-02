@@ -8,6 +8,7 @@
    ======================================================================== */
 (function(){
 "use strict";
+var QB_PAGE=40,qbShow=QB_PAGE;   /* បង្ហាញលំហាត់ម្ដង ៤០ (KaTeX គូររូបមន្តលឿនជាង) */
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},qbLoaded=false,fG=0,fL="",fV=0,mine=false;
 var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 /* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
@@ -49,23 +50,34 @@ function correct(q,ans){
 function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"test.html?t="+encodeURIComponent(id)}
 
 /* ---------- ផ្ទុក/រក្សាទុកធនាគារលំហាត់ ---------- */
-/* ធនាគារលំហាត់របស់គ្រូទាំងអស់ · តាមដានផ្ទាល់ (onSnapshot) ដើម្បីឱ្យលំហាត់ដែលគ្រូផ្សេងទើបបន្ថែម បង្ហាញភ្លាម */
-var qbUn=null,qbErr="";
-function qbApply(sn){var o={};sn.forEach(function(d){var v=d.data();try{o[v.o||d.id]=JSON.parse(v.j)||[]}catch(x){}});qb=o;qbLoaded=true;qbErr=""}
+/* ធនាគារលំហាត់របស់គ្រូទាំងអស់ · តាមដានផ្ទាល់ (onSnapshot) ដើម្បីឱ្យលំហាត់ដែលគ្រូផ្សេងទើបបន្ថែម បង្ហាញភ្លាម ·
+   ចងចាំក្នុង sessionStorage ដើម្បីបើកលើកក្រោយភ្លាម (បន្ទាប់មកធ្វើបច្ចុប្បន្នភាពពី Cloud) */
+var qbUn=null,qbErr="",qbWait=null,QBC="qbCache";
+function qbFresh(){if(!$("p17").hidden&&QV==="bank"&&!document.querySelector("dialog[open]")){var y=window.scrollY;keepFocus(renderBank);window.scrollTo(0,y)}}
+function qbApply(sn){
+  var o={};sn.forEach(function(d){var v=d.data();try{o[v.o||d.id]=JSON.parse(v.j)||[]}catch(x){}});qb=o;qbLoaded=true;qbErr="";
+  try{sessionStorage.setItem(QBC,JSON.stringify(o))}catch(x){}
+}
+function qbDone(){if(qbWait){var f=qbWait;qbWait=null;f()}}
 function loadQB(){
   if(!window.FB||!window.db||!who)return new Promise(function(r){setTimeout(r,500)});
-  if(qbUn)return Promise.resolve();
-  return new Promise(function(res){
-    var first=true;
-    qbUn=window.FB.onSnapshot(window.FB.collection(window.db,"qb"),function(sn){
-      qbApply(sn);if(first){first=false;res();return}
-      if(!$("p17").hidden&&QV==="bank"&&!document.querySelector("#qzBody dialog[open]"))keepFocus(renderBank);
-    },function(e){
-      console.error("qb:",e);qbUn=null;qbLoaded=true;qbErr=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិអានធនាគារលំហាត់ (សូម Admin Publish firestore.rules កំណែថ្មី)":"មិនអាចផ្ទុកធនាគារលំហាត់បានទេ · សូមពិនិត្យអ៊ីនធឺណិត";
-      if(first){first=false;res()}
-    });
-    var un=qbUn;if(window.unsubs)unsubs.push(function(){un();if(qbUn===un){qbUn=null;qbLoaded=false}});
+  if(qbUn)return qbWait?new Promise(function(r){var f=qbWait;qbWait=function(){f();r()}}):Promise.resolve();
+  if(!qbLoaded){try{var c=JSON.parse(sessionStorage.getItem(QBC)||"null");if(c){qb=c;qbLoaded=true}}catch(x){}}
+  var p=new Promise(function(res){qbWait=res});
+  var first=true;
+  qbUn=window.FB.onSnapshot(window.FB.collection(window.db,"qb"),function(sn){
+    var was=qbLoaded;qbApply(sn);
+    if(first){first=false;qbDone();if(was)qbFresh();return}
+    qbFresh();
+  },function(e){
+    console.error("qb:",e);qbUn=null;qbLoaded=true;
+    qbErr=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិអានធនាគារលំហាត់ (សូម Admin Publish firestore.rules កំណែថ្មី)":"មិនអាចផ្ទុកធនាគារលំហាត់បានទេ · សូមពិនិត្យអ៊ីនធឺណិត";
+    qbDone();qbFresh();
   });
+  /* ពេលចាកចេញ ឬចាប់ផ្ដើមសមកាលកម្មឡើងវិញ៖ បិទការតាមដាន ហើយកុំឱ្យទំព័រជាប់ «កំពុងផ្ទុក…» */
+  var un=qbUn;
+  if(window.unsubs)unsubs.push(function(){un();if(qbUn===un){qbUn=null;if(qbWait){qbLoaded=false;qbDone();setTimeout(function(){if(!$("p17").hidden)renderQuiz()},0)}}});
+  return qbLoaded?Promise.resolve():p;
 }
 function saveQB(tid){
   return window.FB.setDoc(window.FB.doc(window.db,"qb",tid),{o:tid,j:JSON.stringify(qb[tid]||[]),u:new Date().toISOString()})
@@ -83,12 +95,14 @@ function renderBank(){
     "<button type=button class=primary data-qa=new>＋ បន្ថែមលំហាត់</button><button type=button data-qa=tex>📥 នាំចូលពី LaTeX (.tex)</button></div>"+
     (qbErr?"<p class=cxwarn>⚠️ "+esc(qbErr)+" <button type=button data-qa=reload>🔄 ផ្ទុកម្ដងទៀត</button></p>":"")+
     "<p class=note style='margin:0 0 10px'>សរុប <b>"+kn(list.length)+"</b> លំហាត់"+(list.length<allQ().length?" (ក្នុងធនាគារទាំងមូល "+kn(allQ().length)+" លំហាត់ ពីគ្រូ "+kn(Object.keys(qb).filter(function(t){return qb[t].length}).length)+" នាក់ · ប្ដូរតម្រងដើម្បីមើលបន្ថែម)":"")+" · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
+  var more=list.length-qbShow;if(more>0)list=list.slice(0,qbShow);
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
     return"<div class=qz-q><div class=qz-qh><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span><span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
       (own?"<button type=button data-qe='"+q.by+"|"+q.id+"'>✏️</button><button type=button class=danger data-qd='"+q.by+"|"+q.id+"'>🗑️</button>":"")+"</div>"+
       "<div class=qz-qt>"+tx(q.q)+"</div>"+
-      (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"
+      (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"+
+      (more>0?"<button type=button class=qz-more data-qa=more>⬇️ បង្ហាញបន្ថែម ("+kn(Math.min(more,QB_PAGE))+" ក្នុងចំណោម "+kn(more)+" នៅសល់)</button>":"")
     :"<p class=note>មិនទាន់មានលំហាត់ទេ។ ចុច «＋ បន្ថែមលំហាត់» ដើម្បីចាប់ផ្ដើម។</p>";
   $("qzBody").innerHTML=h;math($("qzBody"));
 }
@@ -473,6 +487,7 @@ $("qzSeg").onclick=function(e){
 };
 $("qzBody").addEventListener("change",function(e){
   var el=e.target,id=el.id;
+  if(/^qf[GLVM]$/.test(id))qbShow=QB_PAGE;
   if(id==="qfG"){fG=+el.value;fL="";renderBank()}else if(id==="qfL"){fL=el.value;renderBank()}else if(id==="qfV"){fV=+el.value;renderBank()}else if(id==="qfM"){mine=el.checked;renderBank()}
   else if(id==="qmT"){mk.tid=el.value;mk.ci=0;mk.ls={};mk.items=null;renderMake()}else if(id==="qmC"){mk.ci=+el.value;mk.ls={};mk.items=null;renderMake()}
   else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;
@@ -493,6 +508,7 @@ $("qzBody").addEventListener("click",function(e){
   if(b.dataset.qo){curTest=tests.filter(function(t){return t.id===b.dataset.qo})[0];watchSubs(curTest);renderRes();return}
   var a=b.dataset.qa,t=curTest;
   if(a==="reload"){qbLoaded=false;qbErr="";renderQuiz();return}
+  if(a==="more"){qbShow+=QB_PAGE;var y=window.scrollY;renderBank();window.scrollTo(0,y);return}
   if(a==="new")qDialog();
   else if(a==="tex")texImport();
   else if(a==="shuffle"){mk.title=($("qmTi")||{}).value||mk.title;mk.dur=+(($("qmD")||{}).value)||mk.dur;doShuffle()}
