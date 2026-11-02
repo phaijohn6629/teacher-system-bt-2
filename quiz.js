@@ -1,6 +1,7 @@
 /* ========================================================================
    លទ្ធផលសិក្សា › 📝 តេស្ត
-   - ធនាគារលំហាត់៖ qb/{ID គ្រូ} = {o, j:JSON[{id,g,ls,lv,t:"mc"|"num",q,ch,a}]} · គ្រូទាំងអស់អាន · ម្ចាស់សរសេរ
+   - ធនាគារលំហាត់៖ qbq/{ID គ្រូ}_{id} = {o, id, g, ls, lv, t:"mc"|"num", q, ch, a, bl, u} — មួយឯកសារក្នុងមួយលំហាត់ · ទាញតាមថ្នាក់
+     (ទម្រង់ចាស់ qb/{ID គ្រូ} = {o, j:JSON[...]} ត្រូវផ្ទេរមក qbq/ ដោយស្វ័យប្រវត្តិ ហើយទុក mig:true ជាការបម្រុងទុក)
    - តេស្ត៖ tests/{id} (គ្មានចម្លើយ · សិស្សអានបានពេលបើក) + tkeys/{id} (ចម្លើយ · តែម្ចាស់)
    - សិស្សផ្ញើ៖ subs/{id}_{សិស្ស} (ម្ដងគត់ · មិនកែបាន) · គ្រូកែពិន្ទុក្នុង browser
    - Google Drive៖ cfg/drive.cid (Client ID ដែល Admin កំណត់) · scope drive.file
@@ -9,7 +10,7 @@
 (function(){
 "use strict";
 var QB_PAGE=40,qbShow=QB_PAGE;   /* បង្ហាញលំហាត់ម្ដង ៤០ (KaTeX គូររូបមន្តលឿនជាង) */
-var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},qbLoaded=false,fG=0,fL="",fV=0,mine=false;
+var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},fG=0,fL="",fV=0,mine=false;
 var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 /* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
 var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២"};
@@ -50,42 +51,75 @@ function correct(q,ans){
 function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"test.html?t="+encodeURIComponent(id)}
 
 /* ---------- ផ្ទុក/រក្សាទុកធនាគារលំហាត់ ---------- */
-/* ធនាគារលំហាត់របស់គ្រូទាំងអស់ · តាមដានផ្ទាល់ (onSnapshot) ដើម្បីឱ្យលំហាត់ដែលគ្រូផ្សេងទើបបន្ថែម បង្ហាញភ្លាម ·
-   ចងចាំក្នុង sessionStorage ដើម្បីបើកលើកក្រោយភ្លាម (បន្ទាប់មកធ្វើបច្ចុប្បន្នភាពពី Cloud) */
-var qbUn=null,qbErr="",qbWait=null,QBC="qbCache";
-function qbFresh(){if(!$("p17").hidden&&QV==="bank"&&!document.querySelector("dialog[open]")){var y=window.scrollY;keepFocus(renderBank);window.scrollTo(0,y)}}
-function qbApply(sn){
-  var o={};sn.forEach(function(d){var v=d.data();try{o[v.o||d.id]=JSON.parse(v.j)||[]}catch(x){}});qb=o;qbLoaded=true;qbErr="";
-  try{sessionStorage.setItem(QBC,JSON.stringify(o))}catch(x){}
+/* ធនាគារលំហាត់៖ តាមដានផ្ទាល់ (onSnapshot) តែថ្នាក់ដែលកំពុងប្រើ · qb = {ID គ្រូ:[លំហាត់]} (គណនាពីឯកសារ qbq/ + ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ) */
+var QD={},LEG={},qgP={},qgU={},qbErr="",legP=null,GR=[7,8,9,10,11,12];
+function qid(o,id){return o+"_"+id}
+function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;return q}
+function rebuild(){
+  var o={};
+  Object.keys(QD).forEach(function(k){var x=QD[k];(o[x.o]=o[x.o]||[]).push(x.q)});
+  Object.keys(LEG).forEach(function(t){var have={};(o[t]||[]).forEach(function(q){have[q.id]=1});(LEG[t]||[]).forEach(function(q){if(!have[q.id])(o[t]=o[t]||[]).push(q)})});
+  qb=o;
 }
-function qbDone(){if(qbWait){var f=qbWait;qbWait=null;f()}}
-function loadQB(){
+function qbFresh(){if(!$("p17").hidden&&(QV==="bank"||QV==="make")&&!document.querySelector("dialog[open]")){var y=window.scrollY;keepFocus(QV==="bank"?renderBank:renderMake);window.scrollTo(0,y)}}
+function qErr(e){return e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ (សូម Admin Publish firestore.rules កំណែថ្មី · មាន qbq)":e&&/resource-exhausted|too large|exceeds/i.test(String(e.code||"")+String(e.message||""))?"ទិន្នន័យធំពេក":"សូមពិនិត្យអ៊ីនធឺណិត"}
+/* ទម្រង់ចាស់ qb/{ID}៖ ផ្ទុកម្ដង · ម្ចាស់ ឬ Admin ផ្ទេរទៅ qbq/ (batch ម្ដង ៤០០) រួចសម្គាល់ mig:true */
+function loadLegacy(){
+  if(legP)return legP;
+  legP=FB.getDocs(FB.collection(db,"qb")).then(function(sn){
+    var todo=[];
+    sn.forEach(function(d){var v=d.data();if(v.mig)return;var arr=[];try{arr=JSON.parse(v.j)||[]}catch(x){}var o=v.o||d.id;if(!arr.length)return;LEG[o]=arr;if(isAdm()||who.id===o)todo.push([o,arr])});
+    rebuild();
+    todo.reduce(function(pr,x){return pr.then(function(){return migrate(x[0],x[1])})},Promise.resolve());   /* ផ្ទេរនៅពីក្រោយ · មិនបាច់រង់ចាំ */
+  }).catch(function(e){console.error("qb legacy:",e)});
+  var me=legP;legP.then(function(){me.ok=1});
+  return legP;
+}
+function migrate(o,arr){
+  var ch=[];for(var i=0;i<arr.length;i+=400)ch.push(arr.slice(i,i+400));
+  return ch.reduce(function(pr,part){return pr.then(function(){var b=FB.writeBatch(db);part.forEach(function(q){if(q&&q.id)b.set(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q))});return b.commit()})},Promise.resolve())
+    .then(function(){return FB.updateDoc(FB.doc(db,"qb",o),{mig:true})})
+    .then(function(){delete LEG[o];rebuild();notify("បានផ្ទេរលំហាត់ "+arr.length+" ទៅទម្រង់ថ្មី")},function(e){console.error("qb migrate:",o,e)});
+}
+function ensureG(gs){
   if(!window.FB||!window.db||!who)return new Promise(function(r){setTimeout(r,500)});
-  if(qbUn)return qbWait?new Promise(function(r){var f=qbWait;qbWait=function(){f();r()}}):Promise.resolve();
-  if(!qbLoaded){try{var c=JSON.parse(sessionStorage.getItem(QBC)||"null");if(c){qb=c;qbLoaded=true}}catch(x){}}
-  var p=new Promise(function(res){qbWait=res});
-  var first=true;
-  qbUn=window.FB.onSnapshot(window.FB.collection(window.db,"qb"),function(sn){
-    var was=qbLoaded;qbApply(sn);
-    if(first){first=false;qbDone();if(was)qbFresh();return}
-    qbFresh();
-  },function(e){
-    console.error("qb:",e);qbUn=null;qbLoaded=true;
-    qbErr=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិអានធនាគារលំហាត់ (សូម Admin Publish firestore.rules កំណែថ្មី)":"មិនអាចផ្ទុកធនាគារលំហាត់បានទេ · សូមពិនិត្យអ៊ីនធឺណិត";
-    qbDone();qbFresh();
-  });
-  /* ពេលចាកចេញ ឬចាប់ផ្ដើមសមកាលកម្មឡើងវិញ៖ បិទការតាមដាន ហើយកុំឱ្យទំព័រជាប់ «កំពុងផ្ទុក…» */
-  var un=qbUn;
-  if(window.unsubs)unsubs.push(function(){un();if(qbUn===un){qbUn=null;if(qbWait){qbLoaded=false;qbDone();setTimeout(function(){if(!$("p17").hidden)renderQuiz()},0)}}});
-  return qbLoaded?Promise.resolve():p;
+  return Promise.all([loadLegacy()].concat(gs.map(function(g){
+    if(qgP[g])return qgP[g];
+    var done=null,first=true;
+    qgP[g]=new Promise(function(r){done=r});
+    var un=FB.onSnapshot(FB.query(FB.collection(db,"qbq"),FB.where("g","==",g)),function(sn){
+      Object.keys(QD).forEach(function(k){if(QD[k].q.g===g)delete QD[k]});
+      sn.forEach(function(d){var v=d.data();QD[d.id]={o:v.o,q:toQ(v)}});
+      rebuild();qbErr="";
+      if(first){first=false;if(qgP[g])qgP[g].ok=1;done()}else qbFresh();
+    },function(e){console.error("qbq:",g,e);qbErr="មិនអាចផ្ទុកធនាគារលំហាត់បានទេ · "+qErr(e);delete qgP[g];done();qbFresh()});
+    /* ពេលចាកចេញ ឬចាប់ផ្ដើមសមកាលកម្មឡើងវិញ៖ បិទការតាមដាន ហើយកុំឱ្យជាប់ «កំពុងផ្ទុក…» */
+    qgU[g]=un;
+    if(window.unsubs)unsubs.push(function(){un();delete qgP[g];delete qgU[g];legP=null;if(first){first=false;done();setTimeout(function(){if(!$("p17").hidden)renderQuiz()},0)}});
+    return qgP[g];
+  })));
 }
-function saveQB(tid){
-  return window.FB.setDoc(window.FB.doc(window.db,"qb",tid),{o:tid,j:JSON.stringify(qb[tid]||[]),u:new Date().toISOString()})
-    .catch(function(e){alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិរក្សាទុក។ សូមប្រាប់ Admin ឱ្យ Publish firestore.rules កំណែថ្មី (មាន qb/tests/subs)។":"មិនអាចរក្សាទុកបានទេ");throw e});
+function ready(gs){return gs.every(function(g){return qgP[g]&&qgP[g].ok})&&!!(legP&&legP.ok)}
+function needG(){return QV==="bank"?(fG?[fG]:GR):QV==="make"?(function(){var c=myClasses(mk.tid||who.id)[mk.ci||0],g=c?parseInt(c.n):0;return g?[g]:[]})():[]}
+function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;return d}
+function saveQ(o,q){return FB.setDoc(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q)).catch(function(e){alert("មិនអាចរក្សាទុកលំហាត់បានទេ · "+qErr(e));throw e})}
+function saveMany(o,list){
+  var ch=[];for(var i=0;i<list.length;i+=400)ch.push(list.slice(i,i+400));
+  return ch.reduce(function(pr,part){return pr.then(function(){var b=FB.writeBatch(db);part.forEach(function(q){b.set(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q))});return b.commit()})},Promise.resolve())
+    .catch(function(e){alert("មិនអាចរក្សាទុកលំហាត់បានទេ · "+qErr(e));throw e});
+}
+function delQ(o,id){
+  var k=qid(o,id);
+  var leg=!!(LEG[o]&&LEG[o].some(function(q){return q.id===id}));
+  /* លុបជានិច្ច (លំហាត់ដែលទើបផ្ទេរ អាចមិនទាន់មកដល់ QD) · លំហាត់ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ → មិនទាន់មានក្នុង qbq (កំហុសគ្មានសិទ្ធិ = ធម្មតា) */
+  return FB.deleteDoc(FB.doc(db,"qbq",k)).catch(function(e){if(!leg){alert("មិនអាចលុបបានទេ · "+qErr(e));throw e}}).then(function(){
+    delete QD[k];if(leg)LEG[o]=LEG[o].filter(function(q){return q.id!==id});rebuild();
+  });
 }
 
 /* ===================== 📚 ធនាគារលំហាត់ ===================== */
 function renderBank(){
+  if(!ready(needG())&&!qbErr)return renderQuiz();   /* ថ្នាក់ថ្មីដែលមិនទាន់ទាញ */
   var list=allQ().filter(function(q){return(!fG||q.g===fG)&&(!fL||String(q.ls)===String(fL))&&(!fV||q.lv===fV)&&(!mine||q.by===who.id)});
   var h="<div class=bar>"+
     "<label>ថ្នាក់៖</label><select id=qfG><option value=0>ទាំងអស់</option>"+grades().map(function(g){return"<option value="+g+(g===fG?" selected":"")+">ថ្នាក់ទី"+kn(g)+"</option>"}).join("")+"</select>"+
@@ -141,9 +175,8 @@ function qDialog(q){
     if(t==="mc"){o.ch=[0,1,2,3].map(function(i){return $("qdC"+i).value.trim()});var ck=d.querySelector("input[name=qdA]:checked");
       if(o.ch.filter(Boolean).length<2){alert("សូមបញ្ចូលជម្រើសយ៉ាងតិច ២");return}if(!ck||!o.ch[+ck.value]){alert("សូមចុចរង្វង់ចម្លើយត្រូវ");return}o.a=+ck.value}
     else{o.a=$("qdN").value.trim();if(!o.a){alert("សូមបញ្ចូលចម្លើយត្រឹមត្រូវ");return}}
-    var owner=q.by||who.id,arr=qb[owner]=qb[owner]||[],i=arr.map(function(x){return x.id}).indexOf(o.id);
-    if(i>=0)arr[i]=o;else arr.push(o);
-    saveQB(owner).then(function(){d.close();fG=o.g;fL=o.ls;renderQuiz();notify("បានរក្សាទុកលំហាត់")});
+    var owner=q.by||who.id,sb=$("qdS");sb.disabled=true;
+    saveQ(owner,o).then(function(){d.close();fG=o.g;fL=o.ls;renderQuiz();notify("បានរក្សាទុកលំហាត់")},function(){sb.disabled=false});
   };
   d.showModal();prev();
 }
@@ -274,9 +307,10 @@ function texPreview(Q,fname){
   $("txOK").onclick=function(){
     var G=+$("txG").value,L=+$("txL").value;if(!L){alert("សូមជ្រើសមេរៀន");return}
     var ok=Q.filter(function(q){return!q.skip&&(q.t==="mc"?q.a>=0:q.a)});if(!ok.length){alert("គ្មានលំហាត់ដែលរួចរាល់សម្រាប់នាំចូលទេ");return}
-    var arr=qb[who.id]=qb[who.id]||[];
+    var arr=[];
     ok.forEach(function(q){var o={id:uid(),g:G,ls:L,lv:q.lv||1,t:q.t,q:q.q};if(q.bl)o.bl=q.bl;if(q.t==="mc"){o.ch=q.ch;o.a=q.a}else o.a=q.a;arr.push(o)});
-    saveQB(who.id).then(function(){d.close();fG=G;fL=L;renderQuiz();notify("បាននាំចូល "+ok.length+" លំហាត់")});
+    var tb=$("txOK");tb.disabled=true;
+    saveMany(who.id,arr).then(function(){d.close();fG=G;fL=L;renderQuiz();notify("បាននាំចូល "+ok.length+" លំហាត់")},function(){tb.disabled=false});
   };
   d.showModal();math($("txB"));
 }
@@ -284,6 +318,7 @@ function texPreview(Q,fname){
 /* ===================== 🧪 បង្កើតតេស្ត ===================== */
 function myClasses(tid){return(rs.c&&rs.c[tid])||[]}
 function renderMake(){
+  if(!ready(needG())&&!qbErr)return renderQuiz();
   var adm=isAdm();if(!mk.tid)mk.tid=who.id;
   var cl=myClasses(mk.tid);if(mk.ci>=cl.length)mk.ci=0;var c=cl[mk.ci],g=c?parseInt(c.n):0,C=window.CUR&&window.CUR[g];
   var pool=allQ().filter(function(q){return q.g===g});
@@ -457,7 +492,9 @@ function driveClick(){
 function renderQuiz(){
   if(!who)return;
   [].forEach.call($("qzSeg").querySelectorAll("[data-qv]"),function(b){b.setAttribute("aria-selected",b.dataset.qv===QV)});drvBtn();
-  if(!qbLoaded){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";loadQB().then(renderQuiz);return}
+  if(!renderQuiz.g0){renderQuiz.g0=1;var c0=myClasses(who.id)[0],g0=c0?parseInt(c0.n):0;if(!fG&&GR.indexOf(g0)>=0)fG=g0}   /* ចាប់ផ្ដើមនៅថ្នាក់របស់គ្រូ (ទាញតែថ្នាក់នោះ) */
+  var gs=needG();
+  if(!ready(gs)&&!qbErr){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";ensureG(gs).then(renderQuiz);return}
   if(QV==="bank")renderBank();else if(QV==="make")renderMake();
   else{if(!tests.length&&!renderQuiz.tl){renderQuiz.tl=1;loadTests().then(renderQuiz);return}renderRes()}
 }
@@ -504,10 +541,10 @@ $("qzBody").addEventListener("change",function(e){
 $("qzBody").addEventListener("click",function(e){
   var b=e.target.closest("[data-qa],[data-qe],[data-qd],[data-qo]");if(!b)return;
   if(b.dataset.qe){var p=b.dataset.qe.split("|"),q=(qb[p[0]]||[]).filter(function(x){return x.id===p[1]})[0];if(q)qDialog(Object.assign({by:p[0]},q));return}
-  if(b.dataset.qd){var p2=b.dataset.qd.split("|");if(!confirm("លុបលំហាត់នេះ?"))return;qb[p2[0]]=(qb[p2[0]]||[]).filter(function(x){return x.id!==p2[1]});saveQB(p2[0]).then(function(){renderBank();notify("បានលុបលំហាត់")});return}
+  if(b.dataset.qd){var p2=b.dataset.qd.split("|");if(!confirm("លុបលំហាត់នេះ?"))return;delQ(p2[0],p2[1]).then(function(){renderBank();notify("បានលុបលំហាត់")});return}
   if(b.dataset.qo){curTest=tests.filter(function(t){return t.id===b.dataset.qo})[0];watchSubs(curTest);renderRes();return}
   var a=b.dataset.qa,t=curTest;
-  if(a==="reload"){qbLoaded=false;qbErr="";renderQuiz();return}
+  if(a==="reload"){Object.keys(qgU).forEach(function(g){try{qgU[g]()}catch(x){}});qbErr="";qgP={};qgU={};legP=null;renderQuiz();return}
   if(a==="more"){qbShow+=QB_PAGE;var y=window.scrollY;renderBank();window.scrollTo(0,y);return}
   if(a==="new")qDialog();
   else if(a==="tex")texImport();

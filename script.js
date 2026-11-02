@@ -38,7 +38,7 @@
       doc: FS.doc, collection: FS.collection, getDoc: FS.getDoc, getDocs: FS.getDocs,
       setDoc: FS.setDoc, updateDoc: FS.updateDoc, deleteDoc: FS.deleteDoc,
       query: FS.query, where: FS.where, onSnapshot: FS.onSnapshot,
-      runTransaction: FS.runTransaction, addDoc: FS.addDoc, serverTimestamp: FS.serverTimestamp,
+      runTransaction: FS.runTransaction, addDoc: FS.addDoc, serverTimestamp: FS.serverTimestamp, writeBatch: FS.writeBatch,
       signInWithEmailAndPassword: AU.signInWithEmailAndPassword, signOut: AU.signOut,
       onAuthStateChanged: AU.onAuthStateChanged,
       createUserWithEmailAndPassword: AU.createUserWithEmailAndPassword,

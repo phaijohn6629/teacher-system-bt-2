@@ -231,6 +231,17 @@ service cloud.firestore {
         && request.resource.data.j.size() < 900000;
       allow delete: if isAdmin() || isOwner(tid);
     }
+    // ធនាគារលំហាត់ (មួយឯកសារក្នុងមួយលំហាត់)៖ doc ID = "<ID គ្រូ>_<id>" · គ្រូទាំងអស់អាន · ម្ចាស់ (o) ឬ Admin សរសេរ
+    match /qbq/{id} {
+      allow read: if active();
+      allow create: if (isAdmin() || isOwner(request.resource.data.o))
+        && id.split('_')[0] == request.resource.data.o
+        && request.resource.data.q is string && request.resource.data.q.size() < 30000;
+      allow update: if (isAdmin() || isOwner(resource.data.o))
+        && request.resource.data.o == resource.data.o
+        && request.resource.data.q is string && request.resource.data.q.size() < 30000;
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
     // វិញ្ញាសា (គ្មានចម្លើយ)៖ សិស្សអានបានដោយគ្មាន Login តែពេលកំពុងបើក
     // កំណត់ហេតុប្រជុំបច្ចេកទេស៖ គ្រប់គ្រូអានបាន · អ្នកកត់ត្រា (o) ឬ Admin កែ/លុប
     match /mt/{id} {
