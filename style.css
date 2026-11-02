@@ -718,3 +718,15 @@ body.mon main{margin-left:auto!important}
 .mon-log .bar{margin-bottom:6px;align-items:center}.mon-log select{width:auto;margin:0}
 .mon-lt td{vertical-align:top}.mon-lt td small{display:block;color:var(--mute);font-size:.75rem}
 .mon-lt ul{margin:0;padding-left:18px}.mon-lt li{font-size:.86rem}
+/* ផ្គូផ្គងជួរឈរ Excel */
+.cm-top{display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:10px}.cm-top label{display:flex;align-items:center;gap:6px;font-weight:600}.cm-top select{width:auto;max-width:100%;margin:0}
+.cm-sheets{margin:0 0 10px;padding:8px 10px;border-radius:10px;background:var(--soft)}.cm-sheets label{display:inline-flex;align-items:center;gap:4px;margin:2px 10px 2px 0}.cm-sheets input{width:auto;margin:0}
+.cm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.cm-f{display:flex;flex-direction:column;gap:2px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;font-size:.85rem}
+.cm-f.on{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 6%,var(--panel))}.cm-f.req span{font-weight:700}
+.cm-f select{margin:0;width:100%}
+.cm-pv th small{display:block;font-weight:400;opacity:.7}.cm-pv td{font-size:.85rem;white-space:nowrap}
+.cm-err{margin:10px 0;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,#c9372c 8%,var(--panel));border:1px solid color-mix(in srgb,#c9372c 35%,transparent)}
+.cm-err summary{font-weight:700;color:var(--danger);cursor:pointer}.cm-err ol{margin:6px 0 0;padding-left:22px;max-height:240px;overflow:auto;font-size:.85rem}
+.cm-okm{color:#1f8a5b;font-weight:700}
+form.cm-form{display:block;padding:18px}

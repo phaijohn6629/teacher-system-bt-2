@@ -820,41 +820,54 @@ var HM=(function(){
   return m;
 })();
 function hn(v){return String(v==null?"":v).toLowerCase().replace(/[\s.]/g,"")}
+/* ជួរឈរពិន្ទុ៖ គ្រូជ្រើស/ផ្ទៀងផ្ទាត់ក្នុង COLMAP (colmap.js) · ប្រព័ន្ធទាយតាមឈ្មោះក្បាលតារាង */
+var SCF=(function(){
+  var A=[["october|oct|តុលា|ខែតុលា","តុលា"],["november|nov|វិច្ឆិកា|ខែវិច្ឆិកា","វិច្ឆិកា"],["december|dec|ធ្នូ|ខែធ្នូ","ធ្នូ"],["january|jan|មករា|ខែមករា","មករា"],["february|feb|កុម្ភៈ|កុម្ភះ|ខែកុម្ភៈ","កុម្ភៈ"],["s_1|s1|sem1|semester1|exam1|ប្រឡងឆមាសទី១|ប្រឡងឆមាស១|ឆមាសទី១","ប្រឡងឆមាសទី១"]],
+      B=[["march|mar|មីនា|ខែមីនា","មីនា"],["april|apr|មេសា|ខែមេសា","មេសា"],["may|ឧសភា|ខែឧសភា","ឧសភា"],["june|jun|មិថុនា|ខែមិថុនា","មិថុនា"],["s_2|s2|sem2|semester2|exam2|ប្រឡងឆមាសទី២|ប្រឡងឆមាស២|ឆមាសទី២","ប្រឡងឆមាសទី២"]];
+  function re(x){return new RegExp("^("+x.replace(/_/g,"_?")+")$")}
+  return[{k:"id",l:"ID សិស្ស",req:true,re:/^(id|studentid|stuid|លេខសម្គាល់|លេខសម្កាល់|លេខសំគាល់|លេខអត្តសញ្ញាណ|អត្តលេខ)/},{k:"n",l:"ឈ្មោះសិស្ស",re:/^(name|studentname|fullname|ឈ្មោះ|គោត្តនាម)/}]
+    .concat(A.map(function(x,j){return{k:"a"+j,l:x[1],re:re(x[0])}})).concat(B.map(function(x,j){return{k:"b"+j,l:x[1]+(j===4?"":" (ឆមាស២)"),re:re(x[0])}}));
+})();
 function parseWB(wb){
-  imp=[];
-  wb.SheetNames.forEach(function(sn){
-    var rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:"",raw:true}),hr=-1,map={},nc=-1,idc=-1;
-    for(var r=0;r<Math.min(6,rows.length)&&hr<0;r++){
-      var mm={},n=0,nm=-1,ic=-1;
-      rows[r].forEach(function(h,ci){var x=hn(h);if(HM[x]&&!mm[ci]&&!Object.keys(mm).some(function(k){return mm[k][0]===HM[x][0]&&mm[k][1]===HM[x][1]})){mm[ci]=HM[x];n++}else if(/^(id|studentid|stuid|លេខសម្គាល់|លេខសម្កាល់|លេខសំគាល់|លេខអត្តសញ្ញាណ|អត្តលេខ)/.test(x))ic=ci;else if(/^(name|studentname|ឈ្មោះ|ឈ្មោះសិស្ស|គោត្តនាម)/.test(x))nm=ci});
-      if(n>=3){hr=r;map=mm;nc=nm;idc=ic}
+  COLMAP.open({title:"📥 នាំចូលពិន្ទុពី Excel — ផ្គូផ្គងជួរឈរ",wb:wb,fields:SCF,multi:true,
+    note:"មួយសន្លឹក = មួយថ្នាក់ (ឈ្មោះសន្លឹក = ឈ្មោះថ្នាក់)។ ត្រូវមាន ID សិស្ស ហើយយ៉ាងតិចមួយជួរពិន្ទុ។",
+    onOk:function(res){
+      if(!Object.keys(res.sheets[0].map).some(function(k){return/^[ab]\d$/.test(k)})){alert("សូមជ្រើសយ៉ាងតិចមួយជួរពិន្ទុ (ឧ. តុលា)");return}
+      impBuild(res);
+    }});
+}
+function impBuild(res){
+  imp=[];var errs=[];
+  res.sheets.forEach(function(sh){
+    var rows=sh.rows,m=sh.map,st=[],found={a:[0,0,0,0,0,0],b:[0,0,0,0,0]},mxv=0,skip=0,dup=0,seen={},bad=0;
+    Object.keys(m).forEach(function(k){if(/^[ab]\d$/.test(k))found[k[0]][+k[1]]=1});
+    function E(r,t){errs.push("សន្លឹក «"+sh.sn+"» · ជួរទី "+(r+1)+"៖ "+t)}
+    for(var r=sh.hr+1;r<rows.length;r++){
+      var row=rows[r];if(!row.some(function(v){return COLMAP.txt(v)}))continue;
+      var idv=COLMAP.txt(row[m.id]),nm=m.n!=null?COLMAP.txt(row[m.n]):"",s={id:idv,n:nm,a:["","","","","",""],b:["","","","",""]},any=false;
+      Object.keys(m).forEach(function(k){
+        if(!/^[ab]\d$/.test(k))return;var v=row[m[k]];if(COLMAP.txt(v)==="")return;
+        var x=COLMAP.num(v),lb=SCF.filter(function(f){return f.k===k})[0].l;
+        if(isNaN(x)){E(r,(idv||nm||"")+" · "+lb+" «"+COLMAP.txt(v)+"» មិនមែនជាលេខ");bad++;return}
+        if(x<0){E(r,(idv||nm||"")+" · "+lb+" "+x+" ជាលេខអវិជ្ជមាន");bad++;return}
+        s[k[0]][+k[1]]=x;any=true;if(x>mxv)mxv=x;
+      });
+      if(!idv){if(any||nm){E(r,"គ្មាន ID"+(nm?" ("+nm+")":"")+" — មិនអាចផ្គូផ្គងសិស្សបានទេ");skip++}continue}
+      if(seen[idv.toLowerCase()]){E(r,"ID «"+idv+"» ជាន់នឹងជួរទី "+seen[idv.toLowerCase()]);dup++;continue}
+      seen[idv.toLowerCase()]=r+1;st.push(s);
     }
-    if(hr<0)return;
-    var st=[],found={a:[0,0,0,0,0,0],b:[0,0,0,0,0]},mxv=0,skip=0,dup=0,seen={};
-    Object.keys(map).forEach(function(ci){found[map[ci][0]][map[ci][1]]=1});
-    if(idc>=0)for(var r=hr+1;r<rows.length;r++){
-      var s={id:"",n:"",a:["","","","","",""],b:["","","","",""]},any=false;
-      Object.keys(map).forEach(function(ci){var v=rows[r][ci];if(v!==""&&v!=null&&!isNaN(+v)){var x=+v;s[map[ci][0]][map[ci][1]]=x;any=true;if(x>mxv)mxv=x}});
-      var idv=String(rows[r][idc]==null?"":rows[r][idc]).trim();
-      if(!any&&!idv)continue;
-      if(!idv){skip++;continue}
-      if(seen[idv.toLowerCase()]){dup++;continue}
-      seen[idv.toLowerCase()]=1;
-      s.id=idv;s.n=nc>=0&&rows[r][nc]!==""?String(rows[r][nc]).trim():"";
-      st.push(s);
-    }
-    if(!st.length&&idc>=0&&!skip)return;
-    var cn=sn.trim().replace(/[\s_]+/g,"-");
-    imp.push({sn:sn,n:cn,st:st,found:found,max:mxv,names:nc>=0,noid:idc<0,skip:skip,dup:dup});
+    imp.push({sn:sh.sn,n:sh.sn.trim().replace(/[\s_]+/g,"-"),st:st,found:found,max:mxv,names:m.n!=null,noid:false,skip:skip,dup:dup,bad:bad});
   });
+  imp.errs=errs;
   if(!imp.length){alert("រកមិនឃើញតារាងពិន្ទុក្នុងឯកសារនេះទេ។ ត្រូវមានជួរ ID សិស្ស (ក្បាលតារាង «ID» ឬ «លេខសម្គាល់») ហើយជួរពិន្ទុមានឈ្មោះដូចជា October, November, December, January, S_1, March, April, May, June, S_2។");return}
   $("impl").innerHTML=imp.map(function(x,i){
     var ex=(rs.c[rt]||[]).filter(function(c){return c.n===x.n})[0],mt=0;
     if(ex)x.st.forEach(function(s){if(ex.st.some(function(q){return String(q.id||"").toLowerCase()===s.id.toLowerCase()}))mt++});
     return"<label class=it style='display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start'><input type=checkbox class=chk data-i='"+i+"' "+(x.noid?"disabled":"checked")+" style='margin-top:6px'><span><b>"+esc(x.n)+"</b> · "+x.st.length+" សិស្ស (មាន ID) · ពិន្ទុខ្ពស់បំផុត "+x.max+
       (x.noid?" · <span style='color:var(--danger)'>គ្មានជួរ ID — មិនអាចនាំចូលបានទេ</span>":ex?" · <span style='color:var(--accent)'>ថ្នាក់មានរួចហើយ៖ ត្រូវ ID "+mt+" នាក់ (ធ្វើបច្ចុប្បន្នភាព) · ថ្មី "+(x.st.length-mt)+" នាក់</span>":" · ថ្នាក់ថ្មី")+
-      (x.skip?" · <span style='color:var(--danger)'>រំលង "+x.skip+" ជួរគ្មាន ID</span>":"")+(x.dup?" · <span style='color:var(--danger)'>រំលង "+x.dup+" ជួរ ID ជាន់គ្នា</span>":"")+
-      "<br><span class=note style='margin:0'>(សន្លឹក «"+esc(x.sn)+"»)</span></span></label>"}).join("");
+      (x.skip?" · <span style='color:var(--danger)'>រំលង "+x.skip+" ជួរគ្មាន ID</span>":"")+(x.dup?" · <span style='color:var(--danger)'>រំលង "+x.dup+" ជួរ ID ជាន់គ្នា</span>":"")+(x.bad?" · <span style='color:var(--danger)'>"+x.bad+" ពិន្ទុមិនត្រឹមត្រូវ</span>":"")+
+      "<br><span class=note style='margin:0'>(សន្លឹក «"+esc(x.sn)+"»)</span></span></label>"}).join("")+
+    (imp.errs&&imp.errs.length?"<details class=cm-err open><summary>⚠️ មាន "+kn(imp.errs.length)+" ចំណុចត្រូវពិនិត្យ (ទិន្នន័យទាំងនេះមិនត្រូវនាំចូលទេ)</summary><ol>"+imp.errs.slice(0,300).map(function(t){return"<li>"+esc(t)+"</li>"}).join("")+"</ol></details>":"");
   $("impt").textContent="ចូលទៅក្នុងគណនីគ្រូ៖ "+teacherOf(rt).name;
   $("dlgImp").showModal();
 }
@@ -1296,30 +1309,10 @@ function pDate(v){
   if(v===""||v==null)return"";
   if(typeof v==="number"&&v>0){var d=new Date(Math.round((v-25569)*864e5));return d.getUTCFullYear()+"-"+pad2(d.getUTCMonth()+1)+"-"+pad2(d.getUTCDate())}
   v=String(v).trim().replace(/[០-៩]/g,function(c){return"០១២៣៤៥៦៧៨៩".indexOf(c)});
-  var m=/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/.exec(v);if(m)return m[1]+"-"+pad2(+m[2])+"-"+pad2(+m[3]);
-  m=/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/.exec(v);if(m)return m[3]+"-"+pad2(+m[2])+"-"+pad2(+m[1]);
+  var ok=function(y,mo,d){var t=new Date(y,mo-1,d);return t.getFullYear()===y&&t.getMonth()===mo-1&&t.getDate()===d?y+"-"+pad2(mo)+"-"+pad2(d):""};   /* បដិសេធ ខែ ១៣ · ថ្ងៃ ៤០ … */
+  var m=/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/.exec(v);if(m)return ok(+m[1],+m[2],+m[3]);
+  m=/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/.exec(v);if(m)return ok(+m[3],+m[2],+m[1]);
   return"";
-}
-function pParse(wb){
-  for(var k=0;k<wb.SheetNames.length;k++){
-    var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[k]],{header:1,defval:"",raw:true});
-    for(var r=0;r<Math.min(10,rows.length);r++){
-      var map={};rows[r].forEach(function(h,ci){var x=hn(h);Object.keys(PCOL).forEach(function(f){if(map[f]==null&&PCOL[f].test(x))map[f]=ci})});
-      if(map.n==null)continue;
-      var out=[],bad=0;
-      for(var i=r+1;i<rows.length;i++){
-        var row=rows[i],cell=function(f){return map[f]==null?"":String(row[map[f]]==null?"":row[map[f]]).trim()},o={n:cell("n")};
-        if(!o.n){if(cell("id"))bad++;continue}
-        if(map.id!=null)o.id=cell("id");
-        if(map.g!=null)o.g=pGender(cell("g"));
-        if(map.dob!=null){o.dob=pDate(row[map.dob]);if(!o.dob&&cell("dob"))bad++}
-        if(map.ph!=null){o.ph=cell("ph");if(typeof row[map.ph]==="number"&&o.ph.charAt(0)!=="0")o.ph="0"+o.ph}   /* Excel លុបលេខ 0 ខាងមុខលេខទូរស័ព្ទ */
-        out.push(o);
-      }
-      return{sn:wb.SheetNames[k],cols:Object.keys(map),st:out,bad:bad};
-    }
-  }
-  return null;
 }
 $("pim").onclick=function(){
   if(!canM()){alert("គ្មានសិទ្ធិនាំចូលទិន្នន័យទៅគ្រូដទៃទេ!");return}
@@ -1331,21 +1324,38 @@ $("pfile").onchange=function(e){
   loadXL(function(){
     var r=new FileReader();
     r.onload=function(ev){
-      var x;try{x=pParse(XLSX.read(ev.target.result,{type:"array",codepage:65001,raw:/\.csv$/i.test(f.name)}))}catch(er){console.error(er);alert("មិនអាចអានឯកសារនេះបានទេ!");return}
-      if(!x||!x.st.length){alert("រកមិនឃើញបញ្ជីសិស្សក្នុងឯកសារនេះទេ។ ជួរក្បាលតារាងត្រូវមាន «ឈ្មោះសិស្ស» ហើយអាចមាន «លេខសម្គាល់», «ភេទ», «ថ្ងៃខែឆ្នាំកំណើត», «ទូរស័ព្ទ»។ ចុច «📄 ទាញយកគំរូ» ដើម្បីមើលទម្រង់។");return}
-      var c=curCls(),add=[],upd=0;
-      x.st.forEach(function(o){
-        var t=c.st.filter(function(q){return o.id?String(q.id||"").toLowerCase()===o.id.toLowerCase():q.n===o.n})[0];
-        if(t)upd++;else add.push(o);
-      });
-      var L={id:"លេខសម្គាល់",n:"ឈ្មោះ",g:"ភេទ",dob:"ថ្ងៃកំណើត",ph:"ទូរស័ព្ទ"};
-      if(!confirm("នាំចូលទៅថ្នាក់ «"+c.n+"» (សន្លឹក «"+x.sn+"»)\n\n• សិស្សថ្មី៖ "+add.length+" នាក់\n• ធ្វើបច្ចុប្បន្នភាព (មានរួចហើយ)៖ "+upd+" នាក់\n• ជួរឈរ៖ "+x.cols.map(function(k){return L[k]}).join(", ")+(x.bad?"\n• ⚠️ "+x.bad+" ជួរមានទិន្នន័យមិនត្រឹមត្រូវ (គ្មានឈ្មោះ ឬថ្ងៃខែមិនស្គាល់) ត្រូវរំលង":"")+"\n\nពិន្ទុ និងអវត្តមានដែលមានស្រាប់ នឹងនៅដដែល។ បន្តទេ?"))return;
-      x.st.forEach(function(o){
-        var t=c.st.filter(function(q){return o.id?String(q.id||"").toLowerCase()===o.id.toLowerCase():q.n===o.n})[0];
-        if(!t){t={id:"",n:o.n,a:["","","","","",""],b:["","","","",""]};c.st.push(t)}
-        Object.keys(o).forEach(function(k){if(o[k]!==""||k==="n")t[k]=o[k]});
-      });
-      savR();renderP();notify("បាននាំចូល៖ ថ្មី "+add.length+" នាក់ · ធ្វើបច្ចុប្បន្នភាព "+upd+" នាក់");
+      var wb;try{wb=XLSX.read(ev.target.result,{type:"array",codepage:65001,raw:/\.csv$/i.test(f.name)})}catch(er){console.error(er);alert("មិនអាចអានឯកសារនេះបានទេ!");return}
+      var F=[{k:"id",l:"លេខសម្គាល់",re:PCOL.id},{k:"n",l:"ឈ្មោះសិស្ស",req:true,re:PCOL.n},{k:"g",l:"ភេទ",re:PCOL.g},{k:"dob",l:"ថ្ងៃខែឆ្នាំកំណើត",re:PCOL.dob},{k:"ph",l:"ទូរស័ព្ទអាណាព្យាបាល",re:PCOL.ph}];
+      COLMAP.open({title:"📥 នាំចូលបញ្ជីសិស្ស — ផ្គូផ្គងជួរឈរ",wb:wb,fields:F,note:"យ៉ាងតិចត្រូវមាន «ឈ្មោះសិស្ស»។",onOk:function(res){
+        var sh=res.sheets[0],rows=sh.rows,m=sh.map,out=[],errs=[],seen={};
+        function E(r,t){errs.push("ជួរទី "+(r+1)+"៖ "+t)}
+        for(var i=sh.hr+1;i<rows.length;i++){
+          var row=rows[i];if(!row.some(function(v){return COLMAP.txt(v)}))continue;
+          var cell=function(k){return m[k]==null?"":COLMAP.txt(row[m[k]])},o={n:cell("n")};
+          if(!o.n){E(i,"គ្មានឈ្មោះសិស្ស"+(cell("id")?" (ID "+cell("id")+")":"")+" — រំលង");continue}
+          if(m.id!=null){o.id=cell("id");if(o.id){var lk=o.id.toLowerCase();if(seen[lk]){E(i,o.n+" · ID «"+o.id+"» ជាន់នឹងជួរទី "+seen[lk]+" — រំលង");continue}seen[lk]=i+1}}
+          if(m.g!=null){o.g=pGender(cell("g"));if(!o.g&&cell("g"))E(i,o.n+" · ភេទ «"+cell("g")+"» មិនស្គាល់ (ប្រើ ប្រុស/ស្រី · M/F) — ទុកទទេ")}
+          if(m.dob!=null){o.dob=pDate(row[m.dob]);if(!o.dob&&cell("dob"))E(i,o.n+" · ថ្ងៃកំណើត «"+cell("dob")+"» មិនត្រឹមត្រូវ (ប្រើ dd/mm/yyyy) — ទុកទទេ")}
+          if(m.ph!=null){o.ph=cell("ph");if(typeof row[m.ph]==="number"&&o.ph.charAt(0)!=="0")o.ph="0"+o.ph}   /* Excel លុបលេខ 0 ខាងមុខលេខទូរស័ព្ទ */
+          out.push(o);
+        }
+        if(!out.length){COLMAP.report({title:"📥 នាំចូលបញ្ជីសិស្ស",html:"<p>រកមិនឃើញសិស្សក្នុងសន្លឹក «"+esc(sh.sn)+"» ទេ។</p>",errs:errs,ok:false});return}
+        var c=curCls(),add=[],upd=0;
+        out.forEach(function(o){
+          var t=c.st.filter(function(q){return o.id?String(q.id||"").toLowerCase()===o.id.toLowerCase():q.n===o.n})[0];
+          if(t)upd++;else add.push(o);
+        });
+        COLMAP.report({title:"📥 នាំចូលទៅថ្នាក់ «"+c.n+"»",okText:"នាំចូល "+out.length+" នាក់",errs:errs,
+          html:"<ul><li>សិស្សថ្មី៖ <b>"+add.length+"</b> នាក់</li><li>ធ្វើបច្ចុប្បន្នភាព (មានរួចហើយ)៖ <b>"+upd+"</b> នាក់</li><li>សន្លឹក៖ «"+esc(sh.sn)+"»</li></ul>",
+          onOk:function(){
+            out.forEach(function(o){
+              var t=c.st.filter(function(q){return o.id?String(q.id||"").toLowerCase()===o.id.toLowerCase():q.n===o.n})[0];
+              if(!t){t={id:"",n:o.n,a:["","","","","",""],b:["","","","",""]};c.st.push(t)}
+              Object.keys(o).forEach(function(k){if(o[k]!==""||k==="n")t[k]=o[k]});
+            });
+            savR();renderP();notify("បាននាំចូល៖ ថ្មី "+add.length+" នាក់ · ធ្វើបច្ចុប្បន្នភាព "+upd+" នាក់");
+          }});
+      }});
     };
     r.readAsArrayBuffer(f);
   });

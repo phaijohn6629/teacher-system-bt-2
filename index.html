@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
-<link rel="stylesheet" href="style.css?v=58">
+<link rel="stylesheet" href="style.css?v=59">
 <link rel="stylesheet" href="modern.css?v=18">
 
 </head>
@@ -507,7 +507,7 @@
   </form>
 </dialog>
 
-<dialog id="dlgImp" class="wide"><div class="dlgb"><h2 style="margin-top:0">📥 នាំចូលពិន្ទុពី Excel</h2><p class="note" id="impt"></p><p class="note"><b>ប្រព័ន្ធផ្គូផ្គងសិស្សតាម ID ប៉ុណ្ណោះ (មិនមែនតាមលំដាប់ ឬឈ្មោះទេ)</b>៖ ត្រូវមានជួរក្បាលតារាង «ID» ឬ «លេខសម្គាល់»។ ជួរដែលគ្មាន ID នឹងត្រូវរំលង។ ប្រព័ន្ធស្គាល់ជួរពិន្ទុតាមក្បាលតារាង៖ October, November, December, January, (February), S_1, March, April, May, June, S_2។ ជួរណាដែលគ្មាននឹងត្រូវបិទដោយស្វ័យប្រវត្តិសម្រាប់ថ្នាក់នោះ។</p><div id="impl"></div></div><div class="dlgf"><button type="button" id="cxImp">បោះបង់</button><button class="primary" type="button" id="okImp">នាំចូល</button></div></dialog>
+<dialog id="dlgImp" class="wide"><div class="dlgb"><h2 style="margin-top:0">📥 នាំចូលពិន្ទុពី Excel</h2><p class="note" id="impt"></p><p class="note"><b>ប្រព័ន្ធផ្គូផ្គងសិស្សតាម ID ប៉ុណ្ណោះ (មិនមែនតាមលំដាប់ ឬឈ្មោះទេ)</b>៖ ជួរឈរ ID និងពិន្ទុ យកតាមការផ្គូផ្គងដែលអ្នកបានជ្រើសមុននេះ។ ជួរពិន្ទុណាដែលមិនបានជ្រើស នឹងត្រូវបិទសម្រាប់ថ្នាក់នោះ (បើមិនទាន់មានពិន្ទុ)។</p><div id="impl"></div></div><div class="dlgf"><button type="button" id="cxImp">បោះបង់</button><button class="primary" type="button" id="okImp">នាំចូល</button></div></dialog>
 <dialog id="dlgNm"><div style="padding:18px"><h2 style="margin-top:0">📋 បិទភ្ជាប់ ID និងឈ្មោះសិស្ស</h2><label for="nmt">មួយសិស្សក្នុងមួយបន្ទាត់៖ ID [Tab ឬក្បៀស] ឈ្មោះ (ចម្លងពីរជួរពី Excel បិទភ្ជាប់បានតែម្ដង)</label><textarea id="nmt" rows="10" placeholder="S001&#9;សុខ ចាន់ដារ៉ា&#10;S002&#9;ចាន់ សុភា"></textarea><p class="note">ផ្គូផ្គងតាម ID ប៉ុណ្ណោះ៖ ID ដែលមានរួចហើយ នឹងកែឈ្មោះ ហើយ ID ថ្មីនឹងបន្ថែមជាសិស្សថ្មី។</p><div class="foot" style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><button type="button" id="cxNm">បោះបង់</button><button class="primary" type="button" id="okNm">រក្សាទុក</button></div></div></dialog>
 <dialog id="dlgCard" class="wide"><div class="dlgb" id="cardBody"></div><div class="dlgf"><button type="button" id="cxCard">បិទ</button><button class="primary" type="button" id="prCard">🖨️ បោះពុម្ព / PDF</button></div></dialog>
 
@@ -551,7 +551,8 @@
 <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" id="sgClr">សម្អាត</button><span style="display:flex;gap:8px"><button type="button" id="cxSg">បោះបង់</button><button class="primary" type="button" id="okSg">រក្សាទុក</button></span></div></div></dialog>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=50"></script>
+<script src="script.js?v=51"></script>
+<script src="colmap.js?v=1"></script>
 <script src="walker.js?v=4"></script>
 <script src="sched.js?v=21"></script>
 <script src="curriculum7.js?v=4"></script>
