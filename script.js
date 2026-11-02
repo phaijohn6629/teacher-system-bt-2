@@ -1105,8 +1105,7 @@ function renderP(){
   $("pmo").innerHTML=MK.map(function(m,i){return"<option value="+i+(i===pmo?" selected":"")+">"+m+"</option>"}).join("");
   $("pmo").hidden=pv!==2;
   [].forEach.call($("pseg").children,function(b){b.setAttribute("aria-selected",+b.dataset.pv===pv)});
-  ["pt","pc","pim","ptpl","pex"].forEach(function(id){$(id).style.display=pv===3?"none":""});
-  [].forEach.call(document.querySelectorAll("label[for=pt],label[for=pc]"),function(l){l.style.display=pv===3?"none":""});
+  ["pim","ptpl","pex"].forEach(function(id){$(id).style.display=pv===3?"none":""});
   if(pv===3){renderPAll();return}
   var c=cl[rc],ro=!canM(),b="";
   if(!c){$("ptb").innerHTML="<tbody><tr><td class=empty>មិនទាន់មានថ្នាក់ទេ។</td></tr></tbody>";abSum(null);return}
@@ -1153,9 +1152,8 @@ function renderPAll(){
     var gd=parseInt(g.n)||0;
     if(gd!==gr){gr=gd;var sub=L.filter(function(x){return(parseInt(x.n)||0)===gd}),st=sub.reduce(function(a,x){return a+x.tot},0);
       b+="<tr class=tr><td colspan=6>"+(gd?"ថ្នាក់ទី"+kn(gd):"ផ្សេងៗ")+" · "+kn(sub.length)+" ថ្នាក់ · "+kn(st)+" នាក់</td></tr>"}
-    var op=pxOpen[g.k];
-    b+="<tr><td class=nm>"+esc(g.n)+"</td><td><b>"+kn(g.tot)+"</b></td><td>"+kn(g.m)+"</td><td>"+kn(g.f)+"</td><td>"+tn(g.main.t)+
-      (g.dup.length?"<div class=px-dup>⚠️ ស្ទួន (មិនរាប់)៖ "+g.dup.map(function(d){return tn(d.t)+" ("+kn(d.c.st.length)+" នាក់)"}).join(" · ")+"</div>":"")+"</td>"+
+    var op=pxOpen[g.k]!==false;
+    b+="<tr><td class=nm><button type=button class=px-go data-pgo='"+esc(g.main.t)+"|"+esc(g.main.c.n)+"' title='បើកបញ្ជីសិស្សថ្នាក់នេះ'>"+esc(g.n)+"</button></td><td><b>"+kn(g.tot)+"</b></td><td>"+kn(g.m)+"</td><td>"+kn(g.f)+"</td><td>"+tn(g.main.t)+"</td>"+
       "<td>"+(g.tot?"<button type=button data-px='"+esc(g.k)+"'>"+(op?"🔼 បិទ":"👁️ មើលសិស្ស")+"</button>":"<span class=note>គ្មានសិស្ស</span>")+"</td></tr>";
     if(op&&g.tot)b+="<tr class=px-row><td colspan=6><ol class=px-list>"+g.main.c.st.map(function(s){return"<li class='"+(s.g==="ស្រី"?"f":s.g==="ប្រុស"?"m":"")+"'>"+esc(s.n)+"</li>"}).join("")+"</ol></td></tr>";
   });
@@ -1164,10 +1162,15 @@ function renderPAll(){
   el.innerHTML="<h3>📚 ទិន្នន័យសិស្សរួម (គ្រប់គ្រូ · គ្រប់ថ្នាក់)</h3><div class=ab-sts>"+
     "<div class='ab-st ab-exc'><b>"+kn(nc)+"</b><span>ថ្នាក់ដែលមានសិស្ស</span></div><div class='ab-st ab-ok'><b>"+kn(T)+"</b><span>សិស្សសរុប (នាក់)</span></div>"+
     "<div class='ab-st ab-exc'><b>"+kn(Mb)+"</b><span>ប្រុស</span></div><div class='ab-st ab-une'><b>"+kn(F)+"</b><span>ស្រី</span></div></div>"+
-    (nd?"<p class=note style='margin:10px 0 0'>⚠️ មាន "+kn(nd)+" បញ្ជីថ្នាក់ដែលគ្រូបញ្ចូលស្ទួនគ្នា — រាប់តែបញ្ជីមួយ (បញ្ជីដែលមានសិស្សច្រើនជាងគេ) ហើយមិនលុបទិន្នន័យរបស់គ្រូណាម្នាក់ទេ។</p>":"");
+    "";
   $("pnote").textContent="💡 ទិន្នន័យនេះរួមបញ្ចូលថ្នាក់ដែលគ្រូទាំងអស់បានបញ្ចូល។ ចុច «👁️ មើលសិស្ស» ដើម្បីមើលបញ្ជីឈ្មោះ។ ការកែបញ្ជីសិស្ស ធ្វើនៅផ្ទាំង «បញ្ជីសិស្ស» របស់គ្រូម្ចាស់ថ្នាក់។";
 }
-$("ptb").addEventListener("click",function(e){var b=e.target.closest("[data-px]");if(b){pxOpen[b.dataset.px]=!pxOpen[b.dataset.px];renderPAll()}});
+$("ptb").addEventListener("click",function(e){
+  var b=e.target.closest("[data-px]");if(b){pxOpen[b.dataset.px]=pxOpen[b.dataset.px]===false;renderPAll();return}
+  var g=e.target.closest("[data-pgo]");if(!g)return;
+  var a=g.dataset.pgo.split("|"),i=(rs.c[a[0]]||[]).map(function(c){return c.n}).indexOf(a[1]);
+  if(i>=0){rt=a[0];rc=i;pv=1;renderP();window.scrollTo(0,0)}
+});
 /* អវត្តមាន៖ s.ab[ខែ] = [ច្បាប់, ឥតច្បាប់, មកយឺត] */
 var ABK=[{i:2,t:"មកយឺត",ic:"⏰",c:"late"},{i:0,t:"ច្បាប់",ic:"📝",c:"exc"},{i:1,t:"ឥតច្បាប់",ic:"❌",c:"une"}];
 function abCell(i,k,v,ro){
@@ -1227,8 +1230,8 @@ function abSum(c){
     (function st(now){var k=Math.max(0,Math.min(1,(now-t0)/600));b.textContent=Math.round(t*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(st)})(t0);
   });
 }
-$("pt").onchange=function(){rt=this.value;rc=0;renderP()};
-$("pc").onchange=function(){clsPick(this.value,renderP)};
+$("pt").onchange=function(){rt=this.value;rc=0;if(pv===3)pv=1;renderP()};
+$("pc").onchange=function(){if(pv===3)pv=1;clsPick(this.value,renderP)};
 $("pmo").onchange=function(){pmo=+this.value;renderP()};
 $("pseg").onclick=function(e){var b=e.target.closest("button");if(b){pv=+b.dataset.pv;renderP()}};
 $("ptb").oninput=function(e){
