@@ -150,20 +150,22 @@ L("ផលគុណតាមទម្រង់ត្រីកោណមាត្�
   B("tip","មកពី",R`$\cos\theta_1\cos\theta_2-\sin\theta_1\sin\theta_2=\cos(\theta_1+\theta_2)$
 $\sin\theta_1\cos\theta_2+\cos\theta_1\sin\theta_2=\sin(\theta_1+\theta_2)$`)),
  S("ឧទាហរណ៍",
-  B("ex","",R`$\sqrt2\,\text{cis}\frac{3\pi}4\cdot2\,\text{cis}\frac{4\pi}3=2\sqrt2\,\text{cis}\frac{25\pi}{12}=2\sqrt2\,\text{cis}\frac{\pi}{12}$
+  B("ex","",R`$\sqrt2\left(\cos\frac{3\pi}4+i\sin\frac{3\pi}4\right)\cdot2\left(\cos\frac{4\pi}3+i\sin\frac{4\pi}3\right)=2\sqrt2\left(\cos\frac{25\pi}{12}+i\sin\frac{25\pi}{12}\right)$
+$\qquad=2\sqrt2\left(\cos\frac{\pi}{12}+i\sin\frac{\pi}{12}\right)$
 $(1+i)(-1+i\sqrt3)=2\sqrt2\left(\cos\frac{11\pi}{12}+i\sin\frac{11\pi}{12}\right)$`),
-  B("sum","អត្ថប្រយោជន៍",R`$(1+i)(1+i\sqrt3)=(1-\sqrt3)+(1+\sqrt3)i=2\sqrt2\,\text{cis}\frac{7\pi}{12}$
-⇒ $\cos\frac{7\pi}{12}=\frac{\sqrt2-\sqrt6}4,\ \sin\frac{7\pi}{12}=\frac{\sqrt2+\sqrt6}4$`),
-  B("tip","សញ្ញាណ",R`$\text{cis}\,\theta=\cos\theta+i\sin\theta$`))
+  B("sum","អត្ថប្រយោជន៍",R`$(1+i)(1+i\sqrt3)=(1-\sqrt3)+(1+\sqrt3)i=2\sqrt2\left(\cos\frac{7\pi}{12}+i\sin\frac{7\pi}{12}\right)$
+⇒ $\cos\frac{7\pi}{12}=\frac{\sqrt2-\sqrt6}4,\ \sin\frac{7\pi}{12}=\frac{\sqrt2+\sqrt6}4$`))
 ]),
 L("ផលចែកតាមទម្រង់ត្រីកោណមាត្រ","Blended",[
  S("រូបមន្ត",
   B("def","ចែកម៉ូឌុល · ដកអាគុយម៉ង់",R`$$\frac{z_1}{z_2}=\frac{r_1}{r_2}[\cos(\theta_1-\theta_2)+i\sin(\theta_1-\theta_2)]$$`),
-  B("plot",R`$2\,\text{cis}120^\circ \div \sqrt2\,\text{cis}45^\circ=\sqrt2\,\text{cis}75^\circ$`,{p:[[-1,1.73,"z_1",BL],[1,1,"z_2",OR],[0.37,1.37,"z_1/z_2",RD]],v:true})),
+  B("plot",R`$\dfrac{z_1}{z_2}$ ៖ ម៉ូឌុល $\dfrac{2}{\sqrt2}=\sqrt2$ · មុំ $120^\circ-45^\circ=75^\circ$`,{p:[[-1,1.73,"z_1",BL],[1,1,"z_2",OR],[0.37,1.37,"z_1/z_2",RD]],v:true})),
  S("ឧទាហរណ៍",
-  B("ex","",R`$\dfrac{6\,\text{cis}\frac{5\pi}{12}}{2\,\text{cis}\frac{\pi}{12}}=3\,\text{cis}\frac\pi3$
-$\dfrac{-1+i\sqrt3}{1+i}=\dfrac{2\,\text{cis}\frac{2\pi}3}{\sqrt2\,\text{cis}\frac\pi4}=\sqrt2\,\text{cis}\frac{5\pi}{12}$
-$\dfrac{2\,\text{cis}\frac\pi2}{\text{cis}\frac\pi6}=2\,\text{cis}\frac\pi3=1+\sqrt3 i$`))
+  B("ex","",R`$\dfrac{6\left(\cos\frac{5\pi}{12}+i\sin\frac{5\pi}{12}\right)}{2\left(\cos\frac{\pi}{12}+i\sin\frac{\pi}{12}\right)}=3\left(\cos\frac\pi3+i\sin\frac\pi3\right)$
+$\dfrac{-1+i\sqrt3}{1+i}=\dfrac{2\left(\cos\frac{2\pi}3+i\sin\frac{2\pi}3\right)}{\sqrt2\left(\cos\frac\pi4+i\sin\frac\pi4\right)}$
+$\qquad=\sqrt2\left(\cos\frac{5\pi}{12}+i\sin\frac{5\pi}{12}\right)$
+$\dfrac{2\left(\cos\frac\pi2+i\sin\frac\pi2\right)}{\left(\cos\frac\pi6+i\sin\frac\pi6\right)}=2\left(\cos\frac\pi3+i\sin\frac\pi3\right)$
+$\qquad=1+\sqrt3 i$`))
 ]),
 L("បំប្លែងវិលជុំវិញគល់តម្រុយ","Blended · ពិភាក្សាក្រុម",[
  S("និយមន័យ",
@@ -177,7 +179,9 @@ L("បំប្លែងវិលជុំវិញគល់តម្រុយ",
 - រកមុំ ៖ $\dfrac{z'}{z}=\cos\alpha+i\sin\alpha$
 - បញ្ច្រាស ៖ $z=[\cos(-\alpha)+i\sin(-\alpha)]\,z'$`)),
  S("ឧទាហរណ៍",
-  B("ex",R`$z=1+i$ វិល $\frac\pi3$`,R`$z'=\sqrt2\,\text{cis}\left(\frac\pi4+\frac\pi3\right)=\sqrt2\,\text{cis}\frac{7\pi}{12}=\frac{1-\sqrt3}2+\frac{1+\sqrt3}2 i$`),
+  B("ex",R`$z=1+i$ វិល $\frac\pi3$`,R`$z'=\sqrt2\left(\cos\left(\frac\pi4+\frac\pi3\right)+i\sin\left(\frac\pi4+\frac\pi3\right)\right)$
+$\qquad=\sqrt2\left(\cos\frac{7\pi}{12}+i\sin\frac{7\pi}{12}\right)$
+$\qquad=\frac{1-\sqrt3}2+\frac{1+\sqrt3}2 i$`),
   B("ex","រកមុំ",R`$z=1+i\to z'=-1+i$ ៖ $\dfrac{z'}z=i$ ⇒ $\alpha=\frac\pi2$`))
 ]),
 L("ស្វ័យគុណទី $n$ និងរូបមន្តដឺម័រ","Think-Pair-Share · GeoGebra",[
@@ -185,16 +189,18 @@ L("ស្វ័យគុណទី $n$ និងរូបមន្តដឺម័
   B("def","De Moivre",R`$$(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta$$
 $$z^n=r^n(\cos n\theta+i\sin n\theta)$$
 ម៉ូឌុលលើកស្វ័យគុណ $n$ · អាគុយម៉ង់គុណនឹង $n$`),
-  B("tip","",R`ពិតដែរចំពោះ $n\in\Z$ ៖ $(\text{cis}\,\theta)^{-n}=\cos n\theta-i\sin n\theta$`)),
+  B("tip","",R`ពិតដែរចំពោះ $n\in\Z$ ៖ $(\cos\theta+i\sin\theta)^{-n}=\cos n\theta-i\sin n\theta$`)),
  S("ឧទាហរណ៍",
-  B("ex","",R`$(1+i)^6=(\sqrt2)^6\text{cis}\frac{6\pi}4=8\,\text{cis}\frac{3\pi}2=-8i$
-$(\sqrt3+i)^{10}=2^{10}\text{cis}\frac{5\pi}3=512-512\sqrt3 i$
+  B("ex","",R`$(1+i)^6=(\sqrt2)^6\left(\cos\frac{6\pi}4+i\sin\frac{6\pi}4\right)$
+$\qquad=8\left(\cos\frac{3\pi}2+i\sin\frac{3\pi}2\right)$
+$\qquad=-8i$
+$(\sqrt3+i)^{10}=2^{10}\left(\cos\frac{5\pi}3+i\sin\frac{5\pi}3\right)=512-512\sqrt3 i$
 $(1+i)^{10}=32i$ , $(\sqrt3+i)^6=-64$`),
-  B("plot",R`គុណនឹង $z=\text{cis}\frac\pi6$ ម្ដង = វិល $30^\circ$`,{p:[[2.6,1.5,"z",BL],[1.5,2.6,"z^2",BL],[0,3,"z^3",BL],[-1.5,2.6,"z^4",BL],[-2.6,1.5,"z^5",BL],[-3,0,"z^6",RD]],v:true,c:3}))
+  B("plot",R`គុណនឹង $z=\cos\frac\pi6+i\sin\frac\pi6$ ម្ដង = វិល $30^\circ$`,{p:[[2.6,1.5,"z",BL],[1.5,2.6,"z^2",BL],[0,3,"z^3",BL],[-1.5,2.6,"z^4",BL],[-2.6,1.5,"z^5",BL],[-3,0,"z^6",RD]],v:true,c:3}))
 ]),
 L("ឫសទី $n$ នៃចំនួនកុំផ្លិច","Student-Centered · GeoGebra",[
  S("រូបមន្ត",
-  B("def",R`ឫសទី $n$ នៃ $z=r\,\text{cis}\,\theta$`,R`$$w_k=\sqrt[n]r\left[\cos\frac{\theta+2k\pi}n+i\sin\frac{\theta+2k\pi}n\right]$$
+  B("def",R`ឫសទី $n$ នៃ $z=r(\cos\theta+i\sin\theta)$`,R`$$w_k=\sqrt[n]r\left[\cos\frac{\theta+2k\pi}n+i\sin\frac{\theta+2k\pi}n\right]$$
 $k=0,1,\dots,n-1$ (មាន $n$ ឫសខុសគ្នា)`),
   B("sum","ធរណីមាត្រ",R`ឫសទាំង $n$ នៅលើរង្វង់ផ្ចិត $O$ កាំ $\sqrt[n]r$ ឃ្លាតគ្នា $\frac{2\pi}n$ → ពហុកោណនិយ័ត $n$ ជ្រុង`)),
  S("ឧទាហរណ៍",
@@ -246,9 +252,11 @@ function plot(d){
 
 /* ---------------- បង្ហាញ ---------------- */
 var gSel=12,cur=null,idx=0,timer=null;
+/* ប្រភាគ និងរូបមន្តក្នុងបន្ទាត់ ឲ្យធំស្មើរូបមន្តឯករាជ្យ */
+function ds(t){return String(t||"").replace(/\$\$[\s\S]*?\$\$|\$([^$]+)\$/g,function(m,a){return a==null?m:"$\\displaystyle "+a+"$"})}
 function body(t){
   var out="",ul=false;
-  String(t||"").split("\n").forEach(function(l){
+  ds(t).split("\n").forEach(function(l){
     if(/^- /.test(l)){if(!ul){out+="<ul>";ul=true}out+="<li>"+esc(l.slice(2))+"</li>"}
     else{if(ul){out+="</ul>";ul=false}out+=l.trim()?"<p>"+esc(l)+"</p>":""}
   });
@@ -257,8 +265,8 @@ function body(t){
 var KI={def:["📘","និយមន័យ"],ex:["✏️","ឧទាហរណ៍"],sol:["✅","ចម្លើយ"],tip:["💡","គន្លឹះ"],warn:["⚠️","ប្រយ័ត្ន"],sum:["📌","សង្ខេប"],plot:["📈",""]};
 function blk(b,i){
   var ki=KI[b.k]||KI.def,h=b.h!=null?b.h:ki[1];
-  if(b.k==="plot")return"<div class='ls-blk ls-plotb' style='--d:"+i+"'>"+plot(b.b)+(h?"<div class=ls-cap>"+esc(h)+"</div>":"")+"</div>";
-  return"<div class='ls-blk ls-"+b.k+"' style='--d:"+i+"'><div class=ls-bh><span aria-hidden=true>"+ki[0]+"</span> "+esc(h||ki[1])+"</div><div class=ls-bb>"+body(b.b)+"</div></div>";
+  if(b.k==="plot")return"<div class='ls-blk ls-plotb' style='--d:"+i+"'>"+plot(b.b)+(h?"<div class=ls-cap>"+esc(ds(h))+"</div>":"")+"</div>";
+  return"<div class='ls-blk ls-"+b.k+"' style='--d:"+i+"'><div class=ls-bh><span aria-hidden=true>"+ki[0]+"</span> "+esc(ds(h||ki[1]))+"</div><div class=ls-bb>"+body(b.b)+"</div></div>";
 }
 function slides(ls,ch){
   var t=[{title:1}].concat(ls.s,[{end:1}]);return t;

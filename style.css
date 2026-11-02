@@ -627,3 +627,4 @@ body.ls-open{overflow:hidden}
 .ls-recap button{font-size:clamp(13px,1.2vw,22px)}
 .ls-view{padding-left:8px;padding-right:8px}.ls-stage{align-items:stretch}
 .ls-view:fullscreen{padding:10px 14px}
+.ls-bb{line-height:2.05}.ls-bb .katex{font-size:1.12em}.ls-bh .katex{font-size:1.05em}
