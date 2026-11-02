@@ -49,11 +49,23 @@ function correct(q,ans){
 function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"test.html?t="+encodeURIComponent(id)}
 
 /* ---------- ផ្ទុក/រក្សាទុកធនាគារលំហាត់ ---------- */
+/* ធនាគារលំហាត់របស់គ្រូទាំងអស់ · តាមដានផ្ទាល់ (onSnapshot) ដើម្បីឱ្យលំហាត់ដែលគ្រូផ្សេងទើបបន្ថែម បង្ហាញភ្លាម */
+var qbUn=null,qbErr="";
+function qbApply(sn){var o={};sn.forEach(function(d){var v=d.data();try{o[v.o||d.id]=JSON.parse(v.j)||[]}catch(x){}});qb=o;qbLoaded=true;qbErr=""}
 function loadQB(){
-  if(!window.FB||!window.db)return Promise.resolve();
-  return window.FB.getDocs(window.FB.collection(window.db,"qb")).then(function(sn){
-    var o={};sn.forEach(function(d){var v=d.data();try{o[v.o]=JSON.parse(v.j)||[]}catch(x){}});qb=o;qbLoaded=true;
-  }).catch(function(e){console.error("qb:",e);qbLoaded=true});
+  if(!window.FB||!window.db||!who)return new Promise(function(r){setTimeout(r,500)});
+  if(qbUn)return Promise.resolve();
+  return new Promise(function(res){
+    var first=true;
+    qbUn=window.FB.onSnapshot(window.FB.collection(window.db,"qb"),function(sn){
+      qbApply(sn);if(first){first=false;res();return}
+      if(!$("p17").hidden&&QV==="bank"&&!document.querySelector("#qzBody dialog[open]"))keepFocus(renderBank);
+    },function(e){
+      console.error("qb:",e);qbUn=null;qbLoaded=true;qbErr=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិអានធនាគារលំហាត់ (សូម Admin Publish firestore.rules កំណែថ្មី)":"មិនអាចផ្ទុកធនាគារលំហាត់បានទេ · សូមពិនិត្យអ៊ីនធឺណិត";
+      if(first){first=false;res()}
+    });
+    var un=qbUn;if(window.unsubs)unsubs.push(function(){un();if(qbUn===un){qbUn=null;qbLoaded=false}});
+  });
 }
 function saveQB(tid){
   return window.FB.setDoc(window.FB.doc(window.db,"qb",tid),{o:tid,j:JSON.stringify(qb[tid]||[]),u:new Date().toISOString()})
@@ -69,7 +81,8 @@ function renderBank(){
     "<label>កម្រិត៖</label><select id=qfV><option value=0>ទាំងអស់</option>"+[1,2,3].map(function(v){return"<option value="+v+(v===fV?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
     "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox id=qfM "+(mine?"checked":"")+" style='width:auto;margin:0'> តែរបស់ខ្ញុំ</label>"+
     "<button type=button class=primary data-qa=new>＋ បន្ថែមលំហាត់</button><button type=button data-qa=tex>📥 នាំចូលពី LaTeX (.tex)</button></div>"+
-    "<p class=note style='margin:0 0 10px'>សរុប <b>"+kn(list.length)+"</b> លំហាត់ · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
+    (qbErr?"<p class=cxwarn>⚠️ "+esc(qbErr)+" <button type=button data-qa=reload>🔄 ផ្ទុកម្ដងទៀត</button></p>":"")+
+    "<p class=note style='margin:0 0 10px'>សរុប <b>"+kn(list.length)+"</b> លំហាត់"+(list.length<allQ().length?" (ក្នុងធនាគារទាំងមូល "+kn(allQ().length)+" លំហាត់ ពីគ្រូ "+kn(Object.keys(qb).filter(function(t){return qb[t].length}).length)+" នាក់ · ប្ដូរតម្រងដើម្បីមើលបន្ថែម)":"")+" · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
     return"<div class=qz-q><div class=qz-qh><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span><span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
@@ -479,6 +492,7 @@ $("qzBody").addEventListener("click",function(e){
   if(b.dataset.qd){var p2=b.dataset.qd.split("|");if(!confirm("លុបលំហាត់នេះ?"))return;qb[p2[0]]=(qb[p2[0]]||[]).filter(function(x){return x.id!==p2[1]});saveQB(p2[0]).then(function(){renderBank();notify("បានលុបលំហាត់")});return}
   if(b.dataset.qo){curTest=tests.filter(function(t){return t.id===b.dataset.qo})[0];watchSubs(curTest);renderRes();return}
   var a=b.dataset.qa,t=curTest;
+  if(a==="reload"){qbLoaded=false;qbErr="";renderQuiz();return}
   if(a==="new")qDialog();
   else if(a==="tex")texImport();
   else if(a==="shuffle"){mk.title=($("qmTi")||{}).value||mk.title;mk.dur=+(($("qmD")||{}).value)||mk.dur;doShuffle()}
