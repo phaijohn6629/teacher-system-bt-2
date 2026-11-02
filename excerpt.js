@@ -186,7 +186,7 @@ window.CXDAYS=function(tid,ym){
       if((r.d||"").slice(0,7)!==ym)return;
       if(isNew(k)&&!cxOk(r,tid))return;
       var cls=r.cls||rec.cls||"",g=parseInt(cls),t="";
-      if(r.ls&&window.CUR[g]&&window.CUR[g].LS[r.ls]){var l=window.CUR[g].LS[r.ls];t="មេរៀនទី"+kh(l[5]||r.ls)+" "+l[0]}
+      if(r.ls&&window.CUR&&window.CUR[g]&&window.CUR[g].LS[r.ls]){var l=window.CUR[g].LS[r.ls];t="មេរៀនទី"+kh(l[5]||r.ls)+" "+l[0]}
       else t=((r.c||"").split("\n").filter(Boolean)[0]||"").replace(/\s+—.*$/,"").replace(/^ជំពូកទី\S+\s.*?·\s*/,"");
       if(!t)return;var d=+r.d.slice(8,10),v=(cls?cls+"៖ ":"")+t,q=cxP(r.p);o[d]=o[d]||[];
       if(!o[d].some(function(x){return x.v===v}))o[d].push({v:v,p:q?q[0]:99});

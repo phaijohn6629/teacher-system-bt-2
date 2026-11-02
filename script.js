@@ -1585,7 +1585,25 @@ $("lbG").onclick=function(e){
 };
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
+/* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=2"],ls:["lessons.js?v=4","lessonedit.js?v=1"]};
+var NEED={p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
+function lazy(g){
+  if(lzP[g])return lzP[g];
+  lzP[g]=LAZY[g].reduce(function(pr,src){return pr.then(function(){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.body.appendChild(s)})})},Promise.resolve())
+    .then(function(){lzD[g]=1},function(e){delete lzP[g];throw e});
+  return lzP[g];
+}
+setTimeout(function(){var go=function(){Object.keys(LAZY).forEach(function(g){lazy(g).catch(function(){})})};if(window.requestIdleCallback)requestIdleCallback(go,{timeout:6000});else go()},2500);
 function show(p){
+  var need=(NEED[p]||[]).filter(function(g){return!lzD[g]});
+  if(need.length){
+    ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].forEach(function(x){$(x).hidden=x!==p});
+    syncNav(p);show.want=p;
+    Promise.all(need.map(lazy)).then(function(){if(show.want===p&&!$(p).hidden)show(p)},function(){notify("⚠️ មិនអាចទាញយកផ្ទាំងនេះបានទេ · សូមពិនិត្យអ៊ីនធឺណិត ហើយចុចម្ដងទៀត")});
+    return;
+  }
+  show.want=p;
   ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].forEach(function(x){$(x).hidden=x!==p});
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){b.setAttribute("aria-selected",b.dataset.p===p)});
   if(p==="p1")render();
