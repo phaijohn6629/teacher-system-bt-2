@@ -804,5 +804,5 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .tm-mini[hidden]{display:none}.tm-mini[data-st=warn]{color:#fbbf24}.tm-mini[data-st=red],.tm-mini[data-st=end]{color:#fff;background:#dc2626}
 @media print{.tm-view,.tm-mini{display:none!important}}
 /* ប្លង់តុ (បោះពុម្ព/PDF)៖ ស៊ុមតាមកម្ពស់ខ្លឹមសារ (មិនពេញទំព័រ) កុំឱ្យជ្រុងក្រោមធ្លាក់ទៅទំព័រទី២ */
-.pg.land.seatp{height:auto!important;max-height:160mm}
+.pg.land.seatp{height:auto!important}.pg.land.seatp.fixh{height:165mm!important}
 .pg.land.seatp .room-seats{padding-bottom:8px}

@@ -153,7 +153,22 @@ $("ogBody").addEventListener("click",function(e){
   if(x){var c=cls();if(!c||!canE())return;var o=org(c);if(o.ph)delete o.ph[x.dataset.ogdel];savR();renderOrg();return}
   var b=e.target.closest("[data-ogph]");if(b)setPhoto(b.dataset.ogph);
 });
-$("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}window.SCHX.fontsOk().then(function(){doPrint(ogV==="seat"?seatPrint(c):printHTML(c))})};
+$("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}window.SCHX.fontsOk().then(function(){doPrint(ogV==="seat"?seatFit(seatPrint(c)):printHTML(c))})};
+/* ប្លង់តុ៖ ស៊ុមខ្លីតាមខ្លឹមសារ · បើវែងជាង ១៦៥ម.ម (ជួរច្រើន) → បង្រួមខ្លឹមសារឱ្យនៅក្នុងទំព័រតែមួយ (មិនកាត់ចោល) */
+function seatFit(html){
+  var p=$("prt");p.innerHTML=html;p.style.cssText="display:block;position:absolute;left:-10000px;top:0;width:281mm";
+  var pg=p.querySelector(".seatp"),ruler=document.createElement("div");ruler.style.height="165mm";p.appendChild(ruler);
+  var Hmax=ruler.offsetHeight;ruler.remove();
+  if(pg&&pg.offsetHeight>Hmax){
+    pg.classList.add("fixh");
+    var inner=document.createElement("div");inner.className="fit";while(pg.firstChild)inner.appendChild(pg.firstChild);pg.appendChild(inner);
+    var cs=getComputedStyle(pg),H=pg.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom),z=1;
+    inner.style.transformOrigin="0 0";
+    for(var i=0;i<6;i++){inner.style.width=(100/z)+"%";inner.style.transform="scale("+z+")";var h=inner.offsetHeight;if(h*z<=H+0.5)break;var nz=Math.max(0.4,Math.min(1,H/h));if(Math.abs(nz-z)<0.003)break;z=nz}
+    inner.style.transform="scale("+(z*0.99)+")";
+  }
+  var out=p.innerHTML;p.style.cssText="";p.innerHTML="";return out;
+}
 $("ogSeg").onclick=function(e){var b=e.target.closest("button[data-ov]");if(b){ogV=b.dataset.ov;seatSel=null;renderOrg()}};
 
 /* ===================== 🪑 ប្លង់តុ =====================
