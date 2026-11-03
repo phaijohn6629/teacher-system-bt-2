@@ -550,10 +550,24 @@ body.pm .pg.land{page-break-inside:avoid}
 .mt-cols{display:grid;grid-template-columns:1.45fr 1fr 1fr;gap:3mm;text-align:center;margin-top:1mm;font-size:10.5pt}.mt-cols .moul{font-size:10pt;line-height:1.8;white-space:nowrap}
 .mt-sg{height:18mm;display:flex;align-items:center;justify-content:center}.mt-sg img{max-height:17mm;max-width:40mm}
 .mt-form h4{margin:12px 0 6px}.mt-form textarea{width:100%;box-sizing:border-box;font:inherit;line-height:1.7}
-.mt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.mt-grid label{display:flex;flex-direction:column;gap:3px;font-size:13px}
+.mt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:8px}.mt-grid input,.mt-grid select{min-width:0;width:100%;box-sizing:border-box}.mt-grid label{display:flex;flex-direction:column;gap:3px;font-size:13px}
 .mt-lun{margin:8px 0;color:var(--muted,#666);font-size:13px}
 .mt-ar{display:flex;gap:6px;align-items:center;margin:4px 0;flex-wrap:wrap}.mt-ar span{width:24px;text-align:right}.mt-ar select{flex:0 0 96px}.mt-ar input{flex:1 1 150px;min-width:0}
 .mt-x{padding:2px 8px}
+.mt-pair{display:inline-flex;align-items:center;gap:6px;max-width:100%;min-width:0}.mt-pair select{min-width:0;max-width:100%}
+/* កំណត់ហេតុប្រជុំលើទូរស័ព្ទ (អេក្រង់តែប៉ុណ្ណោះ · ការបោះពុម្ពនៅដដែល) */
+@media screen and (max-width:640px){
+  .mt-view .pg{padding:6mm 4mm;margin:6px 0}
+  .mt-view .mt-top{flex-direction:column-reverse;align-items:center;gap:2mm}
+  .mt-view .mt-kh{margin-left:0}.mt-view .mt-sch{width:auto;padding-top:0}
+  .mt-view .mt-ti{text-align:center}
+  .mt-view .mt-p{text-indent:6mm}.mt-view .mt-li{margin-left:2mm}.mt-view .mt-i{margin-left:5mm}.mt-view .mt-i2{margin-left:9mm}.mt-view .mt-h{margin-left:2mm}.mt-view .mt-b{margin-left:3mm}
+  .mt-view .mt-at{grid-template-columns:1fr;margin-left:2mm}
+  .mt-view .mt-dt{width:auto;margin:0 0 0 auto;text-align:right}
+  .mt-view .mt-cols{grid-template-columns:1fr;gap:3mm}.mt-view .mt-cols>div:empty{display:none}.mt-view .mt-cols .moul{white-space:normal}
+  .mt-ar{padding-bottom:6px;border-bottom:1px dashed var(--line,#ccc)}.mt-ar select{flex:0 0 92px}
+  .mt-pair{flex:1 1 100%}.mt-pair select{flex:1}
+}
 /* ===== មេរៀនសង្ខេប (ស្លាយមានចលនា) ===== */
 .ls-hero{background:linear-gradient(120deg,#0b5d4b,#13a37f 60%,#3ec9a7);color:#fff;border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:0 6px 18px rgba(11,93,75,.25)}
 .ls-hero h2{margin:0 0 4px;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:20px}.ls-hero p{margin:0;opacity:.9}
