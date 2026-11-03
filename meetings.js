@@ -159,8 +159,8 @@ function drawEdit(){
 }
 function bind(){
   $("mtSel").onchange=function(){cur=this.value;draw()};
-  $("mtNew").onclick=function(){edit={id:null,m:newMt()};draw()};
-  $("mtEd").onclick=function(){if(cur&&canE(cur)){edit={id:cur,m:JSON.parse(JSON.stringify(mts[cur]))};draw()}};
+  $("mtNew").onclick=function(){var d=dGet();edit=d&&!d.id&&confirm("មានសេចក្ដីព្រាងកំណត់ហេតុថ្មីដែលមិនទាន់រក្សាទុក។ បន្តសរសេរពីសេចក្ដីព្រាងនោះ?")?{id:null,m:d.m}:{id:null,m:newMt()};draw()};
+  $("mtEd").onclick=function(){if(cur&&canE(cur)){var d=dGet();edit=d&&d.id===cur&&confirm("មានការកែកំណត់ហេតុនេះដែលមិនទាន់រក្សាទុក។ បន្តពីសេចក្ដីព្រាងនោះ?")?{id:cur,m:d.m}:{id:cur,m:JSON.parse(JSON.stringify(mts[cur]))};draw()}};
   $("mtPr").onclick=function(){if(!cur)return;var X=window.SCHX;(X?X.fontsOk():Promise.resolve()).then(function(){doPrint(docHtml(mts[cur]))})};
   $("mtDel").onclick=function(){
     var b=this;if(!cur||!canE(cur))return;
@@ -172,6 +172,8 @@ function bind(){
       .catch(function(e){console.error(e);notify("លុបមិនបាន៖ "+(e.code||e.message))});
   };
   var body=$("mtBody");
+  /* សេចក្ដីព្រាង៖ រាល់ការកែ → រក្សាក្នុងកុំព្យូទ័រ (មិនបាត់ពេលបិទ/ផ្ទុកទំព័រ) រហូតដល់ចុច «រក្សាទុក» ឬ «បោះបង់» */
+  ["input","change","click"].forEach(function(t){body.addEventListener(t,function(){setTimeout(dPut,0)})});
   body.addEventListener("input",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
     if(t.dataset.k){e[t.dataset.k]=t.dataset.k==="n"?(+t.value||1):t.value;if(t.dataset.k==="d")$("mtLun").textContent=lunar(e.d)+" "+greg(e.d)}
@@ -183,19 +185,25 @@ function bind(){
     if(t.dataset.rm!=null){e.at.splice(+t.dataset.rm,1);drawEdit()}
     else if(t.id==="mtAdd"){var id=$("mtPick").value,x=data.filter(function(q){return q.id===id})[0];if(!x)return;e.at.push({t:x.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ",n:x.name,r:""});drawEdit()}
     else if(t.id==="mtAddB"){e.at.push({t:"លោកគ្រូ",n:"",r:""});drawEdit();var ins=body.querySelectorAll("#mtAt input[data-a$='|n']");if(ins.length)ins[ins.length-1].focus()}
-    else if(t.id==="mtCancel"){edit=null;draw()}
+    else if(t.id==="mtCancel"){edit=null;dDel();draw()}
     else if(t.id==="mtPrev"){$("mtPv").innerHTML=docHtml(e);$("mtPv").scrollIntoView({behavior:"smooth"})}
     else if(t.id==="mtSave"){
       if(!e.d){notify("សូមបញ្ចូលកាលបរិច្ឆេទ");return}
       e.at=e.at.filter(function(a){return String(a.n||"").trim()});
       var id=edit.id||("m"+Date.now().toString(36));
       if(!edit.id){e.rc=who.id;e.rn=who.name}
-      mts[id]=e;t.disabled=true;
-      save(id).then(function(){edit=null;cur=id;draw();notify("បានរក្សាទុកកំណត់ហេតុប្រជុំ")})
-        .catch(function(er){t.disabled=false;console.error(er);notify("រក្សាទុកមិនបាន៖ "+(er.code||er.message))});
+      mts[id]=e;t.disabled=true;mtBusy=true;
+      save(id).then(function(){mtBusy=false;edit=null;dDel();cur=id;draw();notify("បានរក្សាទុកកំណត់ហេតុប្រជុំ")})
+        .catch(function(er){mtBusy=false;t.disabled=false;console.error(er);notify("រក្សាទុកមិនបាន៖ "+(er.code||er.message))});
     }
   });
 }
+var DK="mtDraft",mtBusy=false;
+function dKey(){return DK+"_"+(window.who&&who.id||"")}
+function dGet(){try{return JSON.parse(localStorage.getItem(dKey())||"null")}catch(e){return null}}
+function dPut(){if(!edit)return;try{localStorage.setItem(dKey(),JSON.stringify({id:edit.id,m:edit.m,at:Date.now()}))}catch(e){}}
+function dDel(){try{localStorage.removeItem(dKey())}catch(e){}}
+window.MTSAVE={dirty:function(){return!!edit},busy:function(){return mtBusy},save:function(){var b=$("mtSave");if(b)b.click()}};
 if($("mtBody"))bind();
 window.renderMt=renderMt;
 window.MTG={docHtml:docHtml,seeds:SEEDS};

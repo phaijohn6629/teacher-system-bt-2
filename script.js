@@ -1065,6 +1065,44 @@ function pdfPaginate(w,pageH,contentW){
   });
 }
 window.addEventListener("afterprint",function(){document.body.classList.remove("pm");$("prt").innerHTML=""});
+/* 💾 ប៊ូតុងរក្សាទុក (ការងាររដ្ឋបាល)៖ បង្ហាញស្ថានភាពពិត (មិនទាន់ · កំពុង · បាន ម៉ោង… · បរាជ័យ) · ចុច = រក្សាទុកភ្លាម
+   p2 កិច្ចតែងការ (tasks) · p9 របាយការណ៍ (wr) · p13 Timesheet (ts) · p19 កំណត់ហេតុប្រជុំ (meetings.js · MTSAVE) */
+var SVK={p2:"tasks",p9:"wr",p13:"ts",p19:"mt"},svAt={},svWas={};
+function svState(k){
+  if(k==="mt"){var M=window.MTSAVE;return M&&M.dirty()?"dirty":M&&M.busy()?"busy":"ok"}
+  if(sy.busy[k])return"busy";if(sy.dirty[k])return"dirty";if(sy.fail&&sy.fail[k])return"err";return"ok";
+}
+function svUI(){
+  Object.keys(SVK).forEach(function(p){
+    var b=$("sv-"+p);if(!b||$(p).hidden)return;var k=SVK[p],st=svState(k);
+    if(svWas[k]==="busy"&&st==="ok"){var n=new Date();svAt[k]=("0"+n.getHours()).slice(-2)+":"+("0"+n.getMinutes()).slice(-2)}
+    svWas[k]=st;
+    if(b.dataset.st===st&&b.dataset.at===(svAt[k]||""))return;b.dataset.st=st;b.dataset.at=svAt[k]||"";
+    b.innerHTML={dirty:k==="mt"?"💾 រក្សាទុកកំណត់ហេតុ":"💾 រក្សាទុក",busy:"⏳ កំពុងរក្សាទុក…",ok:"✅ បានរក្សាទុក"+(svAt[k]?" "+svAt[k]:""),err:"⚠️ មិនបានរក្សាទុក · ចុចម្ដងទៀត"}[st];
+    b.disabled=st==="busy";
+  });
+}
+function svInit(){
+  Object.keys(SVK).forEach(function(p){
+    var sec=$(p);if(!sec||$("sv-"+p))return;var bar=sec.querySelector(".bar");if(!bar)return;
+    var b=document.createElement("button");b.type="button";b.id="sv-"+p;b.className="save-btn sv-btn";b.title="ទិន្នន័យរក្សាទុកដោយស្វ័យប្រវត្តិ · ចុចដើម្បីរក្សាទុកភ្លាម";
+    b.onclick=function(){
+      var k=SVK[p];
+      if(k==="mt"){var M=window.MTSAVE;if(M&&M.dirty())M.save();else notify("បានរក្សាទុករួចហើយ");return}
+      if(!window.FB||!FB.auth||!FB.auth.currentUser){notify("មិនទាន់ភ្ជាប់ Cloud");return}
+      if(svState(k)==="ok"){notify("បានរក្សាទុករួចហើយ");return}
+      clearTimeout(sy.t[k]);sy.dirty[k]=1;flush(k);svUI();
+    };
+    bar.appendChild(b);
+  });
+  setInterval(svUI,500);
+}
+svInit();
+/* បិទ/ផ្ទុកទំព័រឡើងវិញ ខណៈទិន្នន័យមិនទាន់រក្សាទុក → ព្រមាន */
+window.addEventListener("beforeunload",function(e){
+  var pend=Object.keys(sy.dirty||{}).some(function(k){return sy.dirty[k]})||Object.keys(sy.busy||{}).some(function(k){return sy.busy[k]})||(window.MTSAVE&&MTSAVE.dirty());
+  if(pend){e.preventDefault();e.returnValue=""}
+});
 
 
 /* ===== ផ្ទាំងទី ៦៖ ក្រាហ្វិក និងវិភាគ ===== */
@@ -1617,7 +1655,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=2"],ls:["lessons.js?v=4","lessonedit.js?v=1"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=3"],ls:["lessons.js?v=4","lessonedit.js?v=1"]};
 var NEED={p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
