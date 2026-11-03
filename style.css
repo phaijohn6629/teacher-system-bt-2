@@ -803,3 +803,6 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .tm-mini{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:8000;margin:0;padding:10px 16px;border-radius:99px;border:0;font-weight:800;font-size:16px;background:#1e2a4a;color:#4ade80;box-shadow:0 6px 20px rgba(0,0,0,.3);cursor:pointer;font-variant-numeric:tabular-nums}
 .tm-mini[hidden]{display:none}.tm-mini[data-st=warn]{color:#fbbf24}.tm-mini[data-st=red],.tm-mini[data-st=end]{color:#fff;background:#dc2626}
 @media print{.tm-view,.tm-mini{display:none!important}}
+/* ប្លង់តុ (បោះពុម្ព/PDF)៖ ស៊ុមតាមកម្ពស់ខ្លឹមសារ (មិនពេញទំព័រ) កុំឱ្យជ្រុងក្រោមធ្លាក់ទៅទំព័រទី២ */
+.pg.land.seatp{height:auto!important;max-height:160mm}
+.pg.land.seatp .room-seats{padding-bottom:8px}
