@@ -60,7 +60,10 @@ function idByName(n){var k=nk(n),t=data.filter(function(x){return nk(x.name)===k
 function head(){var t=data.filter(function(x){return x.rl==="ប្រធាន"})[0];return t?{id:t.id,n:t.name}:{id:idByName("ផៃ ចន"),n:"ផៃ ចន"}}
 function owner(id,m){return m.o||(m.rc)||idByName(m.rn)}
 function canE(id){var m=mts[id];return !!(who&&m&&(isAdm()||owner(id,m)===who.id))}
-function list(){return Object.keys(mts).filter(function(id){return !mts[id].x}).sort(function(a,b){return(mts[b].n-mts[a].n)||String(mts[b].d).localeCompare(mts[a].d)})}
+var TY={b:"បច្ចេកទេស",r:"រួម"},fTy="b";try{fTy=localStorage.getItem("mtTy")==="r"?"r":"b"}catch(e){}
+function tyOf(m){return m&&m.ty==="r"?"r":"b"}
+function nextN(ty,skip){return Object.keys(mts).filter(function(id){return !mts[id].x&&id!==skip&&tyOf(mts[id])===ty}).reduce(function(s,id){return Math.max(s,+mts[id].n||0)},0)+1}
+function list(){return Object.keys(mts).filter(function(id){return !mts[id].x&&tyOf(mts[id])===fTy}).sort(function(a,b){return(mts[b].n-mts[a].n)||String(mts[b].d).localeCompare(mts[a].d)})}
 
 function load(){
   mts={};Object.keys(SEEDS).forEach(function(id){mts[id]=JSON.parse(JSON.stringify(SEEDS[id]))});
@@ -100,8 +103,8 @@ function docHtml(m){
   return"<div class='pg mt-doc'>"+
    "<div class=mt-top><div class=mt-sch><img src='"+LOGOBT()+"' alt=''><div class=moul>វិទ្យាល័យបឹងត្របែក</div><div class=moul>សាលារៀនជំនាន់ថ្មី</div></div>"+
     "<div class=mt-kh><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul>ជាតិ សាសនា ព្រះមហាក្សត្រ</div><div class=mt-orn>❧❧❧</div></div></div>"+
-   "<div class='moul mt-ti'>កំណត់ហេតុប្រជុំក្រុមបច្ចេកទេស លើកទី"+kn(m.n)+"</div>"+
-   "<p class=mt-p>"+esc(lunar(m.d).replace("ព.ស.","ពុទ្ធសករាជ"))+" "+esc(greg(m.d))+" នៃវិទ្យាល័យបឹងត្របែក សាលារៀនជំនាន់ថ្មី បានរៀបចំប្រជុំបច្ចេកទេសលើកទី "+n2(m.n)+" ។</p>"+
+   "<div class='moul mt-ti'>កំណត់ហេតុប្រជុំ"+(tyOf(m)==="r"?"រួម":"ក្រុមបច្ចេកទេស")+" លើកទី"+kn(m.n)+"</div>"+
+   "<p class=mt-p>"+esc(lunar(m.d).replace("ព.ស.","ពុទ្ធសករាជ"))+" "+esc(greg(m.d))+" នៃវិទ្យាល័យបឹងត្របែក សាលារៀនជំនាន់ថ្មី បានរៀបចំប្រជុំ"+TY[tyOf(m)]+"លើកទី "+n2(m.n)+" ។</p>"+
    "<div class=mt-li>❖ ទីកន្លែងប្រជុំ៖ "+esc(m.pl||"")+"</div><div class=mt-li>❖ មធ្យោបាយប្រជុំ៖ "+esc(m.md||"")+"</div>"+
    "<div class=mt-li>❖ ម៉ោងចាប់ផ្ដើម៖ "+esc(tm(m.st))+" នាទី បញ្ចប់ម៉ោង "+esc(tm(m.en))+" នាទី ថ្ងៃត្រង់</div>"+
    "<div class=mt-s>I. សមាសភាពចូលរួម</div><div class=mt-at><div>"+at.slice(0,half).map(atl).join("")+"</div><div>"+at.slice(half).map(function(a,i){return atl(a,i+half)}).join("")+"</div></div>"+
@@ -122,26 +125,26 @@ function renderMt(){
 function draw(){
   var b=$("mtBody");if(!b)return;
   if(edit)return drawEdit();
-  var ids=list();
-  if(!cur||!mts[cur]||mts[cur].x)cur=ids[0]||null;
+  var ids=list();if($("mtTy"))$("mtTy").value=fTy;$("mtTy")&&($("mtTy").disabled=false);
+  if(!cur||!mts[cur]||mts[cur].x||tyOf(mts[cur])!==fTy)cur=ids[0]||null;
   $("mtSel").innerHTML=ids.map(function(id){var m=mts[id],a=ymd(m.d);return"<option value='"+id+"'"+(id===cur?" selected":"")+">លើកទី"+kn(m.n)+(a?" · "+kn(a[2])+" "+M[a[1]-1]+" "+kn(a[0]):"")+"</option>"}).join("")||"<option>— មិនទាន់មានកំណត់ហេតុ —</option>";
   var ce=cur&&canE(cur);
   $("mtEd").hidden=!ce;$("mtDel").hidden=!ce;$("mtPr").hidden=!cur;$("mtSel").disabled=!ids.length;$("mtNew").hidden=false;
-  b.innerHTML=cur?"<div class=mt-view>"+docHtml(mts[cur])+"</div>":"<p class=note>មិនទាន់មានកំណត់ហេតុប្រជុំទេ។ ចុច «➕ ប្រជុំថ្មី»។</p>";
+  b.innerHTML=cur?"<div class=mt-view>"+docHtml(mts[cur])+"</div>":"<p class=note>មិនទាន់មានកំណត់ហេតុប្រជុំ"+TY[fTy]+"ទេ។ ចុច «➕ ប្រជុំថ្មី»។</p>";
 }
 function newMt(){
   /* សមាសភាពស្រាប់ = តាមប្រជុំចុងក្រោយ (ដើមឡើយ ៨ នាក់ក្នុងក្រុម) */
-  var ids=list(),n=ids.reduce(function(s,id){return Math.max(s,+mts[id].n||0)},0)+1,d=new Date(),p=function(x){return("0"+x).slice(-2)};
+  var ids=list(),n=nextN(fTy),d=new Date(),p=function(x){return("0"+x).slice(-2)};
   var last=ids.length?mts[ids[0]].at:null;
-  return{n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:JSON.parse(JSON.stringify(last&&last.length?last:AT0)),ag:"",pr:"",rc:who.id,rn:who.name};
+  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:JSON.parse(JSON.stringify(last&&last.length?last:AT0)),ag:"",pr:"",rc:who.id,rn:who.name};
 }
 function drawEdit(){
   var e=edit.m,inp=function(k,lbl,ty,w){return"<label>"+lbl+"<input data-k="+k+" type="+(ty||"text")+" value='"+esc(e[k]||"")+"'"+(w?" style='max-width:"+w+"'":"")+"></label>"};
-  $("mtEd").hidden=$("mtDel").hidden=$("mtPr").hidden=$("mtNew").hidden=true;$("mtSel").disabled=true;
+  $("mtEd").hidden=$("mtDel").hidden=$("mtPr").hidden=$("mtNew").hidden=true;$("mtSel").disabled=true;if($("mtTy"))$("mtTy").disabled=true;
   $("mtBody").innerHTML="<div class='card mt-form'>"+
    "<h3>"+(edit.id?"✏️ កែកំណត់ហេតុ":"➕ ប្រជុំថ្មី")+"</h3>"+
    "<p class=note>ក្បាល ជើង និងកាលបរិច្ឆេទចន្ទគតិ បង្កើតស្វ័យប្រវត្តិ · អ្នកកត់ត្រា៖ <b>"+esc(e.rn)+"</b></p>"+
-   "<div class=mt-grid>"+inp("n","លើកទី","number","90px")+inp("d","កាលបរិច្ឆេទ","date")+inp("pl","ទីកន្លែងប្រជុំ")+
+   "<div class=mt-grid><label>ប្រភេទប្រជុំ<select data-k=ty><option value=b"+(tyOf(e)==="b"?" selected":"")+">🛠️ ប្រជុំក្រុមបច្ចេកទេស</option><option value=r"+(tyOf(e)==="r"?" selected":"")+">👥 ប្រជុំរួម</option></select></label>"+inp("n","លើកទី","number","90px")+inp("d","កាលបរិច្ឆេទ","date")+inp("pl","ទីកន្លែងប្រជុំ")+
     "<label>មធ្យោបាយប្រជុំ<input data-k=md list=mtMd value='"+esc(e.md||"")+"'><datalist id=mtMd><option>ដោយផ្ទាល់</option><option>Online</option><option>ដោយផ្ទាល់និង online</option></datalist></label>"+
     inp("st","ម៉ោងចាប់ផ្ដើម","time")+inp("en","បញ្ចប់ម៉ោង","time")+"</div>"+
    "<div class=mt-lun id=mtLun>"+esc(lunar(e.d))+" "+esc(greg(e.d))+"</div>"+
@@ -159,6 +162,7 @@ function drawEdit(){
 }
 function bind(){
   $("mtSel").onchange=function(){cur=this.value;draw()};
+  if($("mtTy"))$("mtTy").onchange=function(){fTy=this.value==="r"?"r":"b";try{localStorage.setItem("mtTy",fTy)}catch(e){}cur=null;draw()};
   $("mtNew").onclick=function(){var d=dGet();edit=d&&!d.id&&confirm("មានសេចក្ដីព្រាងកំណត់ហេតុថ្មីដែលមិនទាន់រក្សាទុក។ បន្តសរសេរពីសេចក្ដីព្រាងនោះ?")?{id:null,m:d.m}:{id:null,m:newMt()};draw()};
   $("mtEd").onclick=function(){if(cur&&canE(cur)){var d=dGet();edit=d&&d.id===cur&&confirm("មានការកែកំណត់ហេតុនេះដែលមិនទាន់រក្សាទុក។ បន្តពីសេចក្ដីព្រាងនោះ?")?{id:cur,m:d.m}:{id:cur,m:JSON.parse(JSON.stringify(mts[cur]))};draw()}};
   $("mtPr").onclick=function(){if(!cur)return;var X=window.SCHX;(X?X.fontsOk():Promise.resolve()).then(function(){doPrint(docHtml(mts[cur]))})};
@@ -176,10 +180,11 @@ function bind(){
   ["input","change","click"].forEach(function(t){body.addEventListener(t,function(){setTimeout(dPut,0)})});
   body.addEventListener("input",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
-    if(t.dataset.k){e[t.dataset.k]=t.dataset.k==="n"?(+t.value||1):t.value;if(t.dataset.k==="d")$("mtLun").textContent=lunar(e.d)+" "+greg(e.d)}
+    if(t.dataset.k==="ty"){e.ty=t.value==="r"?"r":"b";if(!edit.id||tyOf(mts[edit.id])!==e.ty){e.n=nextN(e.ty,edit.id);var ni=body.querySelector("input[data-k=n]");if(ni)ni.value=e.n}}
+    else if(t.dataset.k){e[t.dataset.k]=t.dataset.k==="n"?(+t.value||1):t.value;if(t.dataset.k==="d")$("mtLun").textContent=lunar(e.d)+" "+greg(e.d)}
     else if(t.dataset.a){var a=t.dataset.a.split("|");e.at[+a[0]][a[1]]=t.value}
   });
-  body.addEventListener("change",function(ev){var t=ev.target;if(edit&&t.dataset.a){var a=t.dataset.a.split("|");edit.m.at[+a[0]][a[1]]=t.value}});
+  body.addEventListener("change",function(ev){var t=ev.target;if(edit&&t.dataset.k==="ty"&&tyOf(edit.m)!==t.value){t.dispatchEvent(new Event("input",{bubbles:true}));return}if(edit&&t.dataset.a){var a=t.dataset.a.split("|");edit.m.at[+a[0]][a[1]]=t.value}});
   body.addEventListener("click",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
     if(t.dataset.rm!=null){e.at.splice(+t.dataset.rm,1);drawEdit()}
@@ -193,7 +198,7 @@ function bind(){
       var id=edit.id||("m"+Date.now().toString(36));
       if(!edit.id){e.rc=who.id;e.rn=who.name}
       mts[id]=e;t.disabled=true;mtBusy=true;
-      save(id).then(function(){mtBusy=false;edit=null;dDel();cur=id;draw();notify("បានរក្សាទុកកំណត់ហេតុប្រជុំ")})
+      save(id).then(function(){mtBusy=false;edit=null;dDel();fTy=tyOf(e);try{localStorage.setItem("mtTy",fTy)}catch(x){}cur=id;draw();notify("បានរក្សាទុកកំណត់ហេតុប្រជុំ")})
         .catch(function(er){mtBusy=false;t.disabled=false;console.error(er);notify("រក្សាទុកមិនបាន៖ "+(er.code||er.message))});
     }
   });
