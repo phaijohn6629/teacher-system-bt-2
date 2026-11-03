@@ -1192,6 +1192,7 @@ function renderP(){
   $("pmo").hidden=pv!==2;
   [].forEach.call($("pseg").children,function(b){b.setAttribute("aria-selected",+b.dataset.pv===pv)});
   ["pim","ptpl","pex"].forEach(function(id){$(id).style.display=pv===3?"none":""});
+  $("pren").style.display=pv===3||!canM()||!(rs.c[rt]||[]).length?"none":"";
   if(pv===3){renderPAll();return}
   var c=cl[rc],ro=!canM(),b="";
   if(!c){$("ptb").innerHTML="<tbody><tr><td class=empty>មិនទាន់មានថ្នាក់ទេ។</td></tr></tbody>";abSum(null);return}
@@ -1331,6 +1332,32 @@ function abSum(c){
 }
 $("pt").onchange=function(){rt=this.value;rc=0;if(pv===3)pv=1;renderP()};
 $("pc").onchange=function(){if(pv===3)pv=1;clsPick(this.value,renderP)};
+/* ✏️ ប្ដូរឈ្មោះថ្នាក់ (ឧ. ចូលខុសកម្រិត 11NGS-C → 10NGS-C)៖ សិស្ស ពិន្ទុ អវត្តមាន ប្លង់តុ នៅដដែល · តំណហាត់ប្ដូរតាម · គណនីប្រធាន/អនុប្រធាន បង្កើតឡើងវិញ */
+$("pren").onclick=function(){
+  var c=curCls();if(!c||!canM())return;
+  var d=$("dlgRen");if(!d){d=document.createElement("dialog");d.id="dlgRen";document.body.appendChild(d)}
+  var have=(rs.c[rt]||[]).map(function(x){return x.n}),nm=CL.map(function(x){return x.slice(2)}).filter(function(n){return n===c.n||have.indexOf(n)<0});
+  var na=window.MONUI&&MONUI.has?MONUI.has(rt,c.n):0;
+  d.innerHTML="<form method=dialog class=dlgb style='display:block;padding:18px;min-width:min(440px,92vw)'><h2 style='margin:0 0 10px'>✏️ ប្ដូរឈ្មោះថ្នាក់ «"+esc(c.n)+"»</h2>"+
+    "<label>ឈ្មោះថ្មី</label><select id=renN style='width:100%'>"+nm.map(function(n){return"<option"+(n===c.n?" selected":"")+">"+esc(n)+"</option>"}).join("")+"</select>"+
+    "<ul class=note style='margin:10px 0;padding-left:18px'><li>សិស្ស ពិន្ទុ អវត្តមាន រចនាសម្ព័ន្ធ និងប្លង់តុ នៅដដែល</li><li>តំណហាត់លំហាត់របស់ថ្នាក់ ប្ដូរតាម</li>"+
+    (na?"<li><b>គណនីប្រធាន/អនុប្រធាន "+na+"</b> នឹងបង្កើតឡើងវិញ (សិស្សដដែល) · <b>លេខសម្គាល់ និងលេខសម្ងាត់ថ្មី</b> ត្រូវផ្ដល់ឱ្យសិស្សម្ដងទៀត</li>":"")+
+    "<li>កាលវិភាគបង្រៀន និងសម្រង់អត្ថបទ មិនប្ដូរទេ (កែនៅទីនោះ បើចាំបាច់)</li></ul>"+
+    "<div class=dlgf style='display:flex;gap:8px;justify-content:flex-end'><button type=button id=renX>បោះបង់</button><button type=button class=primary id=renOk>ប្ដូរឈ្មោះ</button></div></form>";
+  d.showModal();
+  $("renX").onclick=function(){d.close()};
+  $("renOk").onclick=function(){
+    var nn=$("renN").value,old=c.n,tid=rt;if(!nn||nn===old){d.close();return}
+    if((rs.c[tid]||[]).some(function(x){return x!==c&&x.n===nn})){alert("មានថ្នាក់ «"+nn+"» រួចហើយ");return}
+    this.disabled=true;this.textContent="⏳ កំពុងប្ដូរ…";
+    if(window.MONUI&&MONUI.apply)MONUI.apply();   /* បញ្ចូលទិន្នន័យប្រធានថ្នាក់ដែលមិនទាន់បញ្ចូល មុនប្ដូរ */
+    c.n=nn;savR();
+    var p1=window.FB&&FB.getDocs?FB.getDocs(FB.query(FB.collection(db,"pcls"),FB.where("o","==",tid))).then(function(sn){var ps=[];sn.forEach(function(x){if(x.data().cls===old)ps.push(FB.updateDoc(FB.doc(db,"pcls",x.id),{cls:nn,g:parseInt(nn)||0}))});return Promise.all(ps)}).catch(function(e){console.warn("pcls rename:",e)}):Promise.resolve();
+    var p2=window.MONUI&&MONUI.migrate&&na?MONUI.migrate(tid,old,nn):Promise.resolve(0);
+    Promise.all([p1,p2]).then(function(r){d.close();renderP();notify("បានប្ដូរ «"+old+"» → «"+nn+"»"+(r[1]?" · គណនីប្រធាន/អនុប្រធាន "+r[1]+" ត្រូវបានបង្កើតឡើងវិញ (មើលលេខសម្ងាត់ថ្មីខាងក្រោម)":""))},
+      function(e){d.close();renderP();console.error(e);alert("ប្ដូរឈ្មោះថ្នាក់រួច ប៉ុន្តែការបង្កើតគណនីប្រធាន/អនុប្រធានឡើងវិញមានបញ្ហា៖ "+(e&&e.message||e)+"\nសូមលុប ហើយបង្កើតគណនីម្ដងទៀតដោយដៃ")});
+  };
+};
 $("pmo").onchange=function(){pmo=+this.value;renderP()};
 $("pseg").onclick=function(e){var b=e.target.closest("button");if(b){pv=+b.dataset.pv;renderP()}};
 $("ptb").oninput=function(e){

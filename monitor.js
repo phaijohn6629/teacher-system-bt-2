@@ -317,7 +317,32 @@ function go(p){
   [].forEach.call($("monNav").querySelectorAll("button"),function(b){b.setAttribute("aria-selected",String(b.dataset.mp===p))});
   if(p==="p16"){var s=$("ogSeg").querySelector("[data-ov=seat]");if(s&&s.getAttribute("aria-selected")!=="true")s.click()}
 }
-window.MONUI={enter:function(){
+/* ប្ដូរឈ្មោះថ្នាក់៖ គណនីប្រធាន/អនុប្រធាន (ID មានឈ្មោះថ្នាក់) → លុបចាស់ បង្កើតថ្មី (សិស្សដដែល) · mc/{ចាស់} → mc/{ថ្មី}
+   ត្រូវហៅក្រោយប្ដូរ c.n ក្នុង rs រួច (buildT ស្វែងរកថ្នាក់តាមឈ្មោះថ្មី) */
+function migrateCls(tid,oldCn,newCn){
+  var ok=mkey(tid,oldCn),nk=mkey(tid,newCn),d=mcd.r[ok],R={h:"H",v1:"V1",v2:"V2"},out=[];
+  if(!d)return Promise.resolve(0);
+  var accs=d.acc||{};
+  return Object.keys(accs).reduce(function(p,r){return p.then(function(){
+    var a=accs[r];
+    return signMon(a).then(function(cr){return FB.deleteUser(cr.user)}).catch(function(e){console.warn("old monitor:",e)})
+      .then(function(){return FB.signOut(FB.sauth).catch(function(){})})
+      .then(function(){return FB.deleteDoc(FB.doc(db,"users",a.uid)).catch(function(){})})
+      .then(function(){
+        var pw=genPw();
+        return mkUser((tid+"-"+ck(newCn)+"-"+R[r]).toUpperCase(),pw,0).then(function(x){
+          var uid=x.cr.user.uid;
+          return FB.signOut(FB.sauth).catch(function(){}).then(function(){
+            return FB.setDoc(FB.doc(db,"users",uid),{id:x.id,name:RN[r]+" "+newCn+" · "+(a.sn||""),role:"monitor",enabled:a.en!==false,mustChange:false,t:tid,k:nk,c:newCn,r:r,sk:a.sk||"",sn:a.sn||""});
+          }).then(function(){out.push([r,{id:x.id,uid:uid,pw:pw,en:a.en!==false,sk:a.sk||"",sn:a.sn||""}])});
+        });
+      });
+  })},Promise.resolve()).then(function(){
+    mcd.r[nk]={o:tid,cn:newCn,j:null,acc:{},ack:d.ack||0,raw:null};
+    return accTx(nk,tid,newCn,function(acc){out.forEach(function(x){acc[x[0]]=x[1]})});
+  }).then(function(){delete mcd.r[ok];return FB.deleteDoc(FB.doc(db,"mc",ok)).catch(function(){})}).then(function(){out.forEach(function(x){showPw[nk+x[0]]=true});return out.length});
+}
+window.MONUI={apply:function(){teachApply()},has:function(tid,cn){var d=mcd.r[mkey(tid,cn)];return d?Object.keys(d.acc||{}).length:0},migrate:migrateCls,enter:function(){
   document.body.classList.add("mon");
   var n=$("monNav");n.hidden=false;
   n.innerHTML="<div id=monTitle class=mon-title>👤 "+esc(who.rl||"ប្រធានថ្នាក់")+" "+esc(who.mc||"")+"</div><div class=seg>"+PG.map(function(x){return"<button type=button data-mp="+x[0]+">"+x[1]+"</button>"}).join("")+"</div>";
