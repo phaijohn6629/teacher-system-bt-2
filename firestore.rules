@@ -301,6 +301,19 @@ service cloud.firestore {
         && request.resource.data.j is string && request.resource.data.j.size() < 200000;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
+    // ===================== dl/{id} — កំណត់ហេតុប្រចាំថ្ងៃ (ឯកជន ១០០%) =====================
+    // កិច្ចសន្យាសិស្ស · វគ្គបំប៉ន · កំណត់ហេតុផ្ទាល់ខ្លួន — អាន/កែ/លុប បានតែម្ចាស់ (o)
+    match /dl/{id} {
+      allow read, delete: if isOwner(resource.data.o);
+      allow create: if isOwner(request.resource.data.o)
+        && request.resource.data.keys().hasOnly(['o','k','j','u'])
+        && request.resource.data.k in ['c','t','j']
+        && request.resource.data.j is string && request.resource.data.j.size() < 200000;
+      allow update: if isOwner(resource.data.o) && request.resource.data.o == resource.data.o
+        && request.resource.data.keys().hasOnly(['o','k','j','u'])
+        && request.resource.data.k in ['c','t','j']
+        && request.resource.data.j is string && request.resource.data.j.size() < 200000;
+    }
     match /tests/{id} {
       allow get: if resource.data.open == true || active();
       allow list: if active();
