@@ -86,7 +86,7 @@ function load(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function loadK(){try{var s=sessionStorage.getItem(KEY+"-k");if(s)return JSON.parse(s)}catch(e){}return JSON.parse(JSON.stringify(SK))}
-function save(){try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem(KEY+"-k",JSON.stringify(tasks));if(isAdm())push("teachers");push("tasks");}catch(e){alert("មិនអាចរក្សាទុកទិន្នន័យបានទេ!")}}
+function save(){try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem(KEY+"-k",JSON.stringify(tasks));if(isAdm()&&sy.teachersReady)push("teachers");push("tasks");}catch(e){alert("មិនអាចរក្សាទុកទិន្នន័យបានទេ!")}}
 
 function gk(id){if(!tasks[id])tasks[id]={lv:D2.slice(),w:{}};if(!tasks[id].lv||!tasks[id].lv.length)tasks[id].lv=["កម្រិត ១"];return tasks[id]}
 function gw(id,m,l){var k=gk(id);if(!k.w[m])k.w[m]=[];if(!k.w[m][l])k.w[m][l]=[0,0,0,0];return k.w[m][l]}
@@ -156,6 +156,7 @@ function enterApp(user){
     $("loginSection").hidden=true;$("appSection").hidden=false;
     $("add").style.display=isAdm()?"inline-block":"none";
     $("mkAll").style.display=isAdm()?"inline-block":"none";
+    $("tRec").style.display=$("tRecL").style.display=isAdm()?"inline-block":"none";
     updateUserInfo();
     show("p0");
     if(isAdm()){loadUsers().then(function(){render()});migrateLegacy().then(startSync,startSync)}
@@ -236,6 +237,33 @@ function showCreds(out,errs){
   $("credsT").value=t;$("dlgCreds").showModal();
 }
 $("mkAll").onclick=function(){if(isAdm())createAccounts(data)};
+/* ស្ដារបញ្ជីគ្រូ (Admin)៖ បន្ថែមគ្រូដែលបាត់ ពីគណនី Login (users) · ប្រវត្តិរូប (profiles) · ទិន្នន័យថ្នាក់/កិច្ចការ · ឬឯកសារ Backup — មិនជាន់លើគ្រូដែលមានស្រាប់ */
+function tFromProf(id,nm,en){
+  var p=profs[id]||{},o={id:id,name:khNorm(p.nm||nm||id),g:p.g||"",dob:p.dob||"",ph:p.ph||"",ad:p.ad||"",sub:p.sub||"គណិតវិទ្យា",deg:p.deg||"",cl:"",sd:p.sd||"",stt:"កំពុងបម្រើការងារ",nt:"",rl:"សមាជិក",en:en!==false};
+  return o;
+}
+function recoverTeachers(extra){
+  if(!isAdm())return;
+  var have={};data.forEach(function(t){have[String(t.id).toUpperCase()]=1});
+  loadUsers().then(function(){
+    var add=[],seen={};
+    function put(o){var k=String(o.id).toUpperCase();if(!k||have[k]||seen[k])return;seen[k]=1;add.push(o)}
+    (extra||[]).forEach(function(t){if(t&&t.id){var c=Object.assign({},t);delete c.pw;put(c)}});
+    Object.keys(usersById).forEach(function(id){var u=usersById[id];if(u.role==="monitor"||/-/.test(id))return;put(tFromProf(id,u.name,u.enabled))});
+    Object.keys(profs).forEach(function(id){put(tFromProf(id,"",true))});
+    Object.keys(rs.c||{}).concat(Object.keys(tasks||{})).forEach(function(id){if(/^T\d+$/i.test(id))put(tFromProf(id.toUpperCase(),"",true))});
+    if(!add.length){alert("មិនមានគ្រូដែលបាត់ទេ (គ្រូទាំងអស់មានក្នុងបញ្ជីរួចហើយ)។");return}
+    add.sort(function(a,b){return String(a.id).localeCompare(String(b.id),undefined,{numeric:true})});
+    if(!confirm("រកឃើញគ្រូ "+add.length+" នាក់ដែលបាត់ពីបញ្ជី៖\n\n"+add.map(function(t){return"• "+t.id+" — "+t.name}).join("\n")+"\n\nបន្ថែមចូលបញ្ជីគ្រូវិញ? (គ្រូដែលមានស្រាប់មិនប៉ះពាល់ទេ)"))return;
+    data=data.concat(add).sort(function(a,b){return String(a.id).localeCompare(String(b.id),undefined,{numeric:true})});
+    save();render();notify("បានស្ដារគ្រូ "+add.length+" នាក់ · សូមពិនិត្យ និងកែព័ត៌មាន (ថ្នាក់បង្រៀន · តួនាទី) បើចាំបាច់");
+  });
+}
+$("tRec").onclick=function(){if(isAdm())recoverTeachers()};
+$("tRecF").onchange=function(e){
+  var f=e.target.files[0];e.target.value="";if(!f)return;
+  var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||!Array.isArray(o.teachers))throw 0;recoverTeachers(o.teachers)}catch(x){alert("ឯកសារ Backup មិនត្រឹមត្រូវ")}};r.readAsText(f);
+};
 $("credsClose").onclick=function(){$("credsT").value="";$("dlgCreds").close()};
 $("credsCopy").onclick=function(){
   var ta=$("credsT");ta.select();
@@ -365,7 +393,7 @@ $("tb").onclick=function(e){
     if(t&&t.id===who.id){alert("មិនអាចលុបគណនីខ្លួនឯងបានទេ!");return}
     if(t&&confirm("តើអ្នកពិតជាចង់លុបគ្រូឈ្មោះ «"+t.name+"» មែនទេ?")){
       disableAccount(b.dataset.d);
-      data=data.filter(function(x){return x.id!==b.dataset.d});
+      data=data.filter(function(x){return x.id!==b.dataset.d});sy.tDel=(sy.tDel||0)+1;   /* អនុញ្ញាតឱ្យបញ្ជីខ្លីជាងមុន ១ */
       delete tasks[b.dataset.d];
       if(rs&&rs.c)delete rs.c[b.dataset.d];
       save();savR();render();notify("បានលុបទិន្នន័យគ្រូរួចរាល់!");
@@ -2123,7 +2151,7 @@ function pick(c,pre){var o={};Object.keys(c).forEach(function(p){if(p.indexOf(pr
 var MAP={
   teachers:{
     docs:function(){return{"app/teachers":{v:jcl(data)}}},
-    load:function(c){var x=c["app/teachers"];if(x&&Array.isArray(x.v)&&x.v.length)data=normNames(x.v)}
+    load:function(c){var x=c["app/teachers"];if(x&&Array.isArray(x.v)){sy.tLen=x.v.length;sy.tDel=0;if(x.v.length)data=normNames(x.v)}}
   },
   tasks:{
     docs:function(){var o={};Object.keys(tasks).forEach(function(id){o["tasks/"+id]=encO(id,tasks[id])});return o},
@@ -2202,6 +2230,15 @@ async function flush(k){
   if(sy.busy[k]){sy.t[k]=setTimeout(function(){flush(k)},300);return}
   sy.busy[k]=1;delete sy.dirty[k];
   var ok=true;
+  /* ការពារ៖ មិនសរសេរបញ្ជីគ្រូដែលខ្លីជាងក្នុង Cloud (លើកលែងលុបគ្រូដោយចេតនា) */
+  if(k==="teachers"){
+    var nT=data.length;
+    if(!sy.teachersReady||(sy.tLen&&nT<sy.tLen-(sy.tDel||0))){
+      sy.busy[k]=0;console.warn("teachers write blocked",nT,sy.tLen,sy.tDel);
+      if(sy.teachersReady)notify("⚠️ បានបដិសេធការរក្សាទុកបញ្ជីគ្រូ ("+nT+" នាក់ តិចជាង "+sy.tLen+" ក្នុង Cloud) — ដើម្បីការពារទិន្នន័យ");
+      return;
+    }
+  }
   try{
     var docs=MAP[k].docs(),syn=sy.synced[k]||(sy.synced[k]={}),cache=sy.cache[k]||{},ops=[];
     Object.keys(docs).forEach(function(p){
