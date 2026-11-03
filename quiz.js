@@ -640,6 +640,12 @@ function pcAct(a){
   if(a==="pctg"){var o=!p.open;FB.updateDoc(FB.doc(db,"pcls",p.id),{open:o}).then(function(){p.open=o;renderPrac();notify(o?"បានបើកតំណ":"បានបិទតំណ · សិស្សមិនអាចផ្ញើពានរង្វាន់បានទេ")},function(){alert("មិនអាចប្ដូរបានទេ")})}
 }
 /* សម្រាប់ «ពិន្ទុប្រចាំខែ» (monthly.js)៖ បញ្ជីតេស្តរបស់គ្រូ និងពិន្ទុតាមសិស្ស */
+/* ឱ្យផ្នែកផ្សេង (Backup ទៅ Drive) ប្រើការភ្ជាប់ Google Drive តែមួយ */
+window.DRIVE={tok:driveTok,connect:driveConnect,api:gapi,
+  prep:function(){   /* ផ្ទុក Client ID និង Google script ជាមុន ដើម្បីឱ្យផ្ទាំង Login បើកភ្លាមពេលចុច (មិនត្រូវ browser ទប់) */
+    var p=drv.cid?Promise.resolve():window.FB.getDoc(window.FB.doc(window.db,"cfg","drive")).then(function(d){drv.cid=(d.exists()&&d.data().cid)||""});
+    return p.then(function(){if(drv.cid&&!(window.google&&google.accounts&&google.accounts.oauth2))return loadJs("https://accounts.google.com/gsi/client")}).catch(function(){});
+  }};
 window.QUIZ={
   KIND:KIND,
   forMonth:function(tid,cls,mo){   /* {t1:{t,n,by}, t2:{…}} · ប្រសិនបើមានច្រើន យកតេស្តថ្មីបំផុត */

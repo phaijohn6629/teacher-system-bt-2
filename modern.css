@@ -397,6 +397,9 @@ header { z-index: 200; }
 @media (max-width:600px){
   header .hdr-acts{gap:6px;flex-wrap:nowrap}
   header .hdr-acts>button{padding:6px 9px;font-size:.74rem;white-space:nowrap}
+  /* ប៊ូតុង Backup ទាំងពីរ៖ បង្ហាញតែរូប (ឱ្យ ពណ៌ផ្ទៃ និង Profile នៅតែមើលឃើញ) */
+  header .hdr-acts>#btnBackup,header .hdr-acts>#btnBackupD{font-size:0;padding:6px 9px}
+  header .hdr-acts>#btnBackup::before{content:"💾";font-size:.9rem}header .hdr-acts>#btnBackupD::before{content:"☁️";font-size:.9rem}
   .profile-trigger .pname{display:none}
   .wb-wrap .welcome-banner{padding:16px 64px 16px 16px;align-items:flex-start}
   .welcome-banner h2{font-size:17px}

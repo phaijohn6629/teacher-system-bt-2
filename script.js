@@ -2001,25 +2001,70 @@ function bkCloud(){
   ps.push(one("dl",F.query(F.collection(window.db,"dl"),F.where("o","==",who.id))));   /* កំណត់ហេតុប្រចាំថ្ងៃ = ឯកជន → តែរបស់ខ្លួន */
   return Promise.all(ps).then(function(){return{cloud:out,err:err}});
 }
-$("btnBackup").onclick=function(){
+function bkPayload(full){
   var payload={version:5,date:new Date().toISOString(),teachers:data.map(function(t){var c=Object.assign({},t);delete c.pw;return c}),tasks:tasks,demo:ex,results:rs,obs:ob,reports:wr,achievements:ah,library:lib};
+  if(!full)return Promise.resolve({p:payload,n:0,err:[]});
+  return bkCloud().then(function(r){payload.cloud=r.cloud;payload.cloudErr=r.err;var n=0;Object.keys(r.cloud||{}).forEach(function(c){n+=Object.keys(r.cloud[c]).length});return{p:payload,n:n,nc:Object.keys(r.cloud||{}).length,err:r.err}});
+}
+function bkName(full){var d=new Date(),z=function(x){return("0"+x).slice(-2)};return"teacher-system-backup-"+(full?"full-":"")+d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+(full?"_"+z(d.getHours())+z(d.getMinutes()):"")+".json"}
+function bkMark(){try{localStorage.setItem("lastBk_"+who.id,String(Date.now()))}catch(x){}bkBtn()}
+function bkLast(){var t=0;try{t=+localStorage.getItem("lastBk_"+who.id)||0}catch(x){}return t}
+function bkBtn(){var b=$("btnBackupD");if(!b)return;b.hidden=!isAdm();var t=bkLast();b.title="ផ្ញើ Backup ពេញលេញទៅ Google Drive › «Backup ប្រព័ន្ធគ្រូ»"+(t?" · លើកចុងក្រោយ "+new Date(t).toLocaleString("en-GB"):" · មិនទាន់ធ្លាប់")}
+$("btnBackup").onclick=function(){
   var b=this,full=isAdm();
-  var dl=function(){
+  if(b&&b.disabled)return Promise.resolve();
+  if(full){if(b&&b.tagName)b.disabled=true;notify("⏳ កំពុងទាញទិន្នន័យទាំងអស់ពី Cloud ...")}
+  var pr=bkPayload(full).then(function(r){
     var a=document.createElement("a");
-    a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
-    a.download="teacher-system-backup-"+(full?"full-":"")+new Date().toISOString().slice(0,10)+".json";
-    document.body.appendChild(a);a.click();a.remove();
-  };
-  if(!full){dl();notify("បានទាញយកឯកសារបម្រុងទុក (Backup) រួចរាល់!");return Promise.resolve()}
-  if(b&&b.disabled)return Promise.resolve();if(b&&b.tagName)b.disabled=true;notify("⏳ កំពុងទាញទិន្នន័យទាំងអស់ពី Cloud ...");
-  return bkCloud().then(function(r){
-    payload.cloud=r.cloud;payload.cloudErr=r.err;dl();
-    var n=0;Object.keys(r.cloud||{}).forEach(function(c){n+=Object.keys(r.cloud[c]).length});
-    notify("✅ Backup ពេញលេញ៖ "+kn(n)+" ឯកសារ ពី "+kn(Object.keys(r.cloud||{}).length)+" ប្រភេទ"+(r.err.length?" · ⚠️ "+r.err.length+" ប្រភេទអានមិនបាន":""));
-    if(r.err.length)console.warn("backup errors",r.err);
-  }).finally(function(){if(b&&b.tagName)b.disabled=false});
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(r.p,null,2)],{type:"application/json"}));
+    a.download=bkName(full);document.body.appendChild(a);a.click();a.remove();
+    if(full){bkMark();notify("✅ Backup ពេញលេញ៖ "+kn(r.n)+" ឯកសារ ពី "+kn(r.nc)+" ប្រភេទ"+(r.err.length?" · ⚠️ "+r.err.length+" ប្រភេទអានមិនបាន":""));if(r.err.length)console.warn("backup errors",r.err)}
+    else notify("បានទាញយកឯកសារបម្រុងទុក (Backup) រួចរាល់!");
+  });
+  return pr.finally(function(){if(b&&b.tagName)b.disabled=false});
 };
-
+/* ☁️ Backup ទៅ Google Drive (Admin) · folder «Backup ប្រព័ន្ធគ្រូ» · ប្រើការភ្ជាប់ Drive ដូចលទ្ធផលតេស្ត (scope drive.file) */
+var BKF="Backup ប្រព័ន្ធគ្រូ";
+function bkFolder(again){
+  var D=window.DRIVE,k="drvBk_"+who.id,f=null;try{f=localStorage.getItem(k)}catch(x){}
+  if(f&&!again)return Promise.resolve(f);
+  var q="name='"+BKF+"' and mimeType='application/vnd.google-apps.folder' and trashed=false";
+  return D.api("https://www.googleapis.com/drive/v3/files?q="+encodeURIComponent(q)+"&fields=files(id)").then(function(r){
+    if(r.files&&r.files.length)return r.files[0].id;
+    return D.api("https://www.googleapis.com/drive/v3/files",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:BKF,mimeType:"application/vnd.google-apps.folder"})}).then(function(x){return x.id});
+  }).then(function(id){try{localStorage.setItem(k,id)}catch(x){}return id});
+}
+function bkUpload(json,name,again){
+  var D=window.DRIVE;
+  return bkFolder(again).then(function(fid){
+    var b="bk"+Date.now().toString(36),meta={name:name,mimeType:"application/json",parents:[fid]};
+    var body="--"+b+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"+JSON.stringify(meta)+"\r\n--"+b+"\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n"+json+"\r\n--"+b+"--";
+    return D.api("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,size",{method:"POST",headers:{"Content-Type":"multipart/related; boundary="+b},body:body});
+  }).catch(function(e){if(!again&&/40[34]/.test(String(e)))return bkUpload(json,name,true);throw e});   /* folder ត្រូវបានលុប → បង្កើតថ្មី */
+}
+if($("btnBackupD"))$("btnBackupD").onclick=function(){
+  var b=this,D=window.DRIVE;if(!isAdm()||b.disabled)return;
+  if(!D){alert("មុខងារ Google Drive មិនទាន់ផ្ទុករួច សូមព្យាយាមម្ដងទៀត");return}
+  b.disabled=true;var t0=b.textContent;
+  (D.tok()?Promise.resolve():D.connect(false)).then(function(){
+    b.textContent="⏳ កំពុងទាញទិន្នន័យ...";return bkPayload(true);
+  }).then(function(r){
+    b.textContent="⏳ កំពុងផ្ញើទៅ Drive...";var json=JSON.stringify(r.p);
+    return bkUpload(json,bkName(true)).then(function(x){
+      bkMark();notify("✅ បានផ្ញើ Backup ទៅ Google Drive › «"+BKF+"» ("+kn(r.n)+" ឯកសារ · "+(json.length/1048576).toFixed(1)+" MB)"+(r.err.length?" · ⚠️ "+r.err.length+" ប្រភេទអានមិនបាន":""));
+    });
+  }).catch(function(e){
+    console.error("drive backup",e);
+    if(e==="nocid")alert("Admin មិនទាន់កំណត់ Google Client ID ទេ។\n\nAdmin៖ ⚙️ ការកំណត់ → 🏫 សាលា → «Google Drive Client ID»");
+    else alert("មិនអាចផ្ញើ Backup ទៅ Google Drive បានទេ ("+(e&&e.message||e&&e.error||e)+")\n\nអ្នកនៅតែអាចប្រើ «💾 បម្រុងទុក (Backup)» ដើម្បីទាញយកឯកសារបាន។");
+  }).finally(function(){b.disabled=false;b.textContent=t0});
+};
+/* រំលឹក Admin ពេលមិនបាន Backup ៧ ថ្ងៃ */
+function bkRemind(){
+  bkBtn();if(!isAdm())return;
+  if(window.DRIVE)DRIVE.prep();
+  var t=bkLast();if(!t||Date.now()-t>7*864e5)setTimeout(function(){notify("⏰ "+(t?"មិនបាន Backup "+kn(Math.floor((Date.now()-t)/864e5))+" ថ្ងៃហើយ":"មិនទាន់ធ្លាប់ Backup ពីកុំព្យូទ័រនេះ")+" — សូមចុច «☁️ Backup ទៅ Drive»")},6000);
+}
 $("btnRestore").onclick=function(){
   var isAdmin = (isAdm());
   if(!isAdmin) { alert("មានតែអ្នកគ្រប់គ្រង (Admin) ទេដែលអាចបម្រុងទុក ឬទាញយកទិន្នន័យចូលវិញ!"); return; }
@@ -2464,7 +2509,7 @@ function subscribe(k){
 }
 function stopSync(){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[]}
 function startSync(){
-  stopSync();
+  stopSync();try{bkRemind()}catch(e){console.error(e)}
   sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};
   Object.keys(MAP).forEach(subscribe);
   subProfiles();
