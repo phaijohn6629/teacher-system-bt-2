@@ -60,18 +60,21 @@ function idByName(n){var k=nk(n),t=data.filter(function(x){return nk(x.name)===k
 function head(){var t=data.filter(function(x){return x.rl==="ប្រធាន"})[0];return t?{id:t.id,n:t.name}:{id:idByName("ផៃ ចន"),n:"ផៃ ចន"}}
 function owner(id,m){return m.o||(m.rc)||idByName(m.rn)}
 function canE(id){var m=mts[id];return !!(who&&m&&(isAdm()||owner(id,m)===who.id))}
-var TY={b:"បច្ចេកទេស",r:"រួម",p:" PLC "},TT={b:"ក្រុមបច្ចេកទេស",r:"រួម",p:" PLC"},fTy="b";
-function vTy(v){return v==="r"||v==="p"||v==="c"||v==="t"||v==="j"?v:"b"}
+/* a = គណៈកម្មការស្វ័យភាព (សាលារៀនជំនាន់ថ្មី) */
+var TY={b:"បច្ចេកទេស",r:"រួម",p:" PLC ",a:"គណៈកម្មការស្វ័យភាព"},TT={b:"ក្រុមបច្ចេកទេស",r:"រួម",p:" PLC",a:"គណៈកម្មការស្វ័យភាព"},fTy="b";
+var AGA="១. ពិនិត្យ និងអនុម័តកំណត់ហេតុប្រជុំលើកមុន\n២. របាយការណ៍សកម្មភាព និងលទ្ធផលការងារ\n៣. របាយការណ៍ចំណូល-ចំណាយថវិកាសាលា\n៤. ពិភាក្សា និងអនុម័តផែនការសកម្មភាពបន្ទាប់\n៥. ផ្សេងៗ";
+function vTy(v){return v==="r"||v==="p"||v==="a"||v==="c"||v==="t"||v==="j"?v:"b"}
 /* កំណត់ហេតុប្រចាំថ្ងៃ (ឯកជន · collection «dl» · អានបានតែម្ចាស់)៖ c = កិច្ចសន្យាសិស្ស · t = វគ្គបំប៉ន · j = កំណត់ហេតុផ្ទាល់ខ្លួន */
 function isDL(ty){return ty==="c"||ty==="t"||ty==="j"}
-var TN={b:"ប្រជុំក្រុមបច្ចេកទេស",r:"ប្រជុំរួម",p:"ប្រជុំ PLC",c:"កិច្ចសន្យាសិស្ស",t:"វគ្គបំប៉ន",j:"ផ្ទាល់ខ្លួន"};
+var TN={b:"ប្រជុំក្រុមបច្ចេកទេស",r:"ប្រជុំរួម",p:"ប្រជុំ PLC",a:"ប្រជុំគណៈកម្មការស្វ័យភាព",c:"កិច្ចសន្យាសិស្ស",t:"វគ្គបំប៉ន",j:"ផ្ទាល់ខ្លួន"};
 try{fTy=vTy(localStorage.getItem("mtTy"))}catch(e){}
 function tyOf(m){return vTy(m&&m.ty)}
 /* តួនាទី៖ ប្រជុំបច្ចេកទេស = ប្រធាន/អនុប្រធាន/សមាជិក · ប្រជុំរួម = នាយករង (ធំជាងគេ) → ជំនួយការគណៈគ្រប់គ្រង → គ្រូបង្រៀន */
 /* PLC (Professional Learning Centre)៖ គ្រូចែករំលែក → គ្រូទទួល */
-var RL={b:["ប្រធានក្រុម","អនុប្រធាន","សមាជិក"],r:["នាយករង","ជំនួយការគណៈគ្រប់គ្រង","គ្រូបង្រៀន"],p:["គ្រូចែករំលែក","គ្រូទទួល"]},RD={b:"",r:"គ្រូបង្រៀន",p:"គ្រូទទួល"};
-function known(r){return RL.b.indexOf(r)>=0||RL.r.indexOf(r)>=0||RL.p.indexOf(r)>=0}
-function conv(at,ty){return(at||[]).map(function(a){var r=String(a.r||"").trim();if((!r||known(r))&&RL[ty].indexOf(r)<0)r=RD[ty];return{t:a.t,n:a.n,r:r}})}
+var RL={b:["ប្រធានក្រុម","អនុប្រធាន","សមាជិក"],r:["នាយករង","ជំនួយការគណៈគ្រប់គ្រង","គ្រូបង្រៀន"],p:["គ្រូចែករំលែក","គ្រូទទួល"],
+  a:["ប្រធាន","អនុប្រធាន","លេខាធិការ","សមាជិក","តំណាងគ្រូបង្រៀន","តំណាងមាតាបិតាសិស្ស","តំណាងសហគមន៍","តំណាងសិស្ស"]},RD={b:"",r:"គ្រូបង្រៀន",p:"គ្រូទទួល",a:"សមាជិក"};
+function known(r){return RL.b.indexOf(r)>=0||RL.r.indexOf(r)>=0||RL.p.indexOf(r)>=0||RL.a.indexOf(r)>=0}
+function conv(at,ty){return(at||[]).map(function(a){var r=String(a.r||"").trim();if(ty==="a"&&RL.b.indexOf(r)>=0)r=RD.a;else if((!r||known(r))&&RL[ty].indexOf(r)<0)r=RD[ty];return{t:a.t,n:a.n,r:r}})}
 function rk(r,ty){var L=RL[ty]||[],i=L.indexOf(String(r||"").trim());return i<0?L.length-1:i}
 function shr(at){return(at||[]).filter(function(a){return a.n&&String(a.r||"").trim()==="គ្រូចែករំលែក"})}
 function mine(id){var m=mts[id];return !!(who&&m&&owner(id,m)===who.id)}
@@ -125,8 +128,8 @@ function prHtml(s){
 function docHtml(m){
   if(isDL(tyOf(m)))return docDL(m);
   var X=window.SCHX,h=head(),rid=m.rc||idByName(m.rn),sg=function(id){return X&&id?X.getSig(id):""};
-  var ty=tyOf(m),at=(m.at||[]).filter(function(a){return a.n}),R=ty==="r",P=ty==="p",sh=P?shr(at):[];
-  if(R||P)at=at.map(function(a,i){return{t:a.t,n:a.n,r:String(a.r||"").trim()||RD[ty],i:i}}).sort(function(a,b){return rk(a.r,ty)-rk(b.r,ty)||a.i-b.i});
+  var ty=tyOf(m),at=(m.at||[]).filter(function(a){return a.n}),R=ty==="r",P=ty==="p",AU=ty==="a",sh=P?shr(at):[],pz=AU?(at.filter(function(a){return String(a.r||"").trim()==="ប្រធាន"})[0]||null):null;
+  if(R||P||AU)at=at.map(function(a,i){return{t:a.t,n:a.n,r:String(a.r||"").trim()||RD[ty],i:i}}).sort(function(a,b){return rk(a.r,ty)-rk(b.r,ty)||a.i-b.i});
   var half=Math.ceil(at.length/2);
   var atl=function(a,i){return"<div>"+kn(i+1)+". "+esc((a.t?a.t+" ":"")+a.n)+(a.r?" ("+esc(a.r)+")":"")+"</div>"};
   var sig=function(id){var s=sg(id);return"<div class=mt-sg>"+(s?"<img src='"+s+"' alt=''>":"")+"</div>"};
@@ -140,9 +143,11 @@ function docHtml(m){
    "<div class=mt-s>I. សមាសភាពចូលរួម</div><div class=mt-at><div>"+at.slice(0,half).map(atl).join("")+"</div><div>"+at.slice(half).map(function(a,i){return atl(a,i+half)}).join("")+"</div></div>"+
    "<div class=mt-s>II. របៀបវារៈ</div>"+String(m.ag||"").split("\n").filter(function(l){return l.trim()}).map(function(l){return"<div class=mt-i>"+esc(l.trim())+"</div>"}).join("")+
    "<div class=mt-s>III. ដំណើរការប្រជុំ</div>"+prHtml(m.pr)+
+   (AU&&String(m.dc||"").trim()?"<div class=mt-s>IV. សេចក្ដីសម្រេចរបស់អង្គប្រជុំ</div>"+prHtml(m.dc):"")+
    "<div class=mt-ft><div class=mt-dt><div>"+esc(lunar(m.d))+"</div><div>"+esc(greg(m.d))+"</div></div>"+
     "<div class=mt-cols><div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div></div>"+
-     (P?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូចែករំលែក</div>"+sig(sh[0]?idByName(sh[0].n):"")+"<div class=moul>"+esc(sh.map(function(a){return a.n}).join(" · "))+"</div></div>"
+     (AU?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានគណៈកម្មការ</div>"+sig(pz?idByName(pz.n):"")+"<div class=moul>"+esc(pz?pz.n:"")+"</div></div>"
+      :P?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូចែករំលែក</div>"+sig(sh[0]?idByName(sh[0].n):"")+"<div class=moul>"+esc(sh.map(function(a){return a.n}).join(" · "))+"</div></div>"
       :R?"<div></div>"   /* ប្រជុំរួម៖ គ្មានហត្ថលេខាកណ្ដាល (ទុកកន្លែងទំនេរ ឱ្យអ្នកកត់ត្រានៅខាងស្ដាំដដែល) */
        :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>")+
      "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div></div></div>"+
@@ -254,7 +259,7 @@ function newMt(){
   /* សមាសភាពស្រាប់ = តាមប្រជុំចុងក្រោយ (ដើមឡើយ ៨ នាក់ក្នុងក្រុម) */
   var ids=list(),n=nextN(fTy),d=new Date(),p=function(x){return("0"+x).slice(-2)};
   var last=fTy!=="p"&&ids.length?mts[ids[0]].at:null;
-  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:last&&last.length?JSON.parse(JSON.stringify(last)):fTy==="p"?[myAt()]:conv(AT0,fTy),ag:"",pr:"",rc:who.id,rn:who.name};
+  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:last&&last.length?JSON.parse(JSON.stringify(last)):fTy==="p"?[myAt()]:conv(AT0,fTy),ag:fTy==="a"?AGA:"",pr:"",dc:"",rc:who.id,rn:who.name};
 }
 function drawEdit(){
   if(isDL(tyOf(edit.m)))return drawEditDL();
@@ -263,7 +268,7 @@ function drawEdit(){
   $("mtBody").innerHTML="<div class='card mt-form'>"+
    "<h3>"+(edit.id?"✏️ កែកំណត់ហេតុ":"➕ ប្រជុំថ្មី")+"</h3>"+
    "<p class=note>ក្បាល ជើង និងកាលបរិច្ឆេទចន្ទគតិ បង្កើតស្វ័យប្រវត្តិ · អ្នកកត់ត្រា៖ <b>"+esc(e.rn)+"</b></p>"+
-   "<div class=mt-grid><label>ប្រភេទប្រជុំ<select data-k=ty><option value=b"+(tyOf(e)==="b"?" selected":"")+">🛠️ ប្រជុំក្រុមបច្ចេកទេស</option><option value=r"+(tyOf(e)==="r"?" selected":"")+">👥 ប្រជុំរួម</option><option value=p"+(tyOf(e)==="p"?" selected":"")+">📚 ប្រជុំ PLC</option></select></label>"+inp("n","លើកទី","number","90px")+inp("d","កាលបរិច្ឆេទ","date")+inp("pl","ទីកន្លែងប្រជុំ")+
+   "<div class=mt-grid><label>ប្រភេទប្រជុំ<select data-k=ty><option value=b"+(tyOf(e)==="b"?" selected":"")+">🛠️ ប្រជុំក្រុមបច្ចេកទេស</option><option value=r"+(tyOf(e)==="r"?" selected":"")+">👥 ប្រជុំរួម</option><option value=p"+(tyOf(e)==="p"?" selected":"")+">📚 ប្រជុំ PLC</option><option value=a"+(tyOf(e)==="a"?" selected":"")+">🏛️ ប្រជុំគណៈកម្មការស្វ័យភាព</option></select></label>"+inp("n","លើកទី","number","90px")+inp("d","កាលបរិច្ឆេទ","date")+inp("pl","ទីកន្លែងប្រជុំ")+
     "<label>មធ្យោបាយប្រជុំ<input data-k=md list=mtMd value='"+esc(e.md||"")+"'><datalist id=mtMd><option>ដោយផ្ទាល់</option><option>Online</option><option>ដោយផ្ទាល់និង online</option></datalist></label>"+
     inp("st","ម៉ោងចាប់ផ្ដើម","time")+inp("en","បញ្ចប់ម៉ោង","time")+"</div>"+
    "<div class=mt-lun id=mtLun>"+esc(lunar(e.d))+" "+esc(greg(e.d))+"</div>"+
@@ -278,6 +283,7 @@ function drawEdit(){
    "<h4>II. របៀបវារៈ <small>(មួយបន្ទាត់ = មួយចំណុច)</small></h4><textarea data-k=ag rows=5 placeholder='១. ...&#10;២. ផ្សេងៗ'>"+esc(e.ag||"")+"</textarea>"+
    "<h4>III. ដំណើរការប្រជុំ</h4><p class=note>«# » ចំណងជើង · «* » ចំណុច ● · «- » ធាតុ · «-- » ធាតុរង · បន្ទាត់ធម្មតា = កថាខណ្ឌ</p>"+
    "<textarea data-k=pr rows=14 placeholder='# ក. ...&#10;- 1. ...'>"+esc(e.pr||"")+"</textarea>"+
+   (tyOf(e)==="a"?"<h4>IV. សេចក្ដីសម្រេចរបស់អង្គប្រជុំ <small>(«- » មួយបន្ទាត់ = មួយសេចក្ដីសម្រេច)</small></h4><textarea data-k=dc rows=5 placeholder='- អង្គប្រជុំបានឯកភាពអនុម័ត ...&#10;- ...'>"+esc(e.dc||"")+"</textarea>":"")+
    "<div class=bar><button type=button id=mtCancel>បោះបង់</button><button type=button id=mtPrev>👁️ មើលមុន</button><button type=button class=primary id=mtSave>💾 រក្សាទុក</button></div>"+
    "<div id=mtPv class=mt-view></div></div>";
 }
@@ -302,7 +308,7 @@ function bind(){
   body.addEventListener("input",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
     if(t.id==="mtShr"){var x=data.filter(function(q){return q.id===t.value})[0];e.at=e.at.filter(function(a){return String(a.r||"").trim()!=="គ្រូចែករំលែក"});if(x){e.at=e.at.filter(function(a){return nk(a.n)!==nk(x.name)});e.at.unshift({t:x.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ",n:x.name,r:"គ្រូចែករំលែក"})}drawEdit();return}
-    if(t.dataset.k==="ty"){e.ty=vTy(t.value);if(!edit.id||tyOf(mts[edit.id])!==e.ty)e.n=nextN(e.ty,edit.id);e.at=e.ty==="p"&&!edit.id?[myAt()].concat(shr(e.at)):conv(e.at,e.ty);drawEdit()}
+    if(t.dataset.k==="ty"){e.ty=vTy(t.value);if(!edit.id||tyOf(mts[edit.id])!==e.ty)e.n=nextN(e.ty,edit.id);e.at=e.ty==="p"&&!edit.id?[myAt()].concat(shr(e.at)):conv(e.at,e.ty);if(e.ty==="a"&&!edit.id&&!String(e.ag||"").trim())e.ag=AGA;drawEdit()}
     else if(t.dataset.k){e[t.dataset.k]=t.dataset.k==="n"?(+t.value||1):t.value;if(t.dataset.k==="d"&&$("mtLun"))$("mtLun").textContent=lunar(e.d)+" "+greg(e.d)}
     else if(t.dataset.a){var a=t.dataset.a.split("|");e.at[+a[0]][a[1]]=t.value}
   });
