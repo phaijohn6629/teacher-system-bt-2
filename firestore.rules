@@ -286,6 +286,21 @@ service cloud.firestore {
         && request.resource.data.j.size() < 200000;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
+    // ===================== plc/{id} — កំណត់ហេតុ PLC ឯកជន =====================
+    // អានបានតែ៖ អ្នកកត់ត្រា (o) · គ្រូចែករំលែក (s) · Admin · គ្រូផ្សេងមិនអាចអានបានទេ
+    match /plc/{id} {
+      allow read: if isAdmin() || isOwner(resource.data.o)
+        || (active() && myId() in resource.data.s);
+      allow create: if (isAdmin() || isOwner(request.resource.data.o))
+        && request.resource.data.keys().hasOnly(['o','s','j','u'])
+        && request.resource.data.s is list && request.resource.data.s.size() <= 10
+        && request.resource.data.j is string && request.resource.data.j.size() < 200000;
+      allow update: if (isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o))
+        && request.resource.data.keys().hasOnly(['o','s','j','u'])
+        && request.resource.data.s is list && request.resource.data.s.size() <= 10
+        && request.resource.data.j is string && request.resource.data.j.size() < 200000;
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
     match /tests/{id} {
       allow get: if resource.data.open == true || active();
       allow list: if active();
