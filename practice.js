@@ -30,6 +30,7 @@ function parse(src){
     if(w.slice(0,3)==="inf"){i+=3;return{t:"c",v:Infinity,s:"\\infty"}}
     i++;c=w[0];
     if(c==="x")return{t:"x"};
+    if(c==="n")return{t:"x",n:"n"};   /* អថេរ n (ស្វ៊ីត) = x */
     if(c==="i")return{t:"i"};
     if(c==="e")return{t:"c",v:Math.E,s:"e"};
     throw"មិនស្គាល់ «"+c+"»";
@@ -84,7 +85,7 @@ function hasX(t){if(!t||typeof t!=="object")return false;if(t.t==="x")return tru
 /* LaTeX ពី AST (សម្រាប់មើលជាមុនពេលវាយ) */
 function tex(t){
   switch(t.t){
-    case"n":return t.s;case"c":return t.s;case"x":return"x";case"i":return"i";
+    case"n":return t.s;case"c":return t.s;case"x":return t.n||"x";case"i":return"i";
     case"p":return"\\left("+tex(t.a)+"\\right)";case"neg":return"-"+tex(t.a);
     case"+":return tex(t.l)+"+"+tex(t.r);case"-":return tex(t.l)+"-"+tex(t.r);
     case"*":return tex(t.l)+(t.r.t==="n"||t.r.t==="neg"?"\\times ":"\\cdot ")+tex(t.r);
@@ -315,35 +316,39 @@ var LES=[
   ["ជំពូកទី១០ វ៉ិចទ័រក្នុងលំហ",[[101,"ផលគុណនៃពីរវ៉ិចទ័រក្នុងលំហ"],[102,"អនុវត្តនៃផលគុណវ៉ិចទ័រ"]]]
 ];
 var LV={1:["កម្រិត ១","មូលដ្ឋាន"],2:["កម្រិត ២","មធ្យម"],3:["កម្រិត ៣","ពិបាក"]},NQ=6;
+/* ថ្នាក់នីមួយៗ៖ GR[ថ្នាក់] = {les:[ជំពូក], G:{មេរៀន:{1,2,3}}} · ថ្នាក់ផ្សេងបន្ថែមដោយ PX.reg() (practice11.js …) */
+var GR={12:{les:LES,G:G}};
 
 /* =================== វឌ្ឍនភាព (ក្នុងឧបករណ៍) =================== */
-var PK="prac12";
-function prog(){try{return JSON.parse(localStorage.getItem(PK)||"{}")}catch(e){return{}}}
-function setProg(l,v){var p=prog();p[l]=p[l]||{};p[l][v]=1;try{localStorage.setItem(PK,JSON.stringify(p))}catch(e){}}
+function PK(){return"prac"+S.g}
+function prog(){try{return JSON.parse(localStorage.getItem(PK())||"{}")}catch(e){return{}}}
+function setProg(l,v){var p=prog();p[l]=p[l]||{};p[l][v]=1;try{localStorage.setItem(PK(),JSON.stringify(p))}catch(e){}}
 function cupHtml(l){var p=prog()[l]||{};return[1,2,3].map(function(v){return"<i class='cup"+(p[v]?" on":"")+" l"+v+"' title='"+LV[v][0]+"'>🏆</i>"}).join("")}
 
 /* =================== បង្ហាញ =================== */
-var S={l:0,v:1,qs:[],done:false};
+var S={g:12,l:0,v:1,qs:[],done:false};
+function grades(){return Object.keys(GR).map(Number).sort(function(a,b){return a-b})}
 function math(el){if(window.renderMathInElement)try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false})}catch(e){}}
 function home(){
-  S.l=0;location.hash="";
+  S.l=0;location.hash="g="+S.g;
   var tot=0,got=0,p=prog();
-  var h="<div class=hero><h1>🧮 ហាត់លំហាត់ គណិតវិទ្យា ថ្នាក់ទី១២</h1><p>ជ្រើសមេរៀន · ជ្រើសកម្រិត · ដោះស្រាយ · ចុច «ពិនិត្យ» · ឆ្លើយត្រូវទាំងអស់ ទទួលបានពានរង្វាន់ 🏆</p></div>";
-  LES.forEach(function(ch){
+  var h="<div class=hero><h1>🧮 ហាត់លំហាត់ គណិតវិទ្យា ថ្នាក់ទី"+kn(S.g)+"</h1><p>ជ្រើសមេរៀន · ជ្រើសកម្រិត · ដោះស្រាយ · ចុច «ពិនិត្យ» · ឆ្លើយត្រូវទាំងអស់ ទទួលបានពានរង្វាន់ 🏆</p>"+
+    "<div class=gtabs>"+grades().map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">ថ្នាក់ទី"+kn(g)+"</button>"}).join("")+"</div></div>";
+  GR[S.g].les.forEach(function(ch){
     h+="<section class=ch><h2>"+esc(ch[0])+"</h2><div class=cards>"+ch[1].map(function(l){tot+=3;var q=p[l[0]]||{};got+=(q[1]?1:0)+(q[2]?1:0)+(q[3]?1:0);
       return"<button type=button class=card data-l="+l[0]+"><b>"+esc(l[1])+"</b><span class=cups>"+cupHtml(l[0])+"</span></button>"}).join("")+"</div></section>";
   });
   h+="<p class=tot>🏆 ពានរង្វាន់សរុប៖ <b>"+kn(got)+"</b> / "+kn(tot)+(got?" · <button type=button class=link data-a=reset>លុបវឌ្ឍនភាព</button>":"")+"</p>";
   $("app").innerHTML=h;
 }
-function lname(l){var n="";LES.forEach(function(c){c[1].forEach(function(x){if(x[0]===l)n=x[1]})});return n}
+function lname(l){var n="";GR[S.g].les.forEach(function(c){c[1].forEach(function(x){if(x[0]===l)n=x[1]})});return n}
 function open(l,v){
   S.l=l;S.v=v||1;S.done=false;S.qs=[];
   var seen={};
   var kind={};   /* ប្រភេទដូចគ្នា (ពាក្យដើមនៃសំណួរ) មិនលើស ២ */
-  for(var i=0,tries=0;i<NQ&&tries<80;tries++){var q=G[l][S.v]();var k=q.q,t=k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
+  for(var i=0,tries=0;i<NQ&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
     if(seen[k]||(kind[t]>=2&&tries<50))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
-  location.hash="l="+l+"&v="+S.v;
+  location.hash="g="+S.g+"&l="+l+"&v="+S.v;
   draw();window.scrollTo(0,0);
 }
 function draw(){
@@ -390,7 +395,7 @@ function trophy(){
   draw();
 }
 function qr(){
-  var u=location.origin+location.pathname+"#l="+S.l+"&v="+S.v,d=document.createElement("div");d.className="tro";
+  var u=location.origin+location.pathname+"#g="+S.g+"&l="+S.l+"&v="+S.v,d=document.createElement("div");d.className="tro";
   d.innerHTML="<div class=tro-in><h2>📱 ចែករំលែកលំហាត់នេះ</h2><div id=qrb class=qrb></div><input value='"+esc(u)+"' readonly onclick='this.select()'><button type=button data-x>បិទ</button></div>";
   document.body.appendChild(d);d.onclick=function(e){if(e.target===d||e.target.closest("[data-x]"))d.remove()};
   var go=function(){try{new QRCode($("qrb"),{text:u,width:220,height:220})}catch(e){}};
@@ -417,12 +422,13 @@ function bind(){
   var app=$("app");
   app.addEventListener("click",function(e){
     var b=e.target.closest("button");if(!b)return;
+    if(b.dataset.g){S.g=+b.dataset.g;try{localStorage.setItem("pracG",S.g)}catch(x){}return home()}
     if(b.dataset.l)return open(+b.dataset.l,1);
     if(b.dataset.v)return open(S.l,+b.dataset.v);
     if(b.dataset.sol!=null){var q=S.qs[+b.dataset.sol];q.show=!q.show;return draw()}
     var a=b.dataset.a;
     if(a==="home")home();else if(a==="check")doCheck();else if(a==="new")open(S.l,S.v);else if(a==="qr")qr();
-    else if(a==="reset"){if(confirm("លុបពានរង្វាន់ទាំងអស់នៅលើឧបករណ៍នេះ?")){try{localStorage.removeItem(PK)}catch(x){}home()}}
+    else if(a==="reset"){if(confirm("លុបពានរង្វាន់ថ្នាក់ទី"+kn(S.g)+" ទាំងអស់នៅលើឧបករណ៍នេះ?")){try{localStorage.removeItem(PK())}catch(x){}home()}}
   });
   app.addEventListener("input",function(e){
     var t=e.target;if(t.dataset.q==null)return;var a=S.qs[+t.dataset.q].a[+t.dataset.p];a.u=t.value;a.r=null;
@@ -432,7 +438,13 @@ function bind(){
   document.addEventListener("focusin",function(e){var t=e.target;if(t.dataset&&t.dataset.q!=null){lastInp=t;$("kb").hidden=false}});
   document.addEventListener("focusout",function(e){setTimeout(function(){var a=document.activeElement;if(!a||a.dataset.q==null)$("kb").hidden=true},150)});
 }
-function route(){var m=/l=(\d+)(?:&v=(\d))?/.exec(location.hash);if(m&&G[+m[1]])open(+m[1],+m[2]||1);else home()}
-kb();bind();route();
-window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S};
+function route(){
+  var g=/g=(\d+)/.exec(location.hash),m=/l=(\d+)(?:&v=(\d))?/.exec(location.hash),lg=0;try{lg=+localStorage.getItem("pracG")||0}catch(x){}
+  S.g=g&&GR[+g[1]]?+g[1]:GR[lg]?lg:12;
+  if(m&&GR[S.g].G[+m[1]])open(+m[1],+m[2]||1);else home();
+}
+window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S,GR:GR};
+/* ជំនួយសម្រាប់ឯកសារថ្នាក់ផ្សេង (practice11.js …) */
+window.PX={Q:Q,A:A,ri:ri,nz:nz,pick:pick,fr:fr,sg:sg,co:co,poly:poly,polyT:polyT,cx:cx,cxf:cxf,cxT:cxT,cnk:cnk,sgp:sgp,v3:v3,gcd:gcd,G12:G,
+  reg:function(g,o){GR[g]=o},start:function(){kb();bind();route()}};
 })();
