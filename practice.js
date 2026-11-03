@@ -315,7 +315,9 @@ var LES=[
   ["ជំពូកទី៨ កោនិក",[[81,"ប៉ារ៉ាបូល"],[82,"អេលីប"],[83,"អ៊ីពែបូល"]]],
   ["ជំពូកទី១០ វ៉ិចទ័រក្នុងលំហ",[[101,"ផលគុណនៃពីរវ៉ិចទ័រក្នុងលំហ"],[102,"អនុវត្តនៃផលគុណវ៉ិចទ័រ"]]]
 ];
-var LV={1:["កម្រិត ១","មូលដ្ឋាន"],2:["កម្រិត ២","មធ្យម"],3:["កម្រិត ៣","ពិបាក"]},NQ=6;
+var LV={1:["កម្រិត ១","មូលដ្ឋាន"],2:["កម្រិត ២","មធ្យម"],3:["កម្រិត ៣","ពិបាក"],4:["🌍 PISA","បញ្ហាជីវិតពិត"]},NQ=6,NQ4=4;
+/* កម្រិតទី ៤ (PISA) មានតែមេរៀនណាដែលកំណត់ G[l][4] */
+function lvls(l){var g=GR[S.g]&&GR[S.g].G[l];return g&&g[4]?[1,2,3,4]:[1,2,3]}
 /* ថ្នាក់នីមួយៗ៖ GR[ថ្នាក់] = {les:[ជំពូក], G:{មេរៀន:{1,2,3}}} · ថ្នាក់ផ្សេងបន្ថែមដោយ PX.reg() (practice11.js …) */
 var GR={12:{les:LES,G:G}};
 
@@ -367,7 +369,7 @@ function clFlush(){
   },function(e){console.warn("prt:",e)});
 }
 window.addEventListener("online",function(){clFlush()});
-function cupHtml(l){var p=prog()[l]||{};return[1,2,3].map(function(v){return"<i class='cup"+(p[v]?" on":"")+" l"+v+"' title='"+LV[v][0]+"'>🏆</i>"}).join("")}
+function cupHtml(l){var p=prog()[l]||{};return lvls(l).map(function(v){return"<i class='cup"+(p[v]?" on":"")+" l"+v+"' title='"+LV[v][0]+"'>🏆</i>"}).join("")}
 
 /* =================== បង្ហាញ =================== */
 var S={g:12,l:0,v:1,qs:[],done:false};
@@ -380,7 +382,7 @@ function home(){
     (CL.me?"<div class=gtabs><span class=me>👤 "+esc(CL.me.n)+" · ថ្នាក់ "+esc(CL.cls.cls)+"</span><button type=button data-a=chme>ប្ដូរឈ្មោះ</button></div>":
     "<div class=gtabs>"+grades().map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">ថ្នាក់ទី"+kn(g)+"</button>"}).join("")+"</div>")+"</div>";
   GR[S.g].les.forEach(function(ch){
-    h+="<section class=ch><h2>"+esc(ch[0])+"</h2><div class=cards>"+ch[1].map(function(l){tot+=3;var q=p[l[0]]||{};got+=(q[1]?1:0)+(q[2]?1:0)+(q[3]?1:0);
+    h+="<section class=ch><h2>"+esc(ch[0])+"</h2><div class=cards>"+ch[1].map(function(l){var L=lvls(l[0]),q=p[l[0]]||{};tot+=L.length;L.forEach(function(v){if(q[v])got++});
       return"<button type=button class=card data-l="+l[0]+"><b>"+esc(l[1])+"</b><span class=cups>"+cupHtml(l[0])+"</span></button>"}).join("")+"</div></section>";
   });
   h+="<p class=tot>🏆 ពានរង្វាន់សរុប៖ <b>"+kn(got)+"</b> / "+kn(tot)+(got?" · <button type=button class=link data-a=reset>លុបវឌ្ឍនភាព</button>":"")+"</p>";
@@ -391,7 +393,8 @@ function open(l,v){
   S.l=l;S.v=v||1;S.done=false;S.qs=[];
   var seen={};
   var kind={};   /* ប្រភេទដូចគ្នា (ពាក្យដើមនៃសំណួរ) មិនលើស ២ */
-  for(var i=0,tries=0;i<NQ&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
+  if(!GR[S.g].G[l][S.v])S.v=1;var nq=S.v===4?NQ4:NQ;
+  for(var i=0,tries=0;i<nq&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
     if(seen[k]||(kind[t]>=2&&tries<50))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
   location.hash=HS("g="+S.g+"&l="+l+"&v="+S.v);
   draw();window.scrollTo(0,0);
@@ -399,7 +402,7 @@ function open(l,v){
 function draw(){
   var l=S.l,v=S.v;
   var h="<div class=bar><button type=button data-a=home>‹ មេរៀនទាំងអស់</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='តំណ/QR សម្រាប់ចែករំលែក'>📱</button></div>"+
-    "<div class=lv>"+[1,2,3].map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+LV[k][0]+"<small>"+LV[k][1]+"</small></button>"}).join("")+"</div><ol class=qs>";
+    "<div class=lv style='grid-template-columns:repeat("+lvls(l).length+",1fr)'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+LV[k][0]+"<small>"+LV[k][1]+"</small></button>"}).join("")+"</div><ol class=qs>";
   S.qs.forEach(function(q,i){
     h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+q.q+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
       q.a.map(function(a,j){return"<label class=in>"+(a.l?"<span class=lb>"+esc(a.l)+"</span>":"")+"<input data-q="+i+" data-p="+j+" autocomplete=off autocapitalize=off spellcheck=false inputmode=text value='"+esc(a.u||"")+"'"+(q.st==="ok"?" readonly":"")+"><span class=mk>"+(a.r==null?"":a.r?"✅":"❌")+"</span><span class=pv id=pv"+i+"_"+j+"></span></label>"}).join("")+
@@ -434,7 +437,7 @@ function doCheck(){
   if(n===S.qs.length&&!S.done){S.done=true;setProg(S.l,S.v);trophy()}
 }
 function trophy(){
-  var d=document.createElement("div");d.className="tro";d.innerHTML="<div class=tro-in><div class=big>🏆</div><h2>អស្ចារ្យណាស់!</h2><p>អ្នកឆ្លើយត្រូវទាំងអស់ "+esc(LV[S.v][0])+"<br>"+esc(lname(S.l))+"</p>"+(S.v<3?"<button type=button data-next>បន្តទៅ "+LV[S.v+1][0]+" ›</button>":"<button type=button data-home>ជ្រើសមេរៀនផ្សេង</button>")+"</div>";
+  var d=document.createElement("div");d.className="tro";d.innerHTML="<div class=tro-in><div class=big>🏆</div><h2>អស្ចារ្យណាស់!</h2><p>អ្នកឆ្លើយត្រូវទាំងអស់ "+esc(LV[S.v][0])+"<br>"+esc(lname(S.l))+"</p>"+(S.v<lvls(S.l).length?"<button type=button data-next>បន្តទៅ "+LV[S.v+1][0]+" ›</button>":"<button type=button data-home>ជ្រើសមេរៀនផ្សេង</button>")+"</div>";
   document.body.appendChild(d);
   d.onclick=function(e){if(e.target.closest("[data-next]"))open(S.l,S.v+1);else if(e.target.closest("[data-home]"))home();d.remove();if(!e.target.closest("button"))draw()};
   draw();
