@@ -810,3 +810,9 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .pdfw *{letter-spacing:0!important}
 .qz-prac{display:inline-flex;align-items:center;margin-left:auto;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--brand);font-weight:700;text-decoration:none}
 .qz-prac:hover{border-color:var(--brand)}
+/* តារាងហាត់ថ្នាក់ */
+.pc-link input{width:100%;margin:6px 0 0;font-size:.85rem}.pc-lr{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pc-st{font-weight:700;color:var(--mute)}.pc-st.on{color:#1f8a5b}
+.pc-tb th{font-size:.72rem;white-space:nowrap}.pc-tb td.pc-c{text-align:center;font-size:.72rem;white-space:nowrap;letter-spacing:-2px}
+.pc-tb td.n1{background:color-mix(in srgb,#16a34a 8%,transparent)}.pc-tb td.n2{background:color-mix(in srgb,#16a34a 16%,transparent)}.pc-tb td.n3{background:color-mix(in srgb,#16a34a 28%,transparent)}
+.pc-tb td.pc-t{text-align:center}.pc-tb td.pc-d{font-size:.78rem;color:var(--mute);white-space:nowrap}

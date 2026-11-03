@@ -257,6 +257,26 @@ service cloud.firestore {
         && request.resource.data.d is string && request.resource.data.d.size() < 900000;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
+    // ===================== ហាត់លំហាត់៖ តារាងហាត់ថ្នាក់ =====================
+    // តំណហាត់ថ្នាក់ (គ្រូបង្កើត)៖ សិស្សអានបានដោយគ្មាន Login តែពេលបើក
+    match /pcls/{code} {
+      allow get: if resource.data.open == true || active();
+      allow list: if active();
+      allow create: if isAdmin() || isOwner(request.resource.data.o);
+      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+    }
+    // ពានរង្វាន់សិស្ស៖ doc ID = "<កូដ>_<k>" · សរសេរបាន (គ្មាន Login) តែពេលតំណបើក · វាលកំណត់ · អានបានតែគ្រូ
+    match /prt/{id} {
+      allow create, update: if request.resource.data.keys().hasOnly(['c','k','n','g','t','u'])
+        && id == request.resource.data.c + '_' + request.resource.data.k
+        && request.resource.data.n is string && request.resource.data.n.size() <= 100
+        && request.resource.data.t is map && request.resource.data.t.size() <= 300
+        && request.resource.data.u == request.time
+        && get(/databases/$(database)/documents/pcls/$(request.resource.data.c)).data.open == true
+        && (resource == null || (resource.data.c == request.resource.data.c && resource.data.k == request.resource.data.k));
+      allow read: if active();
+      allow delete: if isAdmin() || isOwner(get(/databases/$(database)/documents/pcls/$(resource.data.c)).data.o);
+    }
     // វិញ្ញាសា (គ្មានចម្លើយ)៖ សិស្សអានបានដោយគ្មាន Login តែពេលកំពុងបើក
     // កំណត់ហេតុប្រជុំបច្ចេកទេស៖ គ្រប់គ្រូអានបាន · អ្នកកត់ត្រា (o) ឬ Admin កែ/លុប
     match /mt/{id} {

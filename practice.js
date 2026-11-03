@@ -322,7 +322,51 @@ var GR={12:{les:LES,G:G}};
 /* =================== វឌ្ឍនភាព (ក្នុងឧបករណ៍) =================== */
 function PK(){return"prac"+S.g}
 function prog(){try{return JSON.parse(localStorage.getItem(PK())||"{}")}catch(e){return{}}}
-function setProg(l,v){var p=prog();p[l]=p[l]||{};p[l][v]=1;try{localStorage.setItem(PK(),JSON.stringify(p))}catch(e){}}
+function setProg(l,v){var p=prog();p[l]=p[l]||{};p[l][v]=1;try{localStorage.setItem(PK(),JSON.stringify(p))}catch(e){}if(CL.me)clSend(l,v)}
+function HS(x){return(CL.code?"c="+CL.code+"&":"")+x}   /* hash (រក្សាកូដថ្នាក់) */
+
+/* =================== តារាងហាត់របស់ថ្នាក់ (បើកតាមតំណ #c=កូដ) ===================
+   pcls/{កូដ} = {o, cls, g, names:[{k,n}], open} (គ្រូបង្កើត) · prt/{កូដ}_{k} = {c,k,n,g,t:{"មេរៀន-កម្រិត":ms},u} (សិស្សសរសេរ · បន្ថែមបានតែប៉ុណ្ណោះ)
+   ទាញ Firebase តែក្នុងរបៀបនេះ */
+var CL={code:"",cls:null,me:null,db:null,F:null,q:[]};
+var FBC={apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"};
+function clInit(code){
+  CL.code=code;$("app").innerHTML="<p style='text-align:center;margin-top:40px'>កំពុងភ្ជាប់ថ្នាក់…</p>";
+  var B="https://www.gstatic.com/firebasejs/10.8.0/";
+  return Promise.all([import(B+"firebase-app.js"),import(B+"firebase-firestore.js")]).then(function(m){
+    var app=m[0].initializeApp(FBC,"prac");CL.F=m[1];CL.db=m[1].getFirestore(app);
+    return CL.F.getDoc(CL.F.doc(CL.db,"pcls",code));
+  }).then(function(d){
+    if(!d.exists())throw"nf";var c=d.data();if(!c.open)throw"closed";
+    CL.cls=c;if(GR[+c.g])S.g=+c.g;
+    try{var me=JSON.parse(localStorage.getItem("pracMe_"+code)||"null");if(me&&c.names.some(function(x){return x.k===me.k}))CL.me=me}catch(e){}
+    try{CL.q=JSON.parse(localStorage.getItem("pracQ_"+code)||"[]")}catch(e){CL.q=[]}
+    if(!CL.me)return pickMe();
+    clFlush();route2();
+  }).catch(function(e){
+    console.error(e);CL.code="";
+    $("app").innerHTML="<div class=hero><h1>⚠️ "+(e==="closed"?"តំណហាត់របស់ថ្នាក់នេះត្រូវបានបិទ":e==="nf"?"រកមិនឃើញតំណហាត់នេះ":"មិនអាចភ្ជាប់បានទេ")+"</h1><p>"+(e==="closed"||e==="nf"?"សូមសួរគ្រូរបស់អ្នក។":"សូមពិនិត្យអ៊ីនធឺណិត ហើយបើកម្ដងទៀត។")+" អ្នកនៅតែអាចហាត់បាន (ពានរង្វាន់មិនផ្ញើទៅគ្រូទេ)។</p><div class=gtabs><button type=button data-a=solo>ហាត់ដោយមិនភ្ជាប់ថ្នាក់ ›</button></div></div>";
+  });
+}
+function pickMe(){
+  var c=CL.cls;
+  $("app").innerHTML="<div class=hero><h1>👋 ថ្នាក់ "+esc(c.cls)+"</h1><p>ជ្រើសឈ្មោះរបស់អ្នក (ម្ដងគត់) · ពានរង្វាន់ដែលអ្នកទទួលបាន នឹងផ្ញើទៅគ្រូ</p></div>"+
+    "<input id=meQ class=meq placeholder='🔍 ស្វែងរកឈ្មោះ…' autocomplete=off><div class=mel>"+c.names.map(function(x){return"<button type=button data-me='"+esc(x.k)+"'>"+esc(x.n)+"</button>"}).join("")+"</div>";
+  $("meQ").oninput=function(){var q=this.value.trim().toLowerCase();[].forEach.call($("app").querySelectorAll("[data-me]"),function(b){b.hidden=q&&b.textContent.toLowerCase().indexOf(q)<0})};
+}
+function clSend(l,v){
+  CL.q.push([l,v,Date.now()]);try{localStorage.setItem("pracQ_"+CL.code,JSON.stringify(CL.q))}catch(e){}
+  clFlush();
+}
+/* ផ្ញើពានរង្វាន់ដែលនៅសល់ (បើអ៊ីនធឺណិតដាច់ នឹងផ្ញើលើកក្រោយ) · ១ ការសរសេរ ក្នុងមួយដង */
+function clFlush(){
+  if(!CL.db||!CL.me||!CL.q.length)return;
+  var t={},q=CL.q.slice();q.forEach(function(x){t[x[0]+"-"+x[1]]=x[2]});
+  CL.F.setDoc(CL.F.doc(CL.db,"prt",CL.code+"_"+CL.me.k),{c:CL.code,k:CL.me.k,n:CL.me.n,g:+CL.cls.g,t:t,u:CL.F.serverTimestamp()},{merge:true}).then(function(){
+    CL.q=CL.q.slice(q.length);try{localStorage.setItem("pracQ_"+CL.code,JSON.stringify(CL.q))}catch(e){}
+  },function(e){console.warn("prt:",e)});
+}
+window.addEventListener("online",function(){clFlush()});
 function cupHtml(l){var p=prog()[l]||{};return[1,2,3].map(function(v){return"<i class='cup"+(p[v]?" on":"")+" l"+v+"' title='"+LV[v][0]+"'>🏆</i>"}).join("")}
 
 /* =================== បង្ហាញ =================== */
@@ -330,10 +374,11 @@ var S={g:12,l:0,v:1,qs:[],done:false};
 function grades(){return Object.keys(GR).map(Number).sort(function(a,b){return a-b})}
 function math(el){if(window.renderMathInElement)try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false})}catch(e){}}
 function home(){
-  S.l=0;location.hash="g="+S.g;
+  S.l=0;location.hash=HS("g="+S.g);
   var tot=0,got=0,p=prog();
   var h="<div class=hero><h1>🧮 ហាត់លំហាត់ គណិតវិទ្យា ថ្នាក់ទី"+kn(S.g)+"</h1><p>ជ្រើសមេរៀន · ជ្រើសកម្រិត · ដោះស្រាយ · ចុច «ពិនិត្យ» · ឆ្លើយត្រូវទាំងអស់ ទទួលបានពានរង្វាន់ 🏆</p>"+
-    "<div class=gtabs>"+grades().map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">ថ្នាក់ទី"+kn(g)+"</button>"}).join("")+"</div></div>";
+    (CL.me?"<div class=gtabs><span class=me>👤 "+esc(CL.me.n)+" · ថ្នាក់ "+esc(CL.cls.cls)+"</span><button type=button data-a=chme>ប្ដូរឈ្មោះ</button></div>":
+    "<div class=gtabs>"+grades().map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">ថ្នាក់ទី"+kn(g)+"</button>"}).join("")+"</div>")+"</div>";
   GR[S.g].les.forEach(function(ch){
     h+="<section class=ch><h2>"+esc(ch[0])+"</h2><div class=cards>"+ch[1].map(function(l){tot+=3;var q=p[l[0]]||{};got+=(q[1]?1:0)+(q[2]?1:0)+(q[3]?1:0);
       return"<button type=button class=card data-l="+l[0]+"><b>"+esc(l[1])+"</b><span class=cups>"+cupHtml(l[0])+"</span></button>"}).join("")+"</div></section>";
@@ -348,7 +393,7 @@ function open(l,v){
   var kind={};   /* ប្រភេទដូចគ្នា (ពាក្យដើមនៃសំណួរ) មិនលើស ២ */
   for(var i=0,tries=0;i<NQ&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
     if(seen[k]||(kind[t]>=2&&tries<50))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
-  location.hash="g="+S.g+"&l="+l+"&v="+S.v;
+  location.hash=HS("g="+S.g+"&l="+l+"&v="+S.v);
   draw();window.scrollTo(0,0);
 }
 function draw(){
@@ -395,7 +440,7 @@ function trophy(){
   draw();
 }
 function qr(){
-  var u=location.origin+location.pathname+"#g="+S.g+"&l="+S.l+"&v="+S.v,d=document.createElement("div");d.className="tro";
+  var u=location.origin+location.pathname+"#"+HS("g="+S.g+"&l="+S.l+"&v="+S.v),d=document.createElement("div");d.className="tro";
   d.innerHTML="<div class=tro-in><h2>📱 ចែករំលែកលំហាត់នេះ</h2><div id=qrb class=qrb></div><input value='"+esc(u)+"' readonly onclick='this.select()'><button type=button data-x>បិទ</button></div>";
   document.body.appendChild(d);d.onclick=function(e){if(e.target===d||e.target.closest("[data-x]"))d.remove()};
   var go=function(){try{new QRCode($("qrb"),{text:u,width:220,height:220})}catch(e){}};
@@ -422,11 +467,14 @@ function bind(){
   var app=$("app");
   app.addEventListener("click",function(e){
     var b=e.target.closest("button");if(!b)return;
+    if(b.dataset.me!=null){var x=CL.cls.names.filter(function(n){return n.k===b.dataset.me})[0];if(!x)return;CL.me=x;try{localStorage.setItem("pracMe_"+CL.code,JSON.stringify(x))}catch(e){}clFlush();return home()}
     if(b.dataset.g){S.g=+b.dataset.g;try{localStorage.setItem("pracG",S.g)}catch(x){}return home()}
     if(b.dataset.l)return open(+b.dataset.l,1);
     if(b.dataset.v)return open(S.l,+b.dataset.v);
     if(b.dataset.sol!=null){var q=S.qs[+b.dataset.sol];q.show=!q.show;return draw()}
     var a=b.dataset.a;
+    if(a==="chme"){if(confirm("ប្ដូរឈ្មោះ? (សូមជ្រើសតែឈ្មោះរបស់ខ្លួនឯងប៉ុណ្ណោះ)")){CL.me=null;try{localStorage.removeItem("pracMe_"+CL.code)}catch(e){}pickMe()}return}
+    if(a==="solo"){location.hash="";return route()}
     if(a==="home")home();else if(a==="check")doCheck();else if(a==="new")open(S.l,S.v);else if(a==="qr")qr();
     else if(a==="reset"){if(confirm("លុបពានរង្វាន់ថ្នាក់ទី"+kn(S.g)+" ទាំងអស់នៅលើឧបករណ៍នេះ?")){try{localStorage.removeItem(PK())}catch(x){}home()}}
   });
@@ -439,8 +487,13 @@ function bind(){
   document.addEventListener("focusout",function(e){setTimeout(function(){var a=document.activeElement;if(!a||a.dataset.q==null)$("kb").hidden=true},150)});
 }
 function route(){
+  var c=/c=([A-Za-z0-9_-]{4,40})/.exec(location.hash);
+  if(c&&c[1]!==CL.code)return clInit(c[1]);
+  route2();
+}
+function route2(){
   var g=/g=(\d+)/.exec(location.hash),m=/l=(\d+)(?:&v=(\d))?/.exec(location.hash),lg=0;try{lg=+localStorage.getItem("pracG")||0}catch(x){}
-  S.g=g&&GR[+g[1]]?+g[1]:GR[lg]?lg:12;
+  S.g=CL.cls&&GR[+CL.cls.g]?+CL.cls.g:g&&GR[+g[1]]?+g[1]:GR[lg]?lg:12;
   if(m&&GR[S.g].G[+m[1]])open(+m[1],+m[2]||1);else home();
 }
 window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S,GR:GR};
