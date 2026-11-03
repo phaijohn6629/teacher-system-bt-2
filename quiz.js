@@ -608,14 +608,14 @@ function renderPrac(){
   if(!PC.list){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";pcLoad().then(renderPrac);return}
   var cl=myClasses(who.id);if(PC.ci>=cl.length)PC.ci=0;var c=cl[PC.ci],g=c?parseInt(c.n):0;
   var h="<div class=bar><label>ថ្នាក់៖</label><select id=pcC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===PC.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
-    "<a href='practice.html' target=_blank rel=noopener class=qz-prac style='margin-left:0'>🧮 បើកទំព័រហាត់</a></div>"+
+    "<a href='practice.html' target=_blank rel=noopener class=qz-prac style='margin-left:0'>🧮 បើកទំព័រហ្វឹកហាត់បន្ថែម</a></div>"+
     (PC.err?"<p class=cxwarn>⚠️ "+esc(PC.err)+"</p>":"")+
     "<p class=note style='margin:0 0 10px'>សិស្សបើកតំណ/QR របស់ថ្នាក់ → ជ្រើសឈ្មោះខ្លួន (ម្ដង) → ហាត់។ ពេលឆ្លើយត្រូវទាំងកម្រិត ពានរង្វាន់ 🏆 ចូលតារាងខាងក្រោម។</p>";
   if(!c){$("qzBody").innerHTML=h;return}
   var p=PC.list.filter(function(x){return x.cls===c.n})[0];
-  if(!p){$("qzBody").innerHTML=h+"<div class=card style='text-align:center;padding:24px'><p>ថ្នាក់ <b>"+esc(c.n)+"</b> មិនទាន់មានតំណហាត់ទេ។</p><button type=button class=primary data-qa=pcnew"+(PC.busy?" disabled":"")+">＋ បង្កើតតំណហាត់សម្រាប់ថ្នាក់នេះ</button></div>";return}
+  if(!p){$("qzBody").innerHTML=h+"<div class=card style='text-align:center;padding:24px'><p>ថ្នាក់ <b>"+esc(c.n)+"</b> មិនទាន់មានតំណហ្វឹកហាត់ទេ។</p><button type=button class=primary data-qa=pcnew"+(PC.busy?" disabled":"")+">＋ បង្កើតតំណហ្វឹកហាត់សម្រាប់ថ្នាក់នេះ</button></div>";return}
   var u=pcUrl(p.id),rows=PC.rows[p.id];
-  h+="<div class='card pc-link'><div class=pc-lr><b>🔗 តំណហាត់ថ្នាក់ "+esc(c.n)+"</b> <span class='pc-st"+(p.open?" on":"")+"'>"+(p.open?"✅ កំពុងបើក":"⏸️ បានបិទ")+"</span></div>"+
+  h+="<div class='card pc-link'><div class=pc-lr><b>🔗 តំណហ្វឹកហាត់ថ្នាក់ "+esc(c.n)+"</b> <span class='pc-st"+(p.open?" on":"")+"'>"+(p.open?"✅ កំពុងបើក":"⏸️ បានបិទ")+"</span></div>"+
     "<input readonly value='"+esc(u)+"' onclick='this.select()'>"+
     "<div class=bar style='margin:6px 0 0'><button type=button data-qa=pccp>📋 ចម្លងតំណ</button><button type=button data-qa=pcqr>📱 QR</button><button type=button data-qa=pcnm title='ប្រើបញ្ជីឈ្មោះសិស្សបច្ចុប្បន្នរបស់ថ្នាក់'>🔄 ធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+kn(p.names.length)+")</button><button type=button data-qa=pctg>"+(p.open?"⏸️ បិទតំណ":"▶️ បើកតំណវិញ")+"</button></div></div>";
   if(!rows){$("qzBody").innerHTML=h+"<p class=note>កំពុងផ្ទុកតារាង…</p>";pcRows(p.id).then(renderPrac);return}
@@ -626,7 +626,7 @@ function renderPrac(){
     return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(x.n)+"</td>"+L.map(function(l){var n=cnt(r,l);return"<td class='pc-c n"+n+"' title='"+esc(lsName(g,l))+"'>"+(n?"🏆".repeat(n):"")+"</td>"}).join("")+
       "<td class=pc-t><b>"+kn(tot)+"</b></td><td class=pc-d>"+(last?kn(new Date(last).toLocaleDateString("en-GB")):"—")+"</td></tr>";
   }).join("");
-  h+="<div class=bar><b>🏆 តារាងហាត់</b><span class=note style='margin:0'>សិស្សបានហាត់ "+kn(done)+" / "+kn(p.names.length)+" នាក់</span><button type=button data-qa=pcrf>🔄 ផ្ទុកឡើងវិញ</button></div>"+
+  h+="<div class=bar><b>🏆 កំណត់ត្រាហ្វឹកហាត់</b><span class=note style='margin:0'>សិស្សបានហ្វឹកហាត់ "+kn(done)+" / "+kn(p.names.length)+" នាក់</span><button type=button data-qa=pcrf>🔄 ផ្ទុកឡើងវិញ</button></div>"+
     "<div class=wrap><table class=pc-tb><thead><tr><th>ល.រ</th><th>ឈ្មោះ</th>"+L.map(function(l){return"<th title='"+esc(lsName(g,l))+"'>"+esc(lsName(g,l).replace(/^ជំពូកទី\S+ · /,"").replace(/^មេរៀនទី\S+ /,"").slice(0,14))+"</th>"}).join("")+"<th>សរុប</th><th>ចុងក្រោយ</th></tr></thead><tbody>"+body+"</tbody></table></div>"+
     "<p class=note>🏆 មួយ = កម្រិតមួយដែលឆ្លើយត្រូវទាំងអស់ (អតិបរមា ៣ ក្នុងមួយមេរៀន)។ ដាក់ម៉ៅស៍លើក្បាលជួរ ដើម្បីមើលឈ្មោះមេរៀនពេញ។</p>";
   $("qzBody").innerHTML=h;
@@ -635,12 +635,12 @@ function pcAct(a){
   var cl=myClasses(who.id),c=cl[PC.ci];if(!c)return;var p=PC.list.filter(function(x){return x.cls===c.n})[0];
   if(a==="pcnew"){
     var code=uid().slice(-10),doc={o:who.id,cls:c.n,g:parseInt(c.n)||0,names:pcNames(c),open:true,cr:new Date().toISOString()};PC.busy=true;renderPrac();
-    FB.setDoc(FB.doc(db,"pcls",code),doc).then(function(){PC.busy=false;PC.list.push(Object.assign({id:code},doc));PC.rows[code]={};renderPrac();notify("បានបង្កើតតំណហាត់")},function(e){PC.busy=false;renderPrac();alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន pcls/prt)":"មិនអាចបង្កើតបានទេ")});
+    FB.setDoc(FB.doc(db,"pcls",code),doc).then(function(){PC.busy=false;PC.list.push(Object.assign({id:code},doc));PC.rows[code]={};renderPrac();notify("បានបង្កើតតំណហ្វឹកហាត់")},function(e){PC.busy=false;renderPrac();alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន pcls/prt)":"មិនអាចបង្កើតបានទេ")});
     return;
   }
   if(!p)return;
   if(a==="pccp"){var u=pcUrl(p.id);try{navigator.clipboard.writeText(u)}catch(x){}notify("បានចម្លងតំណ");return}
-  if(a==="pcqr"){showLinkUrl(pcUrl(p.id),"🧮 តំណហាត់ថ្នាក់ "+c.n);return}
+  if(a==="pcqr"){showLinkUrl(pcUrl(p.id),"🧮 តំណហ្វឹកហាត់ថ្នាក់ "+c.n);return}
   if(a==="pcrf"){delete PC.rows[p.id];renderPrac();return}
   if(a==="pcnm"){var nm=pcNames(c);FB.updateDoc(FB.doc(db,"pcls",p.id),{names:nm}).then(function(){p.names=nm;renderPrac();notify("បានធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+nm.length+" នាក់)")},function(){alert("មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ")});return}
   if(a==="pctg"){var o=!p.open;FB.updateDoc(FB.doc(db,"pcls",p.id),{open:o}).then(function(){p.open=o;renderPrac();notify(o?"បានបើកតំណ":"បានបិទតំណ · សិស្សមិនអាចផ្ញើពានរង្វាន់បានទេ")},function(){alert("មិនអាចប្ដូរបានទេ")})}

@@ -345,7 +345,7 @@ function clInit(code){
     clFlush();route2();
   }).catch(function(e){
     console.error(e);CL.code="";
-    $("app").innerHTML="<div class=hero><h1>⚠️ "+(e==="closed"?"តំណហាត់របស់ថ្នាក់នេះត្រូវបានបិទ":e==="nf"?"រកមិនឃើញតំណហាត់នេះ":"មិនអាចភ្ជាប់បានទេ")+"</h1><p>"+(e==="closed"||e==="nf"?"សូមសួរគ្រូរបស់អ្នក។":"សូមពិនិត្យអ៊ីនធឺណិត ហើយបើកម្ដងទៀត។")+" អ្នកនៅតែអាចហាត់បាន (ពានរង្វាន់មិនផ្ញើទៅគ្រូទេ)។</p><div class=gtabs><button type=button data-a=solo>ហាត់ដោយមិនភ្ជាប់ថ្នាក់ ›</button></div></div>";
+    $("app").innerHTML="<div class=hero><h1>⚠️ "+(e==="closed"?"តំណហ្វឹកហាត់របស់ថ្នាក់នេះត្រូវបានបិទ":e==="nf"?"រកមិនឃើញតំណហ្វឹកហាត់នេះ":"មិនអាចភ្ជាប់បានទេ")+"</h1><p>"+(e==="closed"||e==="nf"?"សូមសួរគ្រូរបស់អ្នក។":"សូមពិនិត្យអ៊ីនធឺណិត ហើយបើកម្ដងទៀត។")+" អ្នកនៅតែអាចហាត់បាន (ពានរង្វាន់មិនផ្ញើទៅគ្រូទេ)។</p><div class=gtabs><button type=button data-a=solo>ហាត់ដោយមិនភ្ជាប់ថ្នាក់ ›</button></div></div>";
   });
 }
 function pickMe(){
@@ -376,7 +376,7 @@ function math(el){if(window.renderMathInElement)try{renderMathInElement(el,{deli
 function home(){
   S.l=0;location.hash=HS("g="+S.g);
   var tot=0,got=0,p=prog();
-  var h="<div class=hero><h1>🧮 ហាត់លំហាត់ គណិតវិទ្យា ថ្នាក់ទី"+kn(S.g)+"</h1><p>ជ្រើសមេរៀន · ជ្រើសកម្រិត · ដោះស្រាយ · ចុច «ពិនិត្យ» · ឆ្លើយត្រូវទាំងអស់ ទទួលបានពានរង្វាន់ 🏆</p>"+
+  var h="<div class=hero><h1>🧮 ហ្វឹកហាត់បន្ថែម គណិតវិទ្យា ថ្នាក់ទី"+kn(S.g)+"</h1><p>ជ្រើសមេរៀន · ជ្រើសកម្រិត · ដោះស្រាយ · ចុច «ពិនិត្យ» · ឆ្លើយត្រូវទាំងអស់ ទទួលបានពានរង្វាន់ 🏆</p>"+
     (CL.me?"<div class=gtabs><span class=me>👤 "+esc(CL.me.n)+" · ថ្នាក់ "+esc(CL.cls.cls)+"</span><button type=button data-a=chme>ប្ដូរឈ្មោះ</button></div>":
     "<div class=gtabs>"+grades().map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">ថ្នាក់ទី"+kn(g)+"</button>"}).join("")+"</div>")+"</div>";
   GR[S.g].les.forEach(function(ch){

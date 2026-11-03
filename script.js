@@ -1340,7 +1340,7 @@ $("pren").onclick=function(){
   var na=window.MONUI&&MONUI.has?MONUI.has(rt,c.n):0;
   d.innerHTML="<form method=dialog class=dlgb style='display:block;padding:18px;min-width:min(440px,92vw)'><h2 style='margin:0 0 10px'>✏️ ប្ដូរឈ្មោះថ្នាក់ «"+esc(c.n)+"»</h2>"+
     "<label>ឈ្មោះថ្មី</label><select id=renN style='width:100%'>"+nm.map(function(n){return"<option"+(n===c.n?" selected":"")+">"+esc(n)+"</option>"}).join("")+"</select>"+
-    "<ul class=note style='margin:10px 0;padding-left:18px'><li>សិស្ស ពិន្ទុ អវត្តមាន រចនាសម្ព័ន្ធ និងប្លង់តុ នៅដដែល</li><li>តំណហាត់លំហាត់របស់ថ្នាក់ ប្ដូរតាម</li>"+
+    "<ul class=note style='margin:10px 0;padding-left:18px'><li>សិស្ស ពិន្ទុ អវត្តមាន រចនាសម្ព័ន្ធ និងប្លង់តុ នៅដដែល</li><li>តំណហ្វឹកហាត់បន្ថែមរបស់ថ្នាក់ ប្ដូរតាម</li>"+
     (na?"<li><b>គណនីប្រធាន/អនុប្រធាន "+na+"</b> នឹងបង្កើតឡើងវិញ (សិស្សដដែល) · <b>លេខសម្គាល់ និងលេខសម្ងាត់ថ្មី</b> ត្រូវផ្ដល់ឱ្យសិស្សម្ដងទៀត</li>":"")+
     "<li>កាលវិភាគបង្រៀន និងសម្រង់អត្ថបទ មិនប្ដូរទេ (កែនៅទីនោះ បើចាំបាច់)</li></ul>"+
     "<div class=dlgf style='display:flex;gap:8px;justify-content:flex-end'><button type=button id=renX>បោះបង់</button><button type=button class=primary id=renOk>ប្ដូរឈ្មោះ</button></div></form>";
