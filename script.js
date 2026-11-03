@@ -85,9 +85,10 @@ function load(){
   }catch(e){}
   return JSON.parse(JSON.stringify(SEED));
 }
-function loadK(){try{var s=sessionStorage.getItem(KEY+"-k");if(s)return JSON.parse(s)}catch(e){}return JSON.parse(JSON.stringify(SK))}
+function loadK(){try{var s=sessionStorage.getItem(KEY+"-k");if(s)return JSON.parse(s)}catch(e){}return{}}   /* កុំប្រើទិន្នន័យគំរូ (SK) — ធ្លាប់ជាន់ទិន្នន័យពិតក្នុង Cloud */
 function save(){try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem(KEY+"-k",JSON.stringify(tasks));if(isAdm()&&sy.teachersReady)push("teachers");push("tasks");}catch(e){alert("មិនអាចរក្សាទុកទិន្នន័យបានទេ!")}}
 
+function tTouch(id){(sy.touch||(sy.touch={}))[id]=1}   /* កិច្ចតែងការដែលបានកែដោយដៃ (Admin សរសេរតែគ្រូទាំងនេះ) */
 function gk(id){if(!tasks[id])tasks[id]={lv:D2.slice(),w:{}};if(!tasks[id].lv||!tasks[id].lv.length)tasks[id].lv=["កម្រិត ១"];return tasks[id]}
 function gw(id,m,l){var k=gk(id);if(!k.w[m])k.w[m]=[];if(!k.w[m][l])k.w[m][l]=[0,0,0,0];return k.w[m][l]}
 function sm(a){return a.reduce(function(x,y){return x+(+y||0)},0)}
@@ -435,6 +436,7 @@ function lvop(v){
 }
 
 function renderK(f){
+  if($("krec"))$("krec").hidden=!isAdm();
   var p=f&&document.activeElement&&document.activeElement.dataset.p;
   var b="",cs=[0,0,0,0],all=0;
   data.forEach(function(t){
@@ -504,7 +506,7 @@ $("kt").onclick=function(e){
   var b=e.target.closest("button[data-kl]");if(!b)return;
   var a=b.dataset.kl.split("|"),id=a[1];
   if(!isAdm() && who.id !== id) { alert("លោកគ្រូអាចកែប្រែបានតែកិច្ចតែងការផ្ទាល់ខ្លួនប៉ុណ្ណោះ!"); return; }
-  var k=gk(id);
+  var k=gk(id);tTouch(id);
   if(a[0]==="add"){k.lv.push("10")}
   else if(a[0]==="del"&&k.lv.length>1){
     var idx=k.lv.length-1;k.lv.pop();
@@ -517,6 +519,7 @@ $("kt").oninput=function(e){
   var p=e.target.dataset.p;if(!p)return;
   var a=p.split("|"),id=a[0],l=+a[1];
   if(!isAdm() && who.id !== id) { alert("លោកគ្រូអាចកែប្រែបានតែកិច្ចតែងការផ្ទាល់ខ្លួនប៉ុណ្ណោះ!"); renderK(); return; }
+  tTouch(id);
   if(a[2]==="L"){gk(id).lv[l]=e.target.value;save();return}
   gw(id,cur,l)[+a[2]]=Math.max(0,+e.target.value||0);
   save();
@@ -532,6 +535,27 @@ $("kt").oninput=function(e){
   renderS();
 };
 
+/* 🛟 ស្ដារកិច្ចតែងការពី Backup (Admin)៖ បំពេញតែប្រអប់ដែលទទេ (មិនជាន់លេខដែលមាន) · គាំទ្រ Backup ចាស់ (tasks) និង Backup ពេញលេញ (cloud.tasks) */
+function tRecover(o){
+  var src={};
+  if(o&&o.cloud&&o.cloud.tasks)Object.keys(o.cloud.tasks).forEach(function(id){var v=decO(o.cloud.tasks[id]);if(v)src[id]=v});
+  if(o&&o.tasks&&typeof o.tasks==="object")Object.keys(o.tasks).forEach(function(id){if(!src[id]||tSum(o.tasks[id])>tSum(src[id]))src[id]=o.tasks[id]});
+  var cells=0,ppl=0;
+  Object.keys(src).forEach(function(id){
+    var b=src[id];if(!b||!b.w||!tSum(b))return;
+    var k=gk(id),got=0,curEmpty=!tSum(k);
+    if(curEmpty&&Array.isArray(b.lv)&&b.lv.length)k.lv=b.lv.slice();
+    Object.keys(b.w).forEach(function(m){(b.w[m]||[]).forEach(function(r,l){
+      if(!r||!sm(r))return;k.w[m]=k.w[m]||[];var c=k.w[m][l]||[0,0,0,0];
+      if(sm(c))return;k.w[m][l]=r.map(function(x){return+x||0});got++;
+    })});
+    if(got){cells+=got;ppl++;tTouch(id)}
+  });
+  if(!cells){alert("រកមិនឃើញកិច្ចតែងការដែលត្រូវស្ដារក្នុងឯកសារនេះទេ (ឬប្រអប់ទាំងនោះមានលេខស្រាប់)។");return}
+  save();renderK();renderS();notify("🛟 បានស្ដារកិច្ចតែងការ "+cells+" ជួរ សម្រាប់គ្រូ "+ppl+" នាក់");
+}
+if($("krec")){$("krec").onclick=function(){$("krecF").value="";$("krecF").click()};
+  $("krecF").onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{tRecover(JSON.parse(r.result))}catch(x){alert("ឯកសារ Backup មិនត្រឹមត្រូវ")}};r.readAsText(f)}}
 $("kexp").onclick=function(){
   var rows=[["ឈ្មោះ","កម្រិតថ្នាក់"].concat(MK).concat(["សរុបទាំងអស់"])];
   data.forEach(function(t){var k=gk(t.id);k.lv.forEach(function(lv,l){rows.push([t.name,lv].concat(MK.map(function(_,m){var r=k.w[m]&&k.w[m][l];return r?sm(r):0})).concat([lt(t.id,l)]))})});
@@ -2378,6 +2402,10 @@ async function flush(k){
     Object.keys(docs).forEach(function(p){
       var j=sj(docs[p]);if(syn[p]===j)return;                 /* មិនមានការប្ដូរ */
       if(!canWrite(p,docs[p],!(p in syn)))return;               /* មិនមែនរបស់ខ្លួន → រំលង */
+      if(k==="tasks"){var tid=p.split("/")[1];
+        if(tid!==who.id&&!(sy.touch&&sy.touch[tid]))return;      /* Admin៖ កុំសរសេរកិច្ចតែងការគ្រូផ្សេង ដែលមិនបានកែ (ការពារការជាន់) */
+        if(syn[p]&&tSum(cache[p])>0&&tSum(docs[p])===0&&!(sy.touch&&sy.touch[tid])){console.warn("tasks wipe blocked",p);return}
+      }
       ops.push({p:p,j:j,d:docs[p]});
     });
     Object.keys(syn).forEach(function(p){if(!(p in docs)&&canDel(p,cache[p]))ops.push({p:p,del:1})});
@@ -2451,11 +2479,13 @@ function migrateRs(){   /* លំនាំដើមថ្នាក់ទី ១�
 }
 function trySeed(k){      /* មានតែ Admin ទេដែលបង្កើត document ដំបូង */
   if(!isAdm()||sy.seeded[k])return;
+  if(k==="tasks"||k==="rs"||k==="wr"||k==="ah"||k==="sched"){sy.seeded[k]=1;return}   /* ទិន្នន័យរបស់គ្រូ៖ កុំសរសេរពីកុំព្យូទ័រ Admin ពេលចាប់ផ្ដើម */
   if(k==="obs"&&!sy.teachersReady)return;
   sy.seeded[k]=1;
   if(k==="obs"&&!Object.keys(sy.cache.obs||{}).length&&!sy.legacy.obs)ob=defO();
   push(k);
 }
+function tSum(d){var v=d&&d.j?decO(d):d,s=0;if(v&&v.w)Object.keys(v.w).forEach(function(m){(v.w[m]||[]).forEach(function(r){(r||[]).forEach(function(x){s+=+x||0})})});return s}
 function sameAsSynced(k){   /* Cloud បញ្ជូនមកវិញនូវអ្វីដែលយើងទើបរក្សាទុក → គ្មានអ្វីថ្មី */
   var cache=sy.cache[k]||{},syn=sy.synced[k],ks=Object.keys(cache);
   if(!sy.first[k]||!syn||ks.length!==Object.keys(syn).length)return false;
@@ -2492,7 +2522,9 @@ function subscribe(k){
     if(s.doc)ref=window.FB.doc.apply(null,[window.db].concat(s.doc.split("/")));
     else if(s.own&&!isAdm())ref=window.FB.query(window.FB.collection(window.db,s.col),window.FB.where("o","==",who.id));
     else ref=window.FB.collection(window.db,s.col);
-    var un=window.FB.onSnapshot(ref,function(sn){
+    var un=window.FB.onSnapshot(ref,{includeMetadataChanges:true},function(sn){
+      /* កុំទទួល snapshot ពី cache (ពេល offline/យឺត វាអាចទទេ) ជាលើកដំបូង — រង់ចាំទិន្នន័យពី Server */
+      if(!sy.first[k]&&sn.metadata&&sn.metadata.fromCache)return;
       var cache=sy.cache[k];
       if(s.doc){if(sn.exists())cache[s.doc]=sn.data();else delete cache[s.doc]}
       else{
@@ -2510,7 +2542,7 @@ function subscribe(k){
 function stopSync(){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[]}
 function startSync(){
   stopSync();try{bkRemind()}catch(e){console.error(e)}
-  sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};
+  sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};sy.touch={};
   Object.keys(MAP).forEach(subscribe);
   subProfiles();
 }
