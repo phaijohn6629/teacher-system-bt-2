@@ -62,6 +62,10 @@ function owner(id,m){return m.o||(m.rc)||idByName(m.rn)}
 function canE(id){var m=mts[id];return !!(who&&m&&(isAdm()||owner(id,m)===who.id))}
 var TY={b:"បច្ចេកទេស",r:"រួម"},fTy="b";try{fTy=localStorage.getItem("mtTy")==="r"?"r":"b"}catch(e){}
 function tyOf(m){return m&&m.ty==="r"?"r":"b"}
+/* តួនាទី៖ ប្រជុំបច្ចេកទេស = ប្រធាន/អនុប្រធាន/សមាជិក · ប្រជុំរួម = នាយករង (ធំជាងគេ) → ជំនួយការគណៈគ្រប់គ្រង → គ្រូបង្រៀន */
+var RL={b:["ប្រធានក្រុម","អនុប្រធាន","សមាជិក"],r:["នាយករង","ជំនួយការគណៈគ្រប់គ្រង","គ្រូបង្រៀន"]};
+function conv(at,ty){var o=ty==="r"?"b":"r";return(at||[]).map(function(a){var r=String(a.r||"").trim();if(ty==="r"&&(!r||RL.b.indexOf(r)>=0))r="គ្រូបង្រៀន";else if(ty==="b"&&RL.r.indexOf(r)>=0)r="";return{t:a.t,n:a.n,r:r}})}
+function rk(r){var i=RL.r.indexOf(String(r||"").trim());return i<0?2:i}
 function nextN(ty,skip){return Object.keys(mts).filter(function(id){return !mts[id].x&&id!==skip&&tyOf(mts[id])===ty}).reduce(function(s,id){return Math.max(s,+mts[id].n||0)},0)+1}
 function list(){return Object.keys(mts).filter(function(id){return !mts[id].x&&tyOf(mts[id])===fTy}).sort(function(a,b){return(mts[b].n-mts[a].n)||String(mts[b].d).localeCompare(mts[a].d)})}
 
@@ -97,7 +101,9 @@ function prHtml(s){
 }
 function docHtml(m){
   var X=window.SCHX,h=head(),rid=m.rc||idByName(m.rn),sg=function(id){return X&&id?X.getSig(id):""};
-  var at=(m.at||[]).filter(function(a){return a.n}),half=Math.ceil(at.length/2);
+  var at=(m.at||[]).filter(function(a){return a.n}),R=tyOf(m)==="r";
+  if(R)at=at.map(function(a,i){return{t:a.t,n:a.n,r:String(a.r||"").trim()||"គ្រូបង្រៀន",i:i}}).sort(function(a,b){return rk(a.r)-rk(b.r)||a.i-b.i});
+  var half=Math.ceil(at.length/2),dy=R?(at.filter(function(a){return a.r==="នាយករង"})[0]||null):null;
   var atl=function(a,i){return"<div>"+kn(i+1)+". "+esc((a.t?a.t+" ":"")+a.n)+(a.r?" ("+esc(a.r)+")":"")+"</div>"};
   var sig=function(id){var s=sg(id);return"<div class=mt-sg>"+(s?"<img src='"+s+"' alt=''>":"")+"</div>"};
   return"<div class='pg mt-doc'>"+
@@ -112,7 +118,8 @@ function docHtml(m){
    "<div class=mt-s>III. ដំណើរការប្រជុំ</div>"+prHtml(m.pr)+
    "<div class=mt-ft><div class=mt-dt><div>"+esc(lunar(m.d))+"</div><div>"+esc(greg(m.d))+"</div></div>"+
     "<div class=mt-cols><div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div></div>"+
-     "<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>"+
+     (R?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>នាយករង</div>"+sig(dy?idByName(dy.n):"")+"<div class=moul>"+esc(dy?dy.n:"")+"</div></div>"
+       :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>")+
      "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div></div></div>"+
   "</div>";
 }
@@ -136,7 +143,7 @@ function newMt(){
   /* សមាសភាពស្រាប់ = តាមប្រជុំចុងក្រោយ (ដើមឡើយ ៨ នាក់ក្នុងក្រុម) */
   var ids=list(),n=nextN(fTy),d=new Date(),p=function(x){return("0"+x).slice(-2)};
   var last=ids.length?mts[ids[0]].at:null;
-  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:JSON.parse(JSON.stringify(last&&last.length?last:AT0)),ag:"",pr:"",rc:who.id,rn:who.name};
+  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:last&&last.length?JSON.parse(JSON.stringify(last)):conv(AT0,fTy),ag:"",pr:"",rc:who.id,rn:who.name};
 }
 function drawEdit(){
   var e=edit.m,inp=function(k,lbl,ty,w){return"<label>"+lbl+"<input data-k="+k+" type="+(ty||"text")+" value='"+esc(e[k]||"")+"'"+(w?" style='max-width:"+w+"'":"")+"></label>"};
@@ -150,8 +157,9 @@ function drawEdit(){
    "<div class=mt-lun id=mtLun>"+esc(lunar(e.d))+" "+esc(greg(e.d))+"</div>"+
    "<h4>I. សមាសភាពចូលរួម</h4><div id=mtAt>"+e.at.map(function(a,i){return"<div class=mt-ar><span>"+kn(i+1)+".</span>"+
      "<select data-a='"+i+"|t'><option"+(a.t==="លោកគ្រូ"?" selected":"")+">លោកគ្រូ</option><option"+(a.t==="អ្នកគ្រូ"?" selected":"")+">អ្នកគ្រូ</option><option"+(a.t!=="លោកគ្រូ"&&a.t!=="អ្នកគ្រូ"?" selected":"")+" value=''>—</option></select>"+
-     "<input data-a='"+i+"|n' value='"+esc(a.n)+"' placeholder='ឈ្មោះ'><input data-a='"+i+"|r' value='"+esc(a.r||"")+"' placeholder='តួនាទី (បើមាន)'>"+
+     "<input data-a='"+i+"|n' value='"+esc(a.n)+"' placeholder='ឈ្មោះ'><input data-a='"+i+"|r' list=mtRl value='"+esc(a.r||"")+"' placeholder='តួនាទី (បើមាន)'>"+
      "<button type=button class=mt-x data-rm="+i+" title='ដកចេញ'>✕</button></div>"}).join("")+"</div>"+
+   "<datalist id=mtRl>"+RL[tyOf(e)].map(function(r){return"<option>"+r+"</option>"}).join("")+"</datalist>"+
    "<div class=bar><select id=mtPick><option value=''>— ជ្រើសគ្រូដើម្បីបន្ថែម —</option>"+data.filter(function(t){return t.name&&!e.at.some(function(a){return nk(a.n)===nk(t.name)})}).map(function(t){return"<option value='"+esc(t.id)+"'>"+esc(t.name)+"</option>"}).join("")+"</select>"+
     "<button type=button id=mtAdd>➕ បន្ថែមគ្រូ</button><button type=button id=mtAddB>➕ បន្ថែមឈ្មោះផ្សេង</button></div>"+
    "<h4>II. របៀបវារៈ <small>(មួយបន្ទាត់ = មួយចំណុច)</small></h4><textarea data-k=ag rows=5 placeholder='១. ...&#10;២. ផ្សេងៗ'>"+esc(e.ag||"")+"</textarea>"+
@@ -180,7 +188,7 @@ function bind(){
   ["input","change","click"].forEach(function(t){body.addEventListener(t,function(){setTimeout(dPut,0)})});
   body.addEventListener("input",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
-    if(t.dataset.k==="ty"){e.ty=t.value==="r"?"r":"b";if(!edit.id||tyOf(mts[edit.id])!==e.ty){e.n=nextN(e.ty,edit.id);var ni=body.querySelector("input[data-k=n]");if(ni)ni.value=e.n}}
+    if(t.dataset.k==="ty"){e.ty=t.value==="r"?"r":"b";if(!edit.id||tyOf(mts[edit.id])!==e.ty)e.n=nextN(e.ty,edit.id);e.at=conv(e.at,e.ty);drawEdit()}
     else if(t.dataset.k){e[t.dataset.k]=t.dataset.k==="n"?(+t.value||1):t.value;if(t.dataset.k==="d")$("mtLun").textContent=lunar(e.d)+" "+greg(e.d)}
     else if(t.dataset.a){var a=t.dataset.a.split("|");e.at[+a[0]][a[1]]=t.value}
   });
@@ -188,8 +196,8 @@ function bind(){
   body.addEventListener("click",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
     if(t.dataset.rm!=null){e.at.splice(+t.dataset.rm,1);drawEdit()}
-    else if(t.id==="mtAdd"){var id=$("mtPick").value,x=data.filter(function(q){return q.id===id})[0];if(!x)return;e.at.push({t:x.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ",n:x.name,r:""});drawEdit()}
-    else if(t.id==="mtAddB"){e.at.push({t:"លោកគ្រូ",n:"",r:""});drawEdit();var ins=body.querySelectorAll("#mtAt input[data-a$='|n']");if(ins.length)ins[ins.length-1].focus()}
+    else if(t.id==="mtAdd"){var id=$("mtPick").value,x=data.filter(function(q){return q.id===id})[0];if(!x)return;e.at.push({t:x.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ",n:x.name,r:tyOf(e)==="r"?"គ្រូបង្រៀន":""});drawEdit()}
+    else if(t.id==="mtAddB"){e.at.push({t:"លោកគ្រូ",n:"",r:tyOf(e)==="r"?"គ្រូបង្រៀន":""});drawEdit();var ins=body.querySelectorAll("#mtAt input[data-a$='|n']");if(ins.length)ins[ins.length-1].focus()}
     else if(t.id==="mtCancel"){edit=null;dDel();draw()}
     else if(t.id==="mtPrev"){$("mtPv").innerHTML=docHtml(e);$("mtPv").scrollIntoView({behavior:"smooth"})}
     else if(t.id==="mtSave"){
