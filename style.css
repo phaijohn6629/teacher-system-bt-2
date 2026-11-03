@@ -428,7 +428,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .tdesk b{display:block;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:.9rem;line-height:1.6}.tdesk small{display:block;font-size:.75rem;opacity:.9}
 .t-av .av,.t-av .av-i{width:40px!important;height:40px!important;border:2px solid #fff;border-radius:50%}
 .board{position:relative;background:radial-gradient(ellipse at 30% 30%,#1f6f43,#14532d 70%);border:6px solid #8b5a2b;border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:52px;box-shadow:inset 0 0 18px rgba(0,0,0,.35),0 4px 10px rgba(0,0,0,.15)}
-.chalk{font-family:"Moul","Kantumruy Pro",serif;color:#ecfdf5;letter-spacing:.08em;text-shadow:0 0 1px rgba(255,255,255,.6);opacity:.95}
+.chalk{font-family:"Moul","Kantumruy Pro",serif;color:#ecfdf5;letter-spacing:0;word-spacing:.3em;text-shadow:0 0 1px rgba(255,255,255,.6);opacity:.95}
 .tray{position:absolute;left:10%;right:10%;bottom:-10px;height:5px;background:#8b5a2b;border-radius:3px}
 .door{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0 12px;border:2px dashed #94a3b8;border-left:5px solid #94a3b8;border-radius:4px 10px 10px 4px;color:#64748b;font-size:.8rem;background:#fff}
 .door span{font-size:1.2rem}
@@ -806,3 +806,5 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 /* ប្លង់តុ (បោះពុម្ព/PDF)៖ ស៊ុមតាមកម្ពស់ខ្លឹមសារ (មិនពេញទំព័រ) កុំឱ្យជ្រុងក្រោមធ្លាក់ទៅទំព័រទី២ */
 .pg.land.seatp{height:auto!important}.pg.land.seatp.fixh{height:165mm!important}
 .pg.land.seatp .room-seats{padding-bottom:8px}
+/* PDF (html2canvas)៖ letter-spacing បំបែកជើងអក្សរខ្មែរ → បិទ */
+.pdfw *{letter-spacing:0!important}

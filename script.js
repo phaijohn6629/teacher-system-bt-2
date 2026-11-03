@@ -1057,7 +1057,10 @@ function pdfPaginate(w,pageH,contentW){
         tr.classList.add("pdfpad");
       }else el.style.marginTop=(parseFloat(getComputedStyle(el).marginTop)||0)+pad+"px";
     });
-    var ph=pg.getBoundingClientRect().height;pg.style.setProperty("height",Math.max(1,Math.ceil((ph-1)/H))*H+"px","important");   /* .pg បន្ទាប់ចាប់ផ្ដើមទំព័រថ្មី */
+    /* .pg បន្ទាប់ចាប់ផ្ដើមទំព័រថ្មី៖ ពង្រីកដល់ពហុគុណកម្ពស់ទំព័រ · .pg ចុងក្រោយ៖ ខ្លីជាងមួយទំព័រ → ទុកកម្ពស់ដើម (ស៊ុមមិនលាតពេញទំព័រ) · វែងជាង → ដក ៤px កុំឱ្យការបង្គត់បង្កើតទំព័រទទេ */
+    var ph=pg.getBoundingClientRect().height,last=!pg.nextElementSibling,np=Math.max(1,Math.ceil((ph-1)/H));
+    if(!last)pg.style.setProperty("height",np*H+"px","important");
+    else if(ph>H-4)pg.style.setProperty("height",(np*H-4)+"px","important");
     pg.style.overflow="hidden";pg.style.boxSizing="border-box";
   });
 }
