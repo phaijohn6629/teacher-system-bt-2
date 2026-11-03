@@ -808,3 +808,5 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .pg.land.seatp .room-seats{padding-bottom:8px}
 /* PDF (html2canvas)៖ letter-spacing បំបែកជើងអក្សរខ្មែរ → បិទ */
 .pdfw *{letter-spacing:0!important}
+.qz-prac{display:inline-flex;align-items:center;margin-left:auto;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--brand);font-weight:700;text-decoration:none}
+.qz-prac:hover{border-color:var(--brand)}

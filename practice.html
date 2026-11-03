@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ហាត់លំហាត់ គណិតវិទ្យា · វិទ្យាល័យបឹងត្របែក</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--bg:#eef3fb;--ink:#1c2541;--mute:#5b6787;--card:#fff;--line:#d8e0ef;--brand:#2563eb;--ok:#16a34a;--bad:#dc2626;--l1:#16a34a;--l2:#ea8c0c;--l3:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Kantumruy Pro","Noto Sans Khmer",system-ui,sans-serif;line-height:1.6;padding:0 14px 120px}
+#app{max-width:980px;margin:0 auto;padding-top:14px}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:8px 14px}
+button:hover{border-color:var(--brand)}
+.hero{background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;border-radius:18px;padding:20px 22px;margin-bottom:16px}
+.hero h1{margin:0 0 4px;font-size:clamp(20px,4vw,28px)}.hero p{margin:0;opacity:.9}
+.ch h2{font-size:17px;margin:18px 0 8px;color:#1e3a8a}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:14px;border-radius:14px;background:var(--card);box-shadow:0 2px 8px rgba(30,58,138,.06)}
+.card b{font-size:15px}
+.cups{display:inline-flex;gap:4px}.cup{font-style:normal;font-size:18px;filter:grayscale(1);opacity:.25}.cup.on{filter:none;opacity:1}
+.tot{text-align:center;margin:20px 0;color:var(--mute)}.link{border:0;background:none;color:var(--brand);text-decoration:underline;padding:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px}.bar h1{flex:1;margin:0;font-size:clamp(18px,3.5vw,24px);color:#1e3a8a;min-width:0}
+.lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.lv button{display:flex;flex-direction:column;align-items:center;font-weight:700;border-width:2px;padding:8px}.lv small{font-weight:400;color:var(--mute)}
+.lv .l1{border-color:color-mix(in srgb,var(--l1) 40%,#fff)}.lv .l2{border-color:color-mix(in srgb,var(--l2) 40%,#fff)}.lv .l3{border-color:color-mix(in srgb,var(--l3) 40%,#fff)}
+.lv .l1.on{background:var(--l1);color:#fff}.lv .l2.on{background:var(--l2);color:#fff}.lv .l3.on{background:var(--l3);color:#fff}.lv .on small{color:#fff}
+.qs{list-style:none;counter-reset:q;padding:0;margin:0;display:grid;gap:12px}
+.q{counter-increment:q;position:relative;background:var(--card);border:2px solid transparent;border-radius:14px;padding:14px 14px 12px 52px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
+.q::before{content:counter(q);position:absolute;left:12px;top:12px;width:30px;height:30px;border-radius:50%;background:#e0e7ff;color:#1e3a8a;display:grid;place-items:center;font-weight:700}
+.q.ok{border-color:var(--ok);background:#f0fdf4}.q.ok::before{background:var(--ok);color:#fff;content:"✓"}
+.q.bad{border-color:var(--bad);background:#fef2f2}
+.qt{font-size:16px}.qt .katex{font-size:1.08em}
+.fig{margin:8px 0}.fig svg{max-width:min(380px,100%);max-height:330px;width:auto;height:auto;border:1px solid var(--line);border-radius:10px;background:#fff}.fig-err{color:var(--bad);font-size:13px}
+.ans{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:8px}
+.in{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.in .lb{font-weight:700;color:#1e3a8a}
+.in input{width:170px;max-width:60vw;font:inherit;font-size:16px;padding:7px 10px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.in input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.in input[readonly]{background:#f0fdf4;border-color:var(--ok)}
+.mk{width:22px;text-align:center}
+.pv{min-height:1.4em;font-size:15px;color:#334155;padding:0 6px;border-left:2px solid #e2e8f0}.pv:empty{display:none}.pv.err{color:var(--bad);font-size:12px}
+.sol-b{margin-top:8px;padding:4px 10px;font-size:13px;background:#fffbeb;border-color:#fcd34d}
+.sol{margin-top:8px;padding:10px 12px;border-radius:10px;background:#fffbeb;border:1px dashed #f59e0b;font-size:15px}
+.foot{position:sticky;bottom:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:16px;padding:10px;border-radius:14px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);box-shadow:0 4px 16px rgba(30,58,138,.12)}
+.check{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:700;font-size:17px;padding:10px 26px}
+.score{font-weight:700;color:#1e3a8a}
+.kb{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;flex-wrap:wrap;justify-content:center;gap:5px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:#1e293b;box-shadow:0 -4px 16px rgba(0,0,0,.2)}
+.kb[hidden]{display:none}
+.kb button{min-width:46px;padding:8px 10px;font-size:17px;background:#334155;color:#fff;border-color:#475569}
+.kb button:active{background:var(--brand)}
+.tro{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(15,23,42,.55);padding:16px}
+.tro-in{background:#fff;border-radius:20px;padding:24px 28px;text-align:center;max-width:380px;width:100%;animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
+.tro-in .big{font-size:72px;line-height:1;animation:spin 1.2s ease}.tro-in h2{margin:8px 0}.tro-in input{width:100%;margin:10px 0;padding:8px;font:inherit;font-size:13px}
+.tro-in button{margin-top:8px;background:var(--brand);color:#fff;border-color:var(--brand);font-weight:700}
+.qrb{display:flex;justify-content:center;margin:10px 0}
+@keyframes pop{from{transform:scale(.6);opacity:0}}@keyframes spin{from{transform:rotate(-30deg) scale(.4)}60%{transform:rotate(10deg) scale(1.2)}}
+@media (max-width:560px){.q{padding-left:44px}.q::before{left:8px;width:26px;height:26px}.in input{width:140px}}
+</style>
+</head>
+<body>
+<div id="app"><p style="text-align:center;margin-top:40px">កំពុងផ្ទុក…</p></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="fig.js?v=3"></script>
+<script src="practice.js?v=1"></script>
+</body>
+</html>
