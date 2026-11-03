@@ -33,7 +33,9 @@ function katexReady(){
   return kxP;
 }
 function math(el){if(!el)return;katexReady().then(function(){try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false,macros:KXM})}catch(x){}})}
-function tx(s){return esc(String(s||"")).replace(/\n/g,"<br>")}
+/* ចុះបន្ទាត់ក្នុងរូបមន្ត ($…$ · $$…$$) → \\ (LaTeX) · ក្រៅរូបមន្ត → <br> (កុំឱ្យ cases/matrix បែក) */
+function mathNL(s){return String(s||"").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ ")})}
+function tx(s){return esc(mathNL(s)).replace(/\n/g,"<br>")}
 function grades(){return[7,8,9,10,11,12]}
 function lsName(g,n){var C=window.CUR&&window.CUR[g],l=C&&C.LS[n];if(!l)return"";return l[3]?"ជំពូកទី"+kn(l[3])+" · មេរៀនទី"+kn(l[5])+" "+l[0]:"មេរៀនទី"+kn(+n)+" "+l[0]}
 function lsOpts(g,sel,all){
@@ -273,7 +275,8 @@ function texClean(t){
   t=t.replace(/\\(textbf|textit|emph|underline|text|mbox|textrm)\{([^{}]*)\}/g,function(m,c,x,o,all){return inMath(all,o)?m:x});
   t=t.replace(/\\includegraphics(\[[^\]]*\])?\{[^}]*\}/g,"[រូបភាព]").replace(/\\begin\{(tikzpicture|center|figure)\}[\s\S]*?\\end\{\1\}/g,function(m,k){return k==="center"?m.replace(/\\(begin|end)\{center\}/g,""):"[រូបភាព]"});
   t=t.replace(/\\(vspace|hspace)\*?\{[^}]*\}|\\(noindent|hfill|medskip|bigskip|smallskip|centering|par|newline)\b/g," ");
-  t=t.replace(/\\\\(\[[^\]]*\])?/g,"\n").replace(/~/g," ");
+  /* \\ ចុះបន្ទាត់៖ ក្រៅរូបមន្តប៉ុណ្ណោះ (ក្នុង cases · matrix · aligned ត្រូវរក្សា) */
+  t=t.replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$|\\\\(\[[^\]]*\])?/g,function(m){return m.charAt(0)==="$"?m:"\n"}).replace(/~/g," ");
   return t.replace(/[ \t]+/g," ").replace(/\n\s*\n+/g,"\n").trim();
 }
 function inMath(all,o){var n=0;for(var i=0;i<o;i++){if(all[i]==="\\"){i++;continue}if(all[i]==="$")n++}return n%2===1}

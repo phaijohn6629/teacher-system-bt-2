@@ -52,7 +52,7 @@ const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYW
   storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
 const $=id=>document.getElementById(id),app=$("app"),id=new URLSearchParams(location.search).get("t")||"";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const tx=s=>esc(s).replace(/\n/g,"<br>"),kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);
+const tx=s=>esc(String(s??"").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,m=>m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ "))).replace(/\n/g,"<br>"),kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);
 const math=el=>{try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false,macros:{"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"}})}catch(e){}};
 const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</div><h2>${t}</h2><p class=note>${s||""}</p></div>`};
 /* ក្រឡុកតាមគ្រាប់ពូជ (សិស្សម្នាក់ៗលំដាប់ខុសគ្នា ប៉ុន្តែដដែលពេលបើកឡើងវិញ) */
