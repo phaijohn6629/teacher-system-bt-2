@@ -6,6 +6,7 @@
      tangent y=x^2 at 1    បន្ទាត់ប៉ះ  ·  normal y=x^2 at 1  បន្ទាត់កែង
      hole (1,2)            ចំណុចចំហ (រង្វង់ទទេ)  ·  dots y=1/x [1,8]  ចំណុចស្វ៊ីត (x ជាចំនួនគត់)
      angle A O B           មុំត្រង់ O (ធ្នូ)
+     bar 1:5 2:8 3:3       ដ្យាក្រាមរបារ (តម្លៃ:ប្រេកង់)
      x=1 · asym y=2        បន្ទាត់ដាច់ៗ (អាស៊ីមតូត)
      x^2/9+y^2/4=1         ខ្សែកោងសមីការ (អេលីប អ៊ីពែបូល …)
      A(1,2)                ចំណុច · seg A B · line A B · vec A B · poly A B C · circle A 2 · circle A B
@@ -80,13 +81,14 @@ function svg(spec){
       if((m=/^window\s+(.*)$/i.exec(t))){win=win||{};var mx=/x\s*=\s*(-?[\d.]+)\s*\.\.\s*(-?[\d.]+)/i.exec(m[1]),my=/y\s*=\s*(-?[\d.]+)\s*\.\.\s*(-?[\d.]+)/i.exec(m[1]);if(mx){win.x0=+mx[1];win.x1=+mx[2]}if(my){win.y0=+my[1];win.y1=+my[2]}return}
       if((m=/^complex\s+(.*)$/i.exec(t))){cx=true;m[1].split(/\s+|,/).filter(Boolean).forEach(function(z){var q=/^([A-Za-z]\w*)\s*=\s*(.+)$/.exec(z),v=cnum(q?q[2]:z);if(!v)throw"ចំនួនកុំផ្លិច «"+z+"»";var n=q?q[1]:"";if(n)P[n]=v;items.push({k:"cpt",p:v,n:n,c:col||nextC()})});return}
       if((m=/^normal\s+y\s*=\s*(.+?)\s+at\s+(-?[\d.]+)$/i.exec(t))){var f1=parse(m[1]),x1=+m[2],h1=1e-5,k1=(f1(x1+h1)-f1(x1-h1))/(2*h1);items.push({k:"tan",x0:x1,y0:f1(x1),m:k1?-1/k1:1e6,vert:!k1,c:col||nextC()});return}
-      if((m=/^hole\s+([A-Za-z]\w*)?\s*\(\s*([^,]+),([^)]+)\)$/i.exec(t))){var hp=[parse(m[2])(),parse(m[3])()];if(m[1])P[m[1]]=hp;items.push({k:"hole",p:hp,n:m[1]||"",c:col||"#222"});return}
+      if((m=/^hole\s+([A-Za-z]\w*'*)?\s*\(\s*([^,]+),([^)]+)\)$/i.exec(t))){var hp=[parse(m[2])(),parse(m[3])()];if(m[1])P[m[1]]=hp;items.push({k:"hole",p:hp,n:m[1]||"",c:col||"#222"});return}
       if((m=/^dots\s+y\s*=\s*(.+?)\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\]$/i.exec(t))){var fd=parse(m[1]),da=Math.ceil(parse(m[2])()),db=Math.floor(parse(m[3])()),dc=col||nextC();for(var n=da;n<=db&&n-da<200;n++){var dv=fd(n,0);if(isFinite(dv))items.push({k:"pt",p:[n,dv],n:"",c:dc})}return}
       if((m=/^angle\s+(\S+)\s+(\S+)\s+(\S+)(?:\s+(.+))?$/i.exec(t))){items.push({k:"ang",ns:[m[1],m[2],m[3]],lb:m[4]||"",c:col||"#d9731a"});return}
+      if((m=/^bar\s+(.+)$/i.exec(t))){var bc=col||nextC();m[1].split(/\s+/).forEach(function(z){var q=/^(-?[\d.]+):(-?[\d.]+)$/.exec(z);if(!q)throw"bar «"+z+"»";items.push({k:"bar",p:[+q[1],+q[2]],c:bc})});return}
       if((m=/^text\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)\s*(.+)$/i.exec(t))){items.push({k:"text",p:[+m[1],+m[2]],n:m[3],c:col||"#222"});return}
-      if((m=/^([A-Za-z]\w*)?\s*\(\s*(-?[\d.]+(?:\/[\d.]+)?)\s*,\s*(-?[\d.]+(?:\/[\d.]+)?)\s*\)$/.exec(t))&&!/^(x|y)$/i.test(m[1]||"")){
+      if((m=/^([A-Za-z]\w*'*)?\s*\(\s*(-?[\d.]+(?:\/[\d.]+)?)\s*,\s*(-?[\d.]+(?:\/[\d.]+)?)\s*\)$/.exec(t))&&!/^(x|y)$/i.test(m[1]||"")){
         var px=parse(m[2])(),py=parse(m[3])();if(m[1])P[m[1]]=[px,py];items.push({k:"pt",p:[px,py],n:m[1]||"",c:col||"#222"});return}
-      if((m=/^point\s+(.*)$/i.exec(t))){var q2=/^([A-Za-z]\w*)?\s*\(\s*([^,]+),([^)]+)\)$/.exec(m[1]);if(!q2)throw"ចំណុច";var v2=[parse(q2[2])(),parse(q2[3])()];if(q2[1])P[q2[1]]=v2;items.push({k:"pt",p:v2,n:q2[1]||"",c:col||"#222"});return}
+      if((m=/^point\s+(.*)$/i.exec(t))){var q2=/^([A-Za-z]\w*'*)?\s*\(\s*([^,]+),([^)]+)\)$/.exec(m[1]);if(!q2)throw"ចំណុច";var v2=[parse(q2[2])(),parse(q2[3])()];if(q2[1])P[q2[1]]=v2;items.push({k:"pt",p:v2,n:q2[1]||"",c:col||"#222"});return}
       if((m=/^(seg|line|vec|poly)\s+(.+)$/i.exec(t))){var ns=m[2].split(/\s+/);items.push({k:m[1].toLowerCase(),ns:ns,c:col||nextC()});return}
       if((m=/^circle\s+(.+)$/i.exec(t))){var a=m[1].trim(),cc=/^\(\s*([^,]+),([^)]+)\)\s*(?:r\s*=\s*)?(.+)$/.exec(a),it={k:"circle",c:col||nextC()};
         if(cc){it.o=[parse(cc[1])(),parse(cc[2])()];it.r=parse(cc[3])()}else{var w=a.split(/\s+/);it.on=w[0];if(/^(r\s*=\s*)?[\d.]+$/.test(w.slice(1).join("")))it.r=+w.slice(1).join("").replace(/r\s*=/,"");else it.thru=w[1]}
@@ -185,6 +187,7 @@ function svg(spec){
     else if(it.k==="line"){var A2=pt(it.ns[0]),B2=pt(it.ns[1]),dx=B2[0]-A2[0],dy=B2[1]-A2[1],T=(X1-X0+Y1-Y0)*2;g+="<line x1="+sx(A2[0]-dx*T)+" y1="+sy(A2[1]-dy*T)+" x2="+sx(A2[0]+dx*T)+" y2="+sy(A2[1]+dy*T)+" stroke='"+it.c+"' stroke-width=2 />"}
     else if(it.k==="poly"){g+="<polygon points='"+it.ns.map(function(n){var p=pt(n);return sx(p[0])+","+sy(p[1])}).join(" ")+"' fill='"+it.c+"' fill-opacity=.08 stroke='"+it.c+"' stroke-width=2 />"}
     else if(it.k==="cpt"){g+="<line x1="+sx(0)+" y1="+sy(0)+" x2="+sx(it.p[0])+" y2="+sy(it.p[1])+" stroke='"+it.c+"' stroke-width=2.2 marker-end='url(#figA)'/><line x1="+sx(it.p[0])+" y1="+sy(it.p[1])+" x2="+sx(it.p[0])+" y2="+sy(0)+" stroke='"+it.c+"' stroke-dasharray='3 3'/><line x1="+sx(it.p[0])+" y1="+sy(it.p[1])+" x2="+sx(0)+" y2="+sy(it.p[1])+" stroke='"+it.c+"' stroke-dasharray='3 3'/>";label(it.p,it.n,it.c)}
+    else if(it.k==="bar"){var bw=Math.max(.2,Math.min(.7,(X1-X0)/40*14))/2;g+="<rect x="+sx(it.p[0]-bw)+" y="+sy(Math.max(0,it.p[1]))+" width="+(sx(it.p[0]+bw)-sx(it.p[0]-bw))+" height="+Math.abs(sy(0)-sy(it.p[1]))+" fill='"+it.c+"' fill-opacity=.75 stroke='"+it.c+"'/>";lab+="<text x="+sx(it.p[0])+" y="+(sy(Math.max(0,it.p[1]))-4)+" text-anchor=middle font-size=11 fill='#333'>"+it.p[1]+"</text>"}
     else if(it.k==="text")lab+="<text x="+sx(it.p[0])+" y="+sy(it.p[1])+" fill='"+it.c+"' font-size=12>"+E(it.n)+"</text>";
   }catch(e){errs.push(typeof e==="string"?e:"គូរមិនបាន")}});
   items.forEach(function(it){if(it.k==="pt"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=3.6 fill='"+it.c+"'/>";label(it.p,it.n,it.c)}
