@@ -7,6 +7,7 @@
      hole (1,2)            ចំណុចចំហ (រង្វង់ទទេ)  ·  dots y=1/x [1,8]  ចំណុចស្វ៊ីត (x ជាចំនួនគត់)
      angle A O B           មុំត្រង់ O (ធ្នូ)
      bar 1:5 2:8 3:3       ដ្យាក្រាមរបារ (តម្លៃ:ប្រេកង់)
+     pie 3:ក 5:ខ 2:គ       ក្រាបចំណិត (តម្លៃ:ស្លាក · _ = ដកឃ្លា)
      x=1 · asym y=2        បន្ទាត់ដាច់ៗ (អាស៊ីមតូត)
      x^2/9+y^2/4=1         ខ្សែកោងសមីការ (អេលីប អ៊ីពែបូល …)
      A(1,2)                ចំណុច · seg A B · line A B · vec A B · poly A B C · circle A 2 · circle A B
@@ -84,6 +85,7 @@ function svg(spec){
       if((m=/^hole\s+([A-Za-z]\w*'*)?\s*\(\s*([^,]+),([^)]+)\)$/i.exec(t))){var hp=[parse(m[2])(),parse(m[3])()];if(m[1])P[m[1]]=hp;items.push({k:"hole",p:hp,n:m[1]||"",c:col||"#222"});return}
       if((m=/^dots\s+y\s*=\s*(.+?)\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\]$/i.exec(t))){var fd=parse(m[1]),da=Math.ceil(parse(m[2])()),db=Math.floor(parse(m[3])()),dc=col||nextC();for(var n=da;n<=db&&n-da<200;n++){var dv=fd(n,0);if(isFinite(dv))items.push({k:"pt",p:[n,dv],n:"",c:dc})}return}
       if((m=/^angle\s+(\S+)\s+(\S+)\s+(\S+)(?:\s+(.+))?$/i.exec(t))){items.push({k:"ang",ns:[m[1],m[2],m[3]],lb:m[4]||"",c:col||"#d9731a"});return}
+      if((m=/^pie\s+(.+)$/i.exec(t))){var pv=[],pl=[];m[1].split(/\s+/).forEach(function(z){var q=/^([\d.]+)(?::(.+))?$/.exec(z);if(!q)throw"pie «"+z+"»";pv.push(+q[1]);pl.push((q[2]||"").replace(/_/g," "))});items.push({k:"pie",v:pv,lb:pl});grid=false;axes=false;if(!win)win={x0:-4.2,x1:4.2,y0:-3.6,y1:3.6};return}
       if((m=/^bar\s+(.+)$/i.exec(t))){var bc=col||nextC();m[1].split(/\s+/).forEach(function(z){var q=/^(-?[\d.]+):(-?[\d.]+)$/.exec(z);if(!q)throw"bar «"+z+"»";items.push({k:"bar",p:[+q[1],+q[2]],c:bc})});return}
       if((m=/^text\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)\s*(.+)$/i.exec(t))){items.push({k:"text",p:[+m[1],+m[2]],n:m[3],c:col||"#222"});return}
       if((m=/^([A-Za-z]\w*'*)?\s*\(\s*(-?[\d.]+(?:\/[\d.]+)?)\s*,\s*(-?[\d.]+(?:\/[\d.]+)?)\s*\)$/.exec(t))&&!/^(x|y)$/i.test(m[1]||"")){
@@ -187,6 +189,9 @@ function svg(spec){
     else if(it.k==="line"){var A2=pt(it.ns[0]),B2=pt(it.ns[1]),dx=B2[0]-A2[0],dy=B2[1]-A2[1],T=(X1-X0+Y1-Y0)*2;g+="<line x1="+sx(A2[0]-dx*T)+" y1="+sy(A2[1]-dy*T)+" x2="+sx(A2[0]+dx*T)+" y2="+sy(A2[1]+dy*T)+" stroke='"+it.c+"' stroke-width=2 />"}
     else if(it.k==="poly"){g+="<polygon points='"+it.ns.map(function(n){var p=pt(n);return sx(p[0])+","+sy(p[1])}).join(" ")+"' fill='"+it.c+"' fill-opacity=.08 stroke='"+it.c+"' stroke-width=2 />"}
     else if(it.k==="cpt"){g+="<line x1="+sx(0)+" y1="+sy(0)+" x2="+sx(it.p[0])+" y2="+sy(it.p[1])+" stroke='"+it.c+"' stroke-width=2.2 marker-end='url(#figA)'/><line x1="+sx(it.p[0])+" y1="+sy(it.p[1])+" x2="+sx(it.p[0])+" y2="+sy(0)+" stroke='"+it.c+"' stroke-dasharray='3 3'/><line x1="+sx(it.p[0])+" y1="+sy(it.p[1])+" x2="+sx(0)+" y2="+sy(it.p[1])+" stroke='"+it.c+"' stroke-dasharray='3 3'/>";label(it.p,it.n,it.c)}
+    else if(it.k==="pie"){var tot=it.v.reduce(function(x,y){return x+y},0),a0=Math.PI/2,R=3;it.v.forEach(function(v,i){var a1=a0-v/tot*2*Math.PI,cl=PAL[i%PAL.length],big=v/tot>.5?1:0,am=(a0+a1)/2;
+        g+=(v>=tot?"<circle cx="+sx(0)+" cy="+sy(0)+" r="+(sx(R)-sx(0))+" fill='"+cl+"' fill-opacity=.7 stroke='#fff'/>":"<path d='M"+sx(0)+","+sy(0)+" L"+sx(R*Math.cos(a0))+","+sy(R*Math.sin(a0))+" A"+(sx(R)-sx(0))+","+(sx(R)-sx(0))+" 0 "+big+" 1 "+sx(R*Math.cos(a1))+","+sy(R*Math.sin(a1))+"Z' fill='"+cl+"' fill-opacity=.7 stroke='#fff' stroke-width='2'/>");
+        if(it.lb[i])lab+="<text x="+sx(1.85*Math.cos(am))+" y="+(sy(1.85*Math.sin(am))+4)+" text-anchor=middle font-size=12 font-weight=600 fill='#111'>"+E(it.lb[i])+"</text>";a0=a1})}
     else if(it.k==="bar"){var bw=Math.max(.2,Math.min(.7,(X1-X0)/40*14))/2;g+="<rect x="+sx(it.p[0]-bw)+" y="+sy(Math.max(0,it.p[1]))+" width="+(sx(it.p[0]+bw)-sx(it.p[0]-bw))+" height="+Math.abs(sy(0)-sy(it.p[1]))+" fill='"+it.c+"' fill-opacity=.75 stroke='"+it.c+"'/>";lab+="<text x="+sx(it.p[0])+" y="+(sy(Math.max(0,it.p[1]))-4)+" text-anchor=middle font-size=11 fill='#333'>"+it.p[1]+"</text>"}
     else if(it.k==="text")lab+="<text x="+sx(it.p[0])+" y="+sy(it.p[1])+" fill='"+it.c+"' font-size=12>"+E(it.n)+"</text>";
   }catch(e){errs.push(typeof e==="string"?e:"គូរមិនបាន")}});
