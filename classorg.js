@@ -61,7 +61,7 @@ function renderOrg(){
   $("ogC").innerHTML=cl.length?cl.map(function(x,i){return"<option value="+i+(i===ogI?" selected":"")+">"+esc(x.n)+" ("+x.st.length+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>";
   var n=c?org(c).n:6;
   $("ogN").innerHTML=[2,3,4,5,6,7,8].map(function(k){return"<option value="+k+(k===n?" selected":"")+">"+kn(k)+" ក្រុម</option>"}).join("");
-  ["ogN","ogAuto"].forEach(function(i){$(i).disabled=!ed||!c});
+  ["ogN","ogAuto","ogAbc"].forEach(function(i){$(i).disabled=!ed||!c});
   if(!c){$("ogBody").innerHTML="<p class=note>គ្រូនេះមិនទាន់មានថ្នាក់ទេ។ សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សនៅផ្ទាំង «លទ្ធផលសិក្សា» ឬ «សិស្ស និងអវត្តមាន» ជាមុន។</p>";return}
   if(!c.st.length){$("ogBody").innerHTML="<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានសិស្សទេ។ សូមបញ្ចូលសិស្សជាមុន (អាចនាំចូលពី Excel នៅផ្ទាំង «សិស្ស និងអវត្តមាន»)។</p>";return}
   if(ogV==="seat")return renderSeat(c,ed);
@@ -106,17 +106,27 @@ $("ogBody").onchange=function(e){
   savR();renderOrg();
 };
 /* បែងចែកក្រុមស្វ័យប្រវត្តិ៖ សិស្សដែលមិនមែនប្រធាន/អនុប្រធាន ចែកឱ្យស្មើគ្នា (ឆ្លាស់ប្រុស-ស្រី) · ម្នាក់ដំបូងនៃក្រុមជាប្រធានក្រុម */
-$("ogAuto").onclick=function(){
+/* បែងចែកក្រុម៖ abc=false → ឆ្លាស់ស្រី/ប្រុស វិលជុំ · abc=true → តាមអក្ខរក្រម ជាក្រុមជាប់គ្នា (ទំហំស្មើៗ) · សមាជិកទីមួយ = ប្រធានក្រុម */
+function autoGroups(abc){
   var c=cls();if(!c||!canE())return;var o=org(c),n=o.n;
   var has=c.st.some(function(s){return rOf(c,s).g>=1});
-  if(has&&!confirm("បែងចែកក្រុមឡើងវិញ? ក្រុម និងប្រធានក្រុមចាស់នឹងត្រូវជំនួស (ប្រធាន/អនុប្រធានថ្នាក់នៅដដែល)។"))return;
-  var pool=c.st.filter(function(s){var ro=rOf(c,s).ro;return ro!=="h"&&ro!=="v1"&&ro!=="v2"});
-  var m=pool.filter(function(s){return s.g==="ប្រុស"}),f=pool.filter(function(s){return s.g==="ស្រី"}),u=pool.filter(function(s){return s.g!=="ប្រុស"&&s.g!=="ស្រី"});
-  var order=[];while(m.length||f.length){if(f.length)order.push(f.shift());if(m.length)order.push(m.shift())}order=order.concat(u);
+  if(has&&!confirm((abc?"ចាប់ក្រុមតាមអក្ខរក្រម":"បែងចែកក្រុមឡើងវិញ")+"? ក្រុម និងប្រធានក្រុមចាស់នឹងត្រូវជំនួស (ប្រធាន/អនុប្រធានថ្នាក់នៅដដែល)។"))return;
+  var pool=c.st.filter(function(s){var ro=rOf(c,s).ro;return ro!=="h"&&ro!=="v1"&&ro!=="v2"}),order;
+  if(abc)order=pool.slice().sort(function(a,b){return String(a.n||"").localeCompare(String(b.n||""),"km")});
+  else{var m=pool.filter(function(s){return s.g==="ប្រុស"}),f=pool.filter(function(s){return s.g==="ស្រី"}),u=pool.filter(function(s){return s.g!=="ប្រុស"&&s.g!=="ស្រី"});
+    order=[];while(m.length||f.length){if(f.length)order.push(f.shift());if(m.length)order.push(m.shift())}order=order.concat(u)}
   c.st.forEach(function(s){var r=o.r[key(s)];if(r){if(r.ro==="gl")r.ro="";if(r.ro!=="h"&&r.ro!=="v1"&&r.ro!=="v2")r.g=0}});
-  order.forEach(function(s,i){var k=key(s),r=o.r[k]=o.r[k]||{};r.g=i%n+1;if(i<n)r.ro="gl"});
-  savR();renderOrg();notify("បានបែងចែកសិស្ស "+order.length+" នាក់ជា "+n+" ក្រុម");
-};
+  var N=order.length,base=Math.floor(N/n),ext=N%n,start=0;
+  for(var gi=0;gi<n;gi++){
+    var sz=abc?base+(gi<ext?1:0):0;
+    if(abc)order.slice(start,start+sz).forEach(function(s,j){var k=key(s),r=o.r[k]=o.r[k]||{};r.g=gi+1;if(!j)r.ro="gl"});
+    start+=sz;
+  }
+  if(!abc)order.forEach(function(s,i){var k=key(s),r=o.r[k]=o.r[k]||{};r.g=i%n+1;if(i<n)r.ro="gl"});
+  savR();renderOrg();notify((abc?"បានចាប់ក្រុមតាមអក្ខរក្រម៖ ":"បានបែងចែកសិស្ស ")+N+" នាក់ជា "+n+" ក្រុម");
+}
+$("ogAuto").onclick=function(){autoGroups(false)};
+$("ogAbc").onclick=function(){autoGroups(true)};
 /* ដាក់រូប៖ គ្រូទីប្រឹក្សា (= រូបប្រវត្តិរូប) · ប្រធាន/អនុប្រធានថ្នាក់ (រក្សាក្នុងថ្នាក់ c.org.ph · JPEG តូច) */
 function pickImg(cb){var f=document.createElement("input");f.type="file";f.accept="image/*";f.onchange=function(){if(f.files[0])cb(f.files[0])};f.click()}
 function smallPhoto(file,cb){
