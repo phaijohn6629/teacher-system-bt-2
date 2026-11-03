@@ -327,7 +327,12 @@ service cloud.firestore {
     }
     // ចម្លើយសិស្ស៖ ផ្ញើបានតែម្ដង (គ្មាន Login) ពេលតេស្តកំពុងបើក · មិនអាចកែ
     match /subs/{sid} {
-      allow create: if request.resource.data.keys().hasOnly(['t','sid','sn','a','at','dur'])
+      // lv = ចាកចេញពីផ្ទាំង (ដង) · lt = វិនាទី · cp = ចម្លង/បិទភ្ជាប់ · ax = ផ្ញើស្វ័យប្រវត្តិ (ការពារការលួចមើល)
+      allow create: if request.resource.data.keys().hasOnly(['t','sid','sn','a','at','dur','lv','lt','cp','ax'])
+        && request.resource.data.get('lv', 0) is int && request.resource.data.get('lv', 0) <= 10000
+        && request.resource.data.get('lt', 0) is int && request.resource.data.get('lt', 0) <= 86400
+        && request.resource.data.get('cp', 0) is int && request.resource.data.get('cp', 0) <= 10000
+        && request.resource.data.get('ax', false) is bool
         && sid == request.resource.data.t + '_' + request.resource.data.sid
         && request.resource.data.sn is string && request.resource.data.sn.size() <= 100
         && request.resource.data.a is map && request.resource.data.a.size() <= 200

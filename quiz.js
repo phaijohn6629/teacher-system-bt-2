@@ -11,7 +11,7 @@
 "use strict";
 var QB_PAGE=40,qbShow=QB_PAGE;   /* បង្ហាញលំហាត់ម្ដង ៤០ (KaTeX គូររូបមន្តលឿនជាង) */
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},fG=0,fL="",fV=0,mine=false;
-var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
+var mk={tid:"",ci:0,ls:{},n:{1:5,2:3,3:2},dur:30,lx:3,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 /* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
 var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២"};
 function curMo(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)}
@@ -407,6 +407,7 @@ function renderMake(){
     "<label>ថ្នាក់៖</label><select id=qmC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===mk.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
     "<label>ចំណងជើង៖</label><input id=qmTi value='"+esc(mk.title||("តេស្ត "+(c?c.n:"")))+"' style='flex:1 1 220px'>"+
     "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
+    "<div class=bar><label>🚫 សិស្សចាកចេញពីផ្ទាំងតេស្ត៖</label><select id=qmX>"+[[0,"កត់ត្រា និងព្រមានតែប៉ុណ្ណោះ"],[1,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ១"],[2,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ២"],[3,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៣"],[5,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៥"]].map(function(o){return"<option value="+o[0]+(o[0]===mk.lx?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select><span class=note style='margin:0'>ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់ → កត់ត្រា និងបង្ហាញក្នុងលទ្ធផល 🚩</span></div>"+
     "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
     (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"</div>";
   if(!c){$("qzBody").innerHTML=h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>";return}
@@ -450,7 +451,7 @@ function openTest2(){
   var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
   var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
   if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return;
-  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:+$("qmD").value||0,open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
+  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:+$("qmD").value||0,lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
   if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
   Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
@@ -514,16 +515,21 @@ function renderRes(){
     ((t.kind||"g")!=="g"?"<input id=qrM type=month value='"+(t.mo||curMo())+"' style='width:150px;margin:0'>":"")+
     "<button type=button data-qa=link>🔗 តំណ/QR</button><button type=button data-qa=toggle>"+(t.open?"🔒 បិទតេស្ត":"🔓 បើកតេស្តវិញ")+"</button>"+
     "<button type=button data-qa=csv>⬇️ Excel</button><button type=button class=primary data-qa=drive>💾 រក្សាទុកក្នុង Drive</button><button type=button class=danger data-qa=del>🗑️</button></div>"+
-    "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div><div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
-    "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th></tr></thead><tbody>"+
-    (R.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(r.s.sn)+"</td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td></tr>"}).join(""):"<tr><td colspan=6 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
+    "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div><div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div><b style='color:#b91c1c'>"+kn(R.filter(function(r){return r.s.lv||r.s.cp}).length)+"</b>🚩 សង្ស័យ</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
+    "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th><th title='ចាកចេញពីផ្ទាំងតេស្ត (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់'>🚩 សង្ស័យ</th></tr></thead><tbody>"+
+    (R.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(r.s.sn)+"</td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td></tr>"}).join(""):"<tr><td colspan=7 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
     (miss.length?"<p class=note>មិនទាន់ធ្វើ ("+kn(miss.length)+")៖ "+miss.map(function(x){return esc(x.n)}).join(" · ")+"</p>":"")+
     "<h3 style='margin:16px 0 8px'>អត្រាឆ្លើយត្រូវតាមលំហាត់</h3><div class=qz-list>"+t.items.map(function(q,i){
       var k=K[q.id],ok=R.filter(function(r){return k&&correct({t:k.t,a:k.a},r.s.a&&r.s.a[q.id])}).length,p=R.length?ok/R.length*100:0;
       return"<div class=qz-q><div class=qz-qh><b>លំហាត់ទី"+kn(i+1)+"</b><span class=qr-rate style='--p:"+p+"%'>"+p.toFixed(0)+"% ត្រូវ</span></div><div class=qz-qt>"+tx(q.q)+"</div></div>"}).join("")+"</div>";
   $("qzBody").innerHTML=h;math($("qzBody"));
 }
-function resRows(t){var R=grade(t);return[["ល.រ","ឈ្មោះសិស្ស","លេខសម្គាល់","ពិន្ទុ","សរុប","ភាគរយ","ពេលផ្ញើ"]].concat(R.map(function(r,i){return[i+1,r.s.sn,r.s.sid,r.sc,r.n,r.p.toFixed(1)+"%",r.s.at||""]}))}
+function acCell(s){   /* lv = ចាកចេញ (ដង) · lt = វិនាទី · cp = ចម្លង/បិទភ្ជាប់ · ax = ផ្ញើស្វ័យប្រវត្តិដោយសារចាកចេញ */
+  if(s.lv==null&&s.cp==null)return"<span class=note style='margin:0'>—</span>";
+  if(!s.lv&&!s.cp)return"<span style='color:#16a34a'>✓ ល្អ</span>";
+  return"<b style='color:#b91c1c'>"+(s.lv?"🚩 ចាកចេញ "+kn(s.lv)+" ដង"+(s.lt?" ("+(s.lt>=60?kn(Math.round(s.lt/60))+" នាទី":kn(s.lt)+" វិ")+")":""):"")+(s.cp?(s.lv?" · ":"")+"📋 ចម្លង "+kn(s.cp):"")+"</b>"+(s.ax?"<br><small>⚠️ ផ្ញើស្វ័យប្រវត្តិ</small>":"");
+}
+function resRows(t){var R=grade(t);return[["ល.រ","ឈ្មោះសិស្ស","លេខសម្គាល់","ពិន្ទុ","សរុប","ភាគរយ","ពេលផ្ញើ","ចាកចេញ (ដង)","ចាកចេញ (វិនាទី)","ចម្លង/បិទភ្ជាប់","ផ្ញើស្វ័យប្រវត្តិ"]].concat(R.map(function(r,i){return[i+1,r.s.sn,r.s.sid,r.sc,r.n,r.p.toFixed(1)+"%",r.s.at||"",r.s.lv||0,r.s.lt||0,r.s.cp||0,r.s.ax?"បាទ/ចាស":""]}))}
 
 /* ===================== Google Drive ===================== */
 var drv={tok:null,exp:0,cid:"",client:null};
@@ -674,7 +680,7 @@ $("qzBody").addEventListener("change",function(e){
   if(/^qf[GLVM]$/.test(id))qbShow=QB_PAGE;
   if(id==="qfG"){fG=+el.value;fL="";renderBank()}else if(id==="qfL"){fL=el.value;renderBank()}else if(id==="qfV"){fV=+el.value;renderBank()}else if(id==="qfM"){mine=el.checked;renderBank()}
   else if(id==="qmT"){mk.tid=el.value;mk.ci=0;mk.ls={};mk.items=null;renderMake()}else if(id==="qmC"){mk.ci=+el.value;mk.ls={};mk.items=null;renderMake()}
-  else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;
+  else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;else if(id==="qmX")mk.lx=+el.value||0;
   else if(id==="qmK"){mk.kind=el.value;mk.title=($("qmTi")||{}).value||mk.title;renderMake()}else if(id==="qmM")mk.mo=el.value;
   else if((id==="qrK"||id==="qrM")&&curTest){
     var t=curTest,k=$("qrK").value,mo=k==="g"?"":(($("qrM")||{}).value||t.mo||curMo()),FB=window.FB,ops=[FB.updateDoc(FB.doc(window.db,"tests",t.id),{kind:k,mo:mo})];

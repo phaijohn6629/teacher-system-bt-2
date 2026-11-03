@@ -36,6 +36,12 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 .prog{flex:1;height:8px;background:#ede9fe;border-radius:6px;overflow:hidden}.prog i{display:block;height:100%;background:var(--g);transition:width .2s}
 .msg{text-align:center;padding:30px 10px}.msg .big{font-size:3rem}
 .note{color:var(--mute);font-size:.85rem}
+/* ការពារការចម្លង៖ មិនអាចជ្រើស/ចម្លងអត្ថបទលំហាត់ (លើកលែងប្រអប់ចម្លើយ) */
+.q,.q *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.q input{-webkit-user-select:text;user-select:text}
+.ac{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.6);padding:16px}
+.ac>div{background:#fff;border-radius:18px;padding:22px;max-width:380px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.ac .big{font-size:2.6rem}.ac b{color:#b91c1c}.ac button{margin-top:14px}
+.acn{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:8px 12px;font-size:.85rem;margin-top:10px}
 </style>
 </head>
 <body>
@@ -68,11 +74,13 @@ async function start(){
   $("tt").textContent=T.title;$("ts").textContent="ថ្នាក់ "+T.cls+" · "+kn(T.items.length)+" លំហាត់"+(T.dur?" · "+kn(T.dur)+" នាទី":"");document.title=T.title;
   app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${T.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
     <p class=note>• ធ្វើបានតែម្ដងគត់ · ផ្ញើហើយមិនអាចកែវិញបានទេ${T.dur?"<br>• មានរយៈពេល "+kn(T.dur)+" នាទី · អស់ម៉ោងនឹងផ្ញើដោយស្វ័យប្រវត្តិ":""}</p>
+    <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។${T.lx?"<br>⚠️ ចាកចេញគ្រប់ <b>"+kn(T.lx)+"</b> ដង តេស្តនឹង<b>ផ្ញើដោយស្វ័យប្រវត្តិ</b>ភ្លាម។":""}</div>
     <button class=btn id=go disabled>ចាប់ផ្ដើមធ្វើតេស្ត</button></div>`;
   $("nm").onchange=e=>$("go").disabled=!e.target.value;
   $("go").onclick=()=>{const k=$("nm").value;me=T.names.find(x=>x.k===k);
     try{if(localStorage.getItem("sent_"+id+"_"+k))return msg("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ")}catch(e){}
     try{ans=JSON.parse(localStorage.getItem("ans_"+id+"_"+k)||"{}")}catch(e){ans={}}
+    try{const el=document.documentElement,r=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}   /* Android៖ ពេញអេក្រង់ */
     take()};
 }
 function take(){
@@ -91,17 +99,43 @@ function take(){
   app.oninput=app.onchange=e=>{const n=e.target.name;if(!n||!n.startsWith("a_"))return;ans[n.slice(2)]=e.target.value;
     try{localStorage.setItem("ans_"+id+"_"+me.k,JSON.stringify(ans))}catch(x){}prog()};
   $("sub").onclick=()=>{const left=T.items.filter(q=>ans[q.id]==null||ans[q.id]==="").length;
-    if(left&&!confirm("នៅសល់ "+left+" លំហាត់មិនទាន់ឆ្លើយ។ ផ្ញើឥឡូវ?"))return;send()};
+    if(left){acOn=false;awayAt=0;const ok=confirm("នៅសល់ "+left+" លំហាត់មិនទាន់ឆ្លើយ។ ផ្ញើឥឡូវ?");awayAt=0;acOn=true;if(!ok)return}send()};
+  acStart();
   if(T.dur){const end=t0+T.dur*60000;tick=setInterval(()=>{const s=Math.max(0,Math.round((end-Date.now())/1000));$("tm").textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));if(!s){clearInterval(tick);send(true)}},1000)}
 }
+/* ===== ការពារការលួចមើល៖ ចាកចេញ (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់ → កត់ត្រា lv lt cp ===== */
+let AC={lv:0,lt:0,cp:0},awayAt=0,acOn=false;
+function acKey(){return"ac_"+id+"_"+me.k}
+function acSave(){try{localStorage.setItem(acKey(),JSON.stringify(AC))}catch(e){}}
+function acWarn(t,sub){let w=document.querySelector(".ac");if(!w){w=document.createElement("div");w.className="ac";document.body.appendChild(w)}
+  w.innerHTML=`<div><div class=big>⚠️</div><div style="font-weight:700;font-size:1.05rem">${t}</div><p class=note>${sub}</p><button class=btn id=acOk>យល់ព្រម · បន្តធ្វើតេស្ត</button></div>`;
+  $("acOk").onclick=()=>w.remove()}
+function acLeft(){return T.lx?Math.max(0,T.lx-AC.lv):0}
+function acAway(){if(!acOn||sent||awayAt)return;awayAt=Date.now()}
+function acBack(){if(!acOn||sent||!awayAt)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;   /* < ១ វិនាទី = មិនរាប់ */
+  AC.lv++;AC.lt+=Math.round(d);acSave();
+  if(T.lx&&AC.lv>=T.lx){send(true,"lv");return}
+  acWarn("អ្នកបានចាកចេញពីផ្ទាំងតេស្ត (លើកទី "+kn(AC.lv)+")","រយៈពេលចាកចេញសរុប "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ។"+(T.lx?"<br><b>ចាកចេញ "+kn(acLeft())+" ដងទៀត តេស្តនឹងផ្ញើស្វ័យប្រវត្តិ</b>":""))}
+function acStart(){
+  try{const o=JSON.parse(localStorage.getItem(acKey())||"null");if(o)AC=Object.assign(AC,o)}catch(e){}
+  let st=null;try{st=localStorage.getItem("st_"+id+"_"+me.k);localStorage.setItem("st_"+id+"_"+me.k,"1")}catch(e){}
+  acOn=true;if(st){AC.lv++;acSave();if(T.lx&&AC.lv>=T.lx){send(true,"lv");return}acWarn("អ្នកបានបិទ ឬផ្ទុកទំព័រតេស្តឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+")"+(T.lx?"<br><b>ចាកចេញ "+kn(acLeft())+" ដងទៀត តេស្តនឹងផ្ញើស្វ័យប្រវត្តិ</b>":""))}
+}
+document.addEventListener("visibilitychange",()=>{document.hidden?acAway():acBack()});
+window.addEventListener("blur",acAway);window.addEventListener("focus",acBack);window.addEventListener("pagehide",acAway);
+const acNo=e=>{if(!acOn||sent)return;const inp=e.target&&e.target.tagName==="INPUT";if(e.type==="contextmenu"||e.type==="selectstart"||e.type==="dragstart"){if(!inp)e.preventDefault();return}
+  e.preventDefault();AC.cp++;acSave();acWarn(e.type==="paste"?"មិនអនុញ្ញាតឱ្យបិទភ្ជាប់ (Paste) ទេ":"មិនអនុញ្ញាតឱ្យចម្លងលំហាត់ទេ","ការព្យាយាមនេះត្រូវបានកត់ត្រា (លើកទី "+kn(AC.cp)+") · គ្រូនឹងឃើញ")};
+["copy","cut","paste","contextmenu","selectstart","dragstart"].forEach(t=>document.addEventListener(t,acNo,true));
 function prog(){const n=T.items.length,d=T.items.filter(q=>ans[q.id]!=null&&ans[q.id]!=="").length;$("pg").style.width=(n?d/n*100:0)+"%";$("cnt").textContent=kn(d)+"/"+kn(n);
   T.items.forEach(q=>{const el=$("q_"+q.id);if(el)el.classList.toggle("done",ans[q.id]!=null&&ans[q.id]!=="")})}
-async function send(auto){
+async function send(auto,why){
   if(sent)return;sent=true;clearInterval(tick);const b=$("sub");if(b){b.disabled=true;b.textContent="កំពុងផ្ញើ…"}
   const a={};T.items.forEach(q=>{if(ans[q.id]!=null&&ans[q.id]!=="")a[q.id]=String(ans[q.id]).slice(0,40)});
-  try{await setDoc(doc(db,"subs",id+"_"+me.k),{t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.round((Date.now()-t0)/1000)});
+  const base={t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.round((Date.now()-t0)/1000)},full=Object.assign({},base,{lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,ax:why==="lv"});
+  try{await setDoc(doc(db,"subs",id+"_"+me.k),full).catch(e=>setDoc(doc(db,"subs",id+"_"+me.k),base));   /* Rules ចាស់ (មិនទាន់ Publish) → ផ្ញើដោយគ្មានវាលថ្មី */
+    try{localStorage.removeItem(acKey());localStorage.removeItem("st_"+id+"_"+me.k)}catch(e){}acOn=false;const w=document.querySelector(".ac");if(w)w.remove();
     try{localStorage.setItem("sent_"+id+"_"+me.k,"1");localStorage.removeItem("ans_"+id+"_"+me.k)}catch(e){}
-    msg("🎉",(auto?"អស់ម៉ោង · ":"")+"បានផ្ញើចម្លើយរួចរាល់!","អរគុណ "+esc(me.n)+" · សូមរង់ចាំលទ្ធផលពីគ្រូ")}
+    msg(why==="lv"?"⚠️":"🎉",(why==="lv"?"ចាកចេញពីផ្ទាំងលើសកំណត់ · ":auto?"អស់ម៉ោង · ":"")+"បានផ្ញើចម្លើយរួចរាល់!","អរគុណ "+esc(me.n)+" · សូមរង់ចាំលទ្ធផលពីគ្រូ")}
   catch(e){sent=false;if(b){b.disabled=false;b.textContent="📤 ផ្ញើចម្លើយ"}
     msg("⚠️","មិនអាចផ្ញើបានទេ","អ្នកប្រហែលបានផ្ញើរួចហើយ ឬតេស្តត្រូវបានបិទ។ បើមិនទាន់ផ្ញើ សូមពិនិត្យអ៊ីនធឺណិត ហើយបើកតំណម្ដងទៀត (ចម្លើយនៅរក្សាទុក)។")}
 }
