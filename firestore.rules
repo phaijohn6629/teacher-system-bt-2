@@ -277,8 +277,7 @@ service cloud.firestore {
       allow read: if active();
       allow delete: if isAdmin() || isOwner(get(/databases/$(database)/documents/pcls/$(resource.data.c)).data.o);
     }
-    // វិញ្ញាសា (គ្មានចម្លើយ)៖ សិស្សអានបានដោយគ្មាន Login តែពេលកំពុងបើក
-    // កំណត់ហេតុប្រជុំបច្ចេកទេស៖ គ្រប់គ្រូអានបាន · អ្នកកត់ត្រា (o) ឬ Admin កែ/លុប
+    // កំណត់ហេតុប្រជុំ (បច្ចេកទេស · រួម · គណៈកម្មការស្វ័យភាព)៖ គ្រប់គ្រូអានបាន · អ្នកកត់ត្រា (o) ឬ Admin កែ/លុប
     match /mt/{id} {
       allow read: if active();
       allow create: if (isAdmin() || isOwner(request.resource.data.o)) && request.resource.data.j.size() < 200000;
@@ -314,6 +313,7 @@ service cloud.firestore {
         && request.resource.data.k in ['c','t','j']
         && request.resource.data.j is string && request.resource.data.j.size() < 200000;
     }
+    // វិញ្ញាសា (គ្មានចម្លើយ)៖ សិស្សអានបានដោយគ្មាន Login តែពេលកំពុងបើក
     match /tests/{id} {
       allow get: if resource.data.open == true || active();
       allow list: if active();

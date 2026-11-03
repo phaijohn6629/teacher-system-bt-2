@@ -624,8 +624,8 @@ function renderSY(){
 }
 function ccf(c,p){return(c&&c.cf&&c.cf[p])||(p===1?[1,1,1,1,1,1]:[1,1,1,1,1])}
 function ac(c,p){var f=ccf(c,p),o=[];for(var i=0;i<f.length;i++)if(f[i])o.push(i);return o}
-function sa(s,k,c){var p=k==="a"?1:2;return ac(c,p).reduce(function(x,j){return x+(+s[k][j]||0)},0)}
-function fl(s,k,c){var A=ac(c,k==="a"?1:2);return A.length>0&&A.every(function(j){return s[k][j]!==""&&s[k][j]!=null})}
+function sa(s,k,c){var p=k==="a"?1:2;return ac(c,p).reduce(function(x,j){return x+(+(s[k]||[])[j]||0)},0)}
+function fl(s,k,c){var A=ac(c,k==="a"?1:2);var v=s[k]||[];return A.length>0&&A.every(function(j){return v[j]!==""&&v[j]!=null})}
 function kn(n){return String(n).replace(/\d/g,function(d){return"០១២៣៤៥៦៧៨៩"[d]})}
 function canM(){return !!(who&&(isAdm()||who.id===rt))}
 function curCls(){return(rs.c[rt]||[])[rc]}
@@ -1992,13 +1992,32 @@ function validBackup(o){
   var objs=["tasks","demo","results","obs","reports","achievements","library"];
   return objs.every(function(k){return o[k]==null||typeof o[k]==="object"});
 }
+/* Backup៖ ទិន្នន័យក្នុង memory (ទម្រង់ចាស់ · Restore បាន) + Admin៖ គ្រប់ collection ពី Cloud (cloud.{collection}.{id}) */
+var BKC=["app","cfg","users","tasks","rs","wr","ah","sched","ts","cx","mc","mclog","lsn","sig","profiles","lib","exrows","obsrows","qb","qbq","qimg","pcls","prt","mt","plc","tests","tkeys","subs","timg"];
+function bkCloud(){
+  var F=window.FB,out={},err=[];if(!F||!window.db||!F.getDocs)return Promise.resolve({cloud:null,err:["offline"]});
+  var one=function(c,q){return F.getDocs(q||F.collection(window.db,c)).then(function(sn){var o=out[c]||(out[c]={});sn.forEach(function(d){o[d.id]=d.data()})}).catch(function(e){err.push(c+": "+(e.code||e.message))})};
+  var ps=BKC.map(function(c){return one(c)});
+  ps.push(one("dl",F.query(F.collection(window.db,"dl"),F.where("o","==",who.id))));   /* កំណត់ហេតុប្រចាំថ្ងៃ = ឯកជន → តែរបស់ខ្លួន */
+  return Promise.all(ps).then(function(){return{cloud:out,err:err}});
+}
 $("btnBackup").onclick=function(){
-  var payload={version:4,date:new Date().toISOString(),teachers:data.map(function(t){var c=Object.assign({},t);delete c.pw;return c}),tasks:tasks,demo:ex,results:rs,obs:ob,reports:wr,achievements:ah,library:lib};
-  var a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
-  a.download="teacher-system-backup-"+new Date().toISOString().slice(0,10)+".json";
-  document.body.appendChild(a);a.click();a.remove();
-  notify("បានទាញយកឯកសារបម្រុងទុក (Backup) រួចរាល់!");
+  var payload={version:5,date:new Date().toISOString(),teachers:data.map(function(t){var c=Object.assign({},t);delete c.pw;return c}),tasks:tasks,demo:ex,results:rs,obs:ob,reports:wr,achievements:ah,library:lib};
+  var b=this,full=isAdm();
+  var dl=function(){
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
+    a.download="teacher-system-backup-"+(full?"full-":"")+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();
+  };
+  if(!full){dl();notify("បានទាញយកឯកសារបម្រុងទុក (Backup) រួចរាល់!");return Promise.resolve()}
+  if(b&&b.disabled)return Promise.resolve();if(b&&b.tagName)b.disabled=true;notify("⏳ កំពុងទាញទិន្នន័យទាំងអស់ពី Cloud ...");
+  return bkCloud().then(function(r){
+    payload.cloud=r.cloud;payload.cloudErr=r.err;dl();
+    var n=0;Object.keys(r.cloud||{}).forEach(function(c){n+=Object.keys(r.cloud[c]).length});
+    notify("✅ Backup ពេញលេញ៖ "+kn(n)+" ឯកសារ ពី "+kn(Object.keys(r.cloud||{}).length)+" ប្រភេទ"+(r.err.length?" · ⚠️ "+r.err.length+" ប្រភេទអានមិនបាន":""));
+    if(r.err.length)console.warn("backup errors",r.err);
+  }).finally(function(){if(b&&b.tagName)b.disabled=false});
 };
 
 $("btnRestore").onclick=function(){
@@ -2296,6 +2315,8 @@ function push(k){
 }
 async function flush(k){
   if(sy.busy[k]){sy.t[k]=setTimeout(function(){flush(k)},300);return}
+  /* ការពារ៖ កុំសរសេរមុនពេលទទួលទិន្នន័យពី Cloud ជាលើកដំបូង (Internet យឺត) — បើមិនដូច្នេះ ទិន្នន័យទទេក្នុង memory អាចជាន់ទិន្នន័យពិតក្នុង Cloud */
+  if(!sy.first[k]){(sy.early||(sy.early={}))[k]=1;delete sy.dirty[k];console.warn("write before first load blocked:",k);return}
   sy.busy[k]=1;delete sy.dirty[k];
   var ok=true;
   /* ការពារ៖ មិនសរសេរបញ្ជីគ្រូដែលខ្លីជាងក្នុង Cloud (លើកលែងលុបគ្រូដោយចេតនា) */
@@ -2410,6 +2431,11 @@ function applyCloud(k){
 }
 function onData(k){
   if(Object.keys(sy.got[k]).length<sy.need[k])return;   /* រង់ចាំរហូតទាំងអស់បានមកដល់ */
+  if(!sy.first[k]){   /* លើកដំបូង៖ យកទិន្នន័យ Cloud ជានិច្ច (ការកែមុនផ្ទុករួច មិនត្រូវបានសរសេរ) */
+    var early=sy.early&&sy.early[k];if(early)delete sy.early[k];
+    try{applyCloud(k)}finally{if(early)notify("⏳ ទិន្នន័យទើបផ្ទុកពី Cloud រួច — ការកែដែលធ្វើមុនពេលផ្ទុករួច មិនត្រូវបានរក្សាទុកទេ សូមពិនិត្យ ហើយធ្វើម្ដងទៀត")}
+    return;
+  }
   if(sy.dirty[k]||sy.busy[k]){sy.pending[k]=1;return}   /* កុំជាន់ការកែដែលមិនទាន់រក្សាទុក */
   applyCloud(k);
 }
