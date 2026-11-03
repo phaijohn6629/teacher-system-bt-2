@@ -103,7 +103,7 @@ function docHtml(m){
   var X=window.SCHX,h=head(),rid=m.rc||idByName(m.rn),sg=function(id){return X&&id?X.getSig(id):""};
   var at=(m.at||[]).filter(function(a){return a.n}),R=tyOf(m)==="r";
   if(R)at=at.map(function(a,i){return{t:a.t,n:a.n,r:String(a.r||"").trim()||"គ្រូបង្រៀន",i:i}}).sort(function(a,b){return rk(a.r)-rk(b.r)||a.i-b.i});
-  var half=Math.ceil(at.length/2),dy=R?(at.filter(function(a){return a.r==="នាយករង"})[0]||null):null;
+  var half=Math.ceil(at.length/2);
   var atl=function(a,i){return"<div>"+kn(i+1)+". "+esc((a.t?a.t+" ":"")+a.n)+(a.r?" ("+esc(a.r)+")":"")+"</div>"};
   var sig=function(id){var s=sg(id);return"<div class=mt-sg>"+(s?"<img src='"+s+"' alt=''>":"")+"</div>"};
   return"<div class='pg mt-doc'>"+
@@ -118,7 +118,7 @@ function docHtml(m){
    "<div class=mt-s>III. ដំណើរការប្រជុំ</div>"+prHtml(m.pr)+
    "<div class=mt-ft><div class=mt-dt><div>"+esc(lunar(m.d))+"</div><div>"+esc(greg(m.d))+"</div></div>"+
     "<div class=mt-cols><div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div></div>"+
-     (R?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>នាយករង</div>"+sig(dy?idByName(dy.n):"")+"<div class=moul>"+esc(dy?dy.n:"")+"</div></div>"
+     (R?"<div></div>"   /* ប្រជុំរួម៖ គ្មានហត្ថលេខាកណ្ដាល (ទុកកន្លែងទំនេរ ឱ្យអ្នកកត់ត្រានៅខាងស្ដាំដដែល) */
        :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>")+
      "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div></div></div>"+
   "</div>";
