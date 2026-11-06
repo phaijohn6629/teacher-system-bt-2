@@ -343,10 +343,22 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin() || isOwner(resource.data.o);
       allow create: if isAdmin() || isOwner(request.resource.data.o);
     }
+    // ===================== សុវត្ថិភាពតេស្ត (test.html · គ្មាន Login) =====================
+    // តេស្ត v2៖ សិស្សចាប់ផ្ដើម → st/{t}_{សិស្ស} (ម៉ោង Server · dv = សញ្ញាសម្ងាត់របស់ឧបករណ៍ · លេខកូដចូល)
+    //   ផ្ញើ subs បានតែឧបករណ៍ដែលចាប់ផ្ដើម (dv ត្រូវគ្នា) ក្នុងរយៈពេល dur + ១០ នាទី · ឈ្មោះត្រូវតែមានក្នុងបញ្ជីឈ្មោះតេស្ត
+    //   rcpt/{t}_{សិស្ស} = បង្កាន់ដៃ (បង្កើតជាមួយ subs ក្នុង batch តែមួយ) → សិស្សពិនិត្យបានថាផ្ញើដល់ពិតមែន (អ៊ីនធឺណិតខ្សោយ)
+    function tdoc(t) { return get(/databases/$(database)/documents/tests/$(t)).data; }
+    function onRoster(t, k, n) { return {'k': k, 'n': n} in tdoc(t).get('names', []); }
+    function stOk(sid, dv, t) {
+      return exists(/databases/$(database)/documents/st/$(sid))
+        && get(/databases/$(database)/documents/st/$(sid)).data.dv == dv
+        && (tdoc(t).get('dur', 0) == 0
+          || request.time < get(/databases/$(database)/documents/st/$(sid)).data.at + duration.value(int(tdoc(t).dur) * 60 + 600, 's'));
+    }
     // ចម្លើយសិស្ស៖ ផ្ញើបានតែម្ដង (គ្មាន Login) ពេលតេស្តកំពុងបើក · មិនអាចកែ
     match /subs/{sid} {
-      // lv = ចាកចេញពីផ្ទាំង (ដង) · lt = វិនាទី · cp = ចម្លង/បិទភ្ជាប់ · ax = ផ្ញើស្វ័យប្រវត្តិ (ការពារការលួចមើល)
-      allow create: if request.resource.data.keys().hasOnly(['t','sid','sn','a','at','dur','lv','lt','cp','ax'])
+      // lv = ចាកចេញពីផ្ទាំង (ដង) · lt = វិនាទី · cp = ចម្លង/បិទភ្ជាប់ · ax = ផ្ញើស្វ័យប្រវត្តិ (ការពារការលួចមើល) · dv = សញ្ញាឧបករណ៍ (v2)
+      allow create: if request.resource.data.keys().hasOnly(['t','sid','sn','a','at','dur','lv','lt','cp','ax','dv'])
         && request.resource.data.get('lv', 0) is int && request.resource.data.get('lv', 0) <= 10000
         && request.resource.data.get('lt', 0) is int && request.resource.data.get('lt', 0) <= 86400
         && request.resource.data.get('cp', 0) is int && request.resource.data.get('cp', 0) <= 10000
@@ -354,10 +366,40 @@ service cloud.firestore {
         && sid == request.resource.data.t + '_' + request.resource.data.sid
         && request.resource.data.sn is string && request.resource.data.sn.size() <= 100
         && request.resource.data.a is map && request.resource.data.a.size() <= 200
-        && get(/databases/$(database)/documents/tests/$(request.resource.data.t)).data.open == true;
+        && tdoc(request.resource.data.t).open == true
+        && onRoster(request.resource.data.t, request.resource.data.sid, request.resource.data.sn)
+        && (tdoc(request.resource.data.t).get('v', 1) < 2
+          || stOk(sid, request.resource.data.get('dv', ''), request.resource.data.t));
       allow read: if active();
       allow delete: if isAdmin()
         || isOwner(get(/databases/$(database)/documents/tests/$(resource.data.t)).data.o);
+      allow update: if false;
+    }
+    // ការចាប់ផ្ដើមធ្វើតេស្ត (v2)៖ មួយឈ្មោះ មួយឧបករណ៍ · លេខកូដចូល (pc) ត្រូវតែត្រូវ បើតេស្តតម្រូវ · គ្រូមើល/លុប (អនុញ្ញាតឱ្យធ្វើម្ដងទៀត)
+    match /st/{sid} {
+      allow create: if request.resource.data.keys().hasOnly(['t','sid','sn','dv','at','pc'])
+        && sid == request.resource.data.t + '_' + request.resource.data.sid
+        && request.resource.data.at == request.time
+        && request.resource.data.dv is string && request.resource.data.dv.size() >= 16 && request.resource.data.dv.size() <= 64
+        && tdoc(request.resource.data.t).open == true
+        && tdoc(request.resource.data.t).get('v', 1) >= 2
+        && onRoster(request.resource.data.t, request.resource.data.sid, request.resource.data.sn)
+        && (tdoc(request.resource.data.t).get('pc', false) != true
+          || request.resource.data.get('pc', '') == get(/databases/$(database)/documents/tkeys/$(request.resource.data.t)).data.get('pc', '#'));
+      allow read: if active();
+      allow delete: if isAdmin() || isOwner(tdoc(resource.data.t).o);
+      allow update: if false;
+    }
+    // បង្កាន់ដៃផ្ញើ៖ អ្នកណាក៏អានបាន (មិនមានចម្លើយ) · បង្កើតបានតែជាមួយ subs ថ្មី (batch)
+    match /rcpt/{sid} {
+      allow get: if true;
+      allow list: if active();
+      allow create: if request.resource.data.keys().hasOnly(['t','at'])
+        && request.resource.data.at == request.time
+        && sid.matches(request.resource.data.t + '_.+')
+        && existsAfter(/databases/$(database)/documents/subs/$(sid))
+        && !exists(/databases/$(database)/documents/subs/$(sid));
+      allow delete: if isAdmin() || isOwner(tdoc(resource.data.t).o);
       allow update: if false;
     }
 

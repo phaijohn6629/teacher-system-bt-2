@@ -50,11 +50,26 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="fig.js?v=5"></script>
+<style>
+.net{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;background:#1e293b;color:#fff;border-radius:999px;padding:8px 16px;font-size:.85rem;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:92vw;text-align:center}
+.net.ok{background:#15803d}
+.code{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;font-size:1.4rem;letter-spacing:.4em;text-align:center}
+.qim .retry{cursor:pointer;color:var(--brand);text-decoration:underline}
+</style>
+<div id="net" class="net" hidden></div>
 <script type="module">
-/* ទំព័រសិស្សធ្វើតេស្ត (គ្មាន Login)៖ អាន tests/{id} · ផ្ញើ subs/{id}_{សិស្ស} តែម្ដង */
+/* ========================================================================
+   ទំព័រសិស្សធ្វើតេស្ត (គ្មាន Login) · firestore-lite (REST)
+   - តេស្ត v2 (មានសុវត្ថិភាព)៖ ចាប់ផ្ដើម → st/{t}_{សិស្ស} (ម៉ោង Server · dv = សញ្ញាសម្ងាត់ក្នុងឧបករណ៍នេះ · លេខកូដចូល)
+     ផ្ញើ → batch subs + rcpt (បង្កាន់ដៃ) · Rules៖ ឈ្មោះត្រូវនៅក្នុងបញ្ជី · ឧបករណ៍ដដែល · ក្នុងរយៈពេល
+   - អ៊ីនធឺណិតខ្សោយ៖ ព្យាយាមម្ដងទៀតស្វ័យប្រវត្តិ · ចម្លើយ/ម៉ោងចាប់ផ្ដើម/ការផ្ញើដែលកំពុងរង់ចាំ រក្សាក្នុង localStorage
+     បិទ/បើកទំព័រឡើងវិញ → បន្តពីកន្លែងចាស់ (ម៉ោងមិនចាប់ផ្ដើមឡើងវិញ) · ផ្ញើដល់ហើយតែចម្លើយតបបាត់ → ពិនិត្យបង្កាន់ដៃ
+   - តេស្តចាស់ (v1)៖ ដំណើរការដូចមុន
+   localStorage (key = {តេស្ត}_{សិស្ស})៖ ans_ ចម្លើយ · ac_ ការចាកចេញ · st_ សម្គាល់ការបើកឡើងវិញ · t0_ ម៉ោងចាប់ផ្ដើម · dv_ សញ្ញាឧបករណ៍
+     stok_ st បានបង្កើត · pc_ លេខកូដ · pend_ ការផ្ញើកំពុងរង់ចាំ · sent_ ផ្ញើរួច · cur_{តេស្ត} សិស្សចុងក្រោយលើឧបករណ៍នេះ · T_{តេស្ត} ច្បាប់ចម្លងតេស្ត
+   ======================================================================== */
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-/* firestore-lite (REST · ~១១៧KB ជំនួស ~៤៣៤KB) — សិស្សត្រូវការតែអានតេស្ត ១ ដង និងផ្ញើ ១ ដង · មិនត្រូវការការតភ្ជាប់ផ្ទាល់ */
-import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
+import{getFirestore,doc,getDoc,setDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
 const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",
   storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
 const $=id=>document.getElementById(id),app=$("app"),id=new URLSearchParams(location.search).get("t")||"";
@@ -66,48 +81,126 @@ const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</di
 function rng(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
   return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}}
 function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-let T=null,me=null,ans={},t0=0,tick=0,sent=false;
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}},
+  json:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v}catch(e){return d}}};
+/* កំហុសពិតប្រាកដ (មិនមែនបណ្ដាញ) → មិនព្យាយាមម្ដងទៀត */
+const isNet=e=>!(e&&["permission-denied","not-found","invalid-argument","failed-precondition","already-exists","st-deny","already"].includes(e.code));
+function waitOnline(ms){return new Promise(r=>{let t;const done=()=>{clearTimeout(t);window.removeEventListener("online",done);r()};t=setTimeout(done,ms);window.addEventListener("online",done)})}
+async function retry(fn,label,max){let d=1500;for(let i=0;;i++){try{const v=await fn();net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"… (ព្យាយាមម្ដងទៀត)");await waitOnline(d);d=Math.min(d*2,20000)}}}
+function net(t,ok){const n=$("net");if(!t){n.hidden=true;return}n.textContent=t;n.className="net"+(ok?" ok":"");n.hidden=false}
+window.addEventListener("offline",()=>{if(me&&!sent)net("📶 គ្មានអ៊ីនធឺណិត · ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ · អាចបន្តធ្វើបាន")});
+window.addEventListener("online",()=>{if(me&&!sent){net("✅ មានអ៊ីនធឺណិតវិញ",1);setTimeout(()=>{if(!sent)net("")},2500)}});
+function rand(){const a=new Uint8Array(16);(crypto||window.msCrypto).getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")}
+
+let T=null,me=null,K="",ans={},t0=0,tick=0,sent=false,V2=false;
+const kOf=k=>id+"_"+k;
+/* ការធ្វើតេស្តថ្មី (គ្រូអនុញ្ញាតឱ្យធ្វើម្ដងទៀត) → លុបស្ថានភាពចាស់ក្នុងឧបករណ៍ */
+function clearAttempt(key){["ans_","ac_","st_","t0_","pend_","sent_"].forEach(p=>LS.del(p+key))}
+
+/* ---------- ១. ផ្ទុកតេស្ត (ព្យាយាមម្ដងទៀត · គ្មានអ៊ីនធឺណិត → ច្បាប់ចម្លងចុងក្រោយ) ---------- */
+async function loadTest(){
+  try{const d=await retry(()=>getDoc(doc(db,"tests",id)),"កំពុងផ្ទុកតេស្ត",4);
+    if(!d.exists())return{nf:1};const t=d.data();LS.set("T_"+id,JSON.stringify(t));return{t}}
+  catch(e){
+    if(e&&e.code==="permission-denied")return{closed:1};
+    const c=LS.json("T_"+id,null);if(c)return{t:c,cached:1};
+    return{net:1};
+  }
+}
 async function start(){
   if(!id)return msg("⚠️","តំណមិនត្រឹមត្រូវ","សូមសួរគ្រូរបស់អ្នកម្ដងទៀត");
-  try{const d=await getDoc(doc(db,"tests",id));if(!d.exists())return msg("🔍","រកមិនឃើញតេស្ត","តេស្តនេះអាចត្រូវបានលុប");T=d.data()}
-  catch(e){return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ")}
+  const r=await loadTest();
+  if(r.nf)return msg("🔍","រកមិនឃើញតេស្ត","តេស្តនេះអាចត្រូវបានលុប");
+  if(r.closed)return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
+  if(r.net){app.innerHTML=`<div class="card msg"><div class=big>📶</div><h2>អ៊ីនធឺណិតខ្សោយ</h2><p class=note>មិនអាចផ្ទុកតេស្តបានទេ · ប្រព័ន្ធនឹងព្យាយាមម្ដងទៀតដោយស្វ័យប្រវត្តិ</p><button class=btn id=rt>🔄 ព្យាយាមម្ដងទៀត</button></div>`;
+    $("rt").onclick=()=>{app.innerHTML=`<div class="card msg"><div class=big>⏳</div>កំពុងផ្ទុក…</div>`;start()};waitOnline(15000).then(()=>{if($("rt"))$("rt").click()});return}
+  T=r.t;V2=(T.v||1)>=2;
   if(!T.open)return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
+  if(r.cached)net("📶 គ្មានអ៊ីនធឺណិត · ប្រើតេស្តដែលបានផ្ទុកពីមុន");
   $("tt").textContent=T.title;$("ts").textContent="ថ្នាក់ "+T.cls+" · "+kn(T.items.length)+" លំហាត់"+(T.dur?" · "+kn(T.dur)+" នាទី":"");document.title=T.title;
-  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${T.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
-    <p class=note>• ធ្វើបានតែម្ដងគត់ · ផ្ញើហើយមិនអាចកែវិញបានទេ${T.dur?"<br>• មានរយៈពេល "+kn(T.dur)+" នាទី · អស់ម៉ោងនឹងផ្ញើដោយស្វ័យប្រវត្តិ":""}</p>
+  /* ឧបករណ៍នេះមានការផ្ញើកំពុងរង់ចាំ → បន្តផ្ញើភ្លាម */
+  const last=LS.get("cur_"+id),lm=last&&T.names.find(x=>x.k===last);
+  if(lm&&LS.get("pend_"+kOf(lm.k))){me=lm;K=kOf(me.k);sent=true;return deliver(LS.json("pend_"+K,{}).p)}
+  const resume=lm&&LS.get("t0_"+kOf(lm.k))&&!LS.get("sent_"+kOf(lm.k));
+  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${T.names.map(x=>`<option value="${esc(x.k)}"${lm&&x.k===lm.k?" selected":""}>${esc(x.n)}</option>`).join("")}</select>
+    ${V2&&T.pc?`<label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>`:""}
+    <p class=note>• ធ្វើបានតែម្ដងគត់ · ផ្ញើហើយមិនអាចកែវិញបានទេ${V2?"<br>• ឈ្មោះមួយធ្វើបានតែលើឧបករណ៍មួយ · ជ្រើសឈ្មោះខ្លួនឯងឱ្យត្រូវ":""}${T.dur?"<br>• មានរយៈពេល "+kn(T.dur)+" នាទី · អស់ម៉ោងនឹងផ្ញើដោយស្វ័យប្រវត្តិ":""}<br>• អ៊ីនធឺណិតដាច់ក៏អាចបន្តធ្វើបាន · ចម្លើយរក្សាទុកក្នុងទូរស័ព្ទ</p>
     <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។${T.lx?"<br>⚠️ ចាកចេញគ្រប់ <b>"+kn(T.lx)+"</b> ដង តេស្តនឹង<b>ផ្ញើដោយស្វ័យប្រវត្តិ</b>ភ្លាម។":""}</div>
-    <button class=btn id=go disabled>ចាប់ផ្ដើមធ្វើតេស្ត</button></div>`;
-  $("nm").onchange=e=>$("go").disabled=!e.target.value;
-  $("go").onclick=()=>{const k=$("nm").value;me=T.names.find(x=>x.k===k);
-    try{if(localStorage.getItem("sent_"+id+"_"+k))return msg("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ")}catch(e){}
-    try{ans=JSON.parse(localStorage.getItem("ans_"+id+"_"+k)||"{}")}catch(e){ans={}}
-    try{const el=document.documentElement,r=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}   /* Android៖ ពេញអេក្រង់ */
-    take()};
+    <p id=er class=acn hidden></p>
+    <button class=btn id=go${lm?"":" disabled"}>${resume?"▶️ បន្តធ្វើតេស្ត":"ចាប់ផ្ដើមធ្វើតេស្ត"}</button></div>`;
+  $("nm").onchange=e=>{$("go").disabled=!e.target.value;$("go").textContent=LS.get("t0_"+kOf(e.target.value))&&!LS.get("sent_"+kOf(e.target.value))?"▶️ បន្តធ្វើតេស្ត":"ចាប់ផ្ដើមធ្វើតេស្ត"};
+  $("go").onclick=go;
 }
+function err(t){const e=$("er");if(e){e.innerHTML=t;e.hidden=!t}}
+async function go(){
+  const k=$("nm").value;if(!k)return;me=T.names.find(x=>x.k===k);K=kOf(k);
+  const b=$("go");b.disabled=true;const bt=b.textContent;b.textContent="កំពុងពិនិត្យ…";err("");
+  const back=t=>{b.disabled=false;b.textContent=bt;err(t);me=null};
+  /* ផ្ញើរួចហើយ? (v2៖ ពិនិត្យបង្កាន់ដៃ · គ្រូលុប = អនុញ្ញាតឱ្យធ្វើម្ដងទៀត) */
+  if(V2){try{const r=await retry(()=>getDoc(doc(db,"rcpt",K)),"កំពុងពិនិត្យ",3);
+      if(r.exists()){LS.set("sent_"+K,"1");return msg("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ")}
+      if(LS.get("sent_"+K))clearAttempt(K);}
+    catch(e){if(LS.get("sent_"+K))return msg("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ")}}
+  else if(LS.get("sent_"+K))return msg("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ");
+  if(LS.get("pend_"+K)){LS.set("cur_"+id,k);sent=true;return deliver(LS.json("pend_"+K,{}).p)}
+  if(V2){
+    const pc=$("pc")?$("pc").value.replace(/[០-៩]/g,d=>"០១២៣៤៥៦៧៨៩".indexOf(d)).trim():"";
+    if(T.pc&&!pc&&!LS.get("dv_"+K))return back("🔑 សូមបញ្ចូលលេខកូដចូលដែលគ្រូប្រាប់");
+    if(pc)LS.set("pc_"+K,pc);
+    const s=await startSt();
+    if(s==="deny")return back("⛔ មិនអាចចាប់ផ្ដើមបានទេ៖ <b>លេខកូដចូលមិនត្រឹមត្រូវ</b> ឬឈ្មោះនេះ<b>បានចាប់ផ្ដើមនៅឧបករណ៍ផ្សេង</b>រួចហើយ។<br>បើនេះជាឈ្មោះរបស់អ្នកពិតប្រាកដ សូមប្រាប់គ្រូភ្លាម។");
+    if(s==="closed")return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
+  }
+  LS.set("cur_"+id,k);
+  try{const el=document.documentElement,r=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}   /* Android៖ ពេញអេក្រង់ */
+  take();
+}
+/* ---------- ២. ចាប់ផ្ដើម (v2)៖ st/{K} · ok | deny | offline (បន្តធ្វើបាន · ព្យាយាមម្ដងទៀតពេលផ្ញើ) ---------- */
+async function startSt(){
+  let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=rand();LS.set("dv_"+K,dv)}
+  const d={t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp()};if(T.pc)d.pc=LS.get("pc_"+K)||"";
+  try{await retry(()=>setDoc(doc(db,"st",K),d),"កំពុងចាប់ផ្ដើម",3);
+    if(LS.get("stok_"+K)){clearAttempt(K)}   /* បង្កើតបានម្ដងទៀត = គ្រូបានអនុញ្ញាតឱ្យធ្វើម្ដងទៀត → ចាប់ផ្ដើមថ្មី */
+    LS.set("stok_"+K,"1");return"ok";
+  }catch(e){
+    if(e&&e.code==="permission-denied"){
+      if(had&&LS.get("stok_"+K))return"ok";   /* ឧបករណ៍នេះបានចាប់ផ្ដើមរួច (បើកឡើងវិញ) */
+      try{const t=await getDoc(doc(db,"tests",id));if(!t.exists()||!t.data().open)return"closed"}catch(x){if(x&&x.code==="permission-denied")return"closed"}
+      return"deny";
+    }
+    return"offline";
+  }
+}
+/* ---------- ៣. ធ្វើតេស្ត ---------- */
 function take(){
-  const r=rng(id+"|"+me.k),items=shuffle(T.items,r);t0=Date.now();
+  const r=rng(id+"|"+me.k),items=shuffle(T.items,r);
+  ans=LS.json("ans_"+K,{});t0=+LS.get("t0_"+K)||0;if(!t0){t0=Date.now();LS.set("t0_"+K,String(t0))}   /* បើកឡើងវិញ → ម៉ោងមិនចាប់ផ្ដើមថ្មី */
   let h=`<div class=bar><span>${esc(me.n)}</span><div class=prog><i id=pg></i></div><span id=cnt></span>${T.dur?"<span class=timer id=tm></span>":""}</div>`;
   items.forEach((q,i)=>{
-    h+=`<div class=q id="q_${q.id}"><div class=qn>លំហាត់ទី${kn(i+1)}</div><div class=qt>${tx(q.q)}</div>${q.fg&&window.FIG?FIG.svg(q.fg):""}${q.im?`<div class=qim data-im="${esc(q.id)}">🖼️ …</div>`:""}`;
+    h+=`<div class=q id="q_${esc(q.id)}"><div class=qn>លំហាត់ទី${kn(i+1)}</div><div class=qt>${tx(q.q)}</div>${q.fg&&window.FIG?FIG.svg(q.fg):""}${q.im?`<div class=qim data-im="${esc(q.id)}">🖼️ កំពុងផ្ទុករូប…</div>`:""}`;
     if(q.t==="mc"){const ord=shuffle(q.ch.map((c,j)=>j).filter(j=>q.ch[j]),r);
-      h+=ord.map((j,x)=>`<label class=ch><input type=radio name="a_${q.id}" value=${j}${String(ans[q.id])===String(j)?" checked":""}><b>${"កខគឃ"[x]}.</b><span>${tx(q.ch[j])}</span></label>`).join("")}
-    else h+=`<input class=num inputmode=decimal name="a_${q.id}" placeholder="សរសេរចម្លើយ (លេខ)" value="${esc(ans[q.id]??"")}">`;
+      h+=ord.map((j,x)=>`<label class=ch><input type=radio name="a_${esc(q.id)}" value=${j}${String(ans[q.id])===String(j)?" checked":""}><b>${"កខគឃ"[x]}.</b><span>${tx(q.ch[j])}</span></label>`).join("")}
+    else h+=`<input class=num inputmode=decimal name="a_${esc(q.id)}" placeholder="សរសេរចម្លើយ (លេខ)" maxlength=40 value="${esc(ans[q.id]??"")}">`;
     h+="</div>"});
-  h+=`<button class=btn id=sub>📤 ផ្ញើចម្លើយ</button><p class=note style="text-align:center">ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ ទោះបិទទំព័រក៏មិនបាត់ (រហូតដល់ផ្ញើ)</p>`;
+  h+=`<button class=btn id=sub>📤 ផ្ញើចម្លើយ</button><p class=note style="text-align:center">ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ ទោះបិទទំព័រ ឬអ៊ីនធឺណិតដាច់ក៏មិនបាត់ (រហូតដល់ផ្ញើ)</p>`;
   app.innerHTML=h;math(app);prog();
-  /* រូបភាពលំហាត់ (timg/{តេស្ត}_{លំហាត់}) */
-  app.querySelectorAll("[data-im]").forEach(el=>{getDoc(doc(db,"timg",id+"_"+el.dataset.im)).then(d=>{el.innerHTML=d.exists()?`<img src="${d.data().d}" alt="">`:""}).catch(()=>{el.innerHTML=""})});
-  app.oninput=app.onchange=e=>{const n=e.target.name;if(!n||!n.startsWith("a_"))return;ans[n.slice(2)]=e.target.value;
-    try{localStorage.setItem("ans_"+id+"_"+me.k,JSON.stringify(ans))}catch(x){}prog()};
+  app.querySelectorAll("[data-im]").forEach(el=>loadImg(el,0));
+  app.oninput=app.onchange=e=>{const n=e.target.name;if(!n||!n.startsWith("a_"))return;ans[n.slice(2)]=e.target.value;LS.set("ans_"+K,JSON.stringify(ans));prog()};
   $("sub").onclick=()=>{const left=T.items.filter(q=>ans[q.id]==null||ans[q.id]==="").length;
     if(left){acOn=false;awayAt=0;const ok=confirm("នៅសល់ "+left+" លំហាត់មិនទាន់ឆ្លើយ។ ផ្ញើឥឡូវ?");awayAt=0;acOn=true;if(!ok)return}send()};
-  acStart();
-  if(T.dur){const end=t0+T.dur*60000;tick=setInterval(()=>{const s=Math.max(0,Math.round((end-Date.now())/1000));$("tm").textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));if(!s){clearInterval(tick);send(true)}},1000)}
+  acStart();if(sent)return;
+  if(!navigator.onLine)net("📶 គ្មានអ៊ីនធឺណិត · ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ · អាចបន្តធ្វើបាន");
+  if(T.dur){const end=t0+T.dur*60000,f=()=>{const s=Math.max(0,Math.round((end-Date.now())/1000)),tm=$("tm");if(tm)tm.textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));if(!s){clearInterval(tick);send(true)}};tick=setInterval(f,1000);f()}
+}
+/* រូបលំហាត់ (timg/{តេស្ត}_{លំហាត់}) · បរាជ័យ → ព្យាយាម ៣ ដង រួចចុចដើម្បីផ្ទុកម្ដងទៀត */
+function loadImg(el,n){
+  getDoc(doc(db,"timg",id+"_"+el.dataset.im)).then(d=>{el.innerHTML=d.exists()?`<img src="${d.data().d}" alt="">`:""})
+    .catch(()=>{if(n<2)return setTimeout(()=>loadImg(el,n+1),2000*(n+1));el.innerHTML=`<span class=retry>🖼️ មិនទាន់ផ្ទុករូប · ចុចដើម្បីផ្ទុកម្ដងទៀត</span>`;el.onclick=()=>{el.onclick=null;el.textContent="🖼️ កំពុងផ្ទុករូប…";loadImg(el,0)}});
 }
 /* ===== ការពារការលួចមើល៖ ចាកចេញ (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់ → កត់ត្រា lv lt cp ===== */
 let AC={lv:0,lt:0,cp:0},awayAt=0,acOn=false;
-function acKey(){return"ac_"+id+"_"+me.k}
-function acSave(){try{localStorage.setItem(acKey(),JSON.stringify(AC))}catch(e){}}
+function acKey(){return"ac_"+K}
+function acSave(){LS.set(acKey(),JSON.stringify(AC))}
 function acWarn(t,sub){let w=document.querySelector(".ac");if(!w){w=document.createElement("div");w.className="ac";document.body.appendChild(w)}
   w.innerHTML=`<div><div class=big>⚠️</div><div style="font-weight:700;font-size:1.05rem">${t}</div><p class=note>${sub}</p><button class=btn id=acOk>យល់ព្រម · បន្តធ្វើតេស្ត</button></div>`;
   $("acOk").onclick=()=>w.remove()}
@@ -118,8 +211,8 @@ function acBack(){if(!acOn||sent||!awayAt)return;const d=(Date.now()-awayAt)/100
   if(T.lx&&AC.lv>=T.lx){send(true,"lv");return}
   acWarn("អ្នកបានចាកចេញពីផ្ទាំងតេស្ត (លើកទី "+kn(AC.lv)+")","រយៈពេលចាកចេញសរុប "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ។"+(T.lx?"<br><b>ចាកចេញ "+kn(acLeft())+" ដងទៀត តេស្តនឹងផ្ញើស្វ័យប្រវត្តិ</b>":""))}
 function acStart(){
-  try{const o=JSON.parse(localStorage.getItem(acKey())||"null");if(o)AC=Object.assign(AC,o)}catch(e){}
-  let st=null;try{st=localStorage.getItem("st_"+id+"_"+me.k);localStorage.setItem("st_"+id+"_"+me.k,"1")}catch(e){}
+  AC={lv:0,lt:0,cp:0};const o=LS.json(acKey(),null);if(o)AC=Object.assign(AC,o);
+  const st=LS.get("st_"+K);LS.set("st_"+K,"1");
   acOn=true;if(st){AC.lv++;acSave();if(T.lx&&AC.lv>=T.lx){send(true,"lv");return}acWarn("អ្នកបានបិទ ឬផ្ទុកទំព័រតេស្តឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+")"+(T.lx?"<br><b>ចាកចេញ "+kn(acLeft())+" ដងទៀត តេស្តនឹងផ្ញើស្វ័យប្រវត្តិ</b>":""))}
 }
 document.addEventListener("visibilitychange",()=>{document.hidden?acAway():acBack()});
@@ -127,18 +220,57 @@ window.addEventListener("blur",acAway);window.addEventListener("focus",acBack);w
 const acNo=e=>{if(!acOn||sent)return;const inp=e.target&&e.target.tagName==="INPUT";if(e.type==="contextmenu"||e.type==="selectstart"||e.type==="dragstart"){if(!inp)e.preventDefault();return}
   e.preventDefault();AC.cp++;acSave();acWarn(e.type==="paste"?"មិនអនុញ្ញាតឱ្យបិទភ្ជាប់ (Paste) ទេ":"មិនអនុញ្ញាតឱ្យចម្លងលំហាត់ទេ","ការព្យាយាមនេះត្រូវបានកត់ត្រា (លើកទី "+kn(AC.cp)+") · គ្រូនឹងឃើញ")};
 ["copy","cut","paste","contextmenu","selectstart","dragstart"].forEach(t=>document.addEventListener(t,acNo,true));
-function prog(){const n=T.items.length,d=T.items.filter(q=>ans[q.id]!=null&&ans[q.id]!=="").length;$("pg").style.width=(n?d/n*100:0)+"%";$("cnt").textContent=kn(d)+"/"+kn(n);
+function prog(){const n=T.items.length,d=T.items.filter(q=>ans[q.id]!=null&&ans[q.id]!=="").length,pg=$("pg"),c=$("cnt");if(pg)pg.style.width=(n?d/n*100:0)+"%";if(c)c.textContent=kn(d)+"/"+kn(n);
   T.items.forEach(q=>{const el=$("q_"+q.id);if(el)el.classList.toggle("done",ans[q.id]!=null&&ans[q.id]!=="")})}
-async function send(auto,why){
-  if(sent)return;sent=true;clearInterval(tick);const b=$("sub");if(b){b.disabled=true;b.textContent="កំពុងផ្ញើ…"}
+/* ---------- ៤. ផ្ញើ៖ រក្សាទុកក្នុងឧបករណ៍ជាមុន (pend_) → ព្យាយាមរហូតដល់ជោគជ័យ ---------- */
+function send(auto,why){
+  if(sent)return;sent=true;acOn=false;clearInterval(tick);const w=document.querySelector(".ac");if(w)w.remove();
   const a={};T.items.forEach(q=>{if(ans[q.id]!=null&&ans[q.id]!=="")a[q.id]=String(ans[q.id]).slice(0,40)});
-  const base={t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.round((Date.now()-t0)/1000)},full=Object.assign({},base,{lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,ax:why==="lv"});
-  try{await setDoc(doc(db,"subs",id+"_"+me.k),full).catch(e=>setDoc(doc(db,"subs",id+"_"+me.k),base));   /* Rules ចាស់ (មិនទាន់ Publish) → ផ្ញើដោយគ្មានវាលថ្មី */
-    try{localStorage.removeItem(acKey());localStorage.removeItem("st_"+id+"_"+me.k)}catch(e){}acOn=false;const w=document.querySelector(".ac");if(w)w.remove();
-    try{localStorage.setItem("sent_"+id+"_"+me.k,"1");localStorage.removeItem("ans_"+id+"_"+me.k)}catch(e){}
-    msg(why==="lv"?"⚠️":"🎉",(why==="lv"?"ចាកចេញពីផ្ទាំងលើសកំណត់ · ":auto?"អស់ម៉ោង · ":"")+"បានផ្ញើចម្លើយរួចរាល់!","អរគុណ "+esc(me.n)+" · សូមរង់ចាំលទ្ធផលពីគ្រូ")}
-  catch(e){sent=false;if(b){b.disabled=false;b.textContent="📤 ផ្ញើចម្លើយ"}
-    msg("⚠️","មិនអាចផ្ញើបានទេ","អ្នកប្រហែលបានផ្ញើរួចហើយ ឬតេស្តត្រូវបានបិទ។ បើមិនទាន់ផ្ញើ សូមពិនិត្យអ៊ីនធឺណិត ហើយបើកតំណម្ដងទៀត (ចម្លើយនៅរក្សាទុក)។")}
+  const p={t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.max(0,Math.round((Date.now()-t0)/1000)),lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,ax:why==="lv",
+    _m:why==="lv"?"lv":auto?"auto":""};
+  if(V2)p.dv=LS.get("dv_"+K)||"";
+  LS.set("pend_"+K,JSON.stringify({p}));
+  return deliver(p);
+}
+function sendingUI(t,sub){app.innerHTML=`<div class="card msg"><div class=big>📤</div><h2>${t}</h2><p class=note>${sub||""}</p></div>`}
+async function deliver(p){
+  sendingUI("កំពុងផ្ញើចម្លើយ…","សូមកុំបិទទំព័រនេះ");
+  const mode=p._m||"";delete p._m;
+  let d=2000;
+  for(;;){
+    try{
+      if(V2&&!LS.get("stok_"+K)){const s=await startSt();if(s==="deny"||s==="closed")throw{code:"st-deny"};if(s==="offline")throw{code:"unavailable"}}
+      await submitOnce(p);return done(mode);
+    }catch(e){
+      if(e&&e.code==="already")return done(mode);
+      if(!isNet(e))return failUI(p,mode);
+      net("");sendingUI("📶 កំពុងរង់ចាំអ៊ីនធឺណិត…","ចម្លើយរបស់អ្នក<b>រក្សាទុករួចហើយ</b>ក្នុងទូរស័ព្ទ · ប្រព័ន្ធនឹងផ្ញើដោយស្វ័យប្រវត្តិពេលមានអ៊ីនធឺណិត<br><b>សូមកុំបិទទំព័រនេះ</b> (បិទក៏មិនបាត់ដែរ · បើកតំណម្ដងទៀតដើម្បីបន្ត)");
+      await waitOnline(d);d=Math.min(d*2,30000);sendingUI("កំពុងផ្ញើចម្លើយ…","សូមកុំបិទទំព័រនេះ");
+    }
+  }
+}
+async function submitOnce(p){
+  const ref=doc(db,"subs",K);
+  try{const b=writeBatch(db);b.set(ref,p);b.set(doc(db,"rcpt",K),{t:id,at:serverTimestamp()});await b.commit();return}
+  catch(e){
+    if(!e||e.code!=="permission-denied")throw e;
+    /* ត្រូវបានបដិសេធ៖ ប្រហែលផ្ញើដល់រួចហើយ (ចម្លើយតបបាត់ពេលអ៊ីនធឺណិតខ្សោយ) → ពិនិត្យបង្កាន់ដៃ */
+    try{const r=await getDoc(doc(db,"rcpt",K));if(r.exists())throw{code:"already"}}catch(x){if(x&&x.code==="already")throw x;if(isNet(x))throw x}
+    if(V2)throw e;
+    /* តេស្តចាស់ (Rules ចាស់មិនស្គាល់ rcpt/dv) → ផ្ញើតែ subs */
+    const q=Object.assign({},p);delete q.dv;
+    try{await setDoc(ref,q);return}catch(e2){if(!e2||e2.code!=="permission-denied")throw e2;
+      await setDoc(ref,{t:q.t,sid:q.sid,sn:q.sn,a:q.a,at:q.at,dur:q.dur})}
+  }
+}
+function done(mode){
+  ["pend_","ans_","ac_","st_","t0_"].forEach(x=>LS.del(x+K));LS.set("sent_"+K,"1");net("");
+  msg(mode==="lv"?"⚠️":"🎉",(mode==="lv"?"ចាកចេញពីផ្ទាំងលើសកំណត់ · ":mode==="auto"?"អស់ម៉ោង · ":"")+"បានផ្ញើចម្លើយរួចរាល់!","អរគុណ "+esc(me.n)+" · សូមរង់ចាំលទ្ធផលពីគ្រូ");
+}
+function failUI(p,mode){
+  net("");
+  app.innerHTML=`<div class="card msg"><div class=big>⚠️</div><h2>មិនអាចផ្ញើបានទេ</h2><p class=note>តេស្តអាចត្រូវបានបិទ · ផុតម៉ោង · ឬឈ្មោះនេះកំពុងប្រើនៅឧបករណ៍ផ្សេង។<br><b>ចម្លើយរបស់អ្នកនៅរក្សាទុកក្នុងទូរស័ព្ទនេះ</b> · សូមប្រាប់គ្រូ ហើយចុចព្យាយាមម្ដងទៀត</p><button class=btn id=rt>🔄 ព្យាយាមផ្ញើម្ដងទៀត</button></div>`;
+  $("rt").onclick=()=>{p._m=mode;deliver(p)};
 }
 start();
 </script>

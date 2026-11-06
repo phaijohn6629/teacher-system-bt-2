@@ -11,7 +11,7 @@
 "use strict";
 var QB_PAGE=40,qbShow=QB_PAGE;   /* បង្ហាញលំហាត់ម្ដង ៤០ (KaTeX គូររូបមន្តលឿនជាង) */
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},fG=0,fL="",fV=0,fP=-1,mine=false;   /* fP = តម្រងចំណុច (-1 ទាំងអស់ · 0 មិនទាន់កំណត់) */
-var mk={tid:"",ci:0,ls:{},pt:{},n:{1:5,2:3,3:2},dur:30,lx:3,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
+var mk={tid:"",ci:0,ls:{},pt:{},pc:true,n:{1:5,2:3,3:2},dur:30,lx:3,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 /* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
 var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២",c:"ប្រឡងទម្រង់បិទ"};   /* c = ចូល «ប្រឡងបិទ» ក្នុងពិន្ទុប្រចាំខែ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន) */
 function curMo(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)}
@@ -457,6 +457,7 @@ function renderMake(){
     "<label>ថ្នាក់៖</label><select id=qmC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===mk.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
     "<label>ចំណងជើង៖</label><input id=qmTi value='"+esc(mk.title||("តេស្ត "+(c?c.n:"")))+"' style='flex:1 1 220px'>"+
     "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
+    "<div class=bar><label style='display:flex;gap:6px;align-items:center'><input type=checkbox id=qmPc"+(mk.pc?" checked":"")+" style='width:auto;margin:0'> 🔑 ត្រូវការលេខកូដចូល</label><span class=note style='margin:0'>លេខ ៤ ខ្ទង់ បង្ហាញពេលបើកតេស្ត · គ្រូសរសេរលើក្ដារខៀន → អ្នកនៅក្រៅថ្នាក់ (មានតែតំណ) ធ្វើមិនបាន</span></div>"+
     "<div class=bar><label>🚫 សិស្សចាកចេញពីផ្ទាំងតេស្ត៖</label><select id=qmX>"+[[0,"កត់ត្រា និងព្រមានតែប៉ុណ្ណោះ"],[1,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ១"],[2,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ២"],[3,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៣"],[5,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៥"]].map(function(o){return"<option value="+o[0]+(o[0]===mk.lx?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select><span class=note style='margin:0'>ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់ → កត់ត្រា និងបង្ហាញក្នុងលទ្ធផល 🚩</span></div>"+
     "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
     (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+(mk.kind==="c"?"ប្រឡងបិទ» ដោយស្វ័យប្រវត្តិ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន)":KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ")+"</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"</div>";
@@ -500,7 +501,13 @@ function doShuffle(){
   if(short.length)notify("⚠️ "+short.join(" · "));
   mk.items=out;renderMake();
 }
-function openTest(){loadTests(true).then(openTest2)}   /* ទាញថ្មី ដើម្បីពិនិត្យតេស្តលើកទី១/ទី២ ជាន់គ្នាឱ្យត្រឹមត្រូវ */
+function openTest(){Promise.all([loadTests(true),rulesV2()]).then(function(r){openTest2.v2=r[1];openTest2()})}   /* ទាញថ្មី ដើម្បីពិនិត្យតេស្តលើកទី១/ទី២ ជាន់គ្នាឱ្យត្រឹមត្រូវ */
+/* ---------- 🔒 សុវត្ថិភាពតេស្ត (v2) ----------
+   Rules ថ្មី (st/ · rcpt/) បាន Publish? → អាន st/_probe បាន (គ្រូ) → បង្កើតតេស្ត v2 · មិនទាន់ → v1 ដូចមុន (កុំឱ្យសិស្សជាប់)
+   v2៖ សិស្សចាប់ផ្ដើម = st/{t}_{សិស្ស} (ឧបករណ៍មួយ · លេខកូដចូល · ម៉ោង Server) · ផ្ញើ = subs + rcpt */
+var v2P=null,pcOf={},stl=[],stUn=null;
+function rulesV2(){if(!v2P)v2P=dGet("st","_probe").then(function(){return true},function(){v2P=null;return false});return v2P}
+function genPc(){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return String(1000+a[0]%9000)}
 function openTest2(){
   var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return;
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
@@ -509,14 +516,15 @@ function openTest2(){
   var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
   var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
   if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return;
-  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:+$("qmD").value||0,lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
+  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:Math.round(+$("qmD").value||0),lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
+  var v2=openTest2.v2,pc=v2&&mk.pc?genPc():"";if(v2){T.v=2;T.pc=!!pc}else notify("⚠️ សូម Admin Publish firestore.rules កំណែថ្មី ដើម្បីបើកការការពារតេស្ត (លេខកូដ · មួយឈ្មោះមួយឧបករណ៍)");
   if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
-  Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
+  Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),pc?{o:mk.tid,a:JSON.stringify(keys),pc:pc}:{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
     /* រូបភាពលំហាត់ → timg/{តេស្ត}_{លំហាត់} (សិស្សអានបានពេលតេស្តបើក) */
     return Promise.all(mk.items.filter(function(q){return q.im}).map(function(q){return qimg(qid(q.by,q.id)).then(function(u){if(u)return FB.setDoc(FB.doc(window.db,"timg",id+"_"+q.id),{t:id,o:mk.tid,d:u})})}));
   }).then(function(){
-    mk.items=null;QV="res";curTest=Object.assign({id:id},T);if(dup){dup.kind="g";dup.mo=""}tests.unshift(curTest);watchSubs(curTest);renderQuiz();showLink(id);notify("បានបើកតេស្ត");
+    mk.items=null;QV="res";curTest=Object.assign({id:id},T);if(pc)pcOf[id]=pc;if(dup){dup.kind="g";dup.mo=""}tests.unshift(curTest);watchSubs(curTest);renderQuiz();showLink(id);notify("បានបើកតេស្ត");
   }).catch(function(e){console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ។ សូមប្រាប់ Admin ឱ្យ Publish firestore.rules កំណែថ្មី។":"មិនអាចបើកតេស្តបានទេ")});
 }
 function showLinkUrl(u,title){
@@ -530,6 +538,7 @@ function showLink(id){
   var u=testLink(id);
   d.innerHTML="<div class=dlgb style='text-align:center;min-width:320px'><h2 style='margin:0 0 8px'>🔗 តំណតេស្តសម្រាប់សិស្ស</h2><div id=qzQR class=qz-qr></div>"+
     "<input id=qzU value='"+esc(u)+"' readonly style='text-align:center;margin:10px 0'><div class=bar style='justify-content:center'><button type=button class=primary id=qzCp>📋 ចម្លងតំណ</button><button type=button id=qzX>បិទ</button></div>"+
+    (pcOf[id]?"<div class=qz-pc>🔑 លេខកូដចូល <b>"+esc(pcOf[id])+"</b><small>សរសេរលើក្ដារខៀន ពេលចាប់ផ្ដើមតេស្តក្នុងថ្នាក់ · កុំផ្ញើតាមក្រុម Telegram</small></div>":"")+
     "<p class=note>ឱ្យសិស្សស្កេន QR ឬបើកតំណ ហើយជ្រើសឈ្មោះខ្លួន។</p></div>";
   $("qzX").onclick=function(){d.close()};
   $("qzCp").onclick=function(){var i=$("qzU");i.select();try{navigator.clipboard.writeText(u)}catch(x){document.execCommand("copy")}notify("បានចម្លងតំណ")};
@@ -560,15 +569,20 @@ function grade(t){
 var resT=0;
 function resSoon(t,now){clearTimeout(resT);var go=function(){if(QV==="res"&&curTest===t){var y=window.scrollY;renderRes();window.scrollTo(0,y)}};if(now)go();else resT=setTimeout(go,800)}
 function watchSubs(t){
-  if(subUn){subUn();subUn=null}clearTimeout(resT);subs=[];if(!t)return;
+  if(subUn){subUn();subUn=null}if(stUn){stUn();stUn=null}clearTimeout(resT);subs=[];stl=[];if(!t)return;
   var FB=window.FB,first=true;
-  if(!keyOf[t.id])dGet("tkeys",t.id).then(function(d){try{keyOf[t.id]=JSON.parse(d.data().a)}catch(x){keyOf[t.id]={}}resSoon(t,true)}).catch(function(){});
+  if(!keyOf[t.id])dGet("tkeys",t.id).then(function(d){var v=d.data()||{};if(v.pc)pcOf[t.id]=v.pc;try{keyOf[t.id]=JSON.parse(v.a)}catch(x){keyOf[t.id]={}}resSoon(t,true)}).catch(function(){});
+  /* v2៖ សិស្សដែលកំពុងធ្វើ (st/) → «⏳ កំពុងធ្វើ» · គ្រូអនុញ្ញាតឱ្យធ្វើម្ដងទៀតបាន */
+  if((t.v||1)>=2)stUn=FB.onSnapshot(FB.query(FB.collection(window.db,"st"),FB.where("t","==",t.id)),function(sn){var a=[];sn.forEach(function(d){a.push(d.data())});stl=a;resSoon(t,false)},function(e){console.warn("st:",e)});
   /* បង្ហាញភ្លាមតាម REST · បន្ទាប់មក onSnapshot តាមដានសិស្សផ្ញើថ្មី */
   qGet("subs",["t","==",t.id]).then(function(sn){if(!first||curTest!==t)return;var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,true)}).catch(function(){});
   subUn=FB.onSnapshot(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)),function(sn){
     var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,first);first=false;autoDrive(t);
   },function(e){console.error("subs:",e)});
 }
+function stTime(at,addMin){var d=at&&at.toDate?at.toDate():at&&at.seconds?new Date(at.seconds*1000):null;if(!d)return"…";if(addMin)d=new Date(d.getTime()+addMin*60000);return kn(("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2))}
+/* អនុញ្ញាតឱ្យធ្វើម្ដងទៀត៖ លុប subs + rcpt + st របស់សិស្សម្នាក់ (នីមួយៗ catch ដាច់ដោយឡែក) */
+function resetSt(t,sid){var FB=window.FB,k=t.id+"_"+sid;return Promise.all(["subs","rcpt","st"].map(function(c){return FB.deleteDoc(FB.doc(window.db,c,k)).catch(function(e){if(c==="subs")throw e})}))}
 function renderRes(){
   var h="";
   if(!curTest){
@@ -580,15 +594,19 @@ function renderRes(){
     $("qzBody").innerHTML=h;return;
   }
   var t=curTest,R=grade(t),n=t.items.length,avg=R.length?R.reduce(function(s,r){return s+r.sc},0)/R.length:0,K=keyOf[t.id]||{};
-  var done={};R.forEach(function(r){done[r.s.sid]=1});var miss=(t.names||[]).filter(function(x){return!done[x.k]});
+  var done={};R.forEach(function(r){done[r.s.sid]=1});
+  var prog=stl.filter(function(x){return!done[x.sid]}),inP={};prog.forEach(function(x){inP[x.sid]=1});
+  var miss=(t.names||[]).filter(function(x){return!done[x.k]&&!inP[x.k]}),v2=(t.v||1)>=2;
   h="<div class=bar><button type=button data-qa=back>‹ តេស្តទាំងអស់</button><b style='font-size:1.05rem'>"+esc(t.title)+"</b><span class=note style='margin:0'>"+esc(t.cls)+"</span>"+
     "<select id=qrK title='ប្រភេទតេស្ត' style='width:auto;margin:0'>"+Object.keys(KIND).map(function(k){return"<option value="+k+((t.kind||"g")===k?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
     ((t.kind||"g")!=="g"?"<input id=qrM type=month value='"+(t.mo||curMo())+"' style='width:150px;margin:0'>":"")+
     "<button type=button data-qa=link>🔗 តំណ/QR</button><button type=button data-qa=toggle>"+(t.open?"🔒 បិទតេស្ត":"🔓 បើកតេស្តវិញ")+"</button>"+
     "<button type=button data-qa=csv>⬇️ Excel</button><button type=button class=primary data-qa=drive>💾 រក្សាទុកក្នុង Drive</button><button type=button class=danger data-qa=del>🗑️</button></div>"+
-    "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div><div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div><b style='color:#b91c1c'>"+kn(R.filter(function(r){return r.s.lv||r.s.cp}).length)+"</b>🚩 សង្ស័យ</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
-    "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th><th title='ចាកចេញពីផ្ទាំងតេស្ត (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់'>🚩 សង្ស័យ</th></tr></thead><tbody>"+
-    (R.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(r.s.sn)+"</td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td></tr>"}).join(""):"<tr><td colspan=7 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
+    (v2?"<div class=qr-sec>🔒 <b>តេស្តមានការការពារ</b> · មួយឈ្មោះ មួយឧបករណ៍ · ផ្ញើបានក្នុងរយៈពេលកំណត់"+(t.dur?" (+១០ នាទី)":"")+(t.pc?" · 🔑 លេខកូដចូល <b class=qz-pcb>"+esc(pcOf[t.id]||"…")+"</b>":"")+"</div>":"<div class=qr-sec off>ℹ️ តេស្តនេះបង្កើតមុនការការពារថ្មី (គ្មានលេខកូដ · គ្មានការកំណត់ឧបករណ៍)</div>")+
+    "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div>"+(v2?"<div><b style='color:#d97706'>"+kn(prog.length)+"</b>⏳ កំពុងធ្វើ</div>":"")+"<div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div><b style='color:#b91c1c'>"+kn(R.filter(function(r){return r.s.lv||r.s.cp}).length)+"</b>🚩 សង្ស័យ</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
+    "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th><th title='ចាកចេញពីផ្ទាំងតេស្ត (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់'>🚩 សង្ស័យ</th><th></th></tr></thead><tbody>"+
+    (R.length||prog.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(r.s.sn)+"</td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td><td><button type=button class=qr-rs data-qrs='"+esc(r.s.sid)+"' title='លុបចម្លើយនេះ ហើយអនុញ្ញាតឱ្យសិស្សធ្វើម្ដងទៀត'>🔄</button></td></tr>"}).join("")+
+      prog.map(function(x){return"<tr class=qr-ip><td>⏳</td><td class=nm>"+esc(x.sn||x.sid)+"</td><td colspan=5>កំពុងធ្វើ · ចាប់ផ្ដើម "+esc(stTime(x.at))+(t.dur?" · ផុតម៉ោង "+esc(stTime(x.at,t.dur)):"")+"</td><td><button type=button class=qr-rs data-qrs='"+esc(x.sid)+"' title='អនុញ្ញាតឱ្យចាប់ផ្ដើមម្ដងទៀត (ឧ. ប្ដូរឧបករណ៍ ឬមានអ្នកផ្សេងប្រើឈ្មោះនេះ)'>🔄</button></td></tr>"}).join(""):"<tr><td colspan=8 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
     (miss.length?"<p class=note>មិនទាន់ធ្វើ ("+kn(miss.length)+")៖ "+miss.map(function(x){return esc(x.n)}).join(" · ")+"</p>":"")+
     "<h3 style='margin:16px 0 8px'>អត្រាឆ្លើយត្រូវតាមលំហាត់</h3><div class=qz-list>"+t.items.map(function(q,i){
       var k=K[q.id],ok=R.filter(function(r){return k&&correct({t:k.t,a:k.a},r.s.a&&r.s.a[q.id])}).length,p=R.length?ok/R.length*100:0;
@@ -756,7 +774,7 @@ $("qzBody").addEventListener("change",function(e){
   if(/^qf[GLVM]$/.test(id))qbShow=QB_PAGE;
   if(id==="qfG"){fG=+el.value;fL="";fP=-1;renderBank()}else if(id==="qfL"){fL=el.value;fP=-1;renderBank()}else if(id==="qfP"){fP=+el.value;renderBank()}else if(id==="qfV"){fV=+el.value;renderBank()}else if(id==="qfM"){mine=el.checked;renderBank()}
   else if(id==="qmT"){mk.tid=el.value;mk.ci=0;mk.ls={};mk.pt={};mk.items=null;renderMake()}else if(id==="qmC"){mk.ci=+el.value;mk.ls={};mk.pt={};mk.items=null;renderMake()}
-  else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;else if(id==="qmX")mk.lx=+el.value||0;
+  else if(id==="qmPc")mk.pc=el.checked;else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;else if(id==="qmX")mk.lx=+el.value||0;
   else if(id==="qmK"){mk.kind=el.value;mk.title=($("qmTi")||{}).value||mk.title;renderMake()}else if(id==="qmM")mk.mo=el.value;
   else if((id==="qrK"||id==="qrM")&&curTest){
     var t=curTest,k=$("qrK").value,mo=k==="g"?"":(($("qrM")||{}).value||t.mo||curMo()),FB=window.FB,ops=[FB.updateDoc(FB.doc(window.db,"tests",t.id),{kind:k,mo:mo})];
@@ -770,10 +788,13 @@ $("qzBody").addEventListener("change",function(e){
   else if(el.dataset.mn){mk.n[el.dataset.mn]=Math.max(0,+el.value||0)}
 });
 $("qzBody").addEventListener("click",function(e){
-  var b=e.target.closest("[data-qa],[data-qe],[data-qd],[data-qo]");if(!b)return;
+  var b=e.target.closest("[data-qa],[data-qe],[data-qd],[data-qo],[data-qrs]");if(!b)return;
   if(b.dataset.qe){var p=b.dataset.qe.split("|"),q=(qb[p[0]]||[]).filter(function(x){return x.id===p[1]})[0];if(q)qDialog(Object.assign({by:p[0]},q));return}
   if(b.dataset.qd){var p2=b.dataset.qd.split("|");if(!confirm("លុបលំហាត់នេះ?"))return;delQ(p2[0],p2[1]).then(function(){renderBank();notify("បានលុបលំហាត់")});return}
   if(b.dataset.qo){curTest=tests.filter(function(t){return t.id===b.dataset.qo})[0];watchSubs(curTest);renderRes();return}
+  if(b.dataset.qrs&&curTest){var t0=curTest,sid=b.dataset.qrs,nm=((t0.names||[]).filter(function(x){return x.k===sid})[0]||{}).n||sid;
+    if(!confirm("អនុញ្ញាតឱ្យ «"+nm+"» ធ្វើតេស្តម្ដងទៀត?\n\nចម្លើយដែលបានផ្ញើ (បើមាន) នឹងត្រូវលុប ហើយសិស្សអាចចាប់ផ្ដើមថ្មីលើឧបករណ៍ណាមួយ។"))return;
+    b.disabled=true;resetSt(t0,sid).then(function(){notify("✅ «"+nm+"» អាចធ្វើតេស្តម្ដងទៀតបាន")},function(e){b.disabled=false;alert("មិនអាចលុបបានទេ · "+qErr(e))});return}
   var a=b.dataset.qa,t=curTest;
   if(/^pc/.test(a)){pcAct(a);return}
   if(a==="reload"){Object.keys(qkU).forEach(function(k){try{qkU[k]()}catch(x){}});qbErr="";qkP={};qkU={};CNT={};legP=null;renderQuiz();return}
@@ -791,7 +812,10 @@ $("qzBody").addEventListener("click",function(e){
   else if(a==="csv")dlCSV(resRows(t),"តេស្ត-"+t.cls+"-"+(t.cr||"").slice(0,10)+".csv");
   else if(a==="drive"){(driveTok()?Promise.resolve():driveConnect(false)).then(function(){return driveSave(t,false)}).catch(function(e){if(e==="nocid")driveClick()})}
   else if(a==="del"){if(!confirm("លុបតេស្ត «"+t.title+"» និងលទ្ធផលទាំងអស់?"))return;
-    var FB=window.FB;Promise.all(subs.map(function(s){return FB.deleteDoc(FB.doc(window.db,"subs",t.id+"_"+s.sid))}).concat((t.items||[]).filter(function(q){return q.im}).map(function(q){return FB.deleteDoc(FB.doc(window.db,"timg",t.id+"_"+q.id)).catch(function(){})})).concat([FB.deleteDoc(FB.doc(window.db,"tests",t.id)),FB.deleteDoc(FB.doc(window.db,"tkeys",t.id))]))
+    var FB=window.FB,ks={};subs.forEach(function(s){ks[s.sid]=1});stl.forEach(function(s){ks[s.sid]=1});
+    /* លុបចម្លើយ · ការចាប់ផ្ដើម · បង្កាន់ដៃ មុន (Rules ត្រូវការឯកសារតេស្ត) → រួចលុបតេស្ត */
+    Promise.all(Object.keys(ks).map(function(sid){return resetSt(t,sid)}).concat((t.items||[]).filter(function(q){return q.im}).map(function(q){return FB.deleteDoc(FB.doc(window.db,"timg",t.id+"_"+q.id)).catch(function(){})})))
+      .then(function(){return Promise.all([FB.deleteDoc(FB.doc(window.db,"tests",t.id)),FB.deleteDoc(FB.doc(window.db,"tkeys",t.id))])})
       .then(function(){tests=tests.filter(function(x){return x.id!==t.id});curTest=null;watchSubs(null);renderRes();notify("បានលុបតេស្ត")}).catch(function(){alert("មិនអាចលុបបានទេ")})}
 });
 })();

@@ -835,3 +835,7 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .pc-tb td.pc-t{text-align:center}.pc-tb td.pc-d{font-size:.78rem;color:var(--mute);white-space:nowrap}
 /* ពិន្ទុប្រចាំខែ៖ «ប្រឡងបិទ» ដែលបានពីប្រឡងទម្រង់បិទ (កែបាន) */
 .ms-in input.ms-auto-in{background:rgba(254,226,226,.45);border-color:#fca5a5}
+/* តេស្ត៖ សុវត្ថិភាព (v2) */
+.qz-pc{margin:12px auto 4px;padding:10px 14px;border-radius:14px;background:#fef3c7;color:#92400e;font-size:1rem;max-width:340px}.qz-pc b{display:block;font-size:2.4rem;letter-spacing:.3em;margin:2px 0}.qz-pc small{display:block;font-size:.75rem;opacity:.85}
+.qr-sec{margin:6px 0 8px;padding:6px 12px;border-radius:10px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.35);font-size:.85rem}.qr-sec.off{background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.35)}.qz-pcb{font-size:1.15rem;letter-spacing:.2em;color:#b45309}
+.qr-ip td{color:#b45309;background:rgba(245,158,11,.06)}.qr-rs{padding:2px 8px!important;font-size:.85rem}
