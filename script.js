@@ -1917,6 +1917,8 @@ function renderDash(){
   $("wbDate").textContent="ថ្ងៃ"+DAYF[now.getDay()]+" ទី"+kn(now.getDate())+" ខែ"+M[now.getMonth()]+" ឆ្នាំ"+kn(now.getFullYear());
   $("wbAvatar").innerHTML=avInner(me,who.name);
   var ids=adm?data.map(function(t){return t.id}):[me],cls=allCls(ids),stu=cls.reduce(function(s,x){return s+x.c.st.length},0);
+  /* Admin៖ ថ្នាក់ដដែលដែលគ្រូច្រើននាក់បញ្ចូល (គ្រូមុខវិជ្ជា) រាប់តែម្ដង · សិស្ស = បញ្ជីវែងបំផុតនៃថ្នាក់នីមួយៗ (ដូច «📚 ថ្នាក់ទាំងអស់») */
+  var nCls=cls.length;if(adm){var G=pxGroups();nCls=G.length;stu=G.reduce(function(s,g){return s+g.tot},0)}
   var mk=curMK(),tk=0;
   if(mk>=0)ids.forEach(function(id){((gk(id).w[mk])||[]).forEach(function(r){tk+=sm(r||[])})});
   var ym=ymNow(),rep=0;ids.forEach(function(id){rep+=(wr.r[id]||[]).filter(function(e){return(e.d||"").slice(0,7)===ym}).length});
@@ -1925,7 +1927,7 @@ function renderDash(){
   if(adm){
     k.push(dCard(pad2(data.length),"គ្រូបង្រៀនសរុប","#a855f7"),dCard(pad2(data.filter(function(t){return t.stt==="កំពុងបម្រើការងារ"}).length),"កំពុងបំពេញការងារ","#10b981"));
   }
-  k.push(dCard(pad2(cls.length),adm?"ថ្នាក់សរុប":"ថ្នាក់របស់ខ្ញុំ","#38bdf8"),dCard(stu,adm?"សិស្សសរុប":"សិស្សរបស់ខ្ញុំ","#f59e0b"),
+  k.push(dCard(pad2(nCls),adm?"ថ្នាក់សរុប":"ថ្នាក់របស់ខ្ញុំ","#38bdf8"),dCard(stu,adm?"សិស្សសរុប":"សិស្សរបស់ខ្ញុំ","#f59e0b"),
     dCard(tk,"កិច្ចតែងការខែនេះ","#ec4899"),dCard(rep,"សកម្មភាពរបាយការណ៍ខែនេះ","#8b5cf6"),dCard(ach,"ស្នាដៃឆ្នាំសិក្សានេះ","#14b8a6"));
   $("dKpi").innerHTML=k.join("");
   /* ចូលរហ័ស */
