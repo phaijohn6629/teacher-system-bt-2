@@ -54,7 +54,7 @@ function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/
 
 /* ---------- ផ្ទុក/រក្សាទុកធនាគារលំហាត់ ---------- */
 /* ធនាគារលំហាត់៖ តាមដានផ្ទាល់ (onSnapshot) តែថ្នាក់ដែលកំពុងប្រើ · qb = {ID គ្រូ:[លំហាត់]} (គណនាពីឯកសារ qbq/ + ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ) */
-var QD={},LEG={},qkP={},qkU={},CNT={},qbErr="",legP=null,GR=[7,8,9,10,11,12];   /* qkP["ថ្នាក់|មេរៀន"] = ការតាមដាន · CNT[ថ្នាក់] = ចំនួនលំហាត់តាមមេរៀន (ពី Server) */
+var QD={},LEG={},qkP={},qkU={},CNT={},qbErr="",legP=null,legReg=null,GR=[7,8,9,10,11,12];   /* qkP["ថ្នាក់|មេរៀន"] = ការតាមដាន · CNT[ថ្នាក់] = ចំនួនលំហាត់តាមមេរៀន (ពី Server) */
 function qid(o,id){return o+"_"+id}
 function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;if(v.fg)q.fg=v.fg;if(v.im)q.im=true;return q}
 /* រូបភាពលំហាត់៖ qimg/{ID គ្រូ}_{id} = {o, d:dataURL} (ទាញតែពេលបង្ហាញ · ចងចាំក្នុង QIM) */
@@ -82,14 +82,23 @@ function rebuild(){
 }
 function qbFresh(){if(!$("p17").hidden&&(QV==="bank"||QV==="make")&&!document.querySelector("dialog[open]")){var y=window.scrollY;keepFocus(QV==="bank"?renderBank:renderMake);window.scrollTo(0,y)}}
 function qErr(e){return e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ (សូម Admin Publish firestore.rules កំណែថ្មី · មាន qbq)":e&&/resource-exhausted|too large|exceeds/i.test(String(e.code||"")+String(e.message||""))?"ទិន្នន័យធំពេក":"សូមពិនិត្យអ៊ីនធឺណិត"}
-/* ទម្រង់ចាស់ qb/{ID}៖ ផ្ទុកម្ដង · ម្ចាស់ ឬ Admin ផ្ទេរទៅ qbq/ (batch ម្ដង ៤០០) រួចសម្គាល់ mig:true */
+/* ទម្រង់ចាស់ qb/{ID}៖ ផ្ទុកម្ដង · ម្ចាស់ ឬ Admin ផ្ទេរទៅ qbq/ (batch ម្ដង ៤០០) រួចសម្គាល់ mig:true
+   cfg/qbdone = {v:true} → គ្រប់ qb/ បានផ្ទេររួច · លែងទាញ qb/ (ឯកសារធំ) ទៀត · qb/ នៅដដែលជាការបម្រុងទុក (មិនលុប)
+   បើចង់ឱ្យប្រព័ន្ធពិនិត្យ qb/ ម្ដងទៀត៖ លុប cfg/qbdone ក្នុង Firebase Console */
 function loadLegacy(){
   if(legP)return legP;
-  legP=FB.getDocs(FB.collection(db,"qb")).then(function(sn){
-    var todo=[];
-    sn.forEach(function(d){var v=d.data();if(v.mig)return;var arr=[];try{arr=JSON.parse(v.j)||[]}catch(x){}var o=v.o||d.id;if(!arr.length)return;LEG[o]=arr;if(isAdm()||who.id===o)todo.push([o,arr])});
-    rebuild();
-    todo.reduce(function(pr,x){return pr.then(function(){return migrate(x[0],x[1])})},Promise.resolve());   /* ផ្ទេរនៅពីក្រោយ · មិនបាច់រង់ចាំ */
+  if(window.unsubs&&legReg!==window.unsubs){legReg=window.unsubs;unsubs.push(function(){legP=null;LEG={}})}   /* ចាកចេញ → លុបចោល */
+  legP=FB.getDoc(FB.doc(db,"cfg","qbdone")).catch(function(){return null}).then(function(f){
+    if(f&&f.exists()&&f.data().v)return;
+    return FB.getDocs(FB.collection(db,"qb")).then(function(sn){
+      var todo=[],left=0;
+      sn.forEach(function(d){var v=d.data();if(v.mig)return;var arr=[];try{arr=JSON.parse(v.j)||[]}catch(x){}var o=v.o||d.id;if(!arr.length)return;left++;LEG[o]=arr;if(isAdm()||who.id===o)todo.push([o,arr])});
+      rebuild();if(left)qbFresh();   /* មានលំហាត់ចាស់មិនទាន់ផ្ទេរ → បង្ហាញបន្ថែម */
+      /* ផ្ទេរនៅពីក្រោយ (មិនបាច់រង់ចាំ) · Admin ផ្ទេរគ្រប់គ្នាជោគជ័យ → កត់ cfg/qbdone */
+      todo.reduce(function(pr,x){return pr.then(function(ok){return migrate(x[0],x[1]).then(function(r){return ok&&r})})},Promise.resolve(true))
+        .then(function(ok){if(ok&&isAdm()&&todo.length===left)return FB.setDoc(FB.doc(db,"cfg","qbdone"),{v:true,at:new Date().toISOString()})})
+        .catch(function(e){console.warn("qbdone:",e)});
+    });
   }).catch(function(e){console.error("qb legacy:",e)});
   var me=legP;legP.then(function(){me.ok=1});
   return legP;
@@ -98,13 +107,14 @@ function migrate(o,arr){
   var ch=[];for(var i=0;i<arr.length;i+=400)ch.push(arr.slice(i,i+400));
   return ch.reduce(function(pr,part){return pr.then(function(){var b=FB.writeBatch(db);part.forEach(function(q){if(q&&q.id)b.set(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q))});return b.commit()})},Promise.resolve())
     .then(function(){return FB.updateDoc(FB.doc(db,"qb",o),{mig:true})})
-    .then(function(){delete LEG[o];rebuild();notify("បានផ្ទេរលំហាត់ "+arr.length+" ទៅទម្រង់ថ្មី")},function(e){console.error("qb migrate:",o,e)});
+    .then(function(){delete LEG[o];rebuild();notify("បានផ្ទេរលំហាត់ "+arr.length+" ទៅទម្រង់ថ្មី");return true},function(e){console.error("qb migrate:",o,e);return false});
 }
 /* ទាញតែលំហាត់នៃ «ថ្នាក់ + មេរៀន» ដែលកំពុងប្រើ (onSnapshot · ចងចាំរហូតដល់ចាកចេញ) */
 function kOf(g,ls){return g+"|"+ls}
 function ensureK(ks){
   if(!window.FB||!window.db||!who)return new Promise(function(r){setTimeout(r,500)});
-  return Promise.all([loadLegacy()].concat(ks.map(function(key){
+  loadLegacy();   /* មិនរង់ចាំ */
+  return Promise.all(ks.map(function(key){
     if(qkP[key])return qkP[key];
     var q=key.split("|"),g=+q[0],ls=+q[1],done=null,first=true;
     qkP[key]=new Promise(function(r){done=r});
@@ -118,9 +128,10 @@ function ensureK(ks){
     /* ពេលចាកចេញ ឬចាប់ផ្ដើមសមកាលកម្មឡើងវិញ៖ បិទការតាមដាន ហើយកុំឱ្យជាប់ «កំពុងផ្ទុក…» */
     if(window.unsubs)unsubs.push(function(){un();delete qkP[key];delete qkU[key];legP=null;CNT={};if(first){first=false;done();setTimeout(function(){if(!$("p17").hidden)renderQuiz()},0)}});
     return qkP[key];
-  })));
+  }));
 }
-function ready(ks){return ks.every(function(k){return qkP[k]&&qkP[k].ok})&&!!(legP&&legP.ok)}
+/* ទម្រង់ចាស់ (qb/ · ឯកសារធំ) ទាញនៅពីក្រោយ · គ្មានផ្ទាំងណារង់ចាំវាទេ (មកដល់ → qbFresh) */
+function ready(ks){return ks.every(function(k){return qkP[k]&&qkP[k].ok})}
 function lsOf(g){var C=window.CUR&&window.CUR[g];return C?Object.keys(C.LS).sort(function(a,b){return a-b}):[]}
 /* ចំនួនលំហាត់តាមមេរៀន៖ Firestore count() (១ ការអាន ក្នុង ១០០០ លំហាត់) · មិនទាញខ្លឹមសារ */
 function loadCnt(g){
@@ -442,7 +453,7 @@ function doShuffle(){
   if(short.length)notify("⚠️ "+short.join(" · "));
   mk.items=out;renderMake();
 }
-function openTest(){loadTests().then(openTest2)}
+function openTest(){loadTests(true).then(openTest2)}   /* ទាញថ្មី ដើម្បីពិនិត្យតេស្តលើកទី១/ទី២ ជាន់គ្នាឱ្យត្រឹមត្រូវ */
 function openTest2(){
   var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return;
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
@@ -458,7 +469,7 @@ function openTest2(){
     /* រូបភាពលំហាត់ → timg/{តេស្ត}_{លំហាត់} (សិស្សអានបានពេលតេស្តបើក) */
     return Promise.all(mk.items.filter(function(q){return q.im}).map(function(q){return qimg(qid(q.by,q.id)).then(function(u){if(u)return FB.setDoc(FB.doc(window.db,"timg",id+"_"+q.id),{t:id,o:mk.tid,d:u})})}));
   }).then(function(){
-    mk.items=null;QV="res";curTest=Object.assign({id:id},T);loadTests().then(function(){renderQuiz();showLink(id)});notify("បានបើកតេស្ត");
+    mk.items=null;QV="res";curTest=Object.assign({id:id},T);if(dup){dup.kind="g";dup.mo=""}tests.unshift(curTest);watchSubs(curTest);renderQuiz();showLink(id);notify("បានបើកតេស្ត");
   }).catch(function(e){console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ។ សូមប្រាប់ Admin ឱ្យ Publish firestore.rules កំណែថ្មី។":"មិនអាចបើកតេស្តបានទេ")});
 }
 function showLinkUrl(u,title){
@@ -480,10 +491,17 @@ function showLink(id){
 }
 
 /* ===================== 📊 លទ្ធផលតេស្ត ===================== */
-function loadTests(){
+/* បញ្ជីតេស្ត៖ ទាញម្ដង ហើយចងចាំ (tests/ មានខ្លឹមសារលំហាត់ពេញ → ធ្ងន់) · កែ/លុប/បង្កើត → ធ្វើបច្ចុប្បន្នភាពក្នុង memory · 🔄 = ទាញថ្មី · ចាកចេញ → លុបចោល */
+var tOK=false,tErr="",tReg=null,tP=null;
+function loadTests(force){
+  if(tOK&&!force)return Promise.resolve();
+  if(tP)return tP;
   var FB=window.FB,q=isAdm()?FB.collection(window.db,"tests"):FB.query(FB.collection(window.db,"tests"),FB.where("o","==",who.id));
-  return FB.getDocs(q).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")});tests=a})
-    .catch(function(e){console.error(e);tests=[]});
+  if(window.unsubs&&tReg!==window.unsubs){tReg=window.unsubs;unsubs.push(function(){tOK=false;tErr="";tests=[];tP=null})}
+  tP=FB.getDocs(q).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")});tests=a;tErr=""})
+    .catch(function(e){console.error(e);tErr="មិនអាចផ្ទុកបញ្ជីតេស្តបានទេ · សូមពិនិត្យអ៊ីនធឺណិត"})
+    .then(function(){tOK=true;tP=null});
+  return tP;
 }
 function grade(t){
   var K=keyOf[t.id]||{};
@@ -492,20 +510,25 @@ function grade(t){
     return{s:s,sc:sc,n:t.items.length,p:t.items.length?sc/t.items.length*100:0};
   }).sort(function(a,b){return b.sc-a.sc||String(a.s.sn).localeCompare(String(b.s.sn),"km")});
 }
+/* សិស្សផ្ញើច្រើននាក់ក្នុងពេលតែមួយ → គូរតារាង + KaTeX ឡើងវិញតែម្ដង (រង់ចាំ ០.៨ វិនាទី) មិនមែនម្ដងក្នុងមួយសិស្ស */
+var resT=0;
+function resSoon(t,now){clearTimeout(resT);var go=function(){if(QV==="res"&&curTest===t){var y=window.scrollY;renderRes();window.scrollTo(0,y)}};if(now)go();else resT=setTimeout(go,800)}
 function watchSubs(t){
-  if(subUn){subUn();subUn=null}subs=[];if(!t)return;
-  var FB=window.FB;
-  FB.getDoc(FB.doc(window.db,"tkeys",t.id)).then(function(d){try{keyOf[t.id]=JSON.parse(d.data().a)}catch(x){keyOf[t.id]={}}renderRes()}).catch(function(){});
+  if(subUn){subUn();subUn=null}clearTimeout(resT);subs=[];if(!t)return;
+  var FB=window.FB,first=true;
+  if(!keyOf[t.id])FB.getDoc(FB.doc(window.db,"tkeys",t.id)).then(function(d){try{keyOf[t.id]=JSON.parse(d.data().a)}catch(x){keyOf[t.id]={}}resSoon(t,true)}).catch(function(){});
   subUn=FB.onSnapshot(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)),function(sn){
-    var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;if(QV==="res")renderRes();autoDrive(t);
+    var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,first);first=false;autoDrive(t);
   },function(e){console.error("subs:",e)});
 }
 function renderRes(){
   var h="";
   if(!curTest){
-    h=tests.length?"<div class=qr-list>"+tests.map(function(t){return"<div class=qr-card><div><b>"+esc(t.title)+"</b><small>"+kindBadge(t)+" "+esc(t.cls)+" · "+kn(t.items.length)+" លំហាត់ · "+esc((t.cr||"").slice(0,10))+(isAdm()?" · "+esc(tn(t.o)):"")+"</small></div>"+
+    h="<div class=bar><b>តេស្តទាំងអស់ ("+kn(tests.length)+")</b><button type=button data-qa=treload title='ទាញបញ្ជីតេស្តថ្មីពី Server'>🔄 ផ្ទុកឡើងវិញ</button></div>"+
+      (tErr?"<p class=cxwarn>⚠️ "+esc(tErr)+"</p>":"")+
+      (tests.length?"<div class=qr-list>"+tests.map(function(t){return"<div class=qr-card><div><b>"+esc(t.title)+"</b><small>"+kindBadge(t)+" "+esc(t.cls)+" · "+kn(t.items.length)+" លំហាត់ · "+esc((t.cr||"").slice(0,10))+(isAdm()?" · "+esc(tn(t.o)):"")+"</small></div>"+
       "<span class='qr-st "+(t.open?"on":"")+"'>"+(t.open?"🟢 កំពុងបើក":"⚪ បានបិទ")+"</span><button type=button class=primary data-qo="+t.id+">មើលលទ្ធផល</button></div>"}).join("")+"</div>"
-      :"<p class=note>មិនទាន់មានតេស្តទេ។ ចូល «🧪 បង្កើតតេស្ត» ដើម្បីបង្កើត។</p>";
+      :"<p class=note>មិនទាន់មានតេស្តទេ។ ចូល «🧪 បង្កើតតេស្ត» ដើម្បីបង្កើត។</p>");
     $("qzBody").innerHTML=h;return;
   }
   var t=curTest,R=grade(t),n=t.items.length,avg=R.length?R.reduce(function(s,r){return s+r.sc},0)/R.length:0,K=keyOf[t.id]||{};
@@ -591,9 +614,10 @@ function renderQuiz(){
   [].forEach.call($("qzSeg").querySelectorAll("[data-qv]"),function(b){b.setAttribute("aria-selected",b.dataset.qv===QV)});drvBtn();
   if(!renderQuiz.g0){renderQuiz.g0=1;var c0=myClasses(who.id)[0],g0=c0?parseInt(c0.n):0;if(!fG&&GR.indexOf(g0)>=0)fG=g0}   /* ចាប់ផ្ដើមនៅថ្នាក់របស់គ្រូ (ទាញតែថ្នាក់នោះ) */
   var gs=needG();
+  if((QV==="bank"||QV==="make")&&window.FB&&window.db)loadLegacy();   /* នៅពីក្រោយ · មិនរង់ចាំ */
   if(!ready(gs)&&!qbErr){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";ensureK(gs).then(renderQuiz);return}
   if(QV==="bank")renderBank();else if(QV==="make")renderMake();else if(QV==="prac")renderPrac();
-  else{if(!tests.length&&!renderQuiz.tl){renderQuiz.tl=1;loadTests().then(renderQuiz);return}renderRes()}
+  else{if(!tOK){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";loadTests().then(renderQuiz);return}renderRes()}
 }
 window.renderQuiz=renderQuiz;
 /* ===================== 🏆 តារាងហាត់ថ្នាក់ (practice.html#c=កូដ) =====================
@@ -707,12 +731,13 @@ $("qzBody").addEventListener("click",function(e){
   else if(a==="shuffle"){mk.title=($("qmTi")||{}).value||mk.title;mk.dur=+(($("qmD")||{}).value)||mk.dur;doShuffle()}
   else if(a==="open")openTest();
   else if(a==="back"){curTest=null;watchSubs(null);loadTests().then(renderRes)}
+  else if(a==="treload"){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";loadTests(true).then(renderRes)}
   else if(a==="link")showLink(t.id);
   else if(a==="toggle"){window.FB.updateDoc(window.FB.doc(window.db,"tests",t.id),{open:!t.open}).then(function(){t.open=!t.open;renderRes();notify(t.open?"បានបើកតេស្ត":"បានបិទតេស្ត — សិស្សមិនអាចផ្ញើបានទៀត")})}
   else if(a==="csv")dlCSV(resRows(t),"តេស្ត-"+t.cls+"-"+(t.cr||"").slice(0,10)+".csv");
   else if(a==="drive"){(driveTok()?Promise.resolve():driveConnect(false)).then(function(){return driveSave(t,false)}).catch(function(e){if(e==="nocid")driveClick()})}
   else if(a==="del"){if(!confirm("លុបតេស្ត «"+t.title+"» និងលទ្ធផលទាំងអស់?"))return;
     var FB=window.FB;Promise.all(subs.map(function(s){return FB.deleteDoc(FB.doc(window.db,"subs",t.id+"_"+s.sid))}).concat((t.items||[]).filter(function(q){return q.im}).map(function(q){return FB.deleteDoc(FB.doc(window.db,"timg",t.id+"_"+q.id)).catch(function(){})})).concat([FB.deleteDoc(FB.doc(window.db,"tests",t.id)),FB.deleteDoc(FB.doc(window.db,"tkeys",t.id))]))
-      .then(function(){curTest=null;watchSubs(null);loadTests().then(renderRes);notify("បានលុបតេស្ត")}).catch(function(){alert("មិនអាចលុបបានទេ")})}
+      .then(function(){tests=tests.filter(function(x){return x.id!==t.id});curTest=null;watchSubs(null);renderRes();notify("បានលុបតេស្ត")}).catch(function(){alert("មិនអាចលុបបានទេ")})}
 });
 })();

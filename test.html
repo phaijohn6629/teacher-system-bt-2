@@ -53,7 +53,8 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 <script type="module">
 /* ទំព័រសិស្សធ្វើតេស្ត (គ្មាន Login)៖ អាន tests/{id} · ផ្ញើ subs/{id}_{សិស្ស} តែម្ដង */
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+/* firestore-lite (REST · ~១១៧KB ជំនួស ~៤៣៤KB) — សិស្សត្រូវការតែអានតេស្ត ១ ដង និងផ្ញើ ១ ដង · មិនត្រូវការការតភ្ជាប់ផ្ទាល់ */
+import{getFirestore,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
 const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",
   storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
 const $=id=>document.getElementById(id),app=$("app"),id=new URLSearchParams(location.search).get("t")||"";
