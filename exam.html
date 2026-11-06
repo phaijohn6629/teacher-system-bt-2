@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ប្រឡង · វិទ្យាល័យបឹងត្របែក</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#1e3a8a;--g:linear-gradient(135deg,#1e3a8a,#6366f1)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Kantumruy Pro",system-ui,sans-serif;background:#eef2ff;color:var(--ink);line-height:1.6}
+.top{background:var(--g);color:#fff;padding:18px 16px 46px;text-align:center}
+.top h1{margin:0;font-family:"Moul","Kantumruy Pro",serif;font-weight:400;font-size:1.1rem;line-height:1.8}
+.top p{margin:2px 0 0;opacity:.9;font-size:.9rem}
+.wrap{max-width:860px;margin:-30px auto 40px;padding:0 12px}
+.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(30,58,138,.15);margin-bottom:14px}
+label{display:block;font-weight:700;margin:6px 0}
+select,input,button{font:inherit}
+select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.code{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;font-size:1.4rem;letter-spacing:.35em;text-align:center}
+.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:700;cursor:pointer;background:var(--g);color:#fff;width:100%;font-size:1rem;margin-top:12px}
+.btn:disabled{opacity:.5}
+.msg{text-align:center;padding:30px 10px}.msg .big{font-size:3rem}
+.note{color:var(--mute);font-size:.85rem}
+.bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:12px;font-weight:700}
+.timer{font-variant-numeric:tabular-nums;color:#b91c1c;font-size:1.1rem}.timer.low{animation:bl 1s infinite}@keyframes bl{50%{opacity:.35}}
+.paper{background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 10px 30px rgba(30,58,138,.12);overflow-x:auto}
+.paper,.paper *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.acn{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:8px 12px;font-size:.85rem;margin-top:10px}
+.ac{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.6);padding:16px}
+.ac>div{background:#fff;border-radius:18px;padding:22px;max-width:380px;text-align:center}.ac .big{font-size:2.6rem}
+.net{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;background:#1e293b;color:#fff;border-radius:999px;padding:8px 16px;font-size:.85rem;max-width:92vw;text-align:center}
+@media print{body{display:none}}
+</style>
+</head>
+<body>
+<div class="top"><h1 id="tt">ប្រឡង</h1><p id="ts">វិទ្យាល័យបឹងត្របែក</p></div>
+<div class="wrap" id="app"><div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<div id="net" class="net" hidden></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="khcal.js?v=1"></script>
+<script src="fig.js?v=5"></script>
+<script src="expaper.js?v=1"></script>
+<script type="module">
+/* ========================================================================
+   ទំព័រសិស្សមើលវិញ្ញាសាប្រឡងទម្រង់បើក (គ្មាន Login) · សិស្សសរសេរចម្លើយលើក្រដាស · ទំព័រនេះមិនទទួលចម្លើយ
+   exm/{id} = ព័ត៌មាន (បើក · endMs · បញ្ជីឈ្មោះ) · exq/{id}_{លេខកូដ} = វិញ្ញាសា (អានបានតែពេលបើក និងមុនអស់ម៉ោង)
+   exv/{id}_{សិស្ស} = អ្នកកំពុងមើល (មួយឈ្មោះ មួយឧបករណ៍ · dv) · lv/lt/cp = ចាកចេញ/វិនាទី/ចម្លង (k2 = dv|លេខរៀង)
+   localStorage៖ exp_{id} វិញ្ញាសា · exc_{id} លេខកូដ · exk_{id} សិស្ស · dv/ac/rl_{id}_{សិស្ស}
+   ======================================================================== */
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getFirestore,doc,getDoc,setDoc,updateDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
+const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",
+  storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
+const $=x=>document.getElementById(x),app=$("app"),id=new URLSearchParams(location.search).get("e")||"";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);
+const math=el=>{try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false,macros:{"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"}})}catch(e){}};
+const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</div><h2>${t}</h2><p class=note>${s||""}</p></div>`};
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const isNet=e=>!(e&&["permission-denied","not-found","invalid-argument","failed-precondition","already-exists"].includes(e.code));
+function waitOnline(ms){return new Promise(r=>{let t;const done=()=>{clearTimeout(t);window.removeEventListener("online",done);r()};t=setTimeout(done,ms);window.addEventListener("online",done)})}
+async function retry(fn,label,max){let d=1500;for(let i=0;;i++){try{const v=await fn();net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"…");await waitOnline(d);d=Math.min(d*2,15000)}}}
+function net(t){const n=$("net");n.hidden=!t;n.textContent=t||""}
+function rand(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")}
+
+let M=null,me=null,K="",endMs=0,tick=0,over=false,acOn=false,AC={lv:0,lt:0,cp:0},awayAt=0,seq=0,pushT=0;
+/* ---------- ១. ព័ត៌មានប្រឡង ---------- */
+async function start(){
+  if(!id)return msg("⚠️","តំណមិនត្រឹមត្រូវ","សូមសួរគ្រូរបស់អ្នកម្ដងទៀត");
+  try{const d=await retry(()=>getDoc(doc(db,"exm",id)),"កំពុងផ្ទុក",4);if(!d.exists())return msg("🔍","រកមិនឃើញប្រឡង","");M=d.data();LS.set("exm_"+id,JSON.stringify(M))}
+  catch(e){if(e&&e.code==="permission-denied")return ended("ប្រឡងនេះបានបិទ");try{M=JSON.parse(LS.get("exm_"+id)||"null")}catch(x){}
+    if(!M){app.innerHTML=`<div class="card msg"><div class=big>📶</div><h2>អ៊ីនធឺណិតខ្សោយ</h2><p class=note>មិនអាចផ្ទុកបានទេ</p><button class=btn id=rt>🔄 ព្យាយាមម្ដងទៀត</button></div>`;$("rt").onclick=()=>location.reload();return}}
+  endMs=+M.endMs||0;
+  if(!M.open||Date.now()>endMs)return ended(M.open?"អស់ម៉ោងប្រឡងហើយ":"ប្រឡងនេះបានបិទ");
+  $("tt").textContent=M.t||"ប្រឡង";$("ts").textContent=(M.sch||"")+" · ថ្នាក់ "+(M.cls||"")+" · "+kn(M.dur)+" នាទី";document.title=M.t||"ប្រឡង";
+  /* បើកឡើងវិញលើឧបករណ៍ដដែល → បន្តភ្លាម */
+  const k0=LS.get("exk_"+id),p0=LS.get("exp_"+id),m0=k0&&M.names.find(x=>x.k===k0);
+  if(m0&&p0){me=m0;K=id+"_"+me.k;return show(JSON.parse(p0),true)}
+  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${M.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
+    <label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>
+    <p class=note>• មើលប្រធានលើទូរស័ព្ទ ហើយ<b>សរសេរចម្លើយលើក្រដាស</b>របស់អ្នក<br>• អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ<br>• ឈ្មោះមួយបើកបានតែលើឧបករណ៍មួយ</p>
+    <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ថតអេក្រង់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។</div>
+    <p id=er class=acn hidden></p><button class=btn id=go>📄 បើកវិញ្ញាសា</button></div>`;
+  $("go").onclick=go;
+}
+function ended(t){LS.del("exp_"+id);msg("⏰",t,"សូមប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
+function err(t){const e=$("er");e.innerHTML=t;e.hidden=!t}
+async function go(){
+  const k=$("nm").value,pc=$("pc").value.replace(/[០-៩]/g,d=>"០១២៣៤៥៦៧៨៩".indexOf(d)).trim();
+  if(!k)return err("សូមជ្រើសឈ្មោះរបស់អ្នក");if(!/^\d{6}$/.test(pc))return err("🔑 សូមបញ្ចូលលេខកូដ ៦ ខ្ទង់ដែលគ្រូប្រាប់");
+  me=M.names.find(x=>x.k===k);K=id+"_"+k;const b=$("go");b.disabled=true;b.textContent="កំពុងបើក…";err("");
+  const back=t=>{b.disabled=false;b.textContent="📄 បើកវិញ្ញាសា";err(t)};
+  let P=null;
+  try{const d=await retry(()=>getDoc(doc(db,"exq",id+"_"+pc)),"កំពុងបើកវិញ្ញាសា",5);if(!d.exists())return back("⛔ លេខកូដមិនត្រឹមត្រូវ");P=JSON.parse(d.data().j)}
+  catch(e){return back(e&&e.code==="permission-denied"?"⛔ លេខកូដមិនត្រឹមត្រូវ ឬប្រឡងបានបិទ/អស់ម៉ោង":"📶 អ៊ីនធឺណិតខ្សោយ · សូមព្យាយាមម្ដងទៀត")}
+  /* មួយឈ្មោះ មួយឧបករណ៍ */
+  let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=rand();LS.set("dv_"+K,dv)}
+  try{await retry(()=>setDoc(doc(db,"exv",K),{t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp(),lv:0,lt:0,cp:0}),"កំពុងចុះឈ្មោះ",3)}
+  catch(e){if(e&&e.code==="permission-denied"&&!had)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។")}
+  LS.set("exk_"+id,k);LS.set("exp_"+id,JSON.stringify(P));
+  try{const el=document.documentElement,r=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}
+  show(P,false);
+}
+/* ---------- ២. បង្ហាញវិញ្ញាសា + ម៉ោងរាប់ថយក្រោយ ---------- */
+function show(P,reload){
+  app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span></div><div class=paper id=pp>${EXP.html(P,{})}</div>
+    <p class=note style="text-align:center">✍️ សរសេរចម្លើយលើក្រដាស · អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ</p>`;
+  math($("pp"));
+  AC=Object.assign({lv:0,lt:0,cp:0},JSON.parse(LS.get("ac_"+K)||"null")||{});seq=+LS.get("sq_"+K)||0;acOn=true;
+  if(reload&&LS.get("rl_"+K)){AC.lv++;acSave();warn("អ្នកបានបិទ ឬផ្ទុកទំព័រឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+")")}
+  LS.set("rl_"+K,"1");
+  const f=()=>{const s=Math.max(0,Math.round((endMs-Date.now())/1000)),t=$("tm");if(t){t.textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));t.classList.toggle("low",s<=300)}
+    if(!s){clearInterval(tick);timeUp()}};
+  tick=setInterval(f,1000);f();
+  /* ពិនិត្យម៉ោងថ្មីពីគ្រូ (បន្ថែមម៉ោង ឬបិទមុន) រៀងរាល់ ៦០ វិនាទី */
+  setInterval(()=>{getDoc(doc(db,"exm",id)).then(d=>{if(!d.exists())return;const m=d.data();if(!m.open){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}else if(+m.endMs!==endMs){endMs=+m.endMs;over=false}}).catch(e=>{if(e&&e.code==="permission-denied"){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}})},60000);
+}
+function timeUp(t){if(over)return;over=true;acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();msg("⏰",t||"អស់ម៉ោងប្រឡង","សូមឈប់សរសេរ ហើយប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
+/* ---------- ៣. ការពារការលួចមើល ---------- */
+function acSave(){LS.set("ac_"+K,JSON.stringify(AC));push()}
+/* ផ្ញើចំនួនទៅគ្រូ (k2 = dv|លេខរៀង · Rules ពិនិត្យថាជាឧបករណ៍ដដែល) */
+function push(now){clearTimeout(pushT);pushT=setTimeout(async()=>{const dv=LS.get("dv_"+K);if(!dv)return;seq++;LS.set("sq_"+K,String(seq));
+  try{await retry(()=>updateDoc(doc(db,"exv",K),{lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,k2:dv+"|"+seq}),"កំពុងរក្សាទុក",4)}catch(e){}},now?0:2500)}
+function warn(t,sub){let w=document.querySelector(".ac");if(!w){w=document.createElement("div");w.className="ac";document.body.appendChild(w)}
+  w.innerHTML=`<div><div class=big>⚠️</div><div style="font-weight:700;font-size:1.05rem">${t}</div><p class=note>${sub}</p><button class=btn id=acOk>យល់ព្រម</button></div>`;$("acOk").onclick=()=>w.remove()}
+function away(){if(!acOn||over||awayAt)return;awayAt=Date.now()}
+function back(){if(!acOn||over||!awayAt)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;AC.lv++;AC.lt+=Math.round(d);acSave();
+  warn("អ្នកបានចាកចេញពីទំព័រប្រឡង (លើកទី "+kn(AC.lv)+")","រយៈពេល "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ")}
+document.addEventListener("visibilitychange",()=>{document.hidden?away():back()});
+window.addEventListener("blur",away);window.addEventListener("focus",back);window.addEventListener("pagehide",away);
+const no=e=>{if(!acOn||over)return;const inp=e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="SELECT");if(e.type==="contextmenu"||e.type==="selectstart"||e.type==="dragstart"){if(!inp)e.preventDefault();return}
+  e.preventDefault();AC.cp++;acSave();warn("មិនអនុញ្ញាតឱ្យចម្លងវិញ្ញាសាទេ","ការព្យាយាមនេះត្រូវបានកត់ត្រា (លើកទី "+kn(AC.cp)+")")};
+["copy","cut","paste","contextmenu","selectstart","dragstart"].forEach(t=>document.addEventListener(t,no,true));
+start();
+</script>
+</body>
+</html>

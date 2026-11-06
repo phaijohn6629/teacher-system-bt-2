@@ -403,6 +403,48 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    // ===================== 📝 ប្រឡងទម្រង់បើក (exam.js · exam.html) =====================
+    // exams/{id} = វិញ្ញាសា + ចម្លើយ (គ្រូម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ)
+    match /exams/{id} {
+      allow read: if isAdmin() || (active() && resource.data.o == myId());
+      allow create: if isAdmin() || isOwner(request.resource.data.o);
+      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+    }
+    // exm/{id} = ព័ត៌មានប្រឡងអនឡាញ (សិស្សអានបានពេលបើក) · endMs = ម៉ោងបញ្ចប់
+    function exmDoc(id) { return get(/databases/$(database)/documents/exm/$(id)).data; }
+    function exmLive(id) { return exmDoc(id).open == true && request.time.toMillis() < exmDoc(id).endMs + 300000; }
+    match /exm/{id} {
+      allow get: if resource.data.open == true || active();
+      allow list: if active();
+      allow create: if isAdmin() || isOwner(request.resource.data.o);
+      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+    }
+    // exq/{id}_{លេខកូដ} = វិញ្ញាសា (គ្មានចម្លើយ) · អានបានតែពេលប្រឡងបើក និងមុនអស់ម៉ោង (+៥ នាទី) · ត្រូវដឹងលេខកូដ (doc ID)
+    match /exq/{qid} {
+      allow get: if active() || exmLive(resource.data.t);
+      allow create, update: if isAdmin() || isOwner(request.resource.data.o);
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
+    // exv/{id}_{សិស្ស} = សិស្សកំពុងមើល · មួយឈ្មោះ មួយឧបករណ៍ (dv) · កែបានតែ lv/lt/cp ដោយឧបករណ៍ដដែល (k2 = dv|លេខរៀងថ្មី)
+    match /exv/{vid} {
+      allow create: if request.resource.data.keys().hasOnly(['t','sid','sn','dv','at','lv','lt','cp'])
+        && vid == request.resource.data.t + '_' + request.resource.data.sid
+        && request.resource.data.at == request.time
+        && request.resource.data.dv is string && request.resource.data.dv.size() >= 16 && request.resource.data.dv.size() <= 64
+        && request.resource.data.lv == 0 && request.resource.data.cp == 0 && request.resource.data.lt == 0
+        && exmLive(request.resource.data.t)
+        && {'k': request.resource.data.sid, 'n': request.resource.data.sn} in exmDoc(request.resource.data.t).get('names', []);
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lv','lt','cp','k2'])
+        && request.resource.data.k2 is string
+        && request.resource.data.k2.matches(resource.data.dv + '[|][0-9]+')
+        && request.resource.data.k2 != resource.data.get('k2', '')
+        && request.resource.data.lv is int && request.resource.data.lv >= resource.data.lv && request.resource.data.lv <= 10000
+        && request.resource.data.cp is int && request.resource.data.cp >= resource.data.cp && request.resource.data.cp <= 10000
+        && request.resource.data.lt is int && request.resource.data.lt <= 86400;
+      allow read: if active();
+      allow delete: if isAdmin() || isOwner(exmDoc(resource.data.t).o);
+    }
+
     // ហាមផ្សេងទៀតទាំងអស់
     match /{document=**} {
       allow read, write: if false;

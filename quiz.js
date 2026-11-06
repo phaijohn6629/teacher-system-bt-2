@@ -716,10 +716,12 @@ function renderQuiz(){
   var gs=needG();
   if((QV==="bank"||QV==="make")&&window.FB&&window.db)loadLegacy();   /* នៅពីក្រោយ · មិនរង់ចាំ */
   if(!ready(gs)&&!qbErr){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";ensureK(gs).then(renderQuiz);return}
+  if(QV==="exam"){if(window.EXAM)EXAM.render();else $("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";return}
   if(QV==="bank")renderBank();else if(QV==="make")renderMake();else if(QV==="prac")renderPrac();
   else{if(!tOK){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";loadTests().then(renderQuiz);return}renderRes()}
 }
 window.renderQuiz=renderQuiz;
+window.QUIZVIEW=function(){return QV};
 /* ===================== 🏆 តារាងហាត់ថ្នាក់ (practice.html#c=កូដ) =====================
    pcls/{កូដ} = {o, cls, g, names:[{k,n}], open, cr} · prt/{កូដ}_{k} = ពានរង្វាន់របស់សិស្ស {t:{"មេរៀន-កម្រិត":ms}} */
 var PC={list:null,ci:0,rows:{},busy:false};
@@ -799,7 +801,7 @@ window.QUIZ={
 $("qzBody").addEventListener("change",function(e){if(e.target.id==="pcC"){PC.ci=+e.target.value;renderPrac()}});
 $("qzSeg").onclick=function(e){
   if(e.target.closest("#qzDrive"))return driveClick();
-  var b=e.target.closest("[data-qv]");if(!b)return;QV=b.dataset.qv;
+  var b=e.target.closest("[data-qv]");if(!b)return;if(QV==="exam"&&b.dataset.qv!=="exam"&&window.EXAM)EXAM.leave();QV=b.dataset.qv;
   if(QV==="res"){curTest=null;watchSubs(null);loadTests().then(renderQuiz);return}
   renderQuiz();
 };
