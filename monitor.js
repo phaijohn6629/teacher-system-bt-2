@@ -32,6 +32,7 @@ function buildT(k){
     st:c.st.map(function(s){var o={n:s.n};if(s.id)o.id=s.id;if(s.g)o.g=s.g;if(s.ab&&Object.keys(s.ab).length)o.ab=jcopy(s.ab);return o}),
     org:jcopy(c.org||null),seat:jcopy(c.seat||null),
     sch:window.SCHX?SCHX.schOf(d.o).filter(function(x){return x[2]===c.n&&x[4]!=="D"}):[],
+    sca:window.ATT?ATT.periodsAll(c.n):[],   /* ម៉ោងសិក្សាទាំងអស់នៃថ្នាក់ (គ្រប់គ្រូ) សម្រាប់ស្រង់វត្តមានតាមម៉ោង */
     cxr:window.CXAPI?CXAPI.rows(d.o,c.n):[],cx:{}};
 }
 /* សមកាលកម្មទូទៅ (script.js) គ្រាន់តែអាន mc · ការសរសេរធ្វើដោយ transaction ខាងក្រោម (docs = ដូច Cloud → មិនសរសេរ/មិនលុប) */
@@ -342,7 +343,7 @@ function migrateCls(tid,oldCn,newCn){
     return accTx(nk,tid,newCn,function(acc){out.forEach(function(x){acc[x[0]]=x[1]})});
   }).then(function(){delete mcd.r[ok];return FB.deleteDoc(FB.doc(db,"mc",ok)).catch(function(){})}).then(function(){out.forEach(function(x){showPw[nk+x[0]]=true});return out.length});
 }
-window.MONUI={apply:function(){teachApply()},has:function(tid,cn){var d=mcd.r[mkey(tid,cn)];return d?Object.keys(d.acc||{}).length:0},migrate:migrateCls,enter:function(){
+window.MONUI={apply:function(){teachApply()},j:function(){return M?M.j:null},sync:function(){tSched()},has:function(tid,cn){var d=mcd.r[mkey(tid,cn)];return d?Object.keys(d.acc||{}).length:0},migrate:migrateCls,enter:function(){
   document.body.classList.add("mon");
   var n=$("monNav");n.hidden=false;
   n.innerHTML="<div id=monTitle class=mon-title>👤 "+esc(who.rl||"ប្រធានថ្នាក់")+" "+esc(who.mc||"")+"</div><div class=seg>"+PG.map(function(x){return"<button type=button data-mp="+x[0]+">"+x[1]+"</button>"}).join("")+"</div>";
