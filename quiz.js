@@ -237,6 +237,8 @@ function renderBank(){
   /* មិនទាន់ជ្រើសមេរៀន → បង្ហាញតែចំនួនលំហាត់តាមមេរៀន (មិនទាញខ្លឹមសារ ដើម្បីសន្សំការអាន) */
   if(!fG||!fL){$("qzBody").innerHTML=h+bankIdx();return}
   h+="<p class=note style='margin:0 0 10px'><button type=button class=qz-back data-qa=ls data-ls=''>‹ មេរៀនទាំងអស់</button> សរុប <b>"+kn(list.length)+"</b> លំហាត់ ក្នុងមេរៀននេះ"+(fV||mine?" (តាមតម្រង)":"")+" · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
+  var nUn=allQ().filter(function(q){return q.g===fG&&String(q.ls)===String(fL)&&!(+q.pt)&&(q.by===who.id||isAdm())}).length;
+  if(pts.length&&nUn)h+="<div class=qz-autob>⚠️ មានលំហាត់ <b>"+kn(nUn)+"</b> មិនទាន់កំណត់ចំណុច <button type=button class=primary data-qa=auto>🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ</button><small>ប្រព័ន្ធណែនាំតាមខ្លឹមសារ · អ្នកពិនិត្យ/កែ មុនរក្សាទុក</small></div>";
   var more=list.length-qbShow;if(more>0)list=list.slice(0,qbShow);
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
@@ -247,6 +249,38 @@ function renderBank(){
       (more>0?"<button type=button class=qz-more data-qa=more>⬇️ បង្ហាញបន្ថែម ("+kn(Math.min(more,QB_PAGE))+" ក្នុងចំណោម "+kn(more)+" នៅសល់)</button>":"")
     :"<p class=note>មិនទាន់មានលំហាត់ទេ។ ចុច «＋ បន្ថែមលំហាត់» ដើម្បីចាប់ផ្ដើម។</p>";
   $("qzBody").innerHTML=h;math($("qzBody"));loadImgs($("qzBody"));
+}
+/* ---------- 🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ (ptauto.js) · លំហាត់មិនទាន់កំណត់ចំណុចក្នុងមេរៀននេះ · គ្រូពិនិត្យ → រក្សាទុកម្ដងទាំងអស់ ---------- */
+function autoDlg(){
+  var g=fG,ls=fL,pts=ptsOf(g,ls),key=g+"|"+ls;
+  var list=allQ().filter(function(q){return q.g===g&&String(q.ls)===String(ls)&&!(+q.pt)&&(q.by===who.id||isAdm())});
+  if(!list.length){notify("គ្មានលំហាត់មិនទាន់កំណត់ចំណុចទេ");return}
+  var S={},onlyU=false,C={h:"🟢",m:"🟡",l:"🟠",n:"⚪"};
+  list.forEach(function(q){var r=window.PTAUTO?PTAUTO.guess(q,pts,key):null;S[q.by+"|"+q.id]={q:q,pt:r?r.pt:0,c:r?r.conf:"n"}});
+  var d=$("qzAuto");if(!d){d=document.createElement("dialog");d.id="qzAuto";d.className="wide";document.body.appendChild(d)}
+  function sum(){var c={},n0=0;Object.keys(S).forEach(function(k){var p=S[k].pt;if(p)c[p]=(c[p]||0)+1;else n0++});
+    return pts.map(function(x){return"<span class=pa-s>"+kn(x[0])+". "+esc(x[1])+" <b>"+kn(c[x[0]]||0)+"</b></span>"}).join("")+(n0?"<span class='pa-s pa-s0'>⚪ មិនទាន់ជ្រើស <b>"+kn(n0)+"</b></span>":"")}
+  function draw(){
+    var ks=Object.keys(S).filter(function(k){return!onlyU||S[k].c!=="h"});
+    d.innerHTML="<div class=dlgb><h2 style='margin:0 0 6px'>🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ · "+esc(lsName(g,ls))+"</h2>"+
+      "<p class=note style='margin:0 0 8px'>ប្រព័ន្ធណែនាំចំណុចតាមខ្លឹមសារលំហាត់ ("+kn(list.length)+" លំហាត់)។ ពិនិត្យ ហើយប្ដូរបើខុស មុនចុចរក្សាទុក។ 🟢 ច្បាស់ · 🟡 ប្រហែល · 🟠 មិនសូវច្បាស់ · ⚪ មិនដឹង (មិនរក្សាទុកទេ)</p>"+
+      "<div class=pa-sum id=paSum>"+sum()+"</div>"+
+      "<label style='display:flex;gap:6px;align-items:center;margin:8px 0'><input type=checkbox id=paU"+(onlyU?" checked":"")+" style='width:auto;margin:0'> បង្ហាញតែដែលមិនច្បាស់ ("+kn(Object.keys(S).filter(function(k){return S[k].c!=="h"}).length)+")</label>"+
+      "<div class=pa-list>"+ks.map(function(k){var x=S[k];return"<div class=pa-r><div class=pa-h><span title='កម្រិតទំនុកចិត្ត'>"+C[x.c]+"</span><select data-pa='"+esc(k)+"'>"+ptOpts(g,ls,x.pt).replace("— មិនកំណត់ (ទាំងមេរៀន) —","⚪ មិនទាន់ជ្រើស")+"</select><span class='qz-lv l"+x.q.lv+"'>"+LV[x.q.lv]+"</span></div><div class=qz-qt>"+tx(x.q.q)+"</div></div>"}).join("")+"</div></div>"+
+      "<div class=dlgf><button type=button id=paX>បោះបង់</button><button type=button class=primary id=paS>✅ រក្សាទុក</button></div>";
+    math(d);
+    $("paX").onclick=function(){d.close()};
+    $("paU").onchange=function(e){onlyU=e.target.checked;draw()};
+    $("paS").onclick=function(){
+      var by={},n=0;Object.keys(S).forEach(function(k){var x=S[k];if(!x.pt)return;var o=x.q.by,nq=Object.assign({},x.q);delete nq.by;nq.pt=x.pt;(by[o]=by[o]||[]).push(nq);n++});
+      if(!n){alert("មិនទាន់មានលំហាត់ណាមួយបានជ្រើសចំណុចទេ");return}
+      var b=$("paS");b.disabled=true;b.textContent="កំពុងរក្សាទុក…";
+      Object.keys(by).reduce(function(pr,o){return pr.then(function(){return saveMany(o,by[o])})},Promise.resolve())
+        .then(function(){d.close();notify("✅ បានកំណត់ចំណុចឱ្យលំហាត់ "+kn(n));renderBank()},function(){b.disabled=false;b.textContent="✅ រក្សាទុក"});
+    };
+  }
+  d.onchange=function(e){var k=e.target.dataset.pa;if(!k||!S[k])return;S[k].pt=+e.target.value;S[k].c=S[k].pt?"h":"n";$("paSum").innerHTML=sum()};
+  draw();d.showModal();
 }
 function qDialog(q){
   var d=$("qzDlg");
@@ -801,6 +835,7 @@ $("qzBody").addEventListener("click",function(e){
   if(a==="ls"){fL=b.dataset.ls;fP=-1;qbShow=QB_PAGE;renderQuiz();window.scrollTo(0,0);return}
   if(a==="g"){fG=+b.dataset.g;fL="";renderQuiz();return}
   if(a==="more"){qbShow+=QB_PAGE;var y=window.scrollY;renderBank();window.scrollTo(0,y);return}
+  if(a==="auto"){autoDlg();return}
   if(a==="new")qDialog();
   else if(a==="tex")texImport();
   else if(a==="shuffle"){mk.title=($("qmTi")||{}).value||mk.title;mk.dur=+(($("qmD")||{}).value)||mk.dur;doShuffle()}
