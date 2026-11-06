@@ -491,10 +491,10 @@ function renderMake(){
     "<label>ថ្នាក់៖</label><select id=qmC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===mk.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
     "<label>ចំណងជើង៖</label><input id=qmTi value='"+esc(mk.title||("តេស្ត "+(c?c.n:"")))+"' style='flex:1 1 220px'>"+
     "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
-    "<div class=bar><label style='display:flex;gap:6px;align-items:center'><input type=checkbox id=qmPc"+(mk.pc?" checked":"")+" style='width:auto;margin:0'> 🔑 ត្រូវការលេខកូដចូល</label><span class=note style='margin:0'>លេខ ៤ ខ្ទង់ បង្ហាញពេលបើកតេស្ត · គ្រូសរសេរលើក្ដារខៀន → អ្នកនៅក្រៅថ្នាក់ (មានតែតំណ) ធ្វើមិនបាន</span></div>"+
+    "<div class=bar><label class=qm-pcl><input type=checkbox id=qmPc"+(mk.pc?" checked":"")+"> 🔑 ត្រូវការលេខកូដចូល</label><span class=note style='margin:0'>លេខ ៤ ខ្ទង់ បង្ហាញពេលបើកតេស្ត · គ្រូសរសេរលើក្ដារខៀន → អ្នកនៅក្រៅថ្នាក់ (មានតែតំណ) ធ្វើមិនបាន</span></div>"+
     "<div class=bar><label>🚫 សិស្សចាកចេញពីផ្ទាំងតេស្ត៖</label><select id=qmX>"+[[0,"កត់ត្រា និងព្រមានតែប៉ុណ្ណោះ"],[1,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ១"],[2,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ២"],[3,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៣"],[5,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៥"]].map(function(o){return"<option value="+o[0]+(o[0]===mk.lx?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select><span class=note style='margin:0'>ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់ → កត់ត្រា និងបង្ហាញក្នុងលទ្ធផល 🚩</span></div>"+
     "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
-    (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+(mk.kind==="c"?"ប្រឡងបិទ» ដោយស្វ័យប្រវត្តិ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន)":KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ")+"</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"</div>";
+    (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+(mk.kind==="c"?"ប្រឡងបិទ» ដោយស្វ័យប្រវត្តិ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន)":KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ")+"</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"<button type=button data-qa=goexam style='margin-left:auto' title='វិញ្ញាសាសរសេរលើក្រដាស · បោះពុម្ព ឬមើលអនឡាញ'>📝 ប្រឡងទម្រង់បើក →</button></div>";
   if(!c){$("qzBody").innerHTML=h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>";return}
   if(!C){$("qzBody").innerHTML=h+"<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានកម្មវិធីសិក្សា។</p>";return}
   var cnt={};pool.forEach(function(q){if(!inMk(q)&&mk.ls[q.ls])return;var k=q.ls+"_"+q.lv;cnt[k]=(cnt[k]||0)+1});
@@ -838,6 +838,7 @@ $("qzBody").addEventListener("click",function(e){
   if(a==="g"){fG=+b.dataset.g;fL="";renderQuiz();return}
   if(a==="more"){qbShow+=QB_PAGE;var y=window.scrollY;renderBank();window.scrollTo(0,y);return}
   if(a==="auto"){autoDlg();return}
+  if(a==="goexam"){var sb=$("qzSeg").querySelector("[data-qv=exam]");if(sb)sb.click();return}
   if(a==="new")qDialog();
   else if(a==="tex")texImport();
   else if(a==="shuffle"){mk.title=($("qmTi")||{}).value||mk.title;mk.dur=+(($("qmD")||{}).value)||mk.dur;doShuffle()}
