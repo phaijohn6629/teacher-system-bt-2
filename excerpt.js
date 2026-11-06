@@ -181,33 +181,47 @@ window.renderCx=renderCx;
    att/{…}.d[DD][ម៉ោង].tx = «ផៃ ចន(L), សុខា(P), ដារា(A)» · ស្វែងរកតាម cn (ថ្នាក់) + m (ខែ)
    ម៉ោងត្រួតគ្នា (ឧ. ជួរ ៣–៤ · វត្តមាន ៣ និង ៤) → រួមឈ្មោះ (មិនជាន់)
    r.aa = អត្ថបទដែលបំពេញស្វ័យប្រវត្តិលើកមុន → បើគ្រូសរសេរដោយដៃ (r.a ≠ r.aa) មិនជំនួសទេ */
-var attC={};
-function attLoad(cn,mo){
-  var k=cn+"|"+mo,o=attC[k];
+var attC={},attWarn=false;
+function attCk(n){return String(n||"").replace(/[^A-Za-z0-9-]/g,"")}
+/* មួយ query ក្នុងមួយខែ (m) · ផ្គូផ្គងថ្នាក់តាម cn ឬ k (ទិន្នន័យចាស់គ្មាន cn) */
+function attLoad(mo){
+  var o=attC[mo];
   if(o&&(o.p||Date.now()-o.t<60000))return o.p||Promise.resolve(o.a);   /* ចងចាំ ១ នាទី */
-  o=attC[k]={t:Date.now(),a:o?o.a:[]};
-  o.p=FB.getDocs(FB.query(FB.collection(db,"att"),FB.where("cn","==",cn),FB.where("m","==",mo))).then(function(sn){
+  o=attC[mo]={t:Date.now(),a:o?o.a:[]};
+  o.p=FB.getDocs(FB.query(FB.collection(db,"att"),FB.where("m","==",mo))).then(function(sn){
     var a=[];sn.forEach(function(d){a.push(d.data())});o.a=a;o.t=Date.now();o.p=null;return a;
-  },function(e){console.warn("att→សម្រង់:",cn,mo,e&&e.code);o.p=null;return o.a});
+  },function(e){console.warn("att→សម្រង់:",mo,e&&e.code);o.p=null;
+    if(e&&e.code==="permission-denied"&&!attWarn){attWarn=true;notify("⚠️ សម្រង់អត្ថបទមិនអាចអានវត្តមានបាន — សូម Admin Publish firestore.rules កំណែថ្មី")}
+    return o.a});
   return o.p;
+}
+function attOfCls(docs,cls){var c=attCk(cls);return docs.filter(function(d){return d.cn?d.cn===cls:String(d.k||"").split("_").slice(1).join("_")===c})}
+/* ឈ្មោះ(L/P/A)៖ ប្រើ tx បើមាន · ទិន្នន័យចាស់ → បង្កើតពីបញ្ជីឈ្មោះថ្នាក់ (rs) */
+function attTx(doc,rec){
+  if(rec.tx!=null)return String(rec.tx).split(", ").filter(Boolean);
+  var r=rec.r||{},ks=Object.keys(r);if(!ks.length)return[];
+  var TX={L:"L",E:"P",U:"A"},c=((window.rs&&rs.c&&rs.c[doc.o])||[]).filter(function(x){return attCk(x.n)===attCk(doc.cn||String(doc.k||"").split("_").slice(1).join("_"))})[0],ix={},nm={};
+  ((c&&c.st)||[]).forEach(function(s,i){var k=s.id?"i:"+s.id:"n:"+s.n;ix[k]=i;nm[k]=s.n});
+  return ks.sort(function(a,b){return(ix[a]==null?999:ix[a])-(ix[b]==null?999:ix[b])}).map(function(k){return(nm[k]||k.replace(/^[in]:/,""))+"("+(TX[r[k]]||r[k])+")"});
 }
 function attFill(){
   if(!window.FB||!window.db||!canEd(cxT))return;
-  var rec=cxRec(false);if(!rec||!rec.rows)return;
-  var need={};rec.rows.forEach(function(r){if(r.cls&&r.d&&cxP(r.p))need[r.cls+"|"+r.d.slice(0,7)]=1});
-  var ks=Object.keys(need);if(!ks.length)return;
-  var tid=cxT;
-  Promise.all(ks.map(function(k){var q=k.split("|");return attLoad(q[0],q[1]).then(function(a){return[k,a]})})).then(function(res){
-    if(cxT!==tid||cxRec(false)!==rec)return;
+  var rec0=cxRec(false);if(!rec0||!rec0.rows)return;
+  var need={};rec0.rows.forEach(function(r){if(r.cls&&r.d&&cxP(r.p))need[r.d.slice(0,7)]=1});
+  var ms=Object.keys(need);if(!ms.length)return;
+  var tid=cxT,key=cxKey();
+  Promise.all(ms.map(function(m){return attLoad(m).then(function(a){return[m,a]})})).then(function(res){
+    if(cxT!==tid||cxKey()!==key)return;
+    var rec=cxRec(false);if(!rec||!rec.rows)return;   /* កំណែបច្ចុប្បន្ន (cx អាចបានផ្ទុកពី Cloud ឡើងវិញ) */
     var by={};res.forEach(function(x){by[x[0]]=x[1]});
     var n=0;
     rec.rows.forEach(function(r){
       var q=cxP(r.p);if(!q||!r.cls||!r.d)return;
-      var docs=by[r.cls+"|"+r.d.slice(0,7)]||[],dd=r.d.slice(8),parts=[],got=false;
+      var docs=attOfCls(by[r.d.slice(0,7)]||[],r.cls),dd=r.d.slice(8),parts=[],got=false;
       docs.forEach(function(doc){var day=(doc.d||{})[dd]||{};
         Object.keys(day).sort(function(a,b){return(cxP(a)||[99])[0]-(cxP(b)||[99])[0]}).forEach(function(p){
           var z=cxP(p);if(!z||z[1]<q[0]||z[0]>q[1])return;got=true;
-          String(day[p].tx||"").split(", ").forEach(function(s){if(s&&parts.indexOf(s)<0)parts.push(s)});
+          attTx(doc,day[p]).forEach(function(s){if(parts.indexOf(s)<0)parts.push(s)});
         })});
       if(!got)return;   /* ម៉ោងនេះមិនទាន់ស្រង់វត្តមាន */
       var t=parts.join(", "),cur=r.a||"";
