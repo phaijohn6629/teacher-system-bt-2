@@ -12,14 +12,23 @@ var ES=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){re
 function TX(s){return ES(String(s||"").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ ")})).replace(/\n/g,"<br>")}
 var MO=["មករា","កុម្ភៈ","មីនា","មេសា","ឧសភា","មិថុនា","កក្កដា","សីហា","កញ្ញា","តុលា","វិច្ឆិកា","ធ្នូ"];
 var RN=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"],SUB="កខគឃងចឆជឈញ";
-function head(P){var t=P.title||"ប្រឡងប្រចាំខែ";if(P.mo&&/^\d{4}-\d{2}$/.test(P.mo))t+=(/ខែ\s*$/.test(t)?" ":" ខែ ")+MO[+P.mo.slice(5)-1]+" ឆ្នាំ "+KN(P.mo.slice(0,4));return t}
+function head(P){var t=P.title||"ប្រឡងប្រចាំខែ";if(P.fmt==="bac")return t;if(P.mo&&/^\d{4}-\d{2}$/.test(P.mo))t+=(/ខែ\s*$/.test(t)?" ":" ខែ ")+MO[+P.mo.slice(5)-1]+" ឆ្នាំ "+KN(P.mo.slice(0,4));return t}
 function total(P){return(P.secs||[]).reduce(function(s,x){return s+(+x.pts||0)},0)}
 function lunar(d){try{var a=d.split("-").map(Number);return window.KhCal?KhCal.fmt(a[0],a[1],a[2]).replace(" ព.ស. "," ព.ស ").replace(/([០-៩])(កើត|រោច)/,"$1 $2"):""}catch(e){return""}}
 function solar(d){var a=String(d||"").split("-").map(Number);if(a.length<3||!a[0])return"";return"ថ្ងៃទី "+KN(a[2])+" ខែ"+MO[a[1]-1]+" ឆ្នាំ "+KN(a[0])}
 function fig(f){return f&&window.FIG?"<div class=exp-fig>"+FIG.svg(f)+"</div>":""}
+/* ក្បាលទម្រង់បាក់ឌុប៖ ឆ្វេង = ប្រឡង · សម័យ · វិញ្ញាសា · រយៈពេល · ស្ដាំ = ប្រអប់បេក្ខជន · កណ្ដាល = «ប្រធាន» */
+function bacHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.length===3&&a[0]?KN(a[2])+" "+MO[a[1]-1]+" "+KN(a[0]):"..................",D="<span class=exp-dot>....................</span>";
+  return"<div class=\"exp exp-bac\"><div class=exp-hd><div class=exp-hl>"+
+    "<div class=exp-b>"+ES(P.title||"ប្រឡងសាកល្បង")+"</div>"+
+    "<div class=exp-f>សម័យប្រឡង ៖ <span class=exp-n>"+ss+"</span></div>"+
+    "<div class=exp-f>វិញ្ញាសា ៖ <span class=exp-n>"+ES(P.sub||"គណិតវិទ្យា")+(P.trk?" ("+ES(P.trk)+")":"")+"</span></div>"+
+    "<div class=exp-f>រយៈពេល ៖ <span class=exp-n>"+KN(+P.dur||0)+" នាទី ("+KN(T)+" ពិន្ទុ)</span></div></div>"+
+    (o.key?"":"<div class=exp-cd><div class=exp-f>មណ្ឌលប្រឡង ៖ "+D+"</div><div class=exp-f>លេខបន្ទប់ ៖ <span class=exp-dot>.........</span> លេខតុ ៖ <span class=exp-dot>.........</span></div><div class=exp-f>ឈ្មោះបេក្ខជន ៖ "+D+"</div><div class=exp-f>ហត្ថលេខាបេក្ខជន ៖ <span class=exp-dot>..............</span></div></div>")+
+    "</div><div class=exp-t>"+(o.key?"ចម្លើយ និងដំណោះស្រាយ":"ប្រធាន")+(o.lbl?" "+ES(o.lbl):"")+"</div>"}
 function html(P,o){
-  o=o||{};var key=!!o.key,b=o.v==="b",T=total(P);
-  var h="<div class=exp><div class=exp-hd><div class=exp-hl>"+
+  o=o||{};var key=!!o.key,b=o.v==="b",T=total(P),bac=P.fmt==="bac";
+  var h=bac?bacHead(P,o,T):"<div class=exp><div class=exp-hd><div class=exp-hl>"+
     "<div class=exp-b>"+ES(P.school||"វិទ្យាល័យ")+"</div>"+
     "<div class=exp-b>មុខវិជ្ជា "+ES(P.sub||"គណិតវិទ្យា")+" ថ្នាក់ទី <span class=exp-n>"+ES(P.cls||"")+"</span></div>"+
     (key?"":"<div class=exp-f>សិស្សឈ្មោះ <span class=exp-dot>.................................</span></div><div class=exp-f>ថ្នាក់ទី <span class=exp-dot>...................</span> លេខID<span class=exp-dot>...................</span></div>")+
@@ -34,6 +43,7 @@ function html(P,o){
     else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x):"")+"</div>"}).join("")+"</div>";
     h+="</div>";
   });
+  if(bac)return h+"</div>";
   var ld=lunar(P.date);
   h+="<div class=exp-ft><div class=exp-fl><div>បានឃើញ និងពិនិត្យ</div><div class=exp-nm>"+ES(P.ck||"")+"</div></div>"+
     "<div class=exp-fr>"+(ld?"<div>"+ES(ld)+"</div>":"")+"<div>"+ES(P.place||"រាជធានីភ្នំពេញ")+" "+solar(P.date)+"</div><div class=exp-au>អ្នកចេញវិញ្ញាសា</div><div class=exp-nm>"+ES(P.au||"")+"</div></div></div></div>";
@@ -55,6 +65,7 @@ var CSS=FF+".exp{font-family:'ExKep','Battambang','Kantumruy Pro',system-ui,sans
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
 ".exp-au{font-family:'ExM1','Moul','Kantumruy Pro',serif;color:#1e3a8a;margin-top:2px}.exp-nm{font-family:'ExM1','Moul','Kantumruy Pro',serif;margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+
+".exp-cd{border:1.5px solid #1e3a8a;border-radius:4px;padding:2px 12px;align-self:flex-start}.exp-bac .exp-t{font-size:17px;margin:10px 0 12px}"+
 "@media (max-width:600px){.exp-hd{flex-direction:column}.exp-sc{display:none}.exp-it.two{grid-template-columns:1fr}.exp-it{margin-left:14px}.exp-ft{flex-direction:column-reverse;gap:10px}.exp-fl{margin-top:0}}";
 window.EXP={html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
 })();

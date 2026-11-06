@@ -57,7 +57,7 @@ function newExam(){
   return E;
 }
 function gOf(E){return parseInt(E.cls)||0}
-function P(E){return{school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
+function P(E){return{fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
 /* ---------- រក្សាទុក (exams/{id}) ---------- */
 function save(now){
   X.dirty=true;X.status="…";clearTimeout(X.saveT);
@@ -96,17 +96,20 @@ function editor(){
   if(on)h+=onlineBox();
   h+="<div class=ex-grid><div class=card><h3 style='margin-top:0'>ក្បាល និងជើងវិញ្ញាសា</h3><div class=fg>"+
     "<div><label>ថ្នាក់</label><select data-ef=cls>"+cl.map(function(c){return"<option"+(c.n===E.cls?" selected":"")+">"+esc(c.n)+"</option>"}).join("")+(cl.some(function(c){return c.n===E.cls})?"":"<option selected>"+esc(E.cls)+"</option>")+"</select></div>"+
+    "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option></select></div>"+
+    (E.fmt==="bac"?"<div><label>ផ្នែក</label><input data-ef=trk list=exTrk value='"+esc(E.trk||"")+"'><datalist id=exTrk><option value='វិទ្យាសាស្ត្រ'><option value='វិទ្យាសាស្ត្រសង្គម'></datalist></div>":"")+
     "<div><label>ចំណងជើង</label><input data-ef=title list=exTl value='"+esc(E.title)+"'><datalist id=exTl>"+TITLES.map(function(t){return"<option value='"+t+"'>"}).join("")+"</datalist></div>"+
-    "<div><label>ខែ (ទុកទទេ = មិនបង្ហាញ)</label><input type=month data-ef=mo value='"+esc(E.mo||"")+"'></div>"+
+    (E.fmt==="bac"?"":"<div><label>ខែ (ទុកទទេ = មិនបង្ហាញ)</label><input type=month data-ef=mo value='"+esc(E.mo||"")+"'></div>")+
     "<div><label>មុខវិជ្ជា</label><input data-ef=sub value='"+esc(E.sub)+"'></div>"+
     "<div><label>រយៈពេល (នាទី)</label><input type=number min=5 max=300 data-ef=dur value="+(+E.dur||45)+"></div>"+
-    "<div><label>កាលបរិច្ឆេទ</label><input type=date data-ef=date value='"+esc(E.date)+"'></div>"+
+    "<div><label>"+(E.fmt==="bac"?"សម័យប្រឡង":"កាលបរិច្ឆេទ")+"</label><input type=date data-ef=date value='"+esc(E.date)+"'></div>"+
     "<div><label>ធ្វើនៅ</label><input data-ef=place value='"+esc(E.place)+"'></div>"+
     "<div><label>អ្នកចេញវិញ្ញាសា</label><input data-ef=au value='"+esc(E.au)+"'></div>"+
     "<div><label>បានឃើញ និងពិនិត្យ</label><input data-ef=ck value='"+esc(E.ck)+"' placeholder='ឈ្មោះនាយក/នាយករង'></div>"+
     "<div><label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-ef=ab"+(E.ab?" checked":"")+" style='width:auto;margin:0'> វិញ្ញាសា ក/ខ (លេខខុសគ្នា)</label><small class=note>សិស្សអង្គុយជិតគ្នាទទួលវិញ្ញាសាខុសគ្នា</small></div>"+
     "</div></div>"+
     "<div class=card><h3 style='margin-top:0'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small></h3>"+
+    (g===12&&window.EXGEN&&EXGEN.bac?"<button type=button class=primary data-ex=bac style='width:100%;margin-bottom:8px'>📋 បង្កើតវិញ្ញាសាគំរូបាក់ឌុប (៨ ផ្នែក · ១៥០ នាទី · ១២៥ ពិន្ទុ)</button>":"")+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
         "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+[1,2,3,4].filter(function(v){return v<4||hasLv4(g,s.ls)}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
@@ -138,7 +141,7 @@ function printIt(kind){
 /* ---------- 📱 ប្រឡងអនឡាញ ---------- */
 function examLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"exam.html?e="+encodeURIComponent(id)}
 function code6(){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return String(100000+a[0]%900000)}
-function pub(E){return JSON.stringify({school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,
+function pub(E){return JSON.stringify({fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,
   secs:E.secs.map(function(s){return{pts:s.pts,inst:s.inst,it:s.it.map(function(x){return{q:x.q,fig:x.fig}})}})})}
 function goOnline(){
   var E=X.E,F=window.FB,c=myCls().filter(function(x){return x.n===E.cls})[0];
@@ -210,6 +213,9 @@ function act(a,q){
   if(a==="vr"){var sid=q[1];if(!confirm("អនុញ្ញាតឱ្យសិស្សនេះបើកវិញ្ញាសាលើឧបករណ៍ផ្សេង?"))return;F.deleteDoc(F.doc(window.db,"exv",E.id+"_"+sid)).then(function(){notify("បានអនុញ្ញាត")},function(){alert("មិនអាចលុបបានទេ")});return}
   var i=+q[1],s=E.secs[i];
   if(a==="add"){var last=E.secs[E.secs.length-1],L=lsList(g),ls=last?last.ls:(L[0]&&L[0][1][0][0]);if(!ls){alert("ថ្នាក់នេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់");return}E.secs.push(newSec(g,ls))}
+  else if(a==="bac"){if(E.secs.length&&!confirm("ជំនួសផ្នែកទាំងអស់ដោយវិញ្ញាសាគំរូបាក់ឌុប (៨ ផ្នែក · ១២៥ ពិន្ទុ)?\n\nI ប្រូបាប · II លីមីត · III ចំនួនកុំផ្លិច · IV អាំងតេក្រាល · V សមីការឌីផេរ៉ង់ស្យែល · VI អេលីប · VII វ៉ិចទ័រក្នុងលំហ · VIII សិក្សាអនុគមន៍"))return;
+    E.secs=EXGEN.bac().map(function(x){var s2={ls:x.ls,lv:x.lv,n:1,pts:x.pts,inst:""};fill(s2,g);if(E.ab)fill(s2,g,"itB");return s2});
+    E.fmt="bac";E.dur=150;E.trk=E.trk||"វិទ្យាសាស្ត្រ";E.mo="";if(TITLES.indexOf(E.title)>=0)E.title="ប្រឡងសាកល្បង"}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q});s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av)}
@@ -223,6 +229,7 @@ function onInput(e){
   var t=e.target,E=X.E;if(!E)return;
   if((t.tagName==="SELECT"||t.type==="checkbox")&&e.type!=="change")return;
   if(t.dataset.ef){var f=t.dataset.ef;
+    if(f==="fmt"){E.fmt=t.value;if(E.fmt==="bac"&&!E.trk)E.trk="វិទ្យាសាស្ត្រ";save();editor();return}
     if(f==="ab"){E.ab=t.checked;if(E.ab)E.secs.forEach(function(s){fill(s,gOf(E),"itB")});save();editor();return}
     if(f==="cls"){var og=gOf(E);E.cls=t.value;if(gOf(E)!==og&&E.secs.length&&confirm("ថ្នាក់ថ្មីជាកម្រិតផ្សេង។ បង្កើតផ្នែកទាំងអស់ឡើងវិញតាមកម្រិតថ្នាក់ថ្មី?")){var L=lsList(gOf(E)),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(gOf(E),f0[0])]:[]}save();editor();return}
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
