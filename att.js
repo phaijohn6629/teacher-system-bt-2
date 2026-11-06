@@ -6,6 +6,7 @@
      "ម៉ោង" = "3" ឬ "3-4" (ម៉ោងជាប់គ្នា មុខវិជ្ជាដដែល = ១ ដង · រាប់ជាចំនួនម៉ោង)
    - ប្រធានថ្នាក់ស្រង់/កែបានតែថ្ងៃនេះ និងម្សិលមិញ · គ្រូកែបានគ្រប់ថ្ងៃ · ការកែរបស់ប្រធានថ្នាក់ចូល «ប្រវត្តិសកម្មភាព» (mclog)
    - មិនប៉ះពាល់ចំនួនអវត្តមានប្រចាំខែ (s.ab) ដែលមានស្រាប់
+   - tx = «ផៃ ចន(L), សុខា(P), ដារា(A)» → excerpt.js បំពេញ «អវត្តមានសិស្ស» ក្នុងសម្រង់អត្ថបទរបស់គ្រូដែលបង្រៀនម៉ោងនោះ (cn = ឈ្មោះថ្នាក់ សម្រាប់ស្វែងរក)
    ត្រូវផ្ទុកបន្ទាប់ពី script.js · sched.js · monitor.js
    ======================================================================== */
 (function(){
@@ -112,12 +113,14 @@ function save(x){
   var day=A.day,mo=day.slice(0,7),dd=day.slice(8),p=A.ed,id=docId(x,mo),ref=FB.doc(db,"att",id),me=prof&&prof.id||who.id;
   var nm=x.mon?(who.msn||me)+" ("+(who.rl||"ប្រធានថ្នាក់")+")":(who.name||me);
   var r={};Object.keys(A.draft).forEach(function(k){if(CODE[A.draft[k]])r[k]=A.draft[k]});
-  var rec={r:r,by:me,bn:nm,at:Date.now(),s:A.es||"",t:A.et||""},old=null;
+  /* tx = អត្ថបទសម្រាប់ «សម្រង់អត្ថបទ» (excerpt.js)៖ ផៃ ចន(L), សុខា(P), ដារា(A) — តាមលំដាប់បញ្ជីឈ្មោះ */
+  var TX={L:"L",E:"P",U:"A"},tx=x.c.st.filter(function(s){return r[skey(s)]}).map(function(s){return s.n+"("+TX[r[skey(s)]]+")"}).join(", ");
+  var rec={r:r,tx:tx,by:me,bn:nm,at:Date.now(),s:A.es||"",t:A.et||""},old=null;
   A.busy=true;box();
   return FB.runTransaction(db,function(tx){
     return tx.get(ref).then(function(sn){
       var d=sn.exists()?(sn.data().d||{}):{};old=d[dd]&&d[dd][p]||null;d[dd]=d[dd]||{};d[dd][p]=rec;
-      tx.set(ref,{o:x.tid,k:x.k,m:mo,d:d});return d;
+      tx.set(ref,{o:x.tid,k:x.k,m:mo,cn:x.c.n,d:d});return d;
     });
   }).then(function(d){
     var o=A.docs[id]||(A.docs[id]={});o.d=d;o.err="";A.busy=false;A.ed=null;A.draft={};box();

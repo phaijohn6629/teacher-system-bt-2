@@ -174,8 +174,49 @@ function renderCx(){
     "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-cklu "+(ft.klu==="1"?"checked":"")+" "+(ro?"disabled":"")+" style='width:auto;margin:0'> បង្ហាញថ្ងៃតាមចន្ទគតិខ្មែរ</label>"+
     "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-csgo "+(ft.sgo==="0"?"":"checked")+" "+(ro?"disabled":"")+" style='width:auto;margin:0'> បោះពុម្ពជាមួយហត្ថលេខា "+(getSig(cxT)?"":"(មិនទាន់មានហត្ថលេខា៖ ផ្ទុកក្នុងទំព័រ Timesheet)")+"</label></fieldset></div>";
   $("cxBody").innerHTML=h;
+  attFill();
 }
 window.renderCx=renderCx;
+/* ---------- 🕘 វត្តមានតាមម៉ោង (att/ ពី att.js) → «អវត្តមានសិស្ស» ----------
+   att/{…}.d[DD][ម៉ោង].tx = «ផៃ ចន(L), សុខា(P), ដារា(A)» · ស្វែងរកតាម cn (ថ្នាក់) + m (ខែ)
+   ម៉ោងត្រួតគ្នា (ឧ. ជួរ ៣–៤ · វត្តមាន ៣ និង ៤) → រួមឈ្មោះ (មិនជាន់)
+   r.aa = អត្ថបទដែលបំពេញស្វ័យប្រវត្តិលើកមុន → បើគ្រូសរសេរដោយដៃ (r.a ≠ r.aa) មិនជំនួសទេ */
+var attC={};
+function attLoad(cn,mo){
+  var k=cn+"|"+mo,o=attC[k];
+  if(o&&(o.p||Date.now()-o.t<60000))return o.p||Promise.resolve(o.a);   /* ចងចាំ ១ នាទី */
+  o=attC[k]={t:Date.now(),a:o?o.a:[]};
+  o.p=FB.getDocs(FB.query(FB.collection(db,"att"),FB.where("cn","==",cn),FB.where("m","==",mo))).then(function(sn){
+    var a=[];sn.forEach(function(d){a.push(d.data())});o.a=a;o.t=Date.now();o.p=null;return a;
+  },function(e){console.warn("att→សម្រង់:",cn,mo,e&&e.code);o.p=null;return o.a});
+  return o.p;
+}
+function attFill(){
+  if(!window.FB||!window.db||!canEd(cxT))return;
+  var rec=cxRec(false);if(!rec||!rec.rows)return;
+  var need={};rec.rows.forEach(function(r){if(r.cls&&r.d&&cxP(r.p))need[r.cls+"|"+r.d.slice(0,7)]=1});
+  var ks=Object.keys(need);if(!ks.length)return;
+  var tid=cxT;
+  Promise.all(ks.map(function(k){var q=k.split("|");return attLoad(q[0],q[1]).then(function(a){return[k,a]})})).then(function(res){
+    if(cxT!==tid||cxRec(false)!==rec)return;
+    var by={};res.forEach(function(x){by[x[0]]=x[1]});
+    var n=0;
+    rec.rows.forEach(function(r){
+      var q=cxP(r.p);if(!q||!r.cls||!r.d)return;
+      var docs=by[r.cls+"|"+r.d.slice(0,7)]||[],dd=r.d.slice(8),parts=[],got=false;
+      docs.forEach(function(doc){var day=(doc.d||{})[dd]||{};
+        Object.keys(day).sort(function(a,b){return(cxP(a)||[99])[0]-(cxP(b)||[99])[0]}).forEach(function(p){
+          var z=cxP(p);if(!z||z[1]<q[0]||z[0]>q[1])return;got=true;
+          String(day[p].tx||"").split(", ").forEach(function(s){if(s&&parts.indexOf(s)<0)parts.push(s)});
+        })});
+      if(!got)return;   /* ម៉ោងនេះមិនទាន់ស្រង់វត្តមាន */
+      var t=parts.join(", "),cur=r.a||"";
+      if(cur===t||(cur.trim()&&cur!==(r.aa||"")))return;   /* ដូចគ្នា ឬគ្រូសរសេរដោយដៃ */
+      r.a=t;r.aa=t;n++;
+    });
+    if(n){saveCx();if(!$("p14").hidden&&!document.querySelector("#cxBody :focus"))renderCx()}
+  });
+}
 /* សម្រាប់ Workplan (sched.js)៖ ថ្ងៃ → ["10NGS-C៖ មេរៀនទី២ ...", ...] នៃគ្រូ tid ក្នុងខែ ym */
 window.CXDAYS=function(tid,ym){
   var o={},done={};
