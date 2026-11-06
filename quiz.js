@@ -25,6 +25,26 @@ var BLOOM={"ចងចាំ":1,"យល់":1,"អនុវត្ត":2,"វិ�
 /* ---------- ជំនួយ ---------- */
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function loadJs(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+/* ---------- ការអានម្ដង (មិនតាមដានផ្ទាល់)៖ firestore-lite (REST) ----------
+   SDK ពេញ បញ្ជូន getDocs តាមខ្សែតាមដានផ្ទាល់ (onSnapshot) តែមួយ → រង់ចាំពីក្រោយការ Sync ធំៗ/long-polling ទោះទិន្នន័យតូច
+   lite ហៅ REST ផ្ទាល់ (App/Auth ដដែល) · បរាជ័យ → ប្រើ SDK ពេញវិញស្វ័យប្រវត្តិ */
+var liteP=null;
+function lite(){
+  if(liteP)return liteP;
+  liteP=import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js").then(function(L){return{L:L,db:L.getFirestore()}})
+    .catch(function(e){console.warn("firestore-lite:",e);return null});
+  return liteP;
+}
+/* qGet("tests",["o","==",id]) · dGet("tkeys",id) → snapshot (API ដូចគ្នា៖ forEach · id · data() · exists() · size) */
+function qGet(col,w){
+  var full=function(){var F=window.FB,c=F.collection(window.db,col);return F.getDocs(w?F.query(c,F.where(w[0],w[1],w[2])):c)};
+  return lite().then(function(x){if(!x)return full();var L=x.L,c=L.collection(x.db,col);
+    return L.getDocs(w?L.query(c,L.where(w[0],w[1],w[2])):c).catch(function(e){console.warn("lite→full:",col,e&&e.code);return full()})});
+}
+function dGet(col,id){
+  var full=function(){return window.FB.getDoc(window.FB.doc(window.db,col,id))};
+  return lite().then(function(x){if(!x)return full();return x.L.getDoc(x.L.doc(x.db,col,id)).catch(function(e){console.warn("lite→full:",col,e&&e.code);return full()})});
+}
 var kxP=null;
 function katexReady(){
   if(kxP)return kxP;
@@ -61,7 +81,7 @@ function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a}
 var QIM={};
 function qimg(k){
   if(QIM[k])return QIM[k];
-  QIM[k]=FB.getDoc(FB.doc(db,"qimg",k)).then(function(d){return d.exists()?d.data().d:""},function(){delete QIM[k];return""});
+  QIM[k]=dGet("qimg",k).then(function(d){return d.exists()?d.data().d:""},function(){delete QIM[k];return""});
   return QIM[k];
 }
 function figHtml(q,k){return(q.fg&&window.FIG?FIG.svg(q.fg):"")+(q.im?"<div class=qz-im data-qim='"+esc(k)+"'><span class=note>🖼️ កំពុងផ្ទុករូប…</span></div>":"")}
@@ -88,9 +108,9 @@ function qErr(e){return e&&e.code==="permission-denied"?"គ្មានសិ�
 function loadLegacy(){
   if(legP)return legP;
   if(window.unsubs&&legReg!==window.unsubs){legReg=window.unsubs;unsubs.push(function(){legP=null;LEG={}})}   /* ចាកចេញ → លុបចោល */
-  legP=FB.getDoc(FB.doc(db,"cfg","qbdone")).catch(function(){return null}).then(function(f){
+  legP=dGet("cfg","qbdone").catch(function(){return null}).then(function(f){
     if(f&&f.exists()&&f.data().v)return;
-    return FB.getDocs(FB.collection(db,"qb")).then(function(sn){
+    return qGet("qb").then(function(sn){
       var todo=[],left=0;
       sn.forEach(function(d){var v=d.data();if(v.mig)return;var arr=[];try{arr=JSON.parse(v.j)||[]}catch(x){}var o=v.o||d.id;if(!arr.length)return;left++;LEG[o]=arr;if(isAdm()||who.id===o)todo.push([o,arr])});
       rebuild();if(left)qbFresh();   /* មានលំហាត់ចាស់មិនទាន់ផ្ទេរ → បង្ហាញបន្ថែម */
@@ -496,9 +516,8 @@ var tOK=false,tErr="",tReg=null,tP=null;
 function loadTests(force){
   if(tOK&&!force)return Promise.resolve();
   if(tP)return tP;
-  var FB=window.FB,q=isAdm()?FB.collection(window.db,"tests"):FB.query(FB.collection(window.db,"tests"),FB.where("o","==",who.id));
   if(window.unsubs&&tReg!==window.unsubs){tReg=window.unsubs;unsubs.push(function(){tOK=false;tErr="";tests=[];tP=null})}
-  tP=FB.getDocs(q).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")});tests=a;tErr=""})
+  tP=qGet("tests",isAdm()?null:["o","==",who.id]).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")});tests=a;tErr=""})
     .catch(function(e){console.error(e);tErr="មិនអាចផ្ទុកបញ្ជីតេស្តបានទេ · សូមពិនិត្យអ៊ីនធឺណិត"})
     .then(function(){tOK=true;tP=null});
   return tP;
@@ -516,7 +535,9 @@ function resSoon(t,now){clearTimeout(resT);var go=function(){if(QV==="res"&&curT
 function watchSubs(t){
   if(subUn){subUn();subUn=null}clearTimeout(resT);subs=[];if(!t)return;
   var FB=window.FB,first=true;
-  if(!keyOf[t.id])FB.getDoc(FB.doc(window.db,"tkeys",t.id)).then(function(d){try{keyOf[t.id]=JSON.parse(d.data().a)}catch(x){keyOf[t.id]={}}resSoon(t,true)}).catch(function(){});
+  if(!keyOf[t.id])dGet("tkeys",t.id).then(function(d){try{keyOf[t.id]=JSON.parse(d.data().a)}catch(x){keyOf[t.id]={}}resSoon(t,true)}).catch(function(){});
+  /* បង្ហាញភ្លាមតាម REST · បន្ទាប់មក onSnapshot តាមដានសិស្សផ្ញើថ្មី */
+  qGet("subs",["t","==",t.id]).then(function(sn){if(!first||curTest!==t)return;var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,true)}).catch(function(){});
   subUn=FB.onSnapshot(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)),function(sn){
     var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,first);first=false;autoDrive(t);
   },function(e){console.error("subs:",e)});
@@ -626,8 +647,8 @@ var PC={list:null,ci:0,rows:{},busy:false};
 function pcKey(s,i){return String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_")}
 function pcNames(c){return c.st.map(function(s,i){return{k:pcKey(s,i),n:s.n||("សិស្ស "+(i+1))}})}
 function pcUrl(code){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"practice.html#c="+code}
-function pcLoad(){return FB.getDocs(FB.query(FB.collection(db,"pcls"),FB.where("o","==",who.id))).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});PC.list=a},function(e){console.error("pcls:",e);PC.list=[];PC.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ (សូម Admin Publish firestore.rules កំណែថ្មី · មាន pcls/prt)":"មិនអាចផ្ទុកបានទេ"})}
-function pcRows(code){return FB.getDocs(FB.query(FB.collection(db,"prt"),FB.where("c","==",code))).then(function(sn){var o={};sn.forEach(function(d){var v=d.data();o[v.k]=v});PC.rows[code]=o},function(e){console.error("prt:",e);PC.rows[code]={}})}
+function pcLoad(){return qGet("pcls",["o","==",who.id]).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});PC.list=a},function(e){console.error("pcls:",e);PC.list=[];PC.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ (សូម Admin Publish firestore.rules កំណែថ្មី · មាន pcls/prt)":"មិនអាចផ្ទុកបានទេ"})}
+function pcRows(code){return qGet("prt",["c","==",code]).then(function(sn){var o={};sn.forEach(function(d){var v=d.data();o[v.k]=v});PC.rows[code]=o},function(e){console.error("prt:",e);PC.rows[code]={}})}
 function renderPrac(){
   if(!PC.list){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";pcLoad().then(renderPrac);return}
   var cl=myClasses(who.id);if(PC.ci>=cl.length)PC.ci=0;var c=cl[PC.ci],g=c?parseInt(c.n):0;
@@ -685,9 +706,9 @@ window.QUIZ={
       return Promise.all(Object.keys(pick).map(function(k){return self.scores(pick[k]).then(function(S){out[k]={t:pick[k],n:S.n,by:S.by,bn:S.bn,names:S.names}})})).then(function(){return out});
     });
   },
-  list:function(tid){var FB=window.FB;return FB.getDocs(FB.query(FB.collection(window.db,"tests"),FB.where("o","==",tid))).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});return a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")})})},
-  scores:function(t){var FB=window.FB;
-    return Promise.all([FB.getDoc(FB.doc(window.db,"tkeys",t.id)),FB.getDocs(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)))]).then(function(r){
+  list:function(tid){return qGet("tests",["o","==",tid]).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});return a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")})})},
+  scores:function(t){
+    return Promise.all([dGet("tkeys",t.id),qGet("subs",["t","==",t.id])]).then(function(r){
       var K={};try{K=JSON.parse(r[0].data().a)}catch(x){}var by={},bn={},dn={};
       /* by = តាមលេខសម្គាល់ក្នុងតេស្ត · bn = តាមឈ្មោះ (ពេលបញ្ជីឈ្មោះថ្នាក់ប្ដូរក្រោយបង្កើតតេស្ត · ឈ្មោះជាន់គ្នា = មិនប្រើ) */
       r[1].forEach(function(d){var s=d.data(),sc=0;t.items.forEach(function(q){var k=K[q.id];if(k&&correct({t:k.t,a:k.a},s.a&&s.a[q.id]))sc++});by[s.sid]=sc;
