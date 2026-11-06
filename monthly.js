@@ -69,33 +69,48 @@ function renderMs(){
         "<td class=ms-auto data-o=a>"+fmt(o.a)+"</td><td class=ms-auto data-o=t>"+fmt(o.t)+"</td><td class=ms-auto data-o=h>"+fmt(o.h)+"</td><td class=ms-auto data-o=b>"+fmt(o.b)+"</td><td class='ms-auto ms-b' data-o=act>"+fmt(o.act)+"</td>"+
         "<td class=ms-in><input data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+"></td><td class=ms-in><input data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
         "<td class=ms-b data-o=tot>"+fmt(o.tot)+"</td><td data-o=g>"+gbadge(o.g)+"</td></tr>"}).join("")+"</tbody></table></div>";
-  h=testInfo(R)+h+summary(c)+settingsHtml();
+  h=testInfo(R,c)+h+summary(c)+settingsHtml();
   $("msBody").innerHTML=h;
-  if(ed&&!syncing)syncTests(c);
+  if(ed)syncTests(c);
 }
 /* តេស្តលើកទី១/ទី២ ពីផ្នែកតេស្ត */
-function testInfo(R){
+function testInfo(R,c){
   var S=R.src||{};
   return"<div class=ms-tests>"+["t1","t2"].map(function(k){var x=S[k],L=k==="t1"?"តេស្តលើកទី១":"តេស្តលើកទី២";
-    return"<div class='ms-tc"+(x?" on":"")+"'><b>📝 "+L+"</b>"+(x?"<span>«"+esc(x.title)+"» · "+kn(x.n)+" លំហាត់ · ធ្វើរួច "+kn(x.cnt)+" នាក់</span>":"<span class=note style='margin:0'>មិនទាន់មានតេស្ត «"+L+"» សម្រាប់ខែនេះ — បង្កើតនៅ «📝 តេស្ត → 🧪 បង្កើតតេស្ត» ដោយជ្រើសប្រភេទ «"+L+"»</span>")+"</div>"}).join("")+
+    /* សិស្សដែលគ្មានពិន្ទុ (មិនបានផ្ញើ ឬរកមិនឃើញក្នុងតេស្ត) */
+    var miss=x?c.st.filter(function(s){var r=(R.r||{})[key(s)];return!r||r[k]==null}).map(function(s){return esc(s.n)}):[];
+    return"<div class='ms-tc"+(x?" on":"")+"'><b>📝 "+L+"</b>"+(x?"<span>«"+esc(x.title)+"» · "+kn(x.n)+" លំហាត់ · មានពិន្ទុ "+kn(c.st.length-miss.length)+"/"+kn(c.st.length)+" នាក់</span>"+
+      (miss.length?"<small style='display:block;color:#b45309'>⚠️ គ្មានពិន្ទុ ("+kn(miss.length)+")៖ "+miss.join(" · ")+"<br>(មិនទាន់ផ្ញើចម្លើយ · ពិនិត្យនៅ «📝 តេស្ត → 📊 លទ្ធផលតេស្ត»)</small>":""):"<span class=note style='margin:0'>មិនទាន់មានតេស្ត «"+L+"» សម្រាប់ខែនេះ — បង្កើតនៅ «📝 តេស្ត → 🧪 បង្កើតតេស្ត» ដោយជ្រើសប្រភេទ «"+L+"»</span>")+"</div>"}).join("")+
     "<button type=button data-msync>🔄 ធ្វើបច្ចុប្បន្នភាព</button></div>";
 }
-var syncing=false,lastSync="";
+/* ទាញពិន្ទុរាល់ពេលបើកផ្ទាំង (មិនមែនម្ដងក្នុងមួយ Session) · ការពារការទាញញឹកពេក ២០ វិនាទី · ប្ដូរថ្នាក់/ខែពេលកំពុងទាញ → ទាញម្ដងទៀតក្រោយ */
+var syncing=false,lastSync={},syncAgain=false;
+/* ផ្គូផ្គងសិស្សថ្នាក់ ↔ ចម្លើយតេស្ត៖ ១) លេខសម្គាល់ (សិស្សគ្មានលេខសម្គាល់៖ លុះត្រាឈ្មោះត្រូវគ្នា) ២) ឈ្មោះ (មិនជាន់) */
+function matchScores(c,x){
+  var out={},used={},tn={};(x.names||[]).forEach(function(e){tn[e.k]=QUIZ.nmKey(e.n)});
+  c.st.forEach(function(s,i){var sid=sidOf(s,i);
+    if(x.by[sid]!=null&&(s.id||tn[sid]===QUIZ.nmKey(s.n))){out[i]=x.by[sid];used[sid]=1}});
+  c.st.forEach(function(s,i){if(out[i]!=null)return;var sid=x.bn&&x.bn[QUIZ.nmKey(s.n)];
+    if(sid&&!used[sid]&&x.by[sid]!=null){out[i]=x.by[sid];used[sid]=1}});
+  return out;
+}
 function syncTests(c,manual){
   if(!window.QUIZ||!window.FB)return;
-  var sk=mT+"|"+mI+"|"+mM;if(!manual&&lastSync===sk)return;lastSync=sk;syncing=true;
+  if(syncing){syncAgain=true;return}
+  var sk=mT+"|"+c.n+"|"+mM;if(!manual&&lastSync[sk]&&Date.now()-lastSync[sk]<20000)return;lastSync[sk]=Date.now();syncing=true;
   var cmo=mM,ct=mT;
   QUIZ.forMonth(mT,c.n,mM).then(function(O){
-    if(cmo!==mM||ct!==mT)return;
+    var cc=cls();if(cmo!==mM||ct!==mT||!cc||cc.n!==c.n)return;c=cc;   /* ប្រើកំណែថ្នាក់បច្ចុប្បន្ន (អាចបានផ្ទុកពី Cloud ឡើងវិញ) */
     var R=rec(c,true),before=JSON.stringify([R.f,R.r,R.src||{}]);R.src=R.src||{};
     ["t1","t2"].forEach(function(k){
-      var x=O[k];
-      c.st.forEach(function(s,i){var kk=key(s),r=R.r[kk];var v=x?x.by[sidOf(s,i)]:null;
+      var x=O[k],S=x?matchScores(c,x):{};
+      c.st.forEach(function(s,i){var kk=key(s),r=R.r[kk];var v=S[i];
         if(v!=null){r=R.r[kk]=r||{};r[k]=v}else if(r){delete r[k];if(!Object.keys(r).length)delete R.r[kk]}});
       if(x){R.f[k]=x.n;R.src[k]={id:x.t.id,title:x.t.title,n:x.n,cnt:Object.keys(x.by).length}}else{delete R.f[k];delete R.src[k]}
     });
     if(JSON.stringify([R.f,R.r,R.src])!==before){savR();renderMs()}else if(manual)notify("ពិន្ទុតេស្តត្រឹមត្រូវហើយ");
-  }).catch(function(e){console.error("ms sync:",e);if(manual)alert("មិនអាចយកពិន្ទុតេស្តបានទេ")}).then(function(){syncing=false});
+  }).catch(function(e){console.error("ms sync:",e);if(manual)alert("មិនអាចយកពិន្ទុតេស្តបានទេ")}).then(function(){
+    syncing=false;if(syncAgain){syncAgain=false;var c2=cls();if(c2&&canE())syncTests(c2)}});
 }
 window.renderMs=renderMs;
 function summary(c){

@@ -676,20 +676,24 @@ window.DRIVE={tok:driveTok,connect:driveConnect,api:gapi,
     var p=drv.cid?Promise.resolve():window.FB.getDoc(window.FB.doc(window.db,"cfg","drive")).then(function(d){drv.cid=(d.exists()&&d.data().cid)||""});
     return p.then(function(){if(drv.cid&&!(window.google&&google.accounts&&google.accounts.oauth2))return loadJs("https://accounts.google.com/gsi/client")}).catch(function(){});
   }};
+function nmKey(s){return String(s||"").replace(/[\s​-‍]+/g,"")}
 window.QUIZ={
-  KIND:KIND,
+  KIND:KIND,nmKey:nmKey,
   forMonth:function(tid,cls,mo){   /* {t1:{t,n,by}, t2:{…}} · ប្រសិនបើមានច្រើន យកតេស្តថ្មីបំផុត */
     var self=this;return self.list(tid).then(function(L){
       var out={},pick={};L.forEach(function(t){if(t.cls===cls&&t.mo===mo&&(t.kind==="t1"||t.kind==="t2")&&!pick[t.kind])pick[t.kind]=t});
-      return Promise.all(Object.keys(pick).map(function(k){return self.scores(pick[k]).then(function(S){out[k]={t:pick[k],n:S.n,by:S.by}})})).then(function(){return out});
+      return Promise.all(Object.keys(pick).map(function(k){return self.scores(pick[k]).then(function(S){out[k]={t:pick[k],n:S.n,by:S.by,bn:S.bn,names:S.names}})})).then(function(){return out});
     });
   },
   list:function(tid){var FB=window.FB;return FB.getDocs(FB.query(FB.collection(window.db,"tests"),FB.where("o","==",tid))).then(function(sn){var a=[];sn.forEach(function(d){a.push(Object.assign({id:d.id},d.data()))});return a.sort(function(x,y){return(y.cr||"").localeCompare(x.cr||"")})})},
   scores:function(t){var FB=window.FB;
     return Promise.all([FB.getDoc(FB.doc(window.db,"tkeys",t.id)),FB.getDocs(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)))]).then(function(r){
-      var K={};try{K=JSON.parse(r[0].data().a)}catch(x){}var by={};
-      r[1].forEach(function(d){var s=d.data(),sc=0;t.items.forEach(function(q){var k=K[q.id];if(k&&correct({t:k.t,a:k.a},s.a&&s.a[q.id]))sc++});by[s.sid]=sc});
-      return{n:t.items.length,by:by};
+      var K={};try{K=JSON.parse(r[0].data().a)}catch(x){}var by={},bn={},dn={};
+      /* by = តាមលេខសម្គាល់ក្នុងតេស្ត · bn = តាមឈ្មោះ (ពេលបញ្ជីឈ្មោះថ្នាក់ប្ដូរក្រោយបង្កើតតេស្ត · ឈ្មោះជាន់គ្នា = មិនប្រើ) */
+      r[1].forEach(function(d){var s=d.data(),sc=0;t.items.forEach(function(q){var k=K[q.id];if(k&&correct({t:k.t,a:k.a},s.a&&s.a[q.id]))sc++});by[s.sid]=sc;
+        var nm=nmKey(s.sn);if(nm){if(nm in bn)dn[nm]=1;else bn[nm]=s.sid}});   /* bn[ឈ្មោះ] = sid */
+      Object.keys(dn).forEach(function(k){delete bn[k]});
+      return{n:t.items.length,by:by,bn:bn,names:t.names||[]};
     })}
 };
 $("qzBody").addEventListener("change",function(e){if(e.target.id==="pcC"){PC.ci=+e.target.value;renderPrac()}});
