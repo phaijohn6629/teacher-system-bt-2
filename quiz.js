@@ -13,7 +13,7 @@ var QB_PAGE=40,qbShow=QB_PAGE;   /* បង្ហាញលំហាត់ម្�
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},fG=0,fL="",fV=0,fP=-1,mine=false;   /* fP = តម្រងចំណុច (-1 ទាំងអស់ · 0 មិនទាន់កំណត់) */
 var mk={tid:"",ci:0,ls:{},pt:{},n:{1:5,2:3,3:2},dur:30,lx:3,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 /* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
-var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២"};
+var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២",c:"ប្រឡងទម្រង់បិទ"};   /* c = ចូល «ប្រឡងបិទ» ក្នុងពិន្ទុប្រចាំខែ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន) */
 function curMo(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)}
 function kindBadge(t){var k=t.kind||"g";return"<span class='qz-kind k-"+k+"'>"+KIND[k]+(k!=="g"&&t.mo?" · "+moName(t.mo):"")+"</span>"}
 function moName(m){var p=String(m||"").split("-");return p.length===2?"ខែ"+M[+p[1]-1]+" "+kn(p[0]):""}
@@ -459,7 +459,7 @@ function renderMake(){
     "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
     "<div class=bar><label>🚫 សិស្សចាកចេញពីផ្ទាំងតេស្ត៖</label><select id=qmX>"+[[0,"កត់ត្រា និងព្រមានតែប៉ុណ្ណោះ"],[1,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ១"],[2,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ២"],[3,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៣"],[5,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៥"]].map(function(o){return"<option value="+o[0]+(o[0]===mk.lx?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select><span class=note style='margin:0'>ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់ → កត់ត្រា និងបង្ហាញក្នុងលទ្ធផល 🚩</span></div>"+
     "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
-    (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"</div>";
+    (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+(mk.kind==="c"?"ប្រឡងបិទ» ដោយស្វ័យប្រវត្តិ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន)":KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ")+"</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"</div>";
   if(!c){$("qzBody").innerHTML=h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>";return}
   if(!C){$("qzBody").innerHTML=h+"<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានកម្មវិធីសិក្សា។</p>";return}
   var cnt={};pool.forEach(function(q){if(!inMk(q)&&mk.ls[q.ls])return;var k=q.ls+"_"+q.lv;cnt[k]=(cnt[k]||0)+1});
@@ -729,7 +729,7 @@ window.QUIZ={
   KIND:KIND,nmKey:nmKey,
   forMonth:function(tid,cls,mo){   /* {t1:{t,n,by}, t2:{…}} · ប្រសិនបើមានច្រើន យកតេស្តថ្មីបំផុត */
     var self=this;return self.list(tid).then(function(L){
-      var out={},pick={};L.forEach(function(t){if(t.cls===cls&&t.mo===mo&&(t.kind==="t1"||t.kind==="t2")&&!pick[t.kind])pick[t.kind]=t});
+      var out={},pick={};L.forEach(function(t){if(t.cls===cls&&t.mo===mo&&(t.kind==="t1"||t.kind==="t2"||t.kind==="c")&&!pick[t.kind])pick[t.kind]=t});
       return Promise.all(Object.keys(pick).map(function(k){return self.scores(pick[k]).then(function(S){out[k]={t:pick[k],n:S.n,by:S.by,bn:S.bn,names:S.names}})})).then(function(){return out});
     });
   },

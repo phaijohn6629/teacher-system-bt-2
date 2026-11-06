@@ -67,7 +67,7 @@ function renderMs(){
         COL.map(function(x){if(x[0]==="t1"||x[0]==="t2")return"<td class=ms-tq>"+(r[x[0]]==null?(R.src&&R.src[x[0]]?"<span class=note style='margin:0'>—</span>":""):"<b>"+fmt(r[x[0]])+"</b>")+"</td>";
           return"<td class=ms-in><input data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+
         "<td class=ms-auto data-o=a>"+fmt(o.a)+"</td><td class=ms-auto data-o=t>"+fmt(o.t)+"</td><td class=ms-auto data-o=h>"+fmt(o.h)+"</td><td class=ms-auto data-o=b>"+fmt(o.b)+"</td><td class='ms-auto ms-b' data-o=act>"+fmt(o.act)+"</td>"+
-        "<td class=ms-in><input data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+"></td><td class=ms-in><input data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
+        "<td class=ms-in><input data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+(r.cs!=null&&r.c!=null&&+r.c===+r.cs?" class=ms-auto-in title='📝 ពីប្រឡងទម្រង់បិទ (កែបាន)'":"")+"></td><td class=ms-in><input data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
         "<td class=ms-b data-o=tot>"+fmt(o.tot)+"</td><td data-o=g>"+gbadge(o.g)+"</td></tr>"}).join("")+"</tbody></table></div>";
   h=testInfo(R,c)+h+summary(c)+settingsHtml();
   $("msBody").innerHTML=h;
@@ -76,7 +76,7 @@ function renderMs(){
 /* តេស្តលើកទី១/ទី២ ពីផ្នែកតេស្ត */
 function testInfo(R,c){
   var S=R.src||{};
-  return"<div class=ms-tests>"+["t1","t2"].map(function(k){var x=S[k],L=k==="t1"?"តេស្តលើកទី១":"តេស្តលើកទី២";
+  return"<div class=ms-tests>"+["t1","t2","c"].map(function(k){var x=S[k],L=k==="t1"?"តេស្តលើកទី១":k==="t2"?"តេស្តលើកទី២":"ប្រឡងទម្រង់បិទ";
     /* សិស្សដែលគ្មានពិន្ទុ (មិនបានផ្ញើ ឬរកមិនឃើញក្នុងតេស្ត) */
     var miss=x?c.st.filter(function(s){var r=(R.r||{})[key(s)];return!r||r[k]==null}).map(function(s){return esc(s.n)}):[];
     return"<div class='ms-tc"+(x?" on":"")+"'><b>📝 "+L+"</b>"+(x?"<span>«"+esc(x.title)+"» · "+kn(x.n)+" លំហាត់ · មានពិន្ទុ "+kn(c.st.length-miss.length)+"/"+kn(c.st.length)+" នាក់</span>"+
@@ -108,6 +108,16 @@ function syncTests(c,manual){
         if(v!=null){r=R.r[kk]=r||{};r[k]=v}else if(r){delete r[k];if(!Object.keys(r).length)delete R.r[kk]}});
       if(x){R.f[k]=x.n;R.src[k]={id:x.t.id,title:x.t.title,n:x.n,cnt:Object.keys(x.by).length}}else{delete R.f[k];delete R.src[k]}
     });
+    /* 📝 ប្រឡងទម្រង់បិទ → «ប្រឡងបិទ» (r.c)៖ ពិន្ទុត្រូវ/ចំនួនលំហាត់ × ពិន្ទុអតិបរមាប្រឡងបិទ
+       r.cs = តម្លៃដែលដាក់ស្វ័យប្រវត្តិលើកមុន · គ្រូកែដោយដៃ (r.c ≠ r.cs) → មិនជំនួស · សិស្សមិនបានធ្វើ → មិនប៉ះ */
+    var xc=O.c;
+    if(xc){
+      var Sc=matchScores(c,xc),Mc=maxes(c).c;
+      c.st.forEach(function(s,i){var v=Sc[i];if(v==null)return;
+        var kk=key(s),r=R.r[kk]=R.r[kk]||{},val=r2(v*Mc/(xc.n||1));
+        if(r.c==null||(r.cs!=null&&+r.c===+r.cs)){r.c=val;r.cs=val}});
+      R.src.c={id:xc.t.id,title:xc.t.title,n:xc.n,cnt:Object.keys(xc.by).length};
+    }else delete R.src.c;
     if(JSON.stringify([R.f,R.r,R.src])!==before){savR();renderMs()}else if(manual)notify("ពិន្ទុតេស្តត្រឹមត្រូវហើយ");
   }).catch(function(e){console.error("ms sync:",e);if(manual)alert("មិនអាចយកពិន្ទុតេស្តបានទេ")}).then(function(){
     syncing=false;if(syncAgain){syncAgain=false;var c2=cls();if(c2&&canE())syncTests(c2)}});

@@ -521,13 +521,13 @@ body.pm .pg.land{page-break-inside:avoid}
 .ms-ok{color:#15803d;font-weight:700}
 .msp table.ct th,.msp table.ct td{font-size:7.5pt!important;padding:2px 3px!important}
 .qz-kind{display:inline-block;font-size:.72rem;font-weight:700;padding:0 8px;border-radius:10px;background:var(--soft);color:var(--mute)}
-.qz-kind.k-t1{background:#dbeafe;color:#1e40af}.qz-kind.k-t2{background:#ede9fe;color:#5b21b6}
+.qz-kind.k-t1{background:#dbeafe;color:#1e40af}.qz-kind.k-t2{background:#ede9fe;color:#5b21b6}.qz-kind.k-c{background:#fee2e2;color:#991b1b}
 .ms-tests{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:4px 0 10px}
 .ms-tc{flex:1 1 280px;border:1px dashed var(--line);border-radius:12px;padding:6px 12px;font-size:.85rem;display:flex;flex-direction:column;gap:2px}
 .ms-tc.on{border-style:solid;border-color:#93c5fd;background:rgba(219,234,254,.35)}
 .ms-tb td.ms-tq{background:rgba(219,234,254,.45);color:#1e40af}
 .qz-kind{display:inline-block;font-size:.72rem;font-weight:700;padding:0 8px;border-radius:10px;background:var(--soft);color:var(--mute)}
-.qz-kind.k-t1{background:#dbeafe;color:#1e40af}.qz-kind.k-t2{background:#ede9fe;color:#5b21b6}
+.qz-kind.k-t1{background:#dbeafe;color:#1e40af}.qz-kind.k-t2{background:#ede9fe;color:#5b21b6}.qz-kind.k-c{background:#fee2e2;color:#991b1b}
 .ms-tests{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:4px 0 10px}
 .ms-tc{flex:1 1 280px;border:1px dashed var(--line);border-radius:12px;padding:6px 12px;font-size:.85rem;display:flex;flex-direction:column;gap:2px}
 .ms-tc.on{border-style:solid;border-color:#93c5fd;background:rgba(219,234,254,.35)}
@@ -833,3 +833,5 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .pc-tb th{font-size:.72rem;white-space:nowrap}.pc-tb td.pc-c{text-align:center;font-size:.72rem;white-space:nowrap;letter-spacing:-2px}
 .pc-tb td.n4{background:color-mix(in srgb,#0891b2 30%,transparent)}.pc-tb td.n1{background:color-mix(in srgb,#16a34a 8%,transparent)}.pc-tb td.n2{background:color-mix(in srgb,#16a34a 16%,transparent)}.pc-tb td.n3{background:color-mix(in srgb,#16a34a 28%,transparent)}
 .pc-tb td.pc-t{text-align:center}.pc-tb td.pc-d{font-size:.78rem;color:var(--mute);white-space:nowrap}
+/* ពិន្ទុប្រចាំខែ៖ «ប្រឡងបិទ» ដែលបានពីប្រឡងទម្រង់បិទ (កែបាន) */
+.ms-in input.ms-auto-in{background:rgba(254,226,226,.45);border-color:#fca5a5}
