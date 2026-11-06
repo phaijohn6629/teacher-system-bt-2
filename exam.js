@@ -33,6 +33,8 @@ function myCls(){return(rs.c&&rs.c[X.E&&X.E.o||who.id])||[]}
 function body(){return $("qzBody")}
 function lsList(g){var G=window.PRACT&&PRACT.GR[g];return G?G.les:[]}
 function lsTitle(g,ls){var t="";lsList(g).forEach(function(c){c[1].forEach(function(x){if(+x[0]===+ls)t=x[1]})});return t}
+function tplOpts(g,s){var T=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(!T||!T.length)return"";
+  return"<optgroup label='🇰🇭 គំរូប្រឡង (ទម្រង់កម្ពុជា)'>"+T.map(function(x){var v="t:"+x.id;return"<option value='"+v+"'"+(v===String(s.lv)?" selected":"")+">"+esc(x.t)+"</option>"}).join("")+"</optgroup>"}
 function hasLv4(g,ls){var G=PRACT.GR[g]&&PRACT.GR[g].G[ls];return!!(G&&G[4])}
 /* ---------- បង្កើតលំហាត់ ---------- */
 function mkItem(g,ls,lv,avoid){
@@ -41,10 +43,13 @@ function mkItem(g,ls,lv,avoid){
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
   return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||""};
 }
+function isT(s){return/^t:/.test(String(s.lv))}
 function fill(s,g,which){
-  var key=which||"it",out=[];for(var i=0;i<s.n;i++)out.push(mkItem(g,s.ls,s.lv,out.map(function(x){return x.q})));s[key]=out;
+  var key=which||"it",out=[];
+  /* 🇰🇭 គំរូប្រឡង (exgen.js)៖ ទិន្នន័យរួម + សំណួររង · វិញ្ញាសា ខ មានទិន្នន័យផ្ទាល់ខ្លួន (instB) */
+  if(isT(s)&&window.EXGEN){var o=EXGEN.make(g+"|"+s.ls,String(s.lv).slice(2));if(o){s[key]=o.it;if(key==="it")s.inst=o.inst;else s.instB=o.inst;s.n=o.it.length;return}}for(var i=0;i<s.n;i++)out.push(mkItem(g,s.ls,s.lv,out.map(function(x){return x.q})));s[key]=out;
 }
-function newSec(g,ls){var s={ls:ls,lv:2,n:2,pts:4,inst:"ដោះស្រាយលំហាត់ខាងក្រោម៖"};fill(s,g);if(X.E&&X.E.ab)fill(s,g,"itB");return s}
+function newSec(g,ls){var T=window.EXGEN&&EXGEN.list(g+"|"+ls),s={ls:ls,lv:T&&T.length?"t:"+T[0].id:2,n:2,pts:4,inst:"ដោះស្រាយលំហាត់ខាងក្រោម៖"};fill(s,g);if(X.E&&X.E.ab)fill(s,g,"itB");return s}
 function newExam(){
   var c=(rs.c&&rs.c[who.id]||[])[0],g=c?parseInt(c.n):0,t=teacherOf(who.id)||{},ck="";try{ck=localStorage.getItem("exCk")||""}catch(e){}
   var d=new Date(),E={id:uid(),o:who.id,cls:c?c.n:"",title:TITLES[0],mo:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2),sub:t.sub||"គណិតវិទ្យា",dur:45,date:today(),place:"រាជធានីភ្នំពេញ",au:t.name||who.name||"",ck:ck,ab:false,secs:[],cr:new Date().toISOString()};
@@ -104,8 +109,8 @@ function editor(){
     "<div class=card><h3 style='margin-top:0'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small></h3>"+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
-        "<select data-es='"+i+"|lv'>"+[1,2,3,4].filter(function(v){return v<4||hasLv4(g,s.ls)}).map(function(v){return"<option value="+v+(v===+s.lv?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</select>"+
-        "<label>លំហាត់រង <input type=number min=1 max=8 data-es='"+i+"|n' value="+s.n+"></label><label>ពិន្ទុ <input type=number min=0 max=100 step=0.5 data-es='"+i+"|pts' value="+(+s.pts||0)+"></label>"+
+        "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+[1,2,3,4].filter(function(v){return v<4||hasLv4(g,s.ls)}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
+        (isT(s)?"":"<label>លំហាត់រង <input type=number min=1 max=8 data-es='"+i+"|n' value="+s.n+"></label>")+"<label>ពិន្ទុ <input type=number min=0 max=100 step=0.5 data-es='"+i+"|pts' value="+(+s.pts||0)+"></label>"+
         "<button type=button data-ex='rg|"+i+"' title='បង្កើតលំហាត់ផ្នែកនេះឡើងវិញ'>🔄</button><button type=button data-ex='up|"+i+"'"+(i?"":" disabled")+">↑</button><button type=button data-ex='dn|"+i+"'"+(i<E.secs.length-1?"":" disabled")+">↓</button><button type=button class=danger data-ex='rm|"+i+"'>🗑️</button></div>"+
         "<input class=ex-inst data-es='"+i+"|inst' value='"+esc(s.inst)+"' placeholder='សេចក្ដីណែនាំ (ឧ. គណនា · ដោះស្រាយសមីការ)'>"+
         "<div class=ex-its>"+s.it.map(function(x,j){return"<div class=ex-it><b>"+EXP.SUB[j]+".</b><textarea rows=1 data-ei='"+i+"|"+j+"' spellcheck=false>"+esc(x.q)+"</textarea><button type=button data-ex='ri|"+i+"|"+j+"' title='បង្កើតលំហាត់នេះឡើងវិញ'>🔄</button></div>"}).join("")+"</div></div>"}).join("")+
@@ -122,7 +127,7 @@ function printIt(kind){
   var E=X.E,tmp=document.createElement("div");tmp.style.cssText="position:fixed;left:-9999px;top:0;width:800px";
   tmp.innerHTML=EXP.html(P(E),{v:kind==="b"?"b":"a",key:kind==="k",lbl:kind==="k"?"":E.ab?(kind==="b"?"ខ":"ក"):""});document.body.appendChild(tmp);
   var w=window.open("","_blank");if(!w){tmp.remove();alert("សូមអនុញ្ញាត Pop-up ដើម្បីបោះពុម្ព");return}
-  w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(EXP.head(E))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
+  w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(EXP.head(E))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
@@ -206,6 +211,7 @@ function act(a,q){
   var i=+q[1],s=E.secs[i];
   if(a==="add"){var last=E.secs[E.secs.length-1],L=lsList(g),ls=last?last.ls:(L[0]&&L[0][1][0][0]);if(!ls){alert("ថ្នាក់នេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់");return}E.secs.push(newSec(g,ls))}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
+  else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q});s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av)}
   else if(a==="up"&&i>0){E.secs.splice(i-1,0,E.secs.splice(i,1)[0])}
   else if(a==="dn"&&i<E.secs.length-1){E.secs.splice(i+1,0,E.secs.splice(i,1)[0])}
@@ -224,7 +230,7 @@ function onInput(e){
     if(k==="inst"){s.inst=t.value;save();prev();return}
     if(k==="pts"){s.pts=Math.max(0,+t.value||0);save();prev();var h3=body().querySelectorAll(".card h3 small")[0];if(h3)h3.textContent="សរុប "+kn(EXP.total(E))+" ពិន្ទុ";return}
     if(e.type!=="change")return;
-    if(k==="ls"){s.ls=+t.value;if(s.lv===4&&!hasLv4(g,s.ls))s.lv=3}else if(k==="lv")s.lv=+t.value;else if(k==="n")s.n=Math.min(8,Math.max(1,+t.value||1));
+    if(k==="ls"){s.ls=+t.value;var T2=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(isT(s))s.lv=T2&&T2.length?"t:"+T2[0].id:2;else if(T2&&T2.length)s.lv="t:"+T2[0].id;if(s.lv===4&&!hasLv4(g,s.ls))s.lv=3}else if(k==="lv")s.lv=/^t:/.test(t.value)?t.value:+t.value;else if(k==="n")s.n=Math.min(8,Math.max(1,+t.value||1));
     fill(s,g);if(E.ab)fill(s,g,"itB");save();editor();return}
   if(t.dataset.ei){var p=t.dataset.ei.split("|"),it=E.secs[+p[0]].it[+p[1]];it.q=t.value;t.style.height="auto";t.style.height=Math.max(36,t.scrollHeight)+"px";save();prev()}
 }
