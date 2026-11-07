@@ -17,7 +17,7 @@ var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],t
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function gen(){
   if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
-  if(!genP)genP=ld("practice.js?v=7").then(function(){return Promise.all(GENS.map(ld))}).catch(function(e){genP=null;throw e});
+  if(!genP)genP=ld("practice.js?v=8").then(function(){return Promise.all(GENS.map(ld))}).catch(function(e){genP=null;throw e});
   return genP;
 }
 function katex(){
