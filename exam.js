@@ -57,7 +57,7 @@ function newExam(){
   return E;
 }
 function gOf(E){return parseInt(E.cls)||0}
-function P(E){return{fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
+function P(E){return{font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
 /* ---------- រក្សាទុក (exams/{id}) ---------- */
 function save(now){
   X.dirty=true;X.status="…";clearTimeout(X.saveT);
@@ -96,6 +96,7 @@ function editor(){
   if(on)h+=onlineBox();
   h+="<div class=ex-grid><div class=card><h3 style='margin-top:0'>ក្បាល និងជើងវិញ្ញាសា</h3><div class=fg>"+
     "<div><label>ថ្នាក់</label><select data-ef=cls>"+cl.map(function(c){return"<option"+(c.n===E.cls?" selected":"")+">"+esc(c.n)+"</option>"}).join("")+(cl.some(function(c){return c.n===E.cls})?"":"<option selected>"+esc(E.cls)+"</option>")+"</select></div>"+
+    "<div><label>ពុម្ពអក្សរ</label><select data-ef=font>"+Object.keys(EXP.FONTS).map(function(k){return"<option value="+k+((E.font||"os")===k?" selected":"")+">"+esc(EXP.FONTS[k].n)+"</option>"}).join("")+"</select></div>"+
     "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option></select></div>"+
     (E.fmt==="bac"?"<div><label>ផ្នែក</label><input data-ef=trk list=exTrk value='"+esc(E.trk||"")+"'><datalist id=exTrk><option value='ថ្នាក់វិទ្យាសាស្ត្រពិត'><option value='ថ្នាក់វិទ្យាសាស្ត្រសង្គម'><option value='វិទ្យាសាស្ត្រ'></datalist></div>":"")+
     "<div><label>ចំណងជើង</label><input data-ef=title list=exTl value='"+esc(E.title)+"'><datalist id=exTl>"+TITLES.map(function(t){return"<option value='"+t+"'>"}).join("")+"</datalist></div>"+
@@ -130,7 +131,7 @@ function printIt(kind){
   var E=X.E,tmp=document.createElement("div");tmp.style.cssText="position:fixed;left:-9999px;top:0;width:800px";
   tmp.innerHTML=EXP.html(P(E),{v:kind==="b"?"b":"a",key:kind==="k",lbl:kind==="k"?"":E.ab?(kind==="b"?"ខ":"ក"):""});document.body.appendChild(tmp);
   var w=window.open("","_blank");if(!w){tmp.remove();alert("សូមអនុញ្ញាត Pop-up ដើម្បីបោះពុម្ព");return}
-  w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(EXP.head(E))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
+  w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(EXP.head(E))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
@@ -141,7 +142,7 @@ function printIt(kind){
 /* ---------- 📱 ប្រឡងអនឡាញ ---------- */
 function examLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"exam.html?e="+encodeURIComponent(id)}
 function code6(){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return String(100000+a[0]%900000)}
-function pub(E){return JSON.stringify({fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,
+function pub(E){return JSON.stringify({font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,
   secs:E.secs.map(function(s){return{pts:s.pts,inst:s.inst,it:s.it.map(function(x){return{q:x.q,fig:x.fig}})}})})}
 function goOnline(){
   var E=X.E,F=window.FB,c=myCls().filter(function(x){return x.n===E.cls})[0];

@@ -19,7 +19,7 @@ function solar(d){var a=String(d||"").split("-").map(Number);if(a.length<3||!a[0
 function fig(f){return f&&window.FIG?"<div class=exp-fig>"+FIG.svg(f)+"</div>":""}
 /* ក្បាលទម្រង់បាក់ឌុប៖ ឆ្វេង = ប្រឡង · សម័យ · វិញ្ញាសា · រយៈពេល · ស្ដាំ = ប្រអប់បេក្ខជន · កណ្ដាល = «ប្រធាន» */
 function bacHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.length===3&&a[0]?KN(a[2])+" "+MO[a[1]-1]+" "+KN(a[0]):"..................",D="<span class=exp-dot>....................</span>";
-  return"<div class=\"exp exp-bac\"><div class=exp-hd><div class=exp-hl>"+
+  return"<div class=\"exp exp-bac\" style=\""+fvars(P.font)+"\"><div class=exp-hd><div class=exp-hl>"+
     "<div class=exp-b>"+ES(P.title||"វិញ្ញាសាត្រៀមប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ")+"</div>"+
     "<div class=exp-b>វិញ្ញាសា "+ES(P.sub||"គណិតវិទ្យា")+(P.trk?" <span class=exp-n>("+ES(P.trk)+")</span>":"")+"</div>"+
     "<div class=exp-b>រយៈពេល៖ "+KN(+P.dur||0)+"នាទី</div><div class=exp-b>ពិន្ទុសរុប៖ "+KN(T)+"</div></div>"+
@@ -27,7 +27,7 @@ function bacHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.len
     "</div><div class=exp-t>"+(o.key?"ចម្លើយ និងដំណោះស្រាយ":"ប្រធាន")+(o.lbl?" "+ES(o.lbl):"")+"</div>"}
 function html(P,o){
   o=o||{};var key=!!o.key,b=o.v==="b",T=total(P),bac=P.fmt==="bac";
-  var h=bac?bacHead(P,o,T):"<div class=exp><div class=exp-hd><div class=exp-hl>"+
+  var h=bac?bacHead(P,o,T):"<div class=exp style=\""+fvars(P.font)+"\"><div class=exp-hd><div class=exp-hl>"+
     "<div class=exp-b>"+ES(P.school||"វិទ្យាល័យ")+"</div>"+
     "<div class=exp-b>មុខវិជ្ជា "+ES(P.sub||"គណិតវិទ្យា")+" ថ្នាក់ទី <span class=exp-n>"+ES(P.cls||"")+"</span></div>"+
     (key?"":"<div class=exp-f>សិស្សឈ្មោះ <span class=exp-dot>.................................</span></div><div class=exp-f>ថ្នាក់ទី <span class=exp-dot>...................</span> លេខID<span class=exp-dot>...................</span></div>")+
@@ -52,19 +52,28 @@ function keyBox(x){return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+T
 /* ពុម្ពអក្សរដូចវិញ្ញាសាសាលា (LaTeX)៖ ចំណងជើង = Khmer M1 (GPL · ផ្ទុកពី fonts/) · អត្ថបទ = Khmer Kep (មានក្នុងកុំព្យូទ័រគ្រូ · មិនផ្សព្វផ្សាយ ព្រោះរក្សាសិទ្ធិ) → មិនមាន = Battambang */
 var BASE=(function(){try{var s=document.currentScript&&document.currentScript.src;return s?s.replace(/[^\/]*$/,""):""}catch(e){return""}})();
 var FF="@font-face{font-family:'ExM1';src:local('Khmer M1'),url('"+BASE+"fonts/khmer-m1.ttf') format('truetype');font-display:swap}"+
-"@font-face{font-family:'ExKep';src:local('Khmer Kep'),local('KhmerKep'),local('KHMERKEP');font-display:swap}";
-var CSS=FF+".exp{font-family:'ExKep','Battambang','Kantumruy Pro',system-ui,sans-serif;color:#111;line-height:1.75;font-size:14px;max-width:800px;margin:0 auto}"+
+"@font-face{font-family:'ExKep';src:local('Khmer Kep'),local('KhmerKep'),local('KHMERKEP');font-display:swap}"+
+"@font-face{font-family:'ExMuolL';src:local('Khmer OS Muol Light'),local('KhmerOSmuollight'),url('"+BASE+"fonts/khmer-os-muol-light.ttf') format('truetype');font-display:swap}";
+/* ពុម្ពអក្សរ (P.font)៖ ចំណងជើង (--fh) · អត្ថបទ (--fb) · Khmer OS (រដ្ឋបាល) ឬ Khmer M1/Kep (LaTeX) · មិនមានក្នុងកុំព្យូទ័រ → Google Fonts */
+var MUOL="'ExMuolL','Khmer OS Muol Light','Khmer OS Muol','Moul',serif";
+var FONTS={
+  os:{n:"Khmer OS Siemreap + Muol Light (រដ្ឋបាល)",h:MUOL,b:"'Khmer OS Siemreap','Siemreap','Khmer OS Battambang','Battambang',sans-serif"},
+  bt:{n:"Khmer OS Battambang + Muol Light",h:MUOL,b:"'Khmer OS Battambang','Battambang',sans-serif"},
+  ct:{n:"Khmer OS Content + Muol Light (សៀវភៅ)",h:MUOL,b:"'Khmer OS Content','Kh Content','Content','Battambang',serif"},
+  m1:{n:"Khmer M1 + Khmer Kep (ដូច LaTeX)",h:"'ExM1','Moul','Kantumruy Pro',serif",b:"'ExKep','Battambang','Kantumruy Pro',system-ui,sans-serif"}};
+function fvars(k){var f=FONTS[k]||FONTS.os;return"--fh:"+f.h+";--fb:"+f.b}
+var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.75;font-size:14px;max-width:800px;margin:0 auto}"+
 ".exp-hd{display:flex;justify-content:space-between;gap:16px}.exp-hl,.exp-hr{display:flex;flex-direction:column}.exp-hr{align-items:flex-start;position:relative;min-width:42%}"+
-".exp-b{font-family:'ExM1','Moul','Kantumruy Pro',serif;color:#1e3a8a;font-size:13.5px;line-height:2}.exp-n{font-family:'ExKep','Battambang',sans-serif;font-weight:700}"+
-".exp-f{font-family:'ExM1','Moul','Kantumruy Pro',serif;color:#1e3a8a;font-size:13px;line-height:2.1}.exp-dot{font-family:'ExKep','Battambang',sans-serif;color:#444;letter-spacing:1px}"+
+".exp-b{font-family:var(--fh);color:#1e3a8a;font-size:13.5px;line-height:2}.exp-n{font-family:var(--fb);font-weight:700}"+
+".exp-f{font-family:var(--fh);color:#1e3a8a;font-size:13px;line-height:2.1}.exp-dot{font-family:var(--fb);color:#444;letter-spacing:1px}"+
 ".exp-sc{width:96px;height:96px;border:2px solid #be123c;border-radius:50%;position:relative;margin:4px 0 0 60px}.exp-sc span{position:absolute;left:12px;right:12px;top:48%;border-top:2px solid #be123c}.exp-sc b{position:absolute;left:0;right:0;top:54%;text-align:center;color:#be123c;font-size:15px}"+
-".exp-t{text-align:center;font-family:'ExM1','Moul','Kantumruy Pro',serif;color:#1e3a8a;font-size:15px;margin:6px 0 10px}"+
+".exp-t{text-align:center;font-family:var(--fh);color:#1e3a8a;font-size:15px;margin:6px 0 10px}"+
 ".exp-s{margin:6px 0 10px;break-inside:avoid}.exp-rn{color:#1e3a8a}.exp-pt{color:#be123c}.exp-it{margin:2px 0 0 34px}.exp-it.two{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.exp-i{margin:3px 0}.exp-sl{color:#1e3a8a;margin-right:4px}"+
 ".exp-fig{margin:6px 0;text-align:center}.exp-fig svg{max-width:300px;max-height:250px;width:auto;height:auto}"+
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
-".exp-au{font-family:'ExM1','Moul','Kantumruy Pro',serif;color:#1e3a8a;margin-top:2px}.exp-nm{font-family:'ExM1','Moul','Kantumruy Pro',serif;margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+
+".exp-au{font-family:var(--fh);color:#1e3a8a;margin-top:2px}.exp-nm{font-family:var(--fh);margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+
 ".exp-cd{border:1.5px solid #1e3a8a;border-radius:4px;padding:2px 12px;align-self:flex-start}.exp-bac .exp-t{font-size:17px;margin:10px 0 12px}"+
 "@media (max-width:600px){.exp-hd{flex-direction:column}.exp-sc{display:none}.exp-it.two{grid-template-columns:1fr}.exp-it{margin-left:14px}.exp-ft{flex-direction:column-reverse;gap:10px}.exp-fl{margin-top:0}}";
-window.EXP={html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
+window.EXP={FONTS:FONTS,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
 })();

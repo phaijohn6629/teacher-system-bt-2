@@ -506,7 +506,7 @@ function schedPrep(){
     });
   },900);
 }
-setTimeout(function(){try{document.fonts.load('10pt "Moul"',"សាលារៀនជំនាន់ថ្មី");document.fonts.load('10pt "Kantumruy Pro"',"សាលារៀន");document.fonts.load('700 10pt "Kantumruy Pro"',"សាលារៀន")}catch(x){}},1200);
+setTimeout(function(){try{document.fonts.load('10pt "Moul"',"សាលារៀនជំនាន់ថ្មី");document.fonts.load('10pt "Khmer OS Muol Light"',"សាលារៀន");document.fonts.load('10pt "Khmer OS Siemreap"',"សាលារៀន");document.fonts.load('10pt "Kantumruy Pro"',"សាលារៀន");document.fonts.load('700 10pt "Kantumruy Pro"',"សាលារៀន")}catch(x){}},1200);
 
 /* ---------- បោះពុម្ព TS (ផ្ដេក) + WP (ប្រតិទិនខែ) តាមទម្រង់ដើមរបស់សាលា ---------- */
 var LOGO2=(document.getElementById("ngsLogo")||{}).src||new URL("logo-ngs.jpg",location.href).href;try{(new Image()).src=LOGO2}catch(x){}
