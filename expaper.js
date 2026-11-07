@@ -53,8 +53,8 @@ function html(P,o){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
     var sh=!key&&it.length>1&&it.every(function(x){return vlen(x.q)<=40&&!/\n/.test(x.q||"")&&!x.fig});
     h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(it[0].q):TX(inst||""))+"</div>";
-    if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip")}
-    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"):"")+"</div>"}).join("")+"</div>";
+    if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip"||P.fmt==="bac")}
+    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"||P.fmt==="bac"):"")+"</div>"}).join("")+"</div>";
     h+="</div>";
   });
   if(cols)h+="</div>";

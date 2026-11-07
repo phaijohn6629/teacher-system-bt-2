@@ -54,75 +54,105 @@ var PTS=[[S(1),S(1),S(1,1,2),3],[S(-1),S(1),S(1,1,2),9],[S(-1),S(-1),S(1,1,2),-9
 function spt(){var p=pick(PTS),k=pick([1,1,2,2,3]),K=S(k);return{re:Sm(K,p[0]),im:Sm(K,p[1]),r:Sm(K,p[2]),a:p[3]}}
 function Q(q,ans,sol){return{q:q,ans:ans,sol:sol||""}}
 function item(arr){return arr}
-/* ===================== ថ្នាក់ទី១២ · ចំនួនកុំផ្លិច ===================== */
+/* ===================== ថ្នាក់ទី១២ · ចំនួនកុំផ្លិច (ដំណោះស្រាយពេញលេញ) ===================== */
+function sci(k){return k?(k<0?"-":"+")+(Math.abs(k)===1?"":Math.abs(k))+"i":""}
+function cmul(L,a,b,c,d){return[L+"&=("+cxi(a,b)+")("+cxi(c,d)+")","&="+(a*c)+sci(a*d)+sci(b*c)+(b*d?(b*d<0?"-":"+")+(Math.abs(b*d)===1?"":Math.abs(b*d))+"i^2":""),"&="+(a*c)+sci(a*d+b*c)+(b*d?sg(-b*d):"")+"\\quad(i^2=-1)","&="+cxi(a*c-b*d,a*d+b*c)]}
+function cdiv(L,a,b,c,d){var den=c*c+d*d;return[L+"&=\\dfrac{("+cxi(a,b)+")("+cxi(c,-d)+")}{("+cxi(c,d)+")("+cxi(c,-d)+")}","&=\\dfrac{"+cxi(a*c+b*d,b*c-a*d)+"}{"+pn(c)+"^2+"+pn(d)+"^2}","&=\\dfrac{"+cxi(a*c+b*d,b*c-a*d)+"}{"+den+"}","&="+cxq(a*c+b*d,den,b*c-a*d,den)]}
+/* ម៉ូឌុល + អាគុយម៉ង់ (z = {re, im, r, a}) */
+function marg(z,n){n=n||"z";var re=z.re,im=z.im,c=Sdiv(re,z.r),s=Sdiv(im,z.r),sq=function(x){var t=St(x);return/^-|\\dfrac|\\sqrt/.test(t)?"\\left("+t+"\\right)^2":t+"^2"};
+  return AL(["|"+n+"|&=\\sqrt{"+sq(re)+"+"+sq(im)+"}="+St(z.r),"\\cos\\theta&=\\dfrac{"+St(re)+"}{"+St(z.r)+"}="+St(c)+"\\ ,\\ \\sin\\theta=\\dfrac{"+St(im)+"}{"+St(z.r)+"}="+St(s)])+"\nនាំឱ្យ $\\theta="+angT(z.a)+"$"}
 var C=[
  {id:"ops",t:"ប្រមាណវិធីលើចំនួនកុំផ្លិច (ទិន្នន័យរួម)",lv:1,f:function(){
    var a=nz(-5,5),b=nz(-5,5),c=nz(-4,4),d=nz(-4,4);while(a*d===b*c){d=nz(-4,4)}
    var z1=cxi(a,b),z2=cxi(c,d),den=c*c+d*d;
    return{inst:"គេឱ្យចំនួនកុំផ្លិច $z_1="+z1+"$ និង $z_2="+z2+"$ ។",it:[
-     Q("គណនា $z_1+z_2$ , $z_1-z_2$ និង $z_1\\times z_2$ ។","$z_1+z_2="+cxi(a+c,b+d)+"$ · $z_1-z_2="+cxi(a-c,b-d)+"$ · $z_1z_2="+cxi(a*c-b*d,a*d+b*c)+"$","$(a+bi)(c+di)=(ac-bd)+(ad+bc)i$"),
-     Q("សរសេរ $\\dfrac{z_1}{z_2}$ ជាទម្រង់ពិជគណិត $a+bi$ ។","$\\dfrac{z_1}{z_2}="+cxq(a*c+b*d,den,b*c-a*d,den)+"$","គុណភាគយក និងភាគបែងនឹង $\\overline{z_2}="+cxi(c,-d)+"$ · ភាគបែង $="+den+"$"),
-     Q("រកចំនួនកុំផ្លិចឆ្លាស់ $\\overline{z_1}$ និងម៉ូឌុល $|z_2|$ ។","$\\overline{z_1}="+cxi(a,-b)+"$ · $|z_2|="+sqrtT(den)+"$","$|z_2|=\\sqrt{"+c*c+"+"+d*d+"}$")]}}},
+     Q("គណនា $z_1+z_2$ , $z_1-z_2$ និង $z_1\\times z_2$ ។","$z_1+z_2="+cxi(a+c,b+d)+"$ , $z_1-z_2="+cxi(a-c,b-d)+"$ , $z_1z_2="+cxi(a*c-b*d,a*d+b*c)+"$",
+       W(AL(["z_1+z_2&=("+z1+")+("+z2+")="+cxi(a+c,b+d),"z_1-z_2&=("+z1+")-("+z2+")="+cxi(a-c,b-d)]),AL(cmul("z_1z_2",a,b,c,d)))),
+     Q("សរសេរ $\\dfrac{z_1}{z_2}$ ជាទម្រង់ពិជគណិត $a+bi$ ។","$\\dfrac{z_1}{z_2}="+cxq(a*c+b*d,den,b*c-a*d,den)+"$",
+       W("គុណភាគយក និងភាគបែងនឹងចំនួនកុំផ្លិចឆ្លាស់ $\\overline{z_2}="+cxi(c,-d)+"$ ៖",AL(cdiv("\\dfrac{z_1}{z_2}",a,b,c,d)))),
+     Q("រកចំនួនកុំផ្លិចឆ្លាស់ $\\overline{z_1}$ និងម៉ូឌុល $|z_2|$ ។","$\\overline{z_1}="+cxi(a,-b)+"$ , $|z_2|="+sqrtT(den)+"$",
+       AL(["\\overline{z_1}&=\\overline{"+z1+"}="+cxi(a,-b),"|z_2|&=\\sqrt{"+pn(c)+"^2+"+pn(d)+"^2}=\\sqrt{"+den+"}="+sqrtT(den)]))]}}},
  {id:"alg",t:"សរសេរជាទម្រង់ពិជគណិត a+bi",lv:1,f:function(){
    var a=nz(-4,4),b=nz(-4,4),c=nz(-3,3),d=nz(-3,3),e=nz(-3,3),f=nz(-3,3),g=nz(-3,3),h=nz(-3,3),n=pick([4,6,8]),sgn=pick([1,-1]);
    var p=[1,0],base=[1,sgn];for(var i=0;i<n;i++)p=[p[0]*base[0]-p[1]*base[1],p[0]*base[1]+p[1]*base[0]];
-   var den=g*g+h*h;
+   var den=g*g+h*h,s=sgn<0?"-":"+",t2=sgn<0?"-2i":"2i";
    return{inst:"សរសេរចំនួនកុំផ្លិចខាងក្រោមជាទម្រង់ពិជគណិត $a+bi$ (ដែល $a,b\\in\\mathbb R$)៖",it:[
-     Q("$z=("+cxi(a,b)+")("+cxi(c,d)+")$","$z="+cxi(a*c-b*d,a*d+b*c)+"$"),
-     Q("$z=("+cxi(e,f)+")^2$","$z="+cxi(e*e-f*f,2*e*f)+"$","$(a+bi)^2=a^2-b^2+2abi$"),
-     Q("$z=\\dfrac{"+cxi(e,f)+"}{"+cxi(g,h)+"}$","$z="+cxq(e*g+f*h,den,f*g-e*h,den)+"$","គុណនឹងឆ្លាស់នៃភាគបែង"),
-     Q("$z=(1"+(sgn<0?"-":"+")+"i)^{"+n+"}$","$z="+cxi(p[0],p[1])+"$","$(1\\pm i)^2=\\pm2i$")]}}},
+     Q("$z=("+cxi(a,b)+")("+cxi(c,d)+")$","$z="+cxi(a*c-b*d,a*d+b*c)+"$",AL(cmul("z",a,b,c,d))),
+     Q("$z=("+cxi(e,f)+")^2$","$z="+cxi(e*e-f*f,2*e*f)+"$",W("ប្រើ $(a+bi)^2=a^2+2abi+b^2i^2=a^2-b^2+2abi$ ៖",AL(["z&="+pn(e)+"^2+2\\times"+pn(e)+"\\times"+pn(f)+"i+"+pn(f)+"^2i^2","&="+e*e+sci(2*e*f)+"-"+f*f,"&="+cxi(e*e-f*f,2*e*f)]))),
+     Q("$z=\\dfrac{"+cxi(e,f)+"}{"+cxi(g,h)+"}$","$z="+cxq(e*g+f*h,den,f*g-e*h,den)+"$",W("គុណភាគយក និងភាគបែងនឹង $"+cxi(g,-h)+"$ ៖",AL(cdiv("z",e,f,g,h)))),
+     Q("$z=(1"+s+"i)^{"+n+"}$","$z="+cxi(p[0],p[1])+"$",AL(["(1"+s+"i)^2&=1"+s+"2i+i^2="+t2,"z&=\\left[(1"+s+"i)^2\\right]^{"+n/2+"}=("+t2+")^{"+n/2+"}","&="+(sgn<0&&(n/2)%2?"-":"")+Math.pow(2,n/2)+"\\,i^{"+n/2+"}="+cxi(p[0],p[1])]))]}}},
  {id:"xy",t:"រកចំនួនពិត x និង y",lv:2,f:function(){
    var x1=nz(-4,4),y1=nz(-4,4),p=nz(1,3),q=nz(-3,3),r=nz(1,3),s=nz(-3,3);
    var x2=nz(-4,4),y2=nz(-4,4),x3=nz(-3,3),y3=nz(-3,3),a1=nz(1,3),b1=nz(-2,2),a2=nz(-2,2),b2=nz(-3,3);while(a1*b2-a2*b1===0)b2=nz(-3,3);
+   var R=a1*x3+a2*y3,I=b1*x3+b2*y3,D=a1*b2-a2*b1;
    return{inst:"រកចំនួនពិត $x$ និង $y$ ដែលផ្ទៀងផ្ទាត់សមភាពខាងក្រោម៖",it:[
-     Q("$("+(p===1?"":p)+"x"+(q<0?q:"+"+q)+")+("+(r===1?"":r)+"y"+(s<0?s:"+"+s)+")i="+cxi(p*x1+q,r*y1+s)+"$","$x="+x1+"$ · $y="+y1+"$","ផ្នែកពិតស្មើគ្នា និងផ្នែកនិមិត្តស្មើគ្នា"),
-     Q("$(x+y)+(x-y)i="+cxi(x2+y2,x2-y2)+"$","$x="+x2+"$ · $y="+y2+"$","$\\begin{cases}x+y="+(x2+y2)+"\\\\x-y="+(x2-y2)+"\\end{cases}$"),
-     Q("$x("+cxi(a1,b1)+")+y("+cxi(a2,b2)+")="+cxi(a1*x3+a2*y3,b1*x3+b2*y3)+"$","$x="+x3+"$ · $y="+y3+"$")]}}},
+     Q("$("+kx(p)+sg(q)+")+("+kx(r,"y")+sg(s)+")i="+cxi(p*x1+q,r*y1+s)+"$","$x="+x1+"$ , $y="+y1+"$",
+       W("ចំនួនកុំផ្លិចពីរស្មើគ្នា លុះត្រាតែផ្នែកពិតស្មើគ្នា និងផ្នែកនិមិត្តស្មើគ្នា ៖",AL([kx(p)+sg(q)+"&="+(p*x1+q)+"\\Rightarrow x="+x1,kx(r,"y")+sg(s)+"&="+(r*y1+s)+"\\Rightarrow y="+y1]))),
+     Q("$(x+y)+(x-y)i="+cxi(x2+y2,x2-y2)+"$","$x="+x2+"$ , $y="+y2+"$",
+       W("ផ្ទឹមផ្នែកពិត និងផ្នែកនិមិត្ត ៖","$$\\begin{cases}x+y="+(x2+y2)+"\\\\x-y="+(x2-y2)+"\\end{cases}$$","បូកសមីការទាំងពីរ ៖",AL(["2x&="+2*x2+"\\Rightarrow x="+x2,"y&="+(x2+y2)+"-"+pn(x2)+"="+y2]))),
+     Q("$x("+cxi(a1,b1)+")+y("+cxi(a2,b2)+")="+cxi(R,I)+"$","$x="+x3+"$ , $y="+y3+"$",
+       W("អង្គខាងឆ្វេង $=("+kx(a1)+tm(a2,"y")+")+("+kx(b1)+tm(b2,"y")+")i$ ។ ផ្ទឹមផ្នែកពិត និងផ្នែកនិមិត្ត ៖","$$\\begin{cases}"+kx(a1)+tm(a2,"y")+"="+R+"\\\\"+kx(b1)+tm(b2,"y")+"="+I+"\\end{cases}$$",
+         "ដោះស្រាយតាមដេទែមីណង់ ៖",AL(["D&="+pn(a1)+"\\times"+pn(b2)+"-"+pn(a2)+"\\times"+pn(b1)+"="+D,"x&=\\dfrac{"+pn(R)+"\\times"+pn(b2)+"-"+pn(a2)+"\\times"+pn(I)+"}{"+D+"}="+x3,"y&=\\dfrac{"+pn(a1)+"\\times"+pn(I)+"-"+pn(b1)+"\\times"+pn(R)+"}{"+D+"}="+y3])))]}}},
  {id:"eq2",t:"ដោះស្រាយសមីការក្នុង ℂ",lv:2,f:function(){
    var k=ri(2,6),p=nz(-3,3),q=ri(1,4),m=pick([1,3,-1,-3]),n=pick([1,3,5]);
-   var c2=(m*m+n*n);
+   var c2=(m*m+n*n),qi=(q===1?"":q)+"i";
    return{inst:"ដោះស្រាយសមីការខាងក្រោមក្នុងសំណុំចំនួនកុំផ្លិច $\\mathbb C$៖",it:[
-     Q("$z^2+"+k*k+"=0$","$z=\\pm"+k+"i$","$z^2=-"+k*k+"="+k*k+"i^2$"),
-     Q("$z^2"+(2*p<0?"+"+(-2*p):"-"+2*p)+"z+"+(p*p+q*q)+"=0$","$z="+cxi(p,q)+"$ ឬ $z="+cxi(p,-q)+"$","$\\Delta'=-"+q*q+"=("+(q===1?"":q)+"i)^2$"),
-     Q("$4z^2"+(4*m<0?"+"+(-4*m):"-"+4*m)+"z+"+c2+"=0$","$z="+cxq(m,2,n,2)+"$ ឬ $z="+cxq(m,2,-n,2)+"$","$\\Delta'=-"+4*n*n+"=("+2*n+"i)^2$")]}}},
+     Q("$z^2+"+k*k+"=0$","$z=\\pm"+k+"i$",AL(["z^2&=-"+k*k+"="+k*k+"i^2=("+k+"i)^2","z&=\\pm"+k+"i"])),
+     Q("$z^2"+sg(-2*p)+"z+"+(p*p+q*q)+"=0$","$z="+cxi(p,q)+"$ ឬ $z="+cxi(p,-q)+"$",
+       W("មាន $a=1$ , $b'="+(-p)+"$ , $c="+(p*p+q*q)+"$ ៖",AL(["\\Delta'&=b'^2-ac="+pn(-p)+"^2-"+(p*p+q*q)+"=-"+q*q+"=("+qi+")^2"]),"សមីការមានឫសកុំផ្លិចពីរ ៖",AL(["z_1&=\\dfrac{-b'+"+qi+"}{a}="+cxi(p,q),"z_2&=\\dfrac{-b'-"+qi+"}{a}="+cxi(p,-q)]))),
+     Q("$4z^2"+sg(-4*m)+"z+"+c2+"=0$","$z="+cxq(m,2,n,2)+"$ ឬ $z="+cxq(m,2,-n,2)+"$",
+       W("មាន $a=4$ , $b'="+(-2*m)+"$ , $c="+c2+"$ ៖",AL(["\\Delta'&="+pn(-2*m)+"^2-4\\times"+c2+"="+4*m*m+"-"+4*c2+"=-"+4*n*n+"=("+2*n+"i)^2"]),"សមីការមានឫសកុំផ្លិចពីរ ៖",
+         AL(["z_1&=\\dfrac{"+2*m+"+"+2*n+"i}{4}="+cxq(m,2,n,2),"z_2&=\\dfrac{"+2*m+"-"+2*n+"i}{4}="+cxq(m,2,-n,2)])))]}}},
  {id:"modarg",t:"ម៉ូឌុល និងអាគុយម៉ង់",lv:1,f:function(){
-   var L=[spt(),spt(),spt(),spt()],SB="កខគឃ";
+   var L=[spt(),spt(),spt(),spt()];
    return{inst:"គណនាម៉ូឌុល $|z|$ និងអាគុយម៉ង់ចម្បង $\\arg z$ នៃចំនួនកុំផ្លិចខាងក្រោម៖",it:L.map(function(z){
-     return Q("$z="+Ct(z.re,z.im)+"$","$|z|="+St(z.r)+"$ · $\\arg z="+angT(z.a)+"$","$\\cos\\theta=\\dfrac{a}{r}$ , $\\sin\\theta=\\dfrac{b}{r}$")})}}},
+     return Q("$z="+Ct(z.re,z.im)+"$","$|z|="+St(z.r)+"$ , $\\arg z="+angT(z.a)+"$",marg(z))})}}},
  {id:"trig",t:"ទម្រង់ត្រីកោណមាត្រ · ផលគុណ · ផលចែក · ដឺម័រ",lv:3,f:function(){
    var z1=spt(),z2=spt();while(z2.a===z1.a)z2=spt();var n=pick([3,4,6]);
    var rp=Sm(z1.r,z2.r),rq=Sdiv(z1.r,z2.r),rn=S(1);for(var i=0;i<n;i++)rn=Sm(rn,z1.r);
-   var c=cs(n*z1.a),pw=c?Ct(Sm(rn,c[0]),Sm(rn,c[1])):"";
+   var c=cs(n*z1.a),pw=c?Ct(Sm(rn,c[0]),Sm(rn,c[1])):"",ap=function(k){return angT(k)},A2=angN(z2.a)<0?"\\left("+angT(z2.a)+"\\right)":angT(z2.a),SP=angT(z1.a)+"+"+A2,SQ=angT(z1.a)+"-"+A2;
    return{inst:"គេឱ្យចំនួនកុំផ្លិច $z_1="+Ct(z1.re,z1.im)+"$ និង $z_2="+Ct(z2.re,z2.im)+"$ ។",it:[
-     Q("សរសេរ $z_1$ និង $z_2$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z_1="+trig(St(z1.r),z1.a)+"$ · $z_2="+trig(St(z2.r),z2.a)+"$"),
-     Q("គណនា $z_1\\times z_2$ និង $\\dfrac{z_1}{z_2}$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z_1z_2="+trig(St(rp),z1.a+z2.a)+"$ · $\\dfrac{z_1}{z_2}="+trig(St(rq),z1.a-z2.a)+"$","ម៉ូឌុលគុណ/ចែក · អាគុយម៉ង់បូក/ដក"),
-     Q("ដោយប្រើរូបមន្តដឺម័រ គណនា $z_1^{"+n+"}$ ជាទម្រង់ពិជគណិត ។","$z_1^{"+n+"}="+pw+"$","$z_1^{"+n+"}="+trig(St(rn),n*z1.a)+"$")]}}},
+     Q("សរសេរ $z_1$ និង $z_2$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z_1="+trig(St(z1.r),z1.a)+"$ , $z_2="+trig(St(z2.r),z2.a)+"$",
+       W("• ចំពោះ $z_1$ ៖",marg(z1,"z_1"),"ដូចនេះ $z_1="+trig(St(z1.r),z1.a)+"$","• ចំពោះ $z_2$ ៖",marg(z2,"z_2"),"ដូចនេះ $z_2="+trig(St(z2.r),z2.a)+"$")),
+     Q("គណនា $z_1\\times z_2$ និង $\\dfrac{z_1}{z_2}$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z_1z_2="+trig(St(rp),z1.a+z2.a)+"$ , $\\dfrac{z_1}{z_2}="+trig(St(rq),z1.a-z2.a)+"$",
+       W("ផលគុណ ៖ គុណម៉ូឌុល និងបូកអាគុយម៉ង់ ។ ផលចែក ៖ ចែកម៉ូឌុល និងដកអាគុយម៉ង់ ។",AL(["z_1z_2&="+St(z1.r)+"\\times"+St(z2.r)+"\\left[\\cos\\left("+SP+"\\right)+i\\sin\\left("+SP+"\\right)\\right]","&="+trig(St(rp),z1.a+z2.a),
+         "\\dfrac{z_1}{z_2}&=\\dfrac{"+St(z1.r)+"}{"+St(z2.r)+"}\\left[\\cos\\left("+SQ+"\\right)+i\\sin\\left("+SQ+"\\right)\\right]","&="+trig(St(rq),z1.a-z2.a)]))),
+     Q("ដោយប្រើរូបមន្តដឺម័រ គណនា $z_1^{"+n+"}$ ជាទម្រង់ពិជគណិត ។","$z_1^{"+n+"}="+pw+"$",
+       W("រូបមន្តដឺម័រ ៖ $\\left[r(\\cos\\theta+i\\sin\\theta)\\right]^n=r^n(\\cos n\\theta+i\\sin n\\theta)$",AL(["z_1^{"+n+"}&=\\left("+St(z1.r)+"\\right)^{"+n+"}\\left[\\cos\\left("+n+"\\times"+(angN(z1.a)<0?"\\left("+ap(z1.a)+"\\right)":ap(z1.a))+"\\right)+i\\sin\\left("+n+"\\times"+(angN(z1.a)<0?"\\left("+ap(z1.a)+"\\right)":ap(z1.a))+"\\right)\\right]","&="+trig(St(rn),n*z1.a),"&="+pw])))]}}},
  {id:"poly",t:"ពហុធាដឺក្រេទី៣ (ឫសពិត + ឫសកុំផ្លិច)",lv:3,f:function(){
-   var r=nz(-3,3),p=nz(-3,3),q=ri(1,3),B=-2*p,Cc=p*p+q*q;   /* (z-r)(z²+Bz+Cc) */
-   var a2=B-r,a1=Cc-r*B,a0=-r*Cc;
+   var r=nz(-3,3),p=nz(-3,3),q=ri(1,3),B=-2*p,Cc=p*p+q*q;
+   var a2=B-r,a1=Cc-r*B,a0=-r*Cc,cf=[1,a2,a1,a0];
    var Pz="z^3"+(a2?(a2<0?"-":"+")+(Math.abs(a2)===1?"":Math.abs(a2))+"z^2":"")+(a1?(a1<0?"-":"+")+(Math.abs(a1)===1?"":Math.abs(a1))+"z":"")+(a0?(a0<0?"-":"+")+Math.abs(a0):"");
+   var Qz="z^2"+(B?(B<0?"-":"+")+(Math.abs(B)===1?"":Math.abs(B))+"z":"")+"+"+Cc,zr="z"+sg(-r),qi=(q===1?"":q)+"i";
    return{inst:"គេឱ្យពហុធា $P(z)="+Pz+"$ ។",it:[
-     Q("បង្ហាញថា $z_1="+r+"$ ជាឫសមួយនៃពហុធា $P(z)$ ។","$P("+r+")=0$","ជំនួស $z="+r+"$"),
-     Q("ដាក់ $P(z)$ ជាផលគុណកត្តា រួចដោះស្រាយសមីការ $P(z)=0$ ក្នុងសំណុំ $\\mathbb C$ ។","$P(z)=(z"+(r<0?"+"+(-r):"-"+r)+")(z^2"+(B?(B<0?"-":"+")+Math.abs(B)+"z":"")+"+"+Cc+")$ · $z\\in\\{"+r+";\\ "+cxi(p,q)+";\\ "+cxi(p,-q)+"\\}$","ចែក $P(z)$ នឹង $z"+(r<0?"+"+(-r):"-"+r)+"$ (ហូណ័រ)")]}}},
+     Q("បង្ហាញថា $z_1="+r+"$ ជាឫសមួយនៃពហុធា $P(z)$ ។","$P("+r+")=0$ ⇒ $z_1="+r+"$ ជាឫស",
+       AL(["P("+r+")&="+pn(r)+"^3"+sg(a2)+"\\times"+pn(r)+"^2"+sg(a1)+"\\times"+pn(r)+sg(a0),"&="+(r*r*r)+sg(a2*r*r)+sg(a1*r)+sg(a0)+"=0"])),
+     Q("ដាក់ $P(z)$ ជាផលគុណកត្តា រួចដោះស្រាយសមីការ $P(z)=0$ ក្នុងសំណុំ $\\mathbb C$ ។","$P(z)=("+zr+")("+Qz+")$ , $z\\in\\{"+r+";\\ "+cxi(p,q)+";\\ "+cxi(p,-q)+"\\}$",
+       W("ចែក $P(z)$ នឹង $"+zr+"$ តាមវិធីហូណ័រ ៖","$$\\begin{array}{c|cccc}&1&"+a2+"&"+a1+"&"+a0+"\\\\"+r+"&&"+r+"&"+r*B+"&"+r*Cc+"\\\\\\hline&1&"+B+"&"+Cc+"&0\\end{array}$$",
+         "នាំឱ្យ $P(z)=("+zr+")("+Qz+")$ ។ ដោះស្រាយ $"+Qz+"=0$ ៖",AL(["\\Delta'&="+pn(p)+"^2-"+Cc+"=-"+q*q+"=("+qi+")^2","z&="+p+"\\pm"+qi]),"ដូចនេះ ឫសទាំងបីគឺ $"+r+"$ , $"+cxi(p,q)+"$ និង $"+cxi(p,-q)+"$"))]}}},
  {id:"geo",t:"ចំនួនកុំផ្លិចក្នុងធរណីមាត្រ (ត្រីកោណ)",lv:2,f:function(){
    var ax=nz(-3,3),ay=nz(-3,3),u=nz(-3,3),v=nz(-3,3);while(!u&&!v)v=nz(-3,3);
-   var bx=ax+u,by=ay+v,cx_=bx-v,cy=by+u,L2=u*u+v*v;   /* BC = i·AB → កែងត្រង់ B */
-   return{inst:"នៅក្នុងប្លង់កុំផ្លិច គេមានចំណុច $A,B,C$ ដែលមានអាហ្វិករៀងគ្នា $z_A="+cxi(ax,ay)+"$ , $z_B="+cxi(bx,by)+"$ និង $z_C="+cxi(cx_,cy)+"$ ។",it:[
-     Q("គណនាប្រវែងជ្រុង $AB$ , $BC$ និង $AC$ ។","$AB=BC="+sqrtT(L2)+"$ · $AC="+sqrtT(2*L2)+"$","$AB=|z_B-z_A|$"),
-     Q("បង្ហាញថា ត្រីកោណ $ABC$ ជាត្រីកោណកែងសមបាតត្រង់ $B$ ។","$AB=BC$ និង $AB^2+BC^2="+(2*L2)+"=AC^2$","ពីតាគ័រច្រាស")]}}},
+   var bx=ax+u,by=ay+v,cx_=bx-v,cy=by+u,L2=u*u+v*v;
+   return{kfig:FG({A:[ax,ay],B:[bx,by],C:[cx_,cy]},["poly A B C blue","right A B C"],{axes:1}),inst:"នៅក្នុងប្លង់កុំផ្លិច គេមានចំណុច $A,B,C$ ដែលមានអាហ្វិករៀងគ្នា $z_A="+cxi(ax,ay)+"$ , $z_B="+cxi(bx,by)+"$ និង $z_C="+cxi(cx_,cy)+"$ ។",it:[
+     Q("គណនាប្រវែងជ្រុង $AB$ , $BC$ និង $AC$ ។","$AB=BC="+sqrtT(L2)+"$ , $AC="+sqrtT(2*L2)+"$",
+       AL(["AB&=|z_B-z_A|=|"+cxi(u,v)+"|=\\sqrt{"+pn(u)+"^2+"+pn(v)+"^2}="+sqrtT(L2),"BC&=|z_C-z_B|=|"+cxi(-v,u)+"|=\\sqrt{"+pn(-v)+"^2+"+pn(u)+"^2}="+sqrtT(L2),"AC&=|z_C-z_A|=|"+cxi(u-v,u+v)+"|=\\sqrt{"+(u-v)*(u-v)+"+"+(u+v)*(u+v)+"}="+sqrtT(2*L2)])),
+     Q("បង្ហាញថា ត្រីកោណ $ABC$ ជាត្រីកោណកែងសមបាតត្រង់ $B$ ។","$AB=BC$ និង $AB^2+BC^2=AC^2$",
+       W("ដោយ $AB=BC="+sqrtT(L2)+"$ នោះ $ABC$ ជាត្រីកោណសមបាតកំពូល $B$ ។",AL(["AB^2+BC^2&="+L2+"+"+L2+"="+2*L2+"=AC^2"]),"តាមទ្រឹស្ដីបទពីតាករច្រាស $ABC$ កែងត្រង់ $B$ ។ ដូចនេះ $ABC$ ជាត្រីកោណកែងសមបាតត្រង់ $B$ ។"))]}}},
  {id:"root",t:"ឫសទី n នៃចំនួនកុំផ្លិច",lv:3,f:function(){
    var n=pick([2,3,4]),w=spt(),r=S(1);for(var i=0;i<n;i++)r=Sm(r,w.r);var c=cs(n*w.a);
    if(!c){w.a=pick([2,4,6,3]);c=cs(n*w.a)}
-   var z=Ct(Sm(r,c[0]),Sm(r,c[1])),th=angN(n*w.a),list=[];for(var k=0;k<n;k++)list.push("w_"+k+"="+trig(St(w.r),angN((th+24*k)/n)));
+   var zre=Sm(r,c[0]),zim=Sm(r,c[1]),z=Ct(zre,zim),th=angN(n*w.a),list=[];for(var k=0;k<n;k++)list.push("w_"+k+"="+trig(St(w.r),angN((th+24*k)/n)));
    return{inst:"គេឱ្យចំនួនកុំផ្លិច $z="+z+"$ ។",it:[
-     Q("សរសេរ $z$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z="+trig(St(r),th)+"$"),
-     Q("រកគ្រប់ឫសទី $"+n+"$ នៃ $z$ ជាទម្រង់ត្រីកោណមាត្រ ។","$"+list.join("$ · $")+"$","$w_k=\\sqrt["+n+"]{r}\\left[\\cos\\dfrac{\\theta+2k\\pi}{"+n+"}+i\\sin\\dfrac{\\theta+2k\\pi}{"+n+"}\\right]$")]}}},
+     Q("សរសេរ $z$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z="+trig(St(r),th)+"$",W(marg({re:zre,im:zim,r:r,a:th}),"ដូចនេះ $z="+trig(St(r),th)+"$")),
+     Q("រកគ្រប់ឫសទី $"+n+"$ នៃ $z$ ជាទម្រង់ត្រីកោណមាត្រ ។","$"+list.join("$ , $")+"$",
+       W("ឫសទី $n$ នៃ $z=r(\\cos\\theta+i\\sin\\theta)$ គឺ ៖","$$w_k=\\sqrt["+n+"]{r}\\left[\\cos\\dfrac{\\theta+2k\\pi}{"+n+"}+i\\sin\\dfrac{\\theta+2k\\pi}{"+n+"}\\right],\\ k=0,\\dots,"+(n-1)+"$$","ដោយ $\\sqrt["+n+"]{"+St(r)+"}="+St(w.r)+"$ និង $\\theta="+angT(th)+"$ ៖",AL(list.map(function(x){return x.replace("=","&=")}))))]}}},
  {id:"x1x2",t:"សមីការដឺក្រេទី២ មានឫសកុំផ្លិចដែលគេស្គាល់",lv:2,f:function(){
    var p=nz(-3,3),q=ri(1,3),a=-2*p,b=p*p+q*q,den=b;
    return{inst:"គេមានសមីការ $x^2+ax+b=0$ ដែល $a$ និង $b$ ជាចំនួនពិត ។",it:[
-     Q("កំណត់ចំនួនពិត $a$ និង $b$ ដើម្បីឱ្យ $x_1="+cxi(p,q)+"$ ជាឫសមួយនៃសមីការ ។","$a="+a+"$ · $b="+b+"$","$x_1+x_2=-a$ , $x_1x_2=b$"),
-     Q("រកឫស $x_2$ មួយទៀត រួចសរសេរ $\\dfrac{x_1}{x_2}$ ជាទម្រង់ពិជគណិត ។","$x_2="+cxi(p,-q)+"$ · $\\dfrac{x_1}{x_2}="+cxq(p*p-q*q,den,2*p*q,den)+"$","$x_2=\\overline{x_1}$")]}}}
+     Q("កំណត់ចំនួនពិត $a$ និង $b$ ដើម្បីឱ្យ $x_1="+cxi(p,q)+"$ ជាឫសមួយនៃសមីការ ។","$a="+a+"$ , $b="+b+"$",
+       W("ដោយមេគុណជាចំនួនពិត ឫសមួយទៀតគឺ $x_2=\\overline{x_1}="+cxi(p,-q)+"$ ។ តាមទំនាក់ទំនងវ្យែត ៖",AL(["x_1+x_2&="+2*p+"=-a\\Rightarrow a="+a,"x_1x_2&=("+cxi(p,q)+")("+cxi(p,-q)+")="+pn(p)+"^2+"+q*q+"="+b+"=b"]))),
+     Q("រកឫស $x_2$ មួយទៀត រួចសរសេរ $\\dfrac{x_1}{x_2}$ ជាទម្រង់ពិជគណិត ។","$x_2="+cxi(p,-q)+"$ , $\\dfrac{x_1}{x_2}="+cxq(p*p-q*q,den,2*p*q,den)+"$",
+       W("$x_2=\\overline{x_1}="+cxi(p,-q)+"$",AL(cdiv("\\dfrac{x_1}{x_2}",p,q,p,-q))))]}}}
 ];
 /* ===================== ថ្នាក់ទី១២ · អនុគមន៍សនិទាន ===================== */
 function lin(a,b,v){v=v||"x";return(a===1?"":a===-1?"-":a)+v+(b?(b<0?b:"+"+b):"")}
@@ -165,57 +195,84 @@ function nCr(n,r){if(r<0||r>n)return 0;var v=1;for(var i=1;i<=r;i++)v=v*(n-r+i)/
 var CTX=[["ក្នុងកន្ត្រកមួយមានស្វាយ","ស្វាយរសជាតិផ្អែម","ស្វាយរសជាតិជូរ","ផ្លែ","កន្ត្រក"],["ក្នុងប្រអប់មួយមានឃ្លី","ឃ្លីពណ៌ក្រហម","ឃ្លីពណ៌ខៀវ","គ្រាប់","ប្រអប់"],["ក្នុងថង់មួយមានប៊ិច","ប៊ិចខៀវ","ប៊ិចក្រហម","ដើម","ថង់"]];
 var PROB=[{id:"draw",t:"ប្រូបាប · ចាប់យកព្រមគ្នា",lv:2,f:function(){
   var c=pick(CTX),a=ri(8,15),b=ri(3,6),N=a+b,k=ri(5,Math.min(10,a)),T=nCr(N,3),pA=nCr(a,1)*nCr(b,2),pB=nCr(b,2)*nCr(a,1)+nCr(b,3);
+  var fr=function(n,d){return"\\dfrac{"+n+"}{"+d+"}"+(gcd(n,d)===1?"":"="+F(n,d))};
   return{inst:c[0]+"សរុប $"+N+"$ "+c[3]+" ក្នុងនោះមាន"+c[1]+" $"+a+"$ "+c[3]+" និង"+c[2]+" $"+b+"$ "+c[3]+"។ គេចាប់យក $3$ "+c[3]+"ព្រមគ្នាដោយចៃដន្យ។",it:[
-    Q("រកប្រូបាបនៃព្រឹត្តិការណ៍ $A$៖ «មាន"+c[1]+"តែមួយគត់»","$P(A)="+F(pA,T)+"$","$P(A)=\\dfrac{C_{"+a+"}^{1}\\cdot C_{"+b+"}^{2}}{C_{"+N+"}^{3}}=\\dfrac{"+pA+"}{"+T+"}$"),
-    Q("រកប្រូបាបនៃព្រឹត្តិការណ៍ $B$៖ «មាន"+c[2]+"យ៉ាងតិចពីរ»","$P(B)="+F(pB,T)+"$","$P(B)=\\dfrac{C_{"+b+"}^{2}C_{"+a+"}^{1}+C_{"+b+"}^{3}}{C_{"+N+"}^{3}}$"),
-    Q("អ្នកលូកយកពី"+c[4]+"ចង់ប្រាកដថាបាន"+c[1]+"យ៉ាងតិច $"+k+"$ "+c[3]+"។ តើត្រូវលូកយកយ៉ាងតិចប៉ុន្មាន"+c[3]+"?","$"+(b+k)+"$ "+c[3],"ករណីអាក្រក់បំផុត៖ យកបាន"+c[2]+"ទាំង $"+b+"$ មុន")]}}}];
+    Q("រកប្រូបាបនៃព្រឹត្តិការណ៍ $A$៖ «មាន"+c[1]+"តែមួយគត់»","$P(A)="+F(pA,T)+"$",
+      W("ចំនួនករណីអាច ៖ $n(S)=C_{"+N+"}^{3}=\\dfrac{"+N+"\\times"+(N-1)+"\\times"+(N-2)+"}{3\\times2\\times1}="+T+"$","ព្រឹត្តិការណ៍ $A$ ៖ យក"+c[1]+" $1$ និង"+c[2]+" $2$ ៖",
+        AL(["n(A)&=C_{"+a+"}^{1}\\times C_{"+b+"}^{2}="+a+"\\times"+nCr(b,2)+"="+pA,"P(A)&=\\dfrac{n(A)}{n(S)}="+fr(pA,T)]))),
+    Q("រកប្រូបាបនៃព្រឹត្តិការណ៍ $B$៖ «មាន"+c[2]+"យ៉ាងតិចពីរ»","$P(B)="+F(pB,T)+"$",
+      W("«យ៉ាងតិចពីរ» = មាន"+c[2]+" $2$ (និង"+c[1]+" $1$) ឬ មាន"+c[2]+"ទាំង $3$ ៖",AL(["n(B)&=C_{"+b+"}^{2}\\times C_{"+a+"}^{1}+C_{"+b+"}^{3}","&="+nCr(b,2)+"\\times"+a+"+"+nCr(b,3)+"="+pB,"P(B)&=\\dfrac{"+pB+"}{"+T+"}"+(gcd(pB,T)===1?"":"="+F(pB,T))]))),
+    Q("អ្នកលូកយកពី"+c[4]+"ចង់ប្រាកដថាបាន"+c[1]+"យ៉ាងតិច $"+k+"$ "+c[3]+"។ តើត្រូវលូកយកយ៉ាងតិចប៉ុន្មាន"+c[3]+"?","$"+(b+k)+"$ "+c[3],
+      "ករណីអាក្រក់បំផុត ៖ លូកបាន"+c[2]+"ទាំង $"+b+"$ "+c[3]+"មុន ។ បន្ទាប់មកត្រូវលូកថែម $"+k+"$ "+c[3]+"ទៀត ទើបប្រាកដថាបាន"+c[1]+" $"+k+"$ "+c[3]+" ។\nដូចនេះ ត្រូវលូកយកយ៉ាងតិច $"+b+"+"+k+"="+(b+k)+"$ "+c[3]+" ។")]}}}];
 var LIM=[{id:"lim",t:"លីមីត (ln · ត្រីកោណមាត្រ · កំណត់ a, b)",lv:2,f:function(){
-  var c=nz(1,4),k=pick([1,2,3,1]),p=nz(-3,3),m=ri(2,5),n=ri(2,5),r=nz(-2,2),L=nz(-5,5),a=L-2*r,b=-r*r-a*r;
+  var c=nz(1,4),k=pick([1,2,3,1]),p=nz(-3,3),m=ri(2,5),n=ri(2,5),r=nz(-2,2),L=nz(-5,5),a=L-2*r,b=-r*r-a*r,mn=F(m,n),mh=F(m,2);
   var B=pick([
-    ["\\lim\\limits_{x\\to0}\\dfrac{1-\\cos "+m+"x}{x^2}",F(m*m,2)],
-    ["\\lim\\limits_{x\\to0}\\dfrac{\\sin "+m+"x}{"+n+"x}",F(m,n)],
-    ["\\lim\\limits_{x\\to0}\\dfrac{e^{"+m+"x}-1}{"+n+"x}",F(m,n)],
-    ["\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+"+m+"x)}{"+n+"x}",F(m,n)]]);
-  var Aq="\\lim\\limits_{x\\to+\\infty}\\left["+c+"-\\ln\\left(\\dfrac{"+(k===1?"":k)+"x"+(p<0?p:"+"+p)+"}{x}\\right)\\right]";
+    ["\\lim\\limits_{x\\to0}\\dfrac{1-\\cos "+m+"x}{x^2}",F(m*m,2),AL(["B&=\\lim\\limits_{x\\to0}\\dfrac{2\\sin^2\\dfrac{"+m+"x}{2}}{x^2}","&=\\lim\\limits_{x\\to0}2\\left("+mh+"\\right)^2\\left(\\dfrac{\\sin\\frac{"+m+"x}{2}}{\\frac{"+m+"x}{2}}\\right)^2","&=2\\times"+F(m*m,4)+"\\times1^2="+F(m*m,2)])],
+    ["\\lim\\limits_{x\\to0}\\dfrac{\\sin "+m+"x}{"+n+"x}",mn,AL(["B&=\\lim\\limits_{x\\to0}"+mn+"\\times\\dfrac{\\sin "+m+"x}{"+m+"x}="+mn+"\\times1="+mn])],
+    ["\\lim\\limits_{x\\to0}\\dfrac{e^{"+m+"x}-1}{"+n+"x}",mn,AL(["B&=\\lim\\limits_{x\\to0}"+mn+"\\times\\dfrac{e^{"+m+"x}-1}{"+m+"x}="+mn+"\\times1="+mn])],
+    ["\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+"+m+"x)}{"+n+"x}",mn,AL(["B&=\\lim\\limits_{x\\to0}"+mn+"\\times\\dfrac{\\ln(1+"+m+"x)}{"+m+"x}="+mn+"\\times1="+mn])]]);
+  var kx1=(k===1?"":k)+"x"+sg(p),Aq="\\lim\\limits_{x\\to+\\infty}\\left["+c+"-\\ln\\left(\\dfrac{"+kx1+"}{x}\\right)\\right]";
   return{inst:"",it:[
-    Q("គណនាលីមីត $A="+Aq+"$ និង $B="+B[0]+"$ ។","$A="+(k===1?c:c+"-\\ln "+k)+"$ · $B="+B[1]+"$","$\\dfrac{"+(k===1?"":k)+"x"+(p<0?p:"+"+p)+"}{x}\\to "+k+"$ · លីមីតគោល"),
-    Q("រកចំនួនពិត $a$ និង $b$ ដែលផ្ទៀងផ្ទាត់ $\\lim\\limits_{x\\to"+r+"}\\dfrac{x^2+ax+b}{x"+(r<0?"+"+(-r):"-"+r)+"}="+L+"$ ។","$a="+a+"$ · $b="+b+"$","ភាគយកត្រូវស្មើ $0$ ត្រង់ $x="+r+"$ ⇒ $"+(r*r)+(r<0?"":"+")+r+"a+b=0$ · លីមីត $=2("+r+")+a="+L+"$")]}}}];
+    Q("គណនាលីមីត $A="+Aq+"$ និង $B="+B[0]+"$ ។","$A="+(k===1?c:c+"-\\ln "+k)+"$ , $B="+B[1]+"$",
+      W(AL(["\\lim\\limits_{x\\to+\\infty}\\dfrac{"+kx1+"}{x}&=\\lim\\limits_{x\\to+\\infty}\\left("+k+sg(p).replace(/(\d+)$/,"\\dfrac{$1}{x}")+"\\right)="+k,"A&="+c+"-\\ln "+k+(k===1?"="+c:"")]),"ប្រើលីមីតគោល ៖",B[2])),
+    Q("រកចំនួនពិត $a$ និង $b$ ដែលផ្ទៀងផ្ទាត់ $\\lim\\limits_{x\\to"+r+"}\\dfrac{x^2+ax+b}{x"+sg(-r)+"}="+L+"$ ។","$a="+a+"$ , $b="+b+"$",
+      W("ដោយភាគបែង $\\to0$ ពេល $x\\to"+r+"$ ហើយលីមីតជាចំនួនកំណត់ នោះភាគយកត្រូវស្មើ $0$ ត្រង់ $x="+r+"$ ៖",AL([pn(r)+"^2+"+pn(r)+"a+b&=0\\Rightarrow b=-"+r*r+tm(-r,"a")]),
+        "ពេលនោះ $x^2+ax+b=(x"+sg(-r)+")(x"+sg(r)+"+a)$ ៖",AL(["\\lim\\limits_{x\\to"+r+"}(x"+sg(r)+"+a)&="+2*r+"+a="+L,"a&="+a,"b&=-"+r*r+sg(-r)+"\\times"+pn(a)+"="+b])))]}}}];
 var INT=[{id:"int4",t:"គណនាអាំងតេក្រាល (៤ សំណួរ)",lv:2,f:function(){
-  var a=ri(2,6),b=ri(1,3),sg=pick([1,-1]),kk=pick([[1,"2(\\sqrt{2}-1)"],[3,"2(2-\\sqrt{3})"],[8,"2(3-2\\sqrt{2})"]]),pm=pick([1,-1]);
+  var a=ri(2,6),b=ri(1,3),sgn=pick([1,-1]),kk=pick([[1,"2(\\sqrt{2}-1)"],[3,"2(2-\\sqrt{3})"],[8,"2(3-2\\sqrt{2})"]]),pm=pick([1,-1]),bb=b===1?"":b,s=sgn<0?"-":"+",so=sgn<0?"+":"-";
   return{inst:"គណនាអាំងតេក្រាលខាងក្រោម៖",it:[
-    Q("$\\displaystyle\\int_1^2\\left(\\dfrac{"+a+"}{x^2}-\\dfrac{"+2*b+"x}{x^2+1}\\right)dx$","$"+F(a,2)+"-"+(b===1?"":b)+"\\ln\\dfrac{5}{2}$","$\\int\\dfrac{2x}{x^2+1}dx=\\ln(x^2+1)$"),
-    Q("$\\displaystyle\\int_0^{\\frac{\\pi}{4}}(\\sin x"+(sg<0?"-":"+")+"\\cos x)^2dx$","$\\dfrac{\\pi}{4}"+(sg<0?"-":"+")+"\\dfrac{1}{2}$","$(\\sin x\\pm\\cos x)^2=1\\pm\\sin2x$"),
-    Q("$\\displaystyle\\int_1^e\\dfrac{1}{x\\sqrt{"+kk[0]+"+\\ln x}}dx$","$"+kk[1]+"$","$\\int\\dfrac{u'}{\\sqrt u}=2\\sqrt u$ ដែល $u="+kk[0]+"+\\ln x$"),
-    Q("$\\displaystyle\\int_0^1\\sqrt{e^{2x}"+(pm<0?"-":"+")+"2+e^{-2x}}\\,dx$",pm>0?"$e-\\dfrac{1}{e}$":"$e+\\dfrac{1}{e}-2$",pm>0?"$e^{2x}+2+e^{-2x}=(e^x+e^{-x})^2$":"$e^{2x}-2+e^{-2x}=(e^x-e^{-x})^2$ · $e^x-e^{-x}\\ge0$ លើ $[0,1]$")]}}}];
+    Q("$\\displaystyle\\int_1^2\\left(\\dfrac{"+a+"}{x^2}-\\dfrac{"+2*b+"x}{x^2+1}\\right)dx$","$"+F(a,2)+"-"+bb+"\\ln\\dfrac{5}{2}$",
+      W("ប្រើ $\\displaystyle\\int\\dfrac{dx}{x^2}=-\\dfrac1x$ និង $\\displaystyle\\int\\dfrac{2x}{x^2+1}dx=\\ln(x^2+1)$ ៖",AL(["I&=\\left[-\\dfrac{"+a+"}{x}-"+bb+"\\ln(x^2+1)\\right]_1^2","&=\\left(-"+F(a,2)+"-"+bb+"\\ln5\\right)-\\left(-"+a+"-"+bb+"\\ln2\\right)","&="+F(a,2)+"-"+bb+"\\ln\\dfrac52"]))),
+    Q("$\\displaystyle\\int_0^{\\frac{\\pi}{4}}(\\sin x"+s+"\\cos x)^2dx$","$\\dfrac{\\pi}{4}"+s+"\\dfrac{1}{2}$",
+      W("ដោយ $(\\sin x"+s+"\\cos x)^2=\\sin^2x+\\cos^2x"+s+"2\\sin x\\cos x=1"+s+"\\sin2x$ ៖",AL(["J&=\\int_0^{\\frac{\\pi}{4}}(1"+s+"\\sin2x)dx=\\left[x"+so+"\\dfrac{\\cos2x}{2}\\right]_0^{\\frac{\\pi}{4}}","&=\\left(\\dfrac{\\pi}{4}"+so+"0\\right)-\\left(0"+so+"\\dfrac12\\right)=\\dfrac{\\pi}{4}"+s+"\\dfrac12"]))),
+    Q("$\\displaystyle\\int_1^e\\dfrac{1}{x\\sqrt{"+kk[0]+"+\\ln x}}dx$","$"+kk[1]+"$",
+      W("តាង $u="+kk[0]+"+\\ln x$ នោះ $u'=\\dfrac1x$ ហើយ $\\displaystyle\\int\\dfrac{u'}{\\sqrt u}dx=2\\sqrt u$ ៖",AL(["K&=\\left[2\\sqrt{"+kk[0]+"+\\ln x}\\right]_1^e=2\\sqrt{"+(kk[0]+1)+"}-2\\sqrt{"+kk[0]+"}","&="+kk[1]]))),
+    Q("$\\displaystyle\\int_0^1\\sqrt{e^{2x}"+(pm<0?"-":"+")+"2+e^{-2x}}\\,dx$",pm>0?"$e-\\dfrac{1}{e}$":"$e+\\dfrac{1}{e}-2$",
+      pm>0?W("ដោយ $e^{2x}+2+e^{-2x}=(e^x+e^{-x})^2$ និង $e^x+e^{-x}>0$ ៖",AL(["L&=\\int_0^1(e^x+e^{-x})dx=\\left[e^x-e^{-x}\\right]_0^1","&=\\left(e-\\dfrac1e\\right)-(1-1)=e-\\dfrac1e"]))
+        :W("ដោយ $e^{2x}-2+e^{-2x}=(e^x-e^{-x})^2$ និង $e^x-e^{-x}\\ge0$ លើ $[0,1]$ ៖",AL(["L&=\\int_0^1(e^x-e^{-x})dx=\\left[e^x+e^{-x}\\right]_0^1","&=\\left(e+\\dfrac1e\\right)-(1+1)=e+\\dfrac1e-2"])))]}}}];
 var ODE=[{id:"ode2",t:"សមីការឌីផេរ៉ង់ស្យែលលំដាប់ទី២",lv:2,f:function(){
   var r1=ri(1,4),r2=-ri(1,4),s=r1+r2,p=r1*r2,M=ri(2,6);
   var al=F(-M*r2,r1-r2),be=F(M*r1,r1-r2),ex=function(r){return r===1?"x":r===-1?"-x":r+"x"};
-  var eq="y''"+(s?(s>0?"-":"+")+(Math.abs(s)===1?"":Math.abs(s))+"y'":"")+(p<0?"-"+(-p):"+"+p)+"y=0";
+  var cs=function(v){return v?(v>0?"-":"+")+(Math.abs(v)===1?"":Math.abs(v)):""},eq="y''"+(s?cs(s)+"y'":"")+(p<0?"-"+(-p):"+"+p)+"y=0",ch="r^2"+(s?cs(s)+"r":"")+(p<0?"-"+(-p):"+"+p)+"=0";
   return{inst:"គេមានសមីការឌីផេរ៉ង់ស្យែល $(E)\\colon "+eq+"$ ។",it:[
-    Q("បង្ហាញថាចំពោះគ្រប់ចំនួនពិត $x$ អនុគមន៍ $f(x)=\\alpha e^{"+ex(r2)+"}+\\beta e^{"+ex(r1)+"}$ ($\\alpha,\\beta\\in\\mathbb R$) ជាចម្លើយមួយនៃ $(E)$ ។","សមីការសម្គាល់ $r^2"+(s?(s>0?"-":"+")+(Math.abs(s)===1?"":Math.abs(s))+"r":"")+(p<0?"-"+(-p):"+"+p)+"=0$ មានឫស $r_1="+r2+"$ , $r_2="+r1+"$","ជំនួស $f$ , $f'$ , $f''$ ក្នុង $(E)$"),
-    Q("កំណត់ចម្លើយពិសេសមួយនៃ $(E)$ បើក្រាបតាងអនុគមន៍ចម្លើយនោះមានតម្លៃអប្បបរមាស្មើ $"+M+"$ ត្រង់ $x=0$ ។","$f(x)="+be+"e^{"+ex(r2)+"}+"+al+"e^{"+ex(r1)+"}$","$f(0)="+M+"$ និង $f'(0)=0$")]}}}];
+    Q("បង្ហាញថាចំពោះគ្រប់ចំនួនពិត $x$ អនុគមន៍ $f(x)=\\alpha e^{"+ex(r2)+"}+\\beta e^{"+ex(r1)+"}$ ($\\alpha,\\beta\\in\\mathbb R$) ជាចម្លើយមួយនៃ $(E)$ ។","សមីការសម្គាល់ $"+ch+"$ មានឫស $r_1="+r2+"$ , $r_2="+r1+"$",
+      W("សមីការសម្គាល់នៃ $(E)$ ៖",AL([ch.replace("=0","&=0"),"(r"+sg(-r2)+")(r"+sg(-r1)+")&=0"]),"មានឫសពីរផ្សេងគ្នា $r_1="+r2+"$ និង $r_2="+r1+"$ ។ ចម្លើយទូទៅនៃ $(E)$ គឺ $y=\\alpha e^{"+ex(r2)+"}+\\beta e^{"+ex(r1)+"}$ ។","ដូចនេះ $f(x)=\\alpha e^{"+ex(r2)+"}+\\beta e^{"+ex(r1)+"}$ ជាចម្លើយនៃ $(E)$ គ្រប់ $\\alpha,\\beta\\in\\mathbb R$ ។")),
+    Q("កំណត់ចម្លើយពិសេសមួយនៃ $(E)$ បើក្រាបតាងអនុគមន៍ចម្លើយនោះមានតម្លៃអប្បបរមាស្មើ $"+M+"$ ត្រង់ $x=0$ ។","$f(x)="+be+"e^{"+ex(r2)+"}+"+al+"e^{"+ex(r1)+"}$",
+      W("$f$ មានអប្បបរមា $"+M+"$ ត្រង់ $x=0$ ⇒ $f(0)="+M+"$ និង $f'(0)=0$ ។ ដោយ $f'(x)="+r2+"\\alpha e^{"+ex(r2)+"}+"+(r1===1?"":r1)+"\\beta e^{"+ex(r1)+"}$ ៖",
+        "$$\\begin{cases}\\alpha+\\beta="+M+"\\\\"+r2+"\\alpha+"+(r1===1?"":r1)+"\\beta=0\\end{cases}$$",AL(["\\alpha&="+(gcd(M*r1,r1-r2)===1?"":"\\dfrac{"+M*r1+"}{"+(r1-r2)+"}=")+be,"\\beta&="+M+"-\\alpha="+al])))]}}}];
 var ELL=[{id:"ell",t:"អេលីប · ទម្រង់ស្តង់ដា",lv:2,f:function(){
   var h=nz(-3,3),k=nz(-3,3),A=pick([4,9,16,25]),Bq=pick([1,4,9].filter(function(v){return v!==A})),hor=A>Bq;
   var c2=Math.abs(A-Bq),a=Math.sqrt(Math.max(A,Bq)),b=Math.sqrt(Math.min(A,Bq)),cT=sqrtT(c2),ci=Math.sqrt(c2)%1===0?Math.sqrt(c2):0;
   var X2=Bq,Y2=A,X1=-2*h*Bq,Y1=-2*k*A,C0=Bq*h*h+A*k*k-A*Bq,g=gcd(gcd(gcd(X2,Y2),gcd(X1,Y1)),C0);
-  var tm=function(v,s){return v?(v<0?"-":"+")+(Math.abs(v)===1?"":Math.abs(v))+s:""};
-  var E=(X2/g===1?"":X2/g)+"x^2"+tm(Y2/g,"y^2")+tm(X1/g,"x")+tm(Y1/g,"y")+(C0/g?(C0/g<0?"":"+")+C0/g:"")+"=0";
+  var tm2=function(v,s){return v?(v<0?"-":"+")+(Math.abs(v)===1?"":Math.abs(v))+s:""};
+  var E=(X2/g===1?"":X2/g)+"x^2"+tm2(Y2/g,"y^2")+tm2(X1/g,"x")+tm2(Y1/g,"y")+(C0/g?(C0/g<0?"":"+")+C0/g:"")+"=0";
   var sx=function(v){return v<0?"x+"+(-v):"x-"+v},sy=function(v){return v<0?"y+"+(-v):"y-"+v};
   var V=hor?"("+(h-a)+","+k+")$ , $("+(h+a)+","+k+")":"("+h+","+(k-a)+")$ , $("+h+","+(k+a)+")";
   var Fo=ci?(hor?"("+(h-ci)+","+k+")$ , $("+(h+ci)+","+k+")":"("+h+","+(k-ci)+")$ , $("+h+","+(k+ci)+")"):hor?"("+h+"-"+cT+","+k+")$ , $("+h+"+"+cT+","+k+")":"("+h+","+k+"-"+cT+")$ , $("+h+","+k+"+"+cT+")";
-  return{inst:"គេមានសមីការអេលីប $(E)\\colon "+E+"$ ។",it:[
-    Q("ចូរសរសេរសមីការ $(E)$ ទៅជាទម្រង់ស្តង់ដា ។","$\\dfrac{("+sx(h)+")^2}{"+A+"}+\\dfrac{("+sy(k)+")^2}{"+Bq+"}=1$","បំពេញការេ"),
-    Q("កំណត់ផ្ចិត កំពូល កំណុំ ប្រវែងអ័ក្សតូច និងអ័ក្សធំ រួចសង់អេលីប ។","ផ្ចិត $("+h+","+k+")$ · កំពូល $"+V+"$ · កំណុំ $"+Fo+"$ · អ័ក្សធំ $"+2*a+"$ · អ័ក្សតូច $"+2*b+"$","$c^2=a^2-b^2="+c2+"$")]}}}];
+  var cn=Math.sqrt(c2),fp=hor?{F:[h-cn,k],G:[h+cn,k],V:[h-a,k],U:[h+a,k]}:{F:[h,k-cn],G:[h,k+cn],V:[h,k-a],U:[h,k+a]};
+  return{kfig:FG({I:[h,k],F:fp.F,"F'":fp.G},["("+sx(h)+")^2/"+A+"+("+sy(k)+")^2/"+Bq+"=1 blue"],{axes:1,ext:[[h-Math.sqrt(A),k-Math.sqrt(Bq)],[h+Math.sqrt(A),k+Math.sqrt(Bq)]]}),
+    inst:"គេមានសមីការអេលីប $(E)\\colon "+E+"$ ។",it:[
+    Q("ចូរសរសេរសមីការ $(E)$ ទៅជាទម្រង់ស្តង់ដា ។","$\\dfrac{("+sx(h)+")^2}{"+A+"}+\\dfrac{("+sy(k)+")^2}{"+Bq+"}=1$",
+      W(g>1?"គុណអង្គទាំងពីរនឹង $"+g+"$ រួចបំពេញការេ ៖":"បំពេញការេ ៖",AL([X2+"(x^2"+tm2(-2*h,"x")+")+"+Y2+"(y^2"+tm2(-2*k,"y")+")&="+(-C0),X2+"("+sx(h)+")^2-"+X2*h*h+"+"+Y2+"("+sy(k)+")^2-"+Y2*k*k+"&="+(-C0),X2+"("+sx(h)+")^2+"+Y2+"("+sy(k)+")^2&="+A*Bq]),
+        "ចែកអង្គទាំងពីរនឹង $"+A*Bq+"$ ៖ $\\dfrac{("+sx(h)+")^2}{"+A+"}+\\dfrac{("+sy(k)+")^2}{"+Bq+"}=1$")),
+    Q("កំណត់ផ្ចិត កំពូល កំណុំ ប្រវែងអ័ក្សតូច និងអ័ក្សធំ រួចសង់អេលីប ។","ផ្ចិត $("+h+","+k+")$ , កំពូល $"+V+"$ , កំណុំ $"+Fo+"$ , អ័ក្សធំ $"+2*a+"$ , អ័ក្សតូច $"+2*b+"$",
+      W("ផ្ចិត $I("+h+","+k+")$ ។ ដោយ $"+Math.max(A,Bq)+">"+Math.min(A,Bq)+"$ អ័ក្សធំស្រប"+(hor?"អ័ក្សអាប់ស៊ីស":"អ័ក្សអ័រដោនេ")+" ៖",AL(["a^2&="+Math.max(A,Bq)+"\\Rightarrow a="+a+"\\ ,\\ b^2="+Math.min(A,Bq)+"\\Rightarrow b="+b,"c^2&=a^2-b^2="+Math.max(A,Bq)+"-"+Math.min(A,Bq)+"="+c2+"\\Rightarrow c="+cT]),
+        "កំពូលលើអ័ក្សធំ ៖ $"+V+"$","កំណុំ ៖ $"+Fo+"$","ប្រវែងអ័ក្សធំ $2a="+2*a+"$ និងអ័ក្សតូច $2b="+2*b+"$"))]}}}];
 var VEC=[{id:"vec3",t:"វ៉ិចទ័រក្នុងលំហ · ប្លង់ · ស្របគ្នា",lv:2,f:function(){
   var A,B,C,u,v,n;do{A=[ri(-2,3),ri(-2,3),ri(-2,3)];B=[ri(-2,3),ri(-2,3),ri(-2,3)];C=[ri(-2,3),ri(-2,3),ri(-2,3)];u=[B[0]-A[0],B[1]-A[1],B[2]-A[2]];v=[C[0]-A[0],C[1]-A[1],C[2]-A[2]];n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]]}while(!n[0]&&!n[1]&&!n[2]);
   var nn=n[0]*n[0]+n[1]*n[1]+n[2]*n[2],g=gcd(gcd(n[0],n[1]),n[2]),m=n.map(function(x){return x/g}),d=-(m[0]*A[0]+m[1]*A[1]+m[2]*A[2]);
-  var tm=function(v,s,f){return v?(v<0?"-":f?"":"+")+(Math.abs(v)===1?"":Math.abs(v))+s:""},pt=function(P){return"("+P.join(",")+")"};
-  var pl3=tm(m[0],"x",1);pl3+=tm(m[1],"y",!pl3);pl3+=tm(m[2],"z",!pl3);pl3+=(d?(d<0?d:"+"+d):"")+"=0";
+  var tm3=function(v,s,f){return v?(v<0?"-":f?"":"+")+(Math.abs(v)===1?"":Math.abs(v))+s:""},pt=function(P){return"("+P.join(",")+")"};
+  var pl3=tm3(m[0],"x",1);pl3+=tm3(m[1],"y",!pl3);pl3+=tm3(m[2],"z",!pl3);pl3+=(d?(d<0?d:"+"+d):"")+"=0";
   var area=S(1,2,nn),par=["x","y","z"].map(function(w,i){var q=u[i]?(u[i]<0?"-":"+")+(Math.abs(u[i])===1?"":Math.abs(u[i]))+"t":"";return w+"="+(C[i]?C[i]+q:(q.replace(/^\+/,"")||"0"))}).join(" , ");
+  var cr=function(a,b,c,d){return"("+pn(a)+"\\times"+pn(b)+"-"+pn(c)+"\\times"+pn(d)+")"};
   return{inst:"ក្នុងតម្រុយអរតូណរម៉ាល់មានទិសដៅវិជ្ជមាន $(O,\\vec i,\\vec j,\\vec k)$ គេមានចំណុច $A"+pt(A)+"$ ; $B"+pt(B)+"$ ; $C"+pt(C)+"$ និង $D(x,y,z)$ ។",it:[
-    Q("គណនា $\\vec n=\\overrightarrow{AB}\\times\\overrightarrow{AC}$ រួចគណនាផ្ទៃក្រឡានៃត្រីកោណ $ABC$ ។","$\\vec n="+pt(n)+"$ · $S_{ABC}="+St(area)+"$","$S=\\dfrac12\\left\\|\\overrightarrow{AB}\\times\\overrightarrow{AC}\\right\\|$"),
-    Q("សរសេរសមីការប្លង់ $(ABC)$ ។","$"+pl3+"$","$\\vec n$ ជាវ៉ិចទ័រណរម៉ាល់ · ប្លង់កាត់តាម $A$"),
-    Q("រកទំនាក់ទំនងរវាង $x,y$ និង $z$ ដើម្បីឱ្យវ៉ិចទ័រ $\\overrightarrow{AB}$ និង $\\overrightarrow{CD}$ កូលីនេអ៊ែគ្នា។ តើសំណុំចំណុច $D$ ជាអ្វី?","$"+par+"$ ($t\\in\\mathbb R$) · ជាបន្ទាត់កាត់តាម $C$ ស្របនឹង $(AB)$","$\\overrightarrow{CD}=t\\overrightarrow{AB}$")]}}}];
+    Q("គណនា $\\vec n=\\overrightarrow{AB}\\times\\overrightarrow{AC}$ រួចគណនាផ្ទៃក្រឡានៃត្រីកោណ $ABC$ ។","$\\vec n="+pt(n)+"$ , $S_{ABC}="+St(area)+"$",
+      W("$\\overrightarrow{AB}="+pt(u)+"$ និង $\\overrightarrow{AC}="+pt(v)+"$ ៖",AL(["\\vec n&="+cr(u[1],v[2],u[2],v[1])+"\\vec i-"+cr(u[0],v[2],u[2],v[0])+"\\vec j+"+cr(u[0],v[1],u[1],v[0])+"\\vec k","&="+pt(n)]),
+        AL(["S_{ABC}&=\\dfrac12\\left\\|\\vec n\\right\\|=\\dfrac12\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}=\\dfrac12\\sqrt{"+nn+"}="+St(area)]))),
+    Q("សរសេរសមីការប្លង់ $(ABC)$ ។","$"+pl3+"$",
+      W("ប្លង់ $(ABC)$ កាត់តាម $A"+pt(A)+"$ និងមានវ៉ិចទ័រណរម៉ាល់ $"+(g>1?"\\dfrac{1}{"+g+"}\\vec n=":"\\vec n=")+pt(m)+"$ ៖",AL([pn(m[0])+"(x-"+pn(A[0])+")+"+pn(m[1])+"(y-"+pn(A[1])+")+"+pn(m[2])+"(z-"+pn(A[2])+")&=0",pl3.replace("=0","&=0")]))),
+    Q("រកទំនាក់ទំនងរវាង $x,y$ និង $z$ ដើម្បីឱ្យវ៉ិចទ័រ $\\overrightarrow{AB}$ និង $\\overrightarrow{CD}$ កូលីនេអ៊ែគ្នា។ តើសំណុំចំណុច $D$ ជាអ្វី?","$"+par+"$ ($t\\in\\mathbb R$) ជាបន្ទាត់កាត់តាម $C$ ស្របនឹង $(AB)$",
+      W("$\\overrightarrow{CD}=(x-"+pn(C[0])+",y-"+pn(C[1])+",z-"+pn(C[2])+")$ ។ $\\overrightarrow{AB}$ និង $\\overrightarrow{CD}$ កូលីនេអ៊ែ លុះត្រាតែមាន $t\\in\\mathbb R$ ដែល $\\overrightarrow{CD}=t\\overrightarrow{AB}$ ៖",AL(par.split(" , ").map(function(x){return x.replace("=","&=")})),"ដូចនេះ សំណុំចំណុច $D$ ជាបន្ទាត់កាត់តាម $C$ ហើយស្របនឹង $(AB)$ ។"))]}}}];
 var FUN=[
  {id:"fexp",t:"សិក្សាអនុគមន៍ e^x (x−1) − x²/2 (ទម្រង់បាក់ឌុប)",lv:3,f:function(){
   return{inst:"គេមានអនុគមន៍ $f$ កំណត់លើ $\\mathbb R$ ដោយ $f(x)=e^x(x-1)-\\dfrac12x^2$ និងមានក្រាបតំណាង $(C)$ ។",it:[
@@ -236,129 +293,160 @@ var FUN=[
 /* ===================== ថ្នាក់ទី១២ · តាមសៀវភៅ «វិញ្ញាសាត្រៀមប្រឡងបាក់ឌុប ២០២៥» (២៣ វិញ្ញាសា) ===================== */
 function co(v,s,first){if(!v)return"";var a=Math.abs(v);return(v<0?"-":first?"":"+")+(a===1&&s?"":a)+s}
 function poly(t){var o="";t.forEach(function(x){o+=co(x[0],x[1],!o)});return o||"0"}
-function sg(v){return v?(v<0?"-"+(-v):"+"+v):""}
 function xm(v,x){x=x||"x";return v?"("+x+sg(-v)+")":x}
 function cf(s){return s==="1"?"":s==="-1"?"-":s}
 function at(s){return/^-/.test(s)?s:"+"+s}
-function kx(m,v){return(m===1?"":m)+(v||"x")}
 function ex(r){return r===1?"x":r===-1?"-x":r+"x"}
 function lm(to,e){return"\\lim\\limits_{x\\to"+to+"}"+e}
 var LA=[
- function(){var a=ri(1,4);return[lm(a,"\\dfrac{x^3-"+a*a*a+"}{x^2-"+a*a+"}"),F(3*a,2)]},
- function(){var a=nz(-3,4),b=nz(-3,4);while(b===a)b=nz(-3,4);return[lm(a,"\\dfrac{"+poly([[1,"x^2"],[-(a+b),"x"],[a*b,""]])+"}{x"+sg(-a)+"}"),String(a-b)]},
- function(){var d=pick([2,3]),c=ri(1,5),x0=d*d-c;return[lm(x0,"\\dfrac{\\sqrt{x"+sg(c)+"}-"+d+"}{x"+sg(-x0)+"}"),F(1,2*d)]},
- function(){var m=ri(1,4);return[lm("+\\infty","\\left(\\sqrt{x^2+"+2*m+"x}-x\\right)"),String(m)]},
- function(){var a=nz(-5,6),b=nz(-4,4),c=ri(1,5),d=ri(1,4),e=nz(-6,6);return[lm("+\\infty","\\dfrac{"+poly([[a,"x^2"],[b,"x"],[c,""]])+"}{"+poly([[d,"x^2"],[e,""]])+"}"),F(a,d)]}];
+ function(){var a=ri(1,4),x3=a*a*a,x2=a*a;return[lm(a,"\\dfrac{x^3-"+x3+"}{x^2-"+x2+"}"),F(3*a,2),["\\lim\\limits_{x\\to"+a+"}\\dfrac{(x-"+a+")(x^2+"+kx(a)+"+"+x2+")}{(x-"+a+")(x+"+a+")}","=\\lim\\limits_{x\\to"+a+"}\\dfrac{x^2+"+kx(a)+"+"+x2+"}{x+"+a+"}=\\dfrac{"+3*x2+"}{"+2*a+"}="+F(3*a,2)]]},
+ function(){var a=nz(-3,4),b=nz(-3,4);while(b===a)b=nz(-3,4);return[lm(a,"\\dfrac{"+poly([[1,"x^2"],[-(a+b),"x"],[a*b,""]])+"}{x"+sg(-a)+"}"),String(a-b),["\\lim\\limits_{x\\to"+a+"}\\dfrac{(x"+sg(-a)+")(x"+sg(-b)+")}{x"+sg(-a)+"}","=\\lim\\limits_{x\\to"+a+"}(x"+sg(-b)+")="+a+sg(-b)+"="+(a-b)]]},
+ function(){var d=pick([2,3]),c=ri(1,5),x0=d*d-c;return[lm(x0,"\\dfrac{\\sqrt{x"+sg(c)+"}-"+d+"}{x"+sg(-x0)+"}"),F(1,2*d),["\\lim\\limits_{x\\to"+x0+"}\\dfrac{(x"+sg(c)+")-"+d*d+"}{(x"+sg(-x0)+")(\\sqrt{x"+sg(c)+"}+"+d+")}","=\\lim\\limits_{x\\to"+x0+"}\\dfrac{1}{\\sqrt{x"+sg(c)+"}+"+d+"}=\\dfrac{1}{"+d+"+"+d+"}="+F(1,2*d)]]},
+ function(){var m=ri(1,4);return[lm("+\\infty","\\left(\\sqrt{x^2+"+2*m+"x}-x\\right)"),String(m),["\\lim\\limits_{x\\to+\\infty}\\dfrac{(x^2+"+2*m+"x)-x^2}{\\sqrt{x^2+"+2*m+"x}+x}=\\lim\\limits_{x\\to+\\infty}\\dfrac{"+2*m+"x}{x\\left(\\sqrt{1+\\frac{"+2*m+"}{x}}+1\\right)}","=\\dfrac{"+2*m+"}{1+1}="+m]]},
+ function(){var a=nz(-5,6),b=nz(-4,4),c=ri(1,5),d=ri(1,4),e=nz(-6,6);return[lm("+\\infty","\\dfrac{"+poly([[a,"x^2"],[b,"x"],[c,""]])+"}{"+poly([[d,"x^2"],[e,""]])+"}"),F(a,d),["\\lim\\limits_{x\\to+\\infty}\\dfrac{x^2\\left("+a+"+\\frac{"+b+"}{x}+\\frac{"+c+"}{x^2}\\right)}{x^2\\left("+d+"+\\frac{"+e+"}{x^2}\\right)}","=\\dfrac{"+a+"}{"+d+"}"+(gcd(a,d)===1?"":"="+F(a,d))]]}];
 var LT=[
- function(){var m=ri(1,5),n=ri(1,5);return[lm(0,"\\dfrac{e^{"+kx(m)+"}-1}{\\sin "+kx(n)+"}"),F(m,n)]},
- function(){var m=ri(2,5);return[lm(0,"\\dfrac{1-\\cos "+kx(m)+"}{x^2}"),F(m*m,2)]},
- function(){var m=ri(1,5),n=ri(1,5);return[lm(0,"\\dfrac{\\sin "+kx(m)+"}{\\tan "+kx(n)+"}"),F(m,n)]},
- function(){var m=ri(1,5),n=ri(1,5);return[lm(0,"\\dfrac{\\ln(1+"+kx(m)+")}{"+kx(n)+"}"),F(m,n)]},
- function(){var m=ri(1,5);return[lm(0,"\\dfrac{\\sqrt{1+"+kx(m)+"}-1}{x}"),F(m,2)]},
- function(){var m=ri(1,3),n=ri(1,3);return[lm(0,"\\dfrac{\\sqrt{1+"+kx(m)+"}-\\sqrt{1-"+kx(m)+"}}{"+kx(n)+"}"),F(m,n)]},
- function(){var m=ri(1,4);return[lm(0,"\\dfrac{e^{x^2}-\\cos "+kx(m)+"}{x^2}"),F(2+m*m,2)]},
- function(){return[lm(0,"\\dfrac{\\tan x-\\sin x}{x^3}"),"\\dfrac{1}{2}"]},
- function(){var m=ri(1,4);return[lm("+\\infty","x\\ln\\left(1+\\dfrac{"+m+"}{x}\\right)"),String(m)]}];
+ function(){var m=ri(1,5),n=ri(1,5),q=F(m,n);return[lm(0,"\\dfrac{e^{"+kx(m)+"}-1}{\\sin "+kx(n)+"}"),q,["\\lim\\limits_{x\\to0}\\dfrac{e^{"+kx(m)+"}-1}{"+kx(m)+"}\\times\\dfrac{"+kx(n)+"}{\\sin "+kx(n)+"}\\times\\dfrac{"+m+"}{"+n+"}","=1\\times1\\times\\dfrac{"+m+"}{"+n+"}="+q]]},
+ function(){var m=ri(2,5);return[lm(0,"\\dfrac{1-\\cos "+kx(m)+"}{x^2}"),F(m*m,2),["\\lim\\limits_{x\\to0}\\dfrac{2\\sin^2\\frac{"+m+"x}{2}}{x^2}=\\lim\\limits_{x\\to0}2\\times"+F(m*m,4)+"\\left(\\dfrac{\\sin\\frac{"+m+"x}{2}}{\\frac{"+m+"x}{2}}\\right)^2","="+F(m*m,2)]]},
+ function(){var m=ri(1,5),n=ri(1,5),q=F(m,n);return[lm(0,"\\dfrac{\\sin "+kx(m)+"}{\\tan "+kx(n)+"}"),q,["\\lim\\limits_{x\\to0}\\dfrac{\\sin "+kx(m)+"}{"+kx(m)+"}\\times\\dfrac{"+kx(n)+"}{\\tan "+kx(n)+"}\\times\\dfrac{"+m+"}{"+n+"}","="+q]]},
+ function(){var m=ri(1,5),n=ri(1,5),q=F(m,n);return[lm(0,"\\dfrac{\\ln(1+"+kx(m)+")}{"+kx(n)+"}"),q,["\\lim\\limits_{x\\to0}\\dfrac{\\ln(1+"+kx(m)+")}{"+kx(m)+"}\\times\\dfrac{"+m+"}{"+n+"}","=1\\times\\dfrac{"+m+"}{"+n+"}="+q]]},
+ function(){var m=ri(1,5);return[lm(0,"\\dfrac{\\sqrt{1+"+kx(m)+"}-1}{x}"),F(m,2),["\\lim\\limits_{x\\to0}\\dfrac{(1+"+kx(m)+")-1}{x\\left(\\sqrt{1+"+kx(m)+"}+1\\right)}=\\lim\\limits_{x\\to0}\\dfrac{"+m+"}{\\sqrt{1+"+kx(m)+"}+1}","="+F(m,2)]]},
+ function(){var m=ri(1,3),n=ri(1,3);return[lm(0,"\\dfrac{\\sqrt{1+"+kx(m)+"}-\\sqrt{1-"+kx(m)+"}}{"+kx(n)+"}"),F(m,n),["\\lim\\limits_{x\\to0}\\dfrac{(1+"+kx(m)+")-(1-"+kx(m)+")}{"+kx(n)+"\\left(\\sqrt{1+"+kx(m)+"}+\\sqrt{1-"+kx(m)+"}\\right)}","=\\lim\\limits_{x\\to0}\\dfrac{"+2*m+"}{"+n+"\\left(\\sqrt{1+"+kx(m)+"}+\\sqrt{1-"+kx(m)+"}\\right)}=\\dfrac{"+2*m+"}{"+2*n+"}="+F(m,n)]]},
+ function(){var m=ri(1,4);return[lm(0,"\\dfrac{e^{x^2}-\\cos "+kx(m)+"}{x^2}"),F(2+m*m,2),["\\lim\\limits_{x\\to0}\\left(\\dfrac{e^{x^2}-1}{x^2}+\\dfrac{1-\\cos "+kx(m)+"}{x^2}\\right)","=1+"+F(m*m,2)+"="+F(2+m*m,2)]]},
+ function(){return[lm(0,"\\dfrac{\\tan x-\\sin x}{x^3}"),"\\dfrac{1}{2}",["\\lim\\limits_{x\\to0}\\dfrac{\\tan x(1-\\cos x)}{x^3}=\\lim\\limits_{x\\to0}\\dfrac{\\tan x}{x}\\times\\dfrac{1-\\cos x}{x^2}","=1\\times\\dfrac12=\\dfrac12"]]},
+ function(){var m=ri(1,4);return[lm("+\\infty","x\\ln\\left(1+\\dfrac{"+m+"}{x}\\right)"),String(m),["#តាង $t=\\dfrac{"+m+"}{x}$ ពេល $x\\to+\\infty$ នោះ $t\\to0$ ៖","\\lim\\limits_{t\\to0}"+m+"\\times\\dfrac{\\ln(1+t)}{t}="+m+"\\times1="+m]]}];
 function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=ri(0,i),t=a[i];a[i]=a[j];a[j]=t}return a}
 function lim3(){var t=shuf(LT);return[pick(LA)(),t[0](),t[1]()]}
 var IP=[
- function(){var a=nz(-3,4),b=nz(-4,4),c=nz(-5,5);return["\\int_0^1\\left("+poly([[a,"x^2"],[b,"x"],[c,""]])+"\\right)dx",F(2*a+3*b+6*c,6)]},
- function(){var m=ri(1,2),k=ri(1,4);return["\\int_0^"+m+"x\\left(x^2+"+k+"\\right)dx",F(m*m*m*m+2*k*m*m,4)]},
- function(){var k=ri(1,4);return["\\int_1^e\\dfrac{"+kx(k,"\\ln x")+"}{x}\\,dx",F(k,2)]},
- function(){var a=ri(2,5),c=ri(1,3);return["\\int_0^{\\ln "+a+"}\\dfrac{e^x}{e^x+"+c+"}\\,dx","\\ln "+F(a+c,1+c)]},
- function(){var a=nz(-3,4),b=nz(-3,4);return["\\int_0^{\\frac{\\pi}{2}}\\left("+poly([[a,"\\sin x"],[b,"\\cos x"]])+"\\right)dx",String(a+b)]},
- function(){return pick([["\\int_0^{\\pi}x\\sin x\\,dx","\\pi"],["\\int_0^{\\frac{\\pi}{2}}x\\cos x\\,dx","\\dfrac{\\pi}{2}-1"],["\\int_0^1xe^x\\,dx","1"],["\\int_1^e\\ln x\\,dx","1"]])},
- function(){var a=ri(1,6),b=nz(-3,3);return["\\int_1^2\\left(\\dfrac{"+a+"}{x^2}"+(b<0?"-":"+")+"\\dfrac{"+Math.abs(b)+"}{x}\\right)dx",F(a,2)+at(cf(String(b))+"\\ln 2")]},
- function(){var k=ri(1,5),n=ri(2,4);return["\\int_0^{\\frac{\\pi}{2}}"+(k===1?"":k)+"\\sin^"+n+"x\\cos x\\,dx",F(k,n+1)]},
- function(){var c=ri(2,4),b=pick([1,2,4]);return["\\int_0^"+b+"\\dfrac{"+c+"}{2x+1}\\,dx",cf(F(c,2))+"\\ln "+(2*b+1)]}];
+ function(){var a=nz(-3,4),b=nz(-4,4),c=nz(-5,5);return["\\int_0^1\\left("+poly([[a,"x^2"],[b,"x"],[c,""]])+"\\right)dx",F(2*a+3*b+6*c,6),["=\\left["+poly([[a,"\\dfrac{x^3}{3}"],[b,"\\dfrac{x^2}{2}"],[c,"x"]])+"\\right]_0^1","="+F(a,3)+"+\\left("+F(b,2)+"\\right)+("+c+")="+F(2*a+3*b+6*c,6)]]},
+ function(){var m=ri(1,2),k=ri(1,4);return["\\int_0^"+m+"x\\left(x^2+"+k+"\\right)dx",F(m*m*m*m+2*k*m*m,4),["=\\int_0^"+m+"(x^3+"+kx(k)+")dx=\\left[\\dfrac{x^4}{4}+"+(k===1?"":k)+"\\dfrac{x^2}{2}\\right]_0^"+m,"="+F(m*m*m*m,4)+"+"+F(k*m*m,2)+"="+F(m*m*m*m+2*k*m*m,4)]]},
+ function(){var k=ri(1,4);return["\\int_1^e\\dfrac{"+kx(k,"\\ln x")+"}{x}\\,dx",F(k,2),["=\\left["+(k===1?"":k)+"\\dfrac{\\ln^2x}{2}\\right]_1^e\\quad\\left(\\int\\dfrac{\\ln x}{x}dx=\\dfrac{\\ln^2x}{2}\\right)","="+(k===1?"":k+"\\times")+"\\dfrac{1-0}{2}="+F(k,2)]]},
+ function(){var a=ri(2,5),c=ri(1,3);return["\\int_0^{\\ln "+a+"}\\dfrac{e^x}{e^x+"+c+"}\\,dx","\\ln "+F(a+c,1+c),["=\\left[\\ln(e^x+"+c+")\\right]_0^{\\ln "+a+"}\\quad\\left(\\int\\dfrac{u'}{u}=\\ln|u|\\right)","=\\ln"+(a+c)+"-\\ln"+(1+c)+"=\\ln "+F(a+c,1+c)]]},
+ function(){var a=nz(-3,4),b=nz(-3,4);return["\\int_0^{\\frac{\\pi}{2}}\\left("+poly([[a,"\\sin x"],[b,"\\cos x"]])+"\\right)dx",String(a+b),["=\\left["+poly([[-a,"\\cos x"],[b,"\\sin x"]])+"\\right]_0^{\\frac{\\pi}{2}}","=("+(-a)+"\\times0+"+pn(b)+"\\times1)-("+(-a)+"\\times1+"+pn(b)+"\\times0)="+(a+b)]]},
+ function(){return pick([["\\int_0^{\\pi}x\\sin x\\,dx","\\pi",["#ធ្វើអាំងតេក្រាលដោយផ្នែក ៖ $u=x$ , $v'=\\sin x$","=\\left[-x\\cos x\\right]_0^{\\pi}+\\int_0^{\\pi}\\cos x\\,dx=\\pi+\\left[\\sin x\\right]_0^{\\pi}=\\pi"]],
+   ["\\int_0^{\\frac{\\pi}{2}}x\\cos x\\,dx","\\dfrac{\\pi}{2}-1",["#ធ្វើអាំងតេក្រាលដោយផ្នែក ៖ $u=x$ , $v'=\\cos x$","=\\left[x\\sin x\\right]_0^{\\frac{\\pi}{2}}-\\int_0^{\\frac{\\pi}{2}}\\sin x\\,dx=\\dfrac{\\pi}{2}+\\left[\\cos x\\right]_0^{\\frac{\\pi}{2}}=\\dfrac{\\pi}{2}-1"]],
+   ["\\int_0^1xe^x\\,dx","1",["#ធ្វើអាំងតេក្រាលដោយផ្នែក ៖ $u=x$ , $v'=e^x$","=\\left[xe^x\\right]_0^1-\\int_0^1e^xdx=e-(e-1)=1"]],
+   ["\\int_1^e\\ln x\\,dx","1",["#ធ្វើអាំងតេក្រាលដោយផ្នែក ៖ $u=\\ln x$ , $v'=1$","=\\left[x\\ln x\\right]_1^e-\\int_1^e1\\,dx=e-(e-1)=1"]]])},
+ function(){var a=ri(1,6),b=nz(-3,3);return["\\int_1^2\\left(\\dfrac{"+a+"}{x^2}"+(b<0?"-":"+")+"\\dfrac{"+Math.abs(b)+"}{x}\\right)dx",F(a,2)+at(cf(String(b))+"\\ln 2"),["=\\left[-\\dfrac{"+a+"}{x}"+(b<0?"-":"+")+(Math.abs(b)===1?"":Math.abs(b))+"\\ln x\\right]_1^2","=\\left(-"+F(a,2)+at(cf(String(b))+"\\ln2")+"\\right)-(-"+a+")="+F(a,2)+at(cf(String(b))+"\\ln 2")]]},
+ function(){var k=ri(1,5),n=ri(2,4);return["\\int_0^{\\frac{\\pi}{2}}"+(k===1?"":k)+"\\sin^"+n+"x\\cos x\\,dx",F(k,n+1),["#តាង $u=\\sin x$ ⇒ $u'=\\cos x$ ៖","=\\left["+(k===1?"":k)+"\\dfrac{\\sin^{"+(n+1)+"}x}{"+(n+1)+"}\\right]_0^{\\frac{\\pi}{2}}","="+(k===1?"":k+"\\times")+"\\dfrac{1}{"+(n+1)+"}"+(k===1?"":"="+F(k,n+1))]]},
+ function(){var c=ri(2,4),b=pick([1,2,4]);return["\\int_0^"+b+"\\dfrac{"+c+"}{2x+1}\\,dx",cf(F(c,2))+"\\ln "+(2*b+1),["=\\left["+cf(F(c,2))+"\\ln(2x+1)\\right]_0^"+b,"="+cf(F(c,2))+"(\\ln"+(2*b+1)+"-\\ln1)="+cf(F(c,2))+"\\ln "+(2*b+1)]]}];
 function int3(){var t=shuf(IP);return[t[0](),t[1](),t[2]()]}
 var AB="ABC",IJ="IJK";
+function SS(n,e,L){var out=[],cur=[n+"&="+e];L.forEach(function(l){if(l.charAt(0)==="#"){if(cur.length)out.push(AL(cur));out.push(l.slice(1));cur=[]}else cur.push((/^\\text/.test(l)?"&":"&")+l.replace(/^=?/,"="))});if(cur.length)out.push(AL(cur));return out.join("\n")}
+function limS(n,x){return SS(n,x[0],x[2])}
+function intS(n,x){return SS(n,"\\displaystyle"+x[0],x[2])}
 LIM.push({id:"lim3",t:"លីមីត A, B, C (ពិជគណិត · ត្រីកោណមាត្រ · e · ln)",lv:2,f:function(){var L=lim3();
-  return{inst:"គណនាលីមីតខាងក្រោម៖",it:L.map(function(x,i){return Q("$"+AB[i]+"="+x[0]+"$","$"+AB[i]+"="+x[1]+"$")})}}},
+  return{inst:"គណនាលីមីតខាងក្រោម៖",it:L.map(function(x,i){return Q("$"+AB[i]+"="+x[0]+"$","$"+AB[i]+"="+x[1]+"$",limS(AB[i],x))})}}},
  {id:"limint",t:"ក. លីមីត A, B, C · ខ. អាំងតេក្រាល I, J, K (ទម្រង់សៀវភៅ)",lv:2,f:function(){var L=lim3(),I=int3();
-  return{inst:"",it:[Q("គណនាលីមីតខាងក្រោម៖ "+L.map(function(x,i){return"$"+AB[i]+"="+x[0]+"$"}).join(" ; "),L.map(function(x,i){return"$"+AB[i]+"="+x[1]+"$"}).join(" · ")),
-   Q("គណនាអាំងតេក្រាលខាងក្រោម៖ "+I.map(function(x,i){return"$"+IJ[i]+"=\\displaystyle"+x[0]+"$"}).join(" ; "),I.map(function(x,i){return"$"+IJ[i]+"="+x[1]+"$"}).join(" · "))]}}});
+  return{inst:"",it:[Q("គណនាលីមីតខាងក្រោម៖ "+L.map(function(x,i){return"$"+AB[i]+"="+x[0]+"$"}).join(" ; "),L.map(function(x,i){return"$"+AB[i]+"="+x[1]+"$"}).join(" , "),W.apply(null,L.map(function(x,i){return limS(AB[i],x)}))),
+   Q("គណនាអាំងតេក្រាលខាងក្រោម៖ "+I.map(function(x,i){return"$"+IJ[i]+"=\\displaystyle"+x[0]+"$"}).join(" ; "),I.map(function(x,i){return"$"+IJ[i]+"="+x[1]+"$"}).join(" , "),W.apply(null,I.map(function(x,i){return intS(IJ[i],x)})))]}}});
 INT.push({id:"int3",t:"អាំងតេក្រាល I, J, K",lv:2,f:function(){var I=int3();
-  return{inst:"គណនាអាំងតេក្រាលខាងក្រោម៖",it:I.map(function(x,i){return Q("$"+IJ[i]+"=\\displaystyle"+x[0]+"$","$"+IJ[i]+"="+x[1]+"$")})}}});
+  return{inst:"គណនាអាំងតេក្រាលខាងក្រោម៖",it:I.map(function(x,i){return Q("$"+IJ[i]+"=\\displaystyle"+x[0]+"$","$"+IJ[i]+"="+x[1]+"$",intS(IJ[i],x))})}}});
 /* ---- ប្រូបាប ---- */
 var COL=[["ក្រហម","ស","ខៀវ"],["ក្រហម","លឿង","បៃតង"],["ខៀវ","ស","ខ្មៅ"]],OBJ=[["ឃ្លី","គ្រាប់","ថង់"],["ប៊ូល","គ្រាប់","ប្រអប់"]];
-function PQ(q,n,T,s){return Q(q,"$"+F(n,T)+"$",s)}
+/* PQ៖ q · n(E) · n(S) · កន្សោម n(E) · កន្សោម n(S) */
+function PQ(q,n,T,fe,fs){return Q(q,"$"+F(n,T)+"$",W(fs?"ចំនួនករណីអាច ៖ $n(S)="+fs+"="+T+"$":"",AL(["n(E)&="+fe+"="+n,"P(E)&=\\dfrac{n(E)}{n(S)}=\\dfrac{"+n+"}{"+T+"}"+(gcd(n,T)===1||!n?"":"="+F(n,T))])))}
 PROB.push(
- {id:"col3",t:"ប្រូបាប · ឃ្លី ៣ ពណ៌ (ចាប់ ៣ ព្រមគ្នា)",lv:2,f:function(){var c=pick(COL),o=pick(OBJ),r=ri(5,10),w=ri(3,6),b=ri(3,5),N=r+w+b,T=nCr(N,3),n=function(x){return o[0]+"ពណ៌"+x};
+ {id:"col3",t:"ប្រូបាប · ឃ្លី ៣ ពណ៌ (ចាប់ ៣ ព្រមគ្នា)",lv:2,f:function(){var c=pick(COL),o=pick(OBJ),r=ri(5,10),w=ri(3,6),b=ri(3,5),N=r+w+b,T=nCr(N,3),n=function(x){return o[0]+"ពណ៌"+x},SS="C_{"+N+"}^3=\\dfrac{"+N+"\\times"+(N-1)+"\\times"+(N-2)+"}{6}";
   return{inst:"ក្នុង"+o[2]+"មួយមាន"+n(c[0])+"ចំនួន $"+r+"$ "+o[1]+" "+n(c[1])+"ចំនួន $"+w+"$ "+o[1]+" និង"+n(c[2])+"ចំនួន $"+b+"$ "+o[1]+" ។ គេចាប់យក"+o[0]+" $3$ "+o[1]+"ដោយចៃដន្យ ។ រកប្រូបាបនៃព្រឹត្តិការណ៍ដែលគេចាប់បាន៖",it:[
-   PQ(n(c[0])+"ទាំងបី"+o[1],nCr(r,3),T,"$\\dfrac{C_{"+r+"}^3}{C_{"+N+"}^3}$"),
-   PQ(n(c[1])+" $2$ និង"+n(c[2])+" $1$",nCr(w,2)*b,T,"$\\dfrac{C_{"+w+"}^2C_{"+b+"}^1}{C_{"+N+"}^3}$"),
-   PQ(n(c[1])+" $1$ និង"+n(c[0])+" $2$",w*nCr(r,2),T,"$\\dfrac{C_{"+w+"}^1C_{"+r+"}^2}{C_{"+N+"}^3}$"),
-   PQ(o[0]+"គ្រប់ពណ៌",r*w*b,T,"$\\dfrac{"+r+"\\cdot"+w+"\\cdot"+b+"}{C_{"+N+"}^3}$")]}}},
+   PQ(n(c[0])+"ទាំងបី"+o[1],nCr(r,3),T,"C_{"+r+"}^3",SS),
+   PQ(n(c[1])+" $2$ និង"+n(c[2])+" $1$",nCr(w,2)*b,T,"C_{"+w+"}^2\\times C_{"+b+"}^1="+nCr(w,2)+"\\times"+b),
+   PQ(n(c[1])+" $1$ និង"+n(c[0])+" $2$",w*nCr(r,2),T,"C_{"+w+"}^1\\times C_{"+r+"}^2="+w+"\\times"+nCr(r,2)),
+   PQ(o[0]+"គ្រប់ពណ៌",r*w*b,T,"C_{"+r+"}^1C_{"+w+"}^1C_{"+b+"}^1="+r+"\\times"+w+"\\times"+b)]}}},
  {id:"num",t:"ប្រូបាប · ប៊ូលមានលេខ (ចែកដាច់)",lv:2,f:function(){var P2=pick([[12,3],[12,4],[15,3],[15,5],[16,4],[16,3],[20,3],[20,4],[20,5]]),n=P2[0],k=P2[1],m=Math.floor(n/k),T=nCr(n,3),K="ចែកដាច់នឹង $"+k+"$";
+  var L=[];for(var i=1;i<=m;i++)L.push(i*k);
   return{inst:"ក្នុងថង់មួយមានប៊ូល $"+n+"$ គ្រាប់ ដែលសរសេរលេខពី $1$ ដល់ $"+n+"$ ។ គេចាប់យកប៊ូល $3$ គ្រាប់ចេញពីថង់ដោយចៃដន្យ ។ រកប្រូបាបនៃព្រឹត្តិការណ៍ដែលគេចាប់បាន៖",it:[
-   PQ("ប៊ូលទាំងបីសុទ្ធតែមានលេខ"+K,nCr(m,3),T,"មានលេខ"+K+" $"+m+"$ គ្រាប់ · $\\dfrac{C_{"+m+"}^3}{C_{"+n+"}^3}$"),
-   PQ("ប៊ូលទាំងបីសុទ្ធតែមានលេខមិន"+K,nCr(n-m,3),T,"$\\dfrac{C_{"+(n-m)+"}^3}{C_{"+n+"}^3}$"),
-   PQ("ប៊ូលតែមួយគត់ដែលមានលេខ"+K,m*nCr(n-m,2),T,"$\\dfrac{C_{"+m+"}^1C_{"+(n-m)+"}^2}{C_{"+n+"}^3}$")]}}},
+   (function(q){q.sol="លេខ"+K+" គឺ $"+L.join(", ")+"$ (មាន $"+m+"$ គ្រាប់) ។ មិន"+K+" មាន $"+(n-m)+"$ គ្រាប់ ។\n"+q.sol;return q})(PQ("ប៊ូលទាំងបីសុទ្ធតែមានលេខ"+K,nCr(m,3),T,"C_{"+m+"}^3","C_{"+n+"}^3")),
+   PQ("ប៊ូលទាំងបីសុទ្ធតែមានលេខមិន"+K,nCr(n-m,3),T,"C_{"+(n-m)+"}^3"),
+   PQ("ប៊ូលតែមួយគត់ដែលមានលេខ"+K,m*nCr(n-m,2),T,"C_{"+m+"}^1\\times C_{"+(n-m)+"}^2="+m+"\\times"+nCr(n-m,2))]}}},
  {id:"seq",t:"ប្រូបាប · ចាប់បន្តបន្ទាប់ មិនដាក់ចូលវិញ",lv:2,f:function(){var a=ri(8,20),b=ri(6,15),N=a+b,D=N*(N-1);
+  var P3=function(q,n,ex){return Q(q,"$"+F(n,D)+"$",W("ចាប់លើកទី១ មាន $"+N+"$ ក្បាល លើកទី២ នៅសល់ $"+(N-1)+"$ ក្បាល ៖",AL(["P&="+ex+"=\\dfrac{"+n+"}{"+D+"}"+(gcd(n,D)===1?"":"="+F(n,D))])))};
   return{inst:"ក្នុងប្រអប់មួយមានសៀវភៅគណិតវិទ្យាចំនួន $"+a+"$ ក្បាល និងសៀវភៅរូបវិទ្យាចំនួន $"+b+"$ ក្បាល ។ គេចាប់យកសៀវភៅ $2$ ក្បាល ដោយចាប់បន្តបន្ទាប់ ហើយមិនដាក់ចូលវិញ ។ រកប្រូបាបនៃព្រឹត្តិការណ៍៖",it:[
-   PQ("ចាប់បានសៀវភៅគណិតវិទ្យាទាំង $2$ ក្បាល",a*(a-1),D,"$\\dfrac{"+a+"}{"+N+"}\\times\\dfrac{"+(a-1)+"}{"+(N-1)+"}$"),
-   PQ("ចាប់បានសៀវភៅរូបវិទ្យាទាំង $2$ ក្បាល",b*(b-1),D,"$\\dfrac{"+b+"}{"+N+"}\\times\\dfrac{"+(b-1)+"}{"+(N-1)+"}$"),
-   PQ("ចាប់បានសៀវភៅមួយក្បាលពីមុខវិជ្ជានីមួយៗ",2*a*b,D,"$2\\times\\dfrac{"+a+"}{"+N+"}\\times\\dfrac{"+b+"}{"+(N-1)+"}$")]}}},
+   P3("ចាប់បានសៀវភៅគណិតវិទ្យាទាំង $2$ ក្បាល",a*(a-1),"\\dfrac{"+a+"}{"+N+"}\\times\\dfrac{"+(a-1)+"}{"+(N-1)+"}"),
+   P3("ចាប់បានសៀវភៅរូបវិទ្យាទាំង $2$ ក្បាល",b*(b-1),"\\dfrac{"+b+"}{"+N+"}\\times\\dfrac{"+(b-1)+"}{"+(N-1)+"}"),
+   P3("ចាប់បានសៀវភៅមួយក្បាលពីមុខវិជ្ជានីមួយៗ",2*a*b,"\\dfrac{"+a+"}{"+N+"}\\times\\dfrac{"+b+"}{"+(N-1)+"}+\\dfrac{"+b+"}{"+N+"}\\times\\dfrac{"+a+"}{"+(N-1)+"}")]}}},
  {id:"team",t:"ប្រូបាប · រៀបចំក្រុម ៤ នាក់",lv:2,f:function(){var g=ri(4,7),bo=ri(4,7),N=g+bo,T=nCr(N,4);
   return{inst:"ក្នុងថ្នាក់មួយមានសិស្សពូកែ $"+N+"$ នាក់ ក្នុងនោះ $"+g+"$ នាក់ជាសិស្សស្រី និង $"+bo+"$ នាក់ជាសិស្សប្រុស ។ គេរៀបចំក្រុមមួយមានសិស្ស $4$ នាក់ដោយចៃដន្យ ។ រកប្រូបាបនៃព្រឹត្តិការណ៍៖",it:[
-   PQ("$A$ ៖ ក្រុមមានសុទ្ធតែសិស្សស្រី",nCr(g,4),T,"$\\dfrac{C_{"+g+"}^4}{C_{"+N+"}^4}$"),
-   PQ("$B$ ៖ ក្រុមមានសុទ្ធតែសិស្សប្រុស",nCr(bo,4),T,"$\\dfrac{C_{"+bo+"}^4}{C_{"+N+"}^4}$"),
-   PQ("$C$ ៖ ក្រុមមានសិស្សប្រុស $50\\%$",nCr(g,2)*nCr(bo,2),T,"$\\dfrac{C_{"+g+"}^2C_{"+bo+"}^2}{C_{"+N+"}^4}$")]}}});
+   PQ("$A$ ៖ ក្រុមមានសុទ្ធតែសិស្សស្រី",nCr(g,4),T,"C_{"+g+"}^4","C_{"+N+"}^4"),
+   PQ("$B$ ៖ ក្រុមមានសុទ្ធតែសិស្សប្រុស",nCr(bo,4),T,"C_{"+bo+"}^4"),
+   PQ("$C$ ៖ ក្រុមមានសិស្សប្រុស $50\\%$ (ប្រុស $2$ ស្រី $2$)",nCr(g,2)*nCr(bo,2),T,"C_{"+g+"}^2\\times C_{"+bo+"}^2="+nCr(g,2)+"\\times"+nCr(bo,2))]}}});
 /* ---- សមីការឌីផេរ៉ង់ស្យែល ---- */
 ODE.push(
  {id:"full",t:"ED លំដាប់ទី២ · ចម្លើយពិសេស y(0), y'(0) · g = ax + b",lv:3,f:function(){
   var r1,r2;do{r1=nz(-5,4);r2=nz(-5,4)}while(r1===r2);var p=-(r1+r2),q=r1*r2,al=nz(-3,3),be=ri(-3,3),m=q*al,n=p*al+q*be,C1=nz(-3,3),C2=nz(-3,3),y0=C1+C2,y1=r1*C1+r2*C2;
-  var L="y''"+co(p,"y'")+co(q,"y");
+  var L="y''"+co(p,"y'")+co(q,"y"),ch=poly([[1,"r^2"],[p,"r"],[q,""]]);
   return{inst:"គេឱ្យសមីការឌីផេរ៉ង់ស្យែល $(E)\\colon "+L+"="+poly([[m,"x"],[n,""]])+"$ និង $(F)\\colon "+L+"=0$ ។",it:[
-   Q("ដោះស្រាយសមីការ $(F)$ ។","$y=C_1e^{"+ex(r1)+"}+C_2e^{"+ex(r2)+"}$","សមីការសម្គាល់ $"+poly([[1,"r^2"],[p,"r"],[q,""]])+"=0$ មានឫស $"+r1+"$ , $"+r2+"$"),
-   Q("រកចម្លើយពិសេសមួយនៃ $(F)$ បើគេដឹងថា $y(0)="+y0+"$ និង $y'(0)="+y1+"$ ។","$y="+co(C1,"e^{"+ex(r1)+"}",true)+co(C2,"e^{"+ex(r2)+"}")+"$","$C_1+C_2="+y0+"$ , $"+r1+"C_1"+(r2<0?"":"+")+r2+"C_2="+y1+"$"),
-   Q("កំណត់ចំនួនពិត $a, b$ ដើម្បីឱ្យអនុគមន៍ $g(x)=ax+b$ ជាចម្លើយមួយនៃ $(E)$ ។","$a="+al+"$ , $b="+be+"$ · $g(x)="+poly([[al,"x"],[be,""]])+"$","ជំនួស $g'=a$ , $g''=0$ ក្នុង $(E)$ រួចផ្ទឹមមេគុណ")]}}},
+   Q("ដោះស្រាយសមីការ $(F)$ ។","$y=C_1e^{"+ex(r1)+"}+C_2e^{"+ex(r2)+"}$",
+     W("សមីការសម្គាល់ ៖",AL([ch+"&=0","(r"+sg(-r1)+")(r"+sg(-r2)+")&=0"]),"មានឫសពីរផ្សេងគ្នា $r_1="+r1+"$ , $r_2="+r2+"$ ។ ចម្លើយទូទៅនៃ $(F)$ ៖ $y=C_1e^{"+ex(r1)+"}+C_2e^{"+ex(r2)+"}$ ($C_1,C_2\\in\\mathbb R$)")),
+   Q("រកចម្លើយពិសេសមួយនៃ $(F)$ បើគេដឹងថា $y(0)="+y0+"$ និង $y'(0)="+y1+"$ ។","$y="+co(C1,"e^{"+ex(r1)+"}",true)+co(C2,"e^{"+ex(r2)+"}")+"$",
+     W("$y'="+co(r1,"C_1e^{"+ex(r1)+"}",true)+co(r2,"C_2e^{"+ex(r2)+"}")+"$ ។ តាមលក្ខខណ្ឌដើម ៖","$$\\begin{cases}C_1+C_2="+y0+"\\\\"+co(r1,"C_1",true)+co(r2,"C_2")+"="+y1+"\\end{cases}$$",
+       AL(["C_1&=\\dfrac{"+pn(y1)+"-"+pn(r2)+"\\times"+pn(y0)+"}{"+pn(r1)+"-"+pn(r2)+"}="+C1,"C_2&="+y0+"-"+pn(C1)+"="+C2]))),
+   Q("កំណត់ចំនួនពិត $a, b$ ដើម្បីឱ្យអនុគមន៍ $g(x)=ax+b$ ជាចម្លើយមួយនៃ $(E)$ ។","$a="+al+"$ , $b="+be+"$",
+     W("$g'(x)=a$ , $g''(x)=0$ ។ ជំនួសក្នុង $(E)$ ៖",AL(["0"+co(p,"a")+co(q,"(ax+b)")+"&="+poly([[m,"x"],[n,""]]),co(q,"a",true)+"x+("+co(p,"a",true)+co(q,"b")+")&="+poly([[m,"x"],[n,""]])]),
+       "ផ្ទឹមមេគុណ ៖",AL([co(q,"a",true)+"&="+m+"\\Rightarrow a="+al,pn(p)+"\\times"+pn(al)+"+"+pn(q)+"b&="+n+"\\Rightarrow b="+be])))]}}},
  {id:"rep",t:"ED លំដាប់ទី២ · ឫសឌុប (ay″+by′+cy=0)",lv:2,f:function(){
-  var a=pick([1,2,2,3]),b;do{b=nz(-3,3)}while(gcd(a,b)!==1);var C1=nz(-4,4),C2=nz(-3,3),y1=F(a*C2-b*C1,a),r0=a===1?ex(-b):F(-b,a).replace("\\dfrac","\\frac")+"x";
+  var a=pick([1,2,2,3]),b;do{b=nz(-3,3)}while(gcd(a,b)!==1);var C1=nz(-4,4),C2=nz(-3,3),y1=F(a*C2-b*C1,a),r0=a===1?ex(-b):F(-b,a).replace("\\dfrac","\\frac")+"x",rr=F(-b,a);
   return{inst:"គេមានសមីការឌីផេរ៉ង់ស្យែល $(E)\\colon "+co(a*a,"y''",true)+co(2*a*b,"y'")+co(b*b,"y")+"=0$ ។",it:[
-   Q("ដោះស្រាយសមីការឌីផេរ៉ង់ស្យែល $(E)$ ។","$y=(C_1+C_2x)e^{"+r0+"}$","សមីការសម្គាល់ $("+co(a,"r",true)+sg(b)+")^2=0$ មានឫសឌុប $r="+F(-b,a)+"$"),
-   Q("រកចម្លើយតែមួយគត់នៃ $(E)$ បើគេដឹងថា $y(0)="+C1+"$ និង $y'(0)="+y1+"$ ។","$y=("+C1+co(C2,"x")+")e^{"+r0+"}$","$C_1=y(0)$ · $y'(0)=C_2+rC_1$")]}}});
+   Q("ដោះស្រាយសមីការឌីផេរ៉ង់ស្យែល $(E)$ ។","$y=(C_1+C_2x)e^{"+r0+"}$",
+     W("សមីការសម្គាល់ ៖",AL([co(a*a,"r^2",true)+co(2*a*b,"r")+co(b*b,"")+"&=0","("+co(a,"r",true)+sg(b)+")^2&=0"]),"មានឫសឌុប $r="+rr+"$ ។ ចម្លើយទូទៅ ៖ $y=(C_1+C_2x)e^{"+r0+"}$")),
+   Q("រកចម្លើយតែមួយគត់នៃ $(E)$ បើគេដឹងថា $y(0)="+C1+"$ និង $y'(0)="+y1+"$ ។","$y=("+C1+co(C2,"x")+")e^{"+r0+"}$",
+     W("$y'=C_2e^{"+r0+"}+"+(/^-/.test(rr)?"\\left("+rr+"\\right)":rr)+"(C_1+C_2x)e^{"+r0+"}$ ៖",AL(["y(0)&=C_1="+C1,"y'(0)&=C_2"+(/^-/.test(rr)?"":"+")+rr+"\\times"+pn(C1)+"="+y1+"\\Rightarrow C_2="+C2])))]}}});
 /* ---- កោនិក ---- */
 function pmT(h,t){return h?h+"\\pm "+t:"\\pm "+t}
 function eqN(c){var g=c.reduce(function(s,v){return gcd(s,v[0])},0)||1,sgn=c.filter(function(v){return v[0]})[0][0]<0?-1:1;return poly(c.map(function(v){return[v[0]/g*sgn,v[1]]}))+"=0"}
+function eqK(c){var g=c.reduce(function(s,v){return gcd(s,v[0])},0)||1,sgn=c.filter(function(v){return v[0]})[0][0]<0?-1:1;return g*sgn}
 var HYP=[{id:"hyp",t:"អ៊ីពែបូល · ផ្ចិត កំពូល កំណុំ អាស៊ីមតូត",lv:2,f:function(){
-  var h=ri(-3,3),k=ri(-3,3),a=ri(1,4),b=ri(1,4),hor=Math.random()<.5,c2=a*a+b*b,ci=Math.sqrt(c2)%1===0?Math.sqrt(c2):0,cT=sqrtT(c2),A2=a*a,B2=b*b,E,St2,V,Fo,As;
-  if(hor){E=eqN([[B2,"x^2"],[-A2,"y^2"],[-2*h*B2,"x"],[2*k*A2,"y"],[B2*h*h-A2*k*k-A2*B2,""]]);St2="\\dfrac{"+xm(h)+"^2}{"+A2+"}-\\dfrac{"+xm(k,"y")+"^2}{"+B2+"}=1";
-   V="("+(h-a)+","+k+")$ , $("+(h+a)+","+k+")";Fo=ci?"("+(h-ci)+","+k+")$ , $("+(h+ci)+","+k+")":"("+pmT(h,cT)+","+k+")";As="y"+sg(-k)+"=\\pm"+cf(F(b,a))+xm(h)}
-  else{E=eqN([[-A2,"x^2"],[B2,"y^2"],[2*h*A2,"x"],[-2*k*B2,"y"],[B2*k*k-A2*h*h-A2*B2,""]]);St2="\\dfrac{"+xm(k,"y")+"^2}{"+A2+"}-\\dfrac{"+xm(h)+"^2}{"+B2+"}=1";
-   V="("+h+","+(k-a)+")$ , $("+h+","+(k+a)+")";Fo=ci?"("+h+","+(k-ci)+")$ , $("+h+","+(k+ci)+")":"("+h+","+pmT(k,cT)+")";As="y"+sg(-k)+"=\\pm"+cf(F(a,b))+xm(h)}
-  return{inst:"គេមានអ៊ីពែបូល $(H)\\colon "+E+"$ ។",it:[
-   Q("សរសេរសមីការ $(H)$ ជាទម្រង់ស្តង់ដា ។","$"+St2+"$","បំពេញការេ"),
-   Q("រកកូអរដោនេផ្ចិត កំពូល កំណុំ និងសមីការអាស៊ីមតូតនៃ $(H)$ ។","ផ្ចិត $("+h+","+k+")$ · កំពូល $"+V+"$ · កំណុំ $"+Fo+"$ · អាស៊ីមតូត $"+As+"$","$c^2=a^2+b^2="+c2+"$"),
-   Q("សង់អ៊ីពែបូល $(H)$ ។","—")]}}}];
+  var h=ri(-3,3),k=ri(-3,3),a=ri(1,4),b=ri(1,4),hor=Math.random()<.5,c2=a*a+b*b,ci=Math.sqrt(c2)%1===0?Math.sqrt(c2):0,cT=sqrtT(c2),A2=a*a,B2=b*b,E,St2,V,Fo,As,cf2,K,L1,L2,L3;
+  if(hor){cf2=[[B2,"x^2"],[-A2,"y^2"],[-2*h*B2,"x"],[2*k*A2,"y"],[B2*h*h-A2*k*k-A2*B2,""]];St2="\\dfrac{"+xm(h)+"^2}{"+A2+"}-\\dfrac{"+xm(k,"y")+"^2}{"+B2+"}=1";
+   V="("+(h-a)+","+k+")$ , $("+(h+a)+","+k+")";Fo=ci?"("+(h-ci)+","+k+")$ , $("+(h+ci)+","+k+")":"("+pmT(h,cT)+","+k+")";As="y"+sg(-k)+"=\\pm"+cf(F(b,a))+xm(h);
+   L1=(B2===1?"":B2)+"("+poly([[1,"x^2"],[-2*h,"x"]])+")-"+(A2===1?"":A2)+"("+poly([[1,"y^2"],[-2*k,"y"]])+")&="+(A2*B2-B2*h*h+A2*k*k);L2=(B2===1?"":B2)+xm(h)+"^2-"+(A2===1?"":A2)+xm(k,"y")+"^2&="+A2*B2}
+  else{cf2=[[-A2,"x^2"],[B2,"y^2"],[2*h*A2,"x"],[-2*k*B2,"y"],[B2*k*k-A2*h*h-A2*B2,""]];St2="\\dfrac{"+xm(k,"y")+"^2}{"+A2+"}-\\dfrac{"+xm(h)+"^2}{"+B2+"}=1";
+   V="("+h+","+(k-a)+")$ , $("+h+","+(k+a)+")";Fo=ci?"("+h+","+(k-ci)+")$ , $("+h+","+(k+ci)+")":"("+h+","+pmT(k,cT)+")";As="y"+sg(-k)+"=\\pm"+cf(F(a,b))+xm(h);
+   L1=(B2===1?"":B2)+"("+poly([[1,"y^2"],[-2*k,"y"]])+")-"+(A2===1?"":A2)+"("+poly([[1,"x^2"],[-2*h,"x"]])+")&="+(A2*B2-B2*k*k+A2*h*h);L2=(B2===1?"":B2)+xm(k,"y")+"^2-"+(A2===1?"":A2)+xm(h)+"^2&="+A2*B2}
+  E=eqN(cf2);K=eqK(cf2);
+  var fx=hor?"("+xm(h)+")^2/"+A2+"-("+xm(k,"y")+")^2/"+B2+"=1":"("+xm(k,"y")+")^2/"+A2+"-("+xm(h)+")^2/"+B2+"=1",sl=hor?b/a:a/b,R=Math.max(a,b)+3;
+  return{kfig:FG({I:[h,k]},[fx.replace(/\(\(/g,"(").replace(/\)\)/g,")")+" blue","line ("+h+","+k+") ("+(h+1)+","+r3(k+sl)+") gray","line ("+h+","+k+") ("+(h+1)+","+r3(k-sl)+") gray"],{axes:1,ext:[[h-R,k-R],[h+R,k+R]]}),
+   inst:"គេមានអ៊ីពែបូល $(H)\\colon "+E+"$ ។",it:[
+   Q("សរសេរសមីការ $(H)$ ជាទម្រង់ស្តង់ដា ។","$"+St2+"$",
+     W(K===1?"បំពេញការេ ៖":"គុណអង្គទាំងពីរនឹង $"+K+"$ រួចបំពេញការេ ៖",AL([L1,L2]),"ចែកអង្គទាំងពីរនឹង $"+A2*B2+"$ ៖ $"+St2+"$")),
+   Q("រកកូអរដោនេផ្ចិត កំពូល កំណុំ និងសមីការអាស៊ីមតូតនៃ $(H)$ ។","ផ្ចិត $("+h+","+k+")$ , កំពូល $"+V+"$ , កំណុំ $"+Fo+"$ , អាស៊ីមតូត $"+As+"$",
+     W("ផ្ចិត $I("+h+","+k+")$ ។ អ័ក្សទទឹងស្រប"+(hor?"អ័ក្សអាប់ស៊ីស":"អ័ក្សអ័រដោនេ")+" ៖",AL(["a&="+a+"\\ ,\\ b="+b,"c^2&=a^2+b^2="+A2+"+"+B2+"="+c2+"\\Rightarrow c="+cT]),"កំពូល ៖ $"+V+"$","កំណុំ ៖ $"+Fo+"$","អាស៊ីមតូត ៖ $"+As+"$")),
+   Q("សង់អ៊ីពែបូល $(H)$ ។","មើលរូប","សង់ផ្ចិត កំពូល និងអាស៊ីមតូតពីរ រួចគូសមែកទាំងពីរនៃ $(H)$ (មើលរូបខាងលើ) ។")]}}}];
 var PAR=[{id:"par",t:"ប៉ារ៉ាបូល · កំពូល កំណុំ បន្ទាត់ប្រាប់ទិស",lv:2,f:function(){
-  var h=ri(-3,3),k=ri(-3,3),p=pick([-2,-1,1,2]),hor=Math.random()<.5,E,St2,Fo,D;
-  if(hor){E=poly([[1,"y^2"],[-4*p,"x"],[-2*k,"y"],[k*k+4*p*h,""]])+"=0";St2=xm(k,"y")+"^2="+4*p+xm(h);Fo="("+(h+p)+","+k+")";D="x="+(h-p)}
-  else{E=poly([[1,"x^2"],[-2*h,"x"],[-4*p,"y"],[h*h+4*p*k,""]])+"=0";St2=xm(h)+"^2="+4*p+xm(k,"y");Fo="("+h+","+(k+p)+")";D="y="+(k-p)}
-  return{inst:"គេឱ្យប៉ារ៉ាបូល $(P)\\colon "+E+"$ ។",it:[
-   Q("សរសេរ $(P)$ ជាទម្រង់ស្តង់ដា ។","$"+St2+"$","បំពេញការេ"),
-   Q("រកកូអរដោនេកំពូល កំណុំ និងសមីការបន្ទាត់ប្រាប់ទិសនៃ $(P)$ រួចសង់ $(P)$ ។","កំពូល $("+h+","+k+")$ · កំណុំ $"+Fo+"$ · បន្ទាត់ប្រាប់ទិស $"+D+"$","$4p="+4*p+"$ ⇒ $p="+p+"$")]}}}];
+  var h=ri(-3,3),k=ri(-3,3),p=pick([-2,-1,1,2]),hor=Math.random()<.5,E,St2,Fo,D,L1,fx,fp,dl;
+  if(hor){E=poly([[1,"y^2"],[-4*p,"x"],[-2*k,"y"],[k*k+4*p*h,""]])+"=0";St2=xm(k,"y")+"^2="+4*p+xm(h);Fo="("+(h+p)+","+k+")";D="x="+(h-p);L1=poly([[1,"y^2"],[-2*k,"y"]])+"&="+poly([[4*p,"x"],[-k*k-4*p*h,""]]);fx="(y"+sg(-k)+")^2="+4*p+"*(x"+sg(-h)+")";fp=[h+p,k];dl="x="+(h-p)}
+  else{E=poly([[1,"x^2"],[-2*h,"x"],[-4*p,"y"],[h*h+4*p*k,""]])+"=0";St2=xm(h)+"^2="+4*p+xm(k,"y");Fo="("+h+","+(k+p)+")";D="y="+(k-p);L1=poly([[1,"x^2"],[-2*h,"x"]])+"&="+poly([[4*p,"y"],[-h*h-4*p*k,""]]);fx="(x"+sg(-h)+")^2="+4*p+"*(y"+sg(-k)+")";fp=[h,k+p];dl="y="+(k-p)}
+  return{kfig:FG({S:[h,k],F:fp},[fx+" blue","dash "+dl],{axes:1,ext:[[h-4,k-4],[h+4,k+4]]}),inst:"គេឱ្យប៉ារ៉ាបូល $(P)\\colon "+E+"$ ។",it:[
+   Q("សរសេរ $(P)$ ជាទម្រង់ស្តង់ដា ។","$"+St2+"$",W("បំពេញការេ ៖",AL([L1,St2.replace("=","&=")]))),
+   Q("រកកូអរដោនេកំពូល កំណុំ និងសមីការបន្ទាត់ប្រាប់ទិសនៃ $(P)$ រួចសង់ $(P)$ ។","កំពូល $("+h+","+k+")$ , កំណុំ $"+Fo+"$ , បន្ទាត់ប្រាប់ទិស $"+D+"$",
+     W("ប្រៀបធៀបនឹងទម្រង់ $"+(hor?"(y-k)^2=4p(x-h)":"(x-h)^2=4p(y-k)")+"$ ៖ $4p="+4*p+"\\Rightarrow p="+p+"$",AL(["\\text{S}&=("+h+","+k+")","\\text{F}&="+Fo,D.replace("=","&=")]),"អ័ក្សឆ្លុះ $"+(hor?"y="+k:"x="+h)+"$ ។ ប៉ារ៉ាបូលបើកទៅ"+(hor?(p>0?"ស្ដាំ":"ឆ្វេង"):(p>0?"លើ":"ក្រោម"))+" (មើលរូប) ។"))]}}}];
 /* ---- លំហ ---- */
 function pt3(P){return"("+P.join(",")+")"}
 function linT(c,k){return c?c+co(k,"t"):co(k,"t",true)||"0"}
+function crs(u,v){var c=function(a,b,d,e){return"("+pn(a)+"\\times"+pn(b)+"-"+pn(d)+"\\times"+pn(e)+")"};return c(u[1],v[2],u[2],v[1])+"\\vec i-"+c(u[0],v[2],u[2],v[0])+"\\vec j+"+c(u[0],v[1],u[1],v[0])+"\\vec k"}
 var SPC=[
  {id:"pl3m",t:"ផ្ទៃត្រីកោណ · ប្លង់ (ABC) · ចម្ងាយពីចំណុចទៅប្លង់",lv:2,f:function(){
   var A,B,C,u,v,n;do{A=[ri(-2,3),ri(-2,3),ri(-2,3)];B=[ri(-2,3),ri(-2,3),ri(-2,3)];C=[ri(-2,3),ri(-2,3),ri(-2,3)];u=[0,1,2].map(function(i){return B[i]-A[i]});v=[0,1,2].map(function(i){return C[i]-A[i]});n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]]}while(!n[0]&&!n[1]&&!n[2]);
   var g=gcd(gcd(n[0],n[1]),n[2]),m=n.map(function(x){return x/g});if(m.filter(function(x){return x})[0]<0)m=m.map(function(x){return-x});var d=-(m[0]*A[0]+m[1]*A[1]+m[2]*A[2]),M,num;
   do{M=[ri(-3,3),ri(-3,3),ri(-3,3)];num=m[0]*M[0]+m[1]*M[1]+m[2]*M[2]+d}while(!num);
-  var nn=n[0]*n[0]+n[1]*n[1]+n[2]*n[2],mm=m[0]*m[0]+m[1]*m[1]+m[2]*m[2];
+  var nn=n[0]*n[0]+n[1]*n[1]+n[2]*n[2],mm=m[0]*m[0]+m[1]*m[1]+m[2]*m[2],pE=poly([[m[0],"x"],[m[1],"y"],[m[2],"z"],[d,""]]);
   return{inst:"នៅក្នុងតម្រុយអរតូណរម៉ាល់ $(O,\\vec i,\\vec j,\\vec k)$ គេឱ្យចំណុច $A"+pt3(A)+"$ , $B"+pt3(B)+"$ , $C"+pt3(C)+"$ និង $M"+pt3(M)+"$ ។",it:[
-   Q("គណនាវ៉ិចទ័រ $\\vec n=\\overrightarrow{AB}\\times\\overrightarrow{AC}$ ទាញបង្ហាញថា $C\\notin(AB)$ ។","$\\vec n="+pt3(n)+"\\ne\\vec 0$"),
-   Q("គណនាក្រឡាផ្ទៃត្រីកោណ $ABC$ ។","$S="+St(S(1,2,nn))+"$","$S=\\dfrac12\\|\\vec n\\|$"),
-   Q("សរសេរសមីការប្លង់ $(P)$ កាត់តាមបីចំណុច $A, B, C$ ។","$"+poly([[m[0],"x"],[m[1],"y"],[m[2],"z"],[d,""]])+"=0$"),
-   Q("រកចម្ងាយពីចំណុច $M$ ទៅប្លង់ $(P)$ ។","$d="+St(S(Math.abs(num),mm,mm))+"$","$d=\\dfrac{|ax_M+by_M+cz_M+d|}{\\sqrt{a^2+b^2+c^2}}$")]}}},
+   Q("គណនាវ៉ិចទ័រ $\\vec n=\\overrightarrow{AB}\\times\\overrightarrow{AC}$ ទាញបង្ហាញថា $C\\notin(AB)$ ។","$\\vec n="+pt3(n)+"\\ne\\vec 0$ ⇒ $C\\notin(AB)$",
+     W("$\\overrightarrow{AB}="+pt3(u)+"$ , $\\overrightarrow{AC}="+pt3(v)+"$",AL(["\\vec n&="+crs(u,v),"&="+pt3(n)]),"ដោយ $\\vec n\\ne\\vec0$ នោះ $\\overrightarrow{AB}$ និង $\\overrightarrow{AC}$ មិនកូលីនេអ៊ែ ⇒ $C\\notin(AB)$ ។")),
+   Q("គណនាក្រឡាផ្ទៃត្រីកោណ $ABC$ ។","$S="+St(S(1,2,nn))+"$",AL(["S&=\\dfrac12\\left\\|\\vec n\\right\\|=\\dfrac12\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}=\\dfrac12\\sqrt{"+nn+"}="+St(S(1,2,nn))])),
+   Q("សរសេរសមីការប្លង់ $(P)$ កាត់តាមបីចំណុច $A, B, C$ ។","$"+pE+"=0$",
+     W("$(P)$ កាត់តាម $A$ មានវ៉ិចទ័រណរម៉ាល់ $"+pt3(m)+"$ ៖",AL([pn(m[0])+"(x-"+pn(A[0])+")+"+pn(m[1])+"(y-"+pn(A[1])+")+"+pn(m[2])+"(z-"+pn(A[2])+")&=0",pE+"&=0"]))),
+   Q("រកចម្ងាយពីចំណុច $M$ ទៅប្លង់ $(P)$ ។","$d="+St(S(Math.abs(num),mm,mm))+"$",
+     AL(["d(M,(P))&=\\dfrac{|"+pn(m[0])+"\\times"+pn(M[0])+"+"+pn(m[1])+"\\times"+pn(M[1])+"+"+pn(m[2])+"\\times"+pn(M[2])+sg(d)+"|}{\\sqrt{"+pn(m[0])+"^2+"+pn(m[1])+"^2+"+pn(m[2])+"^2}}","&=\\dfrac{"+Math.abs(num)+"}{\\sqrt{"+mm+"}}="+St(S(Math.abs(num),mm,mm))]))]}}},
  {id:"parQ",t:"ប្លង់ស្រប · ចម្ងាយរវាងប្លង់ · ចំណោលកែង H",lv:2,f:function(){
   var N=pick([[2,-3,6,7],[1,2,2,3],[2,1,-2,3],[1,-2,2,3],[6,2,3,7],[2,3,6,7],[3,-6,2,7],[2,-1,2,3]]),n=N.slice(0,3),H=[ri(-3,3),ri(-3,3),ri(-3,3)],s=pick([-2,-1,1,2]);
-  var A=[0,1,2].map(function(i){return H[i]+s*n[i]}),d=-(n[0]*H[0]+n[1]*H[1]+n[2]*H[2]),d2=-(n[0]*A[0]+n[1]*A[1]+n[2]*A[2]);
-  return{inst:"នៅក្នុងលំហមានតម្រុយអរតូណរម៉ាល់ គេឱ្យចំណុច $A"+pt3(A)+"$ និងប្លង់ $(P)\\colon "+poly([[n[0],"x"],[n[1],"y"],[n[2],"z"],[d,""]])+"=0$ ។",it:[
-   Q("សរសេរសមីការប្លង់ $(Q)$ កាត់តាមចំណុច $A$ ហើយស្របនឹងប្លង់ $(P)$ រួចគណនាចម្ងាយរវាងប្លង់ទាំងពីរ ។","$(Q)\\colon "+poly([[n[0],"x"],[n[1],"y"],[n[2],"z"],[d2,""]])+"=0$ · ចម្ងាយ $="+Math.abs(s)*N[3]+"$","$\\|\\vec n\\|="+N[3]+"$"),
-   Q("សរសេរសមីការប៉ារ៉ាម៉ែត្រនៃបន្ទាត់ $(AH)$ ដែលកែងនឹងប្លង់ $(P)$ ត្រង់ $H$ ។ រកកូអរដោនេនៃចំណុច $H$ ។","$x="+linT(A[0],n[0])+"$ , $y="+linT(A[1],n[1])+"$ , $z="+linT(A[2],n[2])+"$ · $H"+pt3(H)+"$","ជំនួសក្នុង $(P)$ ⇒ $t="+(-s)+"$")]}}}];
+  var A=[0,1,2].map(function(i){return H[i]+s*n[i]}),d=-(n[0]*H[0]+n[1]*H[1]+n[2]*H[2]),d2=-(n[0]*A[0]+n[1]*A[1]+n[2]*A[2]),PE=poly([[n[0],"x"],[n[1],"y"],[n[2],"z"],[d,""]]),QE=poly([[n[0],"x"],[n[1],"y"],[n[2],"z"],[d2,""]]),ta=-s;
+  return{inst:"នៅក្នុងលំហមានតម្រុយអរតូណរម៉ាល់ គេឱ្យចំណុច $A"+pt3(A)+"$ និងប្លង់ $(P)\\colon "+PE+"=0$ ។",it:[
+   Q("សរសេរសមីការប្លង់ $(Q)$ កាត់តាមចំណុច $A$ ហើយស្របនឹងប្លង់ $(P)$ រួចគណនាចម្ងាយរវាងប្លង់ទាំងពីរ ។","$(Q)\\colon "+QE+"=0$ , ចម្ងាយ $="+Math.abs(s)*N[3]+"$",
+     W("$(Q)\\parallel(P)$ ⇒ $(Q)$ មានវ៉ិចទ័រណរម៉ាល់ $\\vec n"+pt3(n)+"$ ហើយកាត់តាម $A$ ៖",AL([pn(n[0])+"(x-"+pn(A[0])+")+"+pn(n[1])+"(y-"+pn(A[1])+")+"+pn(n[2])+"(z-"+pn(A[2])+")&=0",QE+"&=0"]),
+       "ចម្ងាយរវាងប្លង់ស្របពីរ ៖",AL(["d&=\\dfrac{|"+d+"-("+d2+")|}{\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}}=\\dfrac{"+Math.abs(d-d2)+"}{"+N[3]+"}="+Math.abs(s)*N[3]]))),
+   Q("សរសេរសមីការប៉ារ៉ាម៉ែត្រនៃបន្ទាត់ $(AH)$ ដែលកែងនឹងប្លង់ $(P)$ ត្រង់ $H$ ។ រកកូអរដោនេនៃចំណុច $H$ ។","$x="+linT(A[0],n[0])+"$ , $y="+linT(A[1],n[1])+"$ , $z="+linT(A[2],n[2])+"$ , $H"+pt3(H)+"$",
+     W("$(AH)\\perp(P)$ ⇒ វ៉ិចទ័រប្រាប់ទិសនៃ $(AH)$ គឺ $\\vec n"+pt3(n)+"$ ៖",AL(["x&="+linT(A[0],n[0]),"y&="+linT(A[1],n[1]),"z&="+linT(A[2],n[2])]),"ជំនួសក្នុង $(P)$ ៖",
+       AL([pn(n[0])+"("+linT(A[0],n[0])+")+"+pn(n[1])+"("+linT(A[1],n[1])+")+"+pn(n[2])+"("+linT(A[2],n[2])+")"+sg(d)+"&=0",(n[0]*n[0]+n[1]*n[1]+n[2]*n[2])+"t"+sg(n[0]*A[0]+n[1]*A[1]+n[2]*A[2]+d)+"&=0\\Rightarrow t="+ta]),"ជំនួស $t="+ta+"$ ៖ $H"+pt3(H)+"$"))]}}}];
 /* ---- សិក្សាអនុគមន៍ (៣០ ពិន្ទុ) ---- */
 function FN(id,t,inst,qs){return{id:id,t:t,lv:3,f:function(){return{inst:inst,it:qs.map(function(x){return Q(x[0],x[1],x[2])})}}}}
 var FE=[
@@ -413,46 +501,64 @@ C.push({id:"conj",t:"សមីការមាន z̄ · iⁿ · ទម្រង�
   var p=nz(-4,4),q=nz(-4,4),a=pick([2,3,-2]),b,c;do{b=nz(-2,2);c=nz(-2,2)}while(a*a===b*b+c*c);
   var re=a*p+b*p+c*q,im=a*q+c*p-b*q,n=ri(2010,2030),r4=n%4,iv=["1","i","-1","-i"][r4];
   var SM=pick([[1,1,1,3],[-1,1,1,9],[2,-2,2,-3],[-3,3,3,9],[3,-3,3,-3],[-2,-2,2,-9]]),z1=-ri(1,5),rT=(SM[2]===1?"":SM[2])+"\\sqrt2";
-  var bz=b<0?"-("+cxi(-b,-c)+")":"+("+cxi(b,c)+")";
+  var bz=b<0?"-("+cxi(-b,-c)+")":"+("+cxi(b,c)+")",D=(a+b)*(a-b)-c*c,zs={re:S(SM[0]),im:S(SM[1]),r:S(SM[2],1,2),a:SM[3]};
   return{inst:"នៅក្នុងសំណុំចំនួនកុំផ្លិច $\\mathbb C$ ៖",it:[
-    Q("ដោះស្រាយសមីការ $"+a+"z"+bz+"\\bar z="+cxi(re,im)+"$ ។","$z="+cxi(p,q)+"$","តាង $z=x+yi$ ⇒ $\\bar z=x-yi$ · ផ្ទឹមផ្នែកពិត និងផ្នែកនិម្មិត ⇒ ប្រព័ន្ធសមីការពីរ"),
-    Q("គណនា $i^{"+n+"}$ ។","$i^{"+n+"}="+iv+"$","$i^4=1$ · $"+n+"=4\\times"+Math.floor(n/4)+"+"+r4+"$"),
-    Q("គេមាន $z_1="+z1+"$ និង $z_2="+cxi(SM[0]-z1,SM[1])+"$ ។ គណនា $z_1+z_2$ រួចសរសេរ $z_1+z_2$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z_1+z_2="+cxi(SM[0],SM[1])+"="+trig(rT,SM[3])+"$","$r=|z_1+z_2|="+rT+"$")]}}});
+    Q("ដោះស្រាយសមីការ $"+a+"z"+bz+"\\bar z="+cxi(re,im)+"$ ។","$z="+cxi(p,q)+"$",
+      W("តាង $z=x+yi$ ($x,y\\in\\mathbb R$) នោះ $\\bar z=x-yi$ ៖",AL([a+"(x+yi)+("+cxi(b,c)+")(x-yi)&="+cxi(re,im),"("+kx(a+b)+tm(c,"y")+")+("+kx(c)+tm(a-b,"y")+")i&="+cxi(re,im)]),
+        "ផ្ទឹមផ្នែកពិត និងផ្នែកនិមិត្ត ៖","$$\\begin{cases}"+kx(a+b)+tm(c,"y")+"="+re+"\\\\"+kx(c)+tm(a-b,"y")+"="+im+"\\end{cases}$$",
+        AL(["D&="+pn(a+b)+"\\times"+pn(a-b)+"-"+pn(c)+"\\times"+pn(c)+"="+D,"x&=\\dfrac{"+pn(re)+"\\times"+pn(a-b)+"-"+pn(c)+"\\times"+pn(im)+"}{"+D+"}="+p,"y&=\\dfrac{"+pn(a+b)+"\\times"+pn(im)+"-"+pn(c)+"\\times"+pn(re)+"}{"+D+"}="+q]))),
+    Q("គណនា $i^{"+n+"}$ ។","$i^{"+n+"}="+iv+"$",AL(["i^4&=1\\ ,\\ "+n+"=4\\times"+Math.floor(n/4)+"+"+r4,"i^{"+n+"}&=\\left(i^4\\right)^{"+Math.floor(n/4)+"}\\times i^{"+r4+"}=i^{"+r4+"}="+iv])),
+    Q("គេមាន $z_1="+z1+"$ និង $z_2="+cxi(SM[0]-z1,SM[1])+"$ ។ គណនា $z_1+z_2$ រួចសរសេរ $z_1+z_2$ ជាទម្រង់ត្រីកោណមាត្រ ។","$z_1+z_2="+cxi(SM[0],SM[1])+"="+trig(rT,SM[3])+"$",
+      W(AL(["z_1+z_2&="+pn(z1)+"+("+cxi(SM[0]-z1,SM[1])+")="+cxi(SM[0],SM[1])]),marg(zs,"z_1+z_2"),"ដូចនេះ $z_1+z_2="+trig(rT,SM[3])+"$"))]}}});
 var ODE1=[{id:"ode1",t:"ED លំដាប់ទី១ · ចម្លើយ y₀ · ចម្លើយទូទៅ · y(0)",lv:2,f:function(){
-  var a=pick([1,2,3,-1,-2]),b=nz(-3,3),c=ri(-3,4),E="e^{"+ex(-a)+"}",ay=a===1?"+y":a===-1?"-y":(a>0?"+":"")+a+"y";
+  var a=pick([1,2,3,-1,-2]),b=nz(-3,3),c=ri(-3,4),E="e^{"+ex(-a)+"}",ay=a===1?"+y":a===-1?"-y":(a>0?"+":"")+a+"y",A=Math.abs(a)===1?"":Math.abs(a);
   return{inst:"គេមានសមីការឌីផេរ៉ង់ស្យែល $(E)\\colon y'"+ay+"=("+pl([2,b])+")"+E+"$ ។",it:[
-    Q("បង្ហាញថាអនុគមន៍ $y_0$ កំណត់លើ $\\mathbb R$ ដោយ $y_0(x)=("+pl([1,b,0])+")"+E+"$ ជាចម្លើយនៃ $(E)$ ។","$y_0'=("+pl([2,b])+")"+E+(a>0?"-":"+")+(Math.abs(a)===1?"":Math.abs(a))+"("+pl([1,b,0])+")"+E+"$ ⇒ $y_0'"+ay.replace("y","y_0")+"=("+pl([2,b])+")"+E+"$"),
-    Q("ដោះស្រាយសមីការ $(E')\\colon y'"+ay+"=0$ ។","$y=Ce^{"+ex(-a)+"}$ , $C\\in\\mathbb R$"),
-    Q("បង្ហាញថា $y$ ជាចម្លើយនៃ $(E)$ លុះត្រាតែ $y-y_0$ ជាចម្លើយនៃ $(E')$ ។ ទាញរកចម្លើយទូទៅនៃ $(E)$ ។","$y=("+pl([1,b,0])+"+C)"+E+"$","$(y-y_0)'"+ay.replace("y","(y-y_0)")+"=0$"),
-    Q("រកចម្លើយពិសេសនៃ $(E)$ ដែលផ្ទៀងផ្ទាត់ $y(0)="+c+"$ ។","$y=("+pl([1,b,c])+")"+E+"$","$y(0)=C="+c+"$")]}}},
+    Q("បង្ហាញថាអនុគមន៍ $y_0$ កំណត់លើ $\\mathbb R$ ដោយ $y_0(x)=("+pl([1,b,0])+")"+E+"$ ជាចម្លើយនៃ $(E)$ ។","$y_0'"+ay.replace("y","y_0")+"=("+pl([2,b])+")"+E+"$ ពិត",
+      W("គណនាដេរីវេ (រូបមន្ត $(uv)'=u'v+uv'$) ៖",AL(["y_0'&=("+pl([2,b])+")"+E+(a>0?"-":"+")+A+"("+pl([1,b,0])+")"+E,"y_0'"+ay.replace("y","y_0")+"&=("+pl([2,b])+")"+E+(a>0?"-":"+")+A+"("+pl([1,b,0])+")"+E+(a>0?"+":"-")+A+"("+pl([1,b,0])+")"+E,"&=("+pl([2,b])+")"+E]),"ដូចនេះ $y_0$ ជាចម្លើយនៃ $(E)$ ។")),
+    Q("ដោះស្រាយសមីការ $(E')\\colon y'"+ay+"=0$ ។","$y=Ce^{"+ex(-a)+"}$ , $C\\in\\mathbb R$","សមីការ $y'+ay=0$ មានចម្លើយទូទៅ $y=Ce^{-ax}$ ។ នៅទីនេះ $a="+a+"$ ៖\n$y=Ce^{"+ex(-a)+"}$ ($C\\in\\mathbb R$)"),
+    Q("បង្ហាញថា $y$ ជាចម្លើយនៃ $(E)$ លុះត្រាតែ $y-y_0$ ជាចម្លើយនៃ $(E')$ ។ ទាញរកចម្លើយទូទៅនៃ $(E)$ ។","$y=("+pl([1,b,0])+"+C)"+E+"$",
+      W("ដោយ $y_0'"+ay.replace("y","y_0")+"=("+pl([2,b])+")"+E+"$ ៖",AL(["y'"+ay+"=("+pl([2,b])+")"+E+"&\\iff y'"+ay+"=y_0'"+ay.replace("y","y_0"),"&\\iff(y-y_0)'"+ay.replace("y","(y-y_0)")+"=0"]),
+        "ដូចនេះ $y-y_0=Ce^{"+ex(-a)+"}$ នាំឱ្យ $y=("+pl([1,b,0])+"+C)"+E+"$ ($C\\in\\mathbb R$)")),
+    Q("រកចម្លើយពិសេសនៃ $(E)$ ដែលផ្ទៀងផ្ទាត់ $y(0)="+c+"$ ។","$y=("+pl([1,b,c])+")"+E+"$",AL(["y(0)&=(0+0+C)e^0=C="+c,"y&=("+pl([1,b,c])+")"+E]))]}}},
  {id:"ode1p",t:"ED លំដាប់ទី១ · y′ + ay = mx + n (ចម្លើយពហុធា)",lv:2,f:function(){
   var a=pick([1,2,3,-1,-2,-3]),p=nz(-3,3),q=ri(-3,3),m=a*p,n=p+a*q,y0=ri(-3,5),K=y0-q,E="e^{"+ex(-a)+"}",ay=a===1?"+y":a===-1?"-y":(a>0?"+":"")+a+"y";
   return{inst:"គេមានសមីការឌីផេរ៉ង់ស្យែល $(E)\\colon y'"+ay+"="+pl([m,n])+"$ ។",it:[
-    Q("កំណត់ចំនួនពិត $p$ និង $q$ ដើម្បីឱ្យ $y_p=px+q$ ជាចម្លើយពិសេសនៃ $(E)$ ។","$p="+p+"$ , $q="+q+"$","$p"+(a>0?"+":"-")+(Math.abs(a)===1?"":Math.abs(a))+"(px+q)="+pl([m,n])+"$ ⇒ ផ្ទឹមមេគុណ"),
-    Q("ទាញរកចម្លើយទូទៅនៃ $(E)$ ។","$y=C"+E+"+"+pl([p,q]).replace(/^\+/,"")+"$","ចម្លើយទូទៅ $=$ ចម្លើយនៃ $y'"+ay+"=0$ $+$ $y_p$"),
-    Q("រកចម្លើយពិសេសនៃ $(E)$ ដែល $y(0)="+y0+"$ ។","$y="+(K===1?"":K===-1?"-":K)+(K?E:"")+(K?(p>0?"+":""):"")+pl([p,q])+"$","$C+"+(q<0?"("+q+")":q)+"="+y0+"$ ⇒ $C="+K+"$")]}}}];
+    Q("កំណត់ចំនួនពិត $p$ និង $q$ ដើម្បីឱ្យ $y_p=px+q$ ជាចម្លើយពិសេសនៃ $(E)$ ។","$p="+p+"$ , $q="+q+"$",
+      W("$y_p'=p$ ។ ជំនួសក្នុង $(E)$ ៖",AL(["p"+(a>0?"+":"-")+(Math.abs(a)===1?"":Math.abs(a))+"(px+q)&="+pl([m,n]),kx(a,"p")+"x+(p"+tm(a,"q")+")&="+pl([m,n])]),"ផ្ទឹមមេគុណ ៖",
+        AL([kx(a,"p")+"&="+m+"\\Rightarrow p="+p,pn(p)+tm(a,"q")+"&="+n+"\\Rightarrow q="+q]))),
+    Q("ទាញរកចម្លើយទូទៅនៃ $(E)$ ។","$y=C"+E+(pl([p,q]).charAt(0)==="-"?"":"+")+pl([p,q])+"$",
+      "ចម្លើយទូទៅ = ចម្លើយទូទៅនៃ $y'"+ay+"=0$ + ចម្លើយពិសេស $y_p$ ៖\n$y=C"+E+(pl([p,q]).charAt(0)==="-"?"":"+")+pl([p,q])+"$ ($C\\in\\mathbb R$)"),
+    Q("រកចម្លើយពិសេសនៃ $(E)$ ដែល $y(0)="+y0+"$ ។","$y="+(K===1?"":K===-1?"-":K)+(K?E:"")+(K?(p>0?"+":""):"")+pl([p,q])+"$",
+      AL(["y(0)&=C+"+pn(q)+"="+y0+"\\Rightarrow C="+K,"y&="+(K===1?"":K===-1?"-":K)+(K?E:"")+(K?(p>0?"+":""):"")+pl([p,q])]))]}}}];
 SPC.push({id:"sph",t:"ស្វ៊ែ · អង្កត់ផ្ចិត [AB] · ប្លង់ប៉ះ",lv:2,f:function(){
   var A0,B0;do{A0=[ri(-2,4),ri(-2,4),ri(-2,4)];B0=A0.map(function(v){return v+2*ri(-2,2)})}while(A0.join()===B0.join());
   var I=A0.map(function(v,i){return(v+B0[i])/2}),u=A0.map(function(v,i){return v-I[i]}),R2=u[0]*u[0]+u[1]*u[1]+u[2]*u[2],d=-(u[0]*A0[0]+u[1]*A0[1]+u[2]*A0[2]);
   var V=function(v){return"("+v.join(",")+")"},eqS=sqx("x",I[0])+"+"+sqx("y",I[1])+"+"+sqx("z",I[2])+"="+R2;
   return{inst:"នៅក្នុងតម្រុយអរតូណរម៉ាល់ $(O,\\vec i,\\vec j,\\vec k)$ គេមានចំណុច $A"+V(A0)+"$ និង $B"+V(B0)+"$ ។",it:[
-    Q("រកកូអរដោនេផ្ចិត $I$ និងកាំ $R$ នៃស្វ៊ែ $(S)$ ដែលមានអង្កត់ផ្ចិត $[AB]$ ។","$I"+V(I)+"$ · $R="+sqrtT(R2)+"$","$I$ ជាចំណុចកណ្ដាលនៃ $[AB]$ · $R=IA$"),
-    Q("សរសេរសមីការស្វ៊ែ $(S)$ ។","$(S)\\colon "+eqS+"$"),
-    Q("រកសមីការប្លង់ $(P)$ ដែលប៉ះនឹងស្វ៊ែ $(S)$ ត្រង់ចំណុច $A$ ។","$(P)\\colon "+eqN([[u[0],"x"],[u[1],"y"],[u[2],"z"],[d,""]])+"$","$(P)\\perp IA$ ⇒ វ៉ិចទ័រណរម៉ាល់ $\\overrightarrow{IA}"+V(u)+"$")]}}});
+    Q("រកកូអរដោនេផ្ចិត $I$ និងកាំ $R$ នៃស្វ៊ែ $(S)$ ដែលមានអង្កត់ផ្ចិត $[AB]$ ។","$I"+V(I)+"$ , $R="+sqrtT(R2)+"$",
+      W("$I$ ជាចំណុចកណ្ដាលនៃ $[AB]$ ៖",AL(["I&=\\left(\\dfrac{"+A0[0]+sg(B0[0])+"}{2},\\dfrac{"+A0[1]+sg(B0[1])+"}{2},\\dfrac{"+A0[2]+sg(B0[2])+"}{2}\\right)="+V(I),"R&=IA=\\sqrt{"+pn(u[0])+"^2+"+pn(u[1])+"^2+"+pn(u[2])+"^2}=\\sqrt{"+R2+"}"+(sqrtT(R2)==="\\sqrt{"+R2+"}"?"":"="+sqrtT(R2))]))),
+    Q("សរសេរសមីការស្វ៊ែ $(S)$ ។","$(S)\\colon "+eqS+"$","ស្វ៊ែផ្ចិត $I(a,b,c)$ កាំ $R$ ៖ $(x-a)^2+(y-b)^2+(z-c)^2=R^2$\n$(S)\\colon "+eqS+"$"),
+    Q("រកសមីការប្លង់ $(P)$ ដែលប៉ះនឹងស្វ៊ែ $(S)$ ត្រង់ចំណុច $A$ ។","$(P)\\colon "+eqN([[u[0],"x"],[u[1],"y"],[u[2],"z"],[d,""]])+"$",
+      W("ប្លង់ប៉ះត្រង់ $A$ កែងនឹងកាំ $IA$ ⇒ វ៉ិចទ័រណរម៉ាល់ $\\overrightarrow{IA}"+V(u)+"$ ៖",AL([pn(u[0])+"(x-"+pn(A0[0])+")+"+pn(u[1])+"(y-"+pn(A0[1])+")+"+pn(u[2])+"(z-"+pn(A0[2])+")&=0",eqN([[u[0],"x"],[u[1],"y"],[u[2],"z"],[d,""]]).replace("=0","&=0")])))]}}});
 HYP.push({id:"hyp2",t:"អ៊ីពែបូល · កំណុំ + ផលដកចម្ងាយ",lv:2,f:function(){
   var T=pick(PT3),a=T[0],b=T[1],c=T[2],h=ri(-3,8),k=ri(-3,3);
   var ys=k?"y"+(k>0?"-"+k:"+"+(-k)):"y",xs=lfx("x",h);
   return{inst:"គ្រប់ចំណុច $M$ នៃអ៊ីពែបូល $(H)$ ផ្ទៀងផ្ទាត់ $|MF_1-MF_2|="+2*a+"$ ដែល $F_1("+(h-c)+","+k+")$ និង $F_2("+(h+c)+","+k+")$ ។",it:[
-    Q("រកសមីការស្តង់ដានៃ $(H)$ ។","$\\dfrac{"+sqx("x",h)+"}{"+a*a+"}-\\dfrac{"+sqx("y",k)+"}{"+b*b+"}=1$","ផ្ចិត $("+h+","+k+")$ · $a="+a+"$ · $c="+c+"$ · $b^2=c^2-a^2="+b*b+"$"),
-    Q("រកកូអរដោនេកំពូល និងសមីការអាស៊ីមតូតនៃ $(H)$ ។","កំពូល $("+(h-a)+","+k+")$ , $("+(h+a)+","+k+")$ · $"+ys+"=\\pm"+F(b,a)+xs+"$"),
-    Q("គណនាចំណាកផ្ចិត $e$ ។","$e=\\dfrac ca="+F(c,a)+"$")]}}});
+    Q("រកសមីការស្តង់ដានៃ $(H)$ ។","$\\dfrac{"+sqx("x",h)+"}{"+a*a+"}-\\dfrac{"+sqx("y",k)+"}{"+b*b+"}=1$",
+      W("ផ្ចិត $I$ ជាចំណុចកណ្ដាលនៃ $[F_1F_2]$ ៖ $I("+h+","+k+")$ ។ អ័ក្សទទឹងស្របអ័ក្សអាប់ស៊ីស ៖",AL(["2a&="+2*a+"\\Rightarrow a="+a,"2c&=F_1F_2="+2*c+"\\Rightarrow c="+c,"b^2&=c^2-a^2="+c*c+"-"+a*a+"="+b*b]),"$(H)\\colon\\dfrac{"+sqx("x",h)+"}{"+a*a+"}-\\dfrac{"+sqx("y",k)+"}{"+b*b+"}=1$")),
+    Q("រកកូអរដោនេកំពូល និងសមីការអាស៊ីមតូតនៃ $(H)$ ។","កំពូល $("+(h-a)+","+k+")$ , $("+(h+a)+","+k+")$ , អាស៊ីមតូត $"+ys+"=\\pm"+F(b,a)+xs+"$",
+      W("កំពូល ៖ $(h\\pm a,k)$ ⇒ $("+(h-a)+","+k+")$ និង $("+(h+a)+","+k+")$","អាស៊ីមតូត ៖ $y-k=\\pm\\dfrac ba(x-h)$ ⇒ $"+ys+"=\\pm"+F(b,a)+xs+"$")),
+    Q("គណនាចំណាកផ្ចិត $e$ ។","$e=\\dfrac ca="+F(c,a)+"$",AL(["e&=\\dfrac ca=\\dfrac{"+c+"}{"+a+"}"+(gcd(c,a)===1?"":"="+F(c,a))]))]}}});
 PAR.push({id:"par2",t:"ប៉ារ៉ាបូល · កំពូល + បន្ទាត់ប្រាប់ទិស",lv:2,f:function(){
   var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3),ver=Math.random()<.5;
   var eq=ver?sqx("x",h)+"="+4*p+lfx("y",k):sqx("y",k)+"="+4*p+lfx("x",h);
   return{inst:"ប៉ារ៉ាបូល $(P)$ មានកំពូល $S("+h+","+k+")$ និងបន្ទាត់ប្រាប់ទិស $(d)\\colon "+(ver?"y="+(k-p):"x="+(h-p))+"$ ។",it:[
-    Q("រកសមីការស្តង់ដានៃ $(P)$ ។","$"+eq+"$","$p="+p+"$ (ចម្ងាយពីកំពូលទៅ $(d)$ ដោយគិតសញ្ញា)"),
-    Q("រកកូអរដោនេកំណុំ $F$ និងសមីការអ័ក្សឆ្លុះ ។",ver?"$F("+h+","+(k+p)+")$ · អ័ក្សឆ្លុះ $x="+h+"$":"$F("+(h+p)+","+k+")$ · អ័ក្សឆ្លុះ $y="+k+"$"),
-    Q("គណនាប្រវែងអង្កត់ធ្នូកាត់តាមកំណុំ និងកែងនឹងអ័ក្សឆ្លុះ ។ សង់ $(P)$ ។","$|4p|="+Math.abs(4*p)+"$")]}}});
+    Q("រកសមីការស្តង់ដានៃ $(P)$ ។","$"+eq+"$",
+      W("បន្ទាត់ប្រាប់ទិស "+(ver?"ដេក":"ឈរ")+" ⇒ អ័ក្សឆ្លុះ"+(ver?"ឈរ":"ដេក")+" ទម្រង់ $"+(ver?"(x-h)^2=4p(y-k)":"(y-k)^2=4p(x-h)")+"$ ។ ចម្ងាយពីកំពូលទៅ $(d)$ (គិតសញ្ញា) ៖",
+        AL([(ver?"k-p&="+(k-p):"h-p&="+(h-p))+"\\Rightarrow p="+p]),"$(P)\\colon "+eq+"$")),
+    Q("រកកូអរដោនេកំណុំ $F$ និងសមីការអ័ក្សឆ្លុះ ។",ver?"$F("+h+","+(k+p)+")$ , អ័ក្សឆ្លុះ $x="+h+"$":"$F("+(h+p)+","+k+")$ , អ័ក្សឆ្លុះ $y="+k+"$",
+      ver?"កំណុំ $F(h,k+p)=("+h+","+(k+p)+")$ ។ អ័ក្សឆ្លុះកាត់តាម $S$ និង $F$ ៖ $x="+h+"$":"កំណុំ $F(h+p,k)=("+(h+p)+","+k+")$ ។ អ័ក្សឆ្លុះកាត់តាម $S$ និង $F$ ៖ $y="+k+"$"),
+    Q("គណនាប្រវែងអង្កត់ធ្នូកាត់តាមកំណុំ និងកែងនឹងអ័ក្សឆ្លុះ ។ សង់ $(P)$ ។","$|4p|="+Math.abs(4*p)+"$","អង្កត់ធ្នូកាត់តាមកំណុំ និងកែងនឹងអ័ក្សឆ្លុះ មានប្រវែង $|4p|=|"+4*p+"|="+Math.abs(4*p)+"$ ។")]}}});
 /* រចនាសម្ព័ន្ធ ក (តាមសៀវភៅ ២៣ វិញ្ញាសា)៖ I លីមីត+អាំងតេក្រាល ១៥ · II កុំផ្លិច ១៥ · III ប្រូបាប ១៥ · IV ED ១៥ · V កោនិក ១៥ · VI លំហ ២០ · VII អនុគមន៍ ៣០ */
 var BAC7=[[[[22,"limint"]],15],[[[11,"trig"],[11,"eq2"],[11,"x1x2"]],15],[[[71,"col3"],[71,"num"],[71,"draw"],[71,"seq"],[71,"team"]],15],[[[62,"full"],[62,"rep"],[62,"ode2"],[61,"ode1"],[61,"ode1p"]],15],
   [[[82,"ell"],[83,"hyp"],[81,"par"]],15],[[[102,"pl3m"],[102,"parQ"],[101,"vec3"]],20],[FEX.map(function(x){return[42,x.id]}).concat(FLN.map(function(x){return[43,x.id]})),30]];
@@ -469,9 +575,9 @@ function fv(n,d){return(n*100)%d===0?n9(n/d):F(n,d)+"\\approx"+n9(Math.round(n/d
 function AL(r){return"$$\\begin{aligned}"+r.join("\\\\")+"\\end{aligned}$$"}
 function W(){return[].slice.call(arguments).filter(function(x){return x!==""&&x!=null}).join("\n")}
 function pn(v){return v<0?"("+v+")":String(v)}
-function sg(v){return v<0?String(v):"+"+v}
+function sg(v){return v?(v<0?String(v):"+"+v):""}
 function kx(c,v){v=v||"x";return c===1?v:c===-1?"-"+v:c+v}
-function tm(c,v,first){return c<0?"-"+(c===-1?"":-c)+v:(first?"":"+")+(c===1?"":c)+v}
+function tm(c,v,first){if(!c)return"";return c<0?"-"+(c===-1?"":-c)+v:(first?"":"+")+(c===1?"":c)+v}
 function fm(v){return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
 var KL="កខគឃ";
 function mcq(q,opt,ok,sol){return Q(q+"\n"+opt.map(function(o,i){return KL[i]+". $\\square$ "+o}).join("$\\qquad$"),"ជ្រើសរើស "+KL[ok]+". "+opt[ok],sol)}
