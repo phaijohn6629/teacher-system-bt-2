@@ -276,7 +276,7 @@ function drawEdit(){
      "<select data-a='"+i+"|t'><option"+(a.t==="លោកគ្រូ"?" selected":"")+">លោកគ្រូ</option><option"+(a.t==="អ្នកគ្រូ"?" selected":"")+">អ្នកគ្រូ</option><option"+(a.t!=="លោកគ្រូ"&&a.t!=="អ្នកគ្រូ"?" selected":"")+" value=''>—</option></select>"+
      "<input data-a='"+i+"|n' value='"+esc(a.n)+"' placeholder='ឈ្មោះ'><input data-a='"+i+"|r' list=mtRl value='"+esc(a.r||"")+"' placeholder='តួនាទី (បើមាន)'>"+
      "<button type=button class=mt-x data-rm="+i+" title='ដកចេញ'>✕</button></div>"}).join("")+"</div>"+
-   (tyOf(e)==="p"?"<div class=bar style='margin:8px 0'><label for=mtShr><b>👩‍🏫 គ្រូចែករំលែក៖</b></label><select id=mtShr><option value=''>— ជ្រើសឈ្មោះគ្រូដែលអ្នកបានសួរ —</option>"+data.filter(function(t){return t.name&&t.id!==who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(shr(e.at).some(function(a){return nk(a.n)===nk(t.name)})?" selected":"")+">"+esc(t.name)+"</option>"}).join("")+"</select><span class=note style='margin:0'>🔒 PLC នេះឃើញតែអ្នក និងគ្រូចែករំលែកប៉ុណ្ណោះ · ឈ្មោះនេះចេញក្នុងហត្ថលេខាកណ្ដាល</span></div>":"")+
+   (tyOf(e)==="p"?"<div class=bar style='margin:8px 0'><label for=mtShr><b>👩‍🏫 គ្រូចែករំលែក៖</b></label><input id=mtShr list=mtShrL autocomplete=off style='width:min(260px,100%);margin:0' placeholder='វាយ ឬជ្រើសឈ្មោះគ្រូ' value='"+esc((shr(e.at)[0]||{}).n||"")+"'><datalist id=mtShrL>"+data.filter(function(t){return t.name&&t.id!==who.id}).map(function(t){return"<option value='"+esc(t.name)+"'>"+esc(t.sub||"")+"</option>"}).join("")+"</datalist><span class=note style='margin:0'>🔒 PLC នេះឃើញតែអ្នក និងគ្រូចែករំលែក (បើជាគ្រូក្នុងប្រព័ន្ធ) · គ្រូមុខវិជ្ជាផ្សេង៖ វាយឈ្មោះផ្ទាល់ · ឈ្មោះនេះចេញក្នុងហត្ថលេខាកណ្ដាល</span></div>":"")+
    "<datalist id=mtRl>"+RL[tyOf(e)].map(function(r){return"<option>"+r+"</option>"}).join("")+"</datalist>"+
    "<div class=bar><select id=mtPick><option value=''>— ជ្រើសគ្រូដើម្បីបន្ថែម —</option>"+data.filter(function(t){return t.name&&!e.at.some(function(a){return nk(a.n)===nk(t.name)})}).map(function(t){return"<option value='"+esc(t.id)+"'>"+esc(t.name)+"</option>"}).join("")+"</select>"+
     "<button type=button id=mtAdd>➕ បន្ថែមគ្រូ</button><button type=button id=mtAddB>➕ បន្ថែមឈ្មោះផ្សេង</button></div>"+
@@ -307,12 +307,20 @@ function bind(){
   ["input","change","click"].forEach(function(t){body.addEventListener(t,function(){setTimeout(dPut,0)})});
   body.addEventListener("input",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
-    if(t.id==="mtShr"){var x=data.filter(function(q){return q.id===t.value})[0];e.at=e.at.filter(function(a){return String(a.r||"").trim()!=="គ្រូចែករំលែក"});if(x){e.at=e.at.filter(function(a){return nk(a.n)!==nk(x.name)});e.at.unshift({t:x.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ",n:x.name,r:"គ្រូចែករំលែក"})}drawEdit();return}
+    if(t.id==="mtShr")return;   /* អនុវត្តពេល change (setShr) */
     if(t.dataset.k==="ty"){e.ty=vTy(t.value);if(!edit.id||tyOf(mts[edit.id])!==e.ty)e.n=nextN(e.ty,edit.id);e.at=e.ty==="p"&&!edit.id?[myAt()].concat(shr(e.at)):conv(e.at,e.ty);if(e.ty==="a"&&!edit.id&&!String(e.ag||"").trim())e.ag=AGA;drawEdit()}
     else if(t.dataset.k){e[t.dataset.k]=t.dataset.k==="n"?(+t.value||1):t.value;if(t.dataset.k==="d"&&$("mtLun"))$("mtLun").textContent=lunar(e.d)+" "+greg(e.d)}
     else if(t.dataset.a){var a=t.dataset.a.split("|");e.at[+a[0]][a[1]]=t.value}
   });
-  body.addEventListener("change",function(ev){var t=ev.target;if(edit&&t.id==="mtShr"){if(t.isConnected)t.dispatchEvent(new Event("input",{bubbles:true}));return}if(edit&&t.dataset.k==="ty"&&tyOf(edit.m)!==t.value){t.dispatchEvent(new Event("input",{bubbles:true}));return}if(edit&&t.dataset.a){var a=t.dataset.a.split("|");edit.m.at[+a[0]][a[1]]=t.value}});
+  /* គ្រូចែករំលែក៖ គ្រូក្នុងប្រព័ន្ធ (ភេទ → លោកគ្រូ/អ្នកគ្រូ) ឬឈ្មោះដែលវាយផ្ទាល់ (គ្រូមុខវិជ្ជាផ្សេង · រក្សាងារដើម បើមាន) */
+  function setShr(v){
+    var e=edit.m,n=String(v||"").replace(/\s+/g," ").trim(),old=shr(e.at)[0],x=data.filter(function(q){return n&&nk(q.name)===nk(n)})[0];
+    e.at=e.at.filter(function(a){return String(a.r||"").trim()!=="គ្រូចែករំលែក"});
+    if(n){var nm=x?x.name:n;e.at=e.at.filter(function(a){return nk(a.n)!==nk(nm)});
+      e.at.unshift({t:x?(x.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ"):(old&&old.t||"លោកគ្រូ"),n:nm,r:"គ្រូចែករំលែក"})}
+    drawEdit();
+  }
+  body.addEventListener("change",function(ev){var t=ev.target;if(edit&&t.id==="mtShr"){if(t.isConnected)setShr(t.value);return}if(edit&&t.dataset.k==="ty"&&tyOf(edit.m)!==t.value){t.dispatchEvent(new Event("input",{bubbles:true}));return}if(edit&&t.dataset.a){var a=t.dataset.a.split("|");edit.m.at[+a[0]][a[1]]=t.value}});
   body.addEventListener("click",function(ev){
     if(!edit)return;var t=ev.target,e=edit.m;
     if(t.dataset.rm!=null){e.at.splice(+t.dataset.rm,1);drawEdit()}
