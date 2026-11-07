@@ -1938,13 +1938,13 @@ function curMK(){var m=new Date().getMonth()+1,i=[10,11,12,1,2,3,4,5,6,7,8].inde
 function ymNow(){var d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)}
 function syStart(){var d=new Date(),y=d.getMonth()+1>=10?d.getFullYear():d.getFullYear()-1;return y+"-10-01"}
 function allCls(ids){var o=[];ids.forEach(function(id){(rs.c&&rs.c[id]||[]).forEach(function(c){o.push({c:c,o:id})})});return o}
-function dCard(num,lbl,col){return"<div class=modern-card><h3 style='font-size:28px;color:"+col+";font-weight:bold'>"+num+"</h3><p style='color:var(--text-muted)'>"+esc(lbl)+"</p></div>"}
+function dCard(num,lbl,col){return"<div class=modern-card><h3 class=dnum style='font-size:28px;color:"+col+"'>"+kn(num)+"</h3><p style='color:var(--text-muted)'>"+esc(lbl)+"</p></div>"}
 function dEmpty(t){return"<p class=note style='margin:0'>"+t+"</p>"}
 function renderDash(){
   if(!who||$("p0").hidden)return;
   var adm=isAdm(),me=who.id,hr=new Date().getHours(),g=hr<12?["Good Morning","☀️"]:hr<17?["Good Afternoon","🌤️"]:["Good Evening","🌙"],now=new Date();
   /* បដាស្វាគមន៍ */
-  $("wbName").textContent=g[0]+", "+who.name+"! "+g[1];
+  $("wbName").innerHTML=esc(g[0])+", <span class=mu>"+esc(who.name)+"</span>! "+g[1];
   $("wbDate").textContent="ថ្ងៃ"+DAYF[now.getDay()]+" ទី"+kn(now.getDate())+" ខែ"+M[now.getMonth()]+" ឆ្នាំ"+kn(now.getFullYear());
   $("wbAvatar").innerHTML=avInner(me,who.name);
   var ids=adm?data.map(function(t){return t.id}):[me],cls=allCls(ids),stu=cls.reduce(function(s,x){return s+x.c.st.length},0);

@@ -877,3 +877,7 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .moul,.moul b,b.moul,h1.moul,h2.moul,h3.moul{font-weight:400}
 .sig b,.tsx-s b.ul,.cuh3 b,.fnm{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap","Kantumruy Pro",serif;font-weight:400}
 .sig b{font-size:10.5pt;line-height:1.8;white-space:nowrap}.sig>div:first-child{flex:1.45}.cuh3 b{font-size:10.5pt;line-height:1.8}
+
+/* ផ្ទាំងដើម៖ ឈ្មោះគ្រូ និងលេខស្ថិតិ = Khmer OS Muol Light (លេខខ្មែរ) */
+.mu,.modern-card h3.dnum{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400}
+.modern-card h3.dnum{line-height:1.5;margin:0 0 2px}
