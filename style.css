@@ -872,3 +872,8 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
   body.pm tfoot tr{break-before:avoid;page-break-before:avoid}
   body.pm p,body.pm li,body.pm .mt-i,body.pm .mt-li{orphans:3;widows:3}
 }
+
+/* ===== ជើងឯកសាររដ្ឋបាល៖ ឈ្មោះ និងតួនាទី (ជ.គណៈគ្រប់គ្រង… · ប្រធាន… · ឈ្មោះគ្រូ) = Khmer OS Muol Light · មិនដិតក្លែងក្លាយ (Muol Light គ្មាន Bold) ===== */
+.moul,.moul b,b.moul,h1.moul,h2.moul,h3.moul{font-weight:400}
+.sig b,.tsx-s b.ul,.cuh3 b,.fnm{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap","Kantumruy Pro",serif;font-weight:400}
+.sig b{font-size:10.5pt;line-height:1.8;white-space:nowrap}.sig>div:first-child{flex:1.45}.cuh3 b{font-size:10.5pt;line-height:1.8}

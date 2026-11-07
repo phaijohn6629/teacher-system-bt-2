@@ -1001,7 +1001,7 @@ function cardHTML(c,i,RK){
     "<table class=ct style='margin-top:8px'><thead><tr><th colspan=4 style='text-align:left'>អវត្តមាន (ថ្ងៃ)</th></tr><tr><th></th><th>មានច្បាប់</th><th>គ្មានច្បាប់</th><th>សរុប</th></tr></thead><tbody>"+
     [["ឆមាសទី១",a1],["ឆមាសទី២",a2],["ប្រចាំឆ្នាំ",ab]].map(function(x){return"<tr><td style='text-align:left'>"+x[0]+"</td><td>"+x[1][0]+"</td><td>"+x[1][1]+"</td><td><b>"+(x[1][0]+x[1][1])+"</b></td></tr>"}).join("")+"</tbody></table>"+
     "<p class=note style='margin:8px 0 0'>កម្រិតនិទ្ទេស៖ "+rs.pc.map(function(v,j){return"ABCDE"[j]+" ≥ "+v+"%"}).join(" · ")+" · F ក្រោម "+rs.pc[4]+"% (នៃពិន្ទុអតិបរមា)</p>"+
-    "<div class=sig><div>មតិមាតា-បិតា ឬអ្នកអាណាព្យាបាល<br><br><br><br>ហត្ថលេខា</div><div>គ្រូបង្រៀន<br><br><br><br>"+esc(t.name||"")+"</div><div>នាយក/នាយិកាសាលា<br><br><br><br>ហត្ថលេខា</div></div></div>";
+    "<div class=sig><div>មតិមាតា-បិតា ឬអ្នកអាណាព្យាបាល<br><br><br><br>ហត្ថលេខា</div><div>គ្រូបង្រៀន<br><br><br><br><b>"+esc(t.name||"")+"</b></div><div>នាយក/នាយិកាសាលា<br><br><br><br>ហត្ថលេខា</div></div></div>";
 }
 function cardsFor(c,idx){
   var RK={1:ranks(c,1),2:ranks(c,2),3:ranks(c,3)};
@@ -1689,7 +1689,7 @@ $("ahP").onclick=function(){
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>តារាងស្នាដៃគ្រូបង្រៀន</h2><p style='margin:4px 0'>គ្រូ៖ <b>"+esc(nm)+"</b>"+(f||g?" · រយៈពេល៖ "+esc(fdd(f)||"…")+" ដល់ "+esc(fdd(g)||"…"):"")+"</p>"+
     "<table class=ct>"+$("ahM").innerHTML+"</table>"+
     (ahT==="*"?"<div style='height:10px'></div><table class=ct>"+$("ahS").innerHTML+"</table><p style='font-size:9.5pt;margin:4px 0'>"+AHC.map(function(c,i){return(i+1)+"="+esc(c)}).join(" · ")+"</p>":"")+
-    "<div class=sig><div>&nbsp;<br>បានឃើញ និងពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី<br><br><br><br>&nbsp;</div><div>ធ្វើនៅភ្នំពេញ ថ្ងៃទី......ខែ......ឆ្នាំ......<br>អ្នករៀបចំ<br><br><br><br><b>"+esc(who.name||"")+"</b></div></div></div>";
+    "<div class=sig><div>&nbsp;<br>បានឃើញ និងពិនិត្យ<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b><br><br><br><br>&nbsp;</div><div>ធ្វើនៅភ្នំពេញ ថ្ងៃទី......ខែ......ឆ្នាំ......<br>អ្នករៀបចំ<br><br><br><br><b>"+esc(who.name||"")+"</b></div></div></div>";
   doPrint(h);
 };
 
@@ -2261,7 +2261,7 @@ function obsPrintHTML(i){
    "<table class='ct ops'><colgroup><col style='width:6%'><col style='width:52%'><col style='width:12%'><col style='width:30%'></colgroup><thead><tr><th>ល.រ</th><th>លក្ខណៈវិនិច្ឆ័យ</th><th>ពិន្ទុ (០–៥)</th><th>កំណត់ត្រា / យោបល់</th></tr></thead><tbody>"+rows+
    "<tr class=og><td colspan=2>សរុប</td><td>"+(T===""?"—":T)+" / 165</td><td>"+(T===""?"":(T/165*100).toFixed(1)+"% · និទ្ទេស៖ "+lvl(T/165))+"</td></tr></tbody></table>"+
    "<h4>ផ្នែកទី៣ ៖ កំណត់ហេតុនៃការសង្កេត</h4><table class='ct opn'><tbody>"+GL.map(function(l,j){return"<tr><th>"+l+"</th><td>"+esc(r.g[j]||"").replace(/\n/g,"<br>")+"</td></tr>"}).join("")+"</tbody></table>"+
-   "<div class=sig><div>បានឃើញ និងពិនិត្យ<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b><br><br><br><br>&nbsp;</div><div>&nbsp;<br>គ្រូត្រូវសង្កេត<br><br><br><br><b>"+esc(tn(r.t))+"</b></div><div>រាជធានីភ្នំពេញ ថ្ងៃទី "+kn(d.getDate())+" ខែ "+M[d.getMonth()]+" ឆ្នាំ"+kn(d.getFullYear())+"<br>អ្នកសង្កេត<br><br><br><br><b>"+esc(tn(r.o))+"</b></div></div></div>";
+   "<div class=sig><div>បានឃើញ និងពិនិត្យ<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b><br><br><br><br>&nbsp;</div><div>&nbsp;<br>គ្រូត្រូវសង្កេត<br><br><br><br><b>"+esc(tn(r.t))+"</b></div><div><span style='white-space:nowrap'>រាជធានីភ្នំពេញ ថ្ងៃទី "+kn(d.getDate())+" ខែ "+M[d.getMonth()]+" ឆ្នាំ"+kn(d.getFullYear())+"</span><br>អ្នកសង្កេត<br><br><br><br><b>"+esc(tn(r.o))+"</b></div></div></div>";
 }
 /* បោះពុម្ពតារាងសង្ខេបការសង្កេត (A4 ផ្ដេក) */
 function obsSumHTML(){
