@@ -208,6 +208,25 @@ function delQ(o,id){
   });
 }
 
+/* ជ្រើសច្រើន (☑️)៖ SEL = {"by|id":1} · កំណត់ឡើងវិញពេលប្ដូរថ្នាក់/មេរៀន · BK = លំហាត់របស់ខ្ញុំក្នុងតម្រងបច្ចុប្បន្ន */
+var SEL={},SELK="",BK=[];
+function selKeys(){return Object.keys(SEL).filter(function(k){return SEL[k]})}
+function selQ(){return selKeys().map(function(k){var p=k.split("|"),q=(qb[p[0]]||[]).filter(function(x){return x.id===p[1]})[0];return q?{o:p[0],q:q}:null}).filter(Boolean)}
+function selUpd(){var n=selKeys().length,b=$("qzBody");
+  [].forEach.call(b.querySelectorAll("[data-qs]"),function(c){c.checked=!!SEL[c.dataset.qs];c.closest(".qz-q").classList.toggle("sel",c.checked)});
+  var e=$("qsN");if(e)e.textContent=kn(n);var a=$("qsAll");if(a){a.checked=n>0&&n===BK.length;a.indeterminate=n>0&&n<BK.length}
+  [].forEach.call(b.querySelectorAll(".qz-selb [data-qa=sdel],.qz-selb select"),function(x){x.disabled=!n})}
+function delMany(L){
+  var FB=window.FB,inQ=L.filter(function(x){return QD[qid(x.o,x.q.id)]}),leg=L.filter(function(x){return!QD[qid(x.o,x.q.id)]}),ch=[];
+  for(var i=0;i<inQ.length;i+=400)ch.push(inQ.slice(i,i+400));
+  return ch.reduce(function(pr,part){return pr.then(function(){var b=FB.writeBatch(db);part.forEach(function(x){b.delete(FB.doc(db,"qbq",qid(x.o,x.q.id)))});return b.commit()})},Promise.resolve())
+    .then(function(){inQ.forEach(function(x){var k=qid(x.o,x.q.id);cntChanged(+x.q.g);if(QD[k]&&QD[k].q.im)FB.deleteDoc(FB.doc(db,"qimg",k)).catch(function(){});delete QD[k]});rebuild();
+      return leg.reduce(function(pr,x){return pr.then(function(){return delQ(x.o,x.q.id).catch(function(){})})},Promise.resolve())})
+    .catch(function(e){alert("មិនអាចលុបបានទេ · "+qErr(e));throw e});
+}
+function editMany(L,fn){var by={};L.forEach(function(x){var nq=Object.assign({},x.q);fn(nq);delete nq.by;(by[x.o]=by[x.o]||[]).push(nq)});
+  return Object.keys(by).reduce(function(pr,o){return pr.then(function(){return saveMany(o,by[o])})},Promise.resolve())}
+
 /* ===================== 📚 ធនាគារលំហាត់ ===================== */
 /* សន្ទស្សន៍៖ ថ្នាក់ → មេរៀន + ចំនួនលំហាត់ (ចុចដើម្បីបើក) */
 function bankIdx(){
@@ -239,16 +258,25 @@ function renderBank(){
   h+="<p class=note style='margin:0 0 10px'><button type=button class=qz-back data-qa=ls data-ls=''>‹ មេរៀនទាំងអស់</button> សរុប <b>"+kn(list.length)+"</b> លំហាត់ ក្នុងមេរៀននេះ"+(fV||mine?" (តាមតម្រង)":"")+" · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
   var nUn=allQ().filter(function(q){return q.g===fG&&String(q.ls)===String(fL)&&!(+q.pt)&&(q.by===who.id||isAdm())}).length;
   if(pts.length&&nUn)h+="<div class=qz-autob>⚠️ មានលំហាត់ <b>"+kn(nUn)+"</b> មិនទាន់កំណត់ចំណុច <button type=button class=primary data-qa=auto>🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ</button><small>ប្រព័ន្ធណែនាំតាមខ្លឹមសារ · អ្នកពិនិត្យ/កែ មុនរក្សាទុក</small></div>";
+  if(SELK!==fG+"|"+fL){SEL={};SELK=fG+"|"+fL}
+  BK=list.filter(function(q){return q.by===who.id||isAdm()}).map(function(q){return q.by+"|"+q.id});
+  var ok={};BK.forEach(function(k){ok[k]=1});Object.keys(SEL).forEach(function(k){if(!ok[k])delete SEL[k]});
+  if(BK.length)h+="<div class=qz-selb><label><input type=checkbox id=qsAll> ជ្រើសទាំងអស់ ("+kn(BK.length)+")</label><span>បានជ្រើស <b id=qsN>0</b></span>"+
+    "<button type=button class=danger data-qa=sdel>🗑️ លុបដែលបានជ្រើស</button>"+
+    "<select id=qsLv><option value=''>🎚️ ប្ដូរកម្រិត…</option>"+[1,2,3].map(function(v){return"<option value="+v+">"+LV[v]+"</option>"}).join("")+"</select>"+
+    "<select id=qsLs style='max-width:260px'><option value=''>📦 ផ្លាស់ទៅមេរៀន…</option>"+lsOpts(fG,"")+"</select>"+
+    (pts.length?"<select id=qsPt style='max-width:240px'><option value=''>📍 កំណត់ចំណុច…</option>"+ptOpts(fG,fL,-1)+"</select>":"")+"</div>";
   var more=list.length-qbShow;if(more>0)list=list.slice(0,qbShow);
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
-    return"<div class=qz-q><div class=qz-qh><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span>"+(pts.length?(own?"<select class=qz-pt data-qp='"+q.by+"|"+q.id+"' title='ចំណុចនៃមេរៀន'>"+ptOpts(q.g,q.ls,q.pt).replace("— មិនកំណត់ (ទាំងមេរៀន) —","⚠️ ជ្រើសចំណុច…")+"</select>":(q.pt?"<span class=qz-bl>"+esc(ptName(q.g,q.ls,q.pt))+"</span>":"")):"")+"<span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
+    var sk=q.by+"|"+q.id;
+    return"<div class='qz-q"+(SEL[sk]?" sel":"")+"'><div class=qz-qh>"+(own?"<input type=checkbox class=qz-sel data-qs='"+sk+"'"+(SEL[sk]?" checked":"")+" title='ជ្រើស'>":"")+"<span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span>"+(pts.length?(own?"<select class=qz-pt data-qp='"+q.by+"|"+q.id+"' title='ចំណុចនៃមេរៀន'>"+ptOpts(q.g,q.ls,q.pt).replace("— មិនកំណត់ (ទាំងមេរៀន) —","⚠️ ជ្រើសចំណុច…")+"</select>":(q.pt?"<span class=qz-bl>"+esc(ptName(q.g,q.ls,q.pt))+"</span>":"")):"")+"<span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
       (own?"<button type=button data-qe='"+q.by+"|"+q.id+"'>✏️</button><button type=button class=danger data-qd='"+q.by+"|"+q.id+"'>🗑️</button>":"")+"</div>"+
       "<div class=qz-qt>"+tx(q.q)+"</div>"+figHtml(q,qid(q.by,q.id))+
       (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"+
       (more>0?"<button type=button class=qz-more data-qa=more>⬇️ បង្ហាញបន្ថែម ("+kn(Math.min(more,QB_PAGE))+" ក្នុងចំណោម "+kn(more)+" នៅសល់)</button>":"")
     :"<p class=note>មិនទាន់មានលំហាត់ទេ។ ចុច «＋ បន្ថែមលំហាត់» ដើម្បីចាប់ផ្ដើម។</p>";
-  $("qzBody").innerHTML=h;math($("qzBody"));loadImgs($("qzBody"));
+  $("qzBody").innerHTML=h;math($("qzBody"));loadImgs($("qzBody"));selUpd();
 }
 /* ---------- 🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ (ptauto.js) · លំហាត់មិនទាន់កំណត់ចំណុចក្នុងមេរៀននេះ · គ្រូពិនិត្យ → រក្សាទុកម្ដងទាំងអស់ ---------- */
 function autoDlg(){
@@ -820,6 +848,15 @@ $("qzBody").addEventListener("change",function(e){
   }
   else if(el.dataset.ml){mk.ls[el.dataset.ml]=el.checked;if(!el.checked)delete mk.pt[el.dataset.ml];mk.items=null;renderMake()}
   else if(el.dataset.mp){var mp=el.dataset.mp.split("|");(mk.pt[mp[0]]=mk.pt[mp[0]]||{})[mp[1]]=el.checked;mk.items=null;renderMake()}
+  else if(el.dataset.qs){SEL[el.dataset.qs]=el.checked;selUpd()}
+  else if(id==="qsAll"){SEL={};if(el.checked)BK.forEach(function(k){SEL[k]=1});selUpd()}
+  else if((id==="qsLv"||id==="qsLs"||id==="qsPt")&&el.value!==""){
+    var L=selQ(),v=el.value,what=id==="qsLv"?"ប្ដូរកម្រិតទៅ «"+LV[+v]+"»":id==="qsLs"?"ផ្លាស់ទៅ «"+lsName(fG,v)+"»":"កំណត់ចំណុច «"+(+v?ptName(fG,fL,v):"មិនកំណត់")+"»";
+    if(!L.length||!confirm(what+" សម្រាប់លំហាត់ "+kn(L.length)+" ?")){el.value="";return}
+    el.disabled=true;
+    editMany(L,function(q){if(id==="qsLv")q.lv=+v;else if(id==="qsLs"){q.ls=/^\d+$/.test(v)?+v:v;delete q.pt}else{if(+v)q.pt=+v;else delete q.pt}})
+      .then(function(){SEL={};notify("✅ បានកែ "+kn(L.length)+" លំហាត់");renderBank()},function(){el.disabled=false;el.value=""});
+  }
   else if(el.dataset.qp){var qp=el.dataset.qp.split("|"),qq=(qb[qp[0]]||[]).filter(function(x){return x.id===qp[1]})[0];if(qq){var nq=Object.assign({},qq);if(+el.value)nq.pt=+el.value;else delete nq.pt;saveQ(qp[0],nq).then(function(){notify("បានកំណត់ចំណុច")})}}
   else if(el.dataset.mn){mk.n[el.dataset.mn]=Math.max(0,+el.value||0)}
 });
@@ -834,6 +871,8 @@ $("qzBody").addEventListener("click",function(e){
   var a=b.dataset.qa,t=curTest;
   if(/^pc/.test(a)){pcAct(a);return}
   if(a==="reload"){Object.keys(qkU).forEach(function(k){try{qkU[k]()}catch(x){}});qbErr="";qkP={};qkU={};CNT={};legP=null;renderQuiz();return}
+  if(a==="sdel"){var L=selQ();if(!L.length)return;if(!confirm("លុបលំហាត់ "+kn(L.length)+" ដែលបានជ្រើស?\n\n⚠️ លុបហើយមិនអាចយកមកវិញបានទេ"))return;
+    b.disabled=true;b.textContent="កំពុងលុប…";delMany(L).then(function(){SEL={};renderBank();notify("🗑️ បានលុប "+kn(L.length)+" លំហាត់")},function(){renderBank()});return}
   if(a==="ls"){fL=b.dataset.ls;fP=-1;qbShow=QB_PAGE;renderQuiz();window.scrollTo(0,0);return}
   if(a==="g"){fG=+b.dataset.g;fL="";renderQuiz();return}
   if(a==="more"){qbShow+=QB_PAGE;var y=window.scrollY;renderBank();window.scrollTo(0,y);return}

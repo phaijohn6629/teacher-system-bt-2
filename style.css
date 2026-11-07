@@ -851,3 +851,10 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .ex-on{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.4)}.ex-left{font-size:1.15rem;color:#b91c1c;font-variant-numeric:tabular-nums}.ex-code{font-size:1.2rem;letter-spacing:.2em;color:#b45309}
 .ex-vl{display:flex;flex-wrap:wrap;gap:6px}.ex-v{display:inline-flex;gap:4px;align-items:center;padding:3px 4px 3px 10px;border-radius:999px;background:var(--soft);font-size:.82rem}.ex-v.bad{background:#fee2e2;color:#991b1b}.ex-v button{padding:0 6px!important;font-size:.75rem}
 .qm-pcl{display:inline-flex!important;gap:6px;align-items:center;white-space:nowrap;flex:0 0 auto!important;width:auto!important;margin:0}.qm-pcl input{width:auto!important;margin:0!important}
+/* ធនាគារលំហាត់ · ជ្រើសច្រើន */
+.qz-selb{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:0 2px 8px rgba(0,0,0,.06);font-size:.9rem}
+.qz-selb label{display:flex;gap:6px;align-items:center;margin:0;font-weight:600}.qz-selb input{width:auto;margin:0}.qz-selb select{width:auto;flex:0 1 auto;margin:0}
+.qz-selb button:disabled,.qz-selb select:disabled{opacity:.45;cursor:not-allowed}
+.qz-sel{width:18px!important;height:18px;margin:0!important;cursor:pointer;accent-color:var(--brand)}
+.qz-q.sel{outline:2px solid var(--brand);background:var(--soft)}
+@media (max-width:600px){.qz-selb select{flex:1 1 100%}}
