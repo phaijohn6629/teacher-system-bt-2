@@ -606,6 +606,17 @@ function open(l,v){
   location.hash=HS("g="+S.g+"&l="+l+"&v="+S.v);
   draw();window.scrollTo(0,0);
 }
+/* ⏱ ដំណោះស្រាយបើកតែក្រោយ៖ (១) ព្យាយាមឆ្លើយយ៉ាងតិច ១ ដង និង (២) គិតលើលំហាត់នោះគ្រប់រយៈពេលតាមកម្រិត
+   គិតម៉ោងពីពេលសិស្សចាប់ផ្ដើមវាយចម្លើយលំហាត់នោះ (q.t0) · ឆ្លើយត្រូវ → មើលបានភ្លាម */
+var SOLT={1:120,2:240,3:360,4:360};
+function solT(){var t=SOLT[S.v]||180;return S.g<=9?Math.round(t*.75):t}
+function solLeft(q){return q.t0?Math.max(0,Math.ceil(solT()-(Date.now()-q.t0)/1000)):solT()}
+function mmss(s){return kn(Math.floor(s/60)+":"+("0"+s%60).slice(-2))}
+function solBtn(q,i){
+  if(q.show||q.st==="ok"||(q.tries>=1&&solLeft(q)<=0))return"<button type=button class=sol-b data-sol="+i+">💡 "+(q.show?"លាក់ដំណោះស្រាយ":"មើលដំណោះស្រាយ")+"</button>";
+  if(q.tries>=1)return"<button type=button class='sol-b lk' disabled data-lk="+i+">🔒 ដំណោះស្រាយបើកក្នុង <b>"+mmss(solLeft(q))+"</b> · សាកគិតម្ដងទៀត 💪</button>";
+  return"";
+}
 function draw(){
   var l=S.l,v=S.v;
   var h="<div class=bar><button type=button data-a=home>‹ មេរៀនទាំងអស់</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='តំណ/QR សម្រាប់ចែករំលែក'>📱</button></div>"+
@@ -613,7 +624,7 @@ function draw(){
   S.qs.forEach(function(q,i){
     h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+q.q+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
       q.a.map(function(a,j){return"<label class=in>"+(a.l?"<span class=lb>"+esc(a.l)+"</span>":"")+"<input data-q="+i+" data-p="+j+" autocomplete=off autocapitalize=off spellcheck=false inputmode=text value='"+esc(a.u||"")+"'"+(q.st==="ok"?" readonly":"")+"><span class=mk>"+(a.r==null?"":a.r?"✅":"❌")+"</span><span class=pv id=pv"+i+"_"+j+"></span></label>"}).join("")+
-      "</div>"+(q.st==="bad"&&q.tries>=1||q.show?"<button type=button class=sol-b data-sol="+i+">💡 "+(q.show?"លាក់ដំណោះស្រាយ":"មើលដំណោះស្រាយ")+"</button>":"")+
+      "</div>"+solBtn(q,i)+
       (q.show?"<div class=sol><b>ចម្លើយ៖</b> "+q.a.map(function(a){return(a.l?esc(a.l)+" ":"")+"$"+a.t+"$"}).join(" · ")+(q.s?"<br>"+q.s:"")+"</div>":"")+"</li>";
   });
   var ok=S.qs.filter(function(q){return q.st==="ok"}).length;
@@ -634,7 +645,7 @@ function doCheck(){
     var ok=true,blank=true;
     q.a.forEach(function(a){if(a.u&&a.u.trim())blank=false});
     if(blank){q.st="";ok=false;all=false;return}
-    any=true;
+    any=true;if(!q.t0)q.t0=Date.now();
     q.a.forEach(function(a){var r=a.u&&a.u.trim()?check(a.u,a.v,a.k):{ok:false};a.r=r.ok;if(!r.ok)ok=false});
     q.st=ok?"ok":"bad";if(!ok){q.tries++;all=false}
   });
@@ -689,9 +700,11 @@ function bind(){
     else if(a==="reset"){if(confirm("លុបពានរង្វាន់ថ្នាក់ទី"+kn(S.g)+" ទាំងអស់នៅលើឧបករណ៍នេះ?")){try{localStorage.removeItem(PK())}catch(x){}home()}}
   });
   app.addEventListener("input",function(e){
-    var t=e.target;if(t.dataset.q==null)return;var a=S.qs[+t.dataset.q].a[+t.dataset.p];a.u=t.value;a.r=null;
+    var t=e.target;if(t.dataset.q==null)return;var qq=S.qs[+t.dataset.q];if(!qq.t0)qq.t0=Date.now();var a=qq.a[+t.dataset.p];a.u=t.value;a.r=null;
     var mk=t.parentNode.querySelector(".mk");if(mk)mk.textContent="";preview(t);
   });
+  setInterval(function(){[].forEach.call(document.querySelectorAll("[data-lk]"),function(b){var i=+b.dataset.lk,q=S.qs[i];if(!q)return;var l=solLeft(q);
+    if(l<=0)b.outerHTML="<button type=button class=sol-b data-sol="+i+">💡 មើលដំណោះស្រាយ</button>";else{var x=b.querySelector("b");if(x)x.textContent=mmss(l)}})},1000);
   app.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.dataset.q!=null){e.preventDefault();doCheck()}});
   document.addEventListener("focusin",function(e){var t=e.target;if(t.dataset&&t.dataset.q!=null){lastInp=t;$("kb").hidden=false}});
   document.addEventListener("focusout",function(e){setTimeout(function(){var a=document.activeElement;if(!a||a.dataset.q==null)$("kb").hidden=true},150)});
