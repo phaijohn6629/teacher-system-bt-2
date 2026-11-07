@@ -1550,7 +1550,10 @@ $("wtb").oninput=function(e){
   en[a[1]]=e.target.value;savW();
   if(a[1]==="a"||a[1]==="b"){var el=$("wd-"+a[0]);if(el)el.textContent=dur(en.a,en.b)}
 };
-$("wtb").onchange=function(e){var p=e.target.dataset.w;if(p&&p.slice(-2)==="|d")renderW()};
+/* ប្ដូរថ្ងៃ → តម្រៀបជួរឡើងវិញតែពេលចេញពីប្រអប់ថ្ងៃ (កុំកាត់ការវាយ/ផ្ទាំងប្រតិទិន) */
+var wSort=false;
+$("wtb").onchange=function(e){var p=e.target.dataset.w;if(p&&p.slice(-2)==="|d")wSort=true};
+$("wtb").addEventListener("focusout",function(e){var p=e.target.dataset&&e.target.dataset.w;if(!wSort||!p||p.slice(-2)!=="|d")return;setTimeout(function(){if(wSort&&!pickerBusy()){wSort=false;renderW()}},250)});
 $("wtb").onclick=function(e){
   var b=e.target.closest("button");if(!b)return;
   if(b.dataset.wd){if(confirm("តើអ្នកពិតជាចង់លុបសកម្មភាពនេះមែនទេ?")){wr.r[wt]=(wr.r[wt]||[]).filter(function(x){return x.u!==b.dataset.wd});savW();renderW()}}
@@ -2469,8 +2472,17 @@ function finishMig(k,ok){
   }
 }
 
+/* ប្រអប់ថ្ងៃ/ម៉ោងកំពុងប្រើ (ផ្ទាំងប្រតិទិនបើក · ម៉ោងវាយបានពាក់កណ្ដាល = តម្លៃមិនទាន់មាន) → ការគូរឡើងវិញនឹងបិទ/លុបវា
+   ដូច្នេះពន្យារ refreshView រហូតដល់ចេញពីប្រអប់នោះ */
+var rvWait=false;
+function pickerBusy(){var a=document.activeElement;return!!(a&&a.tagName==="INPUT"&&/^(date|time|month|week|datetime-local)$/.test(a.type))}
+document.addEventListener("focusout",function(e){
+  if(!rvWait||!e.target||e.target.tagName!=="INPUT")return;
+  setTimeout(function(){if(rvWait&&!pickerBusy()){rvWait=false;refreshView()}},250);
+},true);
 function refreshView(){
   if($("appSection").hidden)return;
+  if(pickerBusy()){rvWait=true;return}
   var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].filter(function(x){return !$(x).hidden})[0]||"p0";
   keepFocus(function(){show(c)});
 }
