@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=2","practice8.js?v=2","practice7.js?v=2"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=3","practice8.js?v=2","practice7.js?v=2"],genP=null,kxP=null;
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
 var TITLES=["ប្រឡងតេស្តប្រចាំខែ","ប្រឡងប្រចាំខែ","ប្រឡងឆមាសទី១","ប្រឡងឆមាសទី២","ប្រឡងសាកល្បង"];
@@ -97,13 +97,13 @@ function editor(){
   h+="<div class=ex-grid><div class=card><h3 style='margin-top:0'>ក្បាល និងជើងវិញ្ញាសា</h3><div class=fg>"+
     "<div><label>ថ្នាក់</label><select data-ef=cls>"+cl.map(function(c){return"<option"+(c.n===E.cls?" selected":"")+">"+esc(c.n)+"</option>"}).join("")+(cl.some(function(c){return c.n===E.cls})?"":"<option selected>"+esc(E.cls)+"</option>")+"</select></div>"+
     "<div><label>ពុម្ពអក្សរ</label><select data-ef=font>"+Object.keys(EXP.FONTS).map(function(k){return"<option value="+k+((E.font||"os")===k?" selected":"")+">"+esc(EXP.FONTS[k].n)+"</option>"}).join("")+"</select></div>"+
-    "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option></select></div>"+
+    "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option><option value=dip"+(E.fmt==="dip"?" selected":"")+">🎓 ទម្រង់ឌីប្លូម ថ្នាក់ទី៩ (មណ្ឌល · បន្ទប់ · តុ)</option></select></div>"+
     (E.fmt==="bac"?"<div><label>ផ្នែក</label><input data-ef=trk list=exTrk value='"+esc(E.trk||"")+"'><datalist id=exTrk><option value='ថ្នាក់វិទ្យាសាស្ត្រពិត'><option value='ថ្នាក់វិទ្យាសាស្ត្រសង្គម'><option value='វិទ្យាសាស្ត្រ'></datalist></div>":"")+
     "<div><label>ចំណងជើង</label><input data-ef=title list=exTl value='"+esc(E.title)+"'><datalist id=exTl>"+TITLES.map(function(t){return"<option value='"+t+"'>"}).join("")+"</datalist></div>"+
-    (E.fmt==="bac"?"":"<div><label>ខែ (ទុកទទេ = មិនបង្ហាញ)</label><input type=month data-ef=mo value='"+esc(E.mo||"")+"'></div>")+
+    (E.fmt==="bac"||E.fmt==="dip"?"":"<div><label>ខែ (ទុកទទេ = មិនបង្ហាញ)</label><input type=month data-ef=mo value='"+esc(E.mo||"")+"'></div>")+
     "<div><label>មុខវិជ្ជា</label><input data-ef=sub value='"+esc(E.sub)+"'></div>"+
     "<div><label>រយៈពេល (នាទី)</label><input type=number min=5 max=300 data-ef=dur value="+(+E.dur||45)+"></div>"+
-    "<div><label>"+(E.fmt==="bac"?"សម័យប្រឡង":"កាលបរិច្ឆេទ")+"</label><input type=date data-ef=date value='"+esc(E.date)+"'></div>"+
+    "<div><label>"+(E.fmt==="bac"||E.fmt==="dip"?"សម័យប្រឡង":"កាលបរិច្ឆេទ")+"</label><input type=date data-ef=date value='"+esc(E.date)+"'></div>"+
     "<div><label>ធ្វើនៅ</label><input data-ef=place value='"+esc(E.place)+"'></div>"+
     "<div><label>អ្នកចេញវិញ្ញាសា</label><input data-ef=au value='"+esc(E.au)+"'></div>"+
     "<div><label>បានឃើញ និងពិនិត្យ</label><input data-ef=ck value='"+esc(E.ck)+"' placeholder='ឈ្មោះនាយក/នាយករង'></div>"+
@@ -111,6 +111,7 @@ function editor(){
     "</div></div>"+
     "<div class=card><h3 style='margin-top:0'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small></h3>"+
     (g===12&&window.EXGEN&&EXGEN.bac?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='bac|a' style='flex:1'>📋 វិញ្ញាសាត្រៀមបាក់ឌុប (៧ ផ្នែក · តាមសៀវភៅ)</button><button type=button data-ex='bac|b' style='flex:1'>📋 គំរូសាកល្បង NGS (៨ ផ្នែក)</button></div>":"")+
+    (g===9&&window.EXGEN&&EXGEN.dip?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex=dip style='flex:1'>🎓 វិញ្ញាសាត្រៀមប្រឡងឌីប្លូម (៧ ផ្នែក · ១០០ ពិន្ទុ · ១២០ នាទី)</button></div>":"")+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
         "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+[1,2,3,4].filter(function(v){return v<4||hasLv4(g,s.ls)}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
@@ -217,6 +218,9 @@ function act(a,q){
   else if(a==="bac"){if(E.secs.length&&!confirm("ជំនួសផ្នែកទាំងអស់ដោយវិញ្ញាសាគំរូបាក់ឌុប (១២៥ ពិន្ទុ)?\n\n"+(q[1]==="b"?"I ប្រូបាប · II លីមីត · III ចំនួនកុំផ្លិច · IV អាំងតេក្រាល · V សមីការឌីផេរ៉ង់ស្យែល · VI អេលីប · VII វ៉ិចទ័រក្នុងលំហ · VIII សិក្សាអនុគមន៍":"I លីមីត + អាំងតេក្រាល · II ចំនួនកុំផ្លិច · III ប្រូបាប · IV សមីការឌីផេរ៉ង់ស្យែល · V កោនិក · VI ធរណីមាត្រលំហ · VII សិក្សាអនុគមន៍")))return;
     var bk=q[1]==="b";E.secs=EXGEN.bac(bk?"b":"a").map(function(x){var s2={ls:x.ls,lv:x.lv,n:1,pts:x.pts,inst:""};fill(s2,g);if(E.ab)fill(s2,g,"itB");return s2});
     E.fmt="bac";E.dur=150;E.trk=E.trk||"ថ្នាក់វិទ្យាសាស្ត្រពិត";E.mo="";if(TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$/.test(E.title))E.title=bk?"ប្រឡងសាកល្បង":"វិញ្ញាសាត្រៀមប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ"}
+  else if(a==="dip"){if(E.secs.length&&!confirm("ជំនួសផ្នែកទាំងអស់ដោយវិញ្ញាសាគំរូឌីប្លូម (១០០ ពិន្ទុ)?\n\nI ពហុជម្រើស · II រ៉ាឌីកាល់ · III កន្សោម/សមីការ · IV ចំណោទ · V ប្រូបាប · VI តម្រុយ · VII ធរណីមាត្ររង្វង់"))return;
+    E.secs=EXGEN.dip().map(function(x){var s2={ls:x.ls,lv:x.lv,n:1,pts:x.pts,inst:""};fill(s2,g);if(E.ab)fill(s2,g,"itB");return s2});
+    E.fmt="dip";E.dur=120;E.mo="";if(!E.title||TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$/.test(E.title))E.title="ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ"}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q});s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av)}
