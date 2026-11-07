@@ -884,3 +884,7 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 
 /* របារចំហៀង៖ ក្រុមមុខងារធំៗ (ទូទៅ · ការងាររដ្ឋបាល · មេរៀនសង្ខេប …) = Khmer OS Muol Light */
 .snav .sn-h,.sn-h{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400!important;letter-spacing:0!important;line-height:1.9;font-size:.92rem!important}
+
+/* របាយការណ៍ការងារ៖ ម៉ោង (បញ្ជីជ្រើស) */
+.wtm{display:flex;align-items:center;gap:4px;margin:0 0 4px;white-space:nowrap}.wtm>span{min-width:58px;font-size:.8rem;color:var(--mute)}
+.wtm select{width:auto;min-width:58px;margin:0;padding:4px 6px}.wtm b{font-weight:700}

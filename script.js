@@ -1523,6 +1523,15 @@ function ft(t){var m=/^(\d{1,2}):(\d{2})/.exec(t||"");return m?(+m[1])+":"+m[2]:
 function ampm(t){var p=(t||"").split(":");return +p[0]<12?"am":"pm"}
 function fdd(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return"";var p=s.split("-");return p[2]+"."+p[1]+"."+p[0]}
 function wlist(){return(wr.r[wt]||[]).filter(function(e){return(e.d||"").slice(0,7)===wmo}).sort(function(a,b){return(a.d+(a.a||"")).localeCompare(b.d+(b.a||""))})}
+/* ម៉ោង = បញ្ជីជ្រើស «ម៉ោង : នាទី» (Safari/ទូរស័ព្ទ៖ input type=time គ្មានផ្ទាំងជ្រើស និងពិបាកកែ) */
+function tmSel(k,v,ro){
+  var m=/^(\d{1,2}):(\d{2})/.exec(v||""),h=m?+m[1]:-1,mi=m?+m[2]:-1,o="<select data-wt='"+k+"|h' class=wth"+(ro?" disabled":"")+"><option value=''>--</option>";
+  for(var i=0;i<24;i++)o+="<option value="+i+(i===h?" selected":"")+">"+("0"+i).slice(-2)+"</option>";
+  o+="</select><b>:</b><select data-wt='"+k+"|m' class=wtn"+(ro?" disabled":"")+"><option value=''>--</option>";
+  var ms=[];for(var j=0;j<60;j+=5)ms.push(j);if(mi>=0&&ms.indexOf(mi)<0){ms.push(mi);ms.sort(function(a,b){return a-b})}
+  ms.forEach(function(j){o+="<option value="+j+(j===mi?" selected":"")+">"+("0"+j).slice(-2)+"</option>"});
+  return o+"</select>";
+}
 function renderW(){
   var isAdmin=(isAdm());
   if(!wt||(!isAdmin&&wt!==who.id))wt=who.id;
@@ -1532,7 +1541,7 @@ function renderW(){
   $("wadd").style.display=ro?"none":"inline-block";
   var L=wlist(),b="";
   L.forEach(function(e){
-    b+="<tr><td><input type=date data-w='"+e.u+"|d' value='"+esc(e.d)+"' style='width:150px' "+(ro?"readonly":"")+"></td><td><input type=time data-w='"+e.u+"|a' value='"+esc(e.a||"")+"' style='width:105px;margin-bottom:4px' "+(ro?"readonly":"")+"><br><input type=time data-w='"+e.u+"|b' value='"+esc(e.b||"")+"' style='width:105px' "+(ro?"readonly":"")+"><div class=note style='margin:2px 0 0' id='wd-"+e.u+"'>"+dur(e.a,e.b)+"</div></td><td><textarea rows=3 data-w='"+e.u+"|c' style='min-width:260px;margin:0' placeholder='ខ្លឹមសារសកម្មភាព (មួយចំណុចក្នុងមួយបន្ទាត់)' "+(ro?"readonly":"")+">"+esc(e.c||"")+"</textarea></td><td class=acts>"+(ro?"":"<button data-wi='"+e.u+"'>🖼️ រូបភាព"+(wimg[e.u]&&wimg[e.u].length?" ("+wimg[e.u].length+")":"")+"</button> <button class=danger data-wd='"+e.u+"'>លុប</button>")+"</td></tr>";
+    b+="<tr><td><input type=date data-w='"+e.u+"|d' value='"+esc(e.d)+"' style='width:150px' "+(ro?"readonly":"")+"></td><td><div class=wtm><span>ចាប់ផ្ដើម</span>"+tmSel(e.u+"|a",e.a,ro)+"</div><div class=wtm><span>បញ្ចប់</span>"+tmSel(e.u+"|b",e.b,ro)+"</div><div class=note style='margin:2px 0 0' id='wd-"+e.u+"'>"+dur(e.a,e.b)+"</div></td><td><textarea rows=3 data-w='"+e.u+"|c' style='min-width:260px;margin:0' placeholder='ខ្លឹមសារសកម្មភាព (មួយចំណុចក្នុងមួយបន្ទាត់)' "+(ro?"readonly":"")+">"+esc(e.c||"")+"</textarea></td><td class=acts>"+(ro?"":"<button data-wi='"+e.u+"'>🖼️ រូបភាព"+(wimg[e.u]&&wimg[e.u].length?" ("+wimg[e.u].length+")":"")+"</button> <button class=danger data-wd='"+e.u+"'>លុប</button>")+"</td></tr>";
   });
   $("wtb").innerHTML="<thead><tr><th>កាលបរិច្ឆេទ</th><th>ម៉ោង (ចាប់ផ្ដើម/បញ្ចប់)</th><th>ខ្លឹមសារសកម្មភាព</th><th></th></tr></thead><tbody>"+(b||"<tr><td colspan=4 class=empty>មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។ ចុច «+ បន្ថែមសកម្មភាព»។</td></tr>")+"</tbody>";
 }
@@ -1544,6 +1553,13 @@ $("wadd").onclick=function(){
   arr.push({u:"w"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),d:d,a:"",b:"",c:""});
   savW();renderW();
 };
+$("wtb").addEventListener("change",function(e){
+  var p=e.target.dataset.wt;if(!p)return;
+  var a=p.split("|"),en=(wr.r[wt]||[]).filter(function(x){return x.u===a[0]})[0];if(!en)return;
+  var td=e.target.closest(".wtm"),hs=td.querySelector(".wth"),ns=td.querySelector(".wtn");
+  if(hs.value===""){en[a[1]]="";ns.value=""}else{if(ns.value==="")ns.value="0";en[a[1]]=("0"+hs.value).slice(-2)+":"+("0"+ns.value).slice(-2)}
+  savW();var el=$("wd-"+a[0]);if(el)el.textContent=dur(en.a,en.b);
+});
 $("wtb").oninput=function(e){
   var p=e.target.dataset.w;if(!p)return;
   var a=p.split("|"),en=(wr.r[wt]||[]).filter(function(x){return x.u===a[0]})[0];if(!en)return;
