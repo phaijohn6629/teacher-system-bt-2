@@ -42,21 +42,24 @@ function html(P,o){
     "</div><div class=exp-hr><div class=exp-b>"+ES(head(P))+"</div><div class=exp-b>រយៈពេល "+KN(+P.dur||0)+" នាទី ពិន្ទុ "+KN(T)+"</div>"+
     (key?"":"<div class=exp-sc><span></span><b>"+KN(T)+"</b></div>")+"</div></div>"+
     "<div class=exp-t>"+(key?"ចម្លើយ និងដំណោះស្រាយ":"វិញ្ញាសា")+(o.lbl?" "+ES(o.lbl):"")+"</div>";
+  var cols=key&&bac;if(cols)h+="<div class=exp-cols>";
   (P.secs||[]).forEach(function(s,i){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
     var sh=!key&&it.length>1&&it.every(function(x){return String(x.q||"").replace(/\$[^$]*\$/g,"xxxxxx").length<=70&&!x.fig});
     h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(it[0].q):TX(inst||""))+"</div>";
-    if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0])}
-    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x):"")+"</div>"}).join("")+"</div>";
+    if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip")}
+    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"):"")+"</div>"}).join("")+"</div>";
     h+="</div>";
   });
+  if(cols)h+="</div>";
   if(bac)return h+"</div>";
   var ld=lunar(P.date);
   h+="<div class=exp-ft><div class=exp-fl><div>បានឃើញ និងពិនិត្យ</div><div class=exp-nm>"+ES(P.ck||"")+"</div></div>"+
     "<div class=exp-fr>"+(ld?"<div>"+ES(ld)+"</div>":"")+"<div>"+ES(P.place||"រាជធានីភ្នំពេញ")+" "+solar(P.date)+"</div><div class=exp-au>អ្នកចេញវិញ្ញាសា</div><div class=exp-nm>"+ES(P.au||"")+"</div></div></div></div>";
   return h;
 }
-function keyBox(x){return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(x.ans||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(x.sol)+"</div>":"")+"</div>"}
+function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'><div class=exp-ks>"+TX(x.sol)+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(x.ans||"—")+"</span></div></div>";
+  return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(x.ans||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(x.sol)+"</div>":"")+"</div>"}
 /* ពុម្ពអក្សរដូចវិញ្ញាសាសាលា (LaTeX)៖ ចំណងជើង = Khmer M1 (GPL · ផ្ទុកពី fonts/) · អត្ថបទ = Khmer Kep (មានក្នុងកុំព្យូទ័រគ្រូ · មិនផ្សព្វផ្សាយ ព្រោះរក្សាសិទ្ធិ) → មិនមាន = Battambang */
 var BASE=(function(){try{var s=document.currentScript&&document.currentScript.src;return s?s.replace(/[^\/]*$/,""):""}catch(e){return""}})();
 var FF="@font-face{font-family:'ExM1';src:local('Khmer M1'),url('"+BASE+"fonts/khmer-m1.ttf') format('truetype');font-display:swap}"+
@@ -78,6 +81,9 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-t{text-align:center;font-family:var(--fh);color:#1e3a8a;font-size:15px;margin:6px 0 10px}"+
 ".exp-s{margin:6px 0 10px;break-inside:avoid}.exp-rn{color:#1e3a8a}.exp-pt{color:#be123c}.exp-it{margin:2px 0 0 34px}.exp-it.two{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.exp-i{margin:3px 0}.exp-sl{color:#1e3a8a;margin-right:4px}"+
 ".exp-fig{margin:6px 0;text-align:center}.exp-fig svg{max-width:300px;max-height:250px;width:auto;height:auto}"+
+".exp-cols{column-count:2;column-gap:26px;column-rule:1px solid #94a3b8}.exp-cols .exp-s{break-inside:auto}.exp-cols .exp-it{margin-left:8px}.exp-cols .exp-sh{break-after:avoid}"+
+".exp-kf{border-left:none!important;background:none!important;padding:0 0 4px!important;margin:2px 0 10px!important;font-size:13.5px}.exp-kf .exp-ks{color:#111}.exp-kf .katex-display{margin:.3em 0;font-size:.96em;overflow-x:auto;overflow-y:hidden;break-inside:avoid}"+
+".exp-ka{margin-top:3px;break-inside:avoid}.exp-bx{display:inline-block;border:1.5px solid #111;padding:1px 10px;margin-left:4px}"+
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
 ".exp-au{font-family:var(--fh);color:#1e3a8a;margin-top:2px}.exp-nm{font-family:var(--fh);margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+
