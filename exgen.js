@@ -510,7 +510,7 @@ var MC9=[
  function(){var p=ri(1,5),q;do{q=ri(1,7)}while(q===p);var s=shuf9(["$x="+p+" , x="+q+"$","$x="+(-p)+" , x="+(-q)+"$","$x="+(p+q)+" , x="+p*q+"$","$x=0 , x="+(p+q)+"$"],0);
    return mcq("សមីការ $"+pl([1,-(p+q),p*q])+"=0$ មានឫស",s.o,s.k,W(AL([pl([1,-(p+q),p*q])+"&=0","(x-"+p+")(x-"+q+")&=0"]),"$x-"+p+"=0$ ឬ $x-"+q+"=0$ ⇒ $x="+p+"$ ឬ $x="+q+"$"))},
  function(){var r=pick([2,3,5]),k;do{k=[ri(2,6),ri(2,6),ri(1,5)]}while(k[0]===k[1]||k[0]-k[1]+k[2]===0);var v=k[0]-k[1]+k[2],R=function(c){return(c===1?"":c===-1?"-":c)+"\\sqrt{"+r+"}"};
-   var s=op4(v,[k[0]+k[1]+k[2],-v,k[0]-k[1]],R);
+   var s=op4(v,[k[0]+k[1]+k[2],-v,k[0]-k[1]],function(c){return"$"+R(c)+"$"});
    return mcq("តម្លៃនៃកន្សោម $\\sqrt{"+k[0]*k[0]*r+"}-\\sqrt{"+k[1]*k[1]*r+"}+\\sqrt{"+k[2]*k[2]*r+"}$ គឺ",s.o,s.k,AL(["&\\sqrt{"+k[0]*k[0]*r+"}-\\sqrt{"+k[1]*k[1]*r+"}+\\sqrt{"+k[2]*k[2]*r+"}","={}&\\sqrt{"+k[0]*k[0]+"\\times"+r+"}-\\sqrt{"+k[1]*k[1]+"\\times"+r+"}+\\sqrt{"+k[2]*k[2]+"\\times"+r+"}","={}&"+R(k[0])+"-"+R(k[1])+"+"+R(k[2]),"={}&"+R(v)]))}];
 /* ===== រូបធរណីមាត្រក្នុងចម្លើយ (kfig · FIG) — គូរតាមលេខពិតនៃលំហាត់ ===== */
 function r3(v){return String(Math.round(v*1000)/1000)}

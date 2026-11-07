@@ -126,7 +126,7 @@ function editor(){
   [].forEach.call(body().querySelectorAll(".ex-it textarea"),function(t){t.style.height=Math.max(36,t.scrollHeight)+"px"});
 }
 var pvT=0;
-function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p)return;p.innerHTML="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});math(p)},250)}
+function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p)return;p.innerHTML="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});math(p).then(function(){EXP.fit&&EXP.fit(p)})},250)}
 /* ---------- បោះពុម្ព ---------- */
 function printIt(kind){
   var E=X.E,tmp=document.createElement("div");tmp.style.cssText="position:fixed;left:-9999px;top:0;width:800px";
@@ -136,7 +136,7 @@ function printIt(kind){
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
-    var go=function(){try{if(kind==="k"&&EXP.paginate)EXP.paginate(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
+    var go=function(){try{EXP.fit&&EXP.fit(w.document);if(kind==="k"&&EXP.paginate)EXP.paginate(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
     if(w.document.fonts&&w.document.fonts.ready)w.document.fonts.ready.then(function(){setTimeout(go,300)});else setTimeout(go,900);
   });
 }

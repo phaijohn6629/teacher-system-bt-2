@@ -44,7 +44,7 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="khcal.js?v=1"></script>
 <script src="fig.js?v=6"></script>
-<script src="expaper.js?v=12"></script>
+<script src="expaper.js?v=13"></script>
 <script type="module">
 /* ========================================================================
    ទំព័រសិស្សមើលវិញ្ញាសាប្រឡងទម្រង់បើក (គ្មាន Login) · សិស្សសរសេរចម្លើយលើក្រដាស · ទំព័រនេះមិនទទួលចម្លើយ
@@ -110,7 +110,7 @@ async function go(){
 function show(P,reload){
   app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span></div><div class=paper id=pp>${EXP.html(P,{})}</div>
     <p class=note style="text-align:center">✍️ សរសេរចម្លើយលើក្រដាស · អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ</p>`;
-  math($("pp"));
+  math($("pp"));if(EXP.fit)EXP.fit($("pp"));
   AC=Object.assign({lv:0,lt:0,cp:0},JSON.parse(LS.get("ac_"+K)||"null")||{});seq=+LS.get("sq_"+K)||0;acOn=true;
   if(reload&&LS.get("rl_"+K)){AC.lv++;acSave();warn("អ្នកបានបិទ ឬផ្ទុកទំព័រឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+")")}
   LS.set("rl_"+K,"1");

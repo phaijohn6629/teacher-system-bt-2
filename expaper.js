@@ -33,6 +33,12 @@ function dipHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.len
     row("សម័យប្រឡង",ss?n(ss):D)+row("វិញ្ញាសា",n(ES(P.sub||"គណិតវិទ្យា")))+row("រយៈពេល",n(KN(+P.dur||0)+" នាទី"))+row("ពិន្ទុ",n(KN(T)))+"</table>"+
     (o.key?"":"<table class=exp-dt>"+row("មណ្ឌលប្រឡង",D)+row("លេខបន្ទប់",D)+row("លេខតុ",D)+row("ហត្ថលេខាបេក្ខជន",D)+row("ឈ្មោះបេក្ខជន",D)+"</table>")+"</div>"+
     (o.key?"<div class=exp-t>អត្រាកំណែ"+(o.lbl?" "+ES(o.lbl):"")+"</div>":"<div class=exp-pr><b>ប្រធាន៖</b><span></span>"+(o.lbl?"<b>"+ES(o.lbl)+"</b>":"")+"</div>")}
+/* ប្រវែងមើលឃើញប្រហាក់ប្រហែល (រូបមន្ត → ដកពាក្យបញ្ជា LaTeX) */
+function vlen(q){q=String(q||"");var m=0;var t=q.replace(/\$\$?([^$]*)\$\$?/g,function(_,f){m+=f.replace(/\\(dfrac|frac)/g,"").replace(/\\[a-zA-Z]+/g,"x").replace(/[{}^_\\ ]/g,"").length;return""});return t.replace(/[\u17b6-\u17d3]/g,"").length+m}
+/* បន្ទាប់ពីគូររួច៖ ក ខ ណាមួយចុះបន្ទាត់ក្នុង ២ ជួរឈរ → ប្ដូរជា ១ ជួរឈរ */
+function fit(root){[].forEach.call((root||document).querySelectorAll(".exp-it.two"),function(g){
+  var w=[].some.call(g.querySelectorAll(".exp-i>span"),function(sp){var r=sp.getClientRects();if(r.length<2)return false;var y=r[0].top;return[].some.call(r,function(x){return Math.abs(x.top-y)>12})});
+  if(w)g.classList.remove("two")})}
 function html(P,o){
   o=o||{};var key=!!o.key,b=o.v==="b",T=total(P),bac=P.fmt==="bac"||P.fmt==="dip";
   var h=P.fmt==="dip"?dipHead(P,o,T):bac?bacHead(P,o,T):"<div class=exp style=\""+fvars(P.font)+"\"><div class=exp-hd><div class=exp-hl>"+
@@ -45,7 +51,7 @@ function html(P,o){
   var cols=key&&bac;if(cols)h+="<div class=exp-cols>";
   (P.secs||[]).forEach(function(s,i){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
-    var sh=!key&&it.length>1&&it.every(function(x){return String(x.q||"").replace(/\$[^$]*\$/g,"xxxxxx").length<=70&&!x.fig});
+    var sh=!key&&it.length>1&&it.every(function(x){return vlen(x.q)<=40&&!/\n/.test(x.q||"")&&!x.fig});
     h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(it[0].q):TX(inst||""))+"</div>";
     if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip")}
     else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"):"")+"</div>"}).join("")+"</div>";
@@ -128,5 +134,5 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-dh{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.exp-dt{border-collapse:collapse}.exp-dt td{padding:0 4px;vertical-align:baseline;line-height:2;font-size:13.5px}.exp-dt td.exp-b{white-space:nowrap}"+
 ".exp-pr{display:flex;align-items:baseline;gap:8px;margin:10px 0 14px;font-family:var(--fh);color:#1e3a8a}.exp-pr span{flex:1;border-bottom:1.5px solid #1e3a8a}"+
 "@media (max-width:600px){.exp-hd,.exp-dh{flex-direction:column}.exp-sc{display:none}.exp-it.two{grid-template-columns:1fr}.exp-it{margin-left:14px}.exp-ft{flex-direction:column-reverse;gap:10px}.exp-fl{margin-top:0}}";
-window.EXP={FONTS:FONTS,paginate:paginate,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
+window.EXP={FONTS:FONTS,paginate:paginate,fit:fit,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
 })();
