@@ -510,6 +510,94 @@ mix(G[102],2,[function(){var A0=[ri(-3,3),ri(-3,3),ri(-3,3)],u=[nz(-3,3),nz(-3,3
    return KQ("ql","បន្ទាត់ $x="+lnr(A0[0],u[0])+"$ , $y="+lnr(A0[1],u[1])+"$ , $z="+lnr(A0[2],u[2])+"$ កាត់ប្លង់ $"+poly([n[0],0]).replace(/0$/,"")+co(n[1],"y")+co(n[2],"z")+sc(d)+"=0$ ត្រង់ $M$ ។ រក $M$",[0,1,2].map(function(i){return A(H[i],null,"num",["x","y","z"][i]+" =")}),"ជំនួស $x,y,z$ ក្នុងប្លង់ ⇒ $t="+t+"$")}]);
 mix(G[102],3,[function(){var N=pick([[2,-3,6,7],[1,2,2,3],[2,1,-2,3],[1,-2,2,3],[6,2,3,7]]),H=[ri(-3,3),ri(-3,3),ri(-3,3)],s=nz(-2,2),A0=[0,1,2].map(function(i){return H[i]+s*N[i]}),d=-(N[0]*H[0]+N[1]*H[1]+N[2]*H[2]);
    return KQ("qh","រកកូអរដោនេចំណោលកែង $H$ នៃ $A"+v3(A0)+"$ លើប្លង់ $"+poly([N[0],0]).replace(/0$/,"")+co(N[1],"y")+co(N[2],"z")+sc(d)+"=0$",[0,1,2].map(function(i){return A(H[i],null,"num",["x","y","z"][i]+" =")}),"បន្ទាត់ $AH$ មានវ៉ិចទ័រប្រាប់ទិស $\\vec n"+v3(N.slice(0,3))+"$ ⇒ $t="+(-s)+"$ · ចម្ងាយ $="+Math.abs(s)*N[3]+"$")}]);
+/* ===== បន្ថែមពីសៀវភៅលំហាត់ថ្នាក់ទី១២ (គ្រប់មេរៀន) — តែទម្រង់ដែលប្រព័ន្ធមិនទាន់មាន ===== */
+function piT(k,d){if(!k)return["0","0"];var g=gcd(k,d);k/=g;d/=g;var a=Math.abs(k),s=k<0?"-":"",c=a===1?"":String(a);
+  return[s+c+"pi"+(d===1?"":"/"+d),d===1?s+c+"\\pi":s+"\\frac{"+c+"\\pi}{"+d+"}"]}
+function v6(R,x){if(Math.abs(x)<1e-9)return null;var s=x<0?"-":"",a=Math.abs(x);if(Math.abs(a-1)<1e-9)return s+R;var f=fr(R,2);
+  if(Math.abs(a-.5)<1e-9)return s+f.t;return s+(f.s==="1"?"":f.t)+"\\sqrt3"}
+function w6(R,j){var th=j*Math.PI/6,re=v6(R,Math.cos(th)),im=v6(R,Math.sin(th)),t=re||"";
+  if(im){var neg=im[0]==="-",it=im.replace(/^-/,"");t+=(neg?"-":(t?"+":""))+(it==="1"?"":it)+"i"}return t||"0"}
+function sqx(v,h){return h?"("+v+sg(-h,0)+")^2":v+"^2"}
+function lfx(v,h){return h?"("+v+sg(-h,0)+")":v}
+/* ---- ចំនួនកុំផ្លិច ---- */
+mix(G[11],2,[
+ function(){var p=nz(-4,4),q=nz(-4,4),a=nz(-3,3),b,c;do{b=ri(-3,3);c=nz(-3,3)}while(a*a===b*b+c*c);
+   var re=a*p+b*p+c*q,im=a*q+c*p-b*q;
+   return KQ("zc","ដោះស្រាយក្នុង $\\mathbb C$ ៖ $"+kx(a,"z")+"+("+cx(b,c)+")\\bar z="+cx(re,im)+"$",[A(cx(p,q),null,"num","z =")],
+     "តាង $z=x+yi$ ⇒ $\\bar z=x-yi$ ។ ពន្លាត រួចផ្ទឹមផ្នែកពិត និងផ្នែកនិម្មិត ⇒ ប្រព័ន្ធសមីការពីរនៃ $x, y$ ⇒ $z="+cx(p,q)+"$")},
+ function(){var k=pick([2,3,4]),F=pick([["-\\cos A+i\\sin A",12-k],["\\cos A-i\\sin A",-k],["-\\cos A-i\\sin A",k-12],["-\\sin A-i\\cos A",-6-k],["-\\sin A+i\\cos A",6+k],["\\sin A-i\\cos A",k-6],["\\sin A+i\\cos A",6-k]]),
+     r=ri(1,3),an=piT(F[1],12),e=F[0].replace(/A/g,"\\frac{\\pi}{"+(12/k)+"}");
+   return KQ("zg","សរសេរ $z="+(r>1?r+"\\left("+e+"\\right)":e)+"$ ជាទម្រង់ត្រីកោណមាត្រ $z=r(\\cos\\theta+i\\sin\\theta)$ ដែល $-\\pi<\\theta\\le\\pi$",[A(r,null,"num","r ="),A(an[0],an[1],"num","θ =")],
+     "ប្រើ $-\\cos\\alpha=\\cos(\\pi-\\alpha)$ , $\\sin\\alpha=\\cos(\\frac{\\pi}{2}-\\alpha)$ , $\\sin(-\\alpha)=-\\sin\\alpha$ … ⇒ $r="+r+"$ , $\\theta="+an[1]+"$")}],.4);
+mix(G[11],3,[
+ function(){var a,b,c,d;do{a=ri(-3,3);b=ri(-3,3);c=ri(-3,3);d=ri(-3,3)}while(a===c||b+d===0);
+   if(a>c){var t=a;a=c;c=t;t=b;b=d;d=t}
+   var S=[a+c,b+d],P=[a*c-b*d,a*d+b*c],D=[(c-a)*(c-a)-(d-b)*(d-b),2*(c-a)*(d-b)];
+   return KQ("zk","ដោះស្រាយក្នុង $\\mathbb C$ ៖ $z^2-("+cx(S[0],S[1])+")z+("+cx(P[0],P[1])+")=0$ ។ (យក $z_1$ ជាឫសដែលមានផ្នែកពិតតូចជាង)",[A(cx(a,b),null,"num","z₁ ="),A(cx(c,d),null,"num","z₂ =")],
+     "$\\Delta=("+cx(S[0],S[1])+")^2-4("+cx(P[0],P[1])+")="+cx(D[0],D[1])+"=("+cx(c-a,d-b)+")^2$ ⇒ $z=\\dfrac{"+cx(S[0],S[1])+"\\pm("+cx(c-a,d-b)+")}{2}$")},
+ function(){var n=pick([2,3,4]),r=pick([1,1,2]),R=Math.pow(r,n),j=pick([1,2,3,4,5,6,7,8,9,10,11]),th=piT(j,6*n),w=piT(j,6)[1];
+   return KQ("zn","គេឱ្យ $w="+w6(R,j)+"$ ។ ឫសទី $"+n+"$ នៃ $w$ មានរាង $z_k=r(\\cos\\theta_k+i\\sin\\theta_k)$ ។ រក $r$ និងអាគុយម៉ង់ $\\theta_0$ តូចបំផុតដែល $\\theta_0\\ge0$",[A(r,null,"num","r ="),A(th[0],th[1],"num","θ₀ =")],
+     "$w="+R+"\\left(\\cos"+w+"+i\\sin"+w+"\\right)$ ⇒ $r=\\sqrt["+n+"]{"+R+"}="+r+"$ · $\\theta_k=\\dfrac{"+w+"+2k\\pi}{"+n+"}$ ⇒ $\\theta_0="+th[1]+"$")}],.4);
+/* ---- លីមីត ---- */
+LM2.cr=function(){var m=pick([1,2]),k=ri(-3,6),x0=m*m*m-k,f=fr(1,3*m*m),r="\\sqrt[3]{x"+(k?sg(k,0):"")+"}";
+  return LQ("cr",x0,"\\dfrac{"+r+"-"+m+"}{x"+(x0?sg(-x0,0):"")+"}",FA(f),"តាង $t="+r+"\\to"+m+"$ ⇒ $x"+(x0?sg(-x0,0):"")+"=t^3-"+m*m*m+"=(t-"+m+")(t^2+"+(m===1?"":m)+"t+"+m*m+")$ ⇒ $\\frac{1}{"+3*m*m+"}$")};
+LM2.ax=function(){var P=[2,3,5,7],a=pick(P),b=pick(P.filter(function(v){return v!==a}));
+  return LQ("ax",0,"\\dfrac{"+a+"^x-"+b+"^x}{x}",["ln("+a+")-ln("+b+")","\\ln\\frac{"+a+"}{"+b+"}"],"$\\lim_{x\\to0}\\frac{a^x-1}{x}=\\ln a$ ⇒ $\\ln "+a+"-\\ln "+b+"=\\ln\\frac{"+a+"}{"+b+"}$")};
+LM3.pn=function(){var a=pick([1,-1,2]),n=ri(2,5),m;do{m=ri(2,5)}while(m===n||(a===2&&n+m>7));var An=Math.pow(a,n),Am=Math.pow(a,m),f=n>=m?fr(n*Math.pow(a,n-m),m):fr(n,m*Math.pow(a,m-n));
+  return LQ("pn",a,"\\dfrac{x^{"+n+"}"+sg(-An,0)+"}{x^{"+m+"}"+sg(-Am,0)+"}",FA(f),"រាង $\\frac00$ · $x^n-a^n=(x-a)(x^{n-1}+ax^{n-2}+\\dots+a^{n-1})$ ⇒ $\\dfrac{n\\,a^{n-1}}{m\\,a^{m-1}}="+f.t+"$")};
+LM3.cc=function(){var q=ri(1,4),s;do{s=ri(1,4)}while(s===q);var x0=ri(-2,4),p=q*q-x0,r=s*s-x0,f=fr(s,q),rt=function(c){return"\\sqrt{x"+(c?sg(c,0):"")+"}"};
+  return LQ("cc",x0,"\\dfrac{"+rt(p)+"-"+q+"}{"+rt(r)+"-"+s+"}",FA(f),"គុណកន្សោមឆ្លាស់ទាំងភាគយក និងភាគបែង ⇒ $\\dfrac{"+rt(r)+"+"+s+"}{"+rt(p)+"+"+q+"}\\to\\frac{"+2*s+"}{"+2*q+"}="+f.t+"$")};
+/* ---- សមីការឌីផេរ៉ង់ស្យែលលំដាប់ទី១ ---- */
+mix(G[61],2,[
+ function(){var a=nz(-3,3),p=nz(-3,3),q=ri(-3,3),m=a*p,n=p+a*q;
+   return KQ("dp","រកចម្លើយពិសេសរាង $y_p=px+q$ នៃសមីការ $y'"+co(a,"y")+"="+polyT([m,n])+"$",[A(p,null,"num","p ="),A(q,null,"num","q =")],
+     "$y_p'=p$ ⇒ $p+"+sgp(a)+"(px+q)="+polyT([m,n])+"$ ⇒ $"+a+"p="+m+"$ និង $p+"+sgp(a)+"q="+n+"$ ⇒ $p="+p+"$ , $q="+q+"$")},
+ function(){var a=nz(-3,3),b;do{b=nz(-3,3)}while(a+b===0);var C=nz(-3,3),k=C*(a+b),E="e^{"+kx(b)+"}";
+   return KQ("dx","រកចម្លើយពិសេសរាង $y_p=C"+E+"$ នៃសមីការ $y'"+co(a,"y")+"="+(k===1?"":k===-1?"-":k)+E+"$",[A(C,null,"num","C =")],
+     "$y_p'="+b+"C"+E+"$ ⇒ $("+b+sg(a,0)+")C="+k+"$ ⇒ $C="+C+"$")}],.35);
+mix(G[61],3,[
+ function(){var a=nz(-3,3),p=nz(-2,2),q=ri(-3,3),m=a*p,n=p+a*q,y0=ri(-3,4),K=y0-q,E="e^{"+kx(-a)+"}";
+   return KQ("dg","ដោះស្រាយ $y'"+co(a,"y")+"="+polyT([m,n])+"$ ដែល $y(0)="+y0+"$",[A("("+K+")e^("+(-a)+"x)+("+p+")x+("+q+")",(K?cfT(fr(K,1))+E:"")+co(p,"x",!K)+sc(q),"expr","y =")],
+     "ចម្លើយពិសេស $y_p="+polyT([p,q])+"$ · ចម្លើយទូទៅ $y=K"+E+"+"+polyT([p,q])+"$ · $y(0)=K"+sc(q)+"="+y0+"$ ⇒ $K="+K+"$")}],.35);
+/* ---- សមីការឌីផេរ៉ង់ស្យែលលំដាប់ទី២ មិនអូម៉ូសែន ---- */
+mix(G[62],2,[
+ function(){var p=ri(-3,3),q=nz(-4,4),al=nz(-3,3),be=ri(-3,3),m=q*al,n=p*al+q*be;
+   return KQ("yn","រកចម្លើយពិសេសរាង $y_p=\\alpha x+\\beta$ នៃ $y''"+co(p,"y'")+co(q,"y")+"="+polyT([m,n])+"$",[A(al,null,"num","α ="),A(be,null,"num","β =")],
+     "$y_p'=\\alpha$ , $y_p''=0$ ⇒ $"+q+"\\alpha="+m+"$ និង $"+(p?p+"\\alpha+":"")+q+"\\beta="+n+"$")},
+ function(){var p=ri(-3,3),q=ri(-4,4),b,D;do{b=nz(-3,3);D=b*b+p*b+q}while(!D);var C=nz(-3,3),k=C*D,E="e^{"+kx(b)+"}";
+   return KQ("ye","រកចម្លើយពិសេសរាង $y_p=C"+E+"$ នៃ $y''"+co(p,"y'")+co(q,"y")+"="+(k===1?"":k===-1?"-":k)+E+"$",[A(C,null,"num","C =")],
+     "ជំនួស $y_p$ , $y_p'="+b+"C"+E+"$ , $y_p''="+b*b+"C"+E+"$ ⇒ $C("+b*b+sg(p*b,0)+sg(q,0)+")="+k+"$ ⇒ $C="+C+"$")}],.35);
+mix(G[62],3,[
+ function(){var p,q;do{p=ri(-3,3);q=ri(-3,5)}while(q===1&&!p);var a=nz(-3,3),b=ri(-3,3),M=(q-1)*a+p*b,N=(q-1)*b-p*a;
+   return KQ("ys","រកចម្លើយពិសេសរាង $y_p=a\\cos x+b\\sin x$ នៃ $y''"+co(p,"y'")+co(q,"y")+"="+co(M,"\\cos x",true)+co(N,"\\sin x",!M)+"$",[A(a,null,"num","a ="),A(b,null,"num","b =")],
+     "$y_p''=-a\\cos x-b\\sin x$ ⇒ ផ្ទឹមមេគុណ $\\cos x$ ៖ $"+(q-1)+"a"+(p?sg(p,0)+"b":"")+"="+M+"$ · $\\sin x$ ៖ $"+(q-1)+"b"+(p?sg(-p,0)+"a":"")+"="+N+"$")}],.35);
+/* ---- កោនិក ---- */
+mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
+   if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
+     "$p=y_S-y_d="+p+"$ ⇒ $K=4p="+4*p+"$ · $F(h;k+p)=("+h+";"+(k+p)+")$");
+   return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $x="+(h-p)+"$ ។ សរសេរជា $"+sqx("y",k)+"=K"+lfx("x",h)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h+p,null,"num","F: x ="),A(k,null,"num","F: y =")],
+     "$p=x_S-x_d="+p+"$ ⇒ $K=4p="+4*p+"$ · $F(h+p;k)=("+(h+p)+";"+k+")$")}],.35);
+mix(G[82],2,[function(){var T=pick(TRI),a=T[2],c=T[0],e=fr(c,a);
+   return KQ("en","អេលីបផ្ចិត $O$ មានកំពូល $(\\pm"+a+";0)$ និងចំណាកផ្ចិត $e="+e.t+"$ ។ រក $b^2$",[A(a*a-c*c,null,"num","b² =")],"$c=ea="+c+"$ · $b^2=a^2-c^2="+a*a+"-"+c*c+"="+(a*a-c*c)+"$")}],.35);
+mix(G[83],2,[function(){var T=pick(TRI),c=T[2],a=T[0],h=ri(-3,6),k=ri(-3,3);
+   return KQ("hd","ចំណុច $M$ គ្រប់ចំណុចនៃអ៊ីពែបូលផ្ទៀងផ្ទាត់ $|MF_1-MF_2|="+2*a+"$ ដែល $F_1("+(h-c)+";"+k+")$ , $F_2("+(h+c)+";"+k+")$ ។ សរសេរជា $\\dfrac{(x-h)^2}{a^2}-\\dfrac{(y-k)^2}{b^2}=1$",[A(h,null,"num","h ="),A(k,null,"num","k ="),A(a*a,null,"num","a² ="),A(c*c-a*a,null,"num","b² =")],
+     "ផ្ចិតជាចំណុចកណ្ដាលនៃ $[F_1F_2]$ ⇒ $("+h+";"+k+")$ · $2a="+2*a+"$ · $c="+c+"$ · $b^2=c^2-a^2="+(c*c-a*a)+"$")}],.35);
+mix(G[83],3,[function(){var T=pick([[3,4,5],[4,3,5]]),a=T[0],b=T[1],c=T[2],h=nz(-3,3),k=nz(-3,3),A2=a*a,B2=b*b,e=fr(c,a);
+   return KQ("hc","អ៊ីពែបូល $"+B2+"x^2"+co(-2*B2*h,"x")+"-"+A2+"y^2"+co(2*A2*k,"y")+sc(B2*h*h-A2*k*k-A2*B2)+"=0$ ។ រកផ្ចិត $I(h;k)$ និងចំណាកផ្ចិត $e$",[A(h,null,"num","h ="),A(k,null,"num","k ="),A(e.s,e.t,"num","e =")],
+     "បំពេញការេ ⇒ $\\dfrac{"+sqx("x",h)+"}{"+A2+"}-\\dfrac{"+sqx("y",k)+"}{"+B2+"}=1$ · $c=\\sqrt{"+A2+"+"+B2+"}="+c+"$ · $e=\\frac ca="+e.t+"$")}],.35);
+/* ---- វ៉ិចទ័រក្នុងលំហ · ស្វ៊ែ · ចម្ងាយពីចំណុចទៅបន្ទាត់ ---- */
+mix(G[102],1,[function(){var I=[ri(-3,3),ri(-3,3),ri(-3,3)],R=ri(1,5),d=I[0]*I[0]+I[1]*I[1]+I[2]*I[2]-R*R;
+   return KQ("sr","ស្វ៊ែ $(S)\\colon x^2+y^2+z^2"+co(-2*I[0],"x")+co(-2*I[1],"y")+co(-2*I[2],"z")+sc(d)+"=0$ ។ រកផ្ចិត $I$ និងកាំ $R$",[A(I[0],null,"num","x =")].concat([A(I[1],null,"num","y ="),A(I[2],null,"num","z ="),A(R,null,"num","R =")]),
+     "បំពេញការេ ⇒ $"+sqx("x",I[0])+"+"+sqx("y",I[1])+"+"+sqx("z",I[2])+"="+R*R+"$")}],.35);
+mix(G[102],2,[function(){var A0,B0;do{A0=[ri(-3,4),ri(-3,4),ri(-3,4)];B0=A0.map(function(v){return v+2*ri(-3,3)})}while(A0.join()===B0.join());
+   var I=A0.map(function(v,i){return(v+B0[i])/2}),R2=I.reduce(function(s,v,i){return s+(A0[i]-v)*(A0[i]-v)},0);
+   return KQ("sd","ស្វ៊ែ $(S)$ មានអង្កត់ផ្ចិត $[AB]$ ដែល $A"+v3(A0)+"$ , $B"+v3(B0)+"$ ។ រកផ្ចិត $I$ និង $R^2$",[A(I[0],null,"num","x ="),A(I[1],null,"num","y ="),A(I[2],null,"num","z ="),A(R2,null,"num","R² =")],
+     "$I$ ជាចំណុចកណ្ដាលនៃ $[AB]$ ⇒ $I"+v3(I)+"$ · $R^2=IA^2="+R2+"$ ⇒ $(S)\\colon "+sqx("x",I[0])+"+"+sqx("y",I[1])+"+"+sqx("z",I[2])+"="+R2+"$")}],.35);
+mix(G[102],3,[function(){var A0=[ri(-3,3),ri(-3,3),ri(-3,3)],u,M,w,c,n2,u2;
+   do{u=[ri(-2,2),ri(-2,2),ri(-2,2)];M=[ri(-3,3),ri(-3,3),ri(-3,3)];w=[0,1,2].map(function(i){return M[i]-A0[i]});c=[w[1]*u[2]-w[2]*u[1],w[2]*u[0]-w[0]*u[2],w[0]*u[1]-w[1]*u[0]];n2=c[0]*c[0]+c[1]*c[1]+c[2]*c[2];u2=u[0]*u[0]+u[1]*u[1]+u[2]*u[2]}while(!u2||!n2);
+   var f=fr(n2,u2),t=f.d===1?sqS(f.n)[1]:"\\sqrt{"+f.t+"}",L=function(i){return lnr(A0[i],u[i])||"0"};
+   return KQ("dl","គណនាចម្ងាយពីចំណុច $M"+v3(M)+"$ ទៅបន្ទាត់ $(L)\\colon x="+L(0)+"$ , $y="+L(1)+"$ , $z="+L(2)+"$",[A("sqrt("+n2+"/"+u2+")",t,"num","d =")],
+     "$A"+v3(A0)+"\\in(L)$ , $\\vec u"+v3(u)+"$ · $\\overrightarrow{AM}\\times\\vec u="+v3(c)+"$ ⇒ $d=\\dfrac{\\|\\overrightarrow{AM}\\times\\vec u\\|}{\\|\\vec u\\|}=\\sqrt{\\frac{"+n2+"}{"+u2+"}}="+t+"$")}],.35);
 /* មេរៀន (ថ្នាក់ទី១២ · តាមកម្មវិធីសិក្សា) */
 var LES=[
   ["ជំពូកទី១ ចំនួនកុំផ្លិច",[[11,"ចំនួនកុំផ្លិច"]]],
