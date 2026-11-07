@@ -77,10 +77,8 @@ G[33]={1:function(){var C=pick([["sin",.5,"pi/6","\\frac12"],["sin",Math.sqrt(3)
   3:function(){var p=pick([[1,"1/2","pi/6","5pi/6"],[2,"1/2","pi/6","5pi/6"]]);
     return Q("ដោះស្រាយ $2\\sin^2 x-3\\sin x+1=0$ ក្នុង $[0;\\pi]$ ៖ សរសេរឫស $x_1<x_2<x_3$",[A("pi/6","\\frac{\\pi}{6}","num","x₁ ="),A("pi/2","\\frac{\\pi}{2}","num","x₂ ="),A("5pi/6","\\frac{5\\pi}{6}","num","x₃ =")],"$(2\\sin x-1)(\\sin x-1)=0\\iff\\sin x=\\frac12$ ឬ $\\sin x=1$ ⇒ $x=\\frac\\pi6,\\frac\\pi2,\\frac{5\\pi}6$","y=2sin(x)^2-3sin(x)+1\nwindow x=-0.3..3.5 y=-0.5..2")}};
 /* ===== ជំពូកទី៥ លីមីត និងដេរីវេ ===== */
-G[51]={1:function(){var a=nz(-3,3),c=[nz(-3,3),ri(-5,5),ri(-6,6)],v=c[0]*a*a+c[1]*a+c[2];
-    return Q("គណនា $\\displaystyle\\lim_{x\\to "+a+"}\\left("+polyT(c)+"\\right)$",[A(v)],"ជំនួស $x="+a+"$ ⇒ $"+v+"$")},
-  2:function(){var a=nz(-5,5),b=nz(-4,4);
-    return Q("គណនា $\\displaystyle\\lim_{x\\to "+a+"}\\frac{x^2"+co(b-a,"x")+sg(-a*b,0)+"}{x"+sg(-a,0)+"}$",[A(a+b)],"កត្តា $(x"+sg(-a,0)+")$ ⇒ $x"+sg(b,0)+"\\to"+(a+b)+"$")},
+G[51]={1:function(){return X.LIM11[1]()},
+  2:function(){return X.LIM11[2]()},
   3:function(){var n=ri(2,4),a=nz(-4,4),b=ri(-5,5),d=co(a*n,n-1>1?"x^"+(n-1):"x",true)+(b?sg(b,0):"");
     return Q("គណនាដេរីវេ $f'(x)$ នៃ $f(x)="+co(a,"x^{"+n+"}",true)+co(b,"x")+"$",[A(d,d.replace(/\^(\d)/g,"^{$1}"),"expr","f'(x) =")],"$(x^n)'=nx^{n-1}$")}};
 G[52]={1:function(){var a=nz(-2,2),b=ri(-4,4),c=ri(-3,3),x0=ri(-2,2),m=2*a*x0+b,f=poly([a,b,c]);

@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=2","practice10.js?v=3","practice9.js?v=2","practice8.js?v=2","practice7.js?v=2"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=3","practice10.js?v=3","practice9.js?v=2","practice8.js?v=2","practice7.js?v=2"],genP=null,kxP=null;
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
 var TITLES=["ប្រឡងតេស្តប្រចាំខែ","ប្រឡងប្រចាំខែ","ប្រឡងឆមាសទី១","ប្រឡងឆមាសទី២","ប្រឡងសាកល្បង"];
@@ -17,7 +17,7 @@ var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],t
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function gen(){
   if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
-  if(!genP)genP=ld("practice.js?v=5").then(function(){return Promise.all(GENS.map(ld))}).catch(function(e){genP=null;throw e});
+  if(!genP)genP=ld("practice.js?v=6").then(function(){return Promise.all(GENS.map(ld))}).catch(function(e){genP=null;throw e});
   return genP;
 }
 function katex(){

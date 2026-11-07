@@ -171,16 +171,88 @@ G[11]={1:function(){
       "$r=|z|="+rt+"$ · $\\cos\\theta=\\frac{"+(+c.toFixed(3))+"}{"+rt+"}$ និង $\\sin\\theta>0$ ⇒ $\\theta="+P[2]+"$","complex z="+c.toFixed(2)+(sn<0?"":"+")+sn.toFixed(2)+"i\ncircle O "+r.toFixed(3)+" gray\nA(1,0)\nangle A O z θ");
   }};
 /* ---- ២. លីមីត ---- */
-G[22]={1:function(){var a=nz(-3,3),c=[nz(-3,3),ri(-5,5),ri(-6,6)],v=c[0]*a*a+c[1]*a+c[2];
-    return Q("គណនា $\\displaystyle\\lim_{x\\to "+a+"}\\left("+polyT(c)+"\\right)$",[A(v)],"អនុគមន៍ពហុធាជាប់ ⇒ ជំនួស $x="+a+"$ ⇒ $"+v+"$")},
-  2:function(){if(Math.random()<.5){var a=nz(-5,5),b=nz(-4,4);
-      return Q("គណនា $\\displaystyle\\lim_{x\\to "+a+"}\\frac{x^2"+co(b-a,"x")+sg(-a*b,0)+"}{x"+sg(-a,0)+"}$",[A(a+b)],"ទម្រង់ $\\frac00$ ⇒ $x^2"+co(b-a,"x")+sg(-a*b,0)+"=(x"+sg(-a,0)+")(x"+sg(b,0)+")$ ⇒ លីមីត $="+a+sg(b,0)+"="+(a+b)+"$")}
-    var p=nz(-6,6),q=nz(1,6),r=ri(-5,5),s=ri(-5,5),f=fr(p,q);
-    return Q("គណនា $\\displaystyle\\lim_{x\\to +\\infty}\\frac{"+polyT([p,r,1])+"}{"+polyT([q,s,-2])+"}$",[A(f.s,f.t)],"ដឺក្រេស្មើគ្នា ⇒ ផលធៀបមេគុណតួធំបំផុត $=\\frac{"+p+"}{"+q+"}="+f.t+"$")},
-  3:function(){var t=ri(0,2);
-    if(t===0){var k=nz(2,7);return Q("គណនា $\\displaystyle\\lim_{x\\to 0}\\frac{\\sin "+k+"x}{x}$",[A(k)],"$\\frac{\\sin "+k+"x}{x}="+k+"\\cdot\\frac{\\sin "+k+"x}{"+k+"x}\\to "+k+"$")}
-    if(t===1){var c=ri(1,5),f=fr(1,2*c);return Q("គណនា $\\displaystyle\\lim_{x\\to 0}\\frac{\\sqrt{x+"+(c*c)+"}-"+c+"}{x}$",[A(f.s,f.t)],"គុណនឹងកន្សោមឆ្លាស់ $\\sqrt{x+"+(c*c)+"}+"+c+"$ ⇒ $\\frac{1}{\\sqrt{x+"+(c*c)+"}+"+c+"}\\to"+f.t+"$")}
-    var k=nz(2,5);return Q("គណនា $\\displaystyle\\lim_{x\\to 0}\\frac{e^{"+k+"x}-1}{x}$",[A(k)],"$\\lim_{u\\to0}\\frac{e^u-1}{u}=1$ ⇒ លីមីត $="+k+"$")}};
+/* ---- ២. លីមីត៖ រាងកំណត់ · 0/0 · ∞/∞ · ∞−∞ · 1^∞ · ត្រីកោណមាត្រ · e^x · ln · តាងអញ្ញាត · កំណត់ប៉ារ៉ាម៉ែត្រ ----
+   q.kd = ប្រភេទ (ដើម្បីកុំឱ្យប្រភេទដដែលច្រើនពេក) · ចម្លើយអនន្ត៖ សិស្សវាយ ∞ / inf / -inf */
+var INF=["inf","+\\infty"],NINF=["-inf","-\\infty"];
+function kx(m,v){v=v||"x";return(m===1?"":m===-1?"-":m)+v}
+function ef(n){return n===0?["1","1"]:n===1?["e","e"]:["e^("+n+")","e^{"+n+"}"]}
+function LQ(kd,to,e,an,sol){var q=Q("គណនា $\\displaystyle\\lim_{x\\to "+to+"}"+e+"$",[A(an[0],an[1],"num","លីមីត =")],sol);q.kd=kd;return q}
+function FA(f){return[f.s,f.t]}
+var TA=[["\\frac{\\pi}{6}",{sin:["1/2","\\frac12"],cos:["sqrt(3)/2","\\frac{\\sqrt3}{2}"],tan:["sqrt(3)/3","\\frac{\\sqrt3}{3}"]}],["\\frac{\\pi}{4}",{sin:["sqrt(2)/2","\\frac{\\sqrt2}{2}"],cos:["sqrt(2)/2","\\frac{\\sqrt2}{2}"],tan:["1","1"]}],
+  ["\\frac{\\pi}{3}",{sin:["sqrt(3)/2","\\frac{\\sqrt3}{2}"],cos:["1/2","\\frac12"],tan:["sqrt(3)","\\sqrt3"]}],["\\pi",{sin:["0","0"],cos:["-1","-1"],tan:["0","0"]}],["0",{sin:["0","0"],cos:["1","1"],tan:["0","0"]}]];
+/* កម្រិត ១ · រាងកំណត់ (ជំនួសផ្ទាល់) និងលីមីតមូលដ្ឋាន */
+var LM1={
+ p:function(){var a=nz(-3,3),c=[nz(-3,3),ri(-5,5),ri(-6,6)],v=c[0]*a*a+c[1]*a+c[2];return LQ("p",a,"\\left("+polyT(c)+"\\right)",[v,String(v)],"ពហុធាជាប់ ⇒ ជំនួស $x="+a+"$")},
+ r:function(){var a=nz(-4,4),b=ri(-5,5),c=nz(-3,3),d=ri(-5,5),x0=ri(-3,3);while(c*x0+d===0)d++;var f=fr(a*x0+b,c*x0+d);
+   return LQ("r",x0,"\\dfrac{"+polyT([a,b])+"}{"+polyT([c,d])+"}",FA(f),"ភាគបែង $\\ne0$ ត្រង់ $x="+x0+"$ ⇒ ជំនួសផ្ទាល់ $="+f.t+"$")},
+ t:function(){var T=pick(TA),f=pick(["sin","cos","tan"]),v=T[1][f];return LQ("t",T[0],"\\"+f+" x",v,"$\\"+f+"$ ជាប់ ⇒ $\\"+f+" "+T[0]+"="+v[1]+"$")},
+ e:function(){var a=nz(-3,3),b=ri(-3,3),x0=ri(-2,2),n=a*x0+b;return LQ("e",x0,"e^{"+polyT([a,b])+"}",ef(n),"$e^u$ ជាប់ ⇒ $e^{"+n+"}$")},
+ l:function(){var k=ri(1,4),m=pick([1,2,3]);return LQ("l",k===1?"e":"e^{"+k+"}",(m===1?"":m)+"\\ln x",[String(m*k),String(m*k)],"$\\ln e^{"+k+"}="+k+"$")},
+ i:function(){var a=nz(-4,4),n=pick([2,3,4]),k=ri(1,6),L=pick([
+   ["+\\infty","e^{x}",INF,"$e^x\\to+\\infty$"],["-\\infty","e^{x}",["0","0"],"$e^x\\to0$"],["+\\infty","e^{-x}",["0","0"],"$e^{-x}=\\frac{1}{e^x}\\to0$"],
+   ["0^{+}","\\ln x",NINF,"$\\ln x\\to-\\infty$"],["+\\infty","\\ln x",INF,"$\\ln x\\to+\\infty$"],["0^{+}","\\dfrac{"+k+"}{x}",INF,"$\\frac{"+k+"}{0^+}=+\\infty$"],["0^{-}","\\dfrac{"+k+"}{x}",NINF,"$\\frac{"+k+"}{0^-}=-\\infty$"],
+   ["+\\infty","\\dfrac{"+k+"}{x^{"+n+"}}",["0","0"],"$\\frac{"+k+"}{+\\infty}=0$"],
+   ["+\\infty","\\left("+polyT([a,0,ri(-5,5),1])+"\\right)",a>0?INF:NINF,"ពហុធា ⇒ តួដឺក្រេខ្ពស់បំផុត $"+kx(a,"x^3")+"$"],
+   ["-\\infty","\\left("+polyT([a,0,ri(-5,5),1])+"\\right)",a>0?NINF:INF,"តួដឺក្រេខ្ពស់បំផុត $"+kx(a,"x^3")+"$ ពេល $x\\to-\\infty$"],
+   ["-\\infty","\\left("+polyT([a,ri(-5,5),1])+"\\right)",a>0?INF:NINF,"តួដឺក្រេខ្ពស់បំផុត $"+kx(a,"x^2")+"$"]]);
+   return LQ("i",L[0],L[1],L[2],L[3])}};
+/* កម្រិត ២ · រាងមិនកំណត់ 0/0 · ∞/∞ · ∞−∞ និងលីមីតគោល */
+var LM2={
+ f2:function(){var a=nz(-5,5),b=nz(-4,4);return LQ("f2",a,"\\dfrac{"+polyT([1,b-a,-a*b])+"}{x"+sg(-a,0)+"}",[String(a+b),String(a+b)],"រាង $\\frac00$ ⇒ $(x"+sg(-a,0)+")(x"+sg(b,0)+")$ ⇒ $"+(a+b)+"$")},
+ f3:function(){var a=nz(-3,3);return LQ("f3",a,"\\dfrac{x^3"+sg(-a*a*a,0)+"}{x"+sg(-a,0)+"}",[String(3*a*a),String(3*a*a)],"$x^3-a^3=(x-a)(x^2+ax+a^2)$ ⇒ $3a^2="+3*a*a+"$")},
+ f22:function(){var a=nz(-3,3),b,c;do{b=ri(-4,4);c=ri(-4,4)}while(b===a||c===a||b===c);var f=fr(a-b,a-c);
+   return LQ("f22",a,"\\dfrac{"+polyT([1,-(a+b),a*b])+"}{"+polyT([1,-(a+c),a*c])+"}",FA(f),"រាង $\\frac00$ ⇒ $\\dfrac{(x"+sg(-a,0)+")(x"+(b?sg(-b,0):"")+")}{(x"+sg(-a,0)+")(x"+(c?sg(-c,0):"")+")}$ ⇒ $"+f.t+"$")},
+ cj:function(){var m=ri(1,4),k=ri(-3,5),x0=m*m-k,f=fr(1,2*m);
+   return LQ("cj",x0,"\\dfrac{\\sqrt{x"+(k?sg(k,0):"")+"}-"+m+"}{x"+(x0?sg(-x0,0):"")+"}",FA(f),"គុណនឹងកន្សោមឆ្លាស់ $\\sqrt{x"+(k?sg(k,0):"")+"}+"+m+"$ ⇒ $\\frac{1}{"+(2*m)+"}$")},
+ ii:function(){var p=nz(-6,6),q=nz(1,5),r=ri(-5,5),s=ri(-5,5),t=ri(0,2);
+   if(t===0){var f=fr(p,q);return LQ("ii","+\\infty","\\dfrac{"+polyT([p,r,1])+"}{"+polyT([q,s,-2])+"}",FA(f),"រាង $\\frac\\infty\\infty$ · ដឺក្រេស្មើ ⇒ $\\frac{"+p+"}{"+q+"}$")}
+   if(t===1)return LQ("ii","+\\infty","\\dfrac{"+polyT([p,r])+"}{"+polyT([q,s,3])+"}",["0","0"],"រាង $\\frac\\infty\\infty$ · ដឺក្រេភាគយក $<$ ភាគបែង ⇒ $0$");
+   var to=pick(["+\\infty","-\\infty"]),sgn=(p/q)*(to==="+\\infty"?1:-1);
+   return LQ("ii",to,"\\dfrac{"+polyT([p,0,r])+"}{"+polyT([q,s])+"}",sgn>0?INF:NINF,"ដឺក្រេភាគយក $>$ ភាគបែង ⇒ $\\frac{"+p+"x^2}{"+q+"x}=\\frac{"+p+"}{"+q+"}x$")},
+ mm:function(){var a=nz(1,6),f=fr(a,2),t=ri(0,2);
+   if(t===0)return LQ("mm","+\\infty","\\left(\\sqrt{x^2+"+kx(a)+"}-x\\right)",FA(f),"រាង $\\infty-\\infty$ ⇒ គុណកន្សោមឆ្លាស់ ⇒ $\\frac{"+a+"x}{\\sqrt{x^2+"+a+"x}+x}\\to"+f.t+"$");
+   if(t===1)return LQ("mm","+\\infty","\\left(x-\\sqrt{x^2-"+kx(a)+"}\\right)",FA(f),"រាង $\\infty-\\infty$ ⇒ $\\frac{"+a+"x}{x+\\sqrt{x^2-"+a+"x}}\\to"+f.t+"$");
+   return LQ("mm","+\\infty","\\left(\\sqrt{x+"+a+"}-\\sqrt{x}\\right)",["0","0"],"$\\frac{"+a+"}{\\sqrt{x+"+a+"}+\\sqrt x}\\to0$")},
+ st:function(){var a=ri(1,6),b=ri(1,6),t=ri(0,3);
+   if(t===0)return LQ("st",0,"\\dfrac{\\sin "+kx(a)+"}{"+kx(b)+"}",FA(fr(a,b)),"$\\lim_{u\\to0}\\frac{\\sin u}{u}=1$");
+   if(t===1)return LQ("st",0,"\\dfrac{\\tan "+kx(a)+"}{"+kx(b)+"}",FA(fr(a,b)),"$\\lim_{u\\to0}\\frac{\\tan u}{u}=1$");
+   if(t===2)return LQ("st",0,"\\dfrac{\\sin "+kx(a)+"}{\\sin "+kx(b)+"}",FA(fr(a,b)),"$\\frac{\\sin ax}{\\sin bx}=\\frac{\\sin ax}{ax}\\cdot\\frac{bx}{\\sin bx}\\cdot\\frac ab$");
+   a=ri(2,6);return LQ("st",0,"\\dfrac{1-\\cos "+kx(a)+"}{x^2}",FA(fr(a*a,2)),"$1-\\cos u=2\\sin^2\\frac u2$ ⇒ $\\frac{a^2}{2}$")},
+ se:function(){var a=nz(-4,5),b=nz(1,5);if(Math.random()<.6)return LQ("se",0,"\\dfrac{e^{"+kx(a)+"}-1}{"+kx(b)+"}",FA(fr(a,b)),"$\\lim_{u\\to0}\\frac{e^u-1}{u}=1$");
+   var c=nz(-4,4);while(c===a)c=nz(-4,4);return LQ("se",0,"\\dfrac{e^{"+kx(a)+"}-e^{"+kx(c)+"}}{x}",[String(a-c),String(a-c)],"$\\frac{e^{ax}-1}{x}-\\frac{e^{cx}-1}{x}\\to a-c$")},
+ sl:function(){var a=ri(1,5),b=ri(1,5);if(Math.random()<.65)return LQ("sl",0,"\\dfrac{\\ln(1+"+kx(a)+")}{"+kx(b)+"}",FA(fr(a,b)),"$\\lim_{u\\to0}\\frac{\\ln(1+u)}{u}=1$");
+   return LQ("sl",1,"\\dfrac{\\ln x}{x-1}",["1","1"],"តាង $t=x-1$ ⇒ $\\frac{\\ln(1+t)}{t}\\to1$")}};
+/* កម្រិត ៣ · 1^∞ · តាងអញ្ញាត · កំណើនប្រៀបធៀប · បន្សំ · កំណត់ប៉ារ៉ាម៉ែត្រ */
+var LM3={
+ o:function(){var a=nz(-3,3),b=nz(-3,3),t=ri(0,2),p=function(v){return v<0?"-":"+"};
+   if(t===0)return LQ("o","+\\infty","\\left(1"+p(a)+"\\dfrac{"+Math.abs(a)+"}{x}\\right)^{"+kx(b)+"}",ef(a*b),"រាង $1^\\infty$ ⇒ $\\lim\\left(1+\\frac ax\\right)^{bx}=e^{ab}$");
+   if(t===1)return LQ("o",0,"\\left(1"+p(a)+kx(Math.abs(a))+"\\right)^{\\frac{"+b+"}{x}}",ef(a*b),"រាង $1^\\infty$ ⇒ $(1+ax)^{\\frac bx}\\to e^{ab}$");
+   var c=nz(-3,3);while(c===a)c=nz(-3,3);return LQ("o","+\\infty","\\left(\\dfrac{x"+sg(a,0)+"}{x"+sg(c,0)+"}\\right)^{x}",ef(a-c),"$\\frac{x+a}{x+c}=1+\\frac{a-c}{x+c}$ ⇒ រាង $1^\\infty$ ⇒ $e^{a-c}$")},
+ u:function(){var a=ri(1,5),L=pick([
+   [function(){return LQ("u","\\pi","\\dfrac{\\sin x}{x-\\pi}",["-1","-1"],"តាង $t=x-\\pi\\to0$ ⇒ $\\sin x=-\\sin t$ ⇒ $-1$")}],
+   [function(){return LQ("u","\\frac{\\pi}{2}","\\dfrac{\\cos x}{x-\\frac{\\pi}{2}}",["-1","-1"],"តាង $t=x-\\frac\\pi2$ ⇒ $\\cos x=-\\sin t$ ⇒ $-1$")}],
+   [function(){return LQ("u","+\\infty","x\\sin\\dfrac{"+a+"}{x}",[String(a),String(a)],"តាង $t=\\frac1x\\to0^+$ ⇒ $\\frac{\\sin "+a+"t}{t}\\to"+a+"$")}],
+   [function(){return LQ("u","+\\infty","x\\left(e^{\\frac{"+a+"}{x}}-1\\right)",[String(a),String(a)],"តាង $t=\\frac1x$ ⇒ $\\frac{e^{"+a+"t}-1}{t}\\to"+a+"$")}],
+   [function(){return LQ("u","+\\infty","x\\ln\\left(1+\\dfrac{"+a+"}{x}\\right)",[String(a),String(a)],"តាង $t=\\frac1x$ ⇒ $\\frac{\\ln(1+"+a+"t)}{t}\\to"+a+"$")}],
+   [function(){var f=fr(1,2*a);return LQ("u",a,"\\dfrac{\\sin(x-"+a+")}{x^2-"+a*a+"}",FA(f),"តាង $t=x-"+a+"$ ⇒ $\\frac{\\sin t}{t}\\cdot\\frac{1}{x+"+a+"}\\to"+f.t+"$")}],
+   [function(){return LQ("u",0,"\\dfrac{\\sin "+kx(a)+"}{\\sqrt{1+x}-1}",[String(2*a),String(2*a)],"គុណកន្សោមឆ្លាស់ ⇒ $\\frac{\\sin "+a+"x}{x}(\\sqrt{1+x}+1)\\to"+2*a+"$")}]]);return L[0]()},
+ c:function(){var n=ri(1,3),k=ri(2,4),L=pick([["+\\infty","\\dfrac{e^{x}}{x^{"+n+"}}",INF,"$e^x$ កើនលឿនជាង $x^n$"],["+\\infty","\\dfrac{\\ln x}{x^{"+n+"}}",["0","0"],"$x^n$ កើនលឿនជាង $\\ln x$"],
+   ["+\\infty","x^{"+n+"}e^{-x}",["0","0"],"$\\frac{x^n}{e^x}\\to0$"],["0^{+}","x\\ln x",["0","0"],"លីមីតគោល $x\\ln x\\to0$"],["-\\infty","x e^{x}",["0","0"],"លីមីតគោល $xe^x\\to0$"],
+   ["+\\infty","\\dfrac{(\\ln x)^2}{x}",["0","0"],"តាង $x=t^2$ ⇒ $\\frac{4(\\ln t)^2}{t^2}=4\\left(\\frac{\\ln t}{t}\\right)^2\\to0$"],["+\\infty","\\left(e^{x}-x^{"+k+"}\\right)",INF,"$x^"+k+"\\left(\\frac{e^x}{x^"+k+"}-1\\right)\\to+\\infty$"],
+   ["+\\infty","\\left(x-\\ln x\\right)",INF,"$x\\left(1-\\frac{\\ln x}{x}\\right)\\to+\\infty$"]]);return LQ("c",L[0],L[1],L[2],L[3])},
+ m:function(){var a=ri(1,5),b=ri(1,5),t=ri(0,4);
+   if(t===0)return LQ("m",0,"\\dfrac{1-\\cos "+kx(a)+"}{x\\sin "+kx(b)+"}",FA(fr(a*a,2*b)),"$\\frac{1-\\cos ax}{x^2}\\cdot\\frac{x}{\\sin bx}\\to\\frac{a^2}{2}\\cdot\\frac1b$");
+   if(t===1)return LQ("m",0,"\\dfrac{\\tan x-\\sin x}{x^3}",FA(fr(1,2)),"$\\tan x(1-\\cos x)$ ⇒ $1\\cdot\\frac12$");
+   if(t===2){while(b===a)b=ri(1,5);return LQ("m",0,"\\dfrac{\\sin "+kx(a)+"-\\sin "+kx(b)+"}{x}",[String(a-b),String(a-b)],"$\\frac{\\sin ax}{x}-\\frac{\\sin bx}{x}\\to a-b$")}
+   if(t===3)return LQ("m",0,"\\dfrac{e^{x^2}-\\cos "+kx(a)+"}{x^2}",FA(fr(2+a*a,2)),"$\\frac{e^{x^2}-1}{x^2}+\\frac{1-\\cos ax}{x^2}\\to1+\\frac{a^2}{2}$");
+   return LQ("m",0,"\\dfrac{\\ln(1+"+kx(a)+")}{\\tan "+kx(b)+"}",FA(fr(a,b)),"$\\frac{\\ln(1+ax)}{ax}\\cdot\\frac{bx}{\\tan bx}\\cdot\\frac ab$")},
+ ab:function(){var r=nz(-3,3),L=nz(-5,5),a=L-2*r,b=r*r-r*L;
+   var q=Q("រកចំនួនពិត $a$ និង $b$ ដែល $\\displaystyle\\lim_{x\\to "+r+"}\\dfrac{x^2+ax+b}{x"+sg(-r,0)+"}="+L+"$",[A(a,null,"num","a ="),A(b,null,"num","b =")],
+     "ភាគយកត្រូវស្មើ $0$ ត្រង់ $x="+r+"$ ⇒ $"+r*r+(r<0?"":"+")+r+"a+b=0$ · លីមីត $=2("+r+")+a="+L+"$ ⇒ $a="+a+"$ , $b="+b+"$");q.kd="ab";return q}};
+function lpick(P,ks){var k=pick(ks||Object.keys(P));return P[k]()}
+G[22]={1:function(){return lpick(LM1)},2:function(){return lpick(LM2)},3:function(){return lpick(LM3)}};
+/* ថ្នាក់ទី១១ (មិនទាន់រៀន e^x · ln · 1^∞)៖ PX.LIM11[1|2]() */
+var LIM11={1:function(){return lpick(LM1,["p","r","r","t","i"])},2:function(){return lpick(LM2,["f2","f3","f22","cj","ii","mm","st","st"])}};
 /* ---- ៣. ភាពជាប់ ---- */
 G[23]={1:function(){var x0=nz(-3,3),m=nz(-3,3),b=ri(-4,4),y0=m*x0+b,c=nz(-3,3),a=y0-c*x0;
     return Q("រកចំនួន $a$ ដើម្បីឱ្យ $f(x)=\\begin{cases}"+co(c,"x",true)+"+a & x<"+x0+"\\\\ "+poly([m,b])+" & x\\ge "+x0+"\\end{cases}$ ជាប់ត្រង់ $x="+x0+"$",[A(a,null,"num","a =")],
@@ -212,7 +284,7 @@ G[31]={1:function(){var n=ri(2,5),a=nz(-5,5),b=ri(-6,6),c=ri(-6,6),f=co(a,"x^"+n
     return Q("គណនាដេរីវេ $f'(x)$ នៃ $f(x)="+f.replace(/\^(\d)/g,"^{$1}")+"$",[A(d,d.replace(/\^(\d)/g,"^{$1}"),"expr","f'(x) =")],"$(x^n)'=nx^{n-1}$ ⇒ $f'(x)="+d.replace(/\^(\d)/g,"^{$1}")+"$")},
   2:function(){var t=ri(0,2);
     if(t===0){var a=nz(-4,4),b=ri(-5,5),c=nz(-4,4),d=ri(-5,5);var e=[2*a*c,a*d+b*c];
-      return Q("គណនា $f'(x)$ នៃ $f(x)=("+poly([a,b])+")("+poly([c,d])+")$",[A(poly(e),polyT(e),"expr","f'(x) =")],"$(uv)'=u'v+uv'="+a+"("+poly([c,d])+")+"+c+"("+poly([a,b])+")="+polyT(e)+"$")}
+      return Q("គណនា $f'(x)$ នៃ $f(x)=("+poly([a,b])+")("+poly([c,d])+")$",[A(poly(e),polyT(e),"expr","f'(x) =")],"$(uv)'=u'v+uv'="+a+"("+poly([c,d])+")"+(c<0?"":"+")+c+"("+poly([a,b])+")="+polyT(e)+"$")}
     if(t===1){var k=nz(2,6),f=pick(["sin","cos"]);
       return Q("គណនា $f'(x)$ នៃ $f(x)=\\"+f+" "+k+"x$",[A((f==="sin"?"":"-")+k+(f==="sin"?"cos":"sin")+"("+k+"x)",(f==="sin"?"":"-")+k+"\\"+(f==="sin"?"cos":"sin")+" "+k+"x","expr","f'(x) =")],"$(\\sin u)'=u'\\cos u$ · $(\\cos u)'=-u'\\sin u$")}
     var a=nz(-3,3),b=ri(-4,4),c=nz(-3,3),d=ri(-4,4);if(a*d-b*c===0)d+=1;var x0=ri(-2,2);while(c*x0+d===0)x0++;var v=fr(a*d-b*c,(c*x0+d)*(c*x0+d));
@@ -254,12 +326,51 @@ G[43]={1:function(){var b=pick([2,3,5,10]),n=ri(-2,4);
   3:function(){var T=pick([[2,4,2,3],[2,4,3,2],[2,8,4,5],[2,8,6,4],[2,16,8,7],[3,9,6,3],[3,3,2,1],[3,9,8,2]]),b=T[0],x=T[1],k=T[2],n=T[3];   /* x(x-k)=bⁿ */
     return Q("ដោះស្រាយ $\\log_{"+b+"} x+\\log_{"+b+"}(x-"+k+")="+n+"$",[A(x,null,"num","x =")],"លក្ខខណ្ឌ $x>"+k+"$ · $\\log_{"+b+"}[x(x-"+k+")]="+n+"\\iff x^2-"+k+"x-"+Math.pow(b,n)+"=0\\iff x="+x+"$ (ឬ $x="+(k-x)+"$ មិនយក)")}};
 /* ---- ៥. អាំងតេក្រាល ---- */
-G[51]={1:function(){var a=nz(-4,4),n=ri(1,4),b=ri(-5,5),F=fr(a,n+1),FT=(F.d===1?(F.n===1?"":F.n===-1?"-":F.n):F.t)+"x^{"+(n+1)+"}";
-    return Q("រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)="+co(a,n>1?"x^{"+n+"}":"x",true)+(b?sg(b,0):"")+"$",[A("("+F.s+")x^"+(n+1)+(b?sg(b,0)+"x":""),FT+(b?co(b,"x"):""),"anti","F(x) =")],"$\\int x^n dx=\\frac{x^{n+1}}{n+1}+C$ (បន្ថែមចំនួនថេរណាក៏បាន)")},
-  2:function(){var a=ri(0,1),b=ri(a+1,3),c=[nz(-3,3),ri(-4,4),ri(-3,3)],F=function(x){return c[0]*x*x*x/3+c[1]*x*x/2+c[2]*x},v=fr(Math.round((F(b)-F(a))*6),6);
-    return Q("គណនា $\\displaystyle\\int_{"+a+"}^{"+b+"}("+polyT(c)+")\\,dx$",[A(v.s,v.t)],"$\\left["+fr(c[0],3).t+"x^3"+(c[1]?(c[1]<0?"-":"+")+fr(Math.abs(c[1]),2).t+"x^2":"")+co(c[2],"x")+"\\right]_{"+a+"}^{"+b+"}="+v.t+"$")},
-  3:function(){var k=ri(1,4),v=fr(k*k*k,6);   /* ផ្ទៃរវាង y=kx និង y=x² លើ [0,k] = k³/6 */
-    return Q("គណនាផ្ទៃក្រឡាដែនខណ្ឌដោយ $y="+(k===1?"":k)+"x$ និង $y=x^2$",[A(v.s,v.t)],"ចំណុចប្រសព្វ $x=0$ និង $x="+k+"$ · $S=\\int_0^{"+k+"}("+(k===1?"":k)+"x-x^2)dx="+v.t+"$","y="+k+"x\ny=x^2 red\narea y="+k+"x | y=x^2 [0,"+k+"]")}};
+/* ---- ៥. អាំងតេក្រាល៖ ព្រីមីទីវមូលដ្ឋាន · អាំងតេក្រាលកំណត់ · ប្ដូរអថេរ · ដោយផ្នែក · ផ្ទៃ ---- */
+function IQ(kd,q,a,s,fig){var o=Q(q,a,s,fig);o.kd=kd;return o}
+function cfT(f){return f.t==="1"?"":f.t==="-1"?"-":f.t}
+var IN1={
+ p:function(){var a=nz(-4,4),n=ri(1,4),b=ri(-5,5),F=fr(a,n+1),FT=cfT(F)+"x^{"+(n+1)+"}";
+   return IQ("p","រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)="+co(a,n>1?"x^{"+n+"}":"x",true)+(b?sg(b,0):"")+"$",[A("("+F.s+")x^"+(n+1)+(b?sg(b,0)+"x":""),FT+(b?co(b,"x"):""),"anti","F(x) =")],"$\\int x^n dx=\\frac{x^{n+1}}{n+1}+C$")},
+ inv:function(){var a=ri(1,6);return IQ("inv","រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)=\\dfrac{"+a+"}{x^2}$",[A("-"+a+"/x","-\\frac{"+a+"}{x}","anti","F(x) =")],"$\\frac{1}{x^2}=x^{-2}$ ⇒ $\\int x^{-2}dx=-\\frac1x$")},
+ sq:function(){var a=ri(1,6),F=fr(2*a,3);return IQ("sq","រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)="+(a===1?"":a)+"\\sqrt{x}$",[A("("+F.s+")x^(3/2)",cfT(F)+"x\\sqrt{x}","anti","F(x) =")],"$\\sqrt x=x^{\\frac12}$ ⇒ $\\frac{x^{\\frac32}}{\\frac32}=\\frac23x\\sqrt x$")},
+ tr:function(){var a=nz(-4,4),b=ri(1,5),c=Math.random()<.5,F=fr(c?a:-a,b);
+   return IQ("tr","រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)="+co(a,"\\"+(c?"cos":"sin")+" "+kx(b),true)+"$",[A("("+F.s+")"+(c?"sin":"cos")+"("+b+"x)",cfT(F)+"\\"+(c?"sin":"cos")+" "+kx(b),"anti","F(x) =")],c?"$\\int\\cos bx\\,dx=\\frac1b\\sin bx$":"$\\int\\sin bx\\,dx=-\\frac1b\\cos bx$")},
+ ex:function(){var a=nz(-4,4),b=nz(-3,4),F=fr(a,b);return IQ("ex","រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)="+(a===1?"":a===-1?"-":a)+"e^{"+kx(b)+"}$",[A("("+F.s+")e^("+b+"x)",cfT(F)+"e^{"+kx(b)+"}","anti","F(x) =")],"$\\int e^{bx}dx=\\frac1b e^{bx}$")},
+ ln:function(){var a=nz(-5,6),b=ri(0,3);return IQ("ln","រកព្រីមីទីវមួយ $F(x)$ នៃ $f(x)=\\dfrac{"+a+"}{x"+(b?"+"+b:"")+"}$ (លើ $x>"+(-b)+"$)",[A(a+"ln(x"+(b?"+"+b:"")+")",(a===1?"":a===-1?"-":a)+"\\ln"+(b?"(x+"+b+")":" x"),"anti","F(x) =")],"$\\int\\frac{u'}{u}dx=\\ln|u|$")}};
+var IN2={
+ p:function(){var a=ri(0,1),b=ri(a+1,3),c=[nz(-3,3),ri(-4,4),ri(-3,3)],F=function(x){return c[0]*x*x*x/3+c[1]*x*x/2+c[2]*x},v=fr(Math.round((F(b)-F(a))*6),6);
+   return IQ("p","គណនា $\\displaystyle\\int_{"+a+"}^{"+b+"}("+polyT(c)+")\\,dx$",[A(v.s,v.t)],"រកព្រីមីទីវ រួចយក $F("+b+")-F("+a+")="+v.t+"$")},
+ tr:function(){var a=nz(-3,4),b=nz(-3,4),t=ri(0,1);
+   if(t===0)return IQ("tr","គណនា $\\displaystyle\\int_0^{\\frac{\\pi}{2}}("+co(a,"\\cos x",true)+co(b,"\\sin x")+")\\,dx$",[A(a+b)],"$[\\,"+co(a,"\\sin x",true)+co(-b,"\\cos x")+"\\,]_0^{\\frac\\pi2}="+(a+b)+"$");
+   return IQ("tr","គណនា $\\displaystyle\\int_0^{\\pi}"+(a===1?"":a===-1?"-":a)+"\\sin x\\,dx$",[A(2*a)],"$[-\\cos x]_0^\\pi=2$ ⇒ $"+2*a+"$")},
+ ex:function(){var k=ri(2,6),a=ri(1,3),t=ri(0,1);
+   if(t===0)return IQ("ex","គណនា $\\displaystyle\\int_0^{\\ln "+k+"}e^{x}\\,dx$",[A(k-1)],"$[e^x]_0^{\\ln "+k+"}="+k+"-1$");
+   return IQ("ex","គណនា $\\displaystyle\\int_0^{1}e^{"+kx(a)+"}\\,dx$",[A("(e^"+a+"-1)/"+a,a===1?"e-1":"\\frac{e^{"+a+"}-1}{"+a+"}")],"$\\left[\\frac1{"+a+"}e^{"+a+"x}\\right]_0^1$")},
+ lg:function(){var a=nz(-4,5),k=ri(1,3),t=ri(0,1);
+   if(t===0)return IQ("lg","គណនា $\\displaystyle\\int_1^{"+(k===1?"e":"e^{"+k+"}")+"}\\dfrac{"+a+"}{x}\\,dx$",[A(a*k)],"$["+a+"\\ln x]_1^{e^{"+k+"}}="+a*k+"$");
+   var b=ri(2,5),f=fr(b-1,b);return IQ("lg","គណនា $\\displaystyle\\int_1^{"+b+"}\\dfrac{1}{x^2}\\,dx$",[A(f.s,f.t)],"$\\left[-\\frac1x\\right]_1^{"+b+"}=1-\\frac1{"+b+"}$")},
+ sq:function(){var m=ri(1,3),f=fr(2*m*m*m,3);return IQ("sq","គណនា $\\displaystyle\\int_0^{"+m*m+"}\\sqrt{x}\\,dx$",[A(f.s,f.t)],"$\\left[\\frac23x\\sqrt x\\right]_0^{"+m*m+"}="+f.t+"$")}};
+var IN3={
+ bp:function(){var L=pick([["\\int_0^1xe^{x}\\,dx","1","1","$u=x$ , $dv=e^xdx$ ⇒ $[xe^x-e^x]_0^1=1$"],["\\int_1^e\\ln x\\,dx","1","1","$u=\\ln x$ , $dv=dx$ ⇒ $[x\\ln x-x]_1^e=1$"],
+   ["\\int_0^{\\pi}x\\sin x\\,dx","pi","\\pi","$[-x\\cos x+\\sin x]_0^\\pi=\\pi$"],["\\int_0^{\\frac{\\pi}{2}}x\\cos x\\,dx","pi/2-1","\\frac{\\pi}{2}-1","$[x\\sin x+\\cos x]_0^{\\frac\\pi2}=\\frac\\pi2-1$"],
+   ["\\int_1^e x\\ln x\\,dx","(e^2+1)/4","\\frac{e^2+1}{4}","$\\left[\\frac{x^2}{2}\\ln x-\\frac{x^2}{4}\\right]_1^e$"],["\\int_0^1xe^{-x}\\,dx","1-2/e","1-\\frac{2}{e}","$[-xe^{-x}-e^{-x}]_0^1=1-\\frac2e$"]]);
+   return IQ("bp","គណនាដោយប្រើអាំងតេក្រាលដោយផ្នែក $\\displaystyle "+L[0]+"$",[A(L[1],L[2])],L[3])},
+ uu:function(){var k=ri(1,4),f=fr(1+k,k);return IQ("uu","គណនា $\\displaystyle\\int_0^1\\dfrac{2x}{x^2+"+k+"}\\,dx$",[A("ln("+f.s+")","\\ln"+(f.d===1?" "+f.t:f.t))],"ទម្រង់ $\\frac{u'}{u}$ ⇒ $[\\ln(x^2+"+k+")]_0^1=\\ln\\frac{"+(1+k)+"}{"+k+"}$")},
+ un:function(){var n=ri(2,4),f=fr(Math.pow(2,n+1)-1,n+1);return IQ("un","គណនា $\\displaystyle\\int_0^1 2x(x^2+1)^{"+n+"}\\,dx$",[A(f.s,f.t)],"តាង $u=x^2+1$ ⇒ $\\left[\\frac{(x^2+1)^{"+(n+1)+"}}{"+(n+1)+"}\\right]_0^1="+f.t+"$")},
+ sp:function(){var n=ri(1,4),t=ri(0,1);if(t===0){var f=fr(1,n+1);return IQ("sp","គណនា $\\displaystyle\\int_0^{\\frac{\\pi}{2}}\\sin^{"+n+"}x\\cos x\\,dx$",[A(f.s,f.t)],"តាង $u=\\sin x$ ⇒ $\\left[\\frac{\\sin^{"+(n+1)+"}x}{"+(n+1)+"}\\right]_0^{\\frac\\pi2}$")}
+   return IQ("sp","គណនា $\\displaystyle\\int_0^{\\pi}\\sin^2x\\,dx$",[A("pi/2","\\frac{\\pi}{2}")],"$\\sin^2x=\\frac{1-\\cos2x}{2}$")},
+ pf:function(){var a=ri(2,3),b=ri(a+1,5),f=fr((b-1)*(a+1),(b+1)*(a-1));return IQ("pf","គណនា $\\displaystyle\\int_{"+a+"}^{"+b+"}\\dfrac{dx}{x^2-1}$",[A("ln("+f.s+")/2","\\frac12\\ln"+(f.d===1?" "+f.t:f.t))],"$\\frac{1}{x^2-1}=\\frac12\\left(\\frac{1}{x-1}-\\frac{1}{x+1}\\right)$ ⇒ $\\frac12\\left[\\ln\\frac{x-1}{x+1}\\right]_{"+a+"}^{"+b+"}$")},
+ ar:function(){var k=ri(1,4),v=fr(k*k*k,6);return IQ("ar","គណនាផ្ទៃក្រឡាដែនខណ្ឌដោយ $y="+(k===1?"":k)+"x$ និង $y=x^2$",[A(v.s,v.t)],"ចំណុចប្រសព្វ $x=0$ និង $x="+k+"$ · $S=\\int_0^{"+k+"}("+(k===1?"":k)+"x-x^2)dx="+v.t+"$","y="+k+"x\ny=x^2 red\narea y="+k+"x | y=x^2 [0,"+k+"]")}};
+G[51]={1:function(){return lpick(IN1)},2:function(){return lpick(IN2)},3:function(){return lpick(IN3)}};
+/* ---- ដេរីវេ៖ ផលគុណ · ផលចែក · e^x · ln · tan (បន្ថែមលើកម្រិត ៣) ---- */
+var D3=[function(){var a=nz(-3,3);return Q("គណនា $f'(x)$ នៃ $f(x)="+kx(a)+"e^{x}$",[A(a+"(x+1)e^x",(a===1?"":a===-1?"-":a)+"(x+1)e^{x}","expr","f'(x) =")],"$(uv)'=u'v+uv'$")},
+ function(){return Q("គណនា $f'(x)$ នៃ $f(x)=x\\ln x$",[A("ln(x)+1","\\ln x+1","expr","f'(x) =")],"$(uv)'=1\\cdot\\ln x+x\\cdot\\frac1x$")},
+ function(){return Q("គណនា $f'(x)$ នៃ $f(x)=e^{x}\\sin x$",[A("e^x(sin(x)+cos(x))","e^x(\\sin x+\\cos x)","expr","f'(x) =")],"$(uv)'=e^x\\sin x+e^x\\cos x$")},
+ function(){return Q("គណនា $f'(x)$ នៃ $f(x)=\\dfrac{\\ln x}{x}$",[A("(1-ln(x))/x^2","\\frac{1-\\ln x}{x^2}","expr","f'(x) =")],"$\\left(\\frac uv\\right)'=\\frac{u'v-uv'}{v^2}$")},
+ function(){var a=ri(2,5);return Q("គណនា $f'(x)$ នៃ $f(x)=\\tan "+a+"x$",[A(a+"/(cos("+a+"x))^2","\\frac{"+a+"}{\\cos^2"+a+"x}","expr","f'(x) =")],"$(\\tan u)'=\\frac{u'}{\\cos^2u}$")},
+ function(){var a=ri(1,3);return Q("គណនា $f'(x)$ នៃ $f(x)=\\dfrac{e^{x}}{x+"+a+"}$",[A("(x+"+(a-1)+")e^x/(x+"+a+")^2","\\frac{(x"+(a-1?"+"+(a-1):"")+")e^{x}}{(x+"+a+")^2}","expr","f'(x) =")],"$\\left(\\frac uv\\right)'=\\frac{e^x(x+"+a+")-e^x}{(x+"+a+")^2}$")}];
+(function(){var o=G[31][3];G[31][3]=function(){return Math.random()<.5?pick(D3)():o()}})();
 /* ---- ៦. សមីការឌីផេរ៉ង់ស្យែល ---- */
 G[61]={1:function(){var k=nz(-3,3),c=nz(-4,4);
     return Q("ដោះស្រាយ $y'="+(k===1?"":k===-1?"-":k)+"y$ ដែល $y(0)="+c+"$ ។ សរសេរ $y$",[A(c+"e^("+k+"x)",c+"e^{"+k+"x}","expr","y =")],"ចម្លើយទូទៅ $y=Ce^{"+k+"x}$ · $y(0)=C="+c+"$")},
@@ -394,7 +505,7 @@ function open(l,v){
   var seen={};
   var kind={};   /* ប្រភេទដូចគ្នា (ពាក្យដើមនៃសំណួរ) មិនលើស ២ */
   if(!GR[S.g].G[l][S.v])S.v=1;var nq=S.v===4?NQ4:NQ;
-  for(var i=0,tries=0;i<nq&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
+  for(var i=0,tries=0;i<nq&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=q.kd?"kd:"+q.kd:k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
     if(seen[k]||(kind[t]>=2&&tries<50))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
   location.hash=HS("g="+S.g+"&l="+l+"&v="+S.v);
   draw();window.scrollTo(0,0);
@@ -450,7 +561,7 @@ function qr(){
   if(window.QRCode)go();else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=go;document.head.appendChild(s)}
 }
 /* ---------- ក្ដារចុចនិមិត្តសញ្ញាគណិត ---------- */
-var KEYS=[["√","√("],["π","π"],["i","i"],["x","x"],["^","^"],["²","^2"],["⁄","/"],["(","("],[")",")"],["e","e"],["ln","ln("],["sin","sin("],["cos","cos("],["−","-"],["⌫","BS"]];
+var KEYS=[["√","√("],["π","π"],["i","i"],["x","x"],["^","^"],["²","^2"],["⁄","/"],["(","("],[")",")"],["e","e"],["ln","ln("],["∞","∞"],["sin","sin("],["cos","cos("],["−","-"],["⌫","BS"]];
 var lastInp=null;
 function kb(){
   var k=document.createElement("div");k.id="kb";k.className="kb";k.hidden=true;
@@ -501,6 +612,6 @@ function route2(){
 }
 window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S,GR:GR};
 /* ជំនួយសម្រាប់ឯកសារថ្នាក់ផ្សេង (practice11.js …) */
-window.PX={Q:Q,A:A,ri:ri,nz:nz,pick:pick,fr:fr,sg:sg,co:co,poly:poly,polyT:polyT,cx:cx,cxf:cxf,cxT:cxT,cnk:cnk,sgp:sgp,v3:v3,gcd:gcd,G12:G,
+window.PX={LIM11:LIM11,Q:Q,A:A,ri:ri,nz:nz,pick:pick,fr:fr,sg:sg,co:co,poly:poly,polyT:polyT,cx:cx,cxf:cxf,cxT:cxT,cnk:cnk,sgp:sgp,v3:v3,gcd:gcd,G12:G,
   reg:function(g,o){GR[g]=o},start:function(){kb();bind();route()}};
 })();
