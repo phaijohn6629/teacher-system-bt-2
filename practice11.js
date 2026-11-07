@@ -40,6 +40,26 @@ G[15]={1:function(){var a=pick([2,3,-1,1/2]),b=nz(-6,6),l=fr(b*(a===1/2?2:1),a==
   3:function(){var a=pick([2,3]),b=nz(-4,4),u1=ri(-3,5),l=fr(b,1-a),c=fr(u1*l.d-l.n,l.d);
     return Q("$u_1="+u1+"$ , $u_{n+1}="+a+"u_n"+sg(b,0)+"$ ។ សរសេរតួទូទៅ $u_n$ ជាអនុគមន៍នៃ $n$",[A("("+c.s+")*"+a+"^(n-1)+("+l.s+")","\\left("+c.t+"\\right)"+a+"^{n-1}"+(l.n<0?"":"+")+l.t,"expr","uₙ =")],
       "$\\ell="+l.t+"$ · $v_n=v_1q^{n-1}$ ដែល $v_1=u_1-\\ell="+c.t+"$ ⇒ $u_n="+c.t+"\\cdot"+a+"^{n-1}"+(l.n<0?"":"+")+l.t+"$")}};
+/* ---- បន្ថែមលើស្វ៊ីត (លាយជាមួយទម្រង់ចាស់) ---- */
+function KQ(kd,q,a,s,fig){var o=Q(q,a,s,fig);o.kd=kd;return o}
+function mix(g,lv,L,p){var o=g[lv];g[lv]=function(){return Math.random()<(p||.55)?pick(L)():o()}}
+mix(G[11],1,[
+ function(){var a=nz(-3,3),b=ri(-4,4),c=ri(-5,5),k=ri(2,6),v=a*k*k+b*k+c;return KQ("s2","ស្វ៊ីត $u_n="+polyT([a,b,c]).replace(/x/g,"n")+"$ ។ គណនា $u_{"+k+"}$",[A(v,null,"num","u"+k+" =")],"ជំនួស $n="+k+"$")},
+ function(){var a=nz(-4,4),b=ri(-6,6),v=ri(5,30)*Math.sign(a)+b;var n=(v-b)/a;if(n%1||n<1){n=ri(3,12);v=a*n+b}return KQ("sn","ស្វ៊ីត $u_n="+co(a,"n",true)+(b?sg(b,0):"")+"$ ។ តួទីប៉ុន្មានដែលមានតម្លៃ $"+v+"$?",[A(n,null,"num","n =")],"$"+co(a,"n",true)+(b?sg(b,0):"")+"="+v+"$ ⇒ $n="+n+"$")}]);
+mix(G[11],3,[
+ function(){var a=nz(1,5),b=ri(-5,5),c=nz(1,4),d=ri(-5,5),f=fr(a,c);return KQ("sl","គណនា $\\displaystyle\\lim_{n\\to+\\infty}\\dfrac{"+polyT([a,b,1]).replace(/x/g,"n")+"}{"+polyT([c,d,2]).replace(/x/g,"n")+"}$",[A(f.s,f.t,"num","lim =")],"ចែកនឹង $n^2$ ⇒ $\\frac{"+a+"}{"+c+"}$")},
+ function(){var k=ri(2,8)*2;return KQ("sm","ស្វ៊ីត $u_n=n^2-"+k+"n$ ។ រក $n$ ដែល $u_n$ តូចបំផុត និងតម្លៃនោះ",[A(k/2,null,"num","n ="),A(-k*k/4,null,"num","uₙ =")],"$u_n=(n-"+k/2+")^2-"+(k*k/4)+"$")}]);
+mix(G[12],1,[
+ function(){var u1=ri(-5,8),d=nz(-4,5),n=ri(6,20),un=u1+(n-1)*d;return KQ("an","ស្វ៊ីតនព្វន្ត $u_1="+u1+"$ , $d="+d+"$ ។ តួទីប៉ុន្មានស្មើ $"+un+"$?",[A(n,null,"num","n =")],"$"+u1+"+(n-1)("+d+")="+un+"$ ⇒ $n="+n+"$")}]);
+mix(G[12],2,[
+ function(){var a=ri(-5,10),d=nz(-4,6),k=ri(2,4),b=a+(k+1)*d;return KQ("ai","បញ្ចូលចំនួន $"+k+"$ រវាង $"+a+"$ និង $"+b+"$ ដើម្បីបានស្វ៊ីតនព្វន្ត ។ រកផលសង $d$",[A(d,null,"num","d =")],"មាន $"+(k+2)+"$ តួ ⇒ $"+b+"="+a+"+"+(k+1)+"d$")}]);
+mix(G[13],2,[
+ function(){var u1=pick([2,3,4,6,8,9,12]),q=pick([[1,2],[1,3],[-1,2],[2,3],[-1,3]]),S=fr(u1*q[1],q[1]-q[0]);return KQ("gi","គណនាផលបូកអនន្ត $S=u_1+u_2+\\dots$ នៃស្វ៊ីតធរណីមាត្រ $u_1="+u1+"$ , $q="+fr(q[0],q[1]).t+"$",[A(S.s,S.t,"num","S =")],"$|q|<1$ ⇒ $S=\\frac{u_1}{1-q}="+S.t+"$")}]);
+mix(G[13],3,[
+ function(){var u1=nz(1,3),q=pick([2,3]),k=ri(3,6),uk=u1*Math.pow(q,k-1);return KQ("gn","ស្វ៊ីតធរណីមាត្រ $u_1="+u1+"$ , $q="+q+"$ ។ តួទីប៉ុន្មានស្មើ $"+uk+"$?",[A(k,null,"num","n =")],"$"+u1+"\\cdot"+q+"^{n-1}="+uk+"$ ⇒ $"+q+"^{n-1}="+Math.pow(q,k-1)+"$ ⇒ $n="+k+"$")}]);
+mix(G[14],2,[
+ function(){var n=ri(5,30);return KQ("od","គណនា $1+3+5+\\dots+"+(2*n-1)+"$",[A(n*n,null,"num","S =")],"មាន $"+n+"$ តួ ⇒ $S=n^2="+n*n+"$")},
+ function(){var b=pick([2,3]),n=ri(4,9),S=(Math.pow(b,n+1)-1)/(b-1);return KQ("gp","គណនា $1+"+b+"+"+b*b+"+\\dots+"+b+"^{"+n+"}$",[A(S,null,"num","S =")],"ធរណីមាត្រ $q="+b+"$ , $"+(n+1)+"$ តួ ⇒ $\\frac{"+b+"^{"+(n+1)+"}-1}{"+(b-1)+"}="+S+"$")}]);
 /* ===== ជំពូកទី២ អិចស្ប៉ូណង់ស្យែល លោការីត ===== */
 G[21]={1:function(){var b=pick([2,3,5]),n=ri(2,5),k=nz(-2,3);
     return Q("ដោះស្រាយ $"+b+"^{x"+sg(k,0)+"}="+Math.pow(b,n)+"$",[A(n-k,null,"num","x =")],"$x"+sg(k,0)+"="+n+"$ ⇒ $x="+(n-k)+"$")},

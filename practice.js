@@ -371,6 +371,42 @@ var D3=[function(){var a=nz(-3,3);return Q("គណនា $f'(x)$ នៃ $f(x)="+
  function(){var a=ri(2,5);return Q("គណនា $f'(x)$ នៃ $f(x)=\\tan "+a+"x$",[A(a+"/(cos("+a+"x))^2","\\frac{"+a+"}{\\cos^2"+a+"x}","expr","f'(x) =")],"$(\\tan u)'=\\frac{u'}{\\cos^2u}$")},
  function(){var a=ri(1,3);return Q("គណនា $f'(x)$ នៃ $f(x)=\\dfrac{e^{x}}{x+"+a+"}$",[A("(x+"+(a-1)+")e^x/(x+"+a+")^2","\\frac{(x"+(a-1?"+"+(a-1):"")+")e^{x}}{(x+"+a+")^2}","expr","f'(x) =")],"$\\left(\\frac uv\\right)'=\\frac{e^x(x+"+a+")-e^x}{(x+"+a+")^2}$")}];
 (function(){var o=G[31][3];G[31][3]=function(){return Math.random()<.5?pick(D3)():o()}})();
+/* ---- បន្ថែម៖ ភាពជាប់ · e^x · ln (លាយជាមួយទម្រង់ចាស់) ---- */
+function KQ(kd,q,a,s,fig){var o=Q(q,a,s,fig);o.kd=kd;return o}
+function mix(g,lv,L,p){var o=g[lv];g[lv]=function(){return Math.random()<(p||.6)?pick(L)():o()}}
+function lnT(f){return"\\ln"+(f.d===1?" "+f.t:f.t)}
+mix(G[23],1,[
+ function(){var a=nz(-3,3),b,c;do{b=ri(-4,4);c=ri(-4,4)}while(b>=c);return KQ("cz","រកតម្លៃ $x$ ដែលអនុគមន៍ $f(x)=\\dfrac{"+polyT([a,ri(-5,5)])+"}{"+polyT([1,-(b+c),b*c])+"}$ មិនជាប់ (សរសេរតម្លៃតូចជាមុន)",[A(b,null,"num","x₁ ="),A(c,null,"num","x₂ =")],"មិនជាប់ត្រង់ភាគបែង $=0$ ៖ $"+polyT([1,-(b+c),b*c])+"=0\\iff x="+b+"$ ឬ $x="+c+"$")},
+ function(){var x0=nz(-2,2),m=nz(-3,3),b=ri(-4,4),y0=m*x0+b,a=y0-x0*x0;return KQ("cq","រក $a$ ដើម្បីឱ្យ $f(x)=\\begin{cases}x^2"+"+a & x<"+x0+"\\\\ "+polyT([m,b])+" & x\\ge "+x0+"\\end{cases}$ ជាប់ត្រង់ $x="+x0+"$",[A(a,null,"num","a =")],"$\\lim\\limits_{x\\to"+x0+"^-}f(x)="+x0*x0+"+a$ · $f("+x0+")="+y0+"$ ⇒ $a="+a+"$")}]);
+mix(G[23],2,[
+ function(){var m=ri(1,4),k=ri(-3,5),x0=m*m-k,f=fr(1,2*m);return KQ("cs","រក $k$ ដើម្បីឱ្យ $f(x)=\\begin{cases}\\dfrac{\\sqrt{x"+(k?sg(k,0):"")+"}-"+m+"}{x"+(x0?sg(-x0,0):"")+"} & x\\ne "+x0+"\\\\ k & x="+x0+"\\end{cases}$ ជាប់ត្រង់ $x="+x0+"$",[A(f.s,f.t,"num","k =")],"គុណកន្សោមឆ្លាស់ ⇒ $\\lim f(x)="+f.t+"$ ⇒ $k="+f.t+"$")},
+ function(){var a=ri(2,6),t=Math.random()<.5;return KQ("ct","រក $k$ ដើម្បីឱ្យ $f(x)=\\begin{cases}\\dfrac{"+(t?"\\sin "+a+"x":"e^{"+a+"x}-1")+"}{x} & x\\ne 0\\\\ k & x=0\\end{cases}$ ជាប់ត្រង់ $x=0$",[A(a,null,"num","k =")],t?"$\\frac{\\sin ax}{x}\\to a$":"$\\frac{e^{ax}-1}{x}\\to a$")}]);
+mix(G[23],3,[
+ function(){var p=pick([-2,-1,1,2]),q=p+ri(1,3),a=fr(p*p-1,p),b=q*q-q;return KQ("c2","រក $a$ និង $b$ ដើម្បីឱ្យ $f(x)=\\begin{cases}ax+1 & x<"+p+"\\\\ x^2 & "+p+"\\le x\\le "+q+"\\\\ x"+"+b & x>"+q+"\\end{cases}$ ជាប់លើ $\\mathbb R$",[A(a.s,a.t,"num","a ="),A(b,null,"num","b =")],
+   "ត្រង់ $x="+p+"$ ៖ $"+p+"a+1="+p*p+"$ ⇒ $a="+a.t+"$ · ត្រង់ $x="+q+"$ ៖ $"+q*q+"="+q+"+b$ ⇒ $b="+b+"$")},
+ function(){var k,n;do{k=ri(3,70);n=0;while((n+1)*(n+1)*(n+1)+(n+1)<k)n++}while(n*n*n+n===k||(n+1)*(n+1)*(n+1)+n+1===k);return KQ("ci","បង្ហាញថាសមីការ $x^3+x-"+k+"=0$ មានឫសតែមួយគត់ $\\alpha$ ។ រកចំនួនគត់ $n$ ដែល $n<\\alpha<n+1$",[A(n,null,"num","n =")],"$f(x)=x^3+x-"+k+"$ កើនដាច់ខាត · $f("+n+")="+(n*n*n+n-k)+"<0$ · $f("+(n+1)+")="+((n+1)*(n+1)*(n+1)+n+1-k)+">0$ ⇒ ទ្រឹស្តីបទតម្លៃកណ្ដាល")}]);
+mix(G[42],1,[
+ function(){var a=nz(-4,5),b=nz(-4,5),c=nz(-4,5),n=a+b-c;return KQ("es","សម្រួល $\\dfrac{e^{"+a+"}\\cdot e^{"+b+"}}{e^{"+c+"}}=e^{k}$ ។ រក $k$",[A(n,null,"num","k =")],"$e^ae^b=e^{a+b}$ · $\\frac{e^m}{e^c}=e^{m-c}$")},
+ function(){var k=ri(2,9);return KQ("el","ដោះស្រាយ $e^{x}="+k+"$",[A("ln("+k+")","\\ln "+k,"num","x =")],"$e^x=k\\iff x=\\ln k$")},
+ function(){var k=ri(2,9),m=ri(1,3);return KQ("ee","គណនា $e^{"+(m===1?"":m)+"\\ln "+k+"}$",[A(Math.pow(k,m))],"$e^{m\\ln k}=k^m="+Math.pow(k,m)+"$")}]);
+mix(G[42],2,[
+ function(){var a=ri(1,4),b=ri(-5,5),c=ri(-4,6),f=fr(c-b,a);return KQ("ei","ដោះស្រាយវិសមីការ $e^{"+polyT([a,b])+"}>e^{"+c+"}$ ។ ចម្លើយ $x>k$ រក $k$",[A(f.s,f.t,"num","k =")],"$e^u$ កើន ⇒ $"+polyT([a,b])+">"+c+"$ ⇒ $x>"+f.t+"$")},
+ function(){var a=ri(2,5),k=ri(1,6),f=fr(a+k,a);return KQ("e2","ដោះស្រាយ $"+a+"e^{x}-"+k+"="+a+"$",[A("ln("+f.s+")",lnT(f),"num","x =")],"$e^x=\\frac{"+(a+k)+"}{"+a+"}$ ⇒ $x="+lnT(f)+"$")},
+ function(){var k=nz(-4,4);return KQ("e3","ដោះស្រាយ $e^{2x}=e^{x"+sg(k,0)+"}$",[A(k,null,"num","x =")],"$2x=x"+sg(k,0)+"$ ⇒ $x="+k+"$")}]);
+mix(G[42],3,[
+ function(){var k=ri(2,6);return KQ("em","អនុគមន៍ $f(x)=e^{x}-"+k+"x$ ។ រកតម្លៃ $x$ ដែល $f$ មានអប្បបរមា និងតម្លៃអប្បបរមា",[A("ln("+k+")","\\ln "+k,"num","x ="),A(k+"-"+k+"ln("+k+")",k+"-"+k+"\\ln "+k,"num","f_min =")],"$f'(x)=e^x-"+k+"=0\\iff x=\\ln "+k+"$ · $f(\\ln "+k+")="+k+"-"+k+"\\ln "+k+"$","y=exp(x)-"+k+"x")},
+ function(){var a=nz(-3,3),b=ri(-3,3);return KQ("et","សរសេរសមីការបន្ទាត់ប៉ះក្រាប $y=e^{"+kx(a)+"}"+(b?sg(b,0):"")+"$ ត្រង់ $x=0$ ជាទម្រង់ $y=mx+p$",[A(a,null,"num","m ="),A(1+b,null,"num","p =")],"$y'="+(a===1?"":a)+"e^{"+kx(a)+"}$ ⇒ $m="+a+"$ · $y(0)="+(1+b)+"$")}]);
+mix(G[43],1,[
+ function(){var k=nz(-3,5);return KQ("lk","គណនា $\\ln e^{"+k+"}$",[A(k)],"$\\ln e^k=k$")},
+ function(){var a=ri(2,6),b=ri(2,6);return KQ("lp","សរសេរ $\\ln "+a+"+\\ln "+b+"$ ជាទម្រង់ $\\ln m$ ។ រក $m$",[A(a*b,null,"num","m =")],"$\\ln a+\\ln b=\\ln(ab)$")},
+ function(){var a=ri(1,4),b=ri(-4,4),f=fr(1-b,a);return KQ("l0","ដោះស្រាយ $\\ln("+polyT([a,b])+")=0$",[A(f.s,f.t,"num","x =")],"$\\ln u=0\\iff u=1$ ⇒ $"+polyT([a,b])+"=1$")}]);
+mix(G[43],2,[
+ function(){var a=ri(-3,4),k=ri(1,3);return KQ("li","ដោះស្រាយវិសមីការ $\\ln(x"+(a?sg(-a,0):"")+")<"+k+"$ ។ ចម្លើយ $\\alpha<x<\\beta$ រក $\\alpha$ និង $\\beta$",[A(a,null,"num","α ="),A("e^"+k+(a?sg(a,0):""),(k===1?"e":"e^{"+k+"}")+(a?sg(a,0):""),"num","β =")],"លក្ខខណ្ឌ $x>"+a+"$ · $\\ln$ កើន ⇒ $x"+(a?sg(-a,0):"")+"<e^{"+k+"}$")},
+ function(){var p=ri(1,4),q=ri(1,4),c=p*q;return KQ("lq","ដោះស្រាយ $\\ln x+\\ln(x"+(q-p?sg(q-p,0):"")+")=\\ln "+c+"$",[A(p,null,"num","x =")],"លក្ខខណ្ឌ $x>"+Math.max(0,p-q)+"$ · $x(x"+(q-p?sg(q-p,0):"")+")="+c+"$ ⇒ $x="+p+"$ (ឫសមួយទៀត $"+(-q)+"$ មិនយក)")},
+ function(){var a=ri(2,5),m=ri(2,4);return KQ("lm","សម្រួល $\\ln "+Math.pow(a,m)+"-\\ln "+a+"=k\\ln "+a+"$ ។ រក $k$",[A(m-1)],"$\\ln a^m=m\\ln a$ ⇒ $"+m+"\\ln "+a+"-\\ln "+a+"$")}]);
+mix(G[43],3,[
+ function(){var p=nz(-2,2),q;do{q=nz(-2,3)}while(q<=p);return KQ("l2","ដោះស្រាយ $(\\ln x)^2"+co(-(p+q),"\\ln x")+sg(p*q,0)+"=0$ (ឫសតូចជាមុន)",[A("e^("+p+")",p===1?"e":"e^{"+p+"}","num","x₁ ="),A("e^("+q+")",q===1?"e":"e^{"+q+"}","num","x₂ =")],"តាង $t=\\ln x$ ៖ $t^2"+co(-(p+q),"t")+(p*q?sg(p*q,0):"")+"=0\\iff t="+p+"$ ឬ $t="+q+"$")},
+ function(){var k=ri(2,6);return KQ("lf","អនុគមន៍ $f(x)=x-"+k+"\\ln x$ ($x>0$) ។ រកតម្លៃ $x$ ដែល $f$ មានអប្បបរមា និងតម្លៃអប្បបរមា",[A(k,null,"num","x ="),A(k+"-"+k+"ln("+k+")",k+"-"+k+"\\ln "+k,"num","f_min =")],"$f'(x)=1-\\frac{"+k+"}{x}=0\\iff x="+k+"$","y=x-"+k+"ln(x)\nwindow x=0..12 y=-6..8")}]);
 /* ---- ៦. សមីការឌីផេរ៉ង់ស្យែល ---- */
 G[61]={1:function(){var k=nz(-3,3),c=nz(-4,4);
     return Q("ដោះស្រាយ $y'="+(k===1?"":k===-1?"-":k)+"y$ ដែល $y(0)="+c+"$ ។ សរសេរ $y$",[A(c+"e^("+k+"x)",c+"e^{"+k+"x}","expr","y =")],"ចម្លើយទូទៅ $y=Ce^{"+k+"x}$ · $y(0)=C="+c+"$")},
