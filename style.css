@@ -881,3 +881,6 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 /* ផ្ទាំងដើម៖ ឈ្មោះគ្រូ និងលេខស្ថិតិ = Khmer OS Muol Light (លេខខ្មែរ) */
 .mu,.modern-card h3.dnum{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400}
 .modern-card h3.dnum{line-height:1.5;margin:0 0 2px}
+
+/* របារចំហៀង៖ ក្រុមមុខងារធំៗ (ទូទៅ · ការងាររដ្ឋបាល · មេរៀនសង្ខេប …) = Khmer OS Muol Light */
+.snav .sn-h,.sn-h{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400!important;letter-spacing:0!important;line-height:1.9}
