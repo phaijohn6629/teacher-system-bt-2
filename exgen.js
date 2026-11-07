@@ -512,6 +512,41 @@ var MC9=[
  function(){var r=pick([2,3,5]),k;do{k=[ri(2,6),ri(2,6),ri(1,5)]}while(k[0]===k[1]||k[0]-k[1]+k[2]===0);var v=k[0]-k[1]+k[2],R=function(c){return(c===1?"":c===-1?"-":c)+"\\sqrt{"+r+"}"};
    var s=op4(v,[k[0]+k[1]+k[2],-v,k[0]-k[1]],R);
    return mcq("តម្លៃនៃកន្សោម $\\sqrt{"+k[0]*k[0]*r+"}-\\sqrt{"+k[1]*k[1]*r+"}+\\sqrt{"+k[2]*k[2]*r+"}$ គឺ",s.o,s.k,AL(["&\\sqrt{"+k[0]*k[0]*r+"}-\\sqrt{"+k[1]*k[1]*r+"}+\\sqrt{"+k[2]*k[2]*r+"}","={}&\\sqrt{"+k[0]*k[0]+"\\times"+r+"}-\\sqrt{"+k[1]*k[1]+"\\times"+r+"}+\\sqrt{"+k[2]*k[2]+"\\times"+r+"}","={}&"+R(k[0])+"-"+R(k[1])+"+"+R(k[2]),"={}&"+R(v)]))}];
+/* ===== រូបធរណីមាត្រក្នុងចម្លើយ (kfig · FIG) — គូរតាមលេខពិតនៃលំហាត់ ===== */
+function r3(v){return String(Math.round(v*1000)/1000)}
+function isect(P1,P2,P3,P4){var d=(P1[0]-P2[0])*(P3[1]-P4[1])-(P1[1]-P2[1])*(P3[0]-P4[0]),a=P1[0]*P2[1]-P1[1]*P2[0],b=P3[0]*P4[1]-P3[1]*P4[0];return[(a*(P3[0]-P4[0])-(P1[0]-P2[0])*b)/d,(a*(P3[1]-P4[1])-(P1[1]-P2[1])*b)/d]}
+function cint(A,D){var u=[D[0]-A[0],D[1]-A[1]],t=-2*(A[0]*u[0]+A[1]*u[1])/(u[0]*u[0]+u[1]*u[1]);return[A[0]+t*u[0],A[1]+t*u[1]]}
+function proj(P,A,B){var u=[B[0]-A[0],B[1]-A[1]],t=((P[0]-A[0])*u[0]+(P[1]-A[1])*u[1])/(u[0]*u[0]+u[1]*u[1]);return[A[0]+t*u[0],A[1]+t*u[1]]}
+function pd(p,d){return[p[0],p[1],d]}
+function FG(pts,cmds,o){o=o||{};var xs=[],ys=[],L=[],k;for(k in pts){xs.push(pts[k][0]);ys.push(pts[k][1])}(o.ext||[]).forEach(function(p){xs.push(p[0]);ys.push(p[1])});
+  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys),w,h,m=Math.max(x1-x0,y1-y0)*.1+(o.axes?1:.5);
+  x0-=m;x1+=m;y0-=m;y1+=m;if(o.axes){x0=Math.floor(Math.min(x0,-1));x1=Math.ceil(Math.max(x1,1));y0=Math.floor(Math.min(y0,-1));y1=Math.ceil(Math.max(y1,1))}
+  w=x1-x0;h=y1-y0;if(h/w<.6){var e=(.6*w-h)/2;y0-=e;y1+=e}else if(h/w>1.2){var e2=(h/1.2-w)/2;x0-=e2;x1+=e2}
+  if(!o.axes)L.push("nogrid","noaxes");L.push("window x="+r3(x0)+".."+r3(x1)+" y="+r3(y0)+".."+r3(y1));
+  for(k in pts)L.push(k+"("+r3(pts[k][0])+","+r3(pts[k][1])+")"+(pts[k][2]?" "+pts[k][2]:""));
+  return L.concat(cmds).join("\n")}
+function sgs(a,c){return a.map(function(p){return"seg "+p+" "+(c||"black")})}
+function rts(a){return a.map(function(p){return"right "+p})}
+var GF={
+ geo1:function(){var r=3,A=[-r,0],B=[r,0],M=[-r/2,r*Math.sqrt(3)/2],D=[(M[0]+B[0])/2,(M[1]+B[1])/2],N=cint(A,D);
+   return FG({O:[0,0,"s"],A:pd(A,"w"),B:pd(B,"e"),M:pd(M,"n"),D:pd(D,"s"),N:pd(N,"ne")},["circle O "+r+" black"].concat(sgs(["A B","A M","M B","A N","N B"]),rts(["A M B","A N B"])),{ext:[[-r,-r],[r,r]]})},
+ geo2:function(){var H=[0,0],B=[-1.6,0],C=[3.6,0],A=[0,2.4],D=proj(H,A,B),E=proj(H,A,C);
+   return FG({A:pd(A,"n"),B:pd(B,"w"),C:pd(C,"e"),H:pd(H,"s"),D:pd(D,"nw"),E:pd(E,"ne")},["circle (0,1.2) 1.2 gray"].concat(sgs(["A B","A C","B C","A H","H D","H E"]),sgs(["D E"],"gray"),rts(["B A C","A H C","A D H","A E H"])))},
+ geo3:function(al){var r=3,M=[-r,0],N=[r,0],a=2*al*Math.PI/180,b=(90+al)*Math.PI/180,Qp=[r*Math.cos(a),r*Math.sin(a)],P=[r*Math.cos(b),r*Math.sin(b)],H=isect(N,P,M,Qp);
+   return FG({O:[0,0,"s"],M:pd(M,"w"),N:pd(N,"e"),Q:pd(Qp,"ne"),P:pd(P,"nw"),H:pd(H,"s")},["circle O "+r+" black"].concat(sgs(["M N","M Q","Q N","N P","M P"]),sgs(["O Q"],"gray"),rts(["M Q N","M P N"]),["angle N M Q "+al+"°"]),{ext:[[-r,-r],[r,r]]})},
+ geo4:function(AB,BD){var r=3,k=2*r/AB,A=[-r,0],B=[r,0],D=[r,BD*k],N=cint(A,D);
+   return FG({O:[0,0,"s"],A:pd(A,"w"),B:pd(B,"se"),D:pd(D,"ne"),N:pd(N,"nw")},["circle O "+r+" black","text ("+r3(r+.25)+","+r3(D[1]*.55)+") d"].concat(sgs(["A B","B D","A D","B N"]),rts(["A B D","A N B"])),{ext:[[-r,-r],[r,r]]})},
+ geo5:function(){var r=3,f=function(t){t*=Math.PI/180;return[r*Math.cos(t),r*Math.sin(t)]},A=f(100),B=f(215),C=f(330),D=[-A[0],-A[1]],H=proj(A,B,C);
+   return FG({O:[0,0,"e"],A:pd(A,"n"),B:pd(B,"w"),C:pd(C,"e"),D:pd(D,"s"),H:pd(H,"ne")},["circle O "+r+" black"].concat(sgs(["A B","B C","C A","A H","B D","C D"]),sgs(["A D"],"gray"),rts(["A H C","A C D","A B D"])),{ext:[[-r,-r],[r,r]]})},
+ geo6:function(){var r=3,s=r*Math.sqrt(3)/2;
+   return FG({O:[0,0,"s"],A:[-r,0,"w"],B:[r,0,"se"],H:[r/2,0,"sw"],C:[r/2,s,"n"],D:[r/2,-s,"s"],E:[2*r,2*s,"ne"]},["circle O "+r+" black"].concat(sgs(["A B","C D","A E","D E","B C"]),rts(["O H C","A C B"])),{ext:[[-r,-r],[r,r]]})},
+ geo7:function(AB,BM,AM){var r=3,k=2*r/AB,A=[-r,0],B=[r,0],c=AM/AB,s=BM/AB,M=[A[0]+AM*k*c,AM*k*s],D=[r+BM*k,0],N=[D[0],(D[0]-A[0])*s/c],I=[(B[0]+N[0])/2,N[1]/2];
+   return FG({O:[0,0,"s"],A:pd(A,"w"),B:pd(B,"s"),M:pd(M,"nw"),D:pd(D,"se"),N:pd(N,"ne"),I:pd(I,"e")},["circle O "+r+" black","circle I B gray"].concat(sgs(["A D","A N","D N","B M","B N"]),rts(["A M B","B D N"])),{ext:[[-r,-r],[r,r],[I[0]-Math.hypot(I[0]-B[0],I[1]),I[1]-Math.hypot(I[0]-B[0],I[1])],[I[0]+Math.hypot(I[0]-B[0],I[1]),I[1]+Math.hypot(I[0]-B[0],I[1])]]})},
+ geo8:function(PA,r0,OP){var r=2.5,k=r/r0,P=[OP*k,0],t=Math.acos(r0/OP),A=[r*Math.cos(t),r*Math.sin(t)],B=[A[0],-A[1]];
+   return FG({O:[0,0,"w"],A:pd(A,"n"),B:pd(B,"s"),P:pd(P,"e")},["circle O "+r+" black"].concat(sgs(["P A","P B","O A","O B"]),sgs(["O P"],"gray"),rts(["O A P","O B P"])),{ext:[[-r,-r],[r,r]]})},
+ coord:function(A,B,C,E,I){return FG({A:A,B:B,C:C,E:E,I:I},["line A B blue","line C I red","seg C A gray","seg C B gray","right B I C"],{axes:1})},
+ c2a:function(m,c,xA,yA,xM,yM){var d1=[xM-2,yM-2*m],d2=[xM+2,yM+2*m];return FG({A:[xA,yA],M:[xM,yM]},["line ("+r3(d1[0])+","+r3(d1[1])+") ("+r3(d2[0])+","+r3(d2[1])+") blue","line A M red","right A M ("+r3(d2[0])+","+r3(d2[1])+")"],{axes:1})},
+ c2b:function(A,B,C,M,H){return FG({A:A,B:B,C:C,M:M,H:H},["poly A B C gray","line A B blue","seg C M green","seg C H red","right C H B"],{axes:1})}};
 var D9={
  mcq:{id:"mcq",t:"ពហុជម្រើស (គូសសញ្ញា ✓)",lv:1,f:function(){var a=ri(0,MC9.length-1),b;do{b=ri(0,MC9.length-1)}while(b===a);
    return{inst:"ចូរគូសសញ្ញា ✓ ក្នុងប្រអប់ខាងមុខចម្លើយដែលត្រឹមត្រូវតែមួយគត់",it:[MC9[a](),MC9[b]()]}}},
@@ -679,7 +714,7 @@ var D9={
        AL(["n(C)&=C_{"+y+"}^2\\times C_{"+b+"}^1="+nCr(y,2)+"\\times"+b+"="+Y2,"P(C)&=\\dfrac{"+Y2+"}{"+D+"}="+F(Y2,D)]))]}}},
  coord:{id:"coord",t:"តម្រុយ · បន្ទាត់ · ចំណុចកណ្ដាល · ត្រីកោណសមបាត",lv:2,f:function(){
    var dx=nz(1,2),dy=nz(-3,3),A0=[ri(-2,2),ri(-2,2)],I=[A0[0]+dx,A0[1]+dy],B0=[A0[0]+2*dx,A0[1]+2*dy],t=pick([1,-1]),C0=[I[0]-t*dy,I[1]+t*dx],E0=[A0[0]-dx,A0[1]-dy],P=function(p){return"("+p.join(",")+")"},sl=F(dy,dx),sl2=F(-dx,dy),L2=2*(dx*dx+dy*dy);
-   return{inst:"ក្នុងតម្រុយអរតូណរមេ $(xOy)$ គេមានចំណុច $A"+P(A0)+"$ ; $B"+P(B0)+"$ និង $C"+P(C0)+"$ ។",it:[
+   return{kfig:GF.coord(A0,B0,C0,E0,I),inst:"ក្នុងតម្រុយអរតូណរមេ $(xOy)$ គេមានចំណុច $A"+P(A0)+"$ ; $B"+P(B0)+"$ និង $C"+P(C0)+"$ ។",it:[
      Q("សរសេរសមីការបន្ទាត់ $(AB)$ ។ បង្ហាញថាចំណុច $E"+P(E0)+"$ នៅលើបន្ទាត់ $(AB)$ ។","$(AB)\\colon "+lineT(dy,dx,A0[0],A0[1])+"$ និង $E\\in(AB)$",
        W(AL(["a_{AB}&=\\dfrac{y_B-y_A}{x_B-x_A}=\\dfrac{"+B0[1]+"-"+pn(A0[1])+"}{"+B0[0]+"-"+pn(A0[0])+"}="+sl,"(AB)\\colon y-y_A&=a_{AB}(x-x_A)","y-"+pn(A0[1])+"&="+sl+"(x-"+pn(A0[0])+")","y&="+lineT(dy,dx,A0[0],A0[1]).slice(2)]),
          "មេគុណប្រាប់ទិសនៃ $(AE)$ ៖ $a_{AE}=\\dfrac{"+E0[1]+"-"+pn(A0[1])+"}{"+E0[0]+"-"+pn(A0[0])+"}="+sl+"=a_{AB}$ នាំឱ្យ $A, B, E$ រត់ត្រង់ជួរ ⇒ $E\\in(AB)$")),
@@ -691,17 +726,17 @@ var D9={
  coord2:{id:"coord2",t:"បន្ទាត់កែង · ចំណុចប្រសព្វ · មេដ្យាន · កម្ពស់ក្នុងតម្រុយ",lv:2,f:function(){var P=function(a,b){return"("+a+","+b+")"};
    if(Math.random()<.5){var m=pick([1,-1,2,-2,3]),c=nz(-4,4),xA,yA,N;do{xA=ri(-3,3);yA=ri(-3,4);N=m*xA+c-yA}while(!N);
      var K=m*m+1,X=xA+m*yA-m*c,xM=F(X,K),yM=F(m*X+c*K,K);
-     return{inst:"ក្នុងតម្រុយអរតូណរមេ $(xOy)$ គេមានបន្ទាត់ $d\\colon y="+kx(m)+sg(c)+"$ និងចំណុច $A"+P(xA,yA)+"$ ។",it:[
+     return{kfig:GF.c2a(m,c,xA,yA,X/K,(m*X+c*K)/K),inst:"ក្នុងតម្រុយអរតូណរមេ $(xOy)$ គេមានបន្ទាត់ $d\\colon y="+kx(m)+sg(c)+"$ និងចំណុច $A"+P(xA,yA)+"$ ។",it:[
        Q("រកសមីការនៃបន្ទាត់ $d'$ ដែលកាត់តាមចំណុច $A$ ហើយកែងនឹងបន្ទាត់ $d$ ។","$d'\\colon "+lineT(-1,m,xA,yA)+"$",
          W("$d$ មានមេគុណប្រាប់ទិស $a="+m+"$ ។ ដោយ $d'\\perp d$ នោះ $a'="+F(-1,m)+"$ ៖",AL(["y-y_A&=a'(x-x_A)","y-"+pn(yA)+"&="+F(-1,m)+"(x-"+pn(xA)+")","y&="+lineT(-1,m,xA,yA).slice(2)]))),
        Q("គណនាកូអរដោនេចំណុច $M$ ជាចំណុចប្រសព្វរវាងបន្ទាត់ $d$ និង $d'$ ។","$M\\left("+xM+","+yM+"\\right)$",
-         W("ផ្ទឹមសមីការទាំងពីរ ៖",AL([kx(m)+sg(c)+"&="+lineT(-1,m,xA,yA).slice(2)]),"គុណអង្គទាំងពីរនឹង $"+m+"$ ៖",AL([kx(m*m)+sg(m*c)+"&=-x"+(xA+m*yA?sg(xA+m*yA):""),kx(K)+"&="+X,"x&="+xM]),"ជំនួសក្នុងសមីការ $d$ ៖ $y="+m+"\\times"+(X%K?"\\left("+xM+"\\right)":pn(X/K))+sg(c)+"="+yM+"$")),
+         W("ផ្ទឹមសមីការទាំងពីរ ៖",AL([kx(m)+sg(c)+"&="+lineT(-1,m,xA,yA).slice(2)]),m===1?"":"គុណអង្គទាំងពីរនឹង $"+m+"$ ៖",AL((m===1?[]:[kx(m*m)+sg(m*c)+"&=-x"+(xA+m*yA?sg(xA+m*yA):"")]).concat([kx(K)+"&="+X,"x&="+xM])),"ជំនួសក្នុងសមីការ $d$ ៖ $y="+m+"\\times"+(X%K?"\\left("+xM+"\\right)":pn(X/K))+sg(c)+"="+yM+"$")),
        Q("គណនាចម្ងាយ $AM$ ។","$AM="+St(S(Math.abs(N),K,K))+"$",
          AL(["AM&=\\sqrt{\\left("+xA+"-"+(X%K?"\\left("+xM+"\\right)":pn(X/K))+"\\right)^2+\\left("+yA+"-"+((m*X+c*K)%K?"\\left("+yM+"\\right)":pn((m*X+c*K)/K))+"\\right)^2}","&=\\sqrt{\\left("+F(m*N,K)+"\\right)^2+\\left("+F(-N,K)+"\\right)^2}","&=\\sqrt{"+F(N*N,K)+"}="+St(S(Math.abs(N),K,K))]))]}}
    var A0,B0,C0,dx,dy,xM,yM;do{A0=[ri(-3,1),ri(-2,3)];dx=2*ri(1,3);dy=2*nz(-2,2);B0=[A0[0]+dx,A0[1]+dy];xM=A0[0]+dx/2;yM=A0[1]+dy/2;C0=[ri(-2,3),ri(2,6)]}
    while(C0[0]===xM||C0[1]===A0[1]+dy*(C0[0]-A0[0])/dx);
    var n=dy,d=dx,g=gcd(n,d);n/=g;d/=g;var Kh=n*n+d*d,X=n*n*A0[0]-n*d*A0[1]+d*d*C0[0]+n*d*C0[1],xH=F(X,Kh),yH=F(n*(X-A0[0]*Kh)+A0[1]*d*Kh,d*Kh);
-   return{inst:"ចូរដៅចំណុច $A"+P(A0[0],A0[1])+"$ , $B"+P(B0[0],B0[1])+"$ និង $C"+P(C0[0],C0[1])+"$ ក្នុងតម្រុយអរតូណរមេ $(xOy)$ ។",it:[
+   return{kfig:GF.c2b(A0,B0,C0,[xM,yM],[X/Kh,(n*(X-A0[0]*Kh)+A0[1]*d*Kh)/(d*Kh)]),inst:"ចូរដៅចំណុច $A"+P(A0[0],A0[1])+"$ , $B"+P(B0[0],B0[1])+"$ និង $C"+P(C0[0],C0[1])+"$ ក្នុងតម្រុយអរតូណរមេ $(xOy)$ ។",it:[
      Q("រកសមីការនៃបន្ទាត់ $(AB)$ ។","$(AB)\\colon "+lineT(n,d,A0[0],A0[1])+"$",AL(["a_{AB}&=\\dfrac{"+B0[1]+"-"+pn(A0[1])+"}{"+B0[0]+"-"+pn(A0[0])+"}="+F(n,d),"y-"+pn(A0[1])+"&="+F(n,d)+"(x-"+pn(A0[0])+")","y&="+lineT(n,d,A0[0],A0[1]).slice(2)])),
      Q("គេគូសមេដ្យាន $(CM)$ នៃត្រីកោណ $ABC$ ។ រកកូអរដោនេចំណុច $M$ និងសមីការ $(CM)$ ។","$M"+P(xM,yM)+"$ , $(CM)\\colon "+lineT(yM-C0[1],xM-C0[0],C0[0],C0[1])+"$",
        W("$M$ ជាចំណុចកណ្ដាលនៃ $[AB]$ ៖",AL(["M&=\\left(\\dfrac{"+A0[0]+sg(B0[0])+"}{2},\\dfrac{"+A0[1]+sg(B0[1])+"}{2}\\right)="+P(xM,yM),"a_{CM}&=\\dfrac{"+yM+"-"+pn(C0[1])+"}{"+xM+"-"+pn(C0[0])+"}="+F(yM-C0[1],xM-C0[0]),"(CM)\\colon y&="+lineT(yM-C0[1],xM-C0[0],C0[0],C0[1]).slice(2)]))),
@@ -710,7 +745,7 @@ var D9={
      Q("រកកូអរដោនេនៃចំណុច $H$ ។","$H\\left("+xH+","+yH+"\\right)$",
        W("$H$ ជាចំណុចប្រសព្វរវាង $(AB)$ និង $(CH)$ ៖",AL([lineT(n,d,A0[0],A0[1]).slice(2)+"&="+lineT(-d,n,C0[0],C0[1]).slice(2),"x&="+xH,"y&="+yH])))]}}},
  geo1:{id:"geo1",t:"រង្វង់ · អង្កត់ផ្ចិត · ត្រីកោណដូចគ្នា (MD² = AD × ND)",lv:3,f:function(){var R=ri(3,8),BM=sqrtT(3*R*R),MD=St(S(R,2,3)),AD=St(S(R,2,7)),ND=St(S(3*R,14,7));
-   return{inst:"គេឱ្យរង្វង់ផ្ចិត $O$ មានអង្កត់ផ្ចិត $AB="+2*R+"$ cm ហើយ $M$ ជាចំណុចមួយនៅលើរង្វង់នេះ ដែល $AM="+R+"$ cm ។",it:[
+   return{kfig:GF.geo1(),inst:"គេឱ្យរង្វង់ផ្ចិត $O$ មានអង្កត់ផ្ចិត $AB="+2*R+"$ cm ហើយ $M$ ជាចំណុចមួយនៅលើរង្វង់នេះ ដែល $AM="+R+"$ cm ។",it:[
      Q("បញ្ជាក់ប្រភេទត្រីកោណ $AMB$ រួចគណនាប្រវែង $BM$ ។","$\\triangle AMB$ កែងត្រង់ $M$ , $BM="+BM+"$ cm",
        W("ដោយ $AB$ ជាអង្កត់ផ្ចិត ហើយ $M$ នៅលើរង្វង់ នោះ $\\angle AMB=90^\\circ$ (មុំចារឹកកន្លះរង្វង់) ⇒ $\\triangle AMB$ កែងត្រង់ $M$ ។","តាមទ្រឹស្ដីបទពីតាករ ៖",AL(["BM^2&=AB^2-AM^2","&="+2*R+"^2-"+R+"^2="+4*R*R+"-"+R*R+"="+3*R*R,"BM&=\\sqrt{"+3*R*R+"}="+BM+"\\text{ cm}"]))),
      Q("$D$ ជាចំណុចកណ្ដាលនៃអង្កត់ $BM$ ។ គេបន្លាយបន្ទាត់ $AD$ ឱ្យកាត់រង្វង់ត្រង់ចំណុច $N$ ។ ប្រៀបធៀបត្រីកោណ $AMD$ និង $BND$ រួចទាញបញ្ជាក់ថា $MD^2=AD\\times ND$ ។","$\\triangle AMD\\sim\\triangle BND$ និង $MD^2=AD\\times ND$",
@@ -719,7 +754,7 @@ var D9={
      Q("គណនាប្រវែង $AD$ និង $ND$ ។","$AD="+AD+"$ cm , $ND="+ND+"$ cm",
        W("$MD=\\dfrac{BM}{2}="+MD+"$ cm ។ ក្នុងត្រីកោណកែង $AMD$ ៖",AL(["AD^2&=AM^2+MD^2="+R*R+"+"+F(3*R*R,4)+"="+F(7*R*R,4),"AD&="+AD+"\\text{ cm}","ND&=\\dfrac{MD^2}{AD}="+F(3*R*R,4)+"\\times\\dfrac{2}{"+(R===1?"":R)+"\\sqrt7}="+ND+"\\text{ cm}"])))]}}},
  geo2:{id:"geo2",t:"ត្រីកោណកែង · កម្ពស់ AH · ចតុកោណចារឹក",lv:3,f:function(){
-   return{inst:"ក្នុងត្រីកោណ $ABC$ កែងត្រង់ $A$ គេគូសកម្ពស់ $[AH]$ ។ រង្វង់មានអង្កត់ផ្ចិត $[AH]$ កាត់ $AB$ ត្រង់ $D$ និងកាត់ $(AC)$ ត្រង់ $E$ ។",it:[
+   return{kfig:GF.geo2(),inst:"ក្នុងត្រីកោណ $ABC$ កែងត្រង់ $A$ គេគូសកម្ពស់ $[AH]$ ។ រង្វង់មានអង្កត់ផ្ចិត $[AH]$ កាត់ $AB$ ត្រង់ $D$ និងកាត់ $(AC)$ ត្រង់ $E$ ។",it:[
      Q("ប្រាប់ឈ្មោះចតុកោណ $ADHE$ ។","$ADHE$ ជាចតុកោណកែង",
        W("ដោយ $AH$ ជាអង្កត់ផ្ចិត នោះ $\\angle ADH=90^\\circ$ និង $\\angle AEH=90^\\circ$ (មុំចារឹកកន្លះរង្វង់) ។","ម្យ៉ាងទៀត $\\angle DAE=\\angle BAC=90^\\circ$ ។ ចតុកោណ $ADHE$ មានមុំកែងបី ⇒ ជាចតុកោណកែង ។")),
      Q("ប្រៀបធៀបត្រីកោណ $ABC$ និង $AED$ រួចទាញបង្ហាញថា $AB\\cdot AD=AC\\cdot AE$ ។","$\\triangle ABC\\sim\\triangle AED$ និង $AB\\cdot AD=AC\\cdot AE$",
@@ -727,7 +762,7 @@ var D9={
      Q("បង្ហាញថាចតុកោណ $BDEC$ ចារឹកក្នុងរង្វង់មួយ ។","$BDEC$ ចារឹកក្នុងរង្វង់",
        W("តាមសំណួរទី២ $\\angle ADE=\\angle ACB$ ។ ដោយ $\\angle ADE+\\angle BDE=180^\\circ$ (មុំបន្ទាប់បន្សំ) ⇒ $\\angle BDE+\\angle BCE=180^\\circ$ ។","ចតុកោណ $BDEC$ មានផលបូកមុំឈមពីរស្មើ $180^\\circ$ ⇒ ចារឹកក្នុងរង្វង់ ។"))]}}},
  geo3:{id:"geo3",t:"រង្វង់ · មុំផ្ចិត · មុំចារឹក · ត្រីកោណដូចគ្នា",lv:2,f:function(){var al=pick([25,30,35,40]);
-   return{inst:"គេមានរង្វង់ផ្ចិត $O$ និងអង្កត់ផ្ចិត $MN$ ។ $Q$ ជាចំណុចមួយនៅលើរង្វង់ដែល $\\angle NMQ="+al+"^\\circ$ ។",it:[
+   return{kfig:GF.geo3(al),inst:"គេមានរង្វង់ផ្ចិត $O$ និងអង្កត់ផ្ចិត $MN$ ។ $Q$ ជាចំណុចមួយនៅលើរង្វង់ដែល $\\angle NMQ="+al+"^\\circ$ ។",it:[
      Q("គណនារង្វាស់ $\\angle NOQ$ ។","$\\angle NOQ="+2*al+"^\\circ$",
        W("$\\angle NMQ$ ជាមុំចារឹក និង $\\angle NOQ$ ជាមុំផ្ចិត ដែលស្កាត់ធ្នូ $NQ$ ដូចគ្នា ៖",AL(["\\angle NOQ&=2\\angle NMQ=2\\times"+al+"^\\circ="+2*al+"^\\circ"]))),
      Q("ប្រាប់ប្រភេទត្រីកោណ $MNQ$ ។","$\\triangle MNQ$ ជាត្រីកោណកែងត្រង់ $Q$",
@@ -735,7 +770,7 @@ var D9={
      Q("ដៅចំណុច $P$ នៅលើធ្នូតូច $MQ$ រួចគូសបន្ទាត់ $NP$ កាត់អង្កត់ $MQ$ ត្រង់ចំណុច $H$ ។ ប្រដូច $\\triangle MHP$ និង $\\triangle NHQ$ រួចទាញវិបាក ។","$\\triangle MHP\\sim\\triangle NHQ$ ⇒ $HM\\cdot HQ=HP\\cdot HN$",
        W("គេមាន $\\angle MHP=\\angle NHQ$ (មុំទល់កំពូល) និង $\\angle MPH=\\angle NQH=90^\\circ$ (មុំចារឹកកន្លះរង្វង់)","⇒ $\\triangle MHP\\sim\\triangle NHQ$ (ករណីទី១ ម.ម) ។ តាមផលធៀបដំណូច ៖",AL(["\\dfrac{MH}{NH}&=\\dfrac{HP}{HQ}=\\dfrac{MP}{NQ}","HM\\cdot HQ&=HP\\cdot HN"])))]}}},
  geo4:{id:"geo4",t:"បន្ទាត់ប៉ះត្រង់ B · BD² = AD × DN",lv:3,f:function(){var t=pick([[8,6,10],[6,8,10],[15,20,25],[12,5,13],[5,12,13],[12,9,15]]),AB=t[0],BD=t[1],AD=t[2];
-   return{inst:"គូសរង្វង់ផ្ចិត $O$ អង្កត់ផ្ចិត $AB="+AB+"$ cm ។ គូសបន្ទាត់ $d$ ប៉ះរង្វង់ត្រង់ $B$ ។ ដៅចំណុច $D$ នៅលើបន្ទាត់ $d$ ដែល $BD="+BD+"$ cm ។ បន្ទាត់ $AD$ កាត់រង្វង់ត្រង់ចំណុច $N$ ។",it:[
+   return{kfig:GF.geo4(AB,BD),inst:"គូសរង្វង់ផ្ចិត $O$ អង្កត់ផ្ចិត $AB="+AB+"$ cm ។ គូសបន្ទាត់ $d$ ប៉ះរង្វង់ត្រង់ $B$ ។ ដៅចំណុច $D$ នៅលើបន្ទាត់ $d$ ដែល $BD="+BD+"$ cm ។ បន្ទាត់ $AD$ កាត់រង្វង់ត្រង់ចំណុច $N$ ។",it:[
      Q("ប្រាប់ឈ្មោះត្រីកោណ $ABD$ និងត្រីកោណ $ANB$ ។","$\\triangle ABD$ កែងត្រង់ $B$ , $\\triangle ANB$ កែងត្រង់ $N$",
        W("$\\angle ABD=90^\\circ$ (ព្រោះ $d$ ប៉ះរង្វង់ត្រង់ $B$ ⇒ $d\\perp AB$) ⇒ $\\triangle ABD$ កែងត្រង់ $B$ ។","$\\angle ANB=90^\\circ$ (មុំចារឹកកន្លះរង្វង់) ⇒ $\\triangle ANB$ កែងត្រង់ $N$ ។")),
      Q("គណនាប្រវែង $AD$ និង $BN$ ។","$AD="+AD+"$ cm , $BN="+fv(AB*BD,AD)+"$ cm",
@@ -743,7 +778,7 @@ var D9={
      Q("ប្រៀបធៀប $\\triangle ABD$ និង $\\triangle BND$ រួចបញ្ជាក់ថា $BD^2=AD\\times DN$ ។ គណនា $DN$ ។","$BD^2=AD\\times DN$ , $DN="+fv(BD*BD,AD)+"$ cm",
        W("គេមាន $\\angle ABD=\\angle BND=90^\\circ$ និង $\\angle D$ ជាមុំរួម ⇒ $\\triangle ABD\\sim\\triangle BND$ (ករណីទី១ ម.ម) ។",AL(["\\dfrac{BD}{ND}&=\\dfrac{AD}{BD}\\Rightarrow BD^2=AD\\times DN","DN&=\\dfrac{BD^2}{AD}=\\dfrac{"+BD*BD+"}{"+AD+"}="+fv(BD*BD,AD)+"\\text{ cm}"])))]}}},
  geo5:{id:"geo5",t:"រង្វង់ចារឹកក្រៅ · កម្ពស់ AH · AB×AC = AD×AH",lv:3,f:function(){
-   return{inst:"គេមានរង្វង់ផ្ចិត $O$ ចារឹកក្រៅត្រីកោណ $ABC$ មួយ ដែលមានកម្ពស់ $AH$ និងមុំទាំងបីជាមុំស្រួច ។ $D$ ជាចំណុចឆ្លុះនៃ $A$ ធៀបនឹងផ្ចិត $O$ ។",it:[
+   return{kfig:GF.geo5(),inst:"គេមានរង្វង់ផ្ចិត $O$ ចារឹកក្រៅត្រីកោណ $ABC$ មួយ ដែលមានកម្ពស់ $AH$ និងមុំទាំងបីជាមុំស្រួច ។ $D$ ជាចំណុចឆ្លុះនៃ $A$ ធៀបនឹងផ្ចិត $O$ ។",it:[
      Q("បង្ហាញថា $\\angle ABC=\\angle ADC$ និង $\\angle ACB=\\angle ADB$ ។","$\\angle ABC=\\angle ADC$ , $\\angle ACB=\\angle ADB$",
        W("$A, B, C, D$ ស្ថិតនៅលើរង្វង់តែមួយ ។","$\\angle ABC$ និង $\\angle ADC$ ជាមុំចារឹកស្កាត់ធ្នូ $AC$ រួម ⇒ $\\angle ABC=\\angle ADC$ ។","$\\angle ACB$ និង $\\angle ADB$ ជាមុំចារឹកស្កាត់ធ្នូ $AB$ រួម ⇒ $\\angle ACB=\\angle ADB$ ។")),
      Q("ប្រៀបធៀប $\\triangle HAB$ និង $\\triangle CAD$ រួចប្រៀបធៀប $\\triangle HAC$ និង $\\triangle BAD$ ។","$\\triangle HAB\\sim\\triangle CAD$ , $\\triangle HAC\\sim\\triangle BAD$",
@@ -752,7 +787,7 @@ var D9={
      Q("បង្ហាញថា $AB\\times AC=AD\\times AH$ ហើយ $\\angle BAD=\\angle HAC$ ។","$AB\\times AC=AD\\times AH$ , $\\angle BAD=\\angle HAC$",
        W("ពី $\\triangle HAB\\sim\\triangle CAD$ ៖",AL(["\\dfrac{AH}{AC}&=\\dfrac{AB}{AD}\\Rightarrow AB\\times AC=AD\\times AH"]),"ពី $\\triangle HAC\\sim\\triangle BAD$ មុំទី៣ ប៉ុនគ្នា ⇒ $\\angle HAC=\\angle BAD$ ។"))]}}},
  geo6:{id:"geo6",t:"អង្កត់ធ្នូកែងត្រង់កណ្ដាល OB · ធ្នូ CD = 120° · EC·EA = ED·EB",lv:3,f:function(){var R=ri(2,6);
-   return{inst:"គេមានរង្វង់ផ្ចិត $O$ អង្កត់ផ្ចិត $AB="+2*R+"$ cm ។ $H$ ជាចំណុចកណ្ដាលនៃកាំ $OB$ ។ បន្ទាត់កែងនឹង $AB$ ត្រង់ $H$ កាត់រង្វង់ត្រង់ $C$ និង $D$ ។ បន្ទាត់ $AC$ និង $BD$ បន្លាយជួបគ្នាត្រង់ $E$ ។",it:[
+   return{kfig:GF.geo6(),inst:"គេមានរង្វង់ផ្ចិត $O$ អង្កត់ផ្ចិត $AB="+2*R+"$ cm ។ $H$ ជាចំណុចកណ្ដាលនៃកាំ $OB$ ។ បន្ទាត់កែងនឹង $AB$ ត្រង់ $H$ កាត់រង្វង់ត្រង់ $C$ និង $D$ ។ បន្ទាត់ $AC$ និង $BD$ បន្លាយជួបគ្នាត្រង់ $E$ ។",it:[
      Q("ប្រាប់ប្រភេទត្រីកោណ $ACB$ រួចគណនា $BC$ និង $AC$ ។","$\\triangle ACB$ កែងត្រង់ $C$ , $BC="+R+"$ cm , $AC="+R+"\\sqrt3$ cm",
        W("$\\angle ACB=90^\\circ$ (មុំចារឹកកន្លះរង្វង់) ⇒ $\\triangle ACB$ កែងត្រង់ $C$ ។ $HB=\\dfrac{OB}{2}="+n9(R/2)+"$ cm , $AH="+n9(1.5*R)+"$ cm ។","តាមទំនាក់ទំនងមាត្រក្នុងត្រីកោណកែង ($CH$ ជាកម្ពស់) ៖",
          AL(["BC^2&=BH\\times AB="+n9(R/2)+"\\times"+2*R+"="+R*R+"\\Rightarrow BC="+R+"\\text{ cm}","AC^2&=AH\\times AB="+n9(1.5*R)+"\\times"+2*R+"="+3*R*R+"\\Rightarrow AC="+R+"\\sqrt3\\text{ cm}"]))),
@@ -761,7 +796,7 @@ var D9={
      Q("ប្រៀបធៀបត្រីកោណ $EAB$ និង $ECD$ រួចទាញបង្ហាញថា $EC\\cdot EA=ED\\cdot EB$ ។","$\\triangle EAB\\sim\\triangle ECD$ ⇒ $EC\\cdot EA=ED\\cdot EB$",
        W("$\\angle EAB=\\angle EDC$ (មុំចារឹកស្កាត់ធ្នូ $CB$) និង $\\angle E$ ជាមុំរួម ⇒ $\\triangle EAB\\sim\\triangle ECD$ (ករណីទី១ ម.ម) ។",AL(["\\dfrac{EA}{ED}&=\\dfrac{EB}{EC}\\Rightarrow EC\\cdot EA=ED\\cdot EB"])))]}}},
  geo7:{id:"geo7",t:"បន្លាយ AB ឱ្យ BD = BM · ត្រីកោណដូចគ្នា · BMND ចារឹក",lv:3,f:function(){var t=pick([[10,6,8],[10,8,6],[5,3,4],[5,4,3],[15,9,12],[15,12,9],[20,12,16],[13,5,12]]),AB=t[0],BM=t[1],AM=t[2],AD=AB+BM,k=F(AD,AM);
-   return{inst:"គេមានរង្វង់ផ្ចិត $O$ អង្កត់ផ្ចិត $AB="+AB+"$ cm និងចំណុច $M$ មួយនៅលើរង្វង់ដែល $BM="+BM+"$ cm ។ គេបន្លាយអង្កត់ $AB$ ខាង $B$ ឱ្យបាន $BD=BM$ រួចគូសបន្ទាត់ $d$ កែងនឹង $BD$ ត្រង់ $D$ ហើយកាត់បន្ទាត់ $AM$ ត្រង់ចំណុច $N$ ។",it:[
+   return{kfig:GF.geo7(AB,BM,AM),inst:"គេមានរង្វង់ផ្ចិត $O$ អង្កត់ផ្ចិត $AB="+AB+"$ cm និងចំណុច $M$ មួយនៅលើរង្វង់ដែល $BM="+BM+"$ cm ។ គេបន្លាយអង្កត់ $AB$ ខាង $B$ ឱ្យបាន $BD=BM$ រួចគូសបន្ទាត់ $d$ កែងនឹង $BD$ ត្រង់ $D$ ហើយកាត់បន្ទាត់ $AM$ ត្រង់ចំណុច $N$ ។",it:[
      Q("គណនារង្វាស់អង្កត់ $AM$ និង $AD$ ។","$AM="+AM+"$ cm , $AD="+AD+"$ cm",
        W("$\\angle AMB=90^\\circ$ (មុំចារឹកកន្លះរង្វង់) ។ ក្នុងត្រីកោណកែង $MAB$ ៖",AL(["AM^2&=AB^2-BM^2="+AB*AB+"-"+BM*BM+"="+AM*AM,"AM&="+AM+"\\text{ cm}","AD&=AB+BD="+AB+"+"+BM+"="+AD+"\\text{ cm}"]))),
      Q("ប្រៀបធៀប $\\triangle MAB$ និង $\\triangle DAN$ រួចគណនារង្វាស់ $AN$ និង $DN$ ។","$AN="+n9(AD*AB/AM)+"$ cm , $DN="+n9(AD*BM/AM)+"$ cm",
@@ -769,7 +804,7 @@ var D9={
      Q("បង្ហាញថាចតុកោណ $BMND$ ចារឹកក្នុងរង្វង់ ហើយប្រាប់ទីតាំងផ្ចិត $I$ របស់រង្វង់នោះ ។","$BMND$ ចារឹកក្នុងរង្វង់ផ្ចិត $I$ ជាចំណុចកណ្ដាលនៃ $BN$",
        W("ដោយ $A, M, N$ រត់ត្រង់ជួរ និង $\\angle AMB=90^\\circ$ ⇒ $\\angle BMN=90^\\circ$ ។ ហើយ $\\angle BDN=90^\\circ$ ($d\\perp BD$) ។","⇒ $\\angle BMN+\\angle BDN=180^\\circ$ ⇒ $BMND$ ចារឹកក្នុងរង្វង់ ។ $M$ និង $D$ មើល $BN$ ក្រោមមុំកែង ⇒ $BN$ ជាអង្កត់ផ្ចិត ⇒ ផ្ចិត $I$ ជាចំណុចកណ្ដាលនៃ $BN$ ។"))]}}},
  geo8:{id:"geo8",t:"បន្ទាត់ប៉ះពីរ PA = PB · បរិមាត្រ · ផ្ទៃក្រឡា PAOB",lv:2,f:function(){var t=pick([[4,3,5],[12,5,13],[8,6,10],[15,8,17],[12,9,15]]),PA=t[0],r=t[1],OP=t[2],a=pick([2,3]),x=ri(Math.floor(PA/a)+1,PA-1),b=a*x-PA,c=PA-x;
-   return{inst:"គេមាន $PA$ និង $PB$ ជាបន្ទាត់ប៉ះទៅនឹងរង្វង់ផ្ចិត $O$ កាំ $"+r+"$ cm ត្រង់ $A$ និង $B$ ។ គេដឹងថា $PA="+a+"x-"+b+"$ និង $PB=x+"+c+"$ ។",it:[
+   return{kfig:GF.geo8(PA,r,OP),inst:"គេមាន $PA$ និង $PB$ ជាបន្ទាត់ប៉ះទៅនឹងរង្វង់ផ្ចិត $O$ កាំ $"+r+"$ cm ត្រង់ $A$ និង $B$ ។ គេដឹងថា $PA="+a+"x-"+b+"$ និង $PB=x+"+c+"$ ។",it:[
      Q("កំណត់តម្លៃ $x$ និងប្រវែង $PA$ ។","$x="+x+"$ , $PA="+PA+"$ cm",
        W("បន្ទាត់ប៉ះរង្វង់ចេញពីចំណុចមួយនៅក្រៅរង្វង់មានប្រវែងស្មើគ្នា ៖ $PA=PB$",AL([a+"x-"+b+"&=x+"+c,kx(a-1)+"&="+(b+c),"x&="+x,"PA&="+a+"\\times"+x+"-"+b+"="+PA+"\\text{ cm}"]))),
      Q("បង្ហាញថា $OA\\perp PA$ ហើយគណនាប្រវែង $OP$ ។","$OP="+OP+"$ cm",
@@ -787,6 +822,6 @@ window.EXGEN={
   bac:function(k){if(k==="b")return BAC.map(function(x){var f=x[1]?null:pick([[42,"fexp"],[43,"fln"]]);return{ls:f?f[0]:x[0],lv:"t:"+(f?f[1]:x[1]),pts:x[2]}});
     return BAC7.map(function(x){var c=pick(x[0]);return{ls:c[0],lv:"t:"+c[1],pts:x[1]}})},
   list:function(k){return(REG[k]||[]).map(function(x){return{id:x.id,t:x.t,lv:x.lv}})},
-  make:function(k,id){var L=REG[k]||[],t=L.filter(function(x){return x.id===id})[0]||L[0];if(!t)return null;var o=t.f();o.it=o.it.map(function(x){return{q:x.q,fig:"",ans:x.ans,sol:x.sol}});return o}
+  make:function(k,id){var L=REG[k]||[],t=L.filter(function(x){return x.id===id})[0]||L[0];if(!t)return null;var o=t.f();o.it=o.it.map(function(x,i){return{q:x.q,fig:"",ans:x.ans,sol:x.sol,kfig:!i&&o.kfig||""}});return o}
 };
 })();

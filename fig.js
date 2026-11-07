@@ -84,12 +84,13 @@ function svg(spec){
       if((m=/^normal\s+y\s*=\s*(.+?)\s+at\s+(-?[\d.]+)$/i.exec(t))){var f1=parse(m[1]),x1=+m[2],h1=1e-5,k1=(f1(x1+h1)-f1(x1-h1))/(2*h1);items.push({k:"tan",x0:x1,y0:f1(x1),m:k1?-1/k1:1e6,vert:!k1,c:col||nextC()});return}
       if((m=/^hole\s+([A-Za-z]\w*'*)?\s*\(\s*([^,]+),([^)]+)\)$/i.exec(t))){var hp=[parse(m[2])(),parse(m[3])()];if(m[1])P[m[1]]=hp;items.push({k:"hole",p:hp,n:m[1]||"",c:col||"#222"});return}
       if((m=/^dots\s+y\s*=\s*(.+?)\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\]$/i.exec(t))){var fd=parse(m[1]),da=Math.ceil(parse(m[2])()),db=Math.floor(parse(m[3])()),dc=col||nextC();for(var n=da;n<=db&&n-da<200;n++){var dv=fd(n,0);if(isFinite(dv))items.push({k:"pt",p:[n,dv],n:"",c:dc})}return}
+      if((m=/^right\s+(\S+)\s+(\S+)\s+(\S+)$/i.exec(t))){items.push({k:"rt",ns:[m[1],m[2],m[3]],c:col||"#222"});return}
       if((m=/^angle\s+(\S+)\s+(\S+)\s+(\S+)(?:\s+(.+))?$/i.exec(t))){items.push({k:"ang",ns:[m[1],m[2],m[3]],lb:m[4]||"",c:col||"#d9731a"});return}
       if((m=/^pie\s+(.+)$/i.exec(t))){var pv=[],pl=[];m[1].split(/\s+/).forEach(function(z){var q=/^([\d.]+)(?::(.+))?$/.exec(z);if(!q)throw"pie «"+z+"»";pv.push(+q[1]);pl.push((q[2]||"").replace(/_/g," "))});items.push({k:"pie",v:pv,lb:pl});grid=false;axes=false;if(!win)win={x0:-4.2,x1:4.2,y0:-3.6,y1:3.6};return}
       if((m=/^bar\s+(.+)$/i.exec(t))){var bc=col||nextC();m[1].split(/\s+/).forEach(function(z){var q=/^(-?[\d.]+):(-?[\d.]+)$/.exec(z);if(!q)throw"bar «"+z+"»";items.push({k:"bar",p:[+q[1],+q[2]],c:bc})});return}
       if((m=/^text\s*\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)\s*(.+)$/i.exec(t))){items.push({k:"text",p:[+m[1],+m[2]],n:m[3],c:col||"#222"});return}
-      if((m=/^([A-Za-z]\w*'*)?\s*\(\s*(-?[\d.]+(?:\/[\d.]+)?)\s*,\s*(-?[\d.]+(?:\/[\d.]+)?)\s*\)$/.exec(t))&&!/^(x|y)$/i.test(m[1]||"")){
-        var px=parse(m[2])(),py=parse(m[3])();if(m[1])P[m[1]]=[px,py];items.push({k:"pt",p:[px,py],n:m[1]||"",c:col||"#222"});return}
+      if((m=/^([A-Za-z]\w*'*)?\s*\(\s*(-?[\d.]+(?:\/[\d.]+)?)\s*,\s*(-?[\d.]+(?:\/[\d.]+)?)\s*\)(?:\s+(ne|nw|se|sw|n|s|e|w))?$/.exec(t))&&!/^(x|y)$/i.test(m[1]||"")){
+        var px=parse(m[2])(),py=parse(m[3])();if(m[1])P[m[1]]=[px,py];items.push({k:"pt",dir:m[4]||"",p:[px,py],n:m[1]||"",c:col||"#222"});return}
       if((m=/^point\s+(.*)$/i.exec(t))){var q2=/^([A-Za-z]\w*'*)?\s*\(\s*([^,]+),([^)]+)\)$/.exec(m[1]);if(!q2)throw"ចំណុច";var v2=[parse(q2[2])(),parse(q2[3])()];if(q2[1])P[q2[1]]=v2;items.push({k:"pt",p:v2,n:q2[1]||"",c:col||"#222"});return}
       if((m=/^(seg|line|vec|poly)\s+(.+)$/i.exec(t))){var ns=m[2].split(/\s+/);items.push({k:m[1].toLowerCase(),ns:ns,c:col||nextC()});return}
       if((m=/^circle\s+(.+)$/i.exec(t))){var a=m[1].trim(),cc=/^\(\s*([^,]+),([^)]+)\)\s*(?:r\s*=\s*)?(.+)$/.exec(a),it={k:"circle",c:col||nextC()};
@@ -152,7 +153,7 @@ function svg(spec){
     g+="<text x="+(sx(ay)-5)+" y="+(sy(ax)+14)+" text-anchor=end fill=#555 font-style=italic>O</text>";
   }
   var lab="";
-  function label(p,n,c){if(!n)return;var dx=p[0]<0?-7:7,dy=p[1]<0?15:-7;lab+="<text x="+(sx(p[0])+dx)+" y="+(sy(p[1])+dy)+" text-anchor="+(p[0]<0?"end":"start")+" fill='"+c+"' font-size=13 font-weight=600>"+sub(n)+"</text>"}
+  function label(p,n,c,d){if(!n)return;var dx=p[0]<0?-7:7,dy=p[1]<0?15:-7,an=p[0]<0?"end":"start";if(d){dx=/e/.test(d)?7:/w/.test(d)?-7:0;dy=/s/.test(d)?16:/n/.test(d)?-8:5;an=dx>0?"start":dx<0?"end":"middle"}lab+="<text x="+(sx(p[0])+dx)+" y="+(sy(p[1])+dy)+" text-anchor="+an+" fill='"+c+"' font-size=13 font-weight=600>"+sub(n)+"</text>"}
   function path(f,d,c,dash){
     var o="",pen=false,N=500,lx=null,ly=null;
     for(var j=0;j<=N;j++){var x=X0+(X1-X0)*j/N;if(d&&(x<d[0]-1e-9||x>d[1]+1e-9)){pen=false;continue}var y=f(x,0);
@@ -171,6 +172,8 @@ function svg(spec){
         a1=Math.atan2(uy,ux),a2=Math.atan2(vy,vx),dA=a2-a1;while(dA<=-Math.PI)dA+=2*Math.PI;while(dA>Math.PI)dA-=2*Math.PI;
         var X=sx(Po[0]),Y=sy(Po[1]);g+="<path d='M"+(X+R*Math.cos(a1))+","+(Y+R*Math.sin(a1))+" A"+R+","+R+" 0 0 "+(dA>0?1:0)+" "+(X+R*Math.cos(a2))+","+(Y+R*Math.sin(a2))+"' fill=none stroke='"+it.c+"' stroke-width=2 />";
         if(it.lb){var am=a1+dA/2;lab+="<text x="+(X+(R+12)*Math.cos(am))+" y="+(Y+(R+12)*Math.sin(am)+4)+" text-anchor=middle fill='"+it.c+"' font-size=12>"+E(it.lb)+"</text>"}}
+    else if(it.k==="rt"){var Ra=pt(it.ns[0]),Ro=pt(it.ns[1]),Rb=pt(it.ns[2]),X2=sx(Ro[0]),Y2=sy(Ro[1]),u1=sx(Ra[0])-X2,u2=sy(Ra[1])-Y2,v1=sx(Rb[0])-X2,v2=sy(Rb[1])-Y2,lu=Math.hypot(u1,u2)||1,lv=Math.hypot(v1,v2)||1,q9=8;
+      u1*=q9/lu;u2*=q9/lu;v1*=q9/lv;v2*=q9/lv;g+="<path d='M"+(X2+u1)+","+(Y2+u2)+" L"+(X2+u1+v1)+","+(Y2+u2+v2)+" L"+(X2+v1)+","+(Y2+v2)+"' fill=none stroke='"+it.c+"' stroke-width=1.4 />"}
     else if(it.k==="impl"){   /* marching squares */
       var NX=140,NY=Math.round(140*H/W),o2="",F=it.F,v=[];
       for(var i2=0;i2<=NX;i2++){v[i2]=[];for(var k=0;k<=NY;k++)v[i2][k]=F(X0+(X1-X0)*i2/NX,Y0+(Y1-Y0)*k/NY)}
@@ -195,7 +198,7 @@ function svg(spec){
     else if(it.k==="bar"){var bw=Math.max(.2,Math.min(.7,(X1-X0)/40*14))/2;g+="<rect x="+sx(it.p[0]-bw)+" y="+sy(Math.max(0,it.p[1]))+" width="+(sx(it.p[0]+bw)-sx(it.p[0]-bw))+" height="+Math.abs(sy(0)-sy(it.p[1]))+" fill='"+it.c+"' fill-opacity=.75 stroke='"+it.c+"'/>";lab+="<text x="+sx(it.p[0])+" y="+(sy(Math.max(0,it.p[1]))-4)+" text-anchor=middle font-size=11 fill='#333'>"+it.p[1]+"</text>"}
     else if(it.k==="text")lab+="<text x="+sx(it.p[0])+" y="+sy(it.p[1])+" fill='"+it.c+"' font-size=12>"+E(it.n)+"</text>";
   }catch(e){errs.push(typeof e==="string"?e:"គូរមិនបាន")}});
-  items.forEach(function(it){if(it.k==="pt"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=3.6 fill='"+it.c+"'/>";label(it.p,it.n,it.c)}
+  items.forEach(function(it){if(it.k==="pt"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=3.6 fill='"+it.c+"'/>";label(it.p,it.n,it.c,it.dir)}
     if(it.k==="hole"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=4 fill=#fff stroke='"+it.c+"' stroke-width=2 />";label(it.p,it.n,it.c)}});
   return"<div class=fig>"+g+lab+"</svg>"+(errs.length?"<div class=fig-err>⚠️ "+errs.map(E).join(" · ")+"</div>":"")+"</div>";
 }
