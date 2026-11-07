@@ -860,13 +860,16 @@ var D9={
      Q("គណនាប្រវែង $AD$ និង $ND$ ។","$AD="+AD+"$ cm , $ND="+ND+"$ cm",
        W("$MD=\\dfrac{BM}{2}="+MD+"$ cm ។ ក្នុងត្រីកោណកែង $AMD$ ៖",AL(["AD^2&=AM^2+MD^2="+R*R+"+"+F(3*R*R,4)+"="+F(7*R*R,4),"AD&="+AD+"\\text{ cm}","ND&=\\dfrac{MD^2}{AD}="+F(3*R*R,4)+"\\times\\dfrac{2}{"+(R===1?"":R)+"\\sqrt7}="+ND+"\\text{ cm}"])))]}}},
  geo2:{id:"geo2",t:"ត្រីកោណកែង · កម្ពស់ AH · ចតុកោណចារឹក",lv:3,f:function(){
+   var T2=pick([[3,4,5],[6,8,10],[5,12,13],[9,12,15],[8,6,10],[12,5,13]]),pAB=T2[0],pAC=T2[1],pBC=T2[2];
    return{kfig:GF.geo2(),inst:"ក្នុងត្រីកោណ $ABC$ កែងត្រង់ $A$ គេគូសកម្ពស់ $[AH]$ ។ រង្វង់មានអង្កត់ផ្ចិត $[AH]$ កាត់ $AB$ ត្រង់ $D$ និងកាត់ $(AC)$ ត្រង់ $E$ ។",it:[
      Q("ប្រាប់ឈ្មោះចតុកោណ $ADHE$ ។","$ADHE$ ជាចតុកោណកែង",
        W("ដោយ $AH$ ជាអង្កត់ផ្ចិត នោះ $\\angle ADH=90^\\circ$ និង $\\angle AEH=90^\\circ$ (មុំចារឹកកន្លះរង្វង់) ។","ម្យ៉ាងទៀត $\\angle DAE=\\angle BAC=90^\\circ$ ។ ចតុកោណ $ADHE$ មានមុំកែងបី ⇒ ជាចតុកោណកែង ។")),
      Q("ប្រៀបធៀបត្រីកោណ $ABC$ និង $AED$ រួចទាញបង្ហាញថា $AB\\cdot AD=AC\\cdot AE$ ។","$\\triangle ABC\\sim\\triangle AED$ និង $AB\\cdot AD=AC\\cdot AE$",
        W("គេមាន $\\angle AED=\\angle AHD$ (មុំចារឹកស្កាត់ធ្នូ $AD$) និង $\\angle AHD=\\angle ABC$ (មុំមានជ្រុងកែងរៀងគ្នា) ⇒ $\\angle AED=\\angle ABC$ ។","ហើយ $\\angle A$ ជាមុំរួម ⇒ $\\triangle ABC\\sim\\triangle AED$ (ករណីទី១ ម.ម) ។ តាមផលធៀបដំណូច ៖",AL(["\\dfrac{AB}{AE}&=\\dfrac{AC}{AD}","AB\\cdot AD&=AC\\cdot AE"]))),
      Q("បង្ហាញថាចតុកោណ $BDEC$ ចារឹកក្នុងរង្វង់មួយ ។","$BDEC$ ចារឹកក្នុងរង្វង់",
-       W("តាមសំណួរទី២ $\\angle ADE=\\angle ACB$ ។ ដោយ $\\angle ADE+\\angle BDE=180^\\circ$ (មុំបន្ទាប់បន្សំ) ⇒ $\\angle BDE+\\angle BCE=180^\\circ$ ។","ចតុកោណ $BDEC$ មានផលបូកមុំឈមពីរស្មើ $180^\\circ$ ⇒ ចារឹកក្នុងរង្វង់ ។"))]}}},
+       W("តាមសំណួរទី២ $\\angle ADE=\\angle ACB$ ។ ដោយ $\\angle ADE+\\angle BDE=180^\\circ$ (មុំបន្ទាប់បន្សំ) ⇒ $\\angle BDE+\\angle BCE=180^\\circ$ ។","ចតុកោណ $BDEC$ មានផលបូកមុំឈមពីរស្មើ $180^\\circ$ ⇒ ចារឹកក្នុងរង្វង់ ។")),
+     Q("គេឱ្យ $AB="+pAB+"$ cm និង $AC="+pAC+"$ cm ។ គណនា $BC$ , $AH$ និង $AD$ ។","$BC="+pBC+"$ cm , $AH="+fv(pAB*pAC,pBC)+"$ cm , $AD="+fv(pAB*pAC*pAC,pBC*pBC)+"$ cm",
+       W("ក្នុងត្រីកោណកែង $ABC$ ៖",AL(["BC&=\\sqrt{AB^2+AC^2}=\\sqrt{"+pAB*pAB+"+"+pAC*pAC+"}="+pBC+"\\text{ cm}","AH&=\\dfrac{AB\\times AC}{BC}=\\dfrac{"+pAB+"\\times"+pAC+"}{"+pBC+"}="+fv(pAB*pAC,pBC)+"\\text{ cm}"]),"ក្នុងត្រីកោណកែង $AHB$ (កែងត្រង់ $H$) មាន $HD$ ជាកម្ពស់ ៖",AL(["AH^2&=AD\\times AB\\Rightarrow AD=\\dfrac{AH^2}{AB}="+fv(pAB*pAC*pAC,pBC*pBC)+"\\text{ cm}"])))]}}},
  geo3:{id:"geo3",t:"រង្វង់ · មុំផ្ចិត · មុំចារឹក · ត្រីកោណដូចគ្នា",lv:2,f:function(){var al=pick([25,30,35,40]);
    return{kfig:GF.geo3(al),inst:"គេមានរង្វង់ផ្ចិត $O$ និងអង្កត់ផ្ចិត $MN$ ។ $Q$ ជាចំណុចមួយនៅលើរង្វង់ដែល $\\angle NMQ="+al+"^\\circ$ ។",it:[
      Q("គណនារង្វាស់ $\\angle NOQ$ ។","$\\angle NOQ="+2*al+"^\\circ$",
@@ -922,12 +925,29 @@ REG["9|10"]=[D9.coord,D9.coord2];REG["9|12"]=[D9.geo4,D9.geo8];REG["9|13"]=[D9.g
 /* រចនាសម្ព័ន្ធវិញ្ញាសាឌីប្លូម (១២០ នាទី · ១០០ ពិន្ទុ) តាមគំរូវិញ្ញាសាជាតិ ២០២១–២០២៥ */
 var DIP=[[[[1,"mcq"]],10],[[[1,"rad"],[3,"frac"]],10],[[[3,"expr"],[4,"eq"],[11,"sys"]],10],[[[11,"word"],[4,"rect"],[2,"pct"],[4,"pisa"],[7,"stat"],[16,"poly"]],15],[[[8,"prob"],[8,"prob2"],[8,"prob3"]],10],[[[10,"coord"],[10,"coord2"]],15],
   [[[15,"geo1"],[15,"geo2"],[13,"geo3"],[12,"geo4"],[13,"geo5"],[13,"geo6"],[15,"geo7"],[12,"geo8"]],30]];
+/* 🔁 ជៀសវាងលំហាត់ដដែលៗ៖ (១) ចងចាំគំរូដែលទើបប្រើ (localStorage) → ជ្រើសគំរូដែលយូរមិនបានប្រើ
+   (២) ធរណីមាត្រ៖ ប្ដូរឈ្មោះចំណុច (A, B, M …) ដោយចៃដន្យ ឱ្យរូប · សំណួរ · ចម្លើយ ត្រូវគ្នា */
+var LRUK="exgen-lru";
+function lruGet(){try{return JSON.parse(localStorage.getItem(LRUK)||"{}")}catch(e){return{}}}
+function fresh(list,tag){var M=lruGet(),key=function(c){return tag+"|"+c[0]+"|"+c[1]},mn=Infinity;
+  list.forEach(function(c){var v=M[key(c)]||0;if(v<mn)mn=v});var cand=list.filter(function(c){return(M[key(c)]||0)===mn}),c=pick(cand);
+  M[key(c)]=Date.now();try{localStorage.setItem(LRUK,JSON.stringify(M))}catch(e){}return c}
+var RL=/(^|[^\\A-Za-z])([A-Z]+)(?![a-z])/g;
+function relabel(o){var f=o.kfig||"";if(!/noaxes/.test(f))return o;
+  var src=[];f.replace(/(^|\n)([A-Z])'?\(/g,function(_,p,c){if(c!=="O"&&src.indexOf(c)<0)src.push(c)});if(!src.length)return o;
+  var used={},all=[o.inst].concat(o.it.map(function(x){return x.q+" "+x.ans+" "+x.sol})).join(" ")+f;
+  all.split("\\\\").join(" ").replace(RL,function(_,p,w){w.split("").forEach(function(c){used[c]=1})});
+  var pool="ABCDEFGHIKLMNPQ".split("").filter(function(c){return src.indexOf(c)>=0||!used[c]});if(pool.length<src.length)return o;
+  for(var i=pool.length-1;i>0;i--){var j=ri(0,i),t=pool[i];pool[i]=pool[j];pool[j]=t}
+  var M={};src.forEach(function(c,i){M[c]=pool[i]});
+  var tr=function(s){return String(s==null?"":s).split("\\\\").join("\u0001").replace(RL,function(_,p,w){return p+w.split("").map(function(c){return M[c]||c}).join("")}).split("\u0001").join("\\\\")};
+  o.inst=tr(o.inst);o.kfig=tr(f);o.it.forEach(function(x){x.q=tr(x.q);x.ans=tr(x.ans);x.sol=tr(x.sol)});return o}
 window.EXGEN={
   has:function(k){return!!REG[k]},
-  dip:function(){return DIP.map(function(x){var c=pick(x[0]);return{ls:c[0],lv:"t:"+c[1],pts:x[1]}})},
+  dip:function(){return DIP.map(function(x,i){var c=fresh(x[0],"dip"+i);return{ls:c[0],lv:"t:"+c[1],pts:x[1]}})},
   bac:function(k){if(k==="b")return BAC.map(function(x){var f=x[1]?null:pick([[42,"fexp"],[43,"fln"]]);return{ls:f?f[0]:x[0],lv:"t:"+(f?f[1]:x[1]),pts:x[2]}});
-    return BAC7.map(function(x){var c=pick(x[0]);return{ls:c[0],lv:"t:"+c[1],pts:x[1]}})},
+    return BAC7.map(function(x,i){var c=fresh(x[0],"bac"+i);return{ls:c[0],lv:"t:"+c[1],pts:x[1]}})},
   list:function(k){return(REG[k]||[]).map(function(x){return{id:x.id,t:x.t,lv:x.lv}})},
-  make:function(k,id){var L=REG[k]||[],t=L.filter(function(x){return x.id===id})[0]||L[0];if(!t)return null;var o=t.f();o.it=o.it.map(function(x,i){return{q:x.q,fig:"",ans:x.ans,sol:x.sol,kfig:!i&&o.kfig||""}});return o}
+  make:function(k,id){var L=REG[k]||[],t=L.filter(function(x){return x.id===id})[0]||L[0];if(!t)return null;var o=relabel(t.f());o.it=o.it.map(function(x,i){return{q:x.q,fig:"",ans:x.ans,sol:x.sol,kfig:!i&&o.kfig||""}});return o}
 };
 })();
