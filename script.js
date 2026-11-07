@@ -1050,7 +1050,7 @@ function savePdf(html){
     var t=(document.querySelector("#tabs button[aria-selected=true]")||{}).textContent||"ឯកសារ",d=new Date();
     var name=t.replace(/^[០-៩]+\.\s*/,"").replace(/[\\/:*?"<>|&]+/g,"-").trim()+"-"+d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+".pdf";
     var done=function(){hold.remove()};
-    pdfPaginate(w,land?194:277,land?281:190);
+    pdfLineFix(w);pdfPaginate(w,land?194:277,land?281:190);
     window.html2pdf().set({margin:land?8:10,filename:name,image:{type:"jpeg",quality:0.95},html2canvas:{scale:2,backgroundColor:"#ffffff",useCORS:true,scrollX:0,scrollY:0},
       jsPDF:{unit:"mm",format:"a4",orientation:land?"landscape":"portrait"},pagebreak:{mode:[]}})
       .from(w).save().then(function(){done();notify("បានទាញយក PDF៖ "+name)},function(e){done();console.error(e);alert("មិនអាចបង្កើត PDF បានទេ។ សូមប្រើ «🖨️ បោះពុម្ព» ជំនួសវិញ។")});
@@ -1061,27 +1061,58 @@ function savePdf(html){
   document.head.appendChild(s);
 }
 window.outChoose=outChoose;
+/* PDF៖ html2canvas កាត់បន្ទាត់អក្សរខ្មែរខុសពី browser (គ្មានដកឃ្លារវាងពាក្យ → ពាក្យជាន់គ្នាត្រង់ចុងបន្ទាត់)
+   ដំណោះស្រាយ៖ វាស់តួអក្សរដែល browser ចាប់ផ្ដើមបន្ទាត់ថ្មី រួចដាក់ <br> ត្រង់នោះ (ប្លង់ដដែល · html2canvas លែងកាត់បន្ទាត់ខ្លួនឯង) */
+function pdfLineFix(w){
+  var tw=document.createTreeWalker(w,NodeFilter.SHOW_TEXT,{acceptNode:function(n){return/\S/.test(n.nodeValue)&&n.nodeValue.length>1?1:2}}),L=[],n,rg=document.createRange();
+  while((n=tw.nextNode()))L.push(n);
+  L.forEach(function(t){
+    var s=t.nodeValue,br=[],cy=null,cs=getComputedStyle(t.parentNode),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.5;
+    /* បន្ទាត់ថ្មី = កណ្ដាលបញ្ឈរនៃតួអក្សរចុះក្រោមលើសពាក់កណ្ដាល line-height (អក្សរឡាតាំង/ខ្មែរ ពុម្ពផ្សេងគ្នា ស្ថិតលើបន្ទាត់ដដែល) */
+    for(var i=0;i<s.length;i++){
+      rg.setStart(t,i);rg.setEnd(t,i+1);var r=rg.getClientRects()[0];if(!r||!r.width)continue;
+      var c=(r.top+r.bottom)/2;
+      if(cy!==null&&c>cy+lh*.5){br.push(i);cy=c}else if(cy===null)cy=c;
+    }
+    for(var j=br.length-1;j>=0;j--){var rest=t.splitText(br[j]);rest.parentNode.insertBefore(document.createElement("br"),rest)}
+  });
+}
 /* PDF៖ រុញផ្នែកដែលធ្លាក់ត្រង់បន្ទាត់ទំព័រ (ជួរ · ក្រុមជួរថ្ងៃតែមួយ · ជើងក្រោម · ហត្ថលេខា) ទៅទំព័របន្ទាប់
    pageH/contentW = កម្ពស់/ទទឹងផ្ទៃសរសេរនៃទំព័រ (mm) · .pg នីមួយៗចាប់ផ្ដើមទំព័រថ្មី */
 function pdfPaginate(w,pageH,contentW){
   var H=pageH*w.getBoundingClientRect().width/contentW;
+  var FT=/(^|\s)(cxf|sig|wpf|tsx-s|mt-ft)(\s|$)/,HD=/^H[234]$|(^|\s)(mt-s|mt-h|mt-b)(\s|$)/;
+  /* រុញ el ទៅទំព័របន្ទាប់ដោយបន្ថែមចន្លោះ pad (ជួរតារាង → ជួរទទេ + ក្បាលតារាងឡើងវិញ) */
+  function push(el,pad){
+    if(el.tagName==="TR"||el.tagName==="TBODY"){
+      var tbl=el.closest("table"),r0=tbl&&tbl.rows[0],nc=0;if(r0)[].forEach.call(r0.cells,function(c){nc+=c.colSpan});   /* colspan ត្រូវតែស្មើចំនួនជួរឈរ */
+      var tr=document.createElement("tr");tr.className="pdfpad";tr.innerHTML="<td colspan="+(nc||1)+" style='height:"+pad+"px;padding:0;border:0!important;background:none!important'></td>";
+      if(el.tagName==="TR")el.parentNode.insertBefore(tr,el);
+      else{var tb=document.createElement("tbody");tb.className="pdfpad";tb.appendChild(tr);el.parentNode.insertBefore(tb,el)}
+      /* ក្បាលតារាងឡើងវិញនៅទំព័រថ្មី (ដូចការបោះពុម្ព) */
+      if(tbl&&tbl.tHead){var host=el.tagName==="TR"?el.parentNode:el,ref=el.tagName==="TR"?el:el.firstElementChild;
+        [].forEach.call(tbl.tHead.rows,function(hr){var c=hr.cloneNode(true);c.classList.add("pdfpad");[].forEach.call(c.cells,function(td){var x=document.createElement("td");x.colSpan=td.colSpan;x.rowSpan=td.rowSpan;x.innerHTML=td.innerHTML;x.setAttribute("style",(td.getAttribute("style")||"")+";background:#eee;font-weight:700;text-align:center");td.parentNode.replaceChild(x,td)});host.insertBefore(c,ref)})}
+    }else el.style.marginTop=(parseFloat(getComputedStyle(el).marginTop)||0)+pad+"px";
+  }
   [].forEach.call(w.querySelectorAll(".pg"),function(pg){
-    var items=pg.querySelectorAll("tbody,tr,.cxf,.sig,.card,.tsx-s,.wpf,.tsx-c,h3,h4,.og");
+    var items=pg.querySelectorAll("tbody,tr,.cxf,.sig,.card,.tsx-s,.wpf,.tsx-c,h2,h3,h4,.og,p,li,.cxi,.mt-ft,.mt-s,.mt-h,.mt-b,.mt-i,.mt-li,.mt-at");
     [].forEach.call(items,function(el){
-      if(el.closest(".pdfpad"))return;
-      var r=el.getBoundingClientRect(),top=r.top-pg.getBoundingClientRect().top,h=r.height;
+      if(el.closest(".pdfpad")||el.closest("thead"))return;
+      var P0=pg.getBoundingClientRect().top,r=el.getBoundingClientRect(),top=r.top-P0,h=r.height;
       if(!h||h>=H)return;
-      var p=Math.floor(top/H);if(Math.floor((top+h-1)/H)===p)return;
-      var pad=(p+1)*H-top+2;
-      if(el.tagName==="TR"||el.tagName==="TBODY"){
-        var tbl=el.closest("table"),r0=tbl&&tbl.rows[0],nc=0;if(r0)[].forEach.call(r0.cells,function(c){nc+=c.colSpan});   /* colspan ត្រូវតែស្មើចំនួនជួរឈរ បើមិនដូច្នោះទទឹងជួរឈរប្រែប្រួល */
-        var tr=document.createElement("tr");tr.innerHTML="<td colspan="+(nc||1)+" style='height:"+pad+"px;padding:0;border:0!important;background:none!important'></td>";
-        if(el.tagName==="TR")el.parentNode.insertBefore(tr,el);
-        else{var tb=document.createElement("tbody");tb.className="pdfpad";tb.appendChild(tr);el.parentNode.insertBefore(tb,el)}
-        tr.classList.add("pdfpad");
-      }else el.style.marginTop=(parseFloat(getComputedStyle(el).marginTop)||0)+pad+"px";
+      var p=Math.floor(top/H),cross=Math.floor((top+h-1)/H)!==p,ft=FT.test(el.className),orph=ft&&p>0&&top-p*H<40;
+      /* ចំណងជើង/ចំណងជើងរងនៅចុងទំព័រ (នៅសល់ < ៤៥px) → ទៅទំព័របន្ទាប់ជាមួយខ្លឹមសាររបស់វា */
+      if(!cross&&!orph&&!(HD.test(el.tagName+" "+el.className)&&(p+1)*H-(top+h)<45))return;
+      /* ហត្ថលេខា/ជើងឯកសារ៖ មិនឱ្យនៅតែឯងលើទំព័រថ្មី (កាត់ចន្លោះទំព័រ ឬធ្លាក់ទៅដើមទំព័រ) → យកជួរចុងក្រោយ (ឬប្លុកមុន) ទៅជាមួយ */
+      if(ft){
+        var q=cross?p+1:p,pv=el.previousElementSibling;while(pv&&!pv.getBoundingClientRect().height)pv=pv.previousElementSibling;
+        var tg=null;if(pv)tg=pv.tagName==="TABLE"?(pv.tBodies.length>1?pv.tBodies[pv.tBodies.length-1]:pv.rows[pv.rows.length-1]):pv;
+        if(tg&&!tg.closest("thead")){var t2=tg.getBoundingClientRect().top-P0;if(t2>=(q-1)*H&&t2<q*H&&top+h-t2<H*.9){push(tg,q*H-t2+2);return}}
+        if(orph)return;
+      }
+      push(el,(p+1)*H-top+2);
     });
-    /* .pg បន្ទាប់ចាប់ផ្ដើមទំព័រថ្មី៖ ពង្រីកដល់ពហុគុណកម្ពស់ទំព័រ · .pg ចុងក្រោយ៖ ខ្លីជាងមួយទំព័រ → ទុកកម្ពស់ដើម (ស៊ុមមិនលាតពេញទំព័រ) · វែងជាង → ដក ៤px កុំឱ្យការបង្គត់បង្កើតទំព័រទទេ */
+    /* .pg បន្ទាប់ចាប់ផ្ដើមទំព័រថ្មី៖ ពង្រីកដល់ពហុគុណកម្ពស់ទំព័រ · .pg ចុងក្រោយ៖ ខ្លីជាងមួយទំព័រ → ទុកកម្ពស់ដើម · វែងជាង → ដក ៤px កុំឱ្យការបង្គត់បង្កើតទំព័រទទេ */
     var ph=pg.getBoundingClientRect().height,last=!pg.nextElementSibling,np=Math.max(1,Math.ceil((ph-1)/H));
     if(!last)pg.style.setProperty("height",np*H+"px","important");
     else if(ph>H-4)pg.style.setProperty("height",(np*H-4)+"px","important");

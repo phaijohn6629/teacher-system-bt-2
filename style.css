@@ -550,7 +550,7 @@ body.pm .pg.land{page-break-inside:avoid}
 .mt-at{display:grid;grid-template-columns:1fr 1fr;gap:0 8mm;margin-left:8mm}
 .mt-i{margin-left:10mm}.mt-i2{margin-left:18mm}.mt-h{font-weight:700;margin:1.5mm 0 .5mm 6mm}.mt-b{font-weight:700;margin:1mm 0 0 8mm}
 .mt-ft{margin-top:6mm;break-inside:avoid;page-break-inside:avoid}
-.mt-dt{text-align:center;margin-left:auto;width:72mm;font-size:10pt;line-height:1.6}
+.mt-dt{text-align:center;margin-left:auto;width:96mm;font-size:10pt;line-height:1.6}.mt-dt>div{white-space:nowrap}
 .mt-cols{display:grid;grid-template-columns:1.45fr 1fr 1fr;gap:3mm;text-align:center;margin-top:1mm;font-size:10.5pt}.mt-cols .moul{font-size:10pt;line-height:1.8;white-space:nowrap}
 .mt-sg{height:18mm;display:flex;align-items:center;justify-content:center}.mt-sg img{max-height:17mm;max-width:40mm}
 .mt-form h4{margin:12px 0 6px}.mt-form textarea{width:100%;box-sizing:border-box;font:inherit;line-height:1.7}
@@ -859,3 +859,16 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .qz-sel{width:18px!important;height:18px;margin:0!important;cursor:pointer;accent-color:var(--brand)}
 .qz-q.sel{outline:2px solid var(--brand);background:var(--soft)}
 @media (max-width:600px){.qz-selb select{flex:1 1 100%}}
+
+/* ===== បោះពុម្ពឯកសាររដ្ឋបាល៖ កុំកាត់ជួរ/ហត្ថលេខា · ចំណងជើងមិននៅចុងទំព័រ · ក្បាលតារាងឡើងវិញគ្រប់ទំព័រ ===== */
+@media print{
+  body.pm thead{display:table-header-group}body.pm tfoot{display:table-footer-group}
+  body.pm tr,body.pm img,body.pm .sig,body.pm .wpf,body.pm .cxf,body.pm .tsx-s,body.pm .mt-ft,body.pm .mt-at,body.pm .card{break-inside:avoid;page-break-inside:avoid}
+  body.pm h2,body.pm h3,body.pm h4,body.pm .hd,body.pm .mt-s,body.pm .mt-h,body.pm .mt-b,body.pm .mt-top,body.pm .mt-ti{break-after:avoid;page-break-after:avoid}
+  body.pm .sig,body.pm .wpf,body.pm .cxf,body.pm .mt-ft{break-before:avoid;page-break-before:avoid}
+  /* ហត្ថលេខាមិននៅតែឯងលើទំព័រថ្មី៖ ជួរ/ក្រុមជួរចុងក្រោយ + សរុប ទៅជាមួយ */
+  body.pm tbody:last-of-type>tr:last-child,body.pm tbody:not(:only-of-type):last-of-type{break-after:avoid;page-break-after:avoid}
+  body.pm tbody:not(:only-of-type){break-inside:avoid;page-break-inside:avoid}
+  body.pm tfoot tr{break-before:avoid;page-break-before:avoid}
+  body.pm p,body.pm li,body.pm .mt-i,body.pm .mt-li{orphans:3;widows:3}
+}
