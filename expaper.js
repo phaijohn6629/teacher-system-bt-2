@@ -24,7 +24,7 @@ function bacHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.len
     "<div class=exp-b>វិញ្ញាសា "+ES(P.sub||"គណិតវិទ្យា")+(P.trk?" <span class=exp-n>("+ES(P.trk)+")</span>":"")+"</div>"+
     "<div class=exp-b>រយៈពេល៖ "+KN(+P.dur||0)+"នាទី</div><div class=exp-b>ពិន្ទុសរុប៖ "+KN(T)+"</div></div>"+
     "<div class=exp-cd><div class=exp-f>សម័យប្រឡង៖ <span class=exp-n>"+ss+"</span></div>"+(o.key?"":"<div class=exp-f>មណ្ឌលប្រឡង៖ "+D+"</div><div class=exp-f>លេខបន្ទប់ <span class=exp-dot>.........</span> លេខតុ <span class=exp-dot>.........</span></div><div class=exp-f>ឈ្មោះបេក្ខជន "+D+"</div><div class=exp-f>ហត្ថលេខាបេក្ខជន <span class=exp-dot>..............</span></div>")+"</div>"+
-    "</div><div class=exp-t>"+(o.key?"ចម្លើយ និងដំណោះស្រាយ":"ប្រធាន")+(o.lbl?" "+ES(o.lbl):"")+"</div>"}
+    "</div><div class=exp-t>"+(o.key?"អត្រាកំណែ":"ប្រធាន")+(o.lbl?" "+ES(o.lbl):"")+"</div>"}
 /* ក្បាលទម្រង់ឌីប្លូម (ថ្នាក់ទី៩)៖ ឆ្វេង = ប្រឡង · សម័យ · វិញ្ញាសា · រយៈពេល · ពិន្ទុ · ស្ដាំ = មណ្ឌល · បន្ទប់ · តុ · ហត្ថលេខា · ឈ្មោះ · ក្រោម = «ប្រធាន៖ ____» */
 function dipHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.length===3&&a[0]?KN(a[2])+" "+MO[a[1]-1]+" "+KN(a[0]):"",D="<span class=exp-dot>..............................</span>";
   var row=function(l,v){return"<tr><td class=exp-b>"+l+"</td><td class=exp-b>:</td><td>"+v+"</td></tr>"},n=function(v){return"<span class=exp-n>"+v+"</span>"};
@@ -32,7 +32,7 @@ function dipHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.len
     "<tr><td class=exp-b colspan=3>"+ES(P.title||"ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ")+"</td></tr>"+
     row("សម័យប្រឡង",ss?n(ss):D)+row("វិញ្ញាសា",n(ES(P.sub||"គណិតវិទ្យា")))+row("រយៈពេល",n(KN(+P.dur||0)+" នាទី"))+row("ពិន្ទុ",n(KN(T)))+"</table>"+
     (o.key?"":"<table class=exp-dt>"+row("មណ្ឌលប្រឡង",D)+row("លេខបន្ទប់",D)+row("លេខតុ",D)+row("ហត្ថលេខាបេក្ខជន",D)+row("ឈ្មោះបេក្ខជន",D)+"</table>")+"</div>"+
-    (o.key?"<div class=exp-t>ចម្លើយ និងដំណោះស្រាយ"+(o.lbl?" "+ES(o.lbl):"")+"</div>":"<div class=exp-pr><b>ប្រធាន៖</b><span></span>"+(o.lbl?"<b>"+ES(o.lbl)+"</b>":"")+"</div>")}
+    (o.key?"<div class=exp-t>អត្រាកំណែ"+(o.lbl?" "+ES(o.lbl):"")+"</div>":"<div class=exp-pr><b>ប្រធាន៖</b><span></span>"+(o.lbl?"<b>"+ES(o.lbl)+"</b>":"")+"</div>")}
 function html(P,o){
   o=o||{};var key=!!o.key,b=o.v==="b",T=total(P),bac=P.fmt==="bac"||P.fmt==="dip";
   var h=P.fmt==="dip"?dipHead(P,o,T):bac?bacHead(P,o,T):"<div class=exp style=\""+fvars(P.font)+"\"><div class=exp-hd><div class=exp-hl>"+
@@ -41,7 +41,7 @@ function html(P,o){
     (key?"":"<div class=exp-f>សិស្សឈ្មោះ <span class=exp-dot>.................................</span></div><div class=exp-f>ថ្នាក់ទី <span class=exp-dot>...................</span> លេខID<span class=exp-dot>...................</span></div>")+
     "</div><div class=exp-hr><div class=exp-b>"+ES(head(P))+"</div><div class=exp-b>រយៈពេល "+KN(+P.dur||0)+" នាទី ពិន្ទុ "+KN(T)+"</div>"+
     (key?"":"<div class=exp-sc><span></span><b>"+KN(T)+"</b></div>")+"</div></div>"+
-    "<div class=exp-t>"+(key?"ចម្លើយ និងដំណោះស្រាយ":"វិញ្ញាសា")+(o.lbl?" "+ES(o.lbl):"")+"</div>";
+    "<div class=exp-t>"+(key?"អត្រាកំណែ":"វិញ្ញាសា")+(o.lbl?" "+ES(o.lbl):"")+"</div>";
   var cols=key&&bac;if(cols)h+="<div class=exp-cols>";
   (P.secs||[]).forEach(function(s,i){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
@@ -60,6 +60,42 @@ function html(P,o){
 }
 function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(x.sol)+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(x.ans||"—")+"</span></div></div>";
   return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(x.ans||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(x.sol)+"</div>":"")+"</div>"}
+
+/* 🖨️ បែងទំព័រដោយខ្លួនឯង (ចម្លើយពីរជួរឈរ)៖ Safari បោះពុម្ព column-count កាត់បន្ទាត់អក្សរ/រូបពាក់កណ្ដាលទំព័រ
+   → បំបែកជាប្លុកតូចៗ (ចំណងជើង · សំណួរ · បន្ទាត់ដំណោះស្រាយ · រូបមន្ត · រូប · «ដូចនេះ») រួចបំពេញជួរឆ្វេង → ស្ដាំ → ទំព័រថ្មី */
+function paginate(doc){
+  var cols=doc.querySelector(".exp-cols");if(!cols)return;
+  var root=cols.parentNode,W=688,PH=1000,units=[];
+  root.style.width=W+"px";root.style.maxWidth=W+"px";
+  function A(a){return[].slice.call(a)}
+  function U(nodes,cls,keep,ind){var d=doc.createElement("div");if(cls)d.className=cls;if(ind)d.style.paddingLeft="8px";nodes.forEach(function(n){d.appendChild(n)});units.push({el:d,keep:keep})}
+  function sol(k,ind){
+    if(!/exp-kf/.test(k.className)){U([k],"",false,ind);return}
+    A(k.childNodes).forEach(function(n){
+      if(n.nodeType!==1)return;
+      if(/exp-fig/.test(n.className))U([n],"",false,ind);
+      else if(/exp-ks/.test(n.className)){var g=[],fl=function(){if(g.length&&g.some(function(x){return x.nodeType===1||/\S/.test(x.textContent)}))U(g,"pg-l",false,ind);g=[]};
+        A(n.childNodes).forEach(function(c){if(c.nodeName==="BR")fl();else if(c.nodeType===1&&/katex-display/.test(c.className)){fl();U([c],"pg-l",false,ind)}else g.push(c)});fl()}
+      else if(/exp-ka/.test(n.className))U([n],"pg-e",false,ind)})}
+  A(cols.children).forEach(function(sec){A(sec.children).forEach(function(c){
+    if(/exp-sh/.test(c.className))U([c],"pg-h",true);
+    else if(/exp-it/.test(c.className))A(c.children).forEach(function(it){var q=[],ks=[];
+      A(it.childNodes).forEach(function(n){if(n.nodeType===1&&/(^|\s)exp-k(\s|$)/.test(n.className))ks.push(n);else q.push(n)});
+      U(q,"exp-i",true,1);ks.forEach(function(k){sol(k,1)})});
+    else if(/exp-fig/.test(c.className))U([c],"",false);
+    else if(/(^|\s)exp-k(\s|$)/.test(c.className))sol(c,0)})});
+  var first=true,colEls,ci;
+  function page(){var pg=doc.createElement("div"),h=first?PH-(cols.getBoundingClientRect().top-root.getBoundingClientRect().top):PH;
+    pg.className="pg";pg.style.cssText="display:flex;height:"+h+"px;"+(first?"":"break-before:page;page-break-before:always;");
+    colEls=[0,1].map(function(i){var c=doc.createElement("div");c.style.cssText="flex:1 1 0;min-width:0;height:100%;overflow:hidden;"+(i?"padding-left:13px":"padding-right:13px;border-right:1px solid #94a3b8");pg.appendChild(c);return c});
+    ci=0;root.insertBefore(pg,cols);first=false}
+  page();
+  units.forEach(function(u){var c=colEls[ci];u.el._keep=u.keep;c.appendChild(u.el);
+    if(c.scrollHeight>c.clientHeight+1&&c.children.length>1){c.removeChild(u.el);var carry=[],l=c.lastElementChild;
+      while(l&&l._keep&&c.children.length>1){carry.unshift(l);c.removeChild(l);l=c.lastElementChild}
+      if(ci===0)ci=1;else page();carry.concat([u.el]).forEach(function(e){colEls[ci].appendChild(e)})}});
+  cols.parentNode.removeChild(cols);
+}
 /* ពុម្ពអក្សរដូចវិញ្ញាសាសាលា (LaTeX)៖ ចំណងជើង = Khmer M1 (GPL · ផ្ទុកពី fonts/) · អត្ថបទ = Khmer Kep (មានក្នុងកុំព្យូទ័រគ្រូ · មិនផ្សព្វផ្សាយ ព្រោះរក្សាសិទ្ធិ) → មិនមាន = Battambang */
 var BASE=(function(){try{var s=document.currentScript&&document.currentScript.src;return s?s.replace(/[^\/]*$/,""):""}catch(e){return""}})();
 var FF="@font-face{font-family:'ExM1';src:local('Khmer M1'),url('"+BASE+"fonts/khmer-m1.ttf') format('truetype');font-display:swap}"+
@@ -83,6 +119,7 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-fig{margin:6px 0;text-align:center;break-inside:avoid;page-break-inside:avoid;display:flow-root}.exp-fig svg{display:block;margin:0 auto;break-inside:avoid;max-width:300px;max-height:250px;width:auto;height:auto}"+
 ".exp-cols{column-count:2;column-gap:26px;column-rule:1px solid #94a3b8}.exp-cols .exp-s{break-inside:auto}.exp-cols .exp-it{margin-left:8px}.exp-cols .exp-sh{break-after:avoid}"+
 ".exp-kf{border-left:none!important;background:none!important;padding:0 0 4px!important;margin:2px 0 10px!important;font-size:13.5px}.exp-kf .exp-ks{color:#111}.exp-kf .katex-display{margin:.3em 0;font-size:.96em;overflow-x:auto;overflow-y:hidden;break-inside:avoid}"+
+".pg-h{margin:8px 0 2px}.pg-l{font-size:13.5px;color:#111}.pg-l .katex-display{margin:.3em 0;font-size:.96em}.pg-e{margin:3px 0 10px;font-size:13.5px}.pg .exp-fig{margin:4px 0}"+
 ".exp-ka{margin-top:3px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:1px 10px;margin-left:4px}"+
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
@@ -91,5 +128,5 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-dh{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.exp-dt{border-collapse:collapse}.exp-dt td{padding:0 4px;vertical-align:baseline;line-height:2;font-size:13.5px}.exp-dt td.exp-b{white-space:nowrap}"+
 ".exp-pr{display:flex;align-items:baseline;gap:8px;margin:10px 0 14px;font-family:var(--fh);color:#1e3a8a}.exp-pr span{flex:1;border-bottom:1.5px solid #1e3a8a}"+
 "@media (max-width:600px){.exp-hd,.exp-dh{flex-direction:column}.exp-sc{display:none}.exp-it.two{grid-template-columns:1fr}.exp-it{margin-left:14px}.exp-ft{flex-direction:column-reverse;gap:10px}.exp-fl{margin-top:0}}";
-window.EXP={FONTS:FONTS,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
+window.EXP={FONTS:FONTS,paginate:paginate,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
 })();
