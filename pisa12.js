@@ -78,7 +78,7 @@ P[61]=[function(){var Ta=pick([25,28,30]),D=pick([40,60,64,80]),k=ri(1,3);
       [A(P0+"*e^"+ex,P0+"e^{"+ex+"}","num","P =")],"$P("+t+")="+P0+"e^{"+r+"\\times"+t+"}="+P0+"e^{"+ex+"}\\approx"+Math.round(P0*Math.exp(ex))+"$")}];
 P[62]=[function(){var w=pick([1,2,3,4,5]),Am=ri(2,10);
     return Q("🪀 ស្ព្រីងមួយញ័រតាម $y''+"+(w*w)+"y=0$ ជាមួយ $y(0)="+Am+"$ cm និង $y'(0)=0$ ⇒ $y=A\\cos\\omega t$ ។ (ក) រក $A$ (ខ) រក $\\omega$ (គ) រកខួប $T=\\dfrac{2\\pi}{\\omega}$ (ទុក $\\pi$)",
-      [A(Am,null,"num","(ក) A ="),A(w,null,"num","(ខ) ω ="),A("2*pi/"+w,w===1?"2\\pi":fr(2,w).t+"\\pi","num","(គ) T =")],"$\\omega^2="+(w*w)+"\\Rightarrow\\omega="+w+"$ · $y="+Am+"\\cos"+(w===1?"":w)+"t$ · $T=\\dfrac{2\\pi}{"+w+"}$")},
+      [A(Am,null,"num","(ក) A ="),A(w,null,"num","(ខ) ω ="),A("2*pi/"+w,w===1?"2\\pi":fr(2,w).t+"\\pi","num","(គ) T =")],"$\\omega^2="+(w*w)+"\\Rightarrow\\omega="+w+"$ · $y="+Am+"\\cos "+(w===1?"":w)+"t$ · $T=\\dfrac{2\\pi}{"+w+"}$")},
   function(){var v0=ri(1,4)*10,h0=pick([0,1,2]),tm=v0/10,H=h0+v0*v0/20;
     return Q("⚽ បាល់ត្រូវបានទាត់ត្រង់ឡើងលើ ល្បឿន $"+v0+"$ m/s ពីកម្ពស់ $"+h0+"$ m ។ $h''=-10$ ⇒ $h(t)="+h0+"+"+v0+"t-5t^2$ ។ (ក) ក្រោយប៉ុន្មានវិនាទី បាល់ដល់កម្ពស់ខ្ពស់បំផុត? (ខ) កម្ពស់ខ្ពស់បំផុតប៉ុន្មាន m?",
       [A(tm,null,"num","(ក) t ="),A(H,null,"num","(ខ) h =")],"$h'(t)="+v0+"-10t=0\\Rightarrow t="+tm+"$ · $h("+tm+")="+H+"$ m")}];
