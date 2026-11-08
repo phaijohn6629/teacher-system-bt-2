@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=4","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=4","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4="practiceen4.js?v=1",genP=null,kxP=null;
 var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
@@ -18,7 +18,7 @@ var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],t
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function gen(){
   if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
-  if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).catch(function(e){genP=null;throw e});
+  if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4)}).catch(function(e){genP=null;throw e});
   return genP;
 }
 function katex(){
@@ -42,7 +42,7 @@ function mkItem(g,ls,lv,avoid){
   var G=PRACT.GR[g]&&PRACT.GR[g].G[ls],f=G&&(G[lv]||G[3]||G[1]);if(!f)return{q:"(មេរៀននេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់ · សូមសរសេរដោយដៃ)",fig:"",ans:"",sol:""};
   var x=null;for(var k=0;k<6;k++){try{x=f()}catch(e){x=null}if(x&&(!avoid||avoid.indexOf(x.q)<0))break}
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
-  return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||"",al:(x.a||[]).map(function(a){return a.l||""}),at:(x.a||[]).map(function(a){return a.t})};
+  return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||"",al:(x.a||[]).map(function(a){return a.l||""}),at:(x.a||[]).map(function(a){return a.t}),mk:x.mk||0,mks:x.mks||null,ex:!!x.ex,kd:x.kd||""};
 }
 function isT(s){return/^t:/.test(String(s.lv))}
 function fill(s,g,which){
@@ -116,6 +116,7 @@ function editor(){
     "</div></div>"+
     "<div class=card><h3 style='margin-top:0'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small></h3>"+
     (g===12&&window.EXGEN&&EXGEN.bac?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='bac|a' style='flex:1'>📋 វិញ្ញាសាត្រៀមបាក់ឌុប (៧ ផ្នែក · តាមសៀវភៅ)</button><button type=button data-ex='bac|b' style='flex:1'>📋 គំរូសាកល្បង NGS (៨ ផ្នែក)</button></div>":"")+
+    (E.fmt==="cam"&&window.CAMPAPER&&PRACT.GR[g]&&PRACT.GR[g].G[31]?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='cpp|p2' style='flex:1'>📋 Paper 2 style · Non-calculator</button><button type=button class=primary data-ex='cpp|p4' style='flex:1'>📋 Paper 4 style · Calculator</button></div>":"")+
     (g===9&&window.EXGEN&&EXGEN.dip?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex=dip style='flex:1'>🎓 វិញ្ញាសាត្រៀមប្រឡងឌីប្លូម (៧ ផ្នែក · ១០០ ពិន្ទុ · ១២០ នាទី)</button></div>":"")+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
@@ -237,6 +238,9 @@ function act(a,q){
   else if(a==="dip"){if(E.secs.length&&!confirm("ជំនួសផ្នែកទាំងអស់ដោយវិញ្ញាសាគំរូឌីប្លូម (១០០ ពិន្ទុ)?\n\nI ពហុជម្រើស · II រ៉ាឌីកាល់ · III កន្សោម/សមីការ · IV ចំណោទ · V ប្រូបាប · VI តម្រុយ · VII ធរណីមាត្ររង្វង់"))return;
     E.secs=EXGEN.dip().map(function(x){var s2={ls:x.ls,lv:x.lv,n:1,pts:x.pts,inst:""};fill(s2,g);if(E.ab)fill(s2,g,"itB");return s2});
     E.fmt="dip";E.dur=120;E.mo="";if(!E.title||TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$/.test(E.title))E.title="ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ"}
+  else if(a==="cpp"){var pp=CAMPAPER[q[1]];if(!pp||E.secs.length&&!confirm("ជំនួសសំណួរទាំងអស់ដោយក្រដាសប្រឡង "+(q[1]==="p2"?"Paper 2 (Non-calculator)":"Paper 4 (Calculator)")+" ពេញ?"))return;var used={};
+    E.secs=pp.map(function(x){var s2={ls:x[0],lv:x[1],n:1,pts:4,inst:""};for(var t=0;t<8;t++){fill(s2,g);if(!used[s2.it[0].kd])break}used[s2.it[0].kd]=1;s2.pts=s2.it[0].mk||4;if(E.ab)fill(s2,g,"itB");return s2});
+    E.calc=q[1]==="p4";E.title=q[1]==="p2"?"Paper 2 (Non-calculator) · Practice":"Paper 4 (Calculator) · Practice";E.dur=Math.round(EXP.total(E)*1.2/5)*5}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q});s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av)}

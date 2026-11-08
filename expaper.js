@@ -67,12 +67,12 @@ function html(P,o){
 /* ===== 🇬🇧 Cambridge style (fmt = "cam") · ក្រដាសសំណួរ + Mark scheme ជាភាសាអង់គ្លេស ===== */
 var CMO=["January","February","March","April","May","June","July","August","September","October","November","December"],LT="abcdefghij";
 function camDate(d){var a=String(d||"").split("-").map(Number);return a.length===3&&a[0]?a[2]+" "+CMO[a[1]-1]+" "+a[0]:""}
-function camLines(al,m){al=al&&al.length?al:[""];return al.map(function(L,k){var pre="",suf="",mm=/^(\([iv]+\))\s*(.*)$/.exec(L=camRm(L));if(mm){pre=mm[1];L=mm[2]}
+function camLines(al,m,mks,ex){al=al&&al.length?al:[""];return al.map(function(L,k){var pre="",suf="",mm=ex?/^(\([a-g]\))\s*(.*)$/.exec(L||""):/^(\([iv]+\))\s*(.*)$/.exec(L=camRm(L));if(mm){pre=mm[1];L=mm[2]}
   if(/=\s*$/.test(L||""))pre+=(pre?" ":"")+L;else suf=L||"";
-  return"<div class=cam-a>"+(pre?"<span>"+ES(pre)+"</span>":"")+"<span class=cam-ln></span>"+(suf?"<span>"+ES(suf)+"</span>":"")+"<b class=cam-mk>"+(k===al.length-1?"["+m+"]":"")+"</b></div>"}).join("")}
+  return"<div class=cam-a>"+(pre?"<span>"+ES(pre)+"</span>":"")+"<span class=cam-ln></span>"+(suf?"<span>"+ES(suf)+"</span>":"")+"<b class=cam-mk>"+(mks&&mks.length===al.length?(mks[k]?"["+mks[k]+"]":""):k===al.length-1?"["+m+"]":"")+"</b></div>"}).join("")}
 function camRm(L){return String(L||"").replace(/^\(([a-d])\)/,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"})}
-function camQ(x){var q=x.q||"";return x.al&&x.al.some(function(l){return/^\([a-d]\)/.test(l)})?q.replace(/\(([a-d])\)/g,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"}):q}
-function camAns(x){if(!x.at||!x.at.length)return x.ans||"";return x.at.map(function(t,k){var L=camRm(x.al&&x.al[k]),m=/^(\([iv]+\))\s*(.*)$/.exec(L),p=m?m[1]+" ":"";if(m)L=m[2];return p+(/=\s*$/.test(L)?L+" $"+t+"$":"$"+t+"$"+(L?" "+L:""))}).join(" · ")}
+function camQ(x){var q=x.q||"";return!x.ex&&x.al&&x.al.some(function(l){return/^\([a-d]\)/.test(l)})?q.replace(/\(([a-d])\)/g,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"}):q}
+function camAns(x){if(!x.at||!x.at.length)return x.ans||"";return x.at.map(function(t,k){var L=x.ex?(x.al&&x.al[k]||""):camRm(x.al&&x.al[k]),m=x.ex?/^(\([a-g]\))\s*(.*)$/.exec(L):/^(\([iv]+\))\s*(.*)$/.exec(L),p=m?m[1]+" ":"";if(m)L=m[2];return p+(/=\s*$/.test(L)?L+" $"+t+"$":"$"+t+"$"+(L?" "+L:""))}).join(" · ")}
 function camHtml(P,o){
   var key=!!o.key,b=o.v==="b",T=total(P),lb={"ក":"A","ខ":"B"}[o.lbl]||"";
   var h="<div class='exp cam'><div class='cam-cv"+(key?" cam-ck":"")+"'><div class=cam-top><span>"+ES(P.school||"")+"</span><span>"+ES(P.gt||"")+"</span></div>";
@@ -94,9 +94,9 @@ function camHtml(P,o){
     var stem=inst&&!/[ក-៿]/.test(inst)?inst:"",wh=({1:60,2:100,3:140,4:140})[s.lv]||100;
     if(key){it.forEach(function(x,j){h+="<tr><td>"+(i+1)+(n>1?"("+LT[j]+")":"")+"</td><td>"+TX(camAns(x))+"</td><td>"+ms[j]+"</td><td class=cam-gd>"+TX(x.sol||"")+"</td></tr>"});return}
     h+="<div class=cam-q><div class=cam-qh><b>"+(i+1)+"</b><div>";
-    if(it.length===1){h+=(stem?TX(stem)+"<br>":"")+TX(camQ(it[0]))+fig(it[0].fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(it[0].al,ms[0])+"</div>";return}
+    if(it.length===1){h+=(stem?TX(stem)+"<br>":"")+TX(camQ(it[0]))+fig(it[0].fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(it[0].al,ms[0],it[0].mks,it[0].ex)+"</div>";return}
     h+=(stem?"<div class=cam-st>"+TX(stem)+"</div>":"");
-    it.forEach(function(x,j){h+="<div class=cam-p><div class=cam-pq><b>("+LT[j]+")</b><div>"+TX(camQ(x))+fig(x.fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(x.al,ms[j])+"</div>"});
+    it.forEach(function(x,j){h+="<div class=cam-p><div class=cam-pq><b>("+LT[j]+")</b><div>"+TX(camQ(x))+fig(x.fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(x.al,ms[j],x.mks,x.ex)+"</div>"});
     h+="</div></div></div>";
   });
   if(key)h+="</tbody></table>";
