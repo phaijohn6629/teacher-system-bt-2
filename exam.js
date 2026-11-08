@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=4","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=2","practiceen5.js?v=1"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=4","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=2","practiceen5.js?v=1","practiceen6.js?v=1"],genP=null,kxP=null;
 var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
@@ -18,7 +18,7 @@ var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],t
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function gen(){
   if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
-  if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4[0])}).then(function(){return ld(GEN4[1])}).catch(function(e){genP=null;throw e});
+  if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4[0])}).then(function(){return ld(GEN4[1])}).then(function(){return ld(GEN4[2])}).catch(function(e){genP=null;throw e});
   return genP;
 }
 function katex(){
