@@ -20,8 +20,8 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 function gen(){
-  if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
-  if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4[0])}).then(function(){return ld(GEN4[1])}).then(function(){return ld(GEN4[2])}).catch(function(e){genP=null;throw e});
+  if(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&window.EXGEN)return Promise.resolve();
+  if(!genP)genP=Promise.all([ld("practice.js?v=12"),window.EXGEN?0:ld("exgen.js?v=13")]).then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4[0])}).then(function(){return ld(GEN4[1])}).then(function(){return ld(GEN4[2])}).catch(function(e){genP=null;throw e});
   return genP;
 }
 function katex(){
@@ -70,21 +70,31 @@ function save(now){
   X.saveT=setTimeout(function(){
     var E=X.E;if(!E)return;var F=window.FB,o=Object.assign({},E);delete o.id;
     E.u=new Date().toISOString();
-    F.setDoc(F.doc(window.db,"exams",E.id),{o:E.o,cls:E.cls,t:EXP.head(E),u:E.u,j:JSON.stringify(o)}).then(function(){X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
+    /* 📦 រក្សាទុកជាពីរឯកសារ៖ exams/{id} = សង្ខេប (បញ្ជីទាញតែនេះ · លឿន) · exams/{id}__c = ខ្លឹមសារពេញ (ទាញពេលបើក) */
+    F.setDoc(F.doc(window.db,"exams",E.id+"__c"),{o:E.o,k:"c",u:E.u,j:JSON.stringify(o)}).then(function(){return F.setDoc(F.doc(window.db,"exams",E.id),sumOf(E))}).then(function(){X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
     try{localStorage.setItem("exCk",E.ck||"")}catch(e){}
   },now?0:1200);stat();
 }
 function stat(){var s=$("exSt");if(s)s.textContent=X.status}
+function sumOf(E){return{o:E.o,cls:E.cls,t:EXP.head(E),u:E.u,k:"s",ns:(E.secs||[]).length,pts:EXP.total(E),dur:+E.dur||0,fmt:E.fmt||"",on:E.on&&E.on.open?{open:true,endMs:E.on.endMs||0,code:E.on.code||""}:null}}
+/* ផ្ទេរវិញ្ញាសាទម្រង់ចាស់ (ខ្លឹមសារក្នុងឯកសារតែមួយ) → ពីរឯកសារ · ម្ដងគត់ក្នុងឧបករណ៍មួយ */
+function migrate(){var F=window.FB,key="exMig2_"+who.id;try{if(localStorage.getItem(key))return Promise.resolve()}catch(e){}
+  var q=isAdm()?F.collection(window.db,"exams"):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id));
+  return tmo(F.getDocs(q),60000).then(function(sn){var todo=[];sn.forEach(function(d){var v=d.data();if(!v.k&&v.j)todo.push([d.id,v])});
+    return todo.reduce(function(pr,x){return pr.then(function(){var E;try{E=JSON.parse(x[1].j)}catch(e){return}E.o=E.o||x[1].o;E.u=x[1].u||E.u;
+      return F.setDoc(F.doc(window.db,"exams",x[0]+"__c"),{o:x[1].o,k:"c",u:x[1].u||"",j:x[1].j}).then(function(){var s=sumOf(E);s.o=x[1].o;s.cls=x[1].cls||s.cls;s.t=x[1].t||s.t;s.u=x[1].u||s.u;return F.setDoc(F.doc(window.db,"exams",x[0]),s)})})},Promise.resolve())
+  }).then(function(){try{localStorage.setItem(key,"1")}catch(e){}},function(e){console.warn("exam migrate:",e)})}
 function loadList(){
-  var F=window.FB,q=isAdm()?F.collection(window.db,"exams"):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id));
-  return tmo(F.getDocs(q),25000).then(function(sn){var a=[];sn.forEach(function(d){var v=d.data();a.push({id:d.id,o:v.o,cls:v.cls,t:v.t,u:v.u,j:v.j})});a.sort(function(x,y){return(y.u||"").localeCompare(x.u||"")});X.list=a;X.err=""},
+  var F=window.FB;
+  return migrate().then(function(){var q=isAdm()?F.query(F.collection(window.db,"exams"),F.where("k","==","s")):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id),F.where("k","==","s"));return tmo(F.getDocs(q),25000)})
+  .then(function(sn){var a=[];sn.forEach(function(d){var v=d.data();a.push({id:d.id,o:v.o,cls:v.cls,t:v.t,u:v.u,ns:v.ns,pts:v.pts,dur:v.dur,on:v.on})});a.sort(function(x,y){return(y.u||"").localeCompare(x.u||"")});X.list=a;X.err=""},
     function(e){X.list=[];X.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exams)":e&&e.code==="timeout"?"ផ្ទុកបញ្ជីវិញ្ញាសាយូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកបញ្ជីវិញ្ញាសាបានទេ"});
 }
 /* ===================== ផ្ទាំង ===================== */
 function render(){
   var el=body();if(!el)return;
   if(!X.E&&!X.list&&!X.lp&&window.FB&&window.db)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});   /* ទាញបញ្ជីព្រមគ្នានឹងម៉ាស៊ីន */
-  if(!window.PRACT||!PRACT.GR[7]||!PRACT.GR[112]){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
+  if(!window.PRACT||!PRACT.GR[7]||!PRACT.GR[112]||!window.EXGEN){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
   if(X.E)return editor();
   if(!X.list){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…</p>";if(!X.lp)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});return}
   try{renderList(el)}catch(e){console.error("exam list:",e);el.innerHTML="<p class=cxwarn>⚠️ បង្ហាញបញ្ជីវិញ្ញាសាមិនបាន"+retryBtn()+"</p>"}
@@ -92,8 +102,8 @@ function render(){
 function renderList(el){
   el.innerHTML="<div class=bar><b>📝 ប្រឡងទម្រង់បើក</b><span class=note style='margin:0'>បង្កើតវិញ្ញាសាស្វ័យប្រវត្តិ · បោះពុម្ព ឬបើកឱ្យសិស្សមើលលើទូរស័ព្ទ (សរសេរចម្លើយលើក្រដាស)</span><button type=button class=primary data-ex=new>＋ វិញ្ញាសាថ្មី</button></div>"+
     (X.err?"<p class=cxwarn>⚠️ "+esc(X.err)+retryBtn()+"</p>":"")+
-    (X.list.length?"<div class=qr-list>"+X.list.map(function(x){var E=null;try{E=JSON.parse(x.j)}catch(e){}var on=E&&E.on&&E.on.open&&E.on.endMs>Date.now();
-      return"<div class=qr-card><div><b>"+esc(x.t||"វិញ្ញាសា")+"</b><small>"+esc(x.cls||"")+" · "+(E?kn(E.secs.length)+" ផ្នែក · "+kn(EXP.total(E))+" ពិន្ទុ · "+kn(E.dur)+" នាទី":"")+" · "+esc((x.u||"").slice(0,10))+(isAdm()&&x.o!==who.id?" · "+esc((teacherOf(x.o)||{}).name||x.o):"")+"</small></div>"+
+    (X.list.length?"<div class=qr-list>"+X.list.map(function(x){var on=x.on&&x.on.open&&x.on.endMs>Date.now();
+      return"<div class=qr-card><div><b>"+esc(x.t||"វិញ្ញាសា")+"</b><small>"+esc(x.cls||"")+" · "+(x.ns!=null?kn(x.ns)+" ផ្នែក · "+kn(x.pts||0)+" ពិន្ទុ · "+kn(x.dur||0)+" នាទី":"")+" · "+esc((x.u||"").slice(0,10))+(isAdm()&&x.o!==who.id?" · "+esc((teacherOf(x.o)||{}).name||x.o):"")+"</small></div>"+
         "<span class='qr-st"+(on?" on":"")+"'>"+(on?"🟢 កំពុងប្រឡងអនឡាញ":"📄 ក្រដាស")+"</span><button type=button class=primary data-ex='open|"+x.id+"'>បើក</button><button type=button data-ex='dup|"+x.id+"' title='ចម្លងជាវិញ្ញាសាថ្មី'>📑</button><button type=button class=danger data-ex='del|"+x.id+"'>🗑️</button></div>"}).join("")+"</div>"
       :"<p class=note>មិនទាន់មានវិញ្ញាសាទេ។ ចុច «＋ វិញ្ញាសាថ្មី» ដើម្បីចាប់ផ្ដើម។</p>");
 }
@@ -223,12 +233,13 @@ function act(a,q){
   var E=X.E,g=E?gOf(E):0,F=window.FB;
   if(a==="reload"){genP=null;X.list=null;X.lp=null;X.err="";render();return}
   if(a==="new"){X.E=newExam();X.status="";save(true);render();return}
-  if(a==="open"||a==="dup"){var x=(X.list||[]).filter(function(y){return y.id===q[1]})[0];if(!x)return;var e2=JSON.parse(x.j);e2.id=x.id;
+  if(a==="open"||a==="dup"){var x=(X.list||[]).filter(function(y){return y.id===q[1]})[0];if(!x)return;body().innerHTML="<p class=note>⏳ កំពុងបើកវិញ្ញាសា…</p>";
+    tmo(F.getDoc(F.doc(window.db,"exams",x.id+"__c")),25000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j)throw{code:"nf"};var e2=JSON.parse(v.j);e2.id=x.id;
     if(a==="dup"){e2.id=uid();e2.o=who.id;e2.on=null;e2.cr=new Date().toISOString();e2.title=e2.title;X.E=e2;save(true)}else{X.E=e2;X.status=""}
-    render();if(X.E.on&&X.E.on.open)watch();return}
+    render();if(X.E.on&&X.E.on.open)watch()}).catch(function(e){console.error("exam open:",e);alert(e&&e.code==="timeout"?"បើកវិញ្ញាសាយូរពេក (អ៊ីនធឺណិតយឺត) · សូមព្យាយាមម្ដងទៀត":"មិនអាចបើកវិញ្ញាសានេះបានទេ");render()});return}
   if(a==="del"){var y=(X.list||[]).filter(function(z){return z.id===q[1]})[0];if(!y||!confirm("លុបវិញ្ញាសា «"+(y.t||"")+"»?"))return;
-    var e3={};try{e3=JSON.parse(y.j)}catch(er){}
-    Promise.all([F.deleteDoc(F.doc(window.db,"exams",y.id)),F.deleteDoc(F.doc(window.db,"exm",y.id)).catch(function(){}),e3.on&&e3.on.code?F.deleteDoc(F.doc(window.db,"exq",y.id+"_"+e3.on.code)).catch(function(){}):0])
+    var e3={on:y.on};
+    Promise.all([F.deleteDoc(F.doc(window.db,"exams",y.id)),F.deleteDoc(F.doc(window.db,"exams",y.id+"__c")).catch(function(){}),F.deleteDoc(F.doc(window.db,"exm",y.id)).catch(function(){}),e3.on&&e3.on.code?F.deleteDoc(F.doc(window.db,"exq",y.id+"_"+e3.on.code)).catch(function(){}):0])
       .then(function(){X.list=X.list.filter(function(z){return z.id!==y.id});render();notify("បានលុបវិញ្ញាសា")},function(){alert("មិនអាចលុបបានទេ")});return}
   if(!E)return;
   if(a==="back"){if(X.dirty)save(true);unwatch();X.E=null;X.list=null;render();return}

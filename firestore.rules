@@ -404,6 +404,13 @@ service cloud.firestore {
     }
 
     // ===================== 📝 ប្រឡងទម្រង់បើក (exam.js · exam.html) =====================
+    // errs/{id} = 🐞 កំណត់ហេតុកំហុស JS ពីឧបករណ៍គ្រូ (errlog.js) · គ្រូបង្កើតបាន (តូច · មិនកែ) · Admin អាន/លុប
+    match /errs/{id} {
+      allow create: if active() && request.resource.data.keys().hasOnly(['m','src','s','pg','ua','t','u','n'])
+                    && request.resource.data.m is string && request.resource.data.m.size() <= 500
+                    && request.resource.data.s is string && request.resource.data.s.size() <= 1500;
+      allow read, delete: if isAdmin();
+    }
     // exams/{id} = វិញ្ញាសា + ចម្លើយ (គ្រូម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ)
     match /exams/{id} {
       allow read: if isAdmin() || (active() && resource.data.o == myId());
