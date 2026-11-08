@@ -9,7 +9,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="style.css?v=86">
-<link rel="stylesheet" href="modern.css?v=20">
+<link rel="stylesheet" href="modern.css?v=21">
 
 </head>
 <body>
@@ -574,7 +574,7 @@
 <script src="quiz.js?v=29"></script>
 <script src="ptauto.js?v=1"></script>
 <script src="expaper.js?v=19"></script>
-<script src="exam.js?v=26"></script>
+<script src="exam.js?v=27"></script>
 <script src="monthly.js?v=5"></script>
 <script src="classorg.js?v=10"></script>
 <script src="timer.js?v=1"></script>

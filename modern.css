@@ -509,3 +509,21 @@ html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!
 @media print{#loginPop{display:none!important}}
 #stTb td.du .chip .ot{background:#16a34a}
 #stTb td.du{background:none}
+
+/* ==========================================================================
+   ⚡ ទូរស័ព្ទ/ថេប្លេត៖ បិទ backdrop-filter (blur) — រាល់ពេលរំកិល ទូរស័ព្ទត្រូវគណនាព្រិលឡើងវិញគ្រប់ប្រអប់ → យឺត
+   ប្រើពណ៌ស្ទើរតែស្រអាប់ជំនួស (មើលទៅស្ទើរតែដូចមុន) · កុំព្យូទ័រនៅដដែល
+   ========================================================================== */
+@media (max-width: 900px), (hover: none) and (pointer: coarse) {
+    :root { --card-bg: rgba(30, 31, 55, 0.96); --nav-bg: rgba(15, 16, 32, 0.97); }
+    :root[data-theme="light"] { --card-bg: rgba(255, 255, 255, 0.97); --nav-bg: rgba(255, 255, 255, 0.98); }
+    .modern-card, .wrap, .card, .stat, header, .floating-nav, .snav, #allMenu, .login-box, #loginPop, dialog::backdrop {
+        -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+    }
+    .brand-logo { animation: none !important; }
+    .modern-card:hover { transform: none; }
+}
+/* អ្នកប្រើដែលចង់កាត់បន្ថយចលនា */
+@media (prefers-reduced-motion: reduce) {
+    .brand-logo { animation: none !important; }
+}

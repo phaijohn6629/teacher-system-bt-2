@@ -30,7 +30,8 @@ function gen(){
   return genP;
 }
 /* 📥 ទាញទុកជាមុនពេលទំនេរ (ទុកក្នុង cache · មិនដំណើរការ) → ពេលបើក «ប្រឡងបើក» លឿន */
-setTimeout(function(){if(navigator.connection&&navigator.connection.saveData)return;var go=function(){if(engReady()||genP)return;ENG().forEach(function(u){var l=document.createElement("link");l.rel="prefetch";l.as="script";l.href=u;document.head.appendChild(l)})};if(window.requestIdleCallback)requestIdleCallback(go,{timeout:15000});else go()},12000);
+setTimeout(function(){var cn=navigator.connection;if(cn&&cn.saveData)return;if(window.matchMedia&&matchMedia("(pointer:coarse)").matches&&!(cn&&cn.type==="wifi"))return;   /* ទូរស័ព្ទ៖ តែ Wi-Fi ប៉ុណ្ណោះ */
+  var go=function(){if(engReady()||genP)return;ENG().forEach(function(u){var l=document.createElement("link");l.rel="prefetch";l.as="script";l.href=u;document.head.appendChild(l)})};if(window.requestIdleCallback)requestIdleCallback(go,{timeout:15000});else go()},12000);
 function katex(){
   if(window.renderMathInElement)return Promise.resolve();
   if(!kxP){var l=document.createElement("link");l.rel="stylesheet";l.href=KX+"katex.min.css";document.head.appendChild(l);
