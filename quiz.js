@@ -313,7 +313,7 @@ function autoDlg(){
 function qDialog(q){
   var d=$("qzDlg");
   if(!d){d=document.createElement("dialog");d.id="qzDlg";d.className="wide";document.body.appendChild(d)}
-  q=q||{id:"",g:fG||10,ls:fL||"",lv:1,t:"mc",q:"",ch:["","","",""],a:0};
+  q=q||{id:"",g:fG||10,ls:fL||"",lv:1,t:"mc",q:"",ch:["","","",""],a:0,pt:fP>0?fP:0};   /* ថ្មី → ចំណុចតាមតម្រងដែលកំពុងជ្រើស */
   var g=q.g;
   d.innerHTML="<form method=dialog class=dlgb><h2 style='margin:0 0 10px'>"+(q.id?"✏️ កែលំហាត់":"＋ បន្ថែមលំហាត់")+"</h2><div class=fg>"+
     "<div><label>ថ្នាក់</label><select id=qdG>"+grades().map(function(x){return"<option value="+x+(x===g?" selected":"")+">ថ្នាក់ទី"+kn(x)+"</option>"}).join("")+"</select></div>"+
@@ -473,12 +473,19 @@ function texImport(){
 }
 function texPreview(Q,fname){
   var d=$("qzTex");if(!d){d=document.createElement("dialog");d.id="qzTex";d.className="wide";document.body.appendChild(d)}
-  var g=fG||10;
+  d.innerHTML="";   /* កុំឱ្យអាន txG/txL ចាស់ពីការនាំចូលមុន */
+  var g=fG||10,P0=fG&&fL&&fP>0?fP:0;   /* 📍 ចំណុច៖ តាមតម្រងដែលកំពុងជ្រើសក្នុងធនាគារ */
+  Q.forEach(function(q){q.pt=P0});
+  function curPts(){var G=$("txG")?+$("txG").value:g,L=$("txL")?+$("txL").value:+fL;return L?ptsOf(G,L):[]}
+  function ptSel(){var pts=curPts();return pts.length?"<label>ចំណុច (សម្រាប់លំហាត់ទាំងអស់)</label><select id=txP><option value=0>— មិនកំណត់ (ទាំងមេរៀន) —</option>"+pts.map(function(x){return"<option value="+x[0]+(x[0]===P0?" selected":"")+">"+kn(x[0])+". "+esc(x[1])+"</option>"}).join("")+"<option value=-2>🤖 ស្វ័យប្រវត្តិ (ប្រព័ន្ធទាយតាមខ្លឹមសារ · ពិនិត្យម្ដងមួយៗខាងក្រោម)</option></select>":""}
+  function ptAll(v){var pts=curPts(),G=$("txG")?+$("txG").value:g,L=$("txL")?+$("txL").value:0;
+    Q.forEach(function(q){if(v===-2){var r=window.PTAUTO&&pts.length?PTAUTO.guess(q,pts,G+"|"+L):null;q.pt=r?r.pt:0}else q.pt=v})}
   function body(){
+    var pts=curPts();
     var miss=Q.filter(function(q){return q.t==="mc"?q.a<0:!q.a}).length;
     return Q.map(function(q,i){
       return"<div class='qz-q"+((q.t==="mc"?q.a<0:!q.a)?" qz-miss":"")+"'><div class=qz-qh><label style='display:flex;gap:6px;align-items:center;margin:0'><input type=checkbox data-ti="+i+(q.skip?"":" checked")+" style='width:auto;margin:0'> <b>លំហាត់ទី"+kn(i+1)+"</b></label>"+
-        (q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+(q.src?"<span class=qz-ls>"+esc(q.src)+"</span>":"")+"<select data-tv="+i+" style='width:auto;margin:0'>"+[1,2,3].map(function(v){return"<option value="+v+((q.lv||1)===v?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
+        (q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+(q.src?"<span class=qz-ls>"+esc(q.src)+"</span>":"")+(pts.length?"<select data-tp="+i+" style='width:auto;max-width:240px;margin:0' title='ចំណុចនៃមេរៀន'><option value=0>⚠️ ចំណុច…</option>"+pts.map(function(x){return"<option value="+x[0]+(+q.pt===x[0]?" selected":"")+">"+kn(x[0])+". "+esc(x[1])+"</option>"}).join("")+"</select>":"")+"<select data-tv="+i+" style='width:auto;margin:0'>"+[1,2,3].map(function(v){return"<option value="+v+((q.lv||1)===v?" selected":"")+">"+LV[v]+"</option>"}).join("")+"</select>"+
         (q.t==="mc"?(q.a<0?"<span class=qz-warn>⚠️ ចុចជម្រើសត្រូវ</span>":""):"<span>ចម្លើយ៖ <input data-tn="+i+" value='"+esc(q.a)+"' style='width:110px;margin:0'></span>"+(q.a?"":"<span class=qz-warn>⚠️ បញ្ចូលចម្លើយ</span>"))+"</div>"+
         "<div class=qz-qt>"+tx(q.q)+"</div>"+
         (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,j){return c?"<li class='pick"+(j===q.a?" ok":"")+"' data-tc='"+i+"|"+j+"'>"+tx(c)+"</li>":""}).join("")+"</ol>":"")+"</div>"}).join("")+
@@ -486,12 +493,15 @@ function texPreview(Q,fname){
   }
   d.innerHTML="<div class=dlgb><h2 style='margin:0 0 6px'>📥 នាំចូលពី «"+esc(fname)+"»</h2><p class=note style='margin:0 0 8px'>រកឃើញ <b>"+kn(Q.length)+"</b> លំហាត់។ ពិនិត្យ ជ្រើសចម្លើយត្រូវ (ចុចលើជម្រើស) និងកម្រិត មុននាំចូល។</p>"+
     "<div class=fg><div><label>ថ្នាក់</label><select id=txG>"+grades().map(function(x){return"<option value="+x+(x===g?" selected":"")+">ថ្នាក់ទី"+kn(x)+"</option>"}).join("")+"</select></div>"+
-    "<div><label>មេរៀន (សម្រាប់លំហាត់ទាំងអស់)</label><select id=txL>"+lsOpts(g,fL,false)+"</select></div></div>"+
+    "<div><label>មេរៀន (សម្រាប់លំហាត់ទាំងអស់)</label><select id=txL>"+lsOpts(g,fL,false)+"</select></div><div id=txPW>"+ptSel()+"</div></div>"+
     "<div id=txB class=qz-list style='margin-top:10px'>"+body()+"</div></div>"+
     "<div class=dlgf><button type=button id=txX>បោះបង់</button><button type=button class=primary id=txOK>📥 នាំចូល</button></div>";
   function re(){$("txB").innerHTML=body();math($("txB"))}
   d.onchange=function(e){var el=e.target;
-    if(el.id==="txG")$("txL").innerHTML=lsOpts(+el.value,"",false);
+    if(el.id==="txG"){$("txL").innerHTML=lsOpts(+el.value,"",false);P0=0;ptAll(0);$("txPW").innerHTML=ptSel();re()}
+    else if(el.id==="txL"){P0=0;ptAll(0);$("txPW").innerHTML=ptSel();re()}
+    else if(el.id==="txP"){ptAll(+el.value);re()}
+    else if(el.dataset.tp)Q[+el.dataset.tp].pt=+el.value;
     else if(el.dataset.ti)Q[+el.dataset.ti].skip=!el.checked;
     else if(el.dataset.tv)Q[+el.dataset.tv].lv=+el.value;
     else if(el.dataset.tn){Q[+el.dataset.tn].a=el.value.trim();re()}};
@@ -501,9 +511,10 @@ function texPreview(Q,fname){
     var G=+$("txG").value,L=+$("txL").value;if(!L){alert("សូមជ្រើសមេរៀន");return}
     var ok=Q.filter(function(q){return!q.skip&&(q.t==="mc"?q.a>=0:q.a)});if(!ok.length){alert("គ្មានលំហាត់ដែលរួចរាល់សម្រាប់នាំចូលទេ");return}
     var arr=[];
-    ok.forEach(function(q){var o={id:uid(),g:G,ls:L,lv:q.lv||1,t:q.t,q:q.q};if(q.bl)o.bl=q.bl;if(q.t==="mc"){o.ch=q.ch;o.a=q.a}else o.a=q.a;arr.push(o)});
+    var hasP=ptsOf(G,L).length,P=$("txP")?+$("txP").value:0;
+    ok.forEach(function(q){var o={id:uid(),g:G,ls:L,lv:q.lv||1,t:q.t,q:q.q};if(q.bl)o.bl=q.bl;if(hasP&&+q.pt>0)o.pt=+q.pt;if(q.t==="mc"){o.ch=q.ch;o.a=q.a}else o.a=q.a;arr.push(o)});
     var tb=$("txOK");tb.disabled=true;
-    saveMany(who.id,arr).then(function(){d.close();fG=G;fL=L;renderQuiz();notify("បាននាំចូល "+ok.length+" លំហាត់")},function(){tb.disabled=false});
+    saveMany(who.id,arr).then(function(){d.close();fG=G;fL=L;fP=P>0?P:-1;renderQuiz();notify("បាននាំចូល "+ok.length+" លំហាត់")},function(){tb.disabled=false});
   };
   d.showModal();math($("txB"));
 }
