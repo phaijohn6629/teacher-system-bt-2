@@ -135,9 +135,25 @@ function doLogout(){
   var done=function(){try{sessionStorage.clear()}catch(e){}location.reload()};
   if(window.FB&&window.FB.auth)window.FB.signOut(window.FB.auth).then(done,done);else done();
 }
+/* ⚡ ចូលលឿន៖ ចងចាំព័ត៌មានគណនី (id · ឈ្មោះ · តួនាទី) ក្នុងឧបករណ៍ → បើកកម្មវិធីភ្លាម ហើយផ្ទៀងផ្ទាត់ពី Cloud នៅពីក្រោយ
+   បើ Cloud ខុសពីអ្វីដែលចងចាំ (ឧ. ត្រូវបានបិទសិទ្ធិ/ប្ដូរតួនាទី) → ផ្ទុកឡើងវិញ · សិទ្ធិពិតនៅតែការពារដោយ firestore.rules */
 function enterApp(user){
-  window.FB.getDoc(window.FB.doc(window.db,"users",user.uid)).then(function(sn){
+  var ck="profC_"+user.uid,c=null;
+  try{c=JSON.parse(localStorage.getItem(ck))}catch(e){}
+  var net=window.FB.getDoc(window.FB.doc(window.db,"users",user.uid)).then(function(sn){
     var p=sn.exists()?sn.data():null;
+    try{if(p&&p.enabled===true)localStorage.setItem(ck,JSON.stringify(p));else localStorage.removeItem(ck)}catch(e){}
+    return p;
+  });
+  var sig=function(p){return p?JSON.stringify([p.id,p.name,p.role,p.enabled,p.mustChange,p.t,p.k,p.c,p.r,p.sn]):""};
+  if(c&&c.enabled===true){
+    net.then(function(p){if(sig(p)!==sig(c))location.reload()},function(e){console.warn("profile:",e)});
+    return goApp(user,c);
+  }
+  net.then(function(p){goApp(user,p)}).catch(function(e){alert(authErr(e));doLogout()});
+}
+function goApp(user,p){
+  (function(){
     if(!p){alert("គណនីនេះមិនទាន់ត្រូវបានកំណត់សិទ្ធិក្នុងប្រព័ន្ធទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
     if(p.enabled!==true){alert("គណនីរបស់អ្នកមិនទាន់បើកសិទ្ធិប្រើប្រាស់ទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។");return doLogout()}
     if(p.role==="monitor"){   /* គណនីប្រធានថ្នាក់៖ ចូលបានតែ វត្តមាន · ប្លង់តុ · សម្រង់អត្ថបទ នៃថ្នាក់ខ្លួន (monitor.js) */
@@ -165,7 +181,7 @@ function enterApp(user){
     if(prof.mustChange)openPass(true);
     else if(window._justLogin)loginPop();
     window._justLogin=false;
-  }).catch(function(e){alert(authErr(e));doLogout()});
+  })();
 }
 function loadUsers(){
   return window.FB.getDocs(window.FB.collection(window.db,"users")).then(function(qs){
@@ -199,6 +215,8 @@ $("btnLogin").onclick=function(){
 };
 ["loginId","loginPass"].forEach(function(i){$(i).onkeydown=function(e){if(e.key==="Enter")$("btnLogin").onclick()}});
 $("btnLogout").onclick=doLogout;
+/* ⚡ បង្ហាញផ្ទាំង Login ភ្លាម (មិនរង់ចាំ Firebase ទាញរួច) បើ Tab នេះមិនទាន់បាន Login */
+try{if(!Object.keys(sessionStorage).some(function(k){return k.indexOf("firebase:authUser:")===0}))$("loginSection").hidden=false}catch(e){}
 window.FBREADY.then(function(){
   window.FB.onAuthStateChanged(window.FB.auth,function(user){if(user)enterApp(user);else showLogin()});
 }).catch(function(e){
@@ -2609,8 +2627,9 @@ function startSync(){
 }
 /* Admin ម្នាក់ដំបូង៖ បំលែងទិន្នន័យចាស់ (app/tasks ... app/lib) ទៅទម្រង់ថ្មី ម្ដងគត់ */
 function migrateLegacy(){
+  if(lsGet("cfgMigrated",""))return Promise.resolve();   /* ⚡ ពិនិត្យរួចម្ដងហើយ → មិនចាំបាច់សួរ Cloud ទៀត */
   return window.FB.getDoc(window.FB.doc(window.db,"cfg","migrated")).then(function(sn){
-    if(sn.exists())return;
+    if(sn.exists()){lsSet("cfgMigrated","1");return}
     var keys=Object.keys(LEG);
     return Promise.all(keys.map(function(k){
       return window.FB.getDoc(window.FB.doc(window.db,"app",k)).then(function(s){return s.exists()?s.data().v:null},function(){return null});
