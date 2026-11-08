@@ -1,0 +1,15 @@
+{
+  "name": "ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន · វិទ្យាល័យបឹងត្របែក",
+  "short_name": "គ្រូ BT",
+  "description": "ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន · សាលារៀនជំនាន់ថ្មី (NGS) វិទ្យាល័យបឹងត្របែក",
+  "lang": "km",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f3ff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
