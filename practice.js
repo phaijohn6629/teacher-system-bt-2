@@ -614,7 +614,7 @@ var LV={1:["កម្រិត ១","មូលដ្ឋាន"],2:["កម្រ
 var LVE={1:["Level 1","Foundation"],2:["Level 2","Core"],3:["Level 3","Extended"],4:["🌍 Real life","Problem solving"]};
 /* 🇬🇧 ថ្នាក់ភាសាអង់គ្លេស (Cambridge) · GR[g].en = true → ផ្ទៃប្រើប្រាស់ជាអង់គ្លេស */
 function EN(){return!!(GR[S.g]&&GR[S.g].en)}function T(k,e){return EN()?e:k}function N(n){return EN()?String(n):kn(n)}function lv(k){return(EN()?LVE:LV)[k]}
-function gname(g){return GR[g]&&GR[g].tab?GR[g].tab:"ថ្នាក់ទី"+kn(g)}
+function gname(g){var t=GR[g]&&GR[g].tab;if(!t)return"ថ្នាក់ទី"+kn(g);var p=t.replace(/^\S+\s/,"").split(" · ");return"<b>"+esc(p[0])+"</b>"+(p[1]?"<small>"+esc(p[1])+"</small>":"")}
 /* កម្រិតទី ៤ (PISA) មានតែមេរៀនណាដែលកំណត់ G[l][4] */
 function lvls(l){var g=GR[S.g]&&GR[S.g].G[l];return g&&g[4]?[1,2,3,4]:[1,2,3]}
 /* ថ្នាក់នីមួយៗ៖ GR[ថ្នាក់] = {les:[ជំពូក], G:{មេរៀន:{1,2,3}}} · ថ្នាក់ផ្សេងបន្ថែមដោយ PX.reg() (practice11.js …) */
@@ -679,7 +679,8 @@ function home(){
   var tot=0,got=0,p=prog();
   var h="<div class=hero><h1>"+T("🧮 ហ្វឹកហាត់បន្ថែម គណិតវិទ្យា ថ្នាក់ទី"+kn(S.g),"🧮 Mathematics Practice · "+esc(GR[S.g].title||""))+"</h1><p>"+T("ជ្រើសមេរៀន · ជ្រើសកម្រិត · ដោះស្រាយ · ចុច «ពិនិត្យ» · ឆ្លើយត្រូវទាំងអស់ ទទួលបានពានរង្វាន់ 🏆","Choose a topic · choose a level · solve · press «Check» · get everything right to win a trophy 🏆")+"</p>"+
     (CL.me?"<div class=gtabs><span class=me>👤 "+esc(CL.me.n)+" · "+T("ថ្នាក់ ","Class ")+esc(CL.cls.cls)+"</span><button type=button data-a=chme>"+T("ប្ដូរឈ្មោះ","Change name")+"</button></div>":
-    "<div class=gtabs>"+grades().map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">"+gname(g)+"</button>"}).join("")+"</div>")+"</div>";
+    "<div class=cur><button type=button data-cur=km"+(EN()?"":" class=on")+">🇰🇭 កម្មវិធីសិក្សាខ្មែរ</button><button type=button data-cur=en"+(EN()?" class=on":"")+">🇬🇧 Cambridge (English)</button></div>"+
+    "<div class=gtabs>"+grades().filter(function(g){return!!GR[g].en===EN()}).map(function(g){return"<button type=button data-g="+g+(g===S.g?" class=on":"")+">"+gname(g)+"</button>"}).join("")+"</div>")+"</div>";
   GR[S.g].les.forEach(function(ch){
     h+="<section class=ch><h2>"+esc(ch[0])+"</h2><div class=cards>"+ch[1].map(function(l){var L=lvls(l[0]),q=p[l[0]]||{};tot+=L.length;L.forEach(function(v){if(q[v])got++});
       return"<button type=button class=card data-l="+l[0]+"><b>"+esc(l[1])+"</b><span class=cups>"+cupHtml(l[0])+"</span></button>"}).join("")+"</div></section>";
@@ -782,7 +783,9 @@ function bind(){
   app.addEventListener("click",function(e){
     var b=e.target.closest("button");if(!b)return;
     if(b.dataset.me!=null){var x=CL.cls.names.filter(function(n){return n.k===b.dataset.me})[0];if(!x)return;CL.me=x;try{localStorage.setItem("pracMe_"+CL.code,JSON.stringify(x))}catch(e){}clFlush();return home()}
-    if(b.dataset.g){S.g=+b.dataset.g;try{localStorage.setItem("pracG",S.g)}catch(x){}return home()}
+    if(b.dataset.g){S.g=+b.dataset.g;try{localStorage.setItem("pracG",S.g);localStorage.setItem("pracG_"+(EN()?"en":"km"),S.g)}catch(x){}return home()}
+    if(b.dataset.cur){var cu=b.dataset.cur,lg=0;try{lg=+localStorage.getItem("pracG_"+cu)||0}catch(x){}var gs=grades().filter(function(g){return!!GR[g].en===(cu==="en")});
+      S.g=gs.indexOf(lg)>=0?lg:cu==="en"?(gs.indexOf(110)>=0?110:gs[0]):(gs.indexOf(12)>=0?12:gs[gs.length-1]);try{localStorage.setItem("pracG",S.g)}catch(x){}return home()}
     if(b.dataset.l)return open(+b.dataset.l,1);
     if(b.dataset.v)return open(S.l,+b.dataset.v);
     if(b.dataset.sol!=null){var q=S.qs[+b.dataset.sol];q.show=!q.show;return draw()}
