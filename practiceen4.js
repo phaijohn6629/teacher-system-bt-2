@@ -206,7 +206,9 @@ var XG={31:{1:L(N1,N3,N4,N8,N9),2:L(N10,N5),3:L(N6,N7)},
 var XL=["📝 Exam-style questions (Paper 2 · Paper 4)",[[31,"Exam-style: Number"],[32,"Exam-style: Algebra"],[33,"Exam-style: Geometry and mensuration"],[34,"Exam-style: Trigonometry and vectors"],[35,"Exam-style: Statistics and probability"]]];
 [110,111].forEach(function(g){var R=window.PRACT&&PRACT.GR[g];if(!R)return;Object.keys(XG).forEach(function(k){R.G[k]=XG[k]});R.les.push(XL)});
 /* ក្រដាសប្រឡងពេញ (សម្រាប់ exam.js)៖ [មេរៀន, កម្រិត] តាមលំដាប់ Paper 2 / Paper 4 */
-window.CAMPAPER={
+var CAMPAPER={
   p2:[[31,1],[31,1],[32,1],[31,1],[33,1],[35,1],[32,1],[33,1],[34,1],[31,1],[35,1],[32,1],[33,1],[32,1]],
   p4:[[31,2],[31,2],[32,2],[35,3],[33,2],[31,3],[32,2],[34,2],[33,3],[32,3],[35,2],[34,3],[31,3],[32,3],[34,2]]};
+var IG={p2:{label:"Paper 2 style · Non-calculator",calc:false,title:"Paper 2 (Non-calculator) · Practice",secs:CAMPAPER.p2},p4:{label:"Paper 4 style · Calculator",calc:true,title:"Paper 4 (Calculator) · Practice",secs:CAMPAPER.p4}};
+window.CAMPAPERS=window.CAMPAPERS||{};window.CAMPAPERS[110]=IG;window.CAMPAPERS[111]=IG;
 })();
