@@ -12,7 +12,7 @@ var ES=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){re
 function TX(s){return ES(String(s||"").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ ")})).replace(/\n/g,"<br>")}
 var MO=["មករា","កុម្ភៈ","មីនា","មេសា","ឧសភា","មិថុនា","កក្កដា","សីហា","កញ្ញា","តុលា","វិច្ឆិកា","ធ្នូ"];
 var RN=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"],SUB="កខគឃងចឆជឈញ";
-function head(P){var t=P.title||"ប្រឡងប្រចាំខែ";if(P.fmt==="bac"||P.fmt==="dip")return t;if(P.mo&&/^\d{4}-\d{2}$/.test(P.mo))t+=(/ខែ\s*$/.test(t)?" ":" ខែ ")+MO[+P.mo.slice(5)-1]+" ឆ្នាំ "+KN(P.mo.slice(0,4));return t}
+function head(P){if(P.fmt==="cam")return P.title||"Topic Test";var t=P.title||"ប្រឡងប្រចាំខែ";if(P.fmt==="bac"||P.fmt==="dip")return t;if(P.mo&&/^\d{4}-\d{2}$/.test(P.mo))t+=(/ខែ\s*$/.test(t)?" ":" ខែ ")+MO[+P.mo.slice(5)-1]+" ឆ្នាំ "+KN(P.mo.slice(0,4));return t}
 function total(P){return(P.secs||[]).reduce(function(s,x){return s+(+x.pts||0)},0)}
 function lunar(d){try{var a=d.split("-").map(Number);return window.KhCal?KhCal.fmt(a[0],a[1],a[2]).replace(" ព.ស. "," ព.ស ").replace(/([០-៩])(កើត|រោច)/,"$1 $2"):""}catch(e){return""}}
 function solar(d){var a=String(d||"").split("-").map(Number);if(a.length<3||!a[0])return"";return"ថ្ងៃទី "+KN(a[2])+" ខែ"+MO[a[1]-1]+" ឆ្នាំ "+KN(a[0])}
@@ -40,7 +40,7 @@ function fit(root){[].forEach.call((root||document).querySelectorAll(".exp-it.tw
   var w=[].some.call(g.querySelectorAll(".exp-i>span"),function(sp){var r=sp.getClientRects();if(r.length<2)return false;var y=r[0].top;return[].some.call(r,function(x){return Math.abs(x.top-y)>12})});
   if(w)g.classList.remove("two")})}
 function html(P,o){
-  o=o||{};var key=!!o.key,b=o.v==="b",T=total(P),bac=P.fmt==="bac"||P.fmt==="dip";
+  o=o||{};if(P.fmt==="cam")return camHtml(P,o);var key=!!o.key,b=o.v==="b",T=total(P),bac=P.fmt==="bac"||P.fmt==="dip";
   var h=P.fmt==="dip"?dipHead(P,o,T):bac?bacHead(P,o,T):"<div class=exp style=\""+fvars(P.font)+"\"><div class=exp-hd><div class=exp-hl>"+
     "<div class=exp-b>"+ES(P.school||"វិទ្យាល័យ")+"</div>"+
     "<div class=exp-b>មុខវិជ្ជា "+ES(P.sub||"គណិតវិទ្យា")+" ថ្នាក់ទី <span class=exp-n>"+ES(P.cls||"")+"</span></div>"+
@@ -64,6 +64,57 @@ function html(P,o){
     "<div class=exp-fr>"+(ld?"<div>"+ES(ld)+"</div>":"")+"<div>"+ES(P.place||"រាជធានីភ្នំពេញ")+" "+solar(P.date)+"</div><div class=exp-au>អ្នកចេញវិញ្ញាសា</div><div class=exp-nm>"+ES(P.au||"")+"</div></div></div></div>";
   return h;
 }
+/* ===== 🇬🇧 Cambridge style (fmt = "cam") · ក្រដាសសំណួរ + Mark scheme ជាភាសាអង់គ្លេស ===== */
+var CMO=["January","February","March","April","May","June","July","August","September","October","November","December"],LT="abcdefghij";
+function camDate(d){var a=String(d||"").split("-").map(Number);return a.length===3&&a[0]?a[2]+" "+CMO[a[1]-1]+" "+a[0]:""}
+function camLines(al,m){al=al&&al.length?al:[""];return al.map(function(L,k){var pre="",suf="",mm=/^(\([iv]+\))\s*(.*)$/.exec(L=camRm(L));if(mm){pre=mm[1];L=mm[2]}
+  if(/=\s*$/.test(L||""))pre+=(pre?" ":"")+L;else suf=L||"";
+  return"<div class=cam-a>"+(pre?"<span>"+ES(pre)+"</span>":"")+"<span class=cam-ln></span>"+(suf?"<span>"+ES(suf)+"</span>":"")+"<b class=cam-mk>"+(k===al.length-1?"["+m+"]":"")+"</b></div>"}).join("")}
+function camRm(L){return String(L||"").replace(/^\(([a-d])\)/,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"})}
+function camQ(x){var q=x.q||"";return x.al&&x.al.some(function(l){return/^\([a-d]\)/.test(l)})?q.replace(/\(([a-d])\)/g,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"}):q}
+function camAns(x){if(!x.at||!x.at.length)return x.ans||"";return x.at.map(function(t,k){var L=camRm(x.al&&x.al[k]),m=/^(\([iv]+\))\s*(.*)$/.exec(L),p=m?m[1]+" ":"";if(m)L=m[2];return p+(/=\s*$/.test(L)?L+" $"+t+"$":"$"+t+"$"+(L?" "+L:""))}).join(" · ")}
+function camHtml(P,o){
+  var key=!!o.key,b=o.v==="b",T=total(P),lb={"ក":"A","ខ":"B"}[o.lbl]||"";
+  var h="<div class='exp cam'><div class='cam-cv"+(key?" cam-ck":"")+"'><div class=cam-top><span>"+ES(P.school||"")+"</span><span>"+ES(P.gt||"")+"</span></div>";
+  if(!key)h+="<table class=cam-cd><tr><td>CANDIDATE<br>NAME</td><td colspan=3 class=cam-bx></td></tr><tr><td>CLASS</td><td class=cam-bx style='width:28%'></td><td>CANDIDATE<br>NUMBER</td><td class=cam-bx></td></tr></table>";
+  h+="<div class=cam-sub>"+ES(String(P.sub||"Mathematics").toUpperCase())+"</div><div class=cam-tt>"+ES(P.title||"Topic Test")+(lb?" — Version "+lb:"")+(key?"<br>MARK SCHEME":"")+"</div>"+
+    "<div class=cam-mt><span>"+ES(camDate(P.date))+"</span><span>"+(key?"Maximum mark: "+T:(+P.dur||45)+" minutes")+"</span></div>";
+  if(!key)h+="<p class=cam-yn>You must answer on the question paper.</p><p class=cam-yn>You will need: "+(P.calc?"Calculator, ":"")+"Geometrical instruments</p>"+
+    "<div class=cam-in><h4>INSTRUCTIONS</h4><ul><li>Answer <b>all</b> questions.</li><li>Use a black or dark blue pen. You may use an HB pencil for any diagrams or graphs.</li>"+
+    "<li>Write your name, class and candidate number in the boxes at the top of the page.</li><li>Write your answer to each question in the space provided.</li>"+
+    "<li>Do <b>not</b> use an erasable pen or correction fluid.</li><li>You should show all your working.</li>"+
+    (P.calc?"<li>You may use a calculator. Give non-exact answers to the accuracy stated in the question.</li><li>For &pi;, use either your calculator value or 3.142.</li>":"<li>Calculators must <b>not</b> be used in this paper.</li>")+
+    "</ul><h4>INFORMATION</h4><ul><li>The total mark for this paper is <b>"+T+"</b>.</li><li>The number of marks for each question or part question is shown in brackets [ ].</li></ul></div>";
+  else h+="<div class=cam-in><ul><li>Award full marks for a correct final answer unless the question asks for working to be shown.</li><li>Accept equivalent forms (fractions, decimals, surds) and answers correct to the accuracy stated.</li><li>Award method marks for correct working even when the final answer is wrong.</li></ul></div>";
+  h+="</div>";
+  if(key)h+="<table class=cam-ms><thead><tr><th>Question</th><th>Answer</th><th>Marks</th><th>Partial marks / working</th></tr></thead><tbody>";
+  (P.secs||[]).forEach(function(s,i){
+    var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,n=it.length||1,pts=+s.pts||0,bs=Math.floor(pts/n),ms=[];
+    for(var j=0;j<n;j++)ms.push(bs);ms[n-1]=Math.round((ms[n-1]+pts-bs*n)*10)/10;
+    var stem=inst&&!/[ក-៿]/.test(inst)?inst:"",wh=({1:60,2:100,3:140,4:140})[s.lv]||100;
+    if(key){it.forEach(function(x,j){h+="<tr><td>"+(i+1)+(n>1?"("+LT[j]+")":"")+"</td><td>"+TX(camAns(x))+"</td><td>"+ms[j]+"</td><td class=cam-gd>"+TX(x.sol||"")+"</td></tr>"});return}
+    h+="<div class=cam-q><div class=cam-qh><b>"+(i+1)+"</b><div>";
+    if(it.length===1){h+=(stem?TX(stem)+"<br>":"")+TX(camQ(it[0]))+fig(it[0].fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(it[0].al,ms[0])+"</div>";return}
+    h+=(stem?"<div class=cam-st>"+TX(stem)+"</div>":"");
+    it.forEach(function(x,j){h+="<div class=cam-p><div class=cam-pq><b>("+LT[j]+")</b><div>"+TX(camQ(x))+fig(x.fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(x.al,ms[j])+"</div>"});
+    h+="</div></div></div>";
+  });
+  if(key)h+="</tbody></table>";
+  return h+"<div class=cam-ft>"+ES(P.school||"")+" · Cambridge-style practice paper · "+(key?"Mark scheme":"Total "+T+" marks")+"</div></div>";
+}
+var CAMCSS=".cam{font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#000;max-width:760px}.cam b{font-weight:700}"+
+".cam-cv{break-after:page;page-break-after:always;padding-bottom:10px;border-bottom:1px dashed #cbd5e1;margin-bottom:16px}"+
+".cam-top{display:flex;justify-content:space-between;gap:10px;font-size:12px;border-bottom:2px solid #000;padding-bottom:4px}"+
+".cam-cd{width:100%;border-collapse:separate;border-spacing:6px;margin:12px 0;font-size:11px;font-weight:700}.cam-cd td{vertical-align:middle;white-space:nowrap}.cam-bx{border:1.5px solid #000;height:32px;width:100%}"+
+".cam-sub{font-size:22px;font-weight:700;margin-top:18px;letter-spacing:.5px}.cam-tt{font-size:17px;font-weight:700;margin-top:2px}"+
+".cam-mt{display:flex;justify-content:space-between;font-weight:700;border-bottom:1.5px solid #000;padding:8px 0 6px;margin-bottom:10px}"+
+".cam-yn{margin:4px 0}.cam-in h4{margin:14px 0 4px;font-size:14px}.cam-in ul{margin:0;padding-left:22px}.cam-in li{margin:2px 0}"+
+".cam-q{margin:16px 0 8px;break-inside:avoid;page-break-inside:avoid}.cam-qh{display:flex;gap:12px}.cam-qh>b{min-width:20px}.cam-qh>div{flex:1}"+
+".cam-p{margin:0 0 12px;break-inside:avoid;page-break-inside:avoid}.cam-st{margin-bottom:8px}.cam-ck{break-after:auto;page-break-after:auto;border-bottom:none}.cam-pq{display:flex;gap:10px}.cam-pq>b{font-weight:400;min-width:24px}.cam-pq>div{flex:1}"+
+".cam-a{display:flex;justify-content:flex-end;align-items:flex-end;gap:6px;margin-top:8px}.cam-ln{display:inline-block;width:200px;border-bottom:1.5px dotted #000;height:20px}.cam-mk{min-width:34px;text-align:right}"+
+".cam-ms{width:100%;border-collapse:collapse;font-size:12.5px}.cam-ms th,.cam-ms td{border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left}.cam-ms th{background:#e5e7eb}.cam-ms tr{break-inside:avoid;page-break-inside:avoid}.cam-gd{color:#334155}.cam-ms td:nth-child(3){text-align:center;width:50px}.cam-ms td:first-child{width:62px;white-space:nowrap}"+
+".cam-ft{margin-top:22px;font-size:11px;color:#555;text-align:center;border-top:1px solid #000;padding-top:4px}"+
+"@media print{.cam-cv{border-bottom:none;margin-bottom:0}}";
 function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(x.sol)+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(x.ans||"—")+"</span></div></div>";
   return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(x.ans||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(x.sol)+"</div>":"")+"</div>"}
 
@@ -134,5 +185,6 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-dh{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.exp-dt{border-collapse:collapse}.exp-dt td{padding:0 4px;vertical-align:baseline;line-height:2;font-size:13.5px}.exp-dt td.exp-b{white-space:nowrap}"+
 ".exp-pr{display:flex;align-items:baseline;gap:8px;margin:10px 0 14px;font-family:var(--fh);color:#1e3a8a}.exp-pr span{flex:1;border-bottom:1.5px solid #1e3a8a}"+
 "@media (max-width:600px){.exp-hd,.exp-dh{flex-direction:column}.exp-sc{display:none}.exp-it.two{grid-template-columns:1fr}.exp-it{margin-left:14px}.exp-ft{flex-direction:column-reverse;gap:10px}.exp-fl{margin-top:0}}";
+CSS+=CAMCSS;
 window.EXP={FONTS:FONTS,paginate:paginate,fit:fit,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
 })();

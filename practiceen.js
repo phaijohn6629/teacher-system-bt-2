@@ -334,7 +334,7 @@ G10[6]={1:L(G9[5][2],
  function(){var a=pick([1,2,3]),b=nz(-9,9),c=nz(-9,9),D=b*b-4*a*c;if(D<=0||Math.sqrt(D)%1===0){c=-Math.abs(c)-1;D=b*b-4*a*c;if(Math.sqrt(D)%1===0){c--;D=b*b-4*a*c}}var x1=(-b-Math.sqrt(D))/(2*a),x2=(-b+Math.sqrt(D))/(2*a);
    return K("qfm","Solve $"+polyT([a,b,c])+"=0$. "+DP,[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],"$x=\\dfrac{"+(-b)+"\\pm\\sqrt{"+D+"}}{"+2*a+"}$, so $x="+r2(x1)+"$ or $x="+r2(x2)+"$.")},
  function(){var p=nz(-6,6),q=ri(-10,10);
-   return K("cts","Write $"+polyT([1,2*p,p*p+q])+"$ in the form $(x+a)^2+b$.",[A(p,null,"num","a ="),A(q,null,"num","b =")],"$(x"+sg(p)+")^2-"+p*p+sg(p*p+q)+"=(x"+sg(p)+")^2"+sg(q)+"$")}),
+   return K("cts","Write $"+polyT([1,2*p,p*p+q])+"$ in the form $(x+a)^2+b$.",[A(p,null,"num","a ="),A(q,null,"num","b =")],"$(x"+sg(p)+")^2-"+p*p+sg(p*p+q)+"=(x"+sg(p)+")^2"+co(q,"")+"$")}),
  3:L(
  function(){var r=ri(1,6),s;do{s=ri(-6,6)}while(s===0||s===r||s===-r);
    /* x + k/x = m  ⇒ x² − mx + k = 0 */var m=r+s,k=r*s,lo=Math.min(r,s),hi=Math.max(r,s);

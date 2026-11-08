@@ -9,7 +9,8 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=3","practice8.js?v=2","practice7.js?v=2"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=4","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],genP=null,kxP=null;
+var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
 var TITLES=["ប្រឡងតេស្តប្រចាំខែ","ប្រឡងប្រចាំខែ","ប្រឡងឆមាសទី១","ប្រឡងឆមាសទី២","ប្រឡងសាកល្បង"];
@@ -17,7 +18,7 @@ var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],t
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function gen(){
   if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
-  if(!genP)genP=ld("practice.js?v=10").then(function(){return Promise.all(GENS.map(ld))}).catch(function(e){genP=null;throw e});
+  if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).catch(function(e){genP=null;throw e});
   return genP;
 }
 function katex(){
@@ -41,7 +42,7 @@ function mkItem(g,ls,lv,avoid){
   var G=PRACT.GR[g]&&PRACT.GR[g].G[ls],f=G&&(G[lv]||G[3]||G[1]);if(!f)return{q:"(មេរៀននេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់ · សូមសរសេរដោយដៃ)",fig:"",ans:"",sol:""};
   var x=null;for(var k=0;k<6;k++){try{x=f()}catch(e){x=null}if(x&&(!avoid||avoid.indexOf(x.q)<0))break}
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
-  return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||""};
+  return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||"",al:(x.a||[]).map(function(a){return a.l||""}),at:(x.a||[]).map(function(a){return a.t})};
 }
 function isT(s){return/^t:/.test(String(s.lv))}
 function fill(s,g,which){
@@ -49,15 +50,17 @@ function fill(s,g,which){
   /* 🇰🇭 គំរូប្រឡង (exgen.js)៖ ទិន្នន័យរួម + សំណួររង · វិញ្ញាសា ខ មានទិន្នន័យផ្ទាល់ខ្លួន (instB) */
   if(isT(s)&&window.EXGEN){var o=EXGEN.make(g+"|"+s.ls,String(s.lv).slice(2));if(o){s[key]=o.it;if(key==="it")s.inst=o.inst;else s.instB=o.inst;s.n=o.it.length;return}}for(var i=0;i<s.n;i++)out.push(mkItem(g,s.ls,s.lv,out.map(function(x){return x.q})));s[key]=out;
 }
-function newSec(g,ls){var T=window.EXGEN&&EXGEN.list(g+"|"+ls),s={ls:ls,lv:T&&T.length?"t:"+T[0].id:2,n:2,pts:4,inst:"ដោះស្រាយលំហាត់ខាងក្រោម៖"};fill(s,g);if(X.E&&X.E.ab)fill(s,g,"itB");return s}
+function newSec(g,ls){var T=window.EXGEN&&EXGEN.list(g+"|"+ls),s={ls:ls,lv:T&&T.length?"t:"+T[0].id:2,n:2,pts:4,inst:g>100?"":"ដោះស្រាយលំហាត់ខាងក្រោម៖"};fill(s,g);if(X.E&&X.E.ab)fill(s,g,"itB");return s}
 function newExam(){
   var c=(rs.c&&rs.c[who.id]||[])[0],g=c?parseInt(c.n):0,t=teacherOf(who.id)||{},ck="";try{ck=localStorage.getItem("exCk")||""}catch(e){}
   var d=new Date(),E={id:uid(),o:who.id,cls:c?c.n:"",title:TITLES[0],mo:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2),sub:t.sub||"គណិតវិទ្យា",dur:45,date:today(),place:"រាជធានីភ្នំពេញ",au:t.name||who.name||"",ck:ck,ab:false,secs:[],cr:new Date().toISOString()};
   var L=lsList(g),first=L[0]&&L[0][1][0];if(first)E.secs.push(newSec(g,first[0]));
   return E;
 }
-function gOf(E){return parseInt(E.cls)||0}
-function P(E){return{font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
+function gOf(E){return E.fmt==="cam"?(+E.camg||110):parseInt(E.cls)||0}
+function camDef(E){var c=parseInt(E.cls)||0;return 100+(c>=6&&c<=12?c:10)}
+function resetSecs(E){var g=gOf(E),L=lsList(g),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(g,f0[0])]:[];if(E.ab)E.secs.forEach(function(s){fill(s,g,"itB")})}
+function P(E){return{camg:E.camg,gt:E.fmt==="cam"&&window.PRACT&&PRACT.GR[gOf(E)]?PRACT.GR[gOf(E)].title:"",calc:E.calc!==false,font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
 /* ---------- រក្សាទុក (exams/{id}) ---------- */
 function save(now){
   X.dirty=true;X.status="…";clearTimeout(X.saveT);
@@ -97,10 +100,12 @@ function editor(){
   h+="<div class=ex-grid><div class=card><h3 style='margin-top:0'>ក្បាល និងជើងវិញ្ញាសា</h3><div class=fg>"+
     "<div><label>ថ្នាក់</label><select data-ef=cls>"+cl.map(function(c){return"<option"+(c.n===E.cls?" selected":"")+">"+esc(c.n)+"</option>"}).join("")+(cl.some(function(c){return c.n===E.cls})?"":"<option selected>"+esc(E.cls)+"</option>")+"</select></div>"+
     "<div><label>ពុម្ពអក្សរ</label><select data-ef=font>"+Object.keys(EXP.FONTS).map(function(k){return"<option value="+k+((E.font||"os")===k?" selected":"")+">"+esc(EXP.FONTS[k].n)+"</option>"}).join("")+"</select></div>"+
-    "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option><option value=dip"+(E.fmt==="dip"?" selected":"")+">🎓 ទម្រង់ឌីប្លូម ថ្នាក់ទី៩ (មណ្ឌល · បន្ទប់ · តុ)</option></select></div>"+
+    "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option><option value=dip"+(E.fmt==="dip"?" selected":"")+">🎓 ទម្រង់ឌីប្លូម ថ្នាក់ទី៩ (មណ្ឌល · បន្ទប់ · តុ)</option><option value=cam"+(E.fmt==="cam"?" selected":"")+">🇬🇧 Cambridge style (English · ក្រដាសសំណួរ + Mark scheme)</option></select></div>"+
+    (E.fmt==="cam"?"<div><label>🇬🇧 កម្រិត Cambridge</label><select data-ef=camg>"+CAMG.filter(function(c){return PRACT.GR[c]}).map(function(c){return"<option value="+c+(c===gOf(E)?" selected":"")+">"+esc(PRACT.GR[c].title)+"</option>"}).join("")+"</select></div>"+
+      "<div><label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-ef=calc"+(E.calc!==false?" checked":"")+" style='width:auto;margin:0'> Calculator allowed</label><small class=note>បើមិនធីក៖ «Calculators must not be used»</small></div>":"")+
     (E.fmt==="bac"?"<div><label>ផ្នែក</label><input data-ef=trk list=exTrk value='"+esc(E.trk||"")+"'><datalist id=exTrk><option value='ថ្នាក់វិទ្យាសាស្ត្រពិត'><option value='ថ្នាក់វិទ្យាសាស្ត្រសង្គម'><option value='វិទ្យាសាស្ត្រ'></datalist></div>":"")+
     "<div><label>ចំណងជើង</label><input data-ef=title list=exTl value='"+esc(E.title)+"'><datalist id=exTl>"+TITLES.map(function(t){return"<option value='"+t+"'>"}).join("")+"</datalist></div>"+
-    (E.fmt==="bac"||E.fmt==="dip"?"":"<div><label>ខែ (ទុកទទេ = មិនបង្ហាញ)</label><input type=month data-ef=mo value='"+esc(E.mo||"")+"'></div>")+
+    (E.fmt==="bac"||E.fmt==="dip"||E.fmt==="cam"?"":"<div><label>ខែ (ទុកទទេ = មិនបង្ហាញ)</label><input type=month data-ef=mo value='"+esc(E.mo||"")+"'></div>")+
     "<div><label>មុខវិជ្ជា</label><input data-ef=sub value='"+esc(E.sub)+"'></div>"+
     "<div><label>រយៈពេល (នាទី)</label><input type=number min=5 max=300 data-ef=dur value="+(+E.dur||45)+"></div>"+
     "<div><label>"+(E.fmt==="bac"||E.fmt==="dip"?"សម័យប្រឡង":"កាលបរិច្ឆេទ")+"</label><input type=date data-ef=date value='"+esc(E.date)+"'></div>"+
@@ -131,10 +136,12 @@ function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if
 /* ឈ្មោះឯកសារពេលព្រីន (= document.title) · លេខរៀងស្វ័យប្រវត្តិតាមប្រភេទប្រឡង
    វិញ្ញាសាដដែល (ខ្លឹមសារដដែល) → លេខដដែល · អត្រាកំណែប្រើលេខដូចវិញ្ញាសា */
 function prName(E,kind){
-  var base=E.fmt==="bac"?"ប្រឡងមធ្យមសិក្សាទុតិយភូមិ":E.fmt==="dip"?"ប្រឡងមធ្យមសិក្សាបឋមភូមិ":EXP.head(E).replace(/^វិញ្ញាសា/,"");
+  var cam=E.fmt==="cam",gt=cam&&window.PRACT&&PRACT.GR[gOf(E)]?PRACT.GR[gOf(E)].tab.replace(/^\S+\s/,""):"";
+  var base=cam?gt+" "+(E.title||"Topic Test"):E.fmt==="bac"?"ប្រឡងមធ្យមសិក្សាទុតិយភូមិ":E.fmt==="dip"?"ប្រឡងមធ្យមសិក្សាបឋមភូមិ":EXP.head(E).replace(/^វិញ្ញាសា/,"");
   var s=E.id+JSON.stringify(E.secs||[]),h=5381;for(var i=0;i<s.length;i++)h=(h*33+s.charCodeAt(i))|0;var fp=String(h>>>0),m={},n;
   try{m=JSON.parse(localStorage.getItem("exPrn")||"{}")||{}}catch(e){}
   var c=m[base]||(m[base]={n:0,f:{}});n=c.f[fp];if(!n){n=++c.n;c.f[fp]=n;try{localStorage.setItem("exPrn",JSON.stringify(m))}catch(e){}}
+  if(cam)return(kind==="k"?"Mark scheme - ":"Question paper - ")+base+" - "+n+(E.ab&&kind!=="k"?(kind==="b"?" B":" A"):"");
   return(kind==="k"?"អត្រាកំណែ":"វិញ្ញាសា")+base+"-"+n+(E.ab&&kind!=="k"?(kind==="b"?"ខ":"ក"):"");
 }
 function printIt(kind){
@@ -243,7 +250,12 @@ function onInput(e){
   var t=e.target,E=X.E;if(!E)return;
   if((t.tagName==="SELECT"||t.type==="checkbox")&&e.type!=="change")return;
   if(t.dataset.ef){var f=t.dataset.ef;
-    if(f==="fmt"){E.fmt=t.value;if(E.fmt==="bac"&&!E.trk)E.trk="ថ្នាក់វិទ្យាសាស្ត្រពិត";save();editor();return}
+    if(f==="fmt"){var wasC=E.fmt==="cam";E.fmt=t.value;if(E.fmt==="bac"&&!E.trk)E.trk="ថ្នាក់វិទ្យាសាស្ត្រពិត";
+      if(E.fmt==="cam"&&!wasC){E.camg=E.camg||camDef(E);if(TITLES.indexOf(E.title)>=0||/[\u1780-\u17FF]/.test(E.title||""))E.title="Topic Test";if(/[\u1780-\u17FF]/.test(E.sub||""))E.sub="Mathematics";if(E.calc==null)E.calc=true;resetSecs(E)}
+      else if(wasC&&E.fmt!=="cam"){if(!/[\u1780-\u17FF]/.test(E.title||""))E.title=TITLES[0];if(!/[\u1780-\u17FF]/.test(E.sub||""))E.sub="គណិតវិទ្យា";resetSecs(E)}
+      save();editor();return}
+    if(f==="camg"){E.camg=+t.value;if(!E.secs.length||confirm("ប្ដូរកម្រិត Cambridge → បង្កើតផ្នែកទាំងអស់ឡើងវិញ?"))resetSecs(E);save();editor();return}
+    if(f==="calc"){E.calc=t.checked;save();prev();return}
     if(f==="ab"){E.ab=t.checked;if(E.ab)E.secs.forEach(function(s){fill(s,gOf(E),"itB")});save();editor();return}
     if(f==="cls"){var og=gOf(E);E.cls=t.value;if(gOf(E)!==og&&E.secs.length&&confirm("ថ្នាក់ថ្មីជាកម្រិតផ្សេង។ បង្កើតផ្នែកទាំងអស់ឡើងវិញតាមកម្រិតថ្នាក់ថ្មី?")){var L=lsList(gOf(E)),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(gOf(E),f0[0])]:[]}save();editor();return}
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
