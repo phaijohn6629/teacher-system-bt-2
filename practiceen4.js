@@ -199,12 +199,36 @@ var S5=function(){var a=ri(10,25),b=ri(10,25),n=ri(2,Math.min(a,b)-2),U=a+b-n+ri
    {q:"A student is chosen at random. Find the probability that this student studies French but not Spanish.",a:[A(o.s,o.t,"num","P =")],m:2}],
    "(a) $"+U+"-("+a+"+"+b+"-"+n+")="+(U-(a+b-n))+"$ (b) $\\dfrac{"+(a-n)+"}{"+U+"}"+(gcd(a-n,U)>1?"="+o.t:"")+"$")};
 
+
+/* ===== បន្ថែម (ជំហាន ៣ · ប្រភេទចម្រុះ) ===== */
+var T6=function(){var hp=2*ri(2,9),C=pick([[30,"opposite"],[60,"adjacent"]]),a=hp/2,FIGv=FB({A:[0,0,"sw"],B:[3.4,0,"se"],C:[3.4,1.96,"ne"]},["poly A B C black","right A B C","angle B A C 30°","text (1.4,1.3) "+hp+" cm"]);
+  return EXF(FIGv,"xt6",2,"Triangle $ABC$ has a right angle at $B$. Angle $BAC=30^\\circ$ and $AC="+hp+"$ cm.",[
+   {q:"Find the exact length of $BC$.",a:[A(a,null,"num","BC =")],m:2},
+   {q:"Find the exact length of $AB$. Give your answer in the form $k\\sqrt3$.",a:[A(a+"*sqrt(3)",(a===1?"":a)+"\\sqrt3","num","AB =")],m:2}],
+   "(a) $BC="+hp+"\\sin30^\\circ="+a+"$ (b) $AB="+hp+"\\cos30^\\circ="+hp+"\\times\\dfrac{\\sqrt3}{2}="+(a===1?"":a)+"\\sqrt3$")};
+var N11=function(){var a=ri(2,5),b=ri(2,7),k=ri(5,20)*2,T,x,y,t;if(a===b)b++;var g0=gcd(a,b);a/=g0;b/=g0;T=(a+b)*k;x=a*k;y=b*k;t=ri(1,Math.floor(x/2));var g=gcd(x-t,y+t);
+  return EX("xn11",4,"Ali and Bora share USD "+T+" in the ratio $"+a+":"+b+"$.",[
+   {q:"Work out how much Ali receives.",a:[A(x,null,"num","USD")],m:2},
+   {q:"Ali then gives USD "+t+" to Bora. Find the new ratio Ali : Bora in its simplest form.",a:[A((x-t)/g,null,"num","Ali :"),A((y+t)/g,null,"num","Bora")],m:2}],
+   "(a) $"+T+"\\div"+(a+b)+"\\times"+a+"="+x+"$ (b) $("+x+"-"+t+"):("+y+"+"+t+")="+(x-t)+":"+(y+t)+"="+(x-t)/g+":"+(y+t)/g+"$")};
+var G7=function(){var k=pick([2,3,1.5]),A1=ri(20,90),V1=ri(40,300),m1=ri(100,900);
+  return EX("xg7",4,"Two mathematically similar bottles have surface areas "+A1+" cm² and "+nf(A1*k*k)+" cm².",[
+   {q:"Find the scale factor of the lengths.",a:[A(k,null,"num","k =")],m:2},
+   {q:"The smaller bottle has volume "+V1+" cm³. Calculate the volume of the larger bottle.",a:[A(nf(V1*k*k*k),null,"num","cm³")],m:2},
+   {q:"The larger bottle has mass "+nf(m1*k*k*k)+" g when full. Find the mass of the smaller bottle when full.",a:[A(m1,null,"num","g")],m:1}],
+   "(a) $\\sqrt{\\dfrac{"+nf(A1*k*k)+"}{"+A1+"}}="+k+"$ (b) $"+V1+"\\times"+k+"^3="+nf(V1*k*k*k)+"$ (c) $"+nf(m1*k*k*k)+"\\div"+nf(k*k*k)+"="+m1+"$")};
+var S6=function(){var b=[0,20,40,60,80,100],f=[ri(3,10),ri(8,18),ri(12,25),ri(6,15),ri(2,8)],N=sum(f),c=[];f.reduce(function(s,v,i){c[i]=s+v;return c[i]},0);var j=ri(1,3);
+  return EX("xs6",4,"The table shows the time, $t$ minutes, that "+N+" people spent in a shop.\n$\\begin{array}{|c|c|c|c|c|c|}\\hline t&0\\lt t\\le20&20\\lt t\\le40&40\\lt t\\le60&60\\lt t\\le80&80\\lt t\\le100\\\\\\hline \\text{Frequency}&"+f.join("&")+"\\\\\\hline\\end{array}$",[
+   {q:"Find the cumulative frequency for $t\\le"+b[j+1]+"$.",a:[A(c[j],null,"num","=")],m:1},
+   {q:"How many people spent more than "+b[j+1]+" minutes in the shop?",a:[A(N-c[j],null,"num","=")],m:1},
+   {q:"Which class contains the median? Give its lower boundary.",a:[A(b[c.findIndex(function(v){return v>=N/2})],null,"num","lower boundary =")],m:2}],
+   "Cumulative frequencies: $"+c.join(",")+"$ (a) $"+c[j]+"$ (b) $"+N+"-"+c[j]+"="+(N-c[j])+"$ (c) the median is the $\\tfrac{"+N+"}{2}$th value")};
 /* ===== បញ្ចូលក្នុង G10 · G11 (មេរៀន ៣១–៣៥) ===== */
-var XG={31:{1:L(N1,N3,N4,N8,N9),2:L(N10,N5),3:L(N6,N7)},
+var XG={31:{1:L(N1,N3,N4,N8,N9),2:L(N10,N5,N11),3:L(N6,N7)},
         32:{1:L(A1,A2,A5,A3),2:L(A6,A8),3:L(A4,A7,A10)},
-        33:{1:L(G1,G2,G5),2:L(G3,G6),3:L(G4,G3)},
-        34:{1:L(T4),2:L(T3,T5,T2),3:L(T1)},
-        35:{1:L(S1,S5,S2),2:L(S4,S2),3:L(S3)}};
+        33:{1:L(G1,G2,G5),2:L(G3,G6),3:L(G4,G3,G7)},
+        34:{1:L(T4,T6),2:L(T3,T5,T2),3:L(T1)},
+        35:{1:L(S1,S5,S2),2:L(S4,S2),3:L(S3,S6)}};
 var XL=["📝 Exam-style questions (Paper 2 · Paper 4)",[[31,"Exam-style: Number"],[32,"Exam-style: Algebra"],[33,"Exam-style: Geometry and mensuration"],[34,"Exam-style: Trigonometry and vectors"],[35,"Exam-style: Statistics and probability"]]];
 [110,111].forEach(function(g){var R=window.PRACT&&PRACT.GR[g];if(!R)return;Object.keys(XG).forEach(function(k){R.G[k]=XG[k]});R.les.push(XL)});
 /* ក្រដាសប្រឡងពេញ (សម្រាប់ exam.js)៖ [មេរៀន, កម្រិត] តាមលំដាប់ Paper 2 / Paper 4 */

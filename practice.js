@@ -693,7 +693,7 @@ function open(l,v){
   S.l=l;S.v=v||1;S.done=false;S.qs=[];
   var seen={};
   var kind={};   /* ប្រភេទដូចគ្នា (ពាក្យដើមនៃសំណួរ) មិនលើស ២ */
-  if(!GR[S.g].G[l][S.v])S.v=1;var nq=S.v===4?NQ4:NQ;
+  if(!GR[S.g].G[l][S.v])S.v=1;var nq=S.v===4||(GR[S.g].en&&l>30)?NQ4:NQ;   /* exam-style (មេរៀន ៣១+) = ៤ សំណួរ */
   for(var i=0,tries=0;i<nq&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=q.kd?"kd:"+q.kd:k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
     if(seen[k]||(kind[t]>=2&&tries<50))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
   location.hash=HS("g="+S.g+"&l="+l+"&v="+S.v);

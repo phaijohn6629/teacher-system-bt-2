@@ -73,6 +73,17 @@ function camLines(al,m,mks,ex){al=al&&al.length?al:[""];return al.map(function(L
 function camRm(L){return String(L||"").replace(/^\(([a-d])\)/,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"})}
 function camQ(x){var q=x.q||"";return!x.ex&&x.al&&x.al.some(function(l){return/^\([a-d]\)/.test(l)})?q.replace(/\(([a-d])\)/g,function(_,c){return"("+["i","ii","iii","iv"]["abcd".indexOf(c)]+")"}):q}
 function camAns(x){if(!x.at||!x.at.length)return x.ans||"";return x.at.map(function(t,k){var L=x.ex?(x.al&&x.al[k]||""):camRm(x.al&&x.al[k]),m=x.ex?/^(\([a-g]\))\s*(.*)$/.exec(L):/^(\([iv]+\))\s*(.*)$/.exec(L),p=m?m[1]+" ":"";if(m)L=m[2];return p+(/=\s*$/.test(L)?L+" $"+t+"$":"$"+t+"$"+(L?" "+L:""))}).join(" · ")}
+/* 📋 Mark scheme តាមស្ដង់ដារ៖ ផ្នែកនីមួយៗ → B1 (១ ពិន្ទុ) ឬ M(n−1) សម្រាប់វិធី + A1 សម្រាប់ចម្លើយ */
+function camMk(m,seg,ans){m=+m||0;if(m<=0)return"";if(m===1)return"<b>B1</b>"+(ans?" for "+ans:"");
+  var w=Math.round((m-1)*10)/10;return"<b>M"+w+"</b> for "+(seg?TX(seg):"a correct method")+"<br><b>A1</b> cao"+(ans?" ("+ans+")":"")}
+function camRows(x,ql,m){var at=x.at||[],al=x.al||[],mk=x.mks;
+  if(!x.ex||!mk||mk.length!==at.length)return[[ql,TX(camAns(x)),m,(x.sol?"<div class=cam-wk>"+TX(x.sol)+"</div>":"")+camMk(m,"","")]];
+  var seg={},sol=String(x.sol||""),re=/\(([a-g])\)\s*/g,mt,last=null,pos=0;
+  while((mt=re.exec(sol))){if(last)seg[last]=sol.slice(pos,mt.index).trim();last=mt[1];pos=re.lastIndex}if(last)seg[last]=sol.slice(pos).trim();
+  var rows=[],st=0,k=0,groups=mk.filter(function(v){return v>0}).length;
+  mk.forEach(function(v,i){if(!v)return;var sub={at:at.slice(st,i+1),al:al.slice(st,i+1),ex:true},lt="abcdefg"[k],sg=groups>1?seg[lt]:(last?sol:sol);
+    var an=TX(camAns(sub)).replace(/^\([a-g]\)\s*/,"").replace(/^=\s*/,"");rows.push([ql+(groups>1?"("+lt+")":""),an,v,camMk(v,sg||"",an)]);st=i+1;k++});
+  return rows}
 function camHtml(P,o){
   var key=!!o.key,b=o.v==="b",T=total(P),lb={"ក":"A","ខ":"B"}[o.lbl]||"";
   var h="<div class='exp cam'><div class='cam-cv"+(key?" cam-ck":"")+"'><div class=cam-top><span>"+ES(P.school||"")+"</span><span>"+ES(P.gt||"")+"</span></div>";
@@ -85,14 +96,14 @@ function camHtml(P,o){
     "<li>Do <b>not</b> use an erasable pen or correction fluid.</li><li>You should show all your working.</li>"+
     (P.calc?"<li>You may use a calculator. Give non-exact answers to the accuracy stated in the question.</li><li>For &pi;, use either your calculator value or 3.142.</li>":"<li>Calculators must <b>not</b> be used in this paper.</li>")+
     "</ul><h4>INFORMATION</h4><ul><li>The total mark for this paper is <b>"+T+"</b>.</li><li>The number of marks for each question or part question is shown in brackets [ ].</li></ul></div>";
-  else h+="<div class=cam-in><ul><li>Award full marks for a correct final answer unless the question asks for working to be shown.</li><li>Accept equivalent forms (fractions, decimals, surds) and answers correct to the accuracy stated.</li><li>Award method marks for correct working even when the final answer is wrong.</li></ul></div>";
+  else h+="<div class=cam-in><p style='margin:0 0 4px'><b>M</b> method mark · <b>A</b> accuracy mark (depends on the M mark) · <b>B</b> mark independent of method · <b>cao</b> correct answer only · <b>oe</b> or equivalent · <b>ft</b> follow through</p><ul><li>Award full marks for a correct final answer unless the question asks for working to be shown.</li><li>Accept equivalent forms (fractions, decimals, surds) and answers correct to the accuracy stated.</li><li>Award method marks for correct working even when the final answer is wrong.</li></ul></div>";
   h+="</div>";
   if(key)h+="<table class=cam-ms><thead><tr><th>Question</th><th>Answer</th><th>Marks</th><th>Partial marks / working</th></tr></thead><tbody>";
   (P.secs||[]).forEach(function(s,i){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,n=it.length||1,pts=+s.pts||0,bs=Math.floor(pts/n),ms=[];
     for(var j=0;j<n;j++)ms.push(bs);ms[n-1]=Math.round((ms[n-1]+pts-bs*n)*10)/10;
     var stem=inst&&!/[ក-៿]/.test(inst)?inst:"",wh=({1:60,2:100,3:140,4:140})[s.lv]||100;
-    if(key){it.forEach(function(x,j){h+="<tr><td>"+(i+1)+(n>1?"("+LT[j]+")":"")+"</td><td>"+TX(camAns(x))+"</td><td>"+ms[j]+"</td><td class=cam-gd>"+TX(x.sol||"")+"</td></tr>"});return}
+    if(key){it.forEach(function(x,j){camRows(x,(i+1)+(n>1?"("+LT[j]+")":""),x.ex&&x.mk?x.mk:ms[j]).forEach(function(r){h+="<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+r[2]+"</td><td class=cam-gd>"+r[3]+"</td></tr>"})});return}
     h+="<div class=cam-q><div class=cam-qh><b>"+(i+1)+"</b><div>";
     if(it.length===1){h+=(stem?TX(stem)+"<br>":"")+TX(camQ(it[0]))+fig(it[0].fig)+"</div></div><div class=cam-w style='height:"+wh+"px'></div>"+camLines(it[0].al,ms[0],it[0].mks,it[0].ex)+"</div>";return}
     h+=(stem?"<div class=cam-st>"+TX(stem)+"</div>":"");
@@ -113,7 +124,7 @@ var CAMCSS=".cam{font-family:Arial,Helvetica,sans-serif;font-size:14px;line-heig
 ".cam-p{margin:0 0 12px;break-inside:avoid;page-break-inside:avoid}.cam-st{margin-bottom:8px}.cam-ck{break-after:auto;page-break-after:auto;border-bottom:none}.cam-pq{display:flex;gap:10px}.cam-pq>b{font-weight:400;min-width:24px}.cam-pq>div{flex:1}"+
 ".cam-a{display:flex;justify-content:flex-end;align-items:flex-end;gap:6px;margin-top:8px}.cam-ln{display:inline-block;width:200px;border-bottom:1.5px dotted #000;height:20px}.cam-mk{min-width:34px;text-align:right}"+
 ".cam-ms{width:100%;border-collapse:collapse;font-size:12.5px}.cam-ms th,.cam-ms td{border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left}.cam-ms th{background:#e5e7eb}.cam-ms tr{break-inside:avoid;page-break-inside:avoid}.cam-gd{color:#334155}.cam-ms td:nth-child(3){text-align:center;width:50px}.cam-ms td:first-child{width:62px;white-space:nowrap}"+
-".cam-ft{margin-top:22px;font-size:11px;color:#555;text-align:center;border-top:1px solid #000;padding-top:4px}"+
+".cam-wk{color:#475569;margin-bottom:3px}.cam-ft{margin-top:22px;font-size:11px;color:#555;text-align:center;border-top:1px solid #000;padding-top:4px}"+
 "@media print{.cam-cv{border-bottom:none;margin-bottom:0}}";
 /* ✂️ អត្រាកំណែ៖ លុបសញ្ញា «។» (មិនចាំបាច់ក្នុងដំណោះស្រាយ) */
 function noP(s){return String(s||"").replace(/\s*។/g,"")}
