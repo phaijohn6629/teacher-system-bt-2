@@ -472,6 +472,7 @@ var LES10=[
  ["Geometry and mensuration",[[11,"Mensuration"],[12,"Trigonometry"],[13,"Circle theorems"],[14,"Vectors"]]],
  ["Statistics and probability",[[15,"Statistics"],[16,"Probability"]]]];
 
+window.PXEN={K:K,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
 })();
