@@ -128,11 +128,20 @@ function editor(){
 var pvT=0;
 function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p)return;p.innerHTML="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});math(p).then(function(){EXP.fit&&EXP.fit(p)})},250)}
 /* ---------- បោះពុម្ព ---------- */
+/* ឈ្មោះឯកសារពេលព្រីន (= document.title) · លេខរៀងស្វ័យប្រវត្តិតាមប្រភេទប្រឡង
+   វិញ្ញាសាដដែល (ខ្លឹមសារដដែល) → លេខដដែល · អត្រាកំណែប្រើលេខដូចវិញ្ញាសា */
+function prName(E,kind){
+  var base=E.fmt==="bac"?"ប្រឡងមធ្យមសិក្សាទុតិយភូមិ":E.fmt==="dip"?"ប្រឡងមធ្យមសិក្សាបឋមភូមិ":EXP.head(E).replace(/^វិញ្ញាសា/,"");
+  var s=E.id+JSON.stringify(E.secs||[]),h=5381;for(var i=0;i<s.length;i++)h=(h*33+s.charCodeAt(i))|0;var fp=String(h>>>0),m={},n;
+  try{m=JSON.parse(localStorage.getItem("exPrn")||"{}")||{}}catch(e){}
+  var c=m[base]||(m[base]={n:0,f:{}});n=c.f[fp];if(!n){n=++c.n;c.f[fp]=n;try{localStorage.setItem("exPrn",JSON.stringify(m))}catch(e){}}
+  return(kind==="k"?"អត្រាកំណែ":"វិញ្ញាសា")+base+"-"+n+(E.ab&&kind!=="k"?(kind==="b"?"ខ":"ក"):"");
+}
 function printIt(kind){
   var E=X.E,tmp=document.createElement("div");tmp.style.cssText="position:fixed;left:-9999px;top:0;width:800px";
   tmp.innerHTML=EXP.html(P(E),{v:kind==="b"?"b":"a",key:kind==="k",lbl:kind==="k"?"":E.ab?(kind==="b"?"ខ":"ក"):""});document.body.appendChild(tmp);
   var w=window.open("","_blank");if(!w){tmp.remove();alert("សូមអនុញ្ញាត Pop-up ដើម្បីបោះពុម្ព");return}
-  w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(EXP.head(E))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
+  w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(prName(E,kind))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
