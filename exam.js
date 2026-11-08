@@ -16,6 +16,9 @@ var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រ�
 var TITLES=["ប្រឡងតេស្តប្រចាំខែ","ប្រឡងប្រចាំខែ","ប្រឡងឆមាសទី១","ប្រឡងឆមាសទី២","ប្រឡងសាកល្បង"];
 var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],tick:0};
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+/* ⏱ កុំឱ្យជាប់ «កំពុងផ្ទុក…» រហូត៖ កំណត់ពេលអតិបរមា រួចបង្ហាញប៊ូតុង 🔄 ផ្ទុកម្ដងទៀត */
+function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
+function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 function gen(){
   if(window.PRACT&&PRACT.GR&&PRACT.GR[7])return Promise.resolve();
   if(!genP)genP=ld("practice.js?v=11").then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=3")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4[0])}).then(function(){return ld(GEN4[1])}).then(function(){return ld(GEN4[2])}).catch(function(e){genP=null;throw e});
@@ -74,17 +77,21 @@ function save(now){
 function stat(){var s=$("exSt");if(s)s.textContent=X.status}
 function loadList(){
   var F=window.FB,q=isAdm()?F.collection(window.db,"exams"):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id));
-  return F.getDocs(q).then(function(sn){var a=[];sn.forEach(function(d){var v=d.data();a.push({id:d.id,o:v.o,cls:v.cls,t:v.t,u:v.u,j:v.j})});a.sort(function(x,y){return(y.u||"").localeCompare(x.u||"")});X.list=a;X.err=""},
-    function(e){X.list=[];X.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exams)":"មិនអាចផ្ទុកបានទេ"});
+  return tmo(F.getDocs(q),25000).then(function(sn){var a=[];sn.forEach(function(d){var v=d.data();a.push({id:d.id,o:v.o,cls:v.cls,t:v.t,u:v.u,j:v.j})});a.sort(function(x,y){return(y.u||"").localeCompare(x.u||"")});X.list=a;X.err=""},
+    function(e){X.list=[];X.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exams)":e&&e.code==="timeout"?"ផ្ទុកបញ្ជីវិញ្ញាសាយូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកបញ្ជីវិញ្ញាសាបានទេ"});
 }
 /* ===================== ផ្ទាំង ===================== */
 function render(){
   var el=body();if(!el)return;
-  if(!window.PRACT||!PRACT.GR[7]){el.innerHTML="<p class=note>កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";gen().then(render,function(){el.innerHTML="<p class=cxwarn>⚠️ មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ · សូមពិនិត្យអ៊ីនធឺណិត</p>"});return}
+  if(!X.E&&!X.list&&!X.lp&&window.FB&&window.db)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});   /* ទាញបញ្ជីព្រមគ្នានឹងម៉ាស៊ីន */
+  if(!window.PRACT||!PRACT.GR[7]||!PRACT.GR[112]){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
   if(X.E)return editor();
-  if(!X.list){el.innerHTML="<p class=note>កំពុងផ្ទុក…</p>";loadList().then(render);return}
+  if(!X.list){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…</p>";if(!X.lp)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});return}
+  try{renderList(el)}catch(e){console.error("exam list:",e);el.innerHTML="<p class=cxwarn>⚠️ បង្ហាញបញ្ជីវិញ្ញាសាមិនបាន"+retryBtn()+"</p>"}
+}
+function renderList(el){
   el.innerHTML="<div class=bar><b>📝 ប្រឡងទម្រង់បើក</b><span class=note style='margin:0'>បង្កើតវិញ្ញាសាស្វ័យប្រវត្តិ · បោះពុម្ព ឬបើកឱ្យសិស្សមើលលើទូរស័ព្ទ (សរសេរចម្លើយលើក្រដាស)</span><button type=button class=primary data-ex=new>＋ វិញ្ញាសាថ្មី</button></div>"+
-    (X.err?"<p class=cxwarn>⚠️ "+esc(X.err)+"</p>":"")+
+    (X.err?"<p class=cxwarn>⚠️ "+esc(X.err)+retryBtn()+"</p>":"")+
     (X.list.length?"<div class=qr-list>"+X.list.map(function(x){var E=null;try{E=JSON.parse(x.j)}catch(e){}var on=E&&E.on&&E.on.open&&E.on.endMs>Date.now();
       return"<div class=qr-card><div><b>"+esc(x.t||"វិញ្ញាសា")+"</b><small>"+esc(x.cls||"")+" · "+(E?kn(E.secs.length)+" ផ្នែក · "+kn(EXP.total(E))+" ពិន្ទុ · "+kn(E.dur)+" នាទី":"")+" · "+esc((x.u||"").slice(0,10))+(isAdm()&&x.o!==who.id?" · "+esc((teacherOf(x.o)||{}).name||x.o):"")+"</small></div>"+
         "<span class='qr-st"+(on?" on":"")+"'>"+(on?"🟢 កំពុងប្រឡងអនឡាញ":"📄 ក្រដាស")+"</span><button type=button class=primary data-ex='open|"+x.id+"'>បើក</button><button type=button data-ex='dup|"+x.id+"' title='ចម្លងជាវិញ្ញាសាថ្មី'>📑</button><button type=button class=danger data-ex='del|"+x.id+"'>🗑️</button></div>"}).join("")+"</div>"
@@ -214,6 +221,7 @@ function showLink(){
 /* ---------- ព្រឹត្តិការណ៍ ---------- */
 function act(a,q){
   var E=X.E,g=E?gOf(E):0,F=window.FB;
+  if(a==="reload"){genP=null;X.list=null;X.lp=null;X.err="";render();return}
   if(a==="new"){X.E=newExam();X.status="";save(true);render();return}
   if(a==="open"||a==="dup"){var x=(X.list||[]).filter(function(y){return y.id===q[1]})[0];if(!x)return;var e2=JSON.parse(x.j);e2.id=x.id;
     if(a==="dup"){e2.id=uid();e2.o=who.id;e2.on=null;e2.cr=new Date().toISOString();e2.title=e2.title;X.E=e2;save(true)}else{X.E=e2;X.status=""}

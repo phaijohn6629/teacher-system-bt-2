@@ -744,7 +744,7 @@ function renderQuiz(){
   var gs=needG();
   if((QV==="bank"||QV==="make")&&window.FB&&window.db)loadLegacy();   /* នៅពីក្រោយ · មិនរង់ចាំ */
   if(!ready(gs)&&!qbErr){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";ensureK(gs).then(renderQuiz);return}
-  if(QV==="exam"){if(window.EXAM)EXAM.render();else $("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";return}
+  if(QV==="exam"){if(window.EXAM)EXAM.render();else $("qzBody").innerHTML="<p class=cxwarn>⚠️ មិនទាន់ផ្ទុកផ្ទាំងប្រឡងបើក · សូមចុច <button type=button onclick='location.reload()'>🔄 Refresh</button></p>";return}
   if(QV==="bank")renderBank();else if(QV==="make")renderMake();else if(QV==="prac")renderPrac();
   else{if(!tOK){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";loadTests().then(renderQuiz);return}renderRes()}
 }
