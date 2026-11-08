@@ -19,11 +19,18 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 /* ⏱ កុំឱ្យជាប់ «កំពុងផ្ទុក…» រហូត៖ កំណត់ពេលអតិបរមា រួចបង្ហាញប៊ូតុង 🔄 ផ្ទុកម្ដងទៀត */
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
+/* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
+function ENG(){return["practice.js?v=13","exgen.js?v=13"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
+function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
-  if(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&window.EXGEN)return Promise.resolve();
-  if(!genP)genP=Promise.all([ld("practice.js?v=13"),window.EXGEN?0:ld("exgen.js?v=13")]).then(function(){return Promise.all(GENS.map(ld))}).then(function(){return ld("practiceen.js?v=4")}).then(function(){return Promise.all(GENE.map(ld))}).then(function(){return ld(GEN4[0])}).then(function(){return ld(GEN4[1])}).then(function(){return ld(GEN4[2])}).catch(function(e){genP=null;throw e});
+  if(engReady())return Promise.resolve();
+  if(!genP)genP=new Promise(function(ok,no){var L=ENG().filter(function(u){return!(/^exgen\.js/.test(u)&&window.EXGEN)}),left=L.length;
+    L.forEach(function(u){var sc=document.createElement("script");sc.src=u;sc.async=false;sc.onload=function(){if(--left===0)ok()};sc.onerror=function(){no(u)};document.head.appendChild(sc)})})
+    .catch(function(e){genP=null;throw e});
   return genP;
 }
+/* 📥 ទាញទុកជាមុនពេលទំនេរ (ទុកក្នុង cache · មិនដំណើរការ) → ពេលបើក «ប្រឡងបើក» លឿន */
+setTimeout(function(){if(navigator.connection&&navigator.connection.saveData)return;var go=function(){if(engReady()||genP)return;ENG().forEach(function(u){var l=document.createElement("link");l.rel="prefetch";l.as="script";l.href=u;document.head.appendChild(l)})};if(window.requestIdleCallback)requestIdleCallback(go,{timeout:15000});else go()},12000);
 function katex(){
   if(window.renderMathInElement)return Promise.resolve();
   if(!kxP){var l=document.createElement("link");l.rel="stylesheet";l.href=KX+"katex.min.css";document.head.appendChild(l);
@@ -94,7 +101,8 @@ function loadList(){
 function render(){
   var el=body();if(!el)return;
   if(!X.E&&!X.list&&!X.lp&&window.FB&&window.db)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});   /* ទាញបញ្ជីព្រមគ្នានឹងម៉ាស៊ីន */
-  if(!window.PRACT||!PRACT.GR[7]||!PRACT.GR[112]||!window.EXGEN){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
+  if(!engReady()&&!genP)gen().catch(function(){});   /* ផ្ទុកនៅពីក្រោយ · បញ្ជីបង្ហាញភ្លាមដោយមិនរង់ចាំ */
+  if(X.E&&!engReady()){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
   if(X.E)return editor();
   if(!X.list){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…</p>";if(!X.lp)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});return}
   try{renderList(el)}catch(e){console.error("exam list:",e);el.innerHTML="<p class=cxwarn>⚠️ បង្ហាញបញ្ជីវិញ្ញាសាមិនបាន"+retryBtn()+"</p>"}
@@ -232,7 +240,7 @@ function showLink(){
 function act(a,q){
   var E=X.E,g=E?gOf(E):0,F=window.FB;
   if(a==="reload"){genP=null;X.list=null;X.lp=null;X.err="";render();return}
-  if(a==="new"){X.E=newExam();X.status="";save(true);render();return}
+  if(a==="new"){if(!engReady()){body().innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(function(){act("new",q)},function(){render()});return}X.E=newExam();X.status="";save(true);render();return}
   if(a==="open"||a==="dup"){var x=(X.list||[]).filter(function(y){return y.id===q[1]})[0];if(!x)return;body().innerHTML="<p class=note>⏳ កំពុងបើកវិញ្ញាសា…</p>";
     tmo(F.getDoc(F.doc(window.db,"exams",x.id+"__c")),25000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j)throw{code:"nf"};var e2=JSON.parse(v.j);e2.id=x.id;
     if(a==="dup"){e2.id=uid();e2.o=who.id;e2.on=null;e2.cr=new Date().toISOString();e2.title=e2.title;X.E=e2;save(true)}else{X.E=e2;X.status=""}
@@ -295,5 +303,5 @@ qb.addEventListener("click",function(e){if(QVx()!=="exam")return;var b=e.target.
 qb.addEventListener("input",function(e){if(QVx()==="exam")onInput(e)});
 qb.addEventListener("change",function(e){if(QVx()==="exam")onInput(e)});
 function QVx(){return window.QUIZVIEW?QUIZVIEW():""}
-window.EXAM={render:render,leave:function(){if(X.E&&X.dirty)save(true);unwatch()}};
+window.EXAM={gen:gen,ready:engReady,render:render,leave:function(){if(X.E&&X.dirty)save(true);unwatch()}};
 })();
