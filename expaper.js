@@ -52,9 +52,9 @@ function html(P,o){
   (P.secs||[]).forEach(function(s,i){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
     var sh=!key&&it.length>1&&it.every(function(x){return vlen(x.q)<=40&&!/\n/.test(x.q||"")&&!x.fig});
-    h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(it[0].q):TX(inst||""))+"</div>";
+    h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(key?noP(it[0].q):it[0].q):TX(key?noP(inst):inst||""))+"</div>";
     if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip"||P.fmt==="bac")}
-    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"||P.fmt==="bac"):"")+"</div>"}).join("")+"</div>";
+    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(key?noP(x.q):x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"||P.fmt==="bac"):"")+"</div>"}).join("")+"</div>";
     h+="</div>";
   });
   if(cols)h+="</div>";
@@ -115,8 +115,15 @@ var CAMCSS=".cam{font-family:Arial,Helvetica,sans-serif;font-size:14px;line-heig
 ".cam-ms{width:100%;border-collapse:collapse;font-size:12.5px}.cam-ms th,.cam-ms td{border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left}.cam-ms th{background:#e5e7eb}.cam-ms tr{break-inside:avoid;page-break-inside:avoid}.cam-gd{color:#334155}.cam-ms td:nth-child(3){text-align:center;width:50px}.cam-ms td:first-child{width:62px;white-space:nowrap}"+
 ".cam-ft{margin-top:22px;font-size:11px;color:#555;text-align:center;border-top:1px solid #000;padding-top:4px}"+
 "@media print{.cam-cv{border-bottom:none;margin-bottom:0}}";
-function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(x.sol)+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(x.ans||"—")+"</span></div></div>";
-  return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(x.ans||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(x.sol)+"</div>":"")+"</div>"}
+/* ✂️ អត្រាកំណែ៖ លុបសញ្ញា «។» (មិនចាំបាច់ក្នុងដំណោះស្រាយ) */
+function noP(s){return String(s||"").replace(/\s*។/g,"")}
+/* 📏 រូបមន្តវែងលើសទទឹងជួរឈរ → បង្រួមទំហំអក្សរដោយស្វ័យប្រវត្តិ (អប្បបរមា ៥០%) · ហៅក្រោយ KaTeX */
+function shrink(root){root=root||document;var W=(root.ownerDocument||root).defaultView||window;
+  [].forEach.call(root.querySelectorAll(".exp .katex"),function(k){var disp=k.parentElement&&/katex-display/.test(k.parentElement.className),box=disp?k.parentElement:k,host=box.parentElement;
+    while(host&&W.getComputedStyle(host).display==="inline")host=host.parentElement;if(!host)return;var cs=W.getComputedStyle(host),aw=host.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0);
+    var w=disp?k.scrollWidth:k.getBoundingClientRect().width;if(aw>40&&w>aw+1){var fs=parseFloat(W.getComputedStyle(k).fontSize);k.style.fontSize=Math.max(fs*.5,fs*aw/w*.97)+"px"}})}
+function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(noP(x.sol))+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(x.ans)||"—")+"</span></div></div>";
+  return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(noP(x.ans)||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(noP(x.sol))+"</div>":"")+"</div>"}
 
 /* 🖨️ បែងទំព័រដោយខ្លួនឯង (ចម្លើយពីរជួរឈរ)៖ Safari បោះពុម្ព column-count កាត់បន្ទាត់អក្សរ/រូបពាក់កណ្ដាលទំព័រ
    → បំបែកជាប្លុកតូចៗ (ចំណងជើង · សំណួរ · បន្ទាត់ដំណោះស្រាយ · រូបមន្ត · រូប · «ដូចនេះ») រួចបំពេញជួរឆ្វេង → ស្ដាំ → ទំព័រថ្មី */
@@ -147,7 +154,7 @@ function paginate(doc){
     colEls=[0,1].map(function(i){var c=doc.createElement("div");c.style.cssText="flex:1 1 0;min-width:0;height:100%;overflow:hidden;"+(i?"padding-left:13px":"padding-right:13px;border-right:1px solid #94a3b8");pg.appendChild(c);return c});
     ci=0;root.insertBefore(pg,cols);first=false}
   page();
-  units.forEach(function(u){var c=colEls[ci];u.el._keep=u.keep;c.appendChild(u.el);
+  units.forEach(function(u){var c=colEls[ci];u.el._keep=u.keep;c.appendChild(u.el);shrink(u.el);
     if(c.scrollHeight>c.clientHeight+1&&c.children.length>1){c.removeChild(u.el);var carry=[],l=c.lastElementChild;
       while(l&&l._keep&&c.children.length>1){carry.unshift(l);c.removeChild(l);l=c.lastElementChild}
       if(ci===0)ci=1;else page();carry.concat([u.el]).forEach(function(e){colEls[ci].appendChild(e)})}});
@@ -186,5 +193,5 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-pr{display:flex;align-items:baseline;gap:8px;margin:10px 0 14px;font-family:var(--fh);color:#1e3a8a}.exp-pr span{flex:1;border-bottom:1.5px solid #1e3a8a}"+
 "@media (max-width:600px){.exp-hd,.exp-dh{flex-direction:column}.exp-sc{display:none}.exp-it.two{grid-template-columns:1fr}.exp-it{margin-left:14px}.exp-ft{flex-direction:column-reverse;gap:10px}.exp-fl{margin-top:0}}";
 CSS+=CAMCSS;
-window.EXP={FONTS:FONTS,paginate:paginate,fit:fit,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
+window.EXP={shrink:shrink,FONTS:FONTS,paginate:paginate,fit:fit,html:html,css:CSS,total:total,head:head,RN:RN,SUB:SUB};
 })();

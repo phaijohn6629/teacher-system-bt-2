@@ -139,7 +139,7 @@ function editor(){
   [].forEach.call(body().querySelectorAll(".ex-it textarea"),function(t){t.style.height=Math.max(36,t.scrollHeight)+"px"});
 }
 var pvT=0;
-function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p)return;p.innerHTML="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});math(p).then(function(){EXP.fit&&EXP.fit(p)})},250)}
+function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p)return;p.innerHTML="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});math(p).then(function(){EXP.fit&&EXP.fit(p);EXP.shrink&&EXP.shrink(p)})},250)}
 /* ---------- បោះពុម្ព ---------- */
 /* ឈ្មោះឯកសារពេលព្រីន (= document.title) · លេខរៀងស្វ័យប្រវត្តិតាមប្រភេទប្រឡង
    វិញ្ញាសាដដែល (ខ្លឹមសារដដែល) → លេខដដែល · អត្រាកំណែប្រើលេខដូចវិញ្ញាសា */
@@ -160,7 +160,7 @@ function printIt(kind){
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
-    var go=function(){try{EXP.fit&&EXP.fit(w.document);if(kind==="k"&&EXP.paginate)EXP.paginate(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
+    var go=function(){try{EXP.fit&&EXP.fit(w.document);EXP.shrink&&EXP.shrink(w.document);if(kind==="k"&&EXP.paginate)EXP.paginate(w.document);EXP.shrink&&EXP.shrink(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
     if(w.document.fonts&&w.document.fonts.ready)w.document.fonts.ready.then(function(){setTimeout(go,300)});else setTimeout(go,900);
   });
 }
