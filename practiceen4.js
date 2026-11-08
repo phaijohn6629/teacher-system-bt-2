@@ -16,6 +16,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   parts.forEach(function(p,i){var lt=n>1?"("+"abcdefg"[i]+")":"";q+=(q?"\n":"")+(lt?lt+" ":"")+p.q;
     p.a.forEach(function(x,k){x.l=(lt&&k===0?lt+" ":"")+(x.l||"");a.push(x);mks.push(k===p.a.length-1?p.m:0)})});
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
+function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
+var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
 function hm(m){return Math.floor(m/60)+" "+("0"+m%60).slice(-2)}
 function ang(v){return Math.round(v*100)/100}
@@ -119,23 +121,23 @@ var G2=function(){var C=pick([[[4,6,12],"3 : 4 : 5"],[[3,8,24],"4 : 9 : 11"],[[3
   return EX("xg2",2,"Three regular polygons A, B and C meet at a point, with no gaps.\nThe interior angles of the polygons are in the ratio $a:b:c="+C[1]+"$.",[{q:"Find the number of sides of each polygon.",a:[A(C[0][0],null,"num","A:"),A(C[0][1],null,"num","B:"),A(C[0][2],null,"num","C:")],m:5}],
    "Angles at a point add to $360^\\circ$, so the angles are $"+C[0].map(function(n){return 180-360/n}).join("^\\circ,")+"^\\circ$. Exterior angles $"+C[0].map(function(n){return 360/n}).join(",")+"$ give $"+C[0].join(", ")+"$ sides")};
 var G3=function(){var l=ri(8,20),r=ri(3,l-2),h=Math.sqrt(l*l-r*r);
-  return EX("xg3",4,"A cone has sloping edge "+l+" cm and base radius "+r+" cm.",[
+  var sc=3.2/l,R=r*sc,Hh=h*sc,FIGv=FB({S:[0,Hh,"n"],A:[-R,0,"w"],B:[R,0,"e"],O:[0,0,"s"]},["seg S A black","seg S B black","x^2/"+(R*R).toFixed(3)+"+y^2/"+(.09*R*R).toFixed(3)+"=1 black","seg S O gray","seg O B gray","text "+mid([0,Hh],[R,0],.45,.15)+" "+l+" cm","text "+mid([0,0],[R,0],0,-.45)+" "+r+" cm"]);return EXF(FIGv,"xg3",4,"A cone has sloping edge "+l+" cm and base radius "+r+" cm.",[
    {q:"Calculate the total surface area of the cone. "+DP,a:[A(nf(Math.PI*r*l+Math.PI*r*r),null,"num","cm²")],m:3},
    {q:"Calculate the volume of the cone. "+DP,a:[A(nf(Math.PI*r*r*h/3),null,"num","cm³")],m:3}],
    "(a) $\\pi rl+\\pi r^2="+r2(Math.PI*r*l+Math.PI*r*r)+"$ (b) $h=\\sqrt{"+l*l+"-"+r*r+"}$, $V=\\tfrac13\\pi r^2h="+r2(Math.PI*r*r*h/3)+"$")};
 var G4=function(){var R=pick([2,2.5,3,3.5,4]),H=+(R+pick([0.4,0.5,0.6,0.8,1])).toFixed(1),Lg=ri(2,9)*100,t=2*Math.acos((H-R)/R),seg=R*R/2*(t-Math.sin(t)),maj=Math.PI*R*R-seg,V=maj*Lg;
-  return EX("xg4",4,"The cross-section of a tunnel is the major segment of a circle, centre $O$, radius "+R+" m. The height of the tunnel is "+H+" m.",[
+  var dd=H-R,cc=Math.sqrt(R*R-dd*dd),FIGv=FB({O:[0,0,"w"],P:[-cc,-dd,"sw"],Q:[cc,-dd,"se"],M:[0,-dd,"s"],T:[0,R,"n"]},["circle O "+R+" black","seg P Q black","seg M T gray","seg O Q gray","text "+mid([0,-dd],[0,R],.55,0)+" "+H+" m","text "+mid([0,0],[cc,-dd],.25,.3)+" "+R+" m"]);return EXF(FIGv,"xg4",4,"The cross-section of a tunnel is the major segment of a circle, centre $O$, radius "+R+" m. The height of the tunnel is "+H+" m.",[
    {q:"Calculate the area of the cross-section. "+DP,a:[A(nf(maj),null,"num","m²")],m:5},
    {q:"The tunnel is "+Lg+" m long. Calculate the volume of the tunnel. "+DP,a:[A(nf(V),null,"num","m³")],m:1}],
    "The floor is a chord "+nf(H-R)+" m below $O$. Angle subtended $=2\\cos^{-1}\\left(\\dfrac{"+nf(H-R)+"}{"+R+"}\\right)="+r2(t)+"$ rad; minor segment $=\\tfrac12r^2(\\theta-\\sin\\theta)="+r2(seg)+"$; major segment $=\\pi r^2-"+r2(seg)+"="+r2(maj)+"$")};
 var G5=function(){var p=ri(95,130),r=ri(25,p-60);
-  return EX("xg5",2,"$A$, $B$, $C$, $D$ and $E$ lie on a circle. $FG$ is a tangent to the circle at $C$.\nAngle $BAD="+p+"^\\circ$ and angle $BEC="+r+"^\\circ$.",[
+  var pc=function(a){return[3*Math.cos(a*D),3*Math.sin(a*D)]},CC=pc(30),tv=[-Math.sin(30*D)*2.2,Math.cos(30*D)*2.2],FIGv=FB({O:[0,0,"s"],A:pc(210).concat("sw"),B:pc(130).concat("nw"),C:CC.concat("e"),D:pc(305).concat("se"),E:pc(255).concat("s"),F:[CC[0]+tv[0],CC[1]+tv[1],"n"],G:[CC[0]-tv[0],CC[1]-tv[1],"e"]},["circle O 3 black","poly A B C D black","seg B D black","seg E B black","seg E C black","seg F G black","angle B A D "+p+"°","angle B E C "+r+"°"]);return EXF(FIGv,"xg5",2,"$A$, $B$, $C$, $D$ and $E$ lie on a circle. $FG$ is a tangent to the circle at $C$.\nAngle $BAD="+p+"^\\circ$ and angle $BEC="+r+"^\\circ$.",[
    {q:"Find angle $BCD$. Give a geometrical reason for your answer.",a:[A(180-p,null,"num","BCD =")],m:2},
    {q:"Find angle $DBC$.",a:[A(p-r,null,"num","DBC =")],m:2},
    {q:"Find angle $DCG$, where $G$ is on the same side of $C$ as $D$.",a:[A(p-r,null,"num","DCG =")],m:1}],
    "(a) opposite angles of a cyclic quadrilateral add up to $180^\\circ$ (b) $BDC=BEC="+r+"^\\circ$ (same segment), so $DBC=180-"+(180-p)+"-"+r+"="+(p-r)+"^\\circ$ (c) alternate segment theorem: $DCG=DBC="+(p-r)+"^\\circ$")};
 var G6=function(){var r=ri(5,15),t=ri(30,160),arc=2*Math.PI*r*t/360;
-  return EX("xg6",4,"The diagram shows a sector of a circle with radius "+r+" cm and angle "+t+"°.",[
+  var tt=t*D,FIGv=FB({O:[0,0,"sw"],A:[3,0,"e"],B:[3*Math.cos(tt),3*Math.sin(tt),"n"]},["circle O 3 gray","seg O A black","seg O B black","angle A O B "+t+"°","text (1.5,-0.4) "+r+" cm"],{ext:[[-3,-3],[3,3]]});return EXF(FIGv,"xg6",4,"The diagram shows a sector of a circle with radius "+r+" cm and angle "+t+"°.",[
    {q:"Calculate the perimeter of the sector. "+DP,a:[A(nf(arc+2*r),null,"num","cm")],m:3},
    {q:"Calculate the area of the sector. "+DP,a:[A(nf(Math.PI*r*r*t/360),null,"num","cm²")],m:2}],
    "(a) arc $="+r2(arc)+"$, perimeter $=arc+2r="+r2(arc+2*r)+"$ (b) $\\dfrac{"+t+"}{360}\\pi r^2="+r2(Math.PI*r*r*t/360)+"$")};
@@ -143,7 +145,7 @@ var G6=function(){var r=ri(5,15),t=ri(30,160),arc=2*Math.PI*r*t/360;
 /* ========================= TRIGONOMETRY & VECTORS ========================= */
 var T1=function(){var th=ri(100,170),p=ri(40,90),q=ri(40,110),g=ri(30,70);
   var C0=[p*Math.sin(th*D),p*Math.cos(th*D)],bc=brg(th+180-g),B0=[C0[0]+q*Math.sin(bc*D),C0[1]+q*Math.cos(bc*D)],AB=Math.hypot(B0[0],B0[1]),bab=brg(Math.atan2(B0[0],B0[1])/D);
-  return EX("xt1",4,"$A$, $B$ and $C$ are three points on horizontal ground. $AC="+p+"$ m and $BC="+q+"$ m.\nThe bearing of $C$ from $A$ is "+("00"+th).slice(-3)+"° and angle $ACB="+g+"$°.",[
+  var sc=3.2/Math.max(Math.hypot(C0[0],C0[1]),Math.hypot(B0[0],B0[1]),1),cP=[C0[0]*sc,C0[1]*sc],bP=[B0[0]*sc,B0[1]*sc],FIGv=FB({A:[0,0,"w"],C:cP.concat("s"),B:bP.concat("e"),N:[0,1.3,"n"]},["vec A N black","seg A C black","seg C B black","seg A B gray","angle A C B "+g+"°","text "+mid([0,0],cP,-.45,0)+" "+p+" m","text "+mid(cP,bP,.45,0)+" "+q+" m"]);return EXF(FIGv,"xt1",4,"$A$, $B$ and $C$ are three points on horizontal ground. $AC="+p+"$ m and $BC="+q+"$ m.\nThe bearing of $C$ from $A$ is "+("00"+th).slice(-3)+"° and angle $ACB="+g+"$°.",[
    {q:"The bearing of $B$ from $C$ is less than the bearing of $A$ from $C$. Find the bearing of $B$ from $C$.",a:[A(bc,null,"num","bearing =")],m:2},
    {q:"Calculate $AB$. "+DP,a:[A(nf(AB),null,"num","m")],m:3},
    {q:"Calculate the bearing of $B$ from $A$. "+DP,a:[A(nf(bab),null,"num","bearing =")],m:2}],
@@ -152,7 +154,7 @@ var T2=function(){var k=pick([1,1.2,0.6,0.8,1.4,-0.6,-1,-1.4]),c=-k/2,x1=Math.ac
   return EX("xt2",4,"",[{q:"Solve the equation $2\\cos x"+(k<0?"-":"+")+Math.abs(k)+"=0$ for $0^\\circ\\le x\\le360^\\circ$. "+DP,a:[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],m:3}],
    "$\\cos x="+nf(c)+"\\Rightarrow x="+r2(x1)+"^\\circ$ or $360-"+r2(x1)+"="+r2(x2)+"^\\circ$")};
 var T3=function(){var p=ri(1,5),q=ri(1,5);if(p===q)q++;var e1=fr(q,p+q),e2=fr(p,p+q),c1=fr(q,p+q),cm=fr(2*q-(p+q),2*(p+q));
-  return EX("xt3",4,"$OAB$ is a triangle. $\\overrightarrow{OA}=\\mathbf a$ and $\\overrightarrow{OB}=\\mathbf b$. $C$ is the midpoint of $OA$. $E$ lies on $AB$ with $AE:EB="+p+":"+q+"$.",[
+  var Oo=[0,0],Aa=[1,3.4],Bb=[5,.6],Ee=[Aa[0]+(Bb[0]-Aa[0])*p/(p+q),Aa[1]+(Bb[1]-Aa[1])*p/(p+q)],FIGv=FB({O:[0,0,"sw"],A:Aa.concat("n"),B:Bb.concat("e"),C:[.5,1.7,"w"],E:Ee.concat("ne")},["poly O A B black","seg C E gray","text "+mid(Oo,Aa,-.9,.3)+" a","text "+mid(Oo,Bb,0,-.4)+" b"]);return EXF(FIGv,"xt3",4,"$OAB$ is a triangle. $\\overrightarrow{OA}=\\mathbf a$ and $\\overrightarrow{OB}=\\mathbf b$. $C$ is the midpoint of $OA$. $E$ lies on $AB$ with $AE:EB="+p+":"+q+"$.",[
    {q:"Find the position vector of $E$ in the form $s\\mathbf a+t\\mathbf b$.",a:[A(e1.s,e1.t,"num","s ="),A(e2.s,e2.t,"num","t =")],m:2},
    {q:"Find $\\overrightarrow{CE}$ in the form $u\\mathbf a+v\\mathbf b$.",a:[A(cm.s,cm.t,"num","u ="),A(e2.s,e2.t,"num","v =")],m:2}],
    "(a) $\\mathbf a+\\dfrac{"+p+"}{"+(p+q)+"}(\\mathbf b-\\mathbf a)="+e1.t+"\\mathbf a+"+e2.t+"\\mathbf b$ (b) $\\overrightarrow{CE}=\\overrightarrow{OE}-\\tfrac12\\mathbf a="+cm.t+"\\mathbf a+"+e2.t+"\\mathbf b$")};
@@ -163,7 +165,7 @@ var T4=function(){var A0=[ri(-6,4),ri(-4,6)],v=[nz(-6,6),nz(-5,5)],B0=[A0[0]-v[0
    {q:"$\\overrightarrow{EF}=3\\overrightarrow{BA}$. Find $|\\overrightarrow{EF}|$, giving your answer as an exact value.",a:[A("sqrt("+m+")",sqT(m),"num","|EF| =")],m:3}],
    "(a) $B=A-\\overrightarrow{BA}$ (b) $\\overrightarrow{AC}=\\mathbf c-\\mathbf a$ (c) $3"+cv(v)+"$, magnitude $\\sqrt{"+m+"}="+sqT(m)+"$")};
 var T5=function(){var a=ri(5,15),b=ri(5,15),Cc=ri(30,150),S=0.5*a*b*Math.sin(Cc*D),c=Math.sqrt(a*a+b*b-2*a*b*Math.cos(Cc*D));
-  return EX("xt5",4,"In triangle $ABC$, $BC="+a+"$ cm, $AC="+b+"$ cm and angle $ACB="+Cc+"$°.",[
+  var sc=4/Math.max(a,b),FIGv=FB({C:[0,0,"sw"],B:[a*sc,0,"se"],A:[b*sc*Math.cos(Cc*D),b*sc*Math.sin(Cc*D),"n"]},["poly A B C black","angle B C A "+Cc+"°","text "+mid([0,0],[a*sc,0],0,-.4)+" "+a+" cm","text "+mid([0,0],[b*sc*Math.cos(Cc*D),b*sc*Math.sin(Cc*D)],-.5,.1)+" "+b+" cm"]);return EXF(FIGv,"xt5",4,"In triangle $ABC$, $BC="+a+"$ cm, $AC="+b+"$ cm and angle $ACB="+Cc+"$°.",[
    {q:"Calculate the area of triangle $ABC$. "+DP,a:[A(nf(S),null,"num","cm²")],m:2},
    {q:"Calculate $AB$. "+DP,a:[A(nf(c),null,"num","cm")],m:3}],
    "(a) $\\tfrac12ab\\sin C="+r2(S)+"$ (b) cosine rule: $AB="+r2(c)+"$")};

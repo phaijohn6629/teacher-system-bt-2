@@ -14,6 +14,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   parts.forEach(function(p,i){var lt=n>1?"("+"abcdefg"[i]+")":"";q+=(q?"\n":"")+(lt?lt+" ":"")+p.q;
     p.a.forEach(function(x,k){x.l=(lt&&k===0?lt+" ":"")+(x.l||"");a.push(x);mks.push(k===p.a.length-1?p.m:0)})});
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
+function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
+var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
 function hm(m){return("0"+Math.floor(m/60)%24).slice(-2)+":"+("0"+m%60).slice(-2)}
 function big(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,",")}
@@ -82,12 +84,12 @@ var P3=function(){var a=ri(2,4),b=nz(-5,5),r=ri(2,7),c=ri(1,9),k=r*r-c,x1=fr(r-b
    {q:"Find an expression for $f^{-1}(x)$.",a:[A("(x"+sg(-b)+")/"+a,"\\dfrac{x"+sg(-b)+"}{"+a+"}","expr","f⁻¹(x) =")],m:2}],
    "(b) $("+a+"x"+sg(b)+")^2="+r*r+"\\Rightarrow "+a+"x"+sg(b)+"=\\pm"+r+"$")};
 var P4=function(){var T=pick([[3,4,5],[4,3,5],[6,8,10],[5,12,13],[12,5,13]]),h=ri(-4,4),k=ri(-4,4),r=T[2],P=[h+T[0]*pick([1,-1]),k+T[1]*pick([1,-1])],F=h*h+k*k-r*r,dx=P[0]-h,dy=P[1]-k,m=fr(-dx,dy),c=fr(P[1]*dy+dx*P[0],dy);
-  return EX("q4",1,"A circle has equation $x^2+y^2"+co(-2*h,"x")+co(-2*k,"y")+co(F,"")+"=0$.",[
+  var FIGv=FB({C:[h,k,"s"],P:[P[0],P[1],"ne"]},["circle C "+r+" blue","seg C P gray"],{axes:1,nts:false,ext:[[h-r,k-r],[h+r,k+r]]});return EXF(FIGv,"q4",1,"A circle has equation $x^2+y^2"+co(-2*h,"x")+co(-2*k,"y")+co(F,"")+"=0$.",[
    {q:"Find the coordinates of the centre and the radius of the circle.",a:[A(h,null,"num","centre x ="),A(k,null,"num","centre y ="),A(r,null,"num","radius =")],m:3},
    {q:"The point $P"+pt(P)+"$ lies on the circle. Find the equation of the tangent to the circle at $P$, in the form $y=mx+c$.",a:[A(m.s,m.t,"num","m ="),A(c.s,c.t,"num","c =")],m:4}],
    "(a) $(x"+sg(-h)+")^2+(y"+sg(-k)+")^2="+r*r+"$ (b) gradient of radius $=\\dfrac{"+dy+"}{"+dx+"}$, tangent gradient $="+m.t+"$")};
 var P5=function(){var r=ri(5,15),t=ri(6,24)/10,seg=r*r/2*(t-Math.sin(t)),per=r*t+2*r*Math.sin(t/2);
-  return EX("q5",1,"The diagram shows a sector $OAB$ of a circle with centre $O$ and radius "+r+" cm. Angle $AOB="+t+"$ radians. The shaded region is bounded by the arc $AB$ and the chord $AB$.",[
+  var FIGv=FB({O:[0,0,"sw"],A:[3,0,"e"],B:[3*Math.cos(t),3*Math.sin(t),"n"]},["circle O 3 gray","seg O A black","seg O B black","seg A B blue","angle A O B "+t+" rad","text (1.5,-0.4) "+r+" cm"],{ext:[[-3,-3],[3,3]]});return EXF(FIGv,"q5",1,"The diagram shows a sector $OAB$ of a circle with centre $O$ and radius "+r+" cm. Angle $AOB="+t+"$ radians. The shaded region is bounded by the arc $AB$ and the chord $AB$.",[
    {q:"Find the area of the shaded region. "+DP,a:[A(nf(seg),null,"num","cm²")],m:3},
    {q:"Find the perimeter of the shaded region. "+DP,a:[A(nf(per),null,"num","cm")],m:3}],
    "(a) $\\tfrac12r^2(\\theta-\\sin\\theta)="+r2(seg)+"$ (b) arc $r\\theta="+r2(r*t)+"$, chord $2r\\sin\\tfrac\\theta2="+r2(2*r*Math.sin(t/2))+"$")};
@@ -115,7 +117,7 @@ var P8b=function(){var b=nz(-4,4),c=ri(-5,5),x0=ri(-2,3),y0=x0*x0+b*x0+c,g=2*x0+
    {q:"The normal meets the $x$-axis at $Q$. Find the $x$-coordinate of $Q$.",a:[A(xi.s,xi.t,"num","x =")],m:1}],
    "Gradient of tangent $="+g+"$, normal gradient $="+m.t+"$, through "+pt([x0,y0]))};
 var P9=function(){var p=ri(0,2),q=p+ri(2,4),Ar=fr(Math.pow(q-p,3),6),a=ri(1,4),b=ri(1,5),h=ri(1,4),V=fr(a*h*h+2*b*h,2);
-  return EX("q9",1,"",[{q:"Find the area of the region enclosed by the curve $y="+polyT([-1,p+q,-p*q])+"$ and the $x$-axis.",a:[A(Ar.s,Ar.t,"num","area =")],m:4},
+  var FIGv=FB({},["y=-(x"+fx(p)+")*(x"+fx(q)+") blue","area y=-(x"+fx(p)+")*(x"+fx(q)+") ["+p+","+q+"]"],{axes:1,nts:false,ext:[[p-1,-1],[q+1,Math.pow((q-p)/2,2)+.5]]});return EXF(FIGv,"q9",1,"",[{q:"Find the area of the region enclosed by the curve $y="+polyT([-1,p+q,-p*q])+"$ and the $x$-axis.",a:[A(Ar.s,Ar.t,"num","area =")],m:4},
    {q:"The region between $y=\\sqrt{"+(a===1?"":a)+"x+"+b+"}$, the $x$-axis and the lines $x=0$ and $x="+h+"$ is rotated through $360^\\circ$ about the $x$-axis. Find the volume obtained, in terms of $\\pi$.",a:[A(V.s+"*pi",piT(V),"num","V =")],m:3}],
    "(a) roots $"+p+"$ and $"+q+"$: $\\int_{"+p+"}^{"+q+"}y\\,dx="+Ar.t+"$ (b) $\\pi\\int_0^{"+h+"}("+(a===1?"":a)+"x+"+b+")dx=\\pi\\left["+fr(a,2).t+"x^2+"+b+"x\\right]_0^{"+h+"}="+piT(V)+"$")};
 var P9b=function(){var k=pick([3,6,9]),m=ri(1,6),x0=pick([1,4,9]),c=ri(-6,6),y0=2*k/3*Math.pow(x0,1.5)-m*x0+c;

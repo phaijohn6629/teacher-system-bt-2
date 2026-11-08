@@ -472,7 +472,19 @@ var LES10=[
  ["Geometry and mensuration",[[11,"Mensuration"],[12,"Trigonometry"],[13,"Circle theorems"],[14,"Vectors"]]],
  ["Statistics and probability",[[15,"Statistics"],[16,"Probability"]]]];
 
-window.PXEN={K:K,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
+/* 🖼 រូបសំណួរ (fig.js)៖ pts={A:[x,y,"ne"]} · cmds=["seg A B",…] · o.axes (អ័ក្ស) · o.nts=false (មិនសរសេរ NOT TO SCALE) · o.ext=[[x,y]] */
+function FB(pts,cmds,o){o=o||{};var xs=[],ys=[],k,L=[],r=function(v){return Math.round(v*1000)/1000};
+  for(k in pts){xs.push(pts[k][0]);ys.push(pts[k][1])}(o.ext||[]).forEach(function(p){xs.push(p[0]);ys.push(p[1])});
+  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys),m=Math.max(x1-x0,y1-y0)*.14+.5;
+  x0-=m;x1+=m;y0-=m;y1+=m+(o.nts===false?0:m*.6);
+  if(o.axes){x0=Math.floor(Math.min(x0,-1));x1=Math.ceil(Math.max(x1,1));y0=Math.floor(Math.min(y0,-1));y1=Math.ceil(Math.max(y1,1))}
+  var w=x1-x0,h=y1-y0;if(h/w<.55){var e=(.55*w-h)/2;y0-=e;y1+=e}else if(h/w>1.1){var e2=(h/1.1-w)/2;x0-=e2;x1+=e2}
+  if(!o.axes)L.push("nogrid","noaxes");L.push("window x="+r(x0)+".."+r(x1)+" y="+r(y0)+".."+r(y1));
+  for(k in pts)L.push(k+"("+r(pts[k][0])+","+r(pts[k][1])+")"+(pts[k][2]?" "+pts[k][2]:""));
+  L=L.concat(cmds);if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
+  return L.join("\n")}
+function mid(P,Q,dx,dy){return"("+(Math.round(((P[0]+Q[0])/2+(dx||0))*1000)/1000)+","+(Math.round(((P[1]+Q[1])/2+(dy||0))*1000)/1000)+")"}
+window.PXEN={K:K,FB:FB,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
 })();

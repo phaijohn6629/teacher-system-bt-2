@@ -15,6 +15,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   parts.forEach(function(p,i){var lt=n>1?"("+"abcdefg"[i]+")":"";q+=(q?"\n":"")+(lt?lt+" ":"")+p.q;
     p.a.forEach(function(x,k){x.l=(lt&&k===0?lt+" ":"")+(x.l||"");a.push(x);mks.push(k===p.a.length-1?p.m:0)})});
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
+function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
+var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function lcm(a,b){return a/gcd(a,b)*b}
 function hm(m){return("0"+Math.floor(m/60)%24).slice(-2)+":"+("0"+m%60).slice(-2)}
 function tb(r){return"$\\begin{array}{|"+r[0].map(function(){return"c|"}).join("")+"}\\hline "+r.map(function(x){return x.join("&")}).join("\\\\\\hline ")+"\\\\\\hline\\end{array}$"}
@@ -102,19 +104,19 @@ add([8,9],32,3,function(){var w=ri(2,9),l=w+ri(2,8),A0=l*w,k=l-w;
 
 /* ======================= GEOMETRY AND MEASURES (33) ======================= */
 add([7,8],33,1,function(){var a=ri(30,80),x=ri(10,40),k=pick([2,3]),c=180-a-k*x;if(c<=10){x=15;c=180-a-k*x}
-  return EX("cg1",1,"The angles of a triangle are $"+a+"^\\circ$, $"+(k===1?"":k)+"x^\\circ$ and $"+c+"^\\circ$.",[{q:"Work out the value of $x$.",a:[A(x,null,"num","x =")],m:2}],
+  var FIGv=FB({A:[0,0,"sw"],B:[5,0,"se"],C:[1.8,3,"n"]},["poly A B C black","angle B A C "+a+"°","angle C B A "+c+"°","angle A C B "+(k===1?"":k)+"x°"]);return EXF(FIGv,"cg1",1,"The angles of a triangle are $"+a+"^\\circ$, $"+(k===1?"":k)+"x^\\circ$ and $"+c+"^\\circ$.",[{q:"Work out the value of $x$.",a:[A(x,null,"num","x =")],m:2}],
    "Angles in a triangle add up to $180^\\circ$: $"+k+"x=180-"+a+"-"+c+"="+k*x+"\\Rightarrow x="+x+"$")});
 add([7],33,1,function(){var l=ri(4,15),w=ri(2,10),b=ri(2,10),h=ri(2,10);
   return EX("cg2",1,"",[{q:"A rectangle is "+l+" cm long and "+w+" cm wide. Work out its perimeter.",a:[A(2*(l+w),null,"num","cm")],m:1},
    {q:"A triangle has base "+b+" cm and perpendicular height "+h+" cm. Work out its area.",a:[A(nf(b*h/2),null,"num","cm²")],m:2}],"(a) $2("+l+"+"+w+")$ (b) $\\tfrac12\\times"+b+"\\times"+h+"="+nf(b*h/2)+"$")});
 add([8,9],33,3,function(){var r=ri(3,20)/2*2;
-  return EX("cg3",2,"A circular table has diameter "+2*r+" cm.",[{q:"Calculate the circumference of the table. "+DP1,a:[A(nf(2*Math.PI*r),null,"num","cm")],m:2},{q:"Calculate the area of the table top. "+DP1,a:[A(nf(Math.PI*r*r),null,"num","cm²")],m:2}],
+  var FIGv=FB({O:[0,0,"n"],P:[-2,0,"w"],Q:[2,0,"e"]},["circle O 2 black","seg P Q black","text (0,-0.45) "+2*r+" cm"],{ext:[[-2,-2],[2,2]]});return EXF(FIGv,"cg3",2,"A circular table has diameter "+2*r+" cm.",[{q:"Calculate the circumference of the table. "+DP1,a:[A(nf(2*Math.PI*r),null,"num","cm")],m:2},{q:"Calculate the area of the table top. "+DP1,a:[A(nf(Math.PI*r*r),null,"num","cm²")],m:2}],
    "(a) $\\pi d="+Math.round(2*Math.PI*r*10)/10+"$ (b) $\\pi r^2="+Math.round(Math.PI*r*r*10)/10+"$")});
 add([7,8],33,2,function(){var a=ri(10,40),b=ri(10,30),c=ri(5,20);
   return EX("cg4",1,"A fish tank is a cuboid "+a+" cm long, "+b+" cm wide and "+c+" cm high.",[{q:"Work out the volume of the tank in cm³.",a:[A(a*b*c,null,"num","cm³")],m:1},{q:"Write the volume in litres. (1 litre = 1000 cm³)",a:[A(nf(a*b*c/1000),null,"num","litres")],m:1}],
    "(a) $"+a+"\\times"+b+"\\times"+c+"="+a*b*c+"$ (b) $\\div1000="+nf(a*b*c/1000)+"$")});
 add([9],33,3,function(){var L=ri(5,12),d=ri(1,L-2),h=Math.sqrt(L*L-d*d);
-  return EX("cg5",2,"A ladder "+L+" m long leans against a vertical wall. The foot of the ladder is "+d+" m from the wall.",[{q:"Calculate how far up the wall the ladder reaches. "+DP,a:[A(nf(h),null,"num","m")],m:3}],
+  var sc=3.2/L,FIGv=FB({O:[0,0,"sw"],W:[0,h*sc,"n"],F:[d*sc,0,"se"]},["seg O W black","seg O F black","seg F W blue","right W O F","text "+mid([d*sc,0],[0,h*sc],.5,.2)+" "+L+" m","text "+mid([0,0],[d*sc,0],0,-.4)+" "+d+" m"]);return EXF(FIGv,"cg5",2,"A ladder "+L+" m long leans against a vertical wall. The foot of the ladder is "+d+" m from the wall.",[{q:"Calculate how far up the wall the ladder reaches. "+DP,a:[A(nf(h),null,"num","m")],m:3}],
    "Pythagoras: $\\sqrt{"+L+"^2-"+d+"^2}=\\sqrt{"+(L*L-d*d)+"}="+r2(h)+"$ m")});
 add([8,9],33,2,function(){var n=pick([5,6,8,9,10,12]);
   return EX("cg6",1,"This is a regular polygon with "+n+" sides.",[{q:"Work out the size of one exterior angle.",a:[A(nf(360/n),null,"num","°")],m:1},{q:"Work out the size of one interior angle.",a:[A(nf(180-360/n),null,"num","°")],m:1}],
