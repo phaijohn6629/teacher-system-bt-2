@@ -29,7 +29,11 @@
   ]).then(function (m) {
     var A = m[0], AU = m[1], FS = m[2];
     var app = A.initializeApp(firebaseConfig);
-    var auth = AU.getAuth(app);
+    /* ☑️ ចងចាំខ្ញុំ៖ remUntil (ពេលផុតកំណត់) ក្នុង localStorage → រក្សា Login ក្នុងឧបករណ៍ · គ្មាន/ផុតកំណត់ → Session តែប៉ុណ្ណោះ (បិទ Tab ត្រូវ Login ឡើងវិញ) */
+    var ru = 0; try { ru = +localStorage.getItem("remUntil") || 0; } catch (e) {}
+    var rem = ru > Date.now();
+    if (ru && !rem) { try { localStorage.removeItem("remUntil"); indexedDB.deleteDatabase("firebaseLocalStorageDb"); } catch (e) {} }
+    var auth = AU.initializeAuth(app, { persistence: rem ? [AU.indexedDBLocalPersistence, AU.browserLocalPersistence] : AU.browserSessionPersistence });
     /* App ទីពីរ ប្រើសម្រាប់ឱ្យ Admin បង្កើតគណនីគ្រូ ដោយមិនចាំបាច់ចាកចេញពីគណនីខ្លួន */
     var sauth = AU.getAuth(A.initializeApp(firebaseConfig, "secondary"));
     window.db = FS.getFirestore(app);
@@ -43,11 +47,10 @@
       onAuthStateChanged: AU.onAuthStateChanged,
       createUserWithEmailAndPassword: AU.createUserWithEmailAndPassword,
       updatePassword: AU.updatePassword, deleteUser: AU.deleteUser, reauthenticateWithCredential: AU.reauthenticateWithCredential,
-      EmailAuthProvider: AU.EmailAuthProvider
+      EmailAuthProvider: AU.EmailAuthProvider,
+      setRemember: function (on) { return AU.setPersistence(auth, on ? AU.indexedDBLocalPersistence : AU.browserSessionPersistence); }
     };
-    /* Session តែប៉ុណ្ណោះ៖ បិទ Tab ត្រូវ Login ឡើងវិញ */
-    return AU.setPersistence(auth, AU.browserSessionPersistence)
-      .then(function () { return AU.setPersistence(sauth, AU.inMemoryPersistence); })
+    return AU.setPersistence(sauth, AU.inMemoryPersistence)
       .catch(function () {});
   });
 })();
@@ -132,6 +135,7 @@ function showLogin(){
 }
 function doLogout(){
   stopSync();
+  try{localStorage.removeItem("remUntil")}catch(e){}   /* ចាកចេញ = ឈប់ចងចាំលើឧបករណ៍នេះ */
   var done=function(){try{sessionStorage.clear()}catch(e){}location.reload()};
   if(window.FB&&window.FB.auth)window.FB.signOut(window.FB.auth).then(done,done);else done();
 }
@@ -168,6 +172,7 @@ function goApp(user,p){
       return;
     }
     prof={uid:user.uid,id:String(p.id||"").toUpperCase(),name:khNorm(p.name||p.id),role:p.role==="admin"?"admin":"member",mustChange:p.mustChange===true};
+    if(prof.role==="admin")try{var ru=+localStorage.getItem("remUntil")||0,mx=Date.now()+7*864e5;if(ru>mx)localStorage.setItem("remUntil",String(mx))}catch(e){}   /* អ្នកគ្រប់គ្រង៖ ចងចាំយូរបំផុត ៧ ថ្ងៃ */
     who={id:prof.id,name:prof.name,role:prof.role,rl:""};
     rt=who.id;
     $("loginSection").hidden=true;$("appSection").hidden=false;
@@ -208,15 +213,18 @@ $("btnLogin").onclick=function(){
   var id=$("loginId").value.trim().toUpperCase(),pass=$("loginPass").value,btn=$("btnLogin");
   if(!id||!pass){alert("សូមបញ្ចូលលេខសម្គាល់ និងលេខសម្ងាត់!");return}
   btn.disabled=true;
-  window.FBREADY.then(function(){return window.FB.signInWithEmailAndPassword(window.FB.auth,idEmail(id),pass)})
-    .then(function(){$("loginPass").value="";window._justLogin=true})
+  var rem=!!($("loginRem")&&$("loginRem").checked);
+  window.FBREADY.then(function(){return window.FB.setRemember(rem).catch(function(){})})
+    .then(function(){return window.FB.signInWithEmailAndPassword(window.FB.auth,idEmail(id),pass)})
+    .then(function(){$("loginPass").value="";window._justLogin=true;
+      try{if(rem)localStorage.setItem("remUntil",String(Date.now()+30*864e5));else localStorage.removeItem("remUntil")}catch(e){}})
     .catch(function(e){alert(authErr(e))})
     .then(function(){btn.disabled=false});
 };
 ["loginId","loginPass"].forEach(function(i){$(i).onkeydown=function(e){if(e.key==="Enter")$("btnLogin").onclick()}});
 $("btnLogout").onclick=doLogout;
 /* ⚡ បង្ហាញផ្ទាំង Login ភ្លាម (មិនរង់ចាំ Firebase ទាញរួច) បើ Tab នេះមិនទាន់បាន Login */
-try{if(!Object.keys(sessionStorage).some(function(k){return k.indexOf("firebase:authUser:")===0}))$("loginSection").hidden=false}catch(e){}
+try{if(!((+localStorage.getItem("remUntil")||0)>Date.now())&&!Object.keys(sessionStorage).some(function(k){return k.indexOf("firebase:authUser:")===0}))$("loginSection").hidden=false}catch(e){$("loginSection").hidden=false}
 window.FBREADY.then(function(){
   window.FB.onAuthStateChanged(window.FB.auth,function(user){if(user)enterApp(user);else showLogin()});
 }).catch(function(e){

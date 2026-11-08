@@ -26,6 +26,7 @@
   <input id="loginId" placeholder="ឧ. T001" autocomplete="username" autocapitalize="characters">
   <label for="loginPass">លេខសម្ងាត់ (Password)</label>
   <input id="loginPass" type="password" autocomplete="current-password">
+  <label for="loginRem" style="display:flex;align-items:flex-start;gap:8px;margin:10px 0 2px;cursor:pointer;font-weight:600"><input type="checkbox" id="loginRem" style="width:18px;height:18px;margin:3px 0 0;flex:none;accent-color:#4f46e5"><span>ចងចាំខ្ញុំ<small style="display:block;font-weight:400;color:#6b7280;line-height:1.5">ធីកតែលើឧបករណ៍ផ្ទាល់ខ្លួនប៉ុណ្ណោះ · មិនបាច់ Login រាល់ពេលបើក (គ្រូ ៣០ ថ្ងៃ · អ្នកគ្រប់គ្រង ៧ ថ្ងៃ)</small></span></label>
   <button class="primary" id="btnLogin" style="width:150px;margin-top:6px">ចូលប្រព័ន្ធ</button>
   <p class="note" style="text-align:center;margin-top:12px">បើភ្លេចលេខសម្ងាត់ សូមទាក់ទងអ្នកគ្រប់គ្រងប្រព័ន្ធ។</p>
 </div>
@@ -570,7 +571,7 @@
 [].forEach.call(document.querySelectorAll("img[data-inl]"),function(im){try{fetch(im.getAttribute("src")).then(function(r){return r.blob()}).then(function(b){var f=new FileReader();f.onload=function(){im.src=f.result;if(im.id==="ngsLogo"&&"LOGO" in window)window.LOGO=f.result};f.readAsDataURL(b)}).catch(function(){})}catch(e){}});</script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_seed.js?v=2"></script>
-<script src="script.js?v=71"></script>
+<script src="script.js?v=72"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=4"></script>
 <script src="sched.js?v=22"></script>
