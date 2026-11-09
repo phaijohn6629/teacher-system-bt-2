@@ -179,7 +179,7 @@ function printIt(kind){
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
-    var go=function(){try{EXP.fit&&EXP.fit(w.document);EXP.shrink&&EXP.shrink(w.document);if(kind==="k"&&EXP.paginate)EXP.paginate(w.document);EXP.shrink&&EXP.shrink(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
+    var go=function(){try{EXP.fit&&EXP.fit(w.document);EXP.shrink&&EXP.shrink(w.document);if(kind==="k"&&EXP.paginate)EXP.paginate(w.document);EXP.shrink&&EXP.shrink(w.document);if(kind!=="k"&&EXP.onePage)EXP.onePage(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
     if(w.document.fonts&&w.document.fonts.ready)w.document.fonts.ready.then(function(){setTimeout(go,300)});else setTimeout(go,900);
   });
 }
