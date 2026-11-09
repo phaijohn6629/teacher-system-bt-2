@@ -149,41 +149,46 @@ $("okSt").onclick=function(){
   o.s.sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});o.u=Date.now();
   saveS();$("dlgSt").close();renderSched();
 };
-function ascImport(id,name){
-  var L=ASC[name];if(!L)return false;
-  sch.r[id]={s:L.map(function(x){return x.slice()}),u:Date.now(),src:"aSc 20/10/2026"};return true;
-}
-function matchAsc(t){
-  var k=nn(t.name),best="";
-  Object.keys(ASC).forEach(function(n){if(nn(n)===k)best=n});
-  if(!best)Object.keys(ASC).forEach(function(n){if(!best&&(k.indexOf(nn(n))>=0||nn(n).indexOf(k)>=0))best=n});
-  return best;
-}
-$("stImp").onclick=function(){
-  var t=teacherOf(stT),m=matchAsc(t);
-  $("ascN").innerHTML=Object.keys(ASC).map(function(n){return"<option"+(n===m?" selected":"")+">"+esc(n)+"</option>"}).join("");
+/* 📄 នាំចូលកាលវិភាគពី PDF aSc (មួយទំព័រ = គ្រូម្នាក់)៖ គ្រូ → ខ្លួនឯង · Admin → គ្រូទាំងអស់ក្នុងប្រព័ន្ធ
+   ផ្គូផ្គងដោយលេខទូរស័ព្ទ ឬព្យញ្ជនៈនៃឈ្មោះ → បង្ហាញឱ្យពិនិត្យ/ប្ដូរទំព័រ មុននាំចូល */
+var ascAll=false,ascRes=null,ascName="";
+function ascPick(all){if(all&&!isAdm())return;if(!all&&!canEd(stT))return;ascAll=!!all;$("ascFile").value="";$("ascFile").click()}
+$("stImp").onclick=function(){ascPick(false)};
+$("stAll").onclick=function(){ascPick(true)};
+$("ascFile").onchange=function(){
+  var f=this.files&&this.files[0];if(!f)return;
+  if(!/\.pdf$/i.test(f.name)&&f.type!=="application/pdf"){alert("សូមជ្រើសឯកសារ PDF");return}
+  ascName=f.name;notify("⏳ កំពុងអាន PDF «"+f.name+"» …");
+  ASCPDF.parse(f,function(i,n){if(i%10===0||i===n)notify("⏳ កំពុងអាន PDF … "+i+"/"+n+" ទំព័រ")}).then(function(res){
+    if(!res.length){alert("រកមិនឃើញកាលវិភាគគ្រូក្នុង PDF នេះទេ។\nសូមប្រើឯកសារ «កាលវិភាគគ្រូ» (មួយទំព័រ = គ្រូម្នាក់) ដែលបង្កើតដោយ aSc Timetables។");return}
+    ascRes=res;ascDlg();
+  }).catch(function(e){console.error("asc pdf:",e);alert("មិនអាចអាន PDF បានទេ៖ "+(e&&e.message||e))});
+};
+function ascOpt(p){return"ទំព័រ "+p.page+" · "+(p.nm||"?")+" · "+p.ph.join("/")+" · "+p.s.length+" ម៉ោង"}
+function ascDlg(){
+  var ts=ascAll?data.filter(function(t){return t&&t.id&&t.en!==false}):[teacherOf(stT)].filter(function(t){return t&&t.id});
+  var used={},rows=ts.map(function(t){var m=ASCPDF.match(t,ascRes);if(m)used[m.page]=(used[m.page]||0)+1;return{t:t,m:m}});
+  var h="<table class=ct style='width:100%'><thead><tr><th></th><th>គ្រូ</th><th>ទំព័រក្នុង PDF</th><th>ម៉ោង/សប្ដាហ៍ (ចាស់ → ថ្មី)</th></tr></thead><tbody>";
+  rows.forEach(function(r,i){var old=(sch.r[r.t.id]&&sch.r[r.t.id].s||[]).length,pg=r.m?r.m.page:"";
+    h+="<tr><td><input type=checkbox data-ai="+i+(r.m?" checked":"")+"></td><td>"+esc(r.t.name)+(r.t.ph?"<br><small class=mu>"+esc(r.t.ph)+"</small>":"")+(r.m&&used[r.m.page]>1?"<br><small style='color:#b91c1c'>⚠️ ទំព័រនេះត្រូវនឹងគ្រូច្រើននាក់</small>":"")+"</td>"+
+      "<td><select data-ap="+i+" style='max-width:100%'><option value=''>— មិននាំចូល —</option>"+ascRes.map(function(p){return"<option value="+p.page+(p.page===pg?" selected":"")+">"+esc(ascOpt(p))+"</option>"}).join("")+"</select></td>"+
+      "<td data-an="+i+">"+kh(old)+" → "+(r.m?"<b>"+kh(r.m.s.length)+"</b>":"—")+"</td></tr>"});
+  $("ascBody").innerHTML=h+"</tbody></table>";
+  var ok=rows.filter(function(r){return r.m}).length;
+  $("ascInfo").innerHTML="ឯកសារ «"+esc(ascName)+"» · រកឃើញ "+kh(ascRes.length)+" ទំព័រ · ផ្គូផ្គងដោយស្វ័យប្រវត្តិ "+kh(ok)+"/"+kh(rows.length)+" នាក់ (តាមលេខទូរស័ព្ទ ឬឈ្មោះ)។<br>សូមពិនិត្យ ឬប្ដូរទំព័រ ហើយធីកអ្នកដែលត្រូវនាំចូល — កាលវិភាគចាស់របស់អ្នកដែលបានធីកនឹងត្រូវជំនួស។";
+  $("ascBody").onchange=function(e){var i=e.target.dataset.ap;if(i==null)return;var p=pageOf(e.target.value),cb=$("ascBody").querySelector("[data-ai='"+i+"']"),r=rows[+i];
+    cb.checked=!!p;$("ascBody").querySelector("[data-an='"+i+"']").innerHTML=kh((sch.r[r.t.id]&&sch.r[r.t.id].s||[]).length)+" → "+(p?"<b>"+kh(p.s.length)+"</b>":"—")};
+  $("okAsc").onclick=function(){
+    var n=0;rows.forEach(function(r,i){if(!$("ascBody").querySelector("[data-ai='"+i+"']").checked||!canEd(r.t.id))return;
+      var p=pageOf($("ascBody").querySelector("[data-ap='"+i+"']").value);if(!p)return;
+      sch.r[r.t.id]={s:p.s.map(function(x){return x.slice()}),u:Date.now(),src:"aSc PDF · "+ascName};n++});
+    if(!n){alert("មិនទាន់បានធីកគ្រូណាមួយទេ");return}
+    saveS();$("dlgAsc").close();renderSched();notify("✅ បាននាំចូលកាលវិភាគ "+kh(n)+" នាក់ ពី «"+ascName+"»");
+  };
   $("dlgAsc").showModal();
-};
+}
+function pageOf(v){v=+v;return ascRes.filter(function(p){return p.page===v})[0]||null}
 $("cxAsc").onclick=function(){$("dlgAsc").close()};
-$("okAsc").onclick=function(){
-  var n=$("ascN").value;
-  if(slotAt(stT,0,1)||schOf(stT).length){if(!confirm("កាលវិភាគចាស់របស់ "+tname(stT)+" នឹងត្រូវជំនួសដោយទិន្នន័យ aSc របស់ «"+n+"»។ បន្តឬទេ?"))return}
-  if(ascImport(stT,n)){saveS();notify("បាននាំចូលកាលវិភាគ «"+n+"»")}
-  $("dlgAsc").close();renderSched();
-};
-$("stAll").onclick=function(){
-  if(!isAdm())return;
-  var ok=[],no=[];
-  Object.keys(ASC).forEach(function(n){
-    var t=data.filter(function(x){return nn(x.name)===nn(n)})[0];
-    if(t)ok.push([t,n]);else no.push(n);
-  });
-  var msg="នឹងនាំចូលកាលវិភាគ "+ok.length+" នាក់ (ជំនួសកាលវិភាគចាស់)៖\n"+ok.map(function(x){return"• "+x[0].name}).join("\n");
-  if(no.length)msg+="\n\nរកមិនឃើញក្នុងបញ្ជីគ្រូ (ត្រូវនាំចូលដោយដៃ ក្រោយបន្ថែមគ្រូ)៖\n"+no.join(", ");
-  if(!ok.length){alert(msg);return}
-  if(!confirm(msg+"\n\nបន្តឬទេ?"))return;
-  ok.forEach(function(x){ascImport(x[0].id,x[1])});saveS();renderSched();notify("បាននាំចូលកាលវិភាគ "+ok.length+" នាក់");
-};
 $("stClr").onclick=function(){
   if(!canEd(stT)||!confirm("សម្អាតកាលវិភាគទាំងអស់របស់ "+tname(stT)+" ?"))return;
   sch.r[stT]={s:[],u:Date.now()};saveS();renderSched();
