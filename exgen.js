@@ -456,9 +456,9 @@ function FN(id,t,inst,qs){return{id:id,t:t,lv:3,f:function(){return{inst:inst,it
 /* ===== សិក្សាអនុគមន៍ (៣០–៣៥ ពិន្ទុ) · មេគុណប្ដូរដោយចៃដន្យ · ដំណោះស្រាយពេញលេញ + តារាងអថេរភាព + ក្រាប ===== */
 /* តារាងអថេរភាព៖ xs = តម្លៃ x (n) · dr = ជួរ f′ (2n−1) · fr = ជួរ f (2n−1) */
 function VT(xs,dr,fr,fn){fn=fn||"f";var xr=[];xs.forEach(function(x,i){xr.push(x);if(i<xs.length-1)xr.push("")});
-  return"$$"+(xr.length>=7?"\\small":"")+"\\begin{array}{c|"+Array(xr.length+1).join("c")+"}x&"+xr.join("&")+"\\\\\\hline "+fn+"'(x)&"+dr.join("&")+"\\\\\\hline "+fn+"(x)&"+fr.join("&")+"\\end{array}$$"}
+  return"$$\\def\\arraystretch{1.45}"+(xr.length>=7?"\\small":"")+"\\begin{array}{c|"+Array(xr.length+1).join("c")+"}x&"+xr.join("&")+"\\\\\\hline "+fn+"'(x)&"+dr.join("&")+"\\\\\\hline "+fn+"(x)&"+fr.join("&")+"\\end{array}$$"}
 var UP="\\nearrow",DN="\\searrow";
-function GRF(lines,w){return["window x="+w[0]+".."+w[1]+" y="+w[2]+".."+w[3]].concat(lines).join("\n")}
+function GRF(lines,w){return["window x="+w[0]+".."+w[1]+" y="+w[2]+".."+w[3],"labels"].concat(lines).join("\n")}
 function cxS(c,s){return c===1?s:c===-1?"-"+s:c+s}   /* មេគុណ × កន្សោម */
 function js(v){return v<0?String(v):"+"+v}
 function lnT(c){return c===1?"0":"\\ln "+c}

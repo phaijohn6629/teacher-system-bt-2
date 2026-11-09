@@ -36,7 +36,8 @@ function dipHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.len
 /* ប្រវែងមើលឃើញប្រហាក់ប្រហែល (រូបមន្ត → ដកពាក្យបញ្ជា LaTeX) */
 function vlen(q){q=String(q||"");var m=0;var t=q.replace(/\$\$?([^$]*)\$\$?/g,function(_,f){m+=f.replace(/\\(dfrac|frac)/g,"").replace(/\\[a-zA-Z]+/g,"x").replace(/[{}^_\\ ]/g,"").length;return""});return t.replace(/[\u17b6-\u17d3]/g,"").length+m}
 /* បន្ទាប់ពីគូររួច៖ ក ខ ណាមួយចុះបន្ទាត់ក្នុង ២ ជួរឈរ → ប្ដូរជា ១ ជួរឈរ */
-function fit(root){[].forEach.call((root||document).querySelectorAll(".exp-it.two"),function(g){
+function fit(root){root=root||document;fit1(root);var d=root.ownerDocument||root;try{if(d.fonts&&d.fonts.ready)d.fonts.ready.then(function(){fit1(root)})}catch(e){}}
+function fit1(root){[].forEach.call(root.querySelectorAll(".exp-it.two"),function(g){
   var w=[].some.call(g.querySelectorAll(".exp-i>span"),function(sp){var r=sp.getClientRects();if(r.length<2)return false;var y=r[0].top;return[].some.call(r,function(x){return Math.abs(x.top-y)>12})});
   if(w)g.classList.remove("two")})}
 function html(P,o){
@@ -51,7 +52,7 @@ function html(P,o){
   var cols=key&&bac;if(cols)h+="<div class=exp-cols>";
   (P.secs||[]).forEach(function(s,i){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
-    var sh=!key&&it.length>1&&it.every(function(x){return vlen(x.q)<=40&&!/\n/.test(x.q||"")&&!x.fig});
+    var sh=!key&&it.length>1&&it.every(function(x){return vlen(x.q)<=22&&!/\n/.test(x.q||"")&&!x.fig});
     h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(key?noP(it[0].q):it[0].q):TX(key?noP(inst):inst||""))+"</div>";
     if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip"||P.fmt==="bac")}
     else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(key?noP(x.q):x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"||P.fmt==="bac"):"")+"</div>"}).join("")+"</div>";
@@ -127,13 +128,21 @@ var CAMCSS=".cam{font-family:Arial,Helvetica,sans-serif;font-size:14px;line-heig
 ".cam-wk{color:#475569;margin-bottom:3px}.cam-ft{margin-top:22px;font-size:11px;color:#555;text-align:center;border-top:1px solid #000;padding-top:4px}"+
 "@media print{.cam-cv{border-bottom:none;margin-bottom:0}}";
 /* ✂️ អត្រាកំណែ៖ លុបសញ្ញា «។» (មិនចាំបាច់ក្នុងដំណោះស្រាយ) */
-function noP(s){return String(s||"").replace(/\s*។/g,"")}
+function noP(s){return String(s||"").replace(/\s*។\s*(?=[^\s\n])/g,"\n").replace(/\s*។/g,"")}
 /* 📏 រូបមន្តវែងលើសទទឹងជួរឈរ → បង្រួមទំហំអក្សរដោយស្វ័យប្រវត្តិ (អប្បបរមា ៥០%) · ហៅក្រោយ KaTeX */
 function shrink(root){root=root||document;var W=(root.ownerDocument||root).defaultView||window;
   [].forEach.call(root.querySelectorAll(".exp .katex"),function(k){var disp=k.parentElement&&/katex-display/.test(k.parentElement.className),box=disp?k.parentElement:k,host=box.parentElement;
     while(host&&W.getComputedStyle(host).display==="inline")host=host.parentElement;if(!host)return;var cs=W.getComputedStyle(host),aw=host.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0);
     var w=disp?k.scrollWidth:k.getBoundingClientRect().width;if(aw>40&&w>aw+1){var fs=parseFloat(W.getComputedStyle(k).fontSize);k.style.fontSize=Math.max(fs*.5,fs*aw/w*.97)+"px"}})}
-function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(noP(x.sol))+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(x.ans)||"—")+"</span></div></div>";
+/* ដូចនេះ៖ ចម្លើយជាលេខសុទ្ធ → ដាក់ឈ្មោះពីជួរចុងក្រោយនៃដំណោះស្រាយ (ឧ. $P(E)=\frac{2}{11}$ · $n(S)=120$) */
+function ansLbl(x){var a=String(x.ans||""),m=/^\s*\$([^$]*)\$\s*$/.exec(a);if(!m)return a;var v=m[1].trim();
+  if(/=|<|>|\\(le|ge|ne|in|Rightarrow)/.test(v)||/[a-zA-Z](?![a-z]*\{)/.test(v.replace(/\\(dfrac|frac|sqrt|pi|left|right|cdot|times)/g,"")))return a;
+  var vv=v.replace(/\s/g,""),lhs="",last="";
+  String(x.sol||"").split(/\\\\|\n|\$\$?|\\(?:begin|end)\{aligned\}/).forEach(function(c){c=c.trim();if(!c)return;
+    var L=/^([^=&]{1,30}?)\s*&?=/.exec(c);if(L&&/[A-Za-z]/.test(L[1]))last=L[1].trim();
+    if(c.replace(/\s/g,"").slice(-vv.length)===vv&&/=/.test(c))lhs=(L&&/[A-Za-z]/.test(L[1]))?L[1].trim():last});
+  return lhs&&lhs.length<=24?"$"+lhs+"="+v+"$":a}
+function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(noP(x.sol))+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span></div></div>";
   return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(noP(x.ans)||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(noP(x.sol))+"</div>":"")+"</div>"}
 
 /* 🖨️ បែងទំព័រដោយខ្លួនឯង (ចម្លើយពីរជួរឈរ)៖ Safari បោះពុម្ព column-count កាត់បន្ទាត់អក្សរ/រូបពាក់កណ្ដាលទំព័រ
@@ -194,8 +203,8 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-fig{margin:6px 0;text-align:center;break-inside:avoid;page-break-inside:avoid;display:flow-root}.exp-fig svg{display:block;margin:0 auto;break-inside:avoid;max-width:300px;max-height:250px;width:auto;height:auto}"+
 ".exp-cols{column-count:2;column-gap:26px;column-rule:1px solid #94a3b8}.exp-cols .exp-s{break-inside:auto}.exp-cols .exp-it{margin-left:8px}.exp-cols .exp-sh{break-after:avoid}"+
 ".exp-kf{border-left:none!important;background:none!important;padding:0 0 4px!important;margin:2px 0 10px!important;font-size:13.5px}.exp-kf .exp-ks{color:#111}.exp-kf .katex-display{margin:.3em 0;font-size:.96em;overflow-x:auto;overflow-y:hidden;break-inside:avoid}"+
-".pg-h{margin:8px 0 2px}.pg-l{font-size:13.5px;color:#111}.pg-l .katex-display{margin:.3em 0;font-size:.96em}.pg-e{margin:3px 0 10px;font-size:13.5px}.pg .exp-fig{margin:4px 0}"+
-".exp-ka{margin-top:3px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:1px 10px;margin-left:4px}"+
+".pg-h{margin:8px 0 2px}.pg-l{font-size:13.5px;color:#111}.pg-l .katex-display{margin:.55em 0;font-size:.96em}.pg-e{margin:3px 0 10px;font-size:13.5px}.pg .exp-fig{margin:4px 0}"+
+".exp-ka{margin-top:9px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:4px 10px;margin-left:4px;line-height:1.9}"+
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
 ".exp-au{font-family:var(--fh);color:#1e3a8a;margin-top:2px}.exp-nm{font-family:var(--fh);margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+

@@ -72,12 +72,13 @@ function sub(t){   /* z1 → z₁ (tspan) */
 function svg(spec){
   var lines=String(spec||"").split(/\n|;/).map(function(l){return l.trim()}).filter(Boolean);
   if(!lines.length)return"";
-  var P={},items=[],errs=[],win=null,grid=true,axes=true,cx=false,ci=0;
+  var P={},items=[],errs=[],win=null,grid=true,axes=true,cx=false,ci=0,autoLab=false;
   function nextC(){return PAL[(ci++)%PAL.length]}
   lines.forEach(function(L){
     try{
       var c=color(L),t=c[0].trim(),col=c[1],m;
       if(/^nogrid$/i.test(t)){grid=false;return}
+      if(/^labels$/i.test(t)){autoLab=true;return}
       if(/^noaxes$/i.test(t)){axes=false;return}
       if((m=/^window\s+(.*)$/i.exec(t))){win=win||{};var mx=/x\s*=\s*(-?[\d.]+)\s*\.\.\s*(-?[\d.]+)/i.exec(m[1]),my=/y\s*=\s*(-?[\d.]+)\s*\.\.\s*(-?[\d.]+)/i.exec(m[1]);if(mx){win.x0=+mx[1];win.x1=+mx[2]}if(my){win.y0=+my[1];win.y1=+my[2]}return}
       if((m=/^complex\s+(.*)$/i.exec(t))){cx=true;m[1].split(/\s+|,/).filter(Boolean).forEach(function(z){var q=/^([A-Za-z]\w*)\s*=\s*(.+)$/.exec(z),v=cnum(q?q[2]:z);if(!v)throw"ចំនួនកុំផ្លិច «"+z+"»";var n=q?q[1]:"";if(n)P[n]=v;items.push({k:"cpt",p:v,n:n,c:col||nextC()})});return}
@@ -98,9 +99,9 @@ function svg(spec){
         items.push(it);return}
       if((m=/^tangent\s+y\s*=\s*(.+?)\s+at\s+(-?[\d.]+)$/i.exec(t))){var f0=parse(m[1]),x0=+m[2],h=1e-5,k=(f0(x0+h)-f0(x0-h))/(2*h);items.push({k:"tan",x0:x0,y0:f0(x0),m:k,c:col||nextC()});return}
       if((m=/^area\s+y\s*=\s*(.+?)(?:\s*\|\s*y\s*=\s*(.+?))?\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\]$/i.exec(t))){items.push({k:"area",f:parse(m[1]),g:m[2]?parse(m[2]):null,a:parse(m[3])(),b:parse(m[4])(),c:col||"#2f6fd0"});return}
-      if((m=/^(asym\s+|dash\s+)?x\s*=\s*(-?[\d.\/]+)$/i.exec(t))){items.push({k:"vline",x:parse(m[2])(),c:col||"#888"});return}
+      if((m=/^(asym\s+|dash\s+)?x\s*=\s*(-?[\d.\/]+)$/i.exec(t))){items.push({k:"vline",x:parse(m[2])(),s:m[2],dash:!!m[1],c:col||"#888"});return}
       if((m=/^(asym\s+|dash\s+)?y\s*=\s*(.+?)(?:\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\])?$/i.exec(t))&&!/[^<>]=/.test(m[2])){
-        items.push({k:"fn",f:parse(m[2]),d:m[3]!=null?[parse(m[3])(),parse(m[4])()]:null,dash:!!m[1],c:col||(m[1]?"#888":nextC())});return}
+        items.push({k:"fn",s:m[2],f:parse(m[2]),d:m[3]!=null?[parse(m[3])(),parse(m[4])()]:null,dash:!!m[1],c:col||(m[1]?"#888":nextC())});return}
       if((m=/^(.+?)=(.+)$/.exec(t))){var l=parse(m[1]),r=parse(m[2]);items.push({k:"impl",F:function(x,y){return l(x,y)-r(x,y)},c:col||nextC()});return}
       throw"មិនស្គាល់";
     }catch(e){errs.push("«"+L+"» "+(typeof e==="string"?e:"កន្សោមមិនត្រឹមត្រូវ"))}
@@ -200,6 +201,26 @@ function svg(spec){
   }catch(e){errs.push(typeof e==="string"?e:"គូរមិនបាន")}});
   items.forEach(function(it){if(it.k==="pt"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=3.6 fill='"+it.c+"'/>";label(it.p,it.n,it.c,it.dir)}
     if(it.k==="hole"){g+="<circle cx="+sx(it.p[0])+" cy="+sy(it.p[1])+" r=4 fill=#fff stroke='"+it.c+"' stroke-width=2 />";label(it.p,it.n,it.c)}});
+  if(autoLab)lab+=autoLabels();
+  /* 🏷️ labels៖ ដាក់ឈ្មោះក្រាបដោយស្វ័យប្រវត្តិ — ខ្សែកោង (C) · អាស៊ីមតូត/ខ្សែដាច់ៗ (d₁): y=… · ខ្សែប្រផេះ (T) · បន្ទាត់ឈរ x=a */
+  function autoLabels(){
+    var out="",used=[],SUBN="₁₂₃₄₅",nd=0,nc=0,W2=sx(X1)-sx(X0),H2=sy(Y0)-sy(Y1);
+    var curves=items.filter(function(it){return it.k==="fn"&&!it.dash&&!/^#(888|777)/.test(it.c)});
+    function pretty(t){return String(t).replace(/\*/g,"").replace(/exp\(x\)/g,"eˣ").replace(/\s+/g,"").replace(/([+\-])/g," $1 ").replace(/^ - /,"-").trim()}
+    function free(x,y){return used.every(function(u){return Math.abs(u[0]-x)>70||Math.abs(u[1]-y)>16})}
+    function put(px,py,txt,c,an){used.push([px,py]);out+="<text x="+px.toFixed(1)+" y="+py.toFixed(1)+" text-anchor="+an+" fill='"+c+"' font-size=14 font-weight=700 font-style=italic stroke='#fff' stroke-width=4 paint-order=stroke>"+E(txt)+"</text>"}
+    function onFn(it,txt,fromRight){
+      for(var k=0;k<=36;k++){var t=fromRight?0.95-k*0.025:0.08+k*0.025,x=X0+(X1-X0)*t;if(it.d&&(x<it.d[0]||x>it.d[1]))continue;
+        var y;try{y=it.f(x,0)}catch(e){continue}if(!isFinite(y)||y<Y0+(Y1-Y0)*0.06||y>Y1-(Y1-Y0)*0.08)continue;
+        var x2=x+(X1-X0)*0.01,y2=it.f(x2,0),up=isFinite(y2)&&y2>y,px=sx(x),py=sy(y)+(up?16:-8);
+        if(free(px,py)){put(px,py,txt,it.c,fromRight?"end":"start");return}}}
+    items.forEach(function(it){
+      if(it.k==="fn"){
+        if(curves.indexOf(it)>=0){nc++;onFn(it,curves.length>1?"(C"+SUBN[nc-1]+")":"(C)",false)}
+        else if(it.dash){nd++;onFn(it,"(d"+SUBN[nd-1]+"): y = "+pretty(it.s),true)}
+        else onFn(it,"(T)",true)}
+      else if(it.k==="vline"&&it.x>X0&&it.x<X1){var px=sx(it.x)+5,py=sy(Y1)+14;put(px,py,"x = "+pretty(it.s),it.c,"start")}});
+    return out}
   return"<div class=fig>"+g+lab+"</svg>"+(errs.length?"<div class=fig-err>⚠️ "+errs.map(E).join(" · ")+"</div>":"")+"</div>";
 }
 var TPL=[
