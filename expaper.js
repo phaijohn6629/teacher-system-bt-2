@@ -9,7 +9,9 @@
 var KN=function(n){return String(n).replace(/\d/g,function(d){return"០១២៣៤៥៦៧៨៩"[d]})};
 var ES=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
 /* LaTeX ក្នុង $…$ · ចុះបន្ទាត់ក្នុងរូបមន្ត → \\ · ក្រៅរូបមន្ត → <br> */
-function TX(s){return ES(String(s||"").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ ")})).replace(/\n/g,"<br>")}
+function TX(s){return ES(String(s||"").split(/(\$\$[\s\S]*?\$\$|\$[^$]*\$)/).map(function(p,i){return i%2?p:p.replace(/\s+([,;:៖])(?=\s|$)/g,"\u00a0$1")}).join("").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ ")})).replace(/\n/g,"<br>")
+  /* កុំឱ្យដាច់ធ្លាក់៖ ជម្រើស «គ. ☐ $m=2$» នៅជាប់គ្នា · ក្បៀស/ចុចពីរនៅជាប់ពាក្យមុន (មិនចាប់ផ្ដើមជួរថ្មី) */
+  .replace(/([ក-ឃ]\.)\s*(\$\\square\$|☐)\s*((?:(?!\$\\qquad\$|<br>)[^])*?)\s*(\$\\qquad\$|(?=<br>)|$)/g,"<span class=exp-op>$1 $2 $3</span>")}
 var MO=["មករា","កុម្ភៈ","មីនា","មេសា","ឧសភា","មិថុនា","កក្កដា","សីហា","កញ្ញា","តុលា","វិច្ឆិកា","ធ្នូ"];
 var RN=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"],SUB="កខគឃងចឆជឈញ";
 function head(P){if(P.fmt==="cam")return P.title||"Topic Test";var t=P.title||"ប្រឡងប្រចាំខែ";if(P.fmt==="bac"||P.fmt==="dip")return t;if(P.mo&&/^\d{4}-\d{2}$/.test(P.mo))t+=(/ខែ\s*$/.test(t)?" ":" ខែ ")+MO[+P.mo.slice(5)-1]+" ឆ្នាំ "+KN(P.mo.slice(0,4));return t}
@@ -132,9 +134,17 @@ var CAMCSS=".cam{font-family:Arial,Helvetica,sans-serif;font-size:14px;line-heig
 function noP(s){return String(s||"").replace(/\s*។\s*(?=[^\s\n])/g,"\n").replace(/\s*។/g,"")}
 /* 📏 រូបមន្តវែងលើសទទឹងជួរឈរ → បង្រួមទំហំអក្សរដោយស្វ័យប្រវត្តិ (អប្បបរមា ៥០%) · ហៅក្រោយ KaTeX */
 function shrink(root){root=root||document;var W=(root.ownerDocument||root).defaultView||window;
-  [].forEach.call(root.querySelectorAll(".exp .katex"),function(k){var disp=k.parentElement&&/katex-display/.test(k.parentElement.className),box=disp?k.parentElement:k,host=box.parentElement;
-    while(host&&W.getComputedStyle(host).display==="inline")host=host.parentElement;if(!host)return;var cs=W.getComputedStyle(host),aw=host.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0);
-    var w=disp?k.scrollWidth:k.getBoundingClientRect().width;if(aw>40&&w>aw+1){var fs=parseFloat(W.getComputedStyle(k).fontSize);k.style.fontSize=Math.max(fs*.5,fs*aw/w*.97)+"px"}})}
+  /* គណនាពីទំហំដើម (data-fs0) ជានិច្ច → ហៅច្រើនដងមិនបង្រួមជាន់គ្នា · អប្បបរមា ៥៥% · រូបមន្តក្នុងប្រអប់ «ដូចនេះ» វាស់តាមទទឹងជួរ */
+  [].forEach.call(root.querySelectorAll(".exp .katex"),function(k){var disp=k.parentElement&&/katex-display/.test(k.parentElement.className),box=disp?k.parentElement:k,host=box.parentElement,cut=0;
+    while(host&&W.getComputedStyle(host).display==="inline")host=host.parentElement;if(!host)return;
+    if(/exp-bx/.test(host.className)&&host.parentElement){cut=110;host=host.parentElement}
+    var cs=W.getComputedStyle(host),aw=host.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0)-cut;if(aw<=40)return;
+    /* រង្វង់ពិន្ទុ (float ស្ដាំ) នៅជួរដដែល → កាត់ទទឹងចេញ មិនឱ្យរូបមន្តជាន់រង្វង់ */
+    var kr=k.getBoundingClientRect(),hr=host.getBoundingClientRect(),hx=hr.right-parseFloat(cs.paddingRight||0);
+    [].forEach.call(root.querySelectorAll(".exp-pc"),function(c){var cr=c.getBoundingClientRect();if(cr.width&&cr.top<kr.bottom-2&&cr.bottom>kr.top+2&&cr.left<hx+40&&cr.right>hr.left)aw=Math.min(aw,cr.left-hr.left-parseFloat(cs.paddingLeft||0)-8)});if(aw<=40)return;
+    var cur=parseFloat(W.getComputedStyle(k).fontSize),f0=+k.getAttribute("data-fs0")||0;if(!f0){f0=cur;k.setAttribute("data-fs0",String(f0))}
+    var kh=disp&&k.querySelector(".katex-html"),w=(kh?Math.max(kh.scrollWidth,kh.getBoundingClientRect().width):k.getBoundingClientRect().width)*f0/cur,nf=w>aw+1?Math.max(f0*.55,f0*aw/w*.97):f0;
+    if(Math.abs(nf-cur)>.2)k.style.fontSize=nf+"px"})}
 /* ដូចនេះ៖ ចម្លើយជាលេខសុទ្ធ → ដាក់ឈ្មោះពីជួរចុងក្រោយនៃដំណោះស្រាយ (ឧ. $P(E)=\frac{2}{11}$ · $n(S)=120$) */
 function ansLbl(x){var a=String(x.ans||""),m=/^\s*\$([^$]*)\$\s*$/.exec(a);if(!m)return a;var v=m[1].trim();
   if(/=|<|>|\\(le|ge|ne|in|Rightarrow)/.test(v)||/[a-zA-Z](?![a-z]*\{)/.test(v.replace(/\\(dfrac|frac|sqrt|pi|left|right|cdot|times)/g,"")))return a;
@@ -217,7 +227,7 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-cols{column-count:2;column-gap:26px;column-rule:1px solid #94a3b8}.exp-cols .exp-s{break-inside:auto}.exp-cols .exp-it{margin-left:8px}.exp-cols .exp-sh{break-after:avoid}"+
 ".exp-kf{border-left:none!important;background:none!important;padding:0 0 4px!important;margin:2px 0 10px!important;font-size:13.5px}.exp-kf .exp-ks{color:#111}.exp-kf .katex-display{margin:.3em 0;font-size:.96em;overflow-x:auto;overflow-y:hidden;break-inside:avoid}"+
 ".pg-h{margin:8px 0 2px}.pg-l{font-size:13.5px;color:#111}.pg-l .katex-display{margin:.55em 0;font-size:.96em}.pg-e{margin:3px 0 10px;font-size:13.5px}.pg .exp-fig{margin:4px 0}"+
-".exp-ka{margin-top:9px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-kp{padding-right:36px!important;position:relative}.exp-kp .exp-pc{margin-right:-36px}.pg-kp{padding-right:36px}.pg-kp .exp-pc{margin-right:-36px}.exp-pc{float:right;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 5px;margin:2px 0 2px 8px;border:1.5px solid #1e3a8a;border-radius:12px;color:#dc2626;font:700 12.5px/1 system-ui,sans-serif;box-sizing:border-box}.exp-ka .exp-pc{float:none;margin-left:auto}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:4px 10px;margin-left:4px;line-height:1.9}"+
+".exp-ka{margin-top:9px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-kp{padding-right:36px!important;position:relative}.exp-kp .exp-pc{margin-right:-36px}.pg-kp{padding-right:36px}.pg-kp .exp-pc{margin-right:-36px}.exp-pc{float:right;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 5px;margin:2px 0 2px 8px;border:1.5px solid #1e3a8a;border-radius:12px;color:#dc2626;font:700 12.5px/1 system-ui,sans-serif;box-sizing:border-box}.exp-ka .exp-pc{float:none;margin-left:auto}.exp .katex{white-space:nowrap}.exp-op{display:inline-block;white-space:nowrap;margin-right:12px}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:4px 10px;margin-left:4px;line-height:1.9}"+
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
 ".exp-au{font-family:var(--fh);color:#1e3a8a;margin-top:2px}.exp-nm{font-family:var(--fh);margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+

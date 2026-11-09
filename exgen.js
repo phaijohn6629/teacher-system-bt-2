@@ -288,8 +288,8 @@ var VEC=[{id:"vec3",t:"វ៉ិចទ័រក្នុងលំហ · ប្�
   var cr=function(a,b,c,d){return"("+pn(a)+"\\times"+pn(b)+"-"+pn(c)+"\\times"+pn(d)+")"};
   return{inst:"ក្នុងតម្រុយអរតូណរម៉ាល់មានទិសដៅវិជ្ជមាន $(O,\\vec i,\\vec j,\\vec k)$ គេមានចំណុច $A"+pt(A)+"$ ; $B"+pt(B)+"$ ; $C"+pt(C)+"$ និង $D(x,y,z)$ ។",it:[
     Q("គណនា $\\vec n=\\overrightarrow{AB}\\times\\overrightarrow{AC}$ រួចគណនាផ្ទៃក្រឡានៃត្រីកោណ $ABC$ ។","$\\vec n="+pt(n)+"$ , $S_{ABC}="+St(area)+"$",
-      W("$\\overrightarrow{AB}="+pt(u)+"$ និង $\\overrightarrow{AC}="+pt(v)+"$ ៖",AL(["\\vec n&="+cr(u[1],v[2],u[2],v[1])+"\\vec i-"+cr(u[0],v[2],u[2],v[0])+"\\vec j+"+cr(u[0],v[1],u[1],v[0])+"\\vec k","&="+pt(n)]),
-        AL(["S_{ABC}&=\\dfrac12\\left\\|\\vec n\\right\\|=\\dfrac12\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}=\\dfrac12\\sqrt{"+nn+"}="+St(area)]))),
+      W("$\\overrightarrow{AB}="+pt(u)+"$ និង $\\overrightarrow{AC}="+pt(v)+"$ ៖",AL(["\\vec n&="+cr(u[1],v[2],u[2],v[1])+"\\vec i","&\\quad-"+cr(u[0],v[2],u[2],v[0])+"\\vec j","&\\quad+"+cr(u[0],v[1],u[1],v[0])+"\\vec k","&="+pt(n)]),
+        AL(["S_{ABC}&=\\dfrac12\\left\\|\\vec n\\right\\|=\\dfrac12\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}","&=\\dfrac12\\sqrt{"+nn+"}="+St(area)]))),
     Q("សរសេរសមីការប្លង់ $(ABC)$ ។","$"+pl3+"$",
       W("ប្លង់ $(ABC)$ កាត់តាម $A"+pt(A)+"$ និងមានវ៉ិចទ័រណរម៉ាល់ $"+(g>1?"\\dfrac{1}{"+g+"}\\vec n=":"\\vec n=")+pt(m)+"$ ៖",AL([pn(m[0])+"(x-"+pn(A[0])+")+"+pn(m[1])+"(y-"+pn(A[1])+")+"+pn(m[2])+"(z-"+pn(A[2])+")&=0",pl3.replace("=0","&=0")]))),
     Q("រកទំនាក់ទំនងរវាង $x,y$ និង $z$ ដើម្បីឱ្យវ៉ិចទ័រ $\\overrightarrow{AB}$ និង $\\overrightarrow{CD}$ កូលីនេអ៊ែគ្នា។ តើសំណុំចំណុច $D$ ជាអ្វី?","$"+par+"$ ($t\\in\\mathbb R$) ជាបន្ទាត់កាត់តាម $C$ ស្របនឹង $(AB)$",
@@ -426,7 +426,7 @@ var PAR=[{id:"par",t:"ប៉ារ៉ាបូល · កំពូល កំណ�
 /* ---- លំហ ---- */
 function pt3(P){return"("+P.join(",")+")"}
 function linT(c,k){return c?c+co(k,"t"):co(k,"t",true)||"0"}
-function crs(u,v){var c=function(a,b,d,e){return"("+pn(a)+"\\times"+pn(b)+"-"+pn(d)+"\\times"+pn(e)+")"};return c(u[1],v[2],u[2],v[1])+"\\vec i-"+c(u[0],v[2],u[2],v[0])+"\\vec j+"+c(u[0],v[1],u[1],v[0])+"\\vec k"}
+function crs(u,v){var c=function(a,b,d,e){return"("+pn(a)+"\\times"+pn(b)+"-"+pn(d)+"\\times"+pn(e)+")"};return c(u[1],v[2],u[2],v[1])+"\\vec i\\\\&\\quad-"+c(u[0],v[2],u[2],v[0])+"\\vec j\\\\&\\quad+"+c(u[0],v[1],u[1],v[0])+"\\vec k"}   /* ៣ ជួរ (មិនលើសទទឹងជួរឈរ) */
 var SPC=[
  {id:"pl3m",t:"ផ្ទៃត្រីកោណ · ប្លង់ (ABC) · ចម្ងាយពីចំណុចទៅប្លង់",lv:2,f:function(){
   var A,B,C,u,v,n;do{A=[ri(-2,3),ri(-2,3),ri(-2,3)];B=[ri(-2,3),ri(-2,3),ri(-2,3)];C=[ri(-2,3),ri(-2,3),ri(-2,3)];u=[0,1,2].map(function(i){return B[i]-A[i]});v=[0,1,2].map(function(i){return C[i]-A[i]});n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]]}while(!n[0]&&!n[1]&&!n[2]);
@@ -436,7 +436,7 @@ var SPC=[
   return{inst:"នៅក្នុងតម្រុយអរតូណរម៉ាល់ $(O,\\vec i,\\vec j,\\vec k)$ គេឱ្យចំណុច $A"+pt3(A)+"$ , $B"+pt3(B)+"$ , $C"+pt3(C)+"$ និង $M"+pt3(M)+"$ ។",it:[
    Q("គណនាវ៉ិចទ័រ $\\vec n=\\overrightarrow{AB}\\times\\overrightarrow{AC}$ ទាញបង្ហាញថា $C\\notin(AB)$ ។","$\\vec n="+pt3(n)+"\\ne\\vec 0$ ⇒ $C\\notin(AB)$",
      W("$\\overrightarrow{AB}="+pt3(u)+"$ , $\\overrightarrow{AC}="+pt3(v)+"$",AL(["\\vec n&="+crs(u,v),"&="+pt3(n)]),"ដោយ $\\vec n\\ne\\vec0$ នោះ $\\overrightarrow{AB}$ និង $\\overrightarrow{AC}$ មិនកូលីនេអ៊ែ ⇒ $C\\notin(AB)$ ។")),
-   Q("គណនាក្រឡាផ្ទៃត្រីកោណ $ABC$ ។","$S="+St(S(1,2,nn))+"$",AL(["S&=\\dfrac12\\left\\|\\vec n\\right\\|=\\dfrac12\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}=\\dfrac12\\sqrt{"+nn+"}="+St(S(1,2,nn))])),
+   Q("គណនាក្រឡាផ្ទៃត្រីកោណ $ABC$ ។","$S="+St(S(1,2,nn))+"$",AL(["S&=\\dfrac12\\left\\|\\vec n\\right\\|=\\dfrac12\\sqrt{"+pn(n[0])+"^2+"+pn(n[1])+"^2+"+pn(n[2])+"^2}","&=\\dfrac12\\sqrt{"+nn+"}="+St(S(1,2,nn))])),
    Q("សរសេរសមីការប្លង់ $(P)$ កាត់តាមបីចំណុច $A, B, C$ ។","$"+pE+"=0$",
      W("$(P)$ កាត់តាម $A$ មានវ៉ិចទ័រណរម៉ាល់ $"+pt3(m)+"$ ៖",AL([pn(m[0])+"(x-"+pn(A[0])+")+"+pn(m[1])+"(y-"+pn(A[1])+")+"+pn(m[2])+"(z-"+pn(A[2])+")&=0",pE+"&=0"]))),
    Q("រកចម្ងាយពីចំណុច $M$ ទៅប្លង់ $(P)$ ។","$d="+St(S(Math.abs(num),mm,mm))+"$",
