@@ -54,8 +54,9 @@ function html(P,o){
     var it=(b&&s.itB&&s.itB.length?s.itB:s.it)||[],inst=b&&s.instB!=null?s.instB:s.inst,one=it.length===1&&!(inst||"").trim();
     var sh=!key&&it.length>1&&it.every(function(x){return vlen(x.q)<=22&&!/\n/.test(x.q||"")&&!x.fig});
     h+="<div class=exp-s><div class=exp-sh><b class=exp-rn>"+RN[i]+".</b> <b class=exp-pt>("+KN(+s.pts||0)+" ពិន្ទុ)</b> "+(one?TX(key?noP(it[0].q):it[0].q):TX(key?noP(inst):inst||""))+"</div>";
-    if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip"||P.fmt==="bac")}
-    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(key?noP(x.q):x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"||P.fmt==="bac"):"")+"</div>"}).join("")+"</div>";
+    var ip=key&&bac&&P.ptStep!==false?itPts(s.pts,it.length):[],cum=0,PP=function(j){if(!ip.length)return null;cum+=ip[j];return{p:ip[j],c:Math.round(cum*2)/2}};
+    if(one){h+=fig(it[0].fig);if(key)h+=keyBox(it[0],P.fmt==="dip"||P.fmt==="bac",PP(0))}
+    else h+="<div class='exp-it"+(sh?" two":"")+"'>"+it.map(function(x,j){return"<div class=exp-i><b class=exp-sl>"+SUB[j]+".</b> <span>"+TX(key?noP(x.q):x.q)+"</span>"+fig(x.fig)+(key?keyBox(x,P.fmt==="dip"||P.fmt==="bac",PP(j)):"")+"</div>"}).join("")+"</div>";
     h+="</div>";
   });
   if(cols)h+="</div>";
@@ -142,7 +143,13 @@ function ansLbl(x){var a=String(x.ans||""),m=/^\s*\$([^$]*)\$\s*$/.exec(a);if(!m
     var L=/^([^=&]{1,30}?)\s*&?=/.exec(c);if(L&&/[A-Za-z]/.test(L[1]))last=L[1].trim();
     if(c.replace(/\s/g,"").slice(-vv.length)===vv&&/=/.test(c))lhs=(L&&/[A-Za-z]/.test(L[1]))?L[1].trim():last});
   return lhs&&lhs.length<=24?"$"+lhs+"="+v+"$":a}
-function keyBox(x,full){if(x.sol&&(full||/\n|\$\$/.test(x.sol)))return"<div class='exp-k exp-kf'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(noP(x.sol))+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span></div></div>";
+/* 🔴 ពិន្ទុតាមជំហាន (អត្រាកំណែបាក់ឌុប/ឌីប្លូម)៖ ពិន្ទុផ្នែក ចែកស្មើលើ ក ខ គ … (គិតជា ០,៥) · ជំហានវិធីសាស្ត្រ = ពាក់កណ្ដាល · «ដូចនេះ» = ពិន្ទុសរុបបង្គរក្នុងផ្នែក */
+function itPts(t,n){t=+t||0;if(!n||t<=0)return[];var a=[],q=Math.round(t/n*2)/2,u=0;for(var i=0;i<n;i++){var v=i<n-1?Math.min(q,Math.max(0,t-u)):Math.max(0,Math.round((t-u)*2)/2);a.push(v);u+=v}return a}
+function pc(v){return"<span class=exp-pc>"+String(v).replace(".",",")+"</span>"}
+function keyBox(x,full,pp){if(x.sol&&(full||/\n|\$\$/.test(x.sol))){var m=pp&&pp.p>=1?Math.floor(pp.p)/2:0;
+    var so=noP(x.sol);if(m){var ti=so.indexOf("\\text{តាម"),j=ti>=0?so.lastIndexOf("$$",ti):so.indexOf("$$");if(j<0||(ti>=0&&j<0))j=0;
+      if(ti>=0&&so.lastIndexOf("$$",ti)<0){var k2=so.lastIndexOf("$",ti);j=k2>=0?k2:0}so=so.slice(0,j)+"@@PC@@"+so.slice(j)}   /* រង្វង់ពិន្ទុនៅជួរ «តាម …» ឬរូបមន្តដំបូង */
+    return"<div class='exp-k exp-kf"+(pp&&pp.p?" exp-kp":"")+"'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(so).replace("@@PC@@",m?pc(m):"")+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span>"+(pp&&pp.p?pc(pp.c):"")+"</div></div>"}
   return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(noP(x.ans)||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(noP(x.sol))+"</div>":"")+"</div>"}
 
 /* 🖨️ បែងទំព័រដោយខ្លួនឯង (ចម្លើយពីរជួរឈរ)៖ Safari បោះពុម្ព column-count កាត់បន្ទាត់អក្សរ/រូបពាក់កណ្ដាលទំព័រ
@@ -160,12 +167,13 @@ function paginate(doc){
   function U(nodes,cls,keep,ind){var d=doc.createElement("div");if(cls)d.className=cls;if(ind)d.style.paddingLeft="8px";nodes.forEach(function(n){d.appendChild(n)});units.push({el:d,keep:keep})}
   function sol(k,ind){
     if(!/exp-kf/.test(k.className)){U([k],"",false,ind);return}
+    var kp=/exp-kp/.test(k.className)?" pg-kp":"";
     A(k.childNodes).forEach(function(n){
       if(n.nodeType!==1)return;
       if(/exp-fig/.test(n.className))U([n],"",false,ind);
-      else if(/exp-ks/.test(n.className)){var g=[],fl=function(){if(g.length&&g.some(function(x){return x.nodeType===1||/\S/.test(x.textContent)}))U(g,"pg-l",false,ind);g=[]};
-        A(n.childNodes).forEach(function(c){if(c.nodeName==="BR")fl();else if(c.nodeType===1&&/katex-display/.test(c.className)){fl();U([c],"pg-l",false,ind)}else g.push(c)});fl()}
-      else if(/exp-ka/.test(n.className))U([n],"pg-e",false,ind)})}
+      else if(/exp-ks/.test(n.className)){var g=[],fl=function(){if(g.length&&g.some(function(x){return x.nodeType===1||/\S/.test(x.textContent)}))U(g,"pg-l"+kp,false,ind);g=[]};
+        A(n.childNodes).forEach(function(c){if(c.nodeName==="BR")fl();else if(c.nodeType===1&&/katex-display/.test(c.className)){var pv=g.length&&g[g.length-1].nodeType===1&&/exp-pc/.test(g[g.length-1].className)?g.pop():null;fl();U(pv?[pv,c]:[c],"pg-l"+kp,false,ind)}else g.push(c)});fl()}
+      else if(/exp-ka/.test(n.className))U([n],"pg-e"+kp,false,ind)})}
   A(cols.children).forEach(function(sec){A(sec.children).forEach(function(c){
     if(/exp-sh/.test(c.className))U([c],"pg-h",true);
     else if(/exp-it/.test(c.className))A(c.children).forEach(function(it){var q=[],ks=[];
@@ -209,7 +217,7 @@ var CSS=FF+".exp{"+fvars("os")+";font-family:var(--fb);color:#111;line-height:1.
 ".exp-cols{column-count:2;column-gap:26px;column-rule:1px solid #94a3b8}.exp-cols .exp-s{break-inside:auto}.exp-cols .exp-it{margin-left:8px}.exp-cols .exp-sh{break-after:avoid}"+
 ".exp-kf{border-left:none!important;background:none!important;padding:0 0 4px!important;margin:2px 0 10px!important;font-size:13.5px}.exp-kf .exp-ks{color:#111}.exp-kf .katex-display{margin:.3em 0;font-size:.96em;overflow-x:auto;overflow-y:hidden;break-inside:avoid}"+
 ".pg-h{margin:8px 0 2px}.pg-l{font-size:13.5px;color:#111}.pg-l .katex-display{margin:.55em 0;font-size:.96em}.pg-e{margin:3px 0 10px;font-size:13.5px}.pg .exp-fig{margin:4px 0}"+
-".exp-ka{margin-top:9px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:4px 10px;margin-left:4px;line-height:1.9}"+
+".exp-ka{margin-top:9px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;break-inside:avoid;page-break-inside:avoid}.exp-kp{padding-right:36px!important;position:relative}.exp-kp .exp-pc{margin-right:-36px}.pg-kp{padding-right:36px}.pg-kp .exp-pc{margin-right:-36px}.exp-pc{float:right;display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;padding:0 5px;margin:2px 0 2px 8px;border:1.5px solid #1e3a8a;border-radius:12px;color:#dc2626;font:700 12.5px/1 system-ui,sans-serif;box-sizing:border-box}.exp-ka .exp-pc{float:none;margin-left:auto}.exp-bx{display:inline-block;break-inside:avoid;page-break-inside:avoid;border:1.5px solid #111;padding:4px 10px;margin-left:4px;line-height:1.9}"+
 ".exp-k{margin:2px 0 6px 18px;padding:4px 10px;border-left:3px solid #16a34a;background:#f0fdf4;font-size:13px}.exp-ks{color:#334155}"+
 ".exp-ft{display:flex;justify-content:space-between;align-items:flex-start;margin-top:26px;text-align:center;break-inside:avoid}.exp-fl{margin-top:70px;min-width:40%}.exp-fr{min-width:52%}"+
 ".exp-au{font-family:var(--fh);color:#1e3a8a;margin-top:2px}.exp-nm{font-family:var(--fh);margin-top:56px}.exp-fl .exp-nm{margin-top:60px}"+
