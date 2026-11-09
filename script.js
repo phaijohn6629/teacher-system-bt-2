@@ -2585,7 +2585,7 @@ function applyCloud(k){
     MAP[k].load(cache);
     var s={};Object.keys(cache).forEach(function(p){s[p]=sj(cache[p])});sy.synced[k]=s;
   }else if(!sy.synced[k])sy.synced[k]={};
-  sy.first[k]=1;
+  sy.first[k]=1;if($("syncBar"))syncDiag();
   if(k==="teachers")afterTeachers();
   if(k==="rs"&&isAdm())migrateRs();
   trySeed(k);
@@ -2610,8 +2610,9 @@ function subscribe(k){
     else if(s.own&&!isAdm())ref=window.FB.query(window.FB.collection(window.db,s.col),window.FB.where("o","==",who.id));
     else ref=window.FB.collection(window.db,s.col);
     var un=window.FB.onSnapshot(ref,{includeMetadataChanges:true},function(sn){
-      /* កុំទទួល snapshot ពី cache (ពេល offline/យឺត វាអាចទទេ) ជាលើកដំបូង — រង់ចាំទិន្នន័យពី Server */
-      if(!sy.first[k]&&sn.metadata&&sn.metadata.fromCache)return;
+      /* លើកដំបូង៖ កុំទទួល snapshot «ទទេ» ពី cache (ពេល offline/យឺត) — រង់ចាំ Server · snapshot ពី cache ដែលមានទិន្នន័យ ទទួលបាន */
+      if(!sy.first[k]&&sn.metadata&&sn.metadata.fromCache&&(s.doc?!sn.exists():sn.empty!==false&&!sn.size))return;
+      (sy.ok||(sy.ok={}))[k]=1;
       var cache=sy.cache[k];
       if(s.doc){if(sn.exists())cache[s.doc]=sn.data();else delete cache[s.doc]}
       else{
@@ -2620,7 +2621,7 @@ function subscribe(k){
       }
       sy.got[k][si]=1;onData(k);
     },function(err){
-      console.error("Sync error:",k,err);
+      console.error("Sync error:",k,err);(sy.err||(sy.err={}))[k]=(err&&(err.code||err.message))||"error";if(sy.diagOn)syncDiag();
       if(err&&err.code==="permission-denied")notify("គ្មានសិទ្ធិអានទិន្នន័យពី Cloud ("+k+") — សូមទាក់ទងអ្នកគ្រប់គ្រង");
     });
     unsubs.push(un);
@@ -2629,9 +2630,26 @@ function subscribe(k){
 function stopSync(){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[]}
 function startSync(){
   stopSync();try{bkRemind()}catch(e){console.error(e)}
-  sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};sy.touch={};
+  sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};sy.touch={};sy.ok={};sy.err={};
   Object.keys(MAP).forEach(subscribe);
   subProfiles();
+  sy.diagOn=false;sy.diagLog=false;clearTimeout(sy.diagT);sy.diagT=setTimeout(function(){sy.diagOn=true;syncDiag()},12000);
+}
+/* 🩺 ទិន្នន័យមិនមកពី Cloud ក្រោយ ១២ វិនាទី → របារព្រមាន (ទិន្នន័យណា · មូលហេតុ) + ប៊ូតុងទាញម្ដងទៀត */
+var SYN={teachers:"បញ្ជីគ្រូ",tasks:"កិច្ចតែងការ",rs:"ថ្នាក់/សិស្ស",ex:"ថ្នាក់និទស្សន៍",obs:"សង្កេតថ្នាក់",wr:"របាយការណ៍",ah:"ស្នាដៃ",lib:"ឯកសារ",sched:"កាលវិភាគ",ts:"Timesheet",sig:"ហត្ថលេខា",cx:"សម្រង់អត្ថបទ",mc:"ប្រធានថ្នាក់"};
+function syncDiag(){
+  var b=$("syncBar");if(!who||$("appSection").hidden){if(b)b.remove();return}
+  var miss=Object.keys(MAP).filter(function(k){return!sy.first[k]&&!(who.role==="monitor"&&k!=="mc")}),err=sy.err||{};
+  if(!miss.length){if(b)b.remove();return}
+  if(!b){b=document.createElement("div");b.id="syncBar";b.setAttribute("role","alert");
+    b.style.cssText="position:fixed;left:50%;transform:translateX(-50%);top:8px;z-index:9999;max-width:min(680px,94vw);background:#b91c1c;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:14px;line-height:1.6";
+    document.body.appendChild(b)}
+  var codes=miss.map(function(k){return err[k]}).filter(function(c,i,a){return c&&a.indexOf(c)===i}),c0=codes[0]||"";
+  var why=!navigator.onLine?"ឧបករណ៍មិនមានអ៊ីនធឺណិត":/permission/.test(c0)?"គ្មានសិទ្ធិអាន (Rules)":/resource-exhausted|quota/i.test(c0)?"អស់កូតាអាន Firestore ប្រចាំថ្ងៃ":/unavailable|deadline/i.test(c0)?"មិនអាចភ្ជាប់ Server បាន":c0?c0:"Server មិនទាន់ឆ្លើយតប (អ៊ីនធឺណិតយឺត ឬត្រូវបានរារាំង)";
+  b.innerHTML="⚠️ <b>មិនទាន់ទាញទិន្នន័យពី Cloud បាន៖</b> "+esc(miss.map(function(k){return SYN[k]||k}).join(" · "))+"<br><small>មូលហេតុ៖ "+esc(why)+(codes.length?" ("+esc(codes.join(", "))+")":"")+"</small> "+
+    "<button type=button id=syncRe style='margin-left:6px;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:3px 10px;font-weight:700;cursor:pointer'>🔄 ទាញម្ដងទៀត</button>";
+  $("syncRe").onclick=function(){b.remove();startSync()};
+  if(!sy.diagLog){sy.diagLog=true;console.error("sync not loaded after 12s: "+miss.join(",")+(codes.length?" · "+codes.join(","):"")+" · online="+navigator.onLine)}
 }
 /* Admin ម្នាក់ដំបូង៖ បំលែងទិន្នន័យចាស់ (app/tasks ... app/lib) ទៅទម្រង់ថ្មី ម្ដងគត់ */
 function migrateLegacy(){
