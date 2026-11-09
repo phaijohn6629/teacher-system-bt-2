@@ -20,7 +20,7 @@ function fig(f){return f&&window.FIG?"<div class=exp-fig>"+FIG.svg(f)+"</div>":"
 /* ក្បាលទម្រង់បាក់ឌុប៖ ឆ្វេង = ប្រឡង · សម័យ · វិញ្ញាសា · រយៈពេល · ស្ដាំ = ប្រអប់បេក្ខជន · កណ្ដាល = «ប្រធាន» */
 function bacHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.length===3&&a[0]?KN(a[2])+" "+MO[a[1]-1]+" "+KN(a[0]):"..................",D="<span class=exp-dot>....................</span>";
   return"<div class=\"exp exp-bac\" style=\""+fvars(P.font)+"\"><div class=exp-hd><div class=exp-hl>"+
-    "<div class=exp-b>"+ES(P.title||"វិញ្ញាសាត្រៀមប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ")+"</div>"+
+    "<div class=exp-b>"+ES((P.title||"វិញ្ញាសាត្រៀមប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ").replace("បឋមភូមិ","ទុតិយភូមិ"))+"</div>"+
     "<div class=exp-b>វិញ្ញាសា "+ES(P.sub||"គណិតវិទ្យា")+(P.trk?" <span class=exp-n>("+ES(P.trk)+")</span>":"")+"</div>"+
     "<div class=exp-b>រយៈពេល៖ "+KN(+P.dur||0)+"នាទី</div><div class=exp-b>ពិន្ទុសរុប៖ "+KN(T)+"</div></div>"+
     "<div class=exp-cd><div class=exp-f>សម័យប្រឡង៖ <span class=exp-n>"+ss+"</span></div>"+(o.key?"":"<div class=exp-f>មណ្ឌលប្រឡង៖ "+D+"</div><div class=exp-f>លេខបន្ទប់ <span class=exp-dot>.........</span> លេខតុ <span class=exp-dot>.........</span></div><div class=exp-f>ឈ្មោះបេក្ខជន "+D+"</div><div class=exp-f>ហត្ថលេខាបេក្ខជន <span class=exp-dot>..............</span></div>")+"</div>"+
@@ -29,7 +29,7 @@ function bacHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.len
 function dipHead(P,o,T){var a=String(P.date||"").split("-").map(Number),ss=a.length===3&&a[0]?KN(a[2])+" "+MO[a[1]-1]+" "+KN(a[0]):"",D="<span class=exp-dot>..............................</span>";
   var row=function(l,v){return"<tr><td class=exp-b>"+l+"</td><td class=exp-b>:</td><td>"+v+"</td></tr>"},n=function(v){return"<span class=exp-n>"+v+"</span>"};
   return"<div class=\"exp exp-bac exp-dip\" style=\""+fvars(P.font)+"\"><div class=exp-dh><table class=exp-dt>"+
-    "<tr><td class=exp-b colspan=3>"+ES(P.title||"ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ")+"</td></tr>"+
+    "<tr><td class=exp-b colspan=3>"+ES((P.title||"ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ").replace("ទុតិយភូមិ","បឋមភូមិ"))+"</td></tr>"+
     row("សម័យប្រឡង",ss?n(ss):D)+row("វិញ្ញាសា",n(ES(P.sub||"គណិតវិទ្យា")))+row("រយៈពេល",n(KN(+P.dur||0)+" នាទី"))+row("ពិន្ទុ",n(KN(T)))+"</table>"+
     (o.key?"":"<table class=exp-dt>"+row("មណ្ឌលប្រឡង",D)+row("លេខបន្ទប់",D)+row("លេខតុ",D)+row("ហត្ថលេខាបេក្ខជន",D)+row("ឈ្មោះបេក្ខជន",D)+"</table>")+"</div>"+
     (o.key?"<div class=exp-t>អត្រាកំណែ"+(o.lbl?" "+ES(o.lbl):"")+"</div>":"<div class=exp-pr><b>ប្រធាន៖</b><span></span>"+(o.lbl?"<b>"+ES(o.lbl)+"</b>":"")+"</div>")}

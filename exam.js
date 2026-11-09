@@ -20,7 +20,7 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 /* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
-function ENG(){return["practice.js?v=13","exgen.js?v=16"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
+function ENG(){return["practice.js?v=13","exgen.js?v=17"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
 function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
   if(engReady())return Promise.resolve();
@@ -262,10 +262,10 @@ function act(a,q){
   if(a==="add"){var last=E.secs[E.secs.length-1],L=lsList(g),ls=last?last.ls:(L[0]&&L[0][1][0][0]);if(!ls){alert("ថ្នាក់នេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់");return}E.secs.push(newSec(g,ls))}
   else if(a==="bac"){if(E.secs.length&&!confirm("ជំនួសផ្នែកទាំងអស់ដោយវិញ្ញាសាគំរូបាក់ឌុប (១២៥ ពិន្ទុ)?\n\n"+(q[1]==="b"?"I ប្រូបាប · II លីមីត · III ចំនួនកុំផ្លិច · IV អាំងតេក្រាល · V សមីការឌីផេរ៉ង់ស្យែល · VI អេលីប · VII វ៉ិចទ័រក្នុងលំហ · VIII សិក្សាអនុគមន៍":"I លីមីត + អាំងតេក្រាល · II ចំនួនកុំផ្លិច · III ប្រូបាប · IV សមីការឌីផេរ៉ង់ស្យែល · V កោនិក · VI ធរណីមាត្រលំហ · VII សិក្សាអនុគមន៍")))return;
     var bk=q[1]==="b";E.secs=EXGEN.bac(bk?"b":"a").map(function(x){var s2={ls:x.ls,lv:x.lv,n:1,pts:x.pts,inst:""};fill(s2,g);if(E.ab)fill(s2,g,"itB");return s2});
-    E.fmt="bac";E.dur=150;E.trk=E.trk||"ថ្នាក់វិទ្យាសាស្ត្រពិត";E.mo="";if(TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$/.test(E.title))E.title=bk?"ប្រឡងសាកល្បង":"វិញ្ញាសាត្រៀមប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ"}
+    E.fmt="bac";E.dur=150;E.trk=E.trk||"ថ្នាក់វិទ្យាសាស្ត្រពិត";E.mo="";if(TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$|បឋមភូមិ/.test(E.title))E.title=bk?"ប្រឡងសាកល្បង":"វិញ្ញាសាត្រៀមប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ"}
   else if(a==="dip"){if(E.secs.length&&!confirm("ជំនួសផ្នែកទាំងអស់ដោយវិញ្ញាសាគំរូឌីប្លូម (១០០ ពិន្ទុ)?\n\nI ពហុជម្រើស · II រ៉ាឌីកាល់ · III កន្សោម/សមីការ · IV ចំណោទ · V ប្រូបាប · VI តម្រុយ · VII ធរណីមាត្ររង្វង់"))return;
     E.secs=EXGEN.dip().map(function(x){var s2={ls:x.ls,lv:x.lv,n:1,pts:x.pts,inst:""};fill(s2,g);if(E.ab)fill(s2,g,"itB");return s2});
-    E.fmt="dip";E.dur=120;E.mo="";if(!E.title||TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$/.test(E.title))E.title="ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ"}
+    E.fmt="dip";E.dur=120;E.mo="";if(!E.title||TITLES.indexOf(E.title)>=0||/^វិញ្ញាសាត្រៀម|^ប្រឡងសាកល្បង$|ទុតិយភូមិ/.test(E.title))E.title="ប្រឡងសញ្ញាបត្រមធ្យមសិក្សាបឋមភូមិ"}
   else if(a==="cpp"){var PD=window.CAMPAPERS&&CAMPAPERS[g]&&CAMPAPERS[g][q[1]],pp=PD&&PD.secs;if(!pp||E.secs.length&&!confirm("ជំនួសសំណួរទាំងអស់ដោយក្រដាសប្រឡង «"+PD.label+"» ពេញ?"))return;var used={};
     E.secs=pp.map(function(x){var s2={ls:x[0],lv:x[1],n:1,pts:4,inst:""};for(var t=0;t<8;t++){fill(s2,g);if(!used[s2.it[0].kd])break}used[s2.it[0].kd]=1;s2.pts=s2.it[0].mk||4;if(E.ab)fill(s2,g,"itB");return s2});
     E.calc=PD.calc;E.title=PD.title;E.dur=Math.round(EXP.total(E)*1.2/5)*5}
