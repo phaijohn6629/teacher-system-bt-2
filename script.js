@@ -36,12 +36,18 @@
     var auth = AU.initializeAuth(app, { persistence: rem ? [AU.indexedDBLocalPersistence, AU.browserLocalPersistence] : AU.browserSessionPersistence });
     /* App ទីពីរ ប្រើសម្រាប់ឱ្យ Admin បង្កើតគណនីគ្រូ ដោយមិនចាំបាច់ចាកចេញពីគណនីខ្លួន */
     var sauth = AU.getAuth(A.initializeApp(firebaseConfig, "secondary"));
-    window.db = FS.getFirestore(app);
+    /* 📱 ចងចាំខ្ញុំ → រក្សាទិន្នន័យក្នុងឧបករណ៍ (IndexedDB) → បើកលើកក្រោយ បង្ហាញភ្លាមពី cache រួចធ្វើបច្ចុប្បន្នភាពពី Cloud
+       មិនចងចាំ (ឧបករណ៍រួម) → memory តែប៉ុណ្ណោះ ហើយលុប cache ចាស់ចោល */
+    var db = null;
+    if (rem) { try { db = FS.initializeFirestore(app, { localCache: FS.persistentLocalCache({ tabManager: FS.persistentMultipleTabManager() }) }); } catch (e) { console.warn("persistent cache:", e); } }
+    else { try { indexedDB.databases().then(function (l) { l.forEach(function (d) { if (d.name && d.name.indexOf("firestore/") === 0) indexedDB.deleteDatabase(d.name); }); }).catch(function () {}); } catch (e) {} }
+    window.db = db || FS.getFirestore(app);
+    window.FBPERSIST = !!db;
     window.FB = {
       auth: auth, sauth: sauth,
       doc: FS.doc, collection: FS.collection, getDoc: FS.getDoc, getDocs: FS.getDocs,
       setDoc: FS.setDoc, updateDoc: FS.updateDoc, deleteDoc: FS.deleteDoc,
-      query: FS.query, where: FS.where, onSnapshot: FS.onSnapshot,
+      query: FS.query, where: FS.where, onSnapshot: FS.onSnapshot, disableNetwork: FS.disableNetwork, enableNetwork: FS.enableNetwork,
       runTransaction: FS.runTransaction, addDoc: FS.addDoc, serverTimestamp: FS.serverTimestamp, writeBatch: FS.writeBatch, getCountFromServer: FS.getCountFromServer,
       signInWithEmailAndPassword: AU.signInWithEmailAndPassword, signOut: AU.signOut,
       onAuthStateChanged: AU.onAuthStateChanged,
@@ -2464,6 +2470,8 @@ async function flush(k){
   if(sy.busy[k]){sy.t[k]=setTimeout(function(){flush(k)},300);return}
   /* ការពារ៖ កុំសរសេរមុនពេលទទួលទិន្នន័យពី Cloud ជាលើកដំបូង (Internet យឺត) — បើមិនដូច្នេះ ទិន្នន័យទទេក្នុង memory អាចជាន់ទិន្នន័យពិតក្នុង Cloud */
   if(!sy.first[k]){(sy.early||(sy.early={}))[k]=1;delete sy.dirty[k];console.warn("write before first load blocked:",k);return}
+  /* ទិន្នន័យបង្ហាញពី cache ក្នុងឧបករណ៍ តែមិនទាន់ផ្ទៀងផ្ទាត់ពី Server → ពន្យារការសរសេរ (អតិបរមា ២០ វិនាទី) កុំឱ្យទិន្នន័យចាស់ជាន់ទិន្នន័យថ្មីក្នុង Cloud */
+  if(!srvOk(k)&&Date.now()-(sy.t0||0)<20000){sy.t[k]=setTimeout(function(){flush(k)},1000);return}
   sy.busy[k]=1;delete sy.dirty[k];
   var ok=true;
   /* ការពារ៖ មិនសរសេរបញ្ជីគ្រូដែលខ្លីជាងក្នុង Cloud (លើកលែងលុបគ្រូដោយចេតនា) */
@@ -2619,6 +2627,7 @@ function subscribe(k){
         Object.keys(cache).forEach(function(p){if(p.indexOf(s.col+"/")===0)delete cache[p]});
         sn.forEach(function(d){cache[s.col+"/"+d.id]=d.data()});
       }
+      if(!(sn.metadata&&sn.metadata.fromCache))((sy.srv[k]||(sy.srv[k]={}))[si]=1);   /* ទទួលពី Server ពិត (មិនមែន cache) */
       sy.got[k][si]=1;onData(k);
     },function(err){
       console.error("Sync error:",k,err);(sy.err||(sy.err={}))[k]=(err&&(err.code||err.message))||"error";if(sy.diagOn)syncDiag();
@@ -2627,29 +2636,44 @@ function subscribe(k){
     unsubs.push(un);
   });
 }
+function srvOk(k){return Object.keys((sy.srv||{})[k]||{}).length>=(sy.need[k]||1)}
 function stopSync(){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[]}
 function startSync(){
   stopSync();try{bkRemind()}catch(e){console.error(e)}
-  sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};sy.touch={};sy.ok={};sy.err={};
+  sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};sy.touch={};sy.ok={};sy.err={};sy.srv={};sy.t0=Date.now();
   Object.keys(MAP).forEach(subscribe);
   subProfiles();
-  sy.diagOn=false;sy.diagLog=false;clearTimeout(sy.diagT);sy.diagT=setTimeout(function(){sy.diagOn=true;syncDiag()},12000);
+  diagArm();
 }
+function diagArm(){var b=$("syncBar");if(b)b.remove();sy.diagOn=false;sy.diagLog=false;sy.diagD=Date.now();clearTimeout(sy.diagT);clearTimeout(sy.diagT2);
+  sy.diagT=setTimeout(function(){sy.diagOn=true;syncDiag()},12000);sy.diagT2=setTimeout(syncDiag,30500)}
+/* 📶 ទូរស័ព្ទ៖ ត្រឡប់មកទំព័រវិញ / អ៊ីនធឺណិតមកវិញ → តភ្ជាប់ Firestore ឡើងវិញភ្លាម (កុំរង់ចាំ backoff រហូតដល់ ១ នាទី) */
+var hidAt=0;
+function kick(why){
+  if(!who||!window.db||!window.FB||!window.FB.disableNetwork||sy.kicking)return;
+  sy.kicking=1;console.info("reconnect:",why);
+  window.FB.disableNetwork(window.db).catch(function(){}).then(function(){return window.FB.enableNetwork(window.db)}).catch(function(e){console.error("reconnect:",e)}).then(function(){sy.kicking=0});
+  if(Object.keys(MAP).some(function(k){return!sy.first[k]}))diagArm();
+}
+document.addEventListener("visibilitychange",function(){if(document.hidden){hidAt=Date.now();return}if(hidAt&&Date.now()-hidAt>8000)kick("visible")});
+window.addEventListener("online",function(){kick("online")});
 /* 🩺 ទិន្នន័យមិនមកពី Cloud ក្រោយ ១២ វិនាទី → របារព្រមាន (ទិន្នន័យណា · មូលហេតុ) + ប៊ូតុងទាញម្ដងទៀត */
 var SYN={teachers:"បញ្ជីគ្រូ",tasks:"កិច្ចតែងការ",rs:"ថ្នាក់/សិស្ស",ex:"ថ្នាក់និទស្សន៍",obs:"សង្កេតថ្នាក់",wr:"របាយការណ៍",ah:"ស្នាដៃ",lib:"ឯកសារ",sched:"កាលវិភាគ",ts:"Timesheet",sig:"ហត្ថលេខា",cx:"សម្រង់អត្ថបទ",mc:"ប្រធានថ្នាក់"};
 function syncDiag(){
   var b=$("syncBar");if(!who||$("appSection").hidden){if(b)b.remove();return}
   var miss=Object.keys(MAP).filter(function(k){return!sy.first[k]&&!(who.role==="monitor"&&k!=="mc")}),err=sy.err||{};
   if(!miss.length){if(b)b.remove();return}
-  if(!b){b=document.createElement("div");b.id="syncBar";b.setAttribute("role","alert");
-    b.style.cssText="position:fixed;left:50%;transform:translateX(-50%);top:8px;z-index:9999;max-width:min(680px,94vw);background:#b91c1c;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:14px;line-height:1.6";
-    document.body.appendChild(b)}
   var codes=miss.map(function(k){return err[k]}).filter(function(c,i,a){return c&&a.indexOf(c)===i}),c0=codes[0]||"";
+  var hard=codes.length||!navigator.onLine||Date.now()-(sy.diagD||0)>30000;   /* ក្រហមតែពេលមានកំហុសពិត · គ្មានអ៊ីនធឺណិត · ឬយូរលើស ៣០ វិនាទី */
+  if(!b){b=document.createElement("div");b.id="syncBar";document.body.appendChild(b)}
+  b.setAttribute("role",hard?"alert":"status");
+  b.style.cssText="position:fixed;left:50%;transform:translateX(-50%);top:8px;z-index:9999;max-width:min(680px,94vw);background:"+(hard?"#b91c1c":"#334155")+";color:#fff;padding:"+(hard?"10px 14px":"6px 12px")+";border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:"+(hard?14:13)+"px;line-height:1.6;opacity:"+(hard?1:.92);
+  if(!hard){b.innerHTML="⏳ កំពុងទាញទិន្នន័យពី Cloud… <small>("+esc(miss.map(function(k){return SYN[k]||k}).join(" · "))+")</small>";return}
   var why=!navigator.onLine?"ឧបករណ៍មិនមានអ៊ីនធឺណិត":/permission/.test(c0)?"គ្មានសិទ្ធិអាន (Rules)":/resource-exhausted|quota/i.test(c0)?"អស់កូតាអាន Firestore ប្រចាំថ្ងៃ":/unavailable|deadline/i.test(c0)?"មិនអាចភ្ជាប់ Server បាន":c0?c0:"Server មិនទាន់ឆ្លើយតប (អ៊ីនធឺណិតយឺត ឬត្រូវបានរារាំង)";
   b.innerHTML="⚠️ <b>មិនទាន់ទាញទិន្នន័យពី Cloud បាន៖</b> "+esc(miss.map(function(k){return SYN[k]||k}).join(" · "))+"<br><small>មូលហេតុ៖ "+esc(why)+(codes.length?" ("+esc(codes.join(", "))+")":"")+"</small> "+
     "<button type=button id=syncRe style='margin-left:6px;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:3px 10px;font-weight:700;cursor:pointer'>🔄 ទាញម្ដងទៀត</button>";
   $("syncRe").onclick=function(){b.remove();startSync()};
-  if(!sy.diagLog){sy.diagLog=true;console.error("sync not loaded after 12s: "+miss.join(",")+(codes.length?" · "+codes.join(","):"")+" · online="+navigator.onLine)}
+  if(!sy.diagLog){sy.diagLog=true;console.error("sync not loaded after 30s: "+miss.join(",")+(codes.length?" · "+codes.join(","):"")+" · online="+navigator.onLine)}
 }
 /* Admin ម្នាក់ដំបូង៖ បំលែងទិន្នន័យចាស់ (app/tasks ... app/lib) ទៅទម្រង់ថ្មី ម្ដងគត់ */
 function migrateLegacy(){
