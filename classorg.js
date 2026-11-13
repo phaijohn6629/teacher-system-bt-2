@@ -307,29 +307,31 @@ function seatPrint(c){
    "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>";
 }
   function pickSeatPresenter() {
-    var seats = document.querySelectorAll('.seat:not(.empty)');
-    if (seats.length === 0) return;
-    animatePointer(Array.from(seats), function(target) {
-      target.style.outline = "4px solid var(--accent)";
-      alert("សិស្សដែលត្រូវឡើងបទបង្ហាញគឺ៖ " + target.querySelector('b').innerText);
+    var seats = [].slice.call(document.querySelectorAll('#ogBody .seat:not(.empty)'));
+    if (!seats.length) { notify("មិនទាន់មានសិស្សអង្គុយលើតុទេ"); return; }
+    animatePointer(seats, function(target) {
+      var n = target.querySelector('b'), name = n ? n.innerText : "";
+      notify("🎉 សិស្សដែលត្រូវឡើងបទបង្ហាញ៖ " + name);
+      showWinner(target, "🎉 " + name);
     });
   }
   window.pickSeatPresenter = pickSeatPresenter;
 
   /* 👆 ដៃរត់ & សំឡេង & Confetti */
 	var audioCtx = null;
-	function playTick() {
+	function tone(f, dur, vol) {
 		try {
 		var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
 		if (!audioCtx) audioCtx = new AC();
 		if (audioCtx.state === "suspended") audioCtx.resume();
-		var osc = audioCtx.createOscillator();
-		var gain = audioCtx.createGain();
+		var osc = audioCtx.createOscillator(), gain = audioCtx.createGain(), t = audioCtx.currentTime;
 		osc.connect(gain); gain.connect(audioCtx.destination);
-		osc.frequency.value = 880; gain.gain.value = 0.1;
-		osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+		osc.frequency.value = f; gain.gain.setValueAtTime(vol, t); gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+		osc.start(t); osc.stop(t + dur);
 		} catch (e) {}
 	}
+	function playTick() { tone(880, 0.05, 0.1); }
+	function playWin() { tone(660, 0.12, 0.14); setTimeout(function(){ tone(990, 0.25, 0.14); }, 110); }
 	function fireConfetti() {
 		for (var i = 0; i < 50; i++) {
 			(function (c) {
@@ -341,20 +343,42 @@ function seatPrint(c){
 			})(document.createElement("div"));
 		}
 	}
+	/* ស្លាកឈ្មោះលើតុដែលត្រូវរើស (៣ វិនាទី) */
+	function showWinner(target, text) {
+		var r = target.getBoundingClientRect(), t = document.createElement("div");
+		t.className = "pick-win"; t.textContent = text;
+		t.style.left = (r.left + r.width / 2) + "px"; t.style.top = Math.max(8, r.top - 44) + "px";
+		document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3000);
+	}
+	/* ដៃលោត ~១២ ជំហាន (≈១.៦ វិនាទី · លឿនពីដំបូង ហើយយឺតបន្តិចពេលជិតឈប់) រួចឈប់ចំគោលដៅដែលបានរើសជាមុន */
+	var pointerBusy = false;
 	function animatePointer(targets, onFinish) {
-		var hand = document.createElement("div"); hand.className = "hand-pointer"; hand.innerHTML = "👆";
-		document.body.appendChild(hand);
-		var i = 0, speed = 100, count = 0, max = targets.length * 3 + Math.floor(Math.random() * targets.length);
-		function tick() {
-			var rect = targets[i % targets.length].getBoundingClientRect();
-			hand.style.left = (rect.left + rect.width / 2) + "px";
-			hand.style.top = (rect.top - 30) + "px";
-			playTick();
-			i++; count++; speed += count < targets.length ? 0 : 10;
-			if (count < max) setTimeout(tick, speed);
-			else { fireConfetti(); setTimeout(function() { hand.remove(); onFinish(targets[(i-1) % targets.length]) }, 500) }
+		if (pointerBusy || !targets.length) return; pointerBusy = true;
+		targets.forEach(function(el){ el.style.outline = ""; el.classList.remove("pick-hit"); });
+		var win = targets[Math.floor(Math.random() * targets.length)];
+		win.scrollIntoView({ block: "nearest", behavior: "smooth" });
+		var STEPS = 12, path = [], prev = null;
+		for (var k = 0; k < STEPS - 1; k++) {   /* លោតចៃដន្យ មិនជាន់កន្លែងដដែលពីរដងជាប់ */
+			var t; do { t = targets[Math.floor(Math.random() * targets.length)]; } while (targets.length > 1 && (t === prev || (k === STEPS - 2 && t === win)));
+			path.push(prev = t);
 		}
-		tick();
+		path.push(win);
+		var hand = document.createElement("div"); hand.className = "hand-pointer"; hand.textContent = "👆";
+		document.body.appendChild(hand);
+		var i = 0;
+		function tick() {
+			var el = path[i], rect = el.getBoundingClientRect();
+			hand.style.left = (rect.left + rect.width / 2) + "px";
+			hand.style.top = (rect.top + rect.height * 0.55) + "px";
+			if (prev && prev !== el) prev.classList.remove("pick-on"); el.classList.add("pick-on"); prev = el;
+			var last = i === path.length - 1;
+			if (!last) { playTick(); var p = i / (STEPS - 1); i++; setTimeout(tick, 70 + 260 * p * p); return; }
+			/* ឈប់៖ សំឡេងឈ្នះ + confetti + បង្ហាញឈ្មោះភ្លាមៗ */
+			el.classList.remove("pick-on"); el.classList.add("pick-hit"); el.style.outline = "4px solid var(--accent,#f59e0b)";
+			playWin(); fireConfetti(); onFinish(el);
+			setTimeout(function() { hand.remove(); pointerBusy = false; }, 900);
+		}
+		prev = null; tick();
 	}
 	window.animatePointer = animatePointer;
 })();
