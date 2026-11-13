@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=4","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=4","practiceen5.js?v=2","practiceen6.js?v=2"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=5","practice8.js?v=2","practice7.js?v=2"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=4","practiceen5.js?v=2","practiceen6.js?v=2"],genP=null,kxP=null;
 var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
@@ -49,23 +49,40 @@ function tplOpts(g,s){var T=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(!T||!T.lengt
   return"<optgroup label='🇰🇭 គំរូប្រឡង (ទម្រង់កម្ពុជា)'>"+T.map(function(x){var v="t:"+x.id;return"<option value='"+v+"'"+(v===String(s.lv)?" selected":"")+">"+esc(x.t)+"</option>"}).join("")+"</optgroup>"}
 function hasLv4(g,ls){var G=PRACT.GR[g]&&PRACT.GR[g].G[ls];return!!(G&&G[4])}
 /* ---------- បង្កើតលំហាត់ ---------- */
-/* កុំឱ្យលំហាត់ដដែលៗ៖ ប្រវត្តិក្នុង Session (៥០ ចុងក្រោយ/មេរៀន) + លំហាត់ដែលមានស្រាប់ក្នុងផ្នែក (extra · ឧ. វិញ្ញាសាបើកពី Cloud) */
-var sessionAvoid = {};
-function mkItem(g,ls,lv,extra){
-  var avoid = (sessionAvoid[g+"|"+ls] || []).concat(extra || []);
+/* ---------- កុំឱ្យលំហាត់ដដែលៗ (តាម «ទម្រង់» មិនមែនតែអក្សរ) ----------
+   ទម្រង់ = kd របស់គំរូ (practice*.js) · គ្មាន kd → អក្សរក្រៅរូបមន្ត + ពាក្យបញ្ជា LaTeX (លេខមិនគិត)
+   ជ្រើសក្នុង ៤០ ដង៖ ① ខ៖ ទម្រង់ដូចលំហាត់ទី j នៃវិញ្ញាសា ក (ពិបាកស្មើគ្នា · លេខខុស) ② ទម្រង់មិនទាន់មានក្នុងផ្នែក ③ ទម្រង់ដែលប្រើតិចជាងគេ (ចងចាំក្នុងឧបករណ៍ exShp)
+   ④ អក្សរដូចគ្នាទាំងស្រុង → មិនយក (ប្រវត្តិ Session ៥០ ចុងក្រោយ/មេរៀន + លំហាត់ក្នុងផ្នែក) */
+var sessionAvoid = {}, SHP = null;
+function shapeOf(x){if(!x)return"";if(x.kd)return"kd:"+x.kd;var q=String(x.q||"");
+  var cmd=(q.match(/\\[a-zA-Z]+|\^|_/g)||[]).filter(function(c,i,a){return a.indexOf(c)===i}).sort().join("");
+  return q.replace(/\$[^$]*\$/g,"$").replace(/[0-9\u17E0-\u17E9]+/g,"#").replace(/\s+/g," ").slice(0,40)+"|"+cmd}
+function shp(){if(!SHP){try{SHP=JSON.parse(localStorage.getItem("exShp")||"{}")||{}}catch(e){SHP={}}}return SHP}
+function shpUse(k,sh){var S=shp(),c=S[k]=S[k]||{};c[sh]=(c[sh]||0)+1;
+  if(c[sh]>40)Object.keys(c).forEach(function(z){c[z]=Math.floor(c[z]/2)});   /* បន្ថយចាស់ៗ កុំឱ្យលេខធំរហូត */
+  try{localStorage.setItem("exShp",JSON.stringify(S))}catch(e){}}
+/* extra = លំហាត់ដែលមានក្នុងផ្នែក (object ឬអក្សរ) · want = ទម្រង់ដែលចង់បាន (វិញ្ញាសា ខ) */
+function mkItem(g,ls,lv,extra,want){
   var G=PRACT.GR[g]&&PRACT.GR[g].G[ls],f=G&&(G[lv]||G[3]||G[1]);if(!f)return{q:"(មេរៀននេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់ · សូមសរសេរដោយដៃ)",fig:"",ans:"",sol:""};
-  var x=null;for(var k=0;k<15;k++){try{x=f()}catch(e){x=null}if(x&&avoid.indexOf(x.q)<0)break}
+  var hk=g+"|"+ls,ck=hk+"|"+lv,cnt=shp()[ck]||{},texts={},used={};
+  (sessionAvoid[hk]||[]).forEach(function(q){texts[q]=1});
+  (extra||[]).forEach(function(e){var o=typeof e==="string"?{q:e}:e;if(!o)return;texts[o.q]=1;used[shapeOf(o)]=1});
+  var x=null,best=null,bs=1e9;
+  for(var k=0,K=want?120:40;k<K;k++){try{x=f()}catch(e){x=null}if(!x||texts[x.q])continue;
+    var sh=shapeOf(x);if(want&&sh===want){best=x;break}
+    var sc=(want?1000:0)+(used[sh]?100:0)+(cnt[sh]||0);if(sc<bs){bs=sc;best=x;if(!sc)break}}
+  x=best;if(!x){try{x=f()}catch(e){x=null}}
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
-  if(!sessionAvoid[g+"|"+ls]) sessionAvoid[g+"|"+ls] = [];
-  sessionAvoid[g+"|"+ls].push(x.q);
-  if(sessionAvoid[g+"|"+ls].length > 50) sessionAvoid[g+"|"+ls].shift();
+  var H=sessionAvoid[hk]=sessionAvoid[hk]||[];H.push(x.q);if(H.length>50)H.shift();
+  shpUse(ck,shapeOf(x));
   return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||"",al:(x.a||[]).map(function(a){return a.l||""}),at:(x.a||[]).map(function(a){return a.t}),mk:x.mk||0,mks:x.mks||null,ex:!!x.ex,kd:x.kd||""};
 }
 function isT(s){return/^t:/.test(String(s.lv))}
 function fill(s,g,which){
   var key=which||"it",out=[];
   /* 🇰🇭 គំរូប្រឡង (exgen.js)៖ ទិន្នន័យរួម + សំណួររង · វិញ្ញាសា ខ មានទិន្នន័យផ្ទាល់ខ្លួន (instB) */
-  if(isT(s)&&window.EXGEN){var o=EXGEN.make(g+"|"+s.ls,String(s.lv).slice(2));if(o){s[key]=o.it;if(key==="it")s.inst=o.inst;else s.instB=o.inst;s.n=o.it.length;return}}for(var i=0;i<s.n;i++)out.push(mkItem(g,s.ls,s.lv,out.map(function(x){return x.q})));s[key]=out;
+  if(isT(s)&&window.EXGEN){var o=EXGEN.make(g+"|"+s.ls,String(s.lv).slice(2));if(o){s[key]=o.it;if(key==="it")s.inst=o.inst;else s.instB=o.inst;s.n=o.it.length;return}}var ref=key==="itB"&&s.it||null;   /* វិញ្ញាសា ខ៖ លំហាត់ទី i ទម្រង់ដូចវិញ្ញាសា ក */
+  for(var i=0;i<s.n;i++)out.push(mkItem(g,s.ls,s.lv,out,ref&&ref[i]?shapeOf(ref[i]):""));s[key]=out;
 }
 function newSec(g,ls){var T=window.EXGEN&&EXGEN.list(g+"|"+ls),s={ls:ls,lv:T&&T.length?"t:"+T[0].id:2,n:2,pts:4,inst:g>100?"":"ដោះស្រាយលំហាត់ខាងក្រោម៖"};fill(s,g);if(X.E&&X.E.ab)fill(s,g,"itB");return s}
 function newExam(){
@@ -289,7 +306,7 @@ function act(a,q){
     E.calc=PD.calc;E.title=PD.title;E.dur=Math.round(EXP.total(E)*1.2/5)*5}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
-  else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q}).concat((s.itB||[]).map(function(x){return x.q}));s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av.concat(s.it[j].q))}
+  else if(a==="ri"){var j=+q[2];s.it[j]=mkItem(g,s.ls,s.lv,s.it.concat(s.itB||[]));if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,s.itB.concat(s.it),shapeOf(s.it[j]))}   /* 🔄 → ទម្រង់ថ្មី · ខ តាមទម្រង់ ក */
   else if(a==="up"&&i>0){E.secs.splice(i-1,0,E.secs.splice(i,1)[0])}
   else if(a==="dn"&&i<E.secs.length-1){E.secs.splice(i+1,0,E.secs.splice(i,1)[0])}
   else if(a==="rm"){if(!confirm("លុបផ្នែក "+EXP.RN[i]+"?"))return;E.secs.splice(i,1)}

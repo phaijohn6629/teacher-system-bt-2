@@ -17,6 +17,7 @@
 | `exam.js` | Exam builder (teacher side) | បង្កើតវិញ្ញាសាប្រឡង · វិញ្ញាសា ក/ខ · បើកប្រឡងអនឡាញ |
 | `exam.html` | Online exam page (student side) | ទំព័រសិស្សមើលវិញ្ញាសា (សរសេរចម្លើយលើក្រដាស) |
 | `expaper.js` | Exam paper renderer | បង្ហាញ/បោះពុម្ពវិញ្ញាសា (ប្រើទាំង exam.js និង exam.html) |
+| `practice*.js` | Question generators per grade | ម៉ាស៊ីនបង្កើតលំហាត់តាមថ្នាក់ (ប្រើទាំងទំព័រហ្វឹកហាត់ និងវិញ្ញាសា) |
 | `exgen.js` | Cambodian-format exam templates | គំរូលំហាត់ប្រឡងទម្រង់កម្ពុជា (BacII · ឌីប្លូម) |
 | `att.js` | Attendance logic | គ្រប់គ្រងការចុះវត្តមាន |
 | `meetings.js` | Meeting minutes / PLC | កំណត់ហេតុប្រជុំ និង PLC |
@@ -28,9 +29,12 @@
 - Use Firebase transactions for any write operations on shared data (e.g., `mc` collection).
 - Before every push: run `python3 tools/bump.py` (bumps `?v=` for changed JS/CSS) and `./tests/run.sh` (all lines must be `bad 0`), then bump the cache name `C` in `sw.js`.
 - Exam/practice generators are lazy-loaded: their `?v=` lives inside `exam.js` (`bump.py` handles it).
+- Question generators: `G[lesson][level]()` returns `{q, a:[A(v,tex,kind,label)], s, fig, kd}`. Every template must have a unique `kd`, because the exam engine detects repeats by `kd`. Build the answer first, then derive the data from it.
+  - Grade 9: add forms with `vx(lesson, level, [fn…])`. Base templates are auto-labeled `kd = b{lesson}_{level}`. `tests/practice.js` fails if any grade 9 lesson×level has fewer than 4 forms.
+  - Grade 9 probability: multiplication rule only (no combinations).
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v11`)
+## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v12`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -68,8 +72,18 @@
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
 
+### ✅ Exam question variety — `practice9.js`, `exam.js`
+- Grade 9: about 125 new question forms (direct computation, find the unknown, applied, reasoning). Every lesson×level has ≥4 forms (most have 5–6). Fixed two broken templates: a degenerate midpoint and an impossible pentagon apothem.
+- `exam.js` `mkItem()`: anti-repetition by **form** (`shapeOf` = `kd`, or a text/LaTeX fallback for other grades).
+  - Within a section, it prefers forms not yet used.
+  - Across exams, it prefers the least-used forms (stored in localStorage `exShp`).
+  - Exact repeated text is never used.
+- Paper ខ: item j has the same form as paper ក item j, with different numbers (≈99%). 🔄 on one item gives a new form, and paper ខ follows it.
+- The exam generator makes open-response items, so there are no auto-generated distractors. Multiple-choice options exist only in the quiz bank (`quiz.js`), entered by teachers.
+
 ## Remaining Tasks
-- None pending in code. **Not yet tested on the live site / real phones:**
+- Next: add question forms to the other grades (7, 8, 10, 11, 12) using the grade 9 pattern (`vx` + `kd` + a form-count test).
+- **Not yet tested on the live site / real phones:**
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.
   - Refresh during a quiz/exam on a weak connection (verified only in a Node simulation with an unresponsive Firestore).
