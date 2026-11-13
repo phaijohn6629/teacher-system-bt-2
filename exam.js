@@ -49,10 +49,15 @@ function tplOpts(g,s){var T=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(!T||!T.lengt
   return"<optgroup label='🇰🇭 គំរូប្រឡង (ទម្រង់កម្ពុជា)'>"+T.map(function(x){var v="t:"+x.id;return"<option value='"+v+"'"+(v===String(s.lv)?" selected":"")+">"+esc(x.t)+"</option>"}).join("")+"</optgroup>"}
 function hasLv4(g,ls){var G=PRACT.GR[g]&&PRACT.GR[g].G[ls];return!!(G&&G[4])}
 /* ---------- បង្កើតលំហាត់ ---------- */
-function mkItem(g,ls,lv,avoid){
+var sessionAvoid = {};
+function mkItem(g,ls,lv){
+  var avoid = sessionAvoid[g+"|"+ls] || [];
   var G=PRACT.GR[g]&&PRACT.GR[g].G[ls],f=G&&(G[lv]||G[3]||G[1]);if(!f)return{q:"(មេរៀននេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់ · សូមសរសេរដោយដៃ)",fig:"",ans:"",sol:""};
-  var x=null;for(var k=0;k<6;k++){try{x=f()}catch(e){x=null}if(x&&(!avoid||avoid.indexOf(x.q)<0))break}
+  var x=null;for(var k=0;k<15;k++){try{x=f()}catch(e){x=null}if(x&&avoid.indexOf(x.q)<0)break}
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
+  if(!sessionAvoid[g+"|"+ls]) sessionAvoid[g+"|"+ls] = [];
+  sessionAvoid[g+"|"+ls].push(x.q);
+  if(sessionAvoid[g+"|"+ls].length > 20) sessionAvoid[g+"|"+ls].shift();
   return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||"",al:(x.a||[]).map(function(a){return a.l||""}),at:(x.a||[]).map(function(a){return a.t}),mk:x.mk||0,mks:x.mks||null,ex:!!x.ex,kd:x.kd||""};
 }
 function isT(s){return/^t:/.test(String(s.lv))}
@@ -271,7 +276,7 @@ function act(a,q){
     E.calc=PD.calc;E.title=PD.title;E.dur=Math.round(EXP.total(E)*1.2/5)*5}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
-  else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q});s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av)}
+  else if(a==="ri"){var j=+q[2];s.it[j]=mkItem(g,s.ls,s.lv);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv)}
   else if(a==="up"&&i>0){E.secs.splice(i-1,0,E.secs.splice(i,1)[0])}
   else if(a==="dn"&&i<E.secs.length-1){E.secs.splice(i+1,0,E.secs.splice(i,1)[0])}
   else if(a==="rm"){if(!confirm("លុបផ្នែក "+EXP.RN[i]+"?"))return;E.secs.splice(i,1)}
