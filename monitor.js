@@ -84,7 +84,8 @@ function tWrite(){
         var cur=sn.data(),cj=pj(cur.j);
         if(cj&&cj.by==="m"&&cj.at>(cj.ack||0)&&cj.at>(d.ack||0))return;
         if(cur.j===js&&cur.acc)return;
-        tx.update(mref(k),{j:js});
+        var up={j:js};if(!cur.acc)up.acc=accOf(cur);   /* ឯកសារទម្រង់ចាស់ {id,uid,pw,en} → បន្ថែម acc (កុំឱ្យសរសេរដដែលៗរាល់ Sync) */
+        tx.update(mref(k),up);
       });
     }).catch(function(e){console.warn("mc write:",k,e)});
   });
@@ -242,7 +243,9 @@ $("p8").addEventListener("click",function(e){
 
 /* ========== ខាងប្រធាន/អនុប្រធានថ្នាក់ ========== */
 /* ការកែនីមួយៗ៖ D = តម្លៃថ្មីតាមគោលដៅ (សរសេរដោយ transaction) · L = សម្រាប់ប្រវត្តិ {l, f(ចាស់), t(ថ្មី)} */
-function snap(c){var ab={};c.st.forEach(function(s){ab[skey(s)]=jcopy(s.ab||{})});return{ab:ab,seat:JSON.stringify(c.seat||null)}}
+/* ប្លង់តុ៖ ប្រៀបធៀបតែ ប្លង់ + លំដាប់កៅអី (abMap ក/ខ គណនាពីកៅអី · កៅអីទំនេរខាងចុង ត្រូវបានបំពេញពេលបង្ហាញ) → មិនកត់ «រៀបឡើងវិញ» ខុស */
+function seatSig(x){return x?JSON.stringify([x.lay||"",(x.s||[]).map(function(k){return k||""}).join("|").replace(/\|+$/,"")]):"null"}
+function snap(c){var ab={};c.st.forEach(function(s){ab[skey(s)]=jcopy(s.ab||{})});return{ab:ab,seat:seatSig(c.seat)}}
 function abv(ab,m,i){return+((ab&&ab[m]||[])[i])||0}
 function note(key,l,f,t){var x=M.L[key];if(!x)x=M.L[key]={l:l,f:f};x.t=t;if(x.f===x.t&&key!=="seat")delete M.L[key]}
 function monDiff(){
@@ -253,7 +256,7 @@ function monDiff(){
     Object.keys(o).concat(Object.keys(n)).forEach(function(m){ms[m]=1});
     Object.keys(ms).forEach(function(m){for(var i=0;i<3;i++){var x=abv(o,m,i),y=abv(n,m,i);if(x!==y){var key="ab|"+k+"|"+m+"|"+i;M.D[key]=y;note(key,s.n+" · ខែ"+(MK[m]||m)+" · "+AB[i],kn(x),kn(y))}}});
   });
-  var ns=JSON.stringify(c.seat||null);
+  var ns=seatSig(c.seat);
   if(ns!==b.seat){M.D.seat=jcopy(c.seat||null);note("seat","ប្លង់តុ","","បានរៀបកៅអីឡើងវិញ")}
   M.base=snap(c);mSched();
 }

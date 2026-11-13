@@ -20,7 +20,7 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 /* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
-function ENG(){return["practice.js?v=13","exgen.js?v=19"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
+function ENG(){return["practice.js?v=13","exgen.js?v=20"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
 function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
   if(engReady())return Promise.resolve();
@@ -49,9 +49,10 @@ function tplOpts(g,s){var T=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(!T||!T.lengt
   return"<optgroup label='🇰🇭 គំរូប្រឡង (ទម្រង់កម្ពុជា)'>"+T.map(function(x){var v="t:"+x.id;return"<option value='"+v+"'"+(v===String(s.lv)?" selected":"")+">"+esc(x.t)+"</option>"}).join("")+"</optgroup>"}
 function hasLv4(g,ls){var G=PRACT.GR[g]&&PRACT.GR[g].G[ls];return!!(G&&G[4])}
 /* ---------- បង្កើតលំហាត់ ---------- */
+/* កុំឱ្យលំហាត់ដដែលៗ៖ ប្រវត្តិក្នុង Session (៥០ ចុងក្រោយ/មេរៀន) + លំហាត់ដែលមានស្រាប់ក្នុងផ្នែក (extra · ឧ. វិញ្ញាសាបើកពី Cloud) */
 var sessionAvoid = {};
-function mkItem(g,ls,lv){
-  var avoid = sessionAvoid[g+"|"+ls] || [];
+function mkItem(g,ls,lv,extra){
+  var avoid = (sessionAvoid[g+"|"+ls] || []).concat(extra || []);
   var G=PRACT.GR[g]&&PRACT.GR[g].G[ls],f=G&&(G[lv]||G[3]||G[1]);if(!f)return{q:"(មេរៀននេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់ · សូមសរសេរដោយដៃ)",fig:"",ans:"",sol:""};
   var x=null;for(var k=0;k<15;k++){try{x=f()}catch(e){x=null}if(x&&avoid.indexOf(x.q)<0)break}
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
@@ -195,7 +196,7 @@ function pub(E){var qf=function(a){return(a||[]).map(function(x){return{q:x.q,fi
   return JSON.stringify({font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,ab:!!E.ab,
   secs:E.secs.map(function(s){var o={pts:s.pts,inst:s.inst,it:qf(s.it)};if(E.ab&&s.itB&&s.itB.length){o.itB=qf(s.itB);if(s.instB!=null)o.instB=s.instB}return o})})}
 /* វិញ្ញាសា ក/ខ របស់សិស្ស៖ តាមប្លង់តុ (classorg.js · c.seat.abMap · គន្លឹះ = i:id ឬ n:ឈ្មោះ) · គ្មានប្លង់ → ឆ្លាស់តាមលេខរៀង */
-var SEATW={d2:8,d1:6};
+var SEATW={d2:8,d1:6};   /* កៅអីក្នុងមួយជួរ = cols × per (ត្រូវគ្នានឹង LAY ក្នុង classorg.js) */
 function abFor(E,c,s,i){
   if(!E.ab)return"";
   var k=s.id?"i:"+s.id:"n:"+s.n,S=c.seat||{},m=S.abMap||{};
@@ -288,7 +289,7 @@ function act(a,q){
     E.calc=PD.calc;E.title=PD.title;E.dur=Math.round(EXP.total(E)*1.2/5)*5}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
-  else if(a==="ri"){var j=+q[2];s.it[j]=mkItem(g,s.ls,s.lv);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv)}
+  else if(a==="ri"){var j=+q[2],av=s.it.map(function(x){return x.q}).concat((s.itB||[]).map(function(x){return x.q}));s.it[j]=mkItem(g,s.ls,s.lv,av);if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,av.concat(s.it[j].q))}
   else if(a==="up"&&i>0){E.secs.splice(i-1,0,E.secs.splice(i,1)[0])}
   else if(a==="dn"&&i<E.secs.length-1){E.secs.splice(i+1,0,E.secs.splice(i,1)[0])}
   else if(a==="rm"){if(!confirm("លុបផ្នែក "+EXP.RN[i]+"?"))return;E.secs.splice(i,1)}

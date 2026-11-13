@@ -5,20 +5,6 @@
    ======================================================================== */
 (function(){
 "use strict";
-/* --- Anti-Repetition History --- */
-var history = {};
-function sessionAvoid(id, q) {
-    if (!history[id]) history[id] = [];
-    if (history[id].includes(q)) return true;
-    history[id].push(q);
-    if (history[id].length > 50) history[id].shift();
-    return false;
-}
-function randomizeEntropy(x) {
-    // Increase variation by adding small random perturbations or template choices
-    var variation = Math.random() > 0.5 ? 1 : -1;
-    return x + variation;
-}
 /* ---------- ជំនួយ ---------- */
 function ri(a,b){return a+Math.floor(Math.random()*(b-a+1))}
 function nz(a,b){var v;do{v=ri(a,b)}while(!v);return v}

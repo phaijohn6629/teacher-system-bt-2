@@ -157,8 +157,8 @@ $("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើស�
 
 /* 🎲 ចាប់ក្រុម 3D & 👆 ដៃរត់ */
 function initPickerUI(){
-  var m=document.createElement("div");m.className="modal";m.id="pickerModal";
-  m.innerHTML=`<div class=modal-content><h2 class=moul>ចាប់ក្រុម 3D</h2><div id=cardContainer></div><div style="margin-top:20px"><button class=primary onclick="startPicker()">ចាប់ផ្តើម</button> <button class=primary onclick="pickPresenter()">👆 រើសក្រុមឡើងបទបង្ហាញ</button> <button onclick="closePicker()">បិទ</button></div></div>`;
+  var m=document.createElement("div");m.className="pk-modal";m.id="pickerModal";m.onclick=function(e){if(e.target===m)closePicker()};
+  m.innerHTML=`<div class=pk-box><h2 class=moul>ចាប់ក្រុម 3D</h2><div id=cardContainer></div><div style="margin-top:20px"><button class=primary onclick="startPicker()">ចាប់ផ្តើម</button> <button class=primary onclick="pickPresenter()">👆 រើសក្រុមឡើងបទបង្ហាញ</button> <button onclick="closePicker()">បិទ</button></div></div>`;
   document.body.appendChild(m);
 }
 function pickPresenter() {

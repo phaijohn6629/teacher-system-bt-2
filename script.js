@@ -161,7 +161,7 @@ function enterApp(user){
     net.then(function(p){if(sig(p)!==sig(c))location.reload()},function(e){console.warn("profile:",e)});
     return goApp(user,c);
   }
-  net.then(function(p){goApp(user,p)}).catch(function(e){notifyErr(e);doLogout()});
+  net.then(function(p){goApp(user,p)}).catch(function(e){alert(authErr(e));doLogout()});   /* alert៖ doLogout ផ្ទុកទំព័រឡើងវិញ → toast នឹងបាត់មុនអាន */
 }
 function goApp(user,p){
   (function(){
@@ -1789,7 +1789,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=12"],ls:["lessons.js?v=4","lessonedit.js?v=1"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=13"],ls:["lessons.js?v=4","lessonedit.js?v=1"]};
 var NEED={p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];

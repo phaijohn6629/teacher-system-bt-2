@@ -147,12 +147,11 @@ function docHtml(m){
    "<div class=mt-ft><div class=mt-dt><div>"+esc(lunar(m.d))+"</div><div>"+esc(greg(m.d))+"</div></div>"+
     "<div class=mt-cols><div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div></div>"+
      (AU?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានគណៈកម្មការ</div>"+sig(pz?idByName(pz.n):"")+"<div class=moul>"+esc(pz?pz.n:"")+"</div></div>"
-      :P?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូចែករំលែក</div>"+sig(sh[0]?idByName(sh[0].n):"")+"<div class=moul>"+esc(sh.map(function(a){return a.n}).join(" · "))+"</div></div>"+
-         "<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div>"
+      :P?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូចែករំលែក</div>"+sig(sh[0]?idByName(sh[0].n):"")+"<div class=moul>"+esc(sh.map(function(a){return a.n}).join(" · "))+"</div></div>"
       :R?"<div></div>"   /* ប្រជុំរួម៖ គ្មានហត្ថលេខាកណ្ដាល (ទុកកន្លែងទំនេរ ឱ្យអ្នកកត់ត្រានៅខាងស្ដាំដដែល) */
-       :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>"+
-         "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div>")+
-     "</div></div>"+
+       :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>")+
+     /* អ្នកកត់ត្រា៖ គ្រប់ប្រភេទប្រជុំ (PLC = គ្រូចែករំលែក + អ្នកកត់ត្រា) */
+     "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div></div></div>"+
   "</div>";
 }
 
