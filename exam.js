@@ -20,7 +20,7 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 /* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
-function ENG(){return["practice.js?v=13","exgen.js?v=18"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
+function ENG(){return["practice.js?v=13","exgen.js?v=19"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
 function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
   if(engReady())return Promise.resolve();
@@ -191,15 +191,25 @@ function printIt(kind){
 /* ---------- 📱 ប្រឡងអនឡាញ ---------- */
 function examLink(id){return location.origin+location.pathname.replace(/[^\/]*$/,"")+"exam.html?e="+encodeURIComponent(id)}
 function code6(){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return String(100000+a[0]%900000)}
-function pub(E){return JSON.stringify({font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,
-  secs:E.secs.map(function(s){return{pts:s.pts,inst:s.inst,it:s.it.map(function(x){return{q:x.q,fig:x.fig}})}})})}
+function pub(E){var qf=function(a){return(a||[]).map(function(x){return{q:x.q,fig:x.fig}})};
+  return JSON.stringify({font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,ab:!!E.ab,
+  secs:E.secs.map(function(s){var o={pts:s.pts,inst:s.inst,it:qf(s.it)};if(E.ab&&s.itB&&s.itB.length){o.itB=qf(s.itB);if(s.instB!=null)o.instB=s.instB}return o})})}
+/* វិញ្ញាសា ក/ខ របស់សិស្ស៖ តាមប្លង់តុ (classorg.js · c.seat.abMap · គន្លឹះ = i:id ឬ n:ឈ្មោះ) · គ្មានប្លង់ → ឆ្លាស់តាមលេខរៀង */
+var SEATW={d2:8,d1:6};
+function abFor(E,c,s,i){
+  if(!E.ab)return"";
+  var k=s.id?"i:"+s.id:"n:"+s.n,S=c.seat||{},m=S.abMap||{};
+  if(m[k]==="ក"||m[k]==="ខ")return m[k];
+  var j=Array.isArray(S.s)?S.s.indexOf(k):-1,w=SEATW[S.lay]||8;
+  if(j>=0)return(Math.floor(j/w)+j%w)%2?"ខ":"ក";
+  return i%2?"ខ":"ក";
+}
 function goOnline(){
   var E=X.E,F=window.FB,c=myCls().filter(function(x){return x.n===E.cls})[0];
   if(!c||!c.st.length){alert("ថ្នាក់ «"+E.cls+"» មិនទាន់មានបញ្ជីឈ្មោះសិស្សទេ");return}
   if(!confirm("បើកប្រឡងអនឡាញ «"+EXP.head(E)+"» ឥឡូវនេះ?\n\n• រយៈពេល "+E.dur+" នាទី (ចាប់ពីពេលនេះ)\n• សិស្សមើលប្រធានលើទូរស័ព្ទ ហើយសរសេរចម្លើយលើក្រដាស\n• អស់ម៉ោង → ប្រធានលាក់ដោយស្វ័យប្រវត្តិ"))return;
   var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){
-    var seatInfo=c.seat&&c.seat.abMap?c.seat.abMap[key(s)]:"";
-    return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:seatInfo}});
+    return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:abFor(E,c,s,i)}});
   Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,names:names,sch:inf().school}),
     F.setDoc(F.doc(window.db,"exq",E.id+"_"+code),{o:E.o,t:E.id,j:pub(E)})]).then(function(){
     E.on={open:true,code:code,endMs:endMs};save(true);editor();watch();showLink();

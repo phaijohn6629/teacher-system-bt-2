@@ -109,7 +109,7 @@ async function go(){
 }
 /* ---------- ២. បង្ហាញវិញ្ញាសា + ម៉ោងរាប់ថយក្រោយ ---------- */
 function show(P,reload){
-  app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span></div><div class=paper id=pp>${EXP.html(P,{})}</div>
+  app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span></div><div class=paper id=pp>${EXP.html(P,P.ab?{v:me.ab==="ខ"?"b":"a",lbl:me.ab==="ខ"?"ខ":"ក"}:{})}</div>
     <p class=note style="text-align:center">✍️ សរសេរចម្លើយលើក្រដាស · អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ</p>`;
   math($("pp"));if(EXP.fit)EXP.fit($("pp"));if(EXP.shrink)EXP.shrink($("pp"));
   AC=Object.assign({lv:0,lt:0,cp:0},JSON.parse(LS.get("ac_"+K)||"null")||{});seq=+LS.get("sq_"+K)||0;acOn=true;

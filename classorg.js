@@ -162,26 +162,29 @@ function initPickerUI(){
   document.body.appendChild(m);
 }
 function pickPresenter() {
-  var groups = document.querySelectorAll('.og-g');
-  if (groups.length === 0) return;
-  animatePointer(Array.from(groups), function(target) {
-    target.style.outline = "4px solid var(--accent)";
-    alert("ក្រុមដែលត្រូវឡើងបទបង្ហាញគឺ៖ " + target.querySelector('.og-gn').innerText);
+  var cards = [].slice.call(document.querySelectorAll('#cardContainer .card-3d'));
+  if (!cards.length) { startPicker(); cards = [].slice.call(document.querySelectorAll('#cardContainer .card-3d')); }
+  if (!cards.length) return;
+  cards.forEach(function(d){ d.classList.remove("flip"); d.style.outline = ""; });
+  animatePointer(cards, function(target) {
+    target.classList.add("flip"); target.style.outline = "4px solid var(--accent,#f59e0b)";
+    notify("ក្រុមដែលត្រូវឡើងបទបង្ហាញ៖ " + target.querySelector('.card-back').innerText);
   });
 }
 window.pickPresenter = pickPresenter;
 function startPicker(){
-  var c=cls(),G=groups(c);
-  var cc=$("cardContainer");cc.innerHTML="";
-  G.forEach(function(_,i){
+  var c=cls(),cc=$("cardContainer");cc.innerHTML="";
+  if(!c){cc.innerHTML="<p class=note>សូមជ្រើសថ្នាក់ជាមុន</p>";return}
+  var G=groups(c),ix=shuffle(G.map(function(_,i){return i}));
+  ix.forEach(function(i){
     var d=document.createElement("div");d.className="card-3d";
-    d.innerHTML=`<div class=card-inner><div class=card-front>?</div><div class=card-back>ក្រុម ${kn(i+1)}</div></div>`;
+    d.innerHTML="<div class=card-inner><div class=card-front>?</div><div class=card-back>ក្រុមទី"+kn(i+1)+"<br><small>"+kn(G[i].length)+" នាក់</small></div></div>";
     d.onclick=function(){d.classList.add("flip")};
     cc.appendChild(d);
   });
 }
 function closePicker(){$("pickerModal").classList.remove("show")}
-function showPicker(){$("pickerModal").classList.add("show")}
+function showPicker(){if(!cls()){alert("សូមជ្រើសថ្នាក់ជាមុន");return}startPicker();$("pickerModal").classList.add("show")}
 window.startPicker=startPicker;window.closePicker=closePicker;window.showPicker=showPicker;initPickerUI();
 
 /* ប្លង់តុ៖ ស៊ុមខ្លីតាមខ្លឹមសារ · បើវែងជាង ១៦៥ម.ម (ជួរច្រើន) → បង្រួមខ្លឹមសារឱ្យនៅក្នុងទំព័រតែមួយ (មិនកាត់ចោល) */
@@ -206,13 +209,16 @@ $("ogSeg").onclick=function(e){var b=e.target.closest("button[data-ov]");if(b){o
    តុគ្រូនៅខាងលើឆ្វេងជានិច្ច · c.seat = {lay, s:[គន្លឹះសិស្សតាមលេខកៅអី]} */
 var seatAnim=false;
 var LAY={d2:{cols:4,rows:6,per:2,lbl:"តុ ២ នាក់ (៤ × ៦)"},d1:{cols:6,rows:6,per:1,lbl:"តុ ១ នាក់ (៦ × ៦)"}};
-function seat(c){c.seat=c.seat||{lay:"d2",s:[],abMap:{}};if(!LAY[c.seat.lay])c.seat.lay="d2";return c.seat}
+function seat(c){c.seat=c.seat||{lay:"d2",s:[]};if(!LAY[c.seat.lay])c.seat.lay="d2";if(!Array.isArray(c.seat.s))c.seat.s=[];if(!c.seat.abMap||typeof c.seat.abMap!=="object")c.seat.abMap={};return c.seat}
+/* វិញ្ញាសា ក/ខ តាមកៅអី៖ ក្ដារអុក (អ្នកជិតគ្នា ទាំងឆ្វេង-ស្ដាំ និងមុខ-ក្រោយ ទទួលវិញ្ញាសាខុសគ្នា) */
+function abOf(L,i){var w=L.cols*L.per;return(Math.floor(i/w)+i%w)%2?"ខ":"ក"}
+function syncAB(S){var L=LAY[S.lay],m={};S.s.forEach(function(k,i){if(k)m[k]=abOf(L,i)});S.abMap=m;return S}
 function nSeats(L){return L.cols*L.rows*L.per}
 function byKey(c){var o={};c.st.forEach(function(s){o[key(s)]=s});return o}
 function cleanSeat(c){   /* ដកសិស្សដែលលែងមាន ឬស្ទួន */
   var S=seat(c),m=byKey(c),seen={},N=nSeats(LAY[S.lay]);
   S.s=S.s.slice(0,N).map(function(k){if(!k||!m[k]||seen[k])return"";seen[k]=1;return k});
-  while(S.s.length<N)S.s.push("");return S;
+  while(S.s.length<N)S.s.push("");return syncAB(S);
 }
 function fillSeats(c,order){var S=seat(c),N=nSeats(LAY[S.lay]);S.s=[];for(var i=0;i<N;i++)S.s.push(order[i]?key(order[i]):"")}
 function seatGrid(c,edit,anim){
@@ -226,7 +232,7 @@ function seatGrid(c,edit,anim){
       for(var k=0;k<L.per;k++,i++){
         var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)],ro=s&&rOf(c,s).ro;if(s)any=true;
         var badge=ro==="h"?"<em class=sb-h title='ប្រធានថ្នាក់'>👑</em>":ro==="v1"||ro==="v2"?"<em class=sb-v title='អនុប្រធាន'>⭐</em>":ro==="gl"?"<em class=sb-g title='ប្រធានក្រុម'>★</em>":"";
-        var ab=s&&S.abMap[key(s)]?"<em class='sb-ab "+S.abMap[key(s)].toLowerCase()+"'>"+S.abMap[key(s)]+"</em>":"";
+        var pa=s&&S.abMap[key(s)],ab=pa?"<em class='sb-ab "+(pa==="ខ"?"b":"a")+"' title='វិញ្ញាសា "+pa+"'>"+pa+"</em>":"";
         d+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":" u"):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+(anim&&s?" style='animation-delay:"+(i*18)+"ms'":"")+">"+
           "<span class=sn>"+kn(i+1)+"</span>"+badge+ab+
           (s?"<span class=sav>"+(ph?"<img src='"+ph+"' alt=''>":ini(s.n))+"</span><b>"+esc(s.n)+"</b>":"<span class='sav e'>＋</span><i>ទំនេរ</i>")+"</div>";
@@ -251,7 +257,7 @@ function renderSeat(c,ed){
   $("ogBody").innerHTML="<div class=bar style='margin-top:4px'>"+
     "<label>ប្លង់៖</label><select id=seLay "+(ed?"":"disabled")+">"+Object.keys(LAY).map(function(k){return"<option value="+k+(k===S.lay?" selected":"")+">"+LAY[k].lbl+"</option>"}).join("")+"</select>"+
     (ed?"<button type=button data-sa=rand>🎲 ចៃដន្យ</button><button type=button data-sa=mix>🎲 ចៃដន្យ (ឆ្លាស់ប្រុស-ស្រី)</button><button type=button data-sa=abc>🔤 តាមអក្ខរក្រម</button><button type=button class=danger data-sa=clr>សម្អាត</button>":"")+
-    "<button type=button class=primary onclick='pickSeatPresenter()'>👆 ចាប់រើសតុ/សិស្ស</button>"+
+    "<button type=button onclick='showPicker()'>🎲 ចាប់ក្រុម 3D</button><button type=button class=primary onclick='pickSeatPresenter()'>👆 ចាប់រើសតុ/សិស្ស</button>"+
     "</div>"+
     (over?"<p class=cxwarn>⚠️ សិស្ស "+kn(c.st.length)+" នាក់ ច្រើនជាងកៅអី "+kn(N)+"។ សូមជ្រើសប្លង់តុ ២ នាក់។</p>":"")+
     (ed?"<p class=note style='margin:0 0 8px'>✋ <b>រៀបដោយដៃ</b>៖ ចុចលើសិស្សក្នុងបញ្ជីខាងក្រោម (ឬលើកៅអី) រួចចុចកៅអីដែលចង់ដាក់ — បើកៅអីនោះមានសិស្ស នឹងប្ដូរកន្លែងគ្នា។ ចុចកៅអីដដែលពីរដង ដើម្បីដកសិស្សចេញ។</p>":"")+
@@ -265,23 +271,20 @@ function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(M
 $("ogBody").addEventListener("change",function(e){
   if(e.target.id!=="seLay")return;var c=cls();if(!c||!canE())return;
   var S=seat(c),order=S.s.map(function(k){return byKey(c)[k]}).filter(Boolean);
-  S.lay=e.target.value;fillSeats(c,order);savR();renderOrg();
+  S.lay=e.target.value;fillSeats(c,order);cleanSeat(c);savR();renderOrg();
 });
 $("ogBody").addEventListener("click",function(e){
   if(ogV!=="seat")return;var c=cls();if(!c||!canE())return;
   var a=e.target.closest("[data-sa]");
   if(a){
     var k=a.dataset.sa,S=seat(c),has=S.s.some(Boolean);
-    if(k==="clr"){if(has&&confirm("សម្អាតកៅអីទាំងអស់?")){S.s=[];savR();renderOrg()}return}
+    if(k==="clr"){if(has&&confirm("សម្អាតកៅអីទាំងអស់?")){S.s=[];S.abMap={};savR();renderOrg()}return}
     if(has&&!confirm("រៀបកៅអីឡើងវិញ? ការរៀបចាស់នឹងត្រូវជំនួស។"))return;
     var st=c.st.slice();
     if(k==="abc")st.sort(kmSort);
     else if(k==="rand")st=shuffle(st);
     else{var f=shuffle(st.filter(function(s){return s.g==="ស្រី"})),m=shuffle(st.filter(function(s){return s.g!=="ស្រី"}));st=[];while(f.length||m.length){if(m.length)st.push(m.shift());if(f.length)st.push(f.shift())}}
-    fillSeats(c,st);seatSel=null;
-    /* បែងចែកវិញ្ញាសា ក/ខ */
-    var S2=seat(c),N2=nSeats(LAY[S2.lay]);S2.abMap={};
-    for(var i=0;i<N2;i++){if(S2.s[i])S2.abMap[S2.s[i]]=(i%2===0?"ក":"ខ")}
+    fillSeats(c,st);cleanSeat(c);seatSel=null;
     savR();seatAnim=true;renderOrg();seatAnim=false;notify(k==="abc"?"បានរៀបតាមអក្ខរក្រម":"បានរៀបដោយចៃដន្យ");return;
   }
   var fr=e.target.closest("[data-free]");
@@ -294,9 +297,7 @@ $("ogBody").addEventListener("click",function(e){
   }else{
     var old=S2.s[i];S2.s[i]=seatSel.k;   /* សិស្សចាស់នៃកៅអីនោះ → ត្រឡប់ទៅបញ្ជីមិនទាន់មានកៅអី */
   }
-  /* អាប់ដេតវិញ្ញាសា ក/ខ ពេលផ្លាស់ប្តូរកៅអី */
-  var S3=seat(c),N3=nSeats(LAY[S3.lay]);S3.abMap={};
-  for(var i=0;i<N3;i++){if(S3.s[i])S3.abMap[S3.s[i]]=(i%2===0?"ក":"ខ")}
+  syncAB(S2);   /* អាប់ដេតវិញ្ញាសា ក/ខ ពេលផ្លាស់ប្តូរកៅអី */
   seatSel=null;savR();renderOrg();
 });
 function seatPrint(c){
@@ -305,8 +306,6 @@ function seatPrint(c){
    "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
    "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>";
 }
-  window.animatePointer = animatePointer;
-
   function pickSeatPresenter() {
     var seats = document.querySelectorAll('.seat:not(.empty)');
     if (seats.length === 0) return;
@@ -318,20 +317,28 @@ function seatPrint(c){
   window.pickSeatPresenter = pickSeatPresenter;
 
   /* 👆 ដៃរត់ & សំឡេង & Confetti */
-	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	var audioCtx = null;
 	function playTick() {
+		try {
+		var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+		if (!audioCtx) audioCtx = new AC();
+		if (audioCtx.state === "suspended") audioCtx.resume();
 		var osc = audioCtx.createOscillator();
 		var gain = audioCtx.createGain();
 		osc.connect(gain); gain.connect(audioCtx.destination);
 		osc.frequency.value = 880; gain.gain.value = 0.1;
 		osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+		} catch (e) {}
 	}
 	function fireConfetti() {
 		for (var i = 0; i < 50; i++) {
-			var c = document.createElement("div"); c.className = "confetti";
-			c.style.left = Math.random() * 100 + "%"; c.style.backgroundColor = 'hsl(' + Math.random() * 360 + ', 70%, 60%)';
-			document.body.appendChild(c);
-			setTimeout(function() { c.remove() }, 1000);
+			(function (c) {
+				c.className = "confetti";
+				c.style.left = Math.random() * 100 + "%"; c.style.backgroundColor = 'hsl(' + Math.random() * 360 + ', 70%, 60%)';
+				c.style.animationDelay = Math.random() * .3 + "s"; c.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+				document.body.appendChild(c);
+				setTimeout(function() { c.remove() }, 1600);
+			})(document.createElement("div"));
 		}
 	}
 	function animatePointer(targets, onFinish) {

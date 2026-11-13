@@ -7,7 +7,7 @@
    - រូប/ពុម្ពអក្សរក្នុងគម្រោង៖ ប្រើពីឧបករណ៍ ហើយធ្វើបច្ចុប្បន្នភាពនៅពីក្រោយ
    បិទ PWA បន្ទាន់៖ បើក index.html?nosw (លុប service worker + cache)
    ======================================================================== */
-var C = "ngs-app-v6";
+var C = "ngs-app-v7";
 var CDN = /^(cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net|fonts\.gstatic\.com)$/;
 self.addEventListener("install", function () { self.skipWaiting(); });
 self.addEventListener("activate", function (e) {
