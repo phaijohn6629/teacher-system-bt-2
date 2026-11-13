@@ -911,3 +911,7 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .card-front{background:var(--brand);color:#fff}
 .card-back{background:#fff;border:2px solid var(--brand);transform:rotateY(180deg)}
 
+/* ពិន្ទុប្រចាំខែ៖ តេស្ត ១/២ — 📝 ពីតេស្ត (ស្វ័យប្រវត្តិ) · ✏️ វាយដោយដៃ (អាទិភាព) */
+.ms-tb td.ms-tq input.ms-tauto{background:rgba(219,234,254,.7);border-color:#93c5fd;color:#1e40af;font-weight:700}
+.ms-tb td.ms-tq input.ms-man{background:#fffbeb;border-color:#f59e0b;color:#92400e;font-weight:700}
+:root:not([data-theme="light"]) .ms-tb td.ms-tq input.ms-man{background:rgba(245,158,11,.15);color:#fcd34d}
