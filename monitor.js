@@ -84,7 +84,7 @@ function tWrite(){
         var cur=sn.data(),cj=pj(cur.j);
         if(cj&&cj.by==="m"&&cj.at>(cj.ack||0)&&cj.at>(d.ack||0))return;
         if(cur.j===js&&cur.acc)return;
-        tx.set(mref(k),{o:d.o,acc:accOf(cur),j:js});
+        tx.update(mref(k),{j:js});
       });
     }).catch(function(e){console.warn("mc write:",k,e)});
   });
