@@ -30,13 +30,14 @@
 - Before every push: run `python3 tools/bump.py` (bumps `?v=` for changed JS/CSS) and `./tests/run.sh` (all lines must be `bad 0`), then bump the cache name `C` in `sw.js`.
 - Exam/practice generators are lazy-loaded: their `?v=` lives inside `exam.js` (`bump.py` handles it).
 - Question generators: `G[lesson][level]()` returns `{q, a:[A(v,tex,kind,label)], s, fig, kd}`. Every template must have a unique `kd`, because the exam engine detects repeats by `kd`. Build the answer first, then derive the data from it.
-  - Grades 7, 8, 9, 10: add forms with `vx(lesson, level, [fn…])` (`kd` prefixes `s7_`, `s8_`, `n_`, `s10_`). Base templates are auto-labeled `kd = b{lesson}_{level}`. `tests/practice.js` fails if any grade 7–10 lesson×level has fewer than 4 forms.
+  - Grades 7–12: add forms with `vx(lesson, level, [fn…])`. In `practice.js`, which holds grade 12 and the shared core, use `vx12`/`K12`. `kd` prefixes: `s7_`, `s8_`, `n_` (grade 9), `s10_`, `s11_`, and `t…_` for grade 12. Base templates are auto-labeled `kd = b{lesson}_{level}`. `tests/practice.js` fails if any grade 7–12 lesson×level has fewer than 4 forms.
+  - Grade 12 lives in `practice.js`; there is no `practice12.js`.
   - Grade 10 logic items answer `1` = true, `0` = false.
   - Never write a retry loop that can fail to terminate (e.g. waiting for a perfect square or a divisor that may not exist). Pick the answer first and derive the data from it.
   - Grade 9 probability: multiplication rule only (no combinations).
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v14`)
+## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v15`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -74,7 +75,9 @@
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
 
-### ✅ Exam question variety — `practice7.js`, `practice8.js`, `practice9.js`, `practice10.js`, `exam.js`
+### ✅ Exam question variety — `practice7.js` … `practice11.js`, `practice.js` (grade 12), `exam.js`
+- Grades 11 and 12: every lesson×level now has ≥4 forms (≈165 new forms for grade 11 and ≈63 for grade 12's gaps: sequences, exponentials/logarithms, trigonometry, derivatives and their applications, counting/probability, solid geometry, 3D vectors and planes, continuity, rational functions, differential equations, conics). Also fixed grade 11 52.2, which wrote `s(t)` in terms of `x`.
+- Every Khmer-curriculum grade (7–12) now has ≥4 forms per lesson×level. In a realistic single exam, paper ខ uses the same form as paper ក in 97.6–100% of items.
 - Grade 10 (25 lessons: polynomials, logic and sets, radicals, equations and inequalities, coordinate geometry, trigonometry, functions, statistics, vectors, transformations): each lesson×level went from 1 form to 4 (≈225 new forms). In the engine simulation, paper ខ uses the same form as paper ក in ≈98% of items.
 - Grade 7 (22 lessons) and grade 8 (19 lessons): each lesson×level went from 1 form to 4 (≈370 new forms: computation, find the unknown, real-life, reasoning). In the engine simulation, paper ខ uses the same form as paper ក in ≈98% of items.
 - Grade 9: about 125 new question forms (direct computation, find the unknown, applied, reasoning). Every lesson×level has ≥4 forms (most have 5–6). Fixed two broken templates: a degenerate midpoint and an impossible pentagon apothem.
@@ -85,9 +88,11 @@
 - Paper ខ: item j has the same form as paper ក item j, with different numbers (≈99%). 🔄 on one item gives a new form, and paper ខ follows it.
 - The exam generator makes open-response items, so there are no auto-generated distractors. Multiple-choice options exist only in the quiz bank (`quiz.js`), entered by teachers.
 
-## Remaining Tasks
-- Next: add question forms to grades 11 and 12 using the same pattern (`vx` + `kd` + extend the form-count test).
-- **Not yet tested on the live site / real phones:**
+## Status
+- ✅ **All planned code tasks are completed.** No code work is pending.
+- Optional future work: raise grades 7, 8, 10 and 11 from 4 to 5–6 forms per cell (grade 9 already has 5–6); add forms to the Cambridge (English) grades.
+
+## Recommended manual checks (live site / real phones — not automatable here)
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.
   - Refresh during a quiz/exam on a weak connection (verified only in a Node simulation with an unresponsive Firestore).

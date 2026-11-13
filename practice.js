@@ -599,6 +599,106 @@ mix(G[102],3,[function(){var A0=[ri(-3,3),ri(-3,3),ri(-3,3)],u,M,w,c,n2,u2;
    return KQ("dl","គណនាចម្ងាយពីចំណុច $M"+v3(M)+"$ ទៅបន្ទាត់ $(L)\\colon x="+L(0)+"$ , $y="+L(1)+"$ , $z="+L(2)+"$",[A("sqrt("+n2+"/"+u2+")",t,"num","d =")],
      "$A"+v3(A0)+"\\in(L)$ , $\\vec u"+v3(u)+"$ · $\\overrightarrow{AM}\\times\\vec u="+v3(c)+"$ ⇒ $d=\\dfrac{\\|\\overrightarrow{AM}\\times\\vec u\\|}{\\|\\vec u\\|}=\\sqrt{\\frac{"+n2+"}{"+u2+"}}="+t+"$")}],.35);
 /* មេរៀន (ថ្នាក់ទី១២ · តាមកម្មវិធីសិក្សា) */
+
+/* ===== ពិពិធកម្មទម្រង់លំហាត់ ថ្នាក់ទី១២ (២០២៦-១១) — បំពេញក្រឡាដែលមានតិចជាង ៤ ទម្រង់ · kd = t…_… =====
+   ជ្រើសចម្លើយមុន រួចបង្កើតទិន្នន័យ · vx12(l,lv,[…]) → ទម្រង់ថ្មីនីមួយៗមានឱកាសស្មើទម្រង់ដើម */
+function K12(kd,q,a,s,f){var o=Q(q,a,s,f);o.kd=kd;return o}
+function vx12(l,lv,L){var o=G[l][lv];G[l][lv]=function(){var i=Math.floor(Math.random()*(L.length+1));return i<L.length?L[i]():o()}}
+var TR12=[[3,4,5],[6,8,10],[5,12,13],[8,15,17]],QD12=[[1,2,2,3],[2,3,6,7],[1,4,8,9],[4,4,7,9]];
+function fct(n){var r=1;for(var i=2;i<=n;i++)r*=i;return r}
+/* ២.៣ ភាពជាប់ */
+vx12(23,1,[function(){var a=nz(-4,4),b=ri(-5,5),c=ri(-5,5),v=a*c*c+b*c;return K12("t23_lim1","$f(x)="+polyT([a,b,0])+"$ ជាប់លើ $\\mathbb R$ ។ គណនា $\\displaystyle\\lim_{x\\to"+c+"}f(x)$",[A(v,null,"num","=")],"ពហុធាជាប់ ⇒ $f("+c+")="+v+"$")}]);
+vx12(23,2,[function(){var a=nz(-5,5),b=nz(-5,5);while(a===-b)b++;return K12("t23_rat","រក $k$ ដើម្បីឱ្យ $f(x)=\\begin{cases}\\dfrac{x^2"+co(b-a,"x")+sg(-a*b,0)+"}{x"+sg(-a,0)+"} & x\\ne"+a+"\\\\ k & x="+a+"\\end{cases}$ ជាប់ត្រង់ $x="+a+"$",[A(a+b,null,"num","k =")],"$\\dfrac{(x"+sg(-a,0)+")(x"+sg(b,0)+")}{x"+sg(-a,0)+"}=x"+sg(b,0)+"\\to"+(a+b)+"$")}]);
+vx12(23,3,[function(){var a=ri(1,4),c=ri(1,3),b=a*c*c-c;return K12("t23_pc","រក $a$ ដើម្បីឱ្យ $f(x)=\\begin{cases}ax^2 & x\\le"+c+"\\\\ x"+sg(b,0)+" & x>"+c+"\\end{cases}$ ជាប់ត្រង់ $x="+c+"$",[A(a,null,"num","a =")],"$a\\cdot"+(c*c)+"="+c+sg(b,0)+"$ ⇒ $a="+a+"$")}]);
+/* ៣.១ ដេរីវេ */
+vx12(31,1,[
+ function(){var a=nz(-5,5),n=ri(2,6),b=nz(-6,6),i,P=[a];for(i=0;i<n-1;i++)P.push(0);P[n-1]=b;P.push(0);var D=[];for(i=0;i<n;i++)D.push(P[i]*(n-i));return K12("t31_pow","គណនា $f'(x)$ នៃ $f(x)="+polyT(P)+"$",[A(poly(D),polyT(D),"expr","f'(x) =")],"$(x^n)'=nx^{n-1}$ ⇒ $"+polyT(D)+"$")},
+ function(){var c=[nz(-3,3),ri(-4,4),ri(-5,5),ri(-6,6)],k=ri(-2,2),v=3*c[0]*k*k+2*c[1]*k+c[2];return K12("t31_val","$f(x)="+polyT(c)+"$ ។ គណនា $f'("+k+")$",[A(v,null,"num","=")],"$f'(x)="+polyT([3*c[0],2*c[1],c[2]])+"$ ⇒ $"+v+"$")},
+ function(){var a=nz(-6,6),k=ri(1,5),v=fr(a,2*k);return K12("t31_sqrt","$f(x)="+co(a,"\\sqrt x",true)+"$ ។ គណនា $f'("+(k*k)+")$",[A(v.s,v.t,"num","=")],"$f'(x)=\\dfrac{"+a+"}{2\\sqrt x}$ ⇒ $\\dfrac{"+a+"}{"+(2*k)+"}="+v.t+"$")}]);
+vx12(31,2,[
+ function(){var a=nz(-6,6);return K12("t31_exp","$f(x)=e^{"+co(a,"x",true)+"}$ ។ គណនា $f'(0)$",[A(a,null,"num","=")],"$f'(x)="+a+"e^{"+co(a,"x",true)+"}$ ⇒ $"+a+"$")},
+ function(){var a=nz(-6,6),b=ri(1,9),v=fr(a,b);return K12("t31_ln","$f(x)=\\ln("+poly([a,b])+")$ ។ គណនា $f'(0)$",[A(v.s,v.t,"num","=")],"$f'(x)=\\dfrac{"+a+"}{"+poly([a,b])+"}$ ⇒ $"+v.t+"$")},
+ function(){var a=nz(-6,6),f=pick(["sin","tan"]);return K12("t31_sin","$f(x)=\\"+f+"("+co(a,"x",true)+")$ ។ គណនា $f'(0)$",[A(a,null,"num","=")],"$f'(0)="+a+"\\cdot"+(f==="sin"?"\\cos0":"(1+\\tan^20)")+"="+a+"$")}]);
+vx12(31,3,[
+ function(){var a=ri(-5,5);return K12("t31_prod","$f(x)=(x"+(a?sg(a,0):"")+")e^x$ ។ គណនា $f'(0)$",[A(1+a,null,"num","=")],"$f'(x)=e^x+(x"+(a?sg(a,0):"")+")e^x$ ⇒ $1"+sg(a,0)+"="+(1+a)+"$")},
+ function(){var a=nz(-5,5),b=ri(-6,6),c=nz(-4,4),v=fr(a*c-b,c*c);return K12("t31_quot","$f(x)=\\dfrac{"+poly([a,b])+"}{x"+sg(c,0)+"}$ ។ គណនា $f'(0)$",[A(v.s,v.t,"num","=")],"$f'(x)=\\dfrac{"+a+"(x"+sg(c,0)+")-("+poly([a,b])+")}{(x"+sg(c,0)+")^2}$ ⇒ $\\dfrac{"+(a*c-b)+"}{"+(c*c)+"}="+v.t+"$")},
+ function(){var a=nz(-3,3),b=nz(-3,3),n=ri(2,5),v=n*a*Math.pow(b,n-1);return K12("t31_chain","$f(x)=("+poly([a,b])+")^{"+n+"}$ ។ គណនា $f'(0)$",[A(v,null,"num","=")],"$f'(x)="+(n*a)+"("+poly([a,b])+")^{"+(n-1)+"}$ ⇒ $"+v+"$")}]);
+/* ៣.២ អនុវត្តដេរីវេ */
+vx12(32,1,[
+ function(){var c=[nz(-3,3),ri(-4,4),ri(-5,5),ri(-5,5)],k=ri(-2,2),m=3*c[0]*k*k+2*c[1]*k+c[2];return K12("t32_slope","រកមេគុណប្រាប់ទិសនៃបន្ទាត់ប៉ះក្រាប $y="+polyT(c)+"$ ត្រង់ $x="+k+"$",[A(m,null,"num","m =")],"$y'("+k+")="+m+"$")},
+ function(){var a=ri(1,12),k=ri(1,5);return K12("t32_vel","ចលនាមួយ $s(t)=t^3-"+a+"t$ (m) ។ គណនាល្បឿនត្រង់ $t="+k+"$",[A(3*k*k-a,null,"num","v =")],"$v=3t^2-"+a+"$ ⇒ $"+(3*k*k-a)+"$")},
+ function(){var a=nz(-3,3);return K12("t32_tanp","សរសេរបន្ទាត់ប៉ះក្រាប $y=x^3$ ត្រង់ $x="+a+"$ ជា $y=mx+p$",[A(3*a*a,null,"num","m ="),A(-2*a*a*a,null,"num","p =")],"$m=3\\cdot"+(a*a)+"="+(3*a*a)+"$ · $p="+(a*a*a)+"-"+(3*a*a)+"\\cdot"+sgp(a)+"="+(-2*a*a*a)+"$")}]);
+vx12(32,2,[
+ function(){var a=ri(1,5);return K12("t32_dec","$f(x)=x^3-"+(3*a*a)+"x$ ចុះលើចន្លោះ $(\\alpha;\\beta)$ ។ រក $\\alpha$ និង $\\beta$",[A(-a,null,"num","α ="),A(a,null,"num","β =")],"$f'(x)=3(x^2-"+(a*a)+")<0$ ⇔ $-"+a+"<x<"+a+"$")},
+ function(){var k=ri(1,9);return K12("t32_minc","រកតម្លៃអប្បបរមានៃ $f(x)=x+\\dfrac{"+(k*k)+"}{x}$ លើ $(0;+\\infty)$",[A(2*k,null,"num","m =")],"$f'(x)=1-\\dfrac{"+(k*k)+"}{x^2}=0$ ⇒ $x="+k+"$ ⇒ $f="+(2*k)+"$")},
+ function(){var h=nz(-4,4),k=ri(-6,6),b=-2*h,c=h*h+k;return K12("t32_vmin","ប្រើដេរីវេ រកតម្លៃអប្បបរមានៃ $f(x)=x^2"+co(b,"x")+sg(c,0)+"$",[A(k,null,"num","m =")],"$f'(x)=2x"+sg(b,0)+"=0$ ⇒ $x="+h+"$ ⇒ $f("+h+")="+k+"$")}]);
+vx12(32,3,[
+ function(){var k=ri(1,5);return K12("t32_cyl","កំប៉ុងរាងស៊ីឡាំងមានមាឌ $"+(2*k*k*k)+"\\pi$ cm³ ។ រកកាំ $r$ ដែលធ្វើឱ្យផ្ទៃក្រឡាសរុបតូចបំផុត",[A(k,null,"num","r =")],"$S=2\\pi r^2+\\dfrac{"+(4*k*k*k)+"\\pi}{r}$ · $S'=0$ ⇒ $r^3="+(k*k*k)+"$ ⇒ $r="+k+"$ (ពេលនោះ $h=2r$)")},
+ function(){var s=2*ri(2,20);return K12("t32_sum","ចំនួនពីរមានផលបូក $"+s+"$ ។ ផលគុណធំបំផុតរបស់វា?",[A(s*s/4,null,"num","=")],"$P=x("+s+"-x)$ · $P'=0$ ⇒ $x="+(s/2)+"$ ⇒ $"+(s*s/4)+"$")},
+ function(){var h=ri(5,30),M=ri(10,200),b=2*h,c=h*h-M;return K12("t32_profit","ប្រាក់ចំណេញ $P(x)=-x^2+"+b+"x"+sg(-c,0)+"$ (ពាន់រៀល) ពេលលក់ $x$ ឯកតា ។ លក់ប៉ុន្មានឯកតា ចំណេញច្រើនបំផុត ហើយចំណេញប៉ុន្មាន?",[A(h,null,"num","x ="),A(M,null,"num","P =")],"$P'(x)=-2x+"+b+"=0$ ⇒ $x="+h+"$ ⇒ $P="+M+"$")}]);
+/* ៤.១ អនុគមន៍សនិទាន */
+vx12(41,1,[
+ function(){var a=nz(-5,5),b=ri(-6,6),c=nz(-5,5);while(a*c+b===0)b++;return K12("t41_va","រកអាស៊ីមតូតឈរ $x=\\dots$ នៃ $y=\\dfrac{"+poly([a,b])+"}{x"+sg(-c,0)+"}$",[A(c,null,"num","x =")],"ភាគបែង $=0$ ត្រង់ $x="+c+"$ (ភាគយក $\\ne0$)")},
+ function(){var a=nz(-6,6),b=ri(-5,5),c=nz(-4,4),d=ri(-5,5),v=fr(a,c);return K12("t41_ha","រកអាស៊ីមតូតដេក $y=\\dots$ នៃ $y=\\dfrac{"+poly([a,b])+"}{"+poly([c,d])+"}$",[A(v.s,v.t,"num","y =")],"$\\lim\\limits_{x\\to\\pm\\infty}=\\dfrac{"+a+"}{"+c+"}="+v.t+"$")},
+ function(){var a=ri(1,9);return K12("t41_dom","អនុគមន៍ $y=\\dfrac{1}{x^2-"+(a*a)+"}$ មិនកំណត់ត្រង់ $x=\\pm k$ ។ រក $k>0$",[A(a,null,"num","k =")],"$x^2="+(a*a)+"$ ⇒ $k="+a+"$")}]);
+vx12(41,2,[
+ function(){var a=ri(-5,5),b=nz(-6,6),c=nz(-4,4);return K12("t41_obl","រកអាស៊ីមតូតទ្រេត $y=mx+p$ នៃ $y=x"+(a?sg(a,0):"")+"+\\dfrac{"+b+"}{x"+sg(-c,0)+"}$",[A(1,null,"num","m ="),A(a,null,"num","p =")],"$\\dfrac{"+b+"}{x"+sg(-c,0)+"}\\to0$ ⇒ $y=x"+(a?sg(a,0):"")+"$")},
+ function(){var a=ri(-9,9),b=nz(-4,4),k=ri(-4,4);while(k===b)k++;var v=fr(k*k+a,k-b);return K12("t41_val","$f(x)=\\dfrac{x^2"+(a?sg(a,0):"")+"}{x"+sg(-b,0)+"}$ ។ គណនា $f("+k+")$",[A(v.s,v.t,"num","=")],"$\\dfrac{"+(k*k+a)+"}{"+(k-b)+"}="+v.t+"$")},
+ function(){var a=nz(-5,5),b=ri(-6,6),c=nz(-4,4);while(a*c-b===0)b++;return K12("t41_der","$f(x)=\\dfrac{"+poly([a,b])+"}{x"+sg(c,0)+"}$ មាន $f'(x)=\\dfrac{N}{(x"+sg(c,0)+")^2}$ ។ រក $N$",[A(a*c-b,null,"num","N =")],"$N=ad-bc="+a+"\\cdot"+sgp(c)+"-"+sgp(b)+"="+(a*c-b)+"$")}]);
+vx12(41,3,[
+ function(){var a=nz(-5,5),b=ri(-6,6),c=nz(-4,4);while(a*c+b===0)b++;return K12("t41_cen","រកផ្ចិតឆ្លុះ $I(p;q)$ នៃក្រាប $y=\\dfrac{"+poly([a,b])+"}{x"+sg(-c,0)+"}$",[A(c,null,"num","p ="),A(a,null,"num","q =")],"ប្រសព្វអាស៊ីមតូត $x="+c+"$ , $y="+a+"$")},
+ function(){var k=ri(1,8);return K12("t41_ext","$f(x)=\\dfrac{x^2+"+(k*k)+"}{x}$ ($x>0$) ។ រកអប្បបរមាធៀប ៖ $x$ និង $f(x)$",[A(k,null,"num","x ="),A(2*k,null,"num","f =")],"$f'(x)=1-\\dfrac{"+(k*k)+"}{x^2}=0$ ⇒ $x="+k+"$ , $f="+(2*k)+"$")},
+ function(){var a=nz(-5,5),b=nz(-8,8),c=nz(-5,5),v=fr(b,c);return K12("t41_yi","ក្រាប $y=\\dfrac{"+poly([a,b])+"}{x"+sg(c,0)+"}$ កាត់អ័ក្ស $Oy$ ត្រង់ $y=\\dots$ ?",[A(v.s,v.t,"num","y =")],"$x=0$ ⇒ $\\dfrac{"+b+"}{"+c+"}="+v.t+"$")}]);
+/* ៤.២ ៤.៣ អិចស្ប៉ូណង់ស្យែល លោការីត (កម្រិត៣) */
+vx12(42,3,[function(){var a=ri(-5,5);return K12("t42_der","$f(x)="+(a?"(x"+sg(a,0)+")":"x")+"e^{x}$ ។ គណនា $f'(0)$ និងរក $x$ ដែល $f'(x)=0$",[A(1+a,null,"num","f'(0) ="),A(-1-a,null,"num","x =")],"$f'(x)=(x"+sg(a+1,0)+")e^x$ ⇒ $f'(0)="+(1+a)+"$ · $x="+(-1-a)+"$")}]);
+vx12(43,3,[function(){var a=ri(-5,5),b=ri(1,9);return K12("t43_ineq","ដោះស្រាយ $\\ln(x"+sg(-a,0)+")<\\ln"+b+"$ ៖ ចម្លើយ $\\alpha<x<\\beta$",[A(a,null,"num","α ="),A(a+b,null,"num","β =")],"$0<x"+sg(-a,0)+"<"+b+"$ ⇒ $"+a+"<x<"+(a+b)+"$")}]);
+/* ៦.១ ៦.២ សមីការឌីផេរ៉ង់ស្យែល */
+vx12(61,1,[
+ function(){var a=nz(-4,4),k=ri(-5,5);return K12("t61_int","$y'="+a+"e^{"+co(a,"x",true)+"}$ និង $y(0)="+k+"$ ។ ចម្លើយ $y=e^{"+co(a,"x",true)+"}+C$ ។ រក $C$",[A(k-1,null,"num","C =")],"$y(0)=1+C="+k+"$ ⇒ $C="+(k-1)+"$")},
+ function(){var y0=nz(-5,5),k=nz(-3,3);return K12("t61_exp","$y'="+co(k,"y",true)+"$ និង $y(0)="+y0+"$ ។ គណនា $y(1)$",[A(y0+"*e^("+k+")",(y0===1?"":y0===-1?"-":y0)+"e^{"+k+"}","num","y(1) =")],"$y="+y0+"e^{"+k+"x}$ ⇒ $y(1)="+(y0===1?"":y0===-1?"-":y0)+"e^{"+k+"}$")}]);
+vx12(61,3,[function(){var h=pick([2,3,5,8,10]);return K12("t61_half","សារធាតុវិទ្យុសកម្មថយតាម $y'=-ky$ ហើយមានពាក់កណ្ដាលអាយុ $"+h+"$ ឆ្នាំ ។ រក $k$",[A("ln(2)/"+h,"\\dfrac{\\ln2}{"+h+"}","num","k =")],"$e^{-"+h+"k}=\\dfrac12$ ⇒ $k=\\dfrac{\\ln2}{"+h+"}$")}]);
+vx12(62,1,[
+ function(){var w=ri(1,6);return K12("t62_cx","ចម្លើយទូទៅនៃ $y''+"+(w*w)+"y=0$ គឺ $y=C_1\\cos\\omega x+C_2\\sin\\omega x$ ។ រក $\\omega>0$",[A(w,null,"num","ω =")],"$r^2+"+(w*w)+"=0$ ⇒ $r=\\pm"+w+"i$ ⇒ $\\omega="+w+"$")},
+ function(){var r1=nz(-5,5),r2=nz(-5,5),b=-(r1+r2),c=r1*r2;return K12("t62_sum","សមីការសម្គាល់នៃ $y''"+co(b,"y'")+(c?co(c,"y"):"")+"=0$ មានឫស $r_1,r_2$ ។ គណនា $r_1+r_2$ និង $r_1r_2$",[A(r1+r2,null,"num","S ="),A(c,null,"num","P =")],"$r^2"+co(b,"r")+(c?sg(c,0):"")+"=0$ ⇒ $S="+(r1+r2)+"$ , $P="+c+"$")}]);
+vx12(62,3,[function(){var w=ri(1,4),A0=nz(-5,5),B0=nz(-5,5);return K12("t62_ivp","ដោះស្រាយ $y''+"+(w*w)+"y=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+(B0*w)+"$ ។ សរសេរ $y=C_1\\cos"+(w===1?"":w)+"x+C_2\\sin"+(w===1?"":w)+"x$ រក $C_1,C_2$",[A(A0,null,"num","C₁ ="),A(B0,null,"num","C₂ =")],"$y(0)=C_1="+A0+"$ · $y'(0)="+w+"C_2="+(B0*w)+"$ ⇒ $C_2="+B0+"$")}]);
+/* ៧.២ ប្រូបាប */
+vx12(71,2,[function(){var n=ri(3,6),k=ri(0,n),p=fr(cnk(n,k),Math.pow(2,n));return K12("t71_bin","បោះកាក់ $"+n+"$ ដង ។ $X$ = ចំនួនដងចេញ «ក្បាល» ។ គណនា $P(X="+k+")$",[A(p.s,p.t,"num","P =")],"ច្បាប់ទ្វេធា ៖ $C_{"+n+"}^{"+k+"}\\left(\\tfrac12\\right)^{"+n+"}="+p.t+"$")}]);
+/* ៨.១ ប៉ារ៉ាបូល */
+vx12(81,1,[
+ function(){var p=nz(-5,5);return K12("t81_x2","ប៉ារ៉ាបូល $x^2="+(4*p)+"y$ ។ រកកំណុំ $F(0;\\dots)$ និងបន្ទាត់ប្រាប់ទិស $y=\\dots$",[A(p,null,"num","F ="),A(-p,null,"num","y =")],"$4p="+(4*p)+"$ ⇒ $p="+p+"$ ⇒ $F(0;"+p+")$ , $y="+(-p)+"$")},
+ function(){var p=nz(-5,5);return K12("t81_dir","ប៉ារ៉ាបូល $y^2="+(4*p)+"x$ ។ រកបន្ទាត់ប្រាប់ទិស $x=\\dots$",[A(-p,null,"num","x =")],"$p="+p+"$ ⇒ $x="+(-p)+"$")},
+ function(){var a=ri(1,6),k=pick([1,2,3,4])*pick([1,-1]),b=a*k*pick([1,-1]);a=Math.abs(a);var K0=b*b/a;if(K0!==Math.round(K0)){b=2*a;K0=4*a}return K12("t81_k","ប៉ារ៉ាបូល $y^2=kx$ កាត់តាម $("+a+";"+b+")$ ។ រក $k$",[A(K0,null,"num","k =")],"$"+(b*b)+"=k\\cdot"+a+"$ ⇒ $k="+K0+"$")}]);
+vx12(81,2,[function(){var p=nz(-6,6);return K12("t81_lr","ប៉ារ៉ាបូល $y^2="+(4*p)+"x$ ។ គណនាប្រវែងអង្កត់កាត់តាមកំណុំ កែងនឹងអ័ក្ស (latus rectum)",[A(4*Math.abs(p),null,"num","=")],"$|4p|="+(4*Math.abs(p))+"$")}]);
+vx12(81,3,[
+ function(){var p=ri(1,5),x0=ri(1,9);return K12("t81_fd","ចំណុច $M$ នៅលើប៉ារ៉ាបូល $y^2="+(4*p)+"x$ មានអាប់ស៊ីស $"+x0+"$ ។ គណនាចម្ងាយ $MF$ ($F$ កំណុំ)",[A(x0+p,null,"num","MF =")],"$MF$ = ចម្ងាយទៅបន្ទាត់ប្រាប់ទិស $x=-"+p+"$ ⇒ $"+x0+"+"+p+"="+(x0+p)+"$")},
+ function(){var h=nz(-4,4),k=ri(-5,5),b=-2*h,c=h*h+k;return K12("t81_vx","ប៉ារ៉ាបូល $y=x^2"+co(b,"x")+sg(c,0)+"$ សរសេរជា $(x-h)^2=y-k$ ។ រកកំពូល $(h;k)$",[A(h,null,"num","h ="),A(k,null,"num","k =")],"បំពេញការេ ⇒ $(x"+sg(-h,0)+")^2=y"+sg(-k,0)+"$")}]);
+/* ៨.២ អេលីប */
+vx12(82,1,[
+ function(){var a=ri(3,9),b=ri(1,a-1);return K12("t82_maj","អេលីប $\\dfrac{x^2}{"+(a*a)+"}+\\dfrac{y^2}{"+(b*b)+"}=1$ ។ គណនាប្រវែងអ័ក្សធំ និងអ័ក្សតូច",[A(2*a,null,"num","2a ="),A(2*b,null,"num","2b =")],"$a="+a+"$ , $b="+b+"$")},
+ function(){var a=ri(3,9),b=ri(1,a-1);return K12("t82_vy","អេលីប $\\dfrac{x^2}{"+(a*a)+"}+\\dfrac{y^2}{"+(b*b)+"}=1$ កាត់អ័ក្ស $Oy$ ត្រង់ $(0;\\pm k)$ ។ រក $k$",[A(b,null,"num","k =")],"$x=0$ ⇒ $y^2="+(b*b)+"$ ⇒ $k="+b+"$")},
+ function(){var T=pick(TR12);return K12("t82_f","អេលីប $\\dfrac{x^2}{"+(T[2]*T[2])+"}+\\dfrac{y^2}{"+(T[1]*T[1])+"}=1$ ។ រកកំណុំ $(\\pm c;0)$",[A(T[0],null,"num","c =")],"$c=\\sqrt{"+(T[2]*T[2])+"-"+(T[1]*T[1])+"}="+T[0]+"$")}]);
+vx12(82,2,[function(){var T=pick(TR12);return K12("t82_a","អេលីបផ្ចិត $O$ អ័ក្សធំលើ $Ox$ មាន $b="+T[1]+"$ និងកំណុំ $(\\pm"+T[0]+";0)$ ។ រក $a$",[A(T[2],null,"num","a =")],"$a^2=b^2+c^2="+(T[2]*T[2])+"$ ⇒ $a="+T[2]+"$")}]);
+vx12(82,3,[
+ function(){var a=ri(2,9),b=ri(1,a-1);return K12("t82_area","គណនាផ្ទៃក្រឡាអេលីប $\\dfrac{x^2}{"+(a*a)+"}+\\dfrac{y^2}{"+(b*b)+"}=1$ (ទុក $\\pi$)",[A((a*b)+"*pi",(a*b)+"\\pi","num","S =")],"$S=\\pi ab="+(a*b)+"\\pi$")},
+ function(){var a=ri(3,12),b=ri(1,a-1);return K12("t82_sum","$M$ ជាចំណុចលើអេលីប $\\dfrac{x^2}{"+(a*a)+"}+\\dfrac{y^2}{"+(b*b)+"}=1$ មានកំណុំ $F_1,F_2$ ។ គណនា $MF_1+MF_2$",[A(2*a,null,"num","=")],"និយមន័យ ⇒ $2a="+(2*a)+"$")}]);
+/* ៨.៣ អ៊ីពែបូល */
+vx12(83,1,[
+ function(){var a=ri(1,9),b=ri(1,9);return K12("t83_a","អ៊ីពែបូល $\\dfrac{x^2}{"+(a*a)+"}-\\dfrac{y^2}{"+(b*b)+"}=1$ មានកំពូល $(\\pm k;0)$ ។ រក $k$",[A(a,null,"num","k =")],"$a="+a+"$")},
+ function(){var a=ri(1,9),b=ri(1,9);return K12("t83_ax","គណនាប្រវែងអ័ក្សទទឹង (រវាងកំពូលពីរ) នៃ $\\dfrac{x^2}{"+(a*a)+"}-\\dfrac{y^2}{"+(b*b)+"}=1$",[A(2*a,null,"num","=")],"$2a="+(2*a)+"$")},
+ function(){var a=ri(1,9),b=ri(1,9),m=fr(b,a);return K12("t83_asy","រកមេគុណប្រាប់ទិសវិជ្ជមាននៃអាស៊ីមតូតនៃ $\\dfrac{x^2}{"+(a*a)+"}-\\dfrac{y^2}{"+(b*b)+"}=1$",[A(m.s,m.t,"num","m =")],"$y=\\pm\\dfrac ba x$ ⇒ $"+m.t+"$")}]);
+vx12(83,2,[function(){var T=pick(TR12);return K12("t83_b2","អ៊ីពែបូល $\\dfrac{x^2}{a^2}-\\dfrac{y^2}{b^2}=1$ មាន $a="+T[0]+"$ និងកំណុំ $(\\pm"+T[2]+";0)$ ។ រក $b^2$",[A(T[1]*T[1],null,"num","b² =")],"$b^2=c^2-a^2="+(T[2]*T[2])+"-"+(T[0]*T[0])+"="+(T[1]*T[1])+"$")}]);
+vx12(83,3,[function(){var a=ri(1,10),b=ri(1,9);return K12("t83_diff","$M$ ជាចំណុចលើអ៊ីពែបូល $\\dfrac{x^2}{"+(a*a)+"}-\\dfrac{y^2}{"+(b*b)+"}=1$ មានកំណុំ $F_1,F_2$ ។ គណនា $|MF_1-MF_2|$",[A(2*a,null,"num","=")],"និយមន័យ ⇒ $2a="+(2*a)+"$")}]);
+/* ១០.១ ១០.២ វ៉ិចទ័រ និងប្លង់ក្នុងលំហ */
+vx12(101,1,[function(){var u=[ri(-5,5),ri(-5,5),ri(-5,5)],v=[ri(-5,5),ri(-5,5),ri(-5,5)];return K12("t101_sub","$\\vec u"+v3(u)+"$ , $\\vec v"+v3(v)+"$ ។ រក $\\vec u-\\vec v$",[A(u[0]-v[0],null,"num","x ="),A(u[1]-v[1],null,"num","y ="),A(u[2]-v[2],null,"num","z =")],"$"+v3([u[0]-v[0],u[1]-v[1],u[2]-v[2]])+"$")}]);
+vx12(101,2,[function(){var u=[ri(-3,3),ri(-3,3),ri(-3,3)],v=[ri(-3,3),ri(-3,3),ri(-3,3)],w=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];return K12("t101_cr","$\\vec u"+v3(u)+"$ , $\\vec v"+v3(v)+"$ ។ រក $\\vec u\\times\\vec v$",[A(w[0],null,"num","x ="),A(w[1],null,"num","y ="),A(w[2],null,"num","z =")],"$"+v3(w)+"$")}]);
+vx12(101,3,[
+ function(){var a=nz(-6,6),b=nz(-6,6),A0=[ri(-3,3),ri(-3,3),ri(-3,3)],S=fr(Math.abs(a*b),2);return K12("t101_ar","$A"+v3(A0)+"$ , $B"+v3([A0[0]+a,A0[1],A0[2]])+"$ , $C"+v3([A0[0],A0[1]+b,A0[2]])+"$ ។ គណនាផ្ទៃក្រឡាត្រីកោណ $ABC$",[A(S.s,S.t,"num","S =")],"$\\overrightarrow{AB}\\times\\overrightarrow{AC}=(0;0;"+(a*b)+")$ ⇒ $S=\\dfrac{"+Math.abs(a*b)+"}{2}$")},
+ function(){var u=[ri(-3,3),ri(-3,3),ri(-3,3)],v=[ri(-3,3),ri(-3,3),ri(-3,3)],w=[ri(-3,3),ri(-3,3),ri(-3,3)],D=u[0]*(v[1]*w[2]-v[2]*w[1])-u[1]*(v[0]*w[2]-v[2]*w[0])+u[2]*(v[0]*w[1]-v[1]*w[0]);return K12("t101_mix","គណនាផលគុណចម្រុះ $[\\vec u,\\vec v,\\vec w]=(\\vec u\\times\\vec v)\\cdot\\vec w$ ដែល $\\vec u"+v3(u)+"$ , $\\vec v"+v3(v)+"$ , $\\vec w"+v3(w)+"$",[A(D,null,"num","=")],"ដេទែរមីណង់ $3\\times3$ ⇒ $"+D+"$")}]);
+vx12(102,1,[function(){var n=[nz(-4,4),nz(-4,4),nz(-4,4)],P=[ri(-3,3),ri(-3,3),ri(-3,3)],d=n[0]*P[0]+n[1]*P[1]+n[2]*P[2];return K12("t102_pt","ប្លង់ $"+co(n[0],"x",true)+co(n[1],"y")+co(n[2],"z")+"=d$ កាត់តាម $M"+v3(P)+"$ ។ រក $d$",[A(d,null,"num","d =")],"ជំនួស ⇒ $d="+d+"$")}]);
+vx12(102,2,[function(){var I=[ri(-4,4),ri(-4,4),ri(-4,4)],R=ri(1,7);return K12("t102_sph","ស្វ៊ែ $(x"+(I[0]?sg(-I[0],0):"")+")^2+(y"+(I[1]?sg(-I[1],0):"")+")^2+(z"+(I[2]?sg(-I[2],0):"")+")^2="+(R*R)+"$ ។ រកផ្ចិត និងកាំ",[A(I[0],null,"num","x ="),A(I[1],null,"num","y ="),A(I[2],null,"num","z ="),A(R,null,"num","R =")],"$I"+v3(I)+"$ , $R="+R+"$")}]);
+vx12(102,3,[function(){var q=pick(QD12.slice(0,3)),d1=ri(-9,9),d2=d1+nz(-12,12),D=fr(Math.abs(d1-d2),q[3]);return K12("t102_dp","គណនាចម្ងាយរវាងប្លង់ស្រប $"+co(q[0],"x",true)+co(q[1],"y")+co(q[2],"z")+sg(d1,0)+"=0$ និង $"+co(q[0],"x",true)+co(q[1],"y")+co(q[2],"z")+sg(d2,0)+"=0$",[A(D.s,D.t,"num","=")],"$\\dfrac{|"+d1+"-("+d2+")|}{"+q[3]+"}="+D.t+"$")}]);
+Object.keys(G).forEach(function(l){[1,2,3].forEach(function(v){var o=G[l][v];if(o)G[l][v]=function(){var x=o();if(x&&!x.kd)x.kd="b"+l+"_"+v;return x}})});
+
 var LES=[
   ["ជំពូកទី១ ចំនួនកុំផ្លិច",[[11,"ចំនួនកុំផ្លិច"]]],
   ["ជំពូកទី២ លីមីត",[[22,"លីមីតនៃអនុគមន៍"],[23,"ភាពជាប់នៃអនុគមន៍"]]],
