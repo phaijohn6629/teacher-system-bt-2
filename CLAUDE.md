@@ -2,11 +2,19 @@
 
 ## Project Structure & Rules
 - **Frameworks**: Firebase (Firestore, Auth), Service Worker (PWA).
-- **Core Files**:
-  - `script.js`: Firebase init, Auth, and main app logic.
-  - `sched.js`: Schedule and Timesheet/Workplan logic.
-  - `monitor.js`: Monitor account management and real-time sync for monitor class data.
-  - `sw.js`: Service worker for PWA.
+## File Map & Architecture
+
+| File | Purpose (English) | Description (Khmer) |
+| :--- | :--- | :--- |
+| `script.js` | App logic & Auth | គ្រប់គ្រង Firebase Auth និងតក្កវិជ្ជាមេនៃកម្មវិធី |
+| `sched.js` | Schedule & Timesheet | គ្រប់គ្រងកាលវិភាគ និងតារាងម៉ោងបង្រៀន |
+| `monitor.js` | Class Monitoring & Sync | គ្រប់គ្រងគណនីប្រធានថ្នាក់ និងការ Sync ទិន្នន័យថ្នាក់ |
+| `sw.js` | PWA Service Worker | គ្រប់គ្រង Cache សម្រាប់ PWA ដើម្បីបើកលឿន |
+| `exam.js` | Exam generator | គ្រប់គ្រងការបង្កើតវិញ្ញាសាប្រឡង |
+| `att.js` | Attendance logic | គ្រប់គ្រងការចុះវត្តមាន |
+| `exgen.js` | Exercise Generator | គ្រប់គ្រងកិច្ចតែងការ និងការបង្កើតលំហាត់ |
+| `index.html` | Main Entry Point | ទំព័រមេសម្រាប់ផ្ទុក UI និងហៅដំណើរការកម្មវិធី |
+
 - **Rules**:
   - Use `tx.update` for Firestore updates to avoid overwriting existing fields (crucial for supporting new data).
   - Use Firebase transactions for any write operations on shared data (e.g., `mc` collection).
