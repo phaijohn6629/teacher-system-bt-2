@@ -75,6 +75,7 @@ function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function csvSafe(v){var s=String(v==null?"":v);return(/^[=+@\t\r]/.test(s)||/^-[^0-9.]/.test(s))?"'"+s:s}
 function notify(msg){if(window.WALKER)WALKER.toast(msg);var t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove("show")},2600)}
+function notifyErr(e){notify(authErr(e))}
 function fd(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return"";var p=s.split("-");return +p[2]+" "+M[+p[1]-1]+" "+p[0]}
 function selOpts(arr,val){return arr.map(function(o){return"<option"+(o===val?" selected":"")+">"+esc(o)+"</option>"}).join("")}
 
@@ -160,7 +161,7 @@ function enterApp(user){
     net.then(function(p){if(sig(p)!==sig(c))location.reload()},function(e){console.warn("profile:",e)});
     return goApp(user,c);
   }
-  net.then(function(p){goApp(user,p)}).catch(function(e){alert(authErr(e));doLogout()});
+  net.then(function(p){goApp(user,p)}).catch(function(e){notifyErr(e);doLogout()});
 }
 function goApp(user,p){
   (function(){
@@ -224,7 +225,7 @@ $("btnLogin").onclick=function(){
     .then(function(){return window.FB.signInWithEmailAndPassword(window.FB.auth,idEmail(id),pass)})
     .then(function(){$("loginPass").value="";window._justLogin=true;
       try{if(rem)localStorage.setItem("remUntil",String(Date.now()+30*864e5));else localStorage.removeItem("remUntil")}catch(e){}})
-    .catch(function(e){alert(authErr(e))})
+    .catch(function(e){notifyErr(e)})
     .then(function(){btn.disabled=false});
 };
 ["loginId","loginPass"].forEach(function(i){$(i).onkeydown=function(e){if(e.key==="Enter")$("btnLogin").onclick()}});
@@ -310,7 +311,7 @@ function setEnabled(id,el){
   window.FB.updateDoc(window.FB.doc(window.db,"users",u.uid),{enabled:on}).then(function(){
     u.enabled=on;data.forEach(function(t){if(t.id===id)t.en=on});
     save();render();notify(on?"បានបើកសិទ្ធិឱ្យប្រើ":"បានបិទសិទ្ធិ");
-  }).catch(function(e){el.checked=!on;alert(authErr(e))});
+  }).catch(function(e){el.checked=!on;notifyErr(e)});
 }
 function disableAccount(id){
   var u=usersById[id];if(!u)return;
@@ -2651,8 +2652,9 @@ function diagArm(){var b=$("syncBar");if(b)b.remove();sy.diagOn=false;sy.diagLog
 var hidAt=0;
 function kick(why){
   if(!who||!window.db||!window.FB||!window.FB.disableNetwork||sy.kicking)return;
+  if(!navigator.onLine){notify("⚠️ កំពុងដាច់ការតភ្ជាប់!"); return;}
   sy.kicking=1;console.info("reconnect:",why);
-  window.FB.disableNetwork(window.db).catch(function(){}).then(function(){return window.FB.enableNetwork(window.db)}).catch(function(e){console.error("reconnect:",e)}).then(function(){sy.kicking=0});
+  window.FB.disableNetwork(window.db).catch(function(){}).then(function(){return window.FB.enableNetwork(window.db)}).catch(function(e){console.error("reconnect:",e); notify("មិនអាចតភ្ជាប់ឡើងវិញបានទេ!")}).then(function(){sy.kicking=0});
   if(Object.keys(MAP).some(function(k){return!sy.first[k]}))diagArm();
 }
 document.addEventListener("visibilitychange",function(){if(document.hidden){hidAt=Date.now();return}if(hidAt&&Date.now()-hidAt>8000)kick("visible")});
