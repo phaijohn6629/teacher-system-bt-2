@@ -127,11 +127,14 @@ function render(){
   if(!X.E&&!X.list&&!X.lp&&window.FB&&window.db)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});   /* ទាញបញ្ជីព្រមគ្នានឹងម៉ាស៊ីន */
   if(!engReady()&&!genP)gen().catch(function(){});   /* ផ្ទុកនៅពីក្រោយ · បញ្ជីបង្ហាញភ្លាមដោយមិនរង់ចាំ */
   if(X.E&&!engReady()){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
-  if(X.E)return editor();
+  /* គូរឡើងវិញពីខាងក្រៅ (refreshView ពេល Cloud sync · renderQuiz) ខណៈកំពុងកែវិញ្ញាសាដដែល → កុំគូរឡើងវិញ
+     (បើគូរ ៖ select ដែលកំពុងបើកនឹងបិទ មិនអាចជ្រើសបាន · ផ្ទាំងមើលជាមុនលោតចេញលោតចូល) · សកម្មភាពអ្នកប្រើហៅ editor() ផ្ទាល់ */
+  if(X.E){if(el.dataset.exid===X.E.id&&el.querySelector("#exPrev"))return;return editor()}
   if(!X.list){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…</p>";if(!X.lp)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});return}
   try{renderList(el)}catch(e){console.error("exam list:",e);el.innerHTML="<p class=cxwarn>⚠️ បង្ហាញបញ្ជីវិញ្ញាសាមិនបាន"+retryBtn()+"</p>"}
 }
 function renderList(el){
+  el.dataset.exid="";
   el.innerHTML="<div class=bar><b>📝 ប្រឡងទម្រង់បើក</b><span class=note style='margin:0'>បង្កើតវិញ្ញាសាស្វ័យប្រវត្តិ · បោះពុម្ព ឬបើកឱ្យសិស្សមើលលើទូរស័ព្ទ (សរសេរចម្លើយលើក្រដាស)</span><button type=button class=primary data-ex=new>＋ វិញ្ញាសាថ្មី</button></div>"+
     (X.err?"<p class=cxwarn>⚠️ "+esc(X.err)+retryBtn()+"</p>":"")+
     (X.list.length?"<div class=qr-list>"+X.list.map(function(x){var on=x.on&&x.on.open&&x.on.endMs>Date.now();
@@ -177,11 +180,13 @@ function editor(){
     "<button type=button data-ex=add style='width:100%'>＋ ផ្នែកថ្មី</button>"+
     "<p class=note>💡 ✏️ កែអត្ថបទលំហាត់ផ្ទាល់បាន (LaTeX ក្នុង $…$) · ពេលកែដោយដៃ ចម្លើយក្នុង «🔑 ចម្លើយ» មិនប្ដូរតាមទេ</p></div></div>"+
     "<div class=card><h3 style='margin-top:0'>👁️ មើលជាមុន</h3><div id=exPrev class=ex-prev></div></div>";
-  body().innerHTML=h;prev();
+  body().innerHTML=h;body().dataset.exid=E.id;prev();
   [].forEach.call(body().querySelectorAll(".ex-it textarea"),function(t){t.style.height=Math.max(36,t.scrollHeight)+"px"});
 }
 var pvT=0;
-function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p)return;p.innerHTML="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});math(p).then(function(){EXP.fit&&EXP.fit(p);EXP.shrink&&EXP.shrink(p)})},250)}
+/* មើលជាមុន ៖ ខ្លឹមសារដដែល → មិនគូរឡើងវិញ (កុំឱ្យលោតចេញលោតចូល) */
+function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p||!X.E)return;var h="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});
+  if(p.dataset.done==="1"&&p._h===h)return;p._h=h;p.dataset.done="";p.innerHTML=h;math(p).then(function(){EXP.fit&&EXP.fit(p);EXP.shrink&&EXP.shrink(p);p.dataset.done="1"})},250)}
 /* ---------- បោះពុម្ព ---------- */
 /* ឈ្មោះឯកសារពេលព្រីន (= document.title) · លេខរៀងស្វ័យប្រវត្តិតាមប្រភេទប្រឡង
    វិញ្ញាសាដដែល (ខ្លឹមសារដដែល) → លេខដដែល · អត្រាកំណែប្រើលេខដូចវិញ្ញាសា */
