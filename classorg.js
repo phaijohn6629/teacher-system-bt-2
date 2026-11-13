@@ -154,6 +154,27 @@ $("ogBody").addEventListener("click",function(e){
   var b=e.target.closest("[data-ogph]");if(b)setPhoto(b.dataset.ogph);
 });
 $("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}window.SCHX.fontsOk().then(function(){doPrint(ogV==="seat"?seatFit(seatPrint(c)):printHTML(c))})};
+
+/* 🎲 ចាប់ក្រុម 3D & 👆 ដៃរត់ */
+function initPickerUI(){
+  var m=document.createElement("div");m.className="modal";m.id="pickerModal";
+  m.innerHTML=`<div class=modal-content><h2 class=moul>ចាប់ក្រុម 3D</h2><div id=cardContainer></div><div style="margin-top:20px"><button class=primary onclick="startPicker()">ចាប់ផ្តើម</button> <button onclick="closePicker()">បិទ</button></div></div>`;
+  document.body.appendChild(m);
+}
+function startPicker(){
+  var c=cls(),G=groups(c);
+  var cc=$("cardContainer");cc.innerHTML="";
+  G.forEach(function(_,i){
+    var d=document.createElement("div");d.className="card-3d";
+    d.innerHTML=`<div class=card-inner><div class=card-front>?</div><div class=card-back>ក្រុម ${kn(i+1)}</div></div>`;
+    d.onclick=function(){d.classList.add("flip")};
+    cc.appendChild(d);
+  });
+}
+function closePicker(){$("pickerModal").classList.remove("show")}
+function showPicker(){$("pickerModal").classList.add("show")}
+window.startPicker=startPicker;window.closePicker=closePicker;window.showPicker=showPicker;initPickerUI();
+
 /* ប្លង់តុ៖ ស៊ុមខ្លីតាមខ្លឹមសារ · បើវែងជាង ១៦៥ម.ម (ជួរច្រើន) → បង្រួមខ្លឹមសារឱ្យនៅក្នុងទំព័រតែមួយ (មិនកាត់ចោល) */
 function seatFit(html){
   var p=$("prt");p.innerHTML=html;p.style.cssText="display:block;position:absolute;left:-10000px;top:0;width:281mm";
