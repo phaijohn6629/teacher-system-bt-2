@@ -176,7 +176,7 @@ $("ogSeg").onclick=function(e){var b=e.target.closest("button[data-ov]");if(b){o
    តុគ្រូនៅខាងលើឆ្វេងជានិច្ច · c.seat = {lay, s:[គន្លឹះសិស្សតាមលេខកៅអី]} */
 var seatAnim=false;
 var LAY={d2:{cols:4,rows:6,per:2,lbl:"តុ ២ នាក់ (៤ × ៦)"},d1:{cols:6,rows:6,per:1,lbl:"តុ ១ នាក់ (៦ × ៦)"}};
-function seat(c){c.seat=c.seat||{lay:"d2",s:[]};if(!LAY[c.seat.lay])c.seat.lay="d2";return c.seat}
+function seat(c){c.seat=c.seat||{lay:"d2",s:[],abMap:{}};if(!LAY[c.seat.lay])c.seat.lay="d2";return c.seat}
 function nSeats(L){return L.cols*L.rows*L.per}
 function byKey(c){var o={};c.st.forEach(function(s){o[key(s)]=s});return o}
 function cleanSeat(c){   /* ដកសិស្សដែលលែងមាន ឬស្ទួន */
@@ -246,7 +246,11 @@ $("ogBody").addEventListener("click",function(e){
     if(k==="abc")st.sort(kmSort);
     else if(k==="rand")st=shuffle(st);
     else{var f=shuffle(st.filter(function(s){return s.g==="ស្រី"})),m=shuffle(st.filter(function(s){return s.g!=="ស្រី"}));st=[];while(f.length||m.length){if(m.length)st.push(m.shift());if(f.length)st.push(f.shift())}}
-    fillSeats(c,st);seatSel=null;savR();seatAnim=true;renderOrg();seatAnim=false;notify(k==="abc"?"បានរៀបតាមអក្ខរក្រម":"បានរៀបដោយចៃដន្យ");return;
+    fillSeats(c,st);seatSel=null;
+    /* បែងចែកវិញ្ញាសា ក/ខ */
+    var S2=seat(c),N2=nSeats(LAY[S2.lay]);S2.abMap={};
+    for(var i=0;i<N2;i++){if(S2.s[i])S2.abMap[S2.s[i]]=(i%2===0?"ក":"ខ")}
+    savR();seatAnim=true;renderOrg();seatAnim=false;notify(k==="abc"?"បានរៀបតាមអក្ខរក្រម":"បានរៀបដោយចៃដន្យ");return;
   }
   var fr=e.target.closest("[data-free]");
   if(fr){var fk=fr.getAttribute("data-free");seatSel=(seatSel&&seatSel.k===fk)?null:{t:"f",k:fk};renderOrg();return}
@@ -258,6 +262,9 @@ $("ogBody").addEventListener("click",function(e){
   }else{
     var old=S2.s[i];S2.s[i]=seatSel.k;   /* សិស្សចាស់នៃកៅអីនោះ → ត្រឡប់ទៅបញ្ជីមិនទាន់មានកៅអី */
   }
+  /* អាប់ដេតវិញ្ញាសា ក/ខ ពេលផ្លាស់ប្តូរកៅអី */
+  var S3=seat(c),N3=nSeats(LAY[S3.lay]);S3.abMap={};
+  for(var i=0;i<N3;i++){if(S3.s[i])S3.abMap[S3.s[i]]=(i%2===0?"ក":"ខ")}
   seatSel=null;savR();renderOrg();
 });
 function seatPrint(c){

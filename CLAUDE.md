@@ -23,6 +23,11 @@
 - **Service Worker**: Updated cache version in `sw.js` to `ngs-app-v2` to force cache busting.
 - **Data Overwrite**: Updated `monitor.js` in `tWrite` function to use `tx.update` instead of `tx.set` to prevent accidental overwriting of documents when adding new record fields (e.g., `r00`).
 - **Monitor Record Data**: Included `r00` in `buildT` and `teachApply` in `monitor.js` to ensure data persistence across syncs.
+- **Group & Exam Seat Randomizer**: 
+  - Added `abMap` to `c.seat` in `classorg.js` to store seat-based A/B paper assignment.
+  - Implemented Animated Group Picker and Seat Randomizer logic in `classorg.js`.
+  - Integrated `abMap` into `exam.js`'s online exam opening logic to pass A/B paper assignment to students.
 
 ## Remaining Tasks for Next Session
 - **Validation**: Verify if `r00` is being populated correctly in the `j` field.
+- **Verification**: Test online exam A/B paper assignment sync with `abMap` in `classorg.js`.

@@ -197,7 +197,9 @@ function goOnline(){
   var E=X.E,F=window.FB,c=myCls().filter(function(x){return x.n===E.cls})[0];
   if(!c||!c.st.length){alert("ថ្នាក់ «"+E.cls+"» មិនទាន់មានបញ្ជីឈ្មោះសិស្សទេ");return}
   if(!confirm("បើកប្រឡងអនឡាញ «"+EXP.head(E)+"» ឥឡូវនេះ?\n\n• រយៈពេល "+E.dur+" នាទី (ចាប់ពីពេលនេះ)\n• សិស្សមើលប្រធានលើទូរស័ព្ទ ហើយសរសេរចម្លើយលើក្រដាស\n• អស់ម៉ោង → ប្រធានលាក់ដោយស្វ័យប្រវត្តិ"))return;
-  var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
+  var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){
+    var seatInfo=c.seat&&c.seat.abMap?c.seat.abMap[key(s)]:"";
+    return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:seatInfo}});
   Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,names:names,sch:inf().school}),
     F.setDoc(F.doc(window.db,"exq",E.id+"_"+code),{o:E.o,t:E.id,j:pub(E)})]).then(function(){
     E.on={open:true,code:code,endMs:endMs};save(true);editor();watch();showLink();
