@@ -196,8 +196,9 @@ function seatGrid(c,edit,anim){
       for(var k=0;k<L.per;k++,i++){
         var s=m[S.s[i]],sel=edit&&seatSel&&seatSel.t==="s"&&seatSel.i===i,ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)],ro=s&&rOf(c,s).ro;if(s)any=true;
         var badge=ro==="h"?"<em class=sb-h title='ប្រធានថ្នាក់'>👑</em>":ro==="v1"||ro==="v2"?"<em class=sb-v title='អនុប្រធាន'>⭐</em>":ro==="gl"?"<em class=sb-g title='ប្រធានក្រុម'>★</em>":"";
+        var ab=s&&S.abMap[key(s)]?"<em class='sb-ab "+S.abMap[key(s)].toLowerCase()+"'>"+S.abMap[key(s)]+"</em>":"";
         d+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":" u"):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+(anim&&s?" style='animation-delay:"+(i*18)+"ms'":"")+">"+
-          "<span class=sn>"+kn(i+1)+"</span>"+badge+
+          "<span class=sn>"+kn(i+1)+"</span>"+badge+ab+
           (s?"<span class=sav>"+(ph?"<img src='"+ph+"' alt=''>":ini(s.n))+"</span><b>"+esc(s.n)+"</b>":"<span class='sav e'>＋</span><i>ទំនេរ</i>")+"</div>";
       }
       if(!any&&!showEmpty)continue;

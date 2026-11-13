@@ -20,7 +20,7 @@
   - Use Firebase transactions for any write operations on shared data (e.g., `mc` collection).
 
 ## Completed Fixes & Modified Files
-- **Service Worker**: Updated cache version in `sw.js` to `ngs-app-v2` to force cache busting.
+- **Service Worker**: Updated cache version in `sw.js` to `ngs-app-v5` to force cache busting.
 - **Data Overwrite**: Updated `monitor.js` in `tWrite` function to use `tx.update` instead of `tx.set` to prevent accidental overwriting of documents when adding new record fields (e.g., `r00`).
 - **Monitor Record Data**: Included `r00` in `buildT` and `teachApply` in `monitor.js` to ensure data persistence across syncs.
 - **Group & Exam Seat Randomizer**: 
@@ -28,6 +28,8 @@
   - Implemented Animated Group Picker and Seat Randomizer logic in `classorg.js`.
   - Integrated `abMap` into `exam.js`'s online exam opening logic to pass A/B paper assignment to students.
 
-## Remaining Tasks for Next Session
+- **Remaining Tasks for Next Session**:
+- **UI Implementation**: Implement the "🎲 ចាប់ក្រុម 3D" button and the associated 3D Card Flip/Confetti animation modal in `classorg.js`.
+- **UI Implementation**: Implement "👆 ចាប់រើសអ្នកឡើងបទបង្ហាញ" (Animated Pointer Hand) functionality in the Group Picker and the Seat Map.
 - **Validation**: Verify if `r00` is being populated correctly in the `j` field.
 - **Verification**: Test online exam A/B paper assignment sync with `abMap` in `classorg.js`.
