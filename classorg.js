@@ -306,13 +306,18 @@ function seatPrint(c){
    "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
    "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>";
 }
+  /* 👆 ចាប់រើសតុ/សិស្ស · ម្នាក់ៗមិនត្រូវចាប់ម្ដងទៀត រហូតដល់គ្រប់គ្នាត្រូវបានចាប់ (ប្ដូរថ្នាក់ → ចាប់ផ្ដើមថ្មី) */
+  var spotDone = {}, spotCls = "";
+  function seatName(el) { var b = el.querySelector('b'); return b ? b.innerText.trim() : ""; }
   function pickSeatPresenter() {
-    var seats = [].slice.call(document.querySelectorAll('#ogBody .seat:not(.empty)'));
-    if (!seats.length) { notify("មិនទាន់មានសិស្សអង្គុយលើតុទេ"); return; }
-    animatePointer(seats, function(target) {
-      var n = target.querySelector('b'), name = n ? n.innerText : "";
-      notify("🎉 សិស្សដែលត្រូវឡើងបទបង្ហាញ៖ " + name);
-      showWinner(target, "🎉 " + name);
+    var all = [].slice.call(document.querySelectorAll('#ogBody .seat:not(.empty)'));
+    if (!all.length) { notify("មិនទាន់មានសិស្សអង្គុយលើតុទេ"); return; }
+    var c = cls(), ck = ogT + "|" + (c ? c.n : ""); if (ck !== spotCls) { spotCls = ck; spotDone = {}; }
+    var left = all.filter(function(el){ return !spotDone[seatName(el)]; });
+    if (!left.length) { spotDone = {}; left = all; notify("គ្រប់គ្នាត្រូវបានចាប់រួចហើយ · ចាប់ផ្ដើមជុំថ្មី"); }
+    animatePointer(left, function(target) {
+      spotDone[seatName(target)] = 1;
+      showSpotlight(target, left.length - 1);
     });
   }
   window.pickSeatPresenter = pickSeatPresenter;
@@ -343,13 +348,42 @@ function seatPrint(c){
 			})(document.createElement("div"));
 		}
 	}
-	/* ស្លាកឈ្មោះលើតុដែលត្រូវរើស (៣ វិនាទី) */
-	function showWinner(target, text) {
-		var r = target.getBoundingClientRect(), t = document.createElement("div");
-		t.className = "pick-win"; t.textContent = text;
-		t.style.left = (r.left + r.width / 2) + "px"; t.style.top = Math.max(8, r.top - 44) + "px";
-		document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 3000);
+	/* 🌟 Spotlight ៖ កាតកណ្ដាលអេក្រង់ ឈ្មោះធំច្បាស់ (អានពី DOM នៃកៅអី → ប្រើបានទាំងអ្នកកែ និងអ្នកមើល) */
+	function showSpotlight(seatEl, remaining) {
+		closeSpotlight();
+		var name = seatName(seatEl), img = seatEl.querySelector('.sav img'), sn = seatEl.querySelector('.sn'),
+			ab = seatEl.querySelector('.sb-ab'), role = seatEl.querySelector('em.sb-h,em.sb-v,em.sb-g'),
+			sex = seatEl.classList.contains('f') ? 'f' : seatEl.classList.contains('m') ? 'm' : '';
+		var meta = [];
+		if (sn) meta.push("<span class=spot-chip>🪑 កៅអីលេខ " + esc(sn.textContent) + "</span>");
+		if (ab) meta.push("<span class='spot-chip sb-ab " + (ab.classList.contains('b') ? 'b' : 'a') + "'>វិញ្ញាសា " + esc(ab.textContent) + "</span>");
+		if (role) meta.push("<span class=spot-chip>" + esc(role.textContent) + " " + esc(role.title || "") + "</span>");
+		var o = document.createElement("div");
+		o.className = "spot"; o.id = "spotlight"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "សិស្សដែលត្រូវបានជ្រើស ៖ " + name);
+		o.innerHTML = "<div class='spot-card " + sex + "'>" +
+			"<div class=spot-k>🎉 សិស្សដែលត្រូវបានជ្រើស</div>" +
+			"<div class=spot-av>" + (img ? "<img src='" + img.getAttribute("src") + "' alt=''>" : "<span>" + ini(name) + "</span>") + "</div>" +
+			"<div class=spot-name>" + esc(name) + "</div>" +
+			(meta.length ? "<div class=spot-meta>" + meta.join("") + "</div>" : "") +
+			"<div class=spot-act><button type=button data-sp=again>🔄 ចាប់ម្ដងទៀត" + (remaining > 0 ? " <small>(នៅសល់ " + kn(remaining) + " នាក់)</small>" : "") + "</button>" +
+			"<button type=button class=primary data-sp=close>✓ បិទ</button></div></div>";
+		o.addEventListener("click", function(e) {
+			var b = e.target.closest("[data-sp]");
+			if (b && b.dataset.sp === "again") { closeSpotlight(); setTimeout(pickSeatPresenter, 150); return; }
+			if (b || e.target === o) closeSpotlight();
+		});
+		spotPrevFocus = document.activeElement;
+		document.body.appendChild(o);
+		var cb = o.querySelector("[data-sp=close]"); if (cb) cb.focus({ preventScroll: true });
 	}
+	var spotPrevFocus = null;
+	function closeSpotlight() {
+		var o = document.getElementById("spotlight"); if (!o) return;
+		o.remove();
+		if (spotPrevFocus && spotPrevFocus.focus) try { spotPrevFocus.focus({ preventScroll: true }); } catch (e) {}
+		spotPrevFocus = null;
+	}
+	document.addEventListener("keydown", function(e) { if (e.key === "Escape" && document.getElementById("spotlight")) closeSpotlight(); });
 	/* ដៃលោត ~១២ ជំហាន (≈១.៦ វិនាទី · លឿនពីដំបូង ហើយយឺតបន្តិចពេលជិតឈប់) រួចឈប់ចំគោលដៅដែលបានរើសជាមុន */
 	var pointerBusy = false;
 	function animatePointer(targets, onFinish) {
@@ -376,7 +410,7 @@ function seatPrint(c){
 			/* ឈប់៖ សំឡេងឈ្នះ + confetti + បង្ហាញឈ្មោះភ្លាមៗ */
 			el.classList.remove("pick-on"); el.classList.add("pick-hit"); el.style.outline = "4px solid var(--accent,#f59e0b)";
 			playWin(); fireConfetti(); onFinish(el);
-			setTimeout(function() { hand.remove(); pointerBusy = false; }, 900);
+			pointerBusy = false; setTimeout(function() { hand.remove(); }, 900);   /* ដោះសោភ្លាម → «🔄 ចាប់ម្ដងទៀត» ដំណើរការបានភ្លាម */
 		}
 		prev = null; tick();
 	}
