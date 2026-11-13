@@ -48,7 +48,12 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 </head>
 <body>
 <div class="top"><h1 id="tt">តេស្ត</h1><p id="ts">វិទ្យាល័យបឹងត្របែក · សាលារៀនជំនាន់ថ្មី</p></div>
-<div class="wrap" id="app"><div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<div class="wrap" id="app"><div class="card msg" id="boot"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<script>
+/* 🛟 Watchdog (មិនពឹង Firebase)៖ ១២ វិនាទីនៅតែ «កំពុងផ្ទុក» (CDN/SDK យឺត ឬកំហុស JS) → បង្ហាញប៊ូតុងផ្ទុកឡើងវិញ · ចម្លើយក្នុង localStorage មិនបាត់ */
+window.bootFail=function(){var b=document.getElementById("boot");if(b)b.innerHTML='<div class="big">📶</div><h2>កំពុងផ្ទុកយូរជាងធម្មតា</h2><p class="note">ចម្លើយដែលអ្នកបានធ្វើ រក្សាទុកក្នុងទូរស័ព្ទ មិនបាត់ទេ</p><button class="btn" onclick="location.reload()">🔄 ផ្ទុកឡើងវិញ</button>'};
+setTimeout(window.bootFail,12000);
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="fig.js?v=7"></script>
@@ -88,7 +93,11 @@ const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:
 /* កំហុសពិតប្រាកដ (មិនមែនបណ្ដាញ) → មិនព្យាយាមម្ដងទៀត */
 const isNet=e=>!(e&&["permission-denied","not-found","invalid-argument","failed-precondition","already-exists","st-deny","already"].includes(e.code));
 function waitOnline(ms){return new Promise(r=>{let t;const done=()=>{clearTimeout(t);window.removeEventListener("online",done);r()};t=setTimeout(done,ms);window.addEventListener("online",done)})}
-async function retry(fn,label,max){let d=1500;for(let i=0;;i++){try{const v=await fn();net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"… (ព្យាយាមម្ដងទៀត)");await waitOnline(d);d=Math.min(d*2,20000)}}}
+/* ម៉ោងកំណត់៖ Firestore Lite គ្មាន timeout ផ្ទាល់ខ្លួន → អ៊ីនធឺណិតខ្សោយអាចរង់ចាំរហូត · ផុតម៉ោង = កំហុសបណ្ដាញ (ព្យាយាមម្ដងទៀត) */
+const to=(p,ms)=>ms?Promise.race([p,new Promise((_,j)=>setTimeout(()=>j({code:"deadline-exceeded"}),ms))]):p;
+window.addEventListener("unhandledrejection",e=>{console.error(e.reason);window.bootFail()});
+window.addEventListener("error",e=>{console.error(e.error||e.message);window.bootFail()});
+async function retry(fn,label,max,ms=9000){let d=1500;for(let i=0;;i++){try{const v=await to(fn(),ms);net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"… (ព្យាយាមម្ដងទៀត)");await waitOnline(d);d=Math.min(d*2,20000)}}}
 function net(t,ok){const n=$("net");if(!t){n.hidden=true;return}n.textContent=t;n.className="net"+(ok?" ok":"");n.hidden=false}
 window.addEventListener("offline",()=>{if(me&&!sent)net("📶 គ្មានអ៊ីនធឺណិត · ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ · អាចបន្តធ្វើបាន")});
 window.addEventListener("online",()=>{if(me&&!sent){net("✅ មានអ៊ីនធឺណិតវិញ",1);setTimeout(()=>{if(!sent)net("")},2500)}});
@@ -109,8 +118,31 @@ async function loadTest(){
     return{net:1};
   }
 }
+function header(){$("tt").textContent=T.title;$("ts").textContent="ថ្នាក់ "+T.cls+" · "+kn(T.items.length)+" លំហាត់"+(T.dur?" · "+kn(T.dur)+" នាទី":"");document.title=T.title}
+/* ⚡ Refresh ពេលកំពុងធ្វើតេស្ត → បន្តភ្លាមពីច្បាប់ក្នុងឧបករណ៍ (T_ · ans_ · t0_) មិនរង់ចាំបណ្ដាញ · ពិនិត្យ «បិទ/ផ្ញើរួច» នៅពីក្រោយ */
+let noFast=false;
+function fastResume(){
+  if(noFast)return false;
+  const c=LS.json("T_"+id,null),last=LS.get("cur_"+id);
+  if(!c||!last||!c.open||!Array.isArray(c.names)||!Array.isArray(c.items)||!c.items.length)return false;
+  const lm=c.names.find(x=>x.k===last);if(!lm)return false;
+  const k=kOf(lm.k),v2=(c.v||1)>=2,pend=LS.get("pend_"+k);
+  if(!pend&&(!LS.get("t0_"+k)||LS.get("sent_"+k)||(v2&&!LS.get("stok_"+k))))return false;
+  T=c;V2=v2;me=lm;K=k;header();
+  if(pend){sent=true;deliver(LS.json("pend_"+K,{}).p);return true}
+  take(true);bgCheck();return true;
+}
+async function bgCheck(){
+  const r=await loadTest();if(sent)return;
+  const stop=(i,t,sub)=>{acOn=false;clearInterval(tick);const w=document.querySelector(".ac");if(w)w.remove();msg(i,t,sub)};
+  if(r.nf)return stop("🔍","រកមិនឃើញតេស្ត","តេស្តនេះអាចត្រូវបានលុប");
+  if(r.closed||(r.t&&!r.cached&&!r.t.open))return stop("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
+  if(V2){try{const x=await retry(()=>getDoc(doc(db,"rcpt",K)),"កំពុងពិនិត្យ",2);
+    if(x.exists()&&!sent){sent=true;LS.set("sent_"+K,"1");stop("✅","អ្នកបានផ្ញើចម្លើយរួចហើយ","សូមរង់ចាំលទ្ធផលពីគ្រូ")}}catch(e){}}
+}
 async function start(){
   if(!id)return msg("⚠️","តំណមិនត្រឹមត្រូវ","សូមសួរគ្រូរបស់អ្នកម្ដងទៀត");
+  try{if(fastResume())return}catch(e){console.error("fastResume:",e);me=null;K="";sent=false}
   const r=await loadTest();
   if(r.nf)return msg("🔍","រកមិនឃើញតេស្ត","តេស្តនេះអាចត្រូវបានលុប");
   if(r.closed)return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
@@ -119,7 +151,7 @@ async function start(){
   T=r.t;V2=(T.v||1)>=2;
   if(!T.open)return msg("🔒","តេស្តនេះបានបិទ","មិនអាចធ្វើតេស្តនេះបានទៀតទេ");
   if(r.cached)net("📶 គ្មានអ៊ីនធឺណិត · ប្រើតេស្តដែលបានផ្ទុកពីមុន");
-  $("tt").textContent=T.title;$("ts").textContent="ថ្នាក់ "+T.cls+" · "+kn(T.items.length)+" លំហាត់"+(T.dur?" · "+kn(T.dur)+" នាទី":"");document.title=T.title;
+  header();
   /* ឧបករណ៍នេះមានការផ្ញើកំពុងរង់ចាំ → បន្តផ្ញើភ្លាម */
   const last=LS.get("cur_"+id),lm=last&&T.names.find(x=>x.k===last);
   if(lm&&LS.get("pend_"+kOf(lm.k))){me=lm;K=kOf(me.k);sent=true;return deliver(LS.json("pend_"+K,{}).p)}
@@ -161,20 +193,29 @@ async function go(){
 async function startSt(){
   let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=rand();LS.set("dv_"+K,dv)}
   const d={t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp()};if(T.pc)d.pc=LS.get("pc_"+K)||"";
-  try{await retry(()=>setDoc(doc(db,"st",K),d),"កំពុងចាប់ផ្ដើម",3);
+  let tmo=false;   /* ផុតម៉ោង ប៉ុន្តែការសរសេរអាចដល់ Server រួច → លើកក្រោយត្រូវបដិសេធ (ឯកសារមានហើយ) = របស់ឧបករណ៍នេះ */
+  try{await retry(()=>to(setDoc(doc(db,"st",K),d),12000).catch(e=>{if(e&&e.code==="deadline-exceeded")tmo=true;throw e}),"កំពុងចាប់ផ្ដើម",3,0);
     if(LS.get("stok_"+K)){clearAttempt(K)}   /* បង្កើតបានម្ដងទៀត = គ្រូបានអនុញ្ញាតឱ្យធ្វើម្ដងទៀត → ចាប់ផ្ដើមថ្មី */
     LS.set("stok_"+K,"1");return"ok";
   }catch(e){
     if(e&&e.code==="permission-denied"){
       if(had&&LS.get("stok_"+K))return"ok";   /* ឧបករណ៍នេះបានចាប់ផ្ដើមរួច (បើកឡើងវិញ) */
-      try{const t=await getDoc(doc(db,"tests",id));if(!t.exists()||!t.data().open)return"closed"}catch(x){if(x&&x.code==="permission-denied")return"closed"}
+      if(tmo){LS.set("stok_"+K,"1");return"ok"}
+      try{const t=await to(getDoc(doc(db,"tests",id)),9000);if(!t.exists()||!t.data().open)return"closed"}catch(x){if(x&&x.code==="permission-denied")return"closed"}
       return"deny";
     }
     return"offline";
   }
 }
 /* ---------- ៣. ធ្វើតេស្ត ---------- */
-function take(){
+function take(fast){
+  try{take0(fast)}catch(e){
+    console.error("take:",e);acOn=false;clearInterval(tick);
+    app.innerHTML=`<div class="card msg"><div class=big>⚠️</div><h2>មិនអាចបង្ហាញលំហាត់បានទេ</h2><p class=note>ចម្លើយដែលអ្នកបានធ្វើ <b>រក្សាទុកក្នុងទូរស័ព្ទ</b> មិនបាត់ទេ</p><button class=btn id=rt>🔄 ផ្ទុកឡើងវិញ</button></div>`;
+    $("rt").onclick=()=>{LS.del("T_"+id);location.reload()};
+  }
+}
+function take0(fast){
   const r=rng(id+"|"+me.k),items=shuffle(T.items,r);
   ans=LS.json("ans_"+K,{});t0=+LS.get("t0_"+K)||0;if(!t0){t0=Date.now();LS.set("t0_"+K,String(t0))}   /* បើកឡើងវិញ → ម៉ោងមិនចាប់ផ្ដើមថ្មី */
   let h=`<div class=bar><span>${esc(me.n)}</span><div class=prog><i id=pg></i></div><span id=cnt></span>${T.dur?"<span class=timer id=tm></span>":""}</div>`;
@@ -184,8 +225,11 @@ function take(){
       h+=ord.map((j,x)=>`<label class=ch><input type=radio name="a_${esc(q.id)}" value=${j}${String(ans[q.id])===String(j)?" checked":""}><b>${"កខគឃ"[x]}.</b><span>${tx(q.ch[j])}</span></label>`).join("")}
     else h+=`<input class=num inputmode=decimal name="a_${esc(q.id)}" placeholder="សរសេរចម្លើយ (លេខ)" maxlength=40 value="${esc(ans[q.id]??"")}">`;
     h+="</div>"});
-  h+=`<button class=btn id=sub>📤 ផ្ញើចម្លើយ</button><p class=note style="text-align:center">ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ ទោះបិទទំព័រ ឬអ៊ីនធឺណិតដាច់ក៏មិនបាត់ (រហូតដល់ផ្ញើ)</p>`;
+  h+=`<button class=btn id=sub>📤 ផ្ញើចម្លើយ</button><p class=note style="text-align:center">ចម្លើយត្រូវបានរក្សាទុកក្នុងទូរស័ព្ទ ទោះបិទទំព័រ ឬអ៊ីនធឺណិតដាច់ក៏មិនបាត់ (រហូតដល់ផ្ញើ)</p>`+
+    (fast?`<p class=note style="text-align:center"><button type=button id=sw style="background:none;border:0;color:var(--brand);text-decoration:underline;cursor:pointer;font:inherit">👤 មិនមែន ${esc(me.n)}? ប្ដូរឈ្មោះ</button></p>`:"");
   app.innerHTML=h;math(app);prog();
+  if($("sw"))$("sw").onclick=()=>{acOn=false;if(!confirm("ប្ដូរទៅឈ្មោះផ្សេង? (ចម្លើយរបស់ "+me.n+" នៅរក្សាទុក)")){acOn=true;awayAt=0;return}
+    clearInterval(tick);noFast=true;me=null;K="";app.onchange=app.oninput=null;app.innerHTML=`<div class="card msg"><div class=big>⏳</div>កំពុងផ្ទុក…</div>`;start()};
   app.querySelectorAll("[data-im]").forEach(el=>loadImg(el,0));
   app.oninput=app.onchange=e=>{const n=e.target.name;if(!n||!n.startsWith("a_"))return;ans[n.slice(2)]=e.target.value;LS.set("ans_"+K,JSON.stringify(ans));prog()};
   $("sub").onclick=()=>{const left=T.items.filter(q=>ans[q.id]==null||ans[q.id]==="").length;
@@ -253,16 +297,16 @@ async function deliver(p){
 }
 async function submitOnce(p){
   const ref=doc(db,"subs",K);
-  try{const b=writeBatch(db);b.set(ref,p);b.set(doc(db,"rcpt",K),{t:id,at:serverTimestamp()});await b.commit();return}
+  try{const b=writeBatch(db);b.set(ref,p);b.set(doc(db,"rcpt",K),{t:id,at:serverTimestamp()});await to(b.commit(),15000);return}
   catch(e){
     if(!e||e.code!=="permission-denied")throw e;
     /* ត្រូវបានបដិសេធ៖ ប្រហែលផ្ញើដល់រួចហើយ (ចម្លើយតបបាត់ពេលអ៊ីនធឺណិតខ្សោយ) → ពិនិត្យបង្កាន់ដៃ */
-    try{const r=await getDoc(doc(db,"rcpt",K));if(r.exists())throw{code:"already"}}catch(x){if(x&&x.code==="already")throw x;if(isNet(x))throw x}
+    try{const r=await to(getDoc(doc(db,"rcpt",K)),9000);if(r.exists())throw{code:"already"}}catch(x){if(x&&x.code==="already")throw x;if(isNet(x))throw x}
     if(V2)throw e;
     /* តេស្តចាស់ (Rules ចាស់មិនស្គាល់ rcpt/dv) → ផ្ញើតែ subs */
     const q=Object.assign({},p);delete q.dv;
-    try{await setDoc(ref,q);return}catch(e2){if(!e2||e2.code!=="permission-denied")throw e2;
-      await setDoc(ref,{t:q.t,sid:q.sid,sn:q.sn,a:q.a,at:q.at,dur:q.dur})}
+    try{await to(setDoc(ref,q),15000);return}catch(e2){if(!e2||e2.code!=="permission-denied")throw e2;
+      await to(setDoc(ref,{t:q.t,sid:q.sid,sn:q.sn,a:q.a,at:q.at,dur:q.dur}),15000)}
   }
 }
 function done(mode){
@@ -274,7 +318,7 @@ function failUI(p,mode){
   app.innerHTML=`<div class="card msg"><div class=big>⚠️</div><h2>មិនអាចផ្ញើបានទេ</h2><p class=note>តេស្តអាចត្រូវបានបិទ · ផុតម៉ោង · ឬឈ្មោះនេះកំពុងប្រើនៅឧបករណ៍ផ្សេង។<br><b>ចម្លើយរបស់អ្នកនៅរក្សាទុកក្នុងទូរស័ព្ទនេះ</b> · សូមប្រាប់គ្រូ ហើយចុចព្យាយាមម្ដងទៀត</p><button class=btn id=rt>🔄 ព្យាយាមផ្ញើម្ដងទៀត</button></div>`;
   $("rt").onclick=()=>{p._m=mode;deliver(p)};
 }
-start();
+start().catch(e=>{console.error("start:",e);app.innerHTML=`<div class="card msg"><div class=big>⚠️</div><h2>មិនអាចផ្ទុកបានទេ</h2><p class=note>ចម្លើយដែលអ្នកបានធ្វើ រក្សាទុកក្នុងទូរស័ព្ទ មិនបាត់ទេ</p><button class=btn onclick="location.reload()">🔄 ផ្ទុកឡើងវិញ</button></div>`});
 </script>
 </body>
 </html>

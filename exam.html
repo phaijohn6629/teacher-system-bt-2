@@ -39,7 +39,12 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 </head>
 <body>
 <div class="top"><h1 id="tt">ប្រឡង</h1><p id="ts">វិទ្យាល័យបឹងត្របែក</p></div>
-<div class="wrap" id="app"><div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<div class="wrap" id="app"><div class="card msg" id="boot"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<script>
+/* 🛟 Watchdog (មិនពឹង Firebase)៖ ១២ វិនាទីនៅតែ «កំពុងផ្ទុក» (CDN/SDK យឺត ឬកំហុស JS) → បង្ហាញប៊ូតុងផ្ទុកឡើងវិញ · ចម្លើយក្នុង localStorage មិនបាត់ */
+window.bootFail=function(){var b=document.getElementById("boot");if(b)b.innerHTML='<div class="big">📶</div><h2>កំពុងផ្ទុកយូរជាងធម្មតា</h2><p class="note">ចម្លើយដែលអ្នកបានធ្វើ រក្សាទុកក្នុងទូរស័ព្ទ មិនបាត់ទេ</p><button class="btn" onclick="location.reload()">🔄 ផ្ទុកឡើងវិញ</button>'};
+setTimeout(window.bootFail,12000);
+</script>
 <div id="net" class="net" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
@@ -65,23 +70,38 @@ const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</di
 const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
 const isNet=e=>!(e&&["permission-denied","not-found","invalid-argument","failed-precondition","already-exists"].includes(e.code));
 function waitOnline(ms){return new Promise(r=>{let t;const done=()=>{clearTimeout(t);window.removeEventListener("online",done);r()};t=setTimeout(done,ms);window.addEventListener("online",done)})}
-async function retry(fn,label,max){let d=1500;for(let i=0;;i++){try{const v=await fn();net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"…");await waitOnline(d);d=Math.min(d*2,15000)}}}
+/* ម៉ោងកំណត់៖ Firestore Lite គ្មាន timeout ផ្ទាល់ខ្លួន → អ៊ីនធឺណិតខ្សោយអាចរង់ចាំរហូត · ផុតម៉ោង = កំហុសបណ្ដាញ (ព្យាយាមម្ដងទៀត) */
+const to=(p,ms)=>ms?Promise.race([p,new Promise((_,j)=>setTimeout(()=>j({code:"deadline-exceeded"}),ms))]):p;
+window.addEventListener("unhandledrejection",e=>{console.error(e.reason);window.bootFail()});
+window.addEventListener("error",e=>{console.error(e.error||e.message);window.bootFail()});
+async function retry(fn,label,max,ms=9000){let d=1500;for(let i=0;;i++){try{const v=await to(fn(),ms);net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"…");await waitOnline(d);d=Math.min(d*2,15000)}}}
 function net(t){const n=$("net");n.hidden=!t;n.textContent=t||""}
 function rand(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")}
 
 let M=null,me=null,K="",endMs=0,tick=0,over=false,acOn=false,AC={lv:0,lt:0,cp:0},awayAt=0,seq=0,pushT=0;
 /* ---------- ១. ព័ត៌មានប្រឡង ---------- */
+function hdr(){$("tt").textContent=M.t||"ប្រឡង";$("ts").textContent=(M.sch||"")+" · ថ្នាក់ "+(M.cls||"")+" · "+kn(M.dur)+" នាទី";document.title=M.t||"ប្រឡង"}
+/* ⚡ Refresh ពេលកំពុងប្រឡង → បង្ហាញវិញ្ញាសាភ្លាមពី localStorage (exm_ · exp_ · exk_) មិនរង់ចាំបណ្ដាញ · ម៉ោង/បិទ ពិនិត្យនៅពីក្រោយ */
+function fastResume(){
+  let M0=null,P=null;try{M0=JSON.parse(LS.get("exm_"+id)||"null");P=JSON.parse(LS.get("exp_"+id)||"null")}catch(e){return false}
+  const k0=LS.get("exk_"+id);
+  if(!M0||!P||!k0||!M0.open||!Array.isArray(M0.names)||!(+M0.endMs>Date.now()))return false;
+  const m0=M0.names.find(x=>x.k===k0);if(!m0)return false;
+  M=M0;endMs=+M.endMs;hdr();me=m0;K=id+"_"+me.k;return show(P,true);
+}
 async function start(){
   if(!id)return msg("⚠️","តំណមិនត្រឹមត្រូវ","សូមសួរគ្រូរបស់អ្នកម្ដងទៀត");
+  if(fastResume())return;
   try{const d=await retry(()=>getDoc(doc(db,"exm",id)),"កំពុងផ្ទុក",4);if(!d.exists())return msg("🔍","រកមិនឃើញប្រឡង","");M=d.data();LS.set("exm_"+id,JSON.stringify(M))}
   catch(e){if(e&&e.code==="permission-denied")return ended("ប្រឡងនេះបានបិទ");try{M=JSON.parse(LS.get("exm_"+id)||"null")}catch(x){}
     if(!M){app.innerHTML=`<div class="card msg"><div class=big>📶</div><h2>អ៊ីនធឺណិតខ្សោយ</h2><p class=note>មិនអាចផ្ទុកបានទេ</p><button class=btn id=rt>🔄 ព្យាយាមម្ដងទៀត</button></div>`;$("rt").onclick=()=>location.reload();return}}
   endMs=+M.endMs||0;
   if(!M.open||Date.now()>endMs)return ended(M.open?"អស់ម៉ោងប្រឡងហើយ":"ប្រឡងនេះបានបិទ");
-  $("tt").textContent=M.t||"ប្រឡង";$("ts").textContent=(M.sch||"")+" · ថ្នាក់ "+(M.cls||"")+" · "+kn(M.dur)+" នាទី";document.title=M.t||"ប្រឡង";
+  if(!Array.isArray(M.names))M.names=[];
+  hdr();
   /* បើកឡើងវិញលើឧបករណ៍ដដែល → បន្តភ្លាម */
   const k0=LS.get("exk_"+id),p0=LS.get("exp_"+id),m0=k0&&M.names.find(x=>x.k===k0);
-  if(m0&&p0){me=m0;K=id+"_"+me.k;return show(JSON.parse(p0),true)}
+  if(m0&&p0){let P=null;try{P=JSON.parse(p0)}catch(e){LS.del("exp_"+id)}if(P){me=m0;K=id+"_"+me.k;if(show(P,true))return}}
   app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${M.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
     <label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>
     <p class=note>• មើលប្រធានលើទូរស័ព្ទ ហើយ<b>សរសេរចម្លើយលើក្រដាស</b>របស់អ្នក<br>• អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ<br>• ឈ្មោះមួយបើកបានតែលើឧបករណ៍មួយ</p>
@@ -90,7 +110,7 @@ async function start(){
   $("go").onclick=go;
 }
 function ended(t){LS.del("exp_"+id);msg("⏰",t,"សូមប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
-function err(t){const e=$("er");e.innerHTML=t;e.hidden=!t}
+function err(t){const e=$("er");if(e){e.innerHTML=t;e.hidden=!t}}
 async function go(){
   const k=$("nm").value,pc=$("pc").value.replace(/[០-៩]/g,d=>"០១២៣៤៥៦៧៨៩".indexOf(d)).trim();
   if(!k)return err("សូមជ្រើសឈ្មោះរបស់អ្នក");if(!/^\d{6}$/.test(pc))return err("🔑 សូមបញ្ចូលលេខកូដ ៦ ខ្ទង់ដែលគ្រូប្រាប់");
@@ -101,14 +121,16 @@ async function go(){
   catch(e){return back(e&&e.code==="permission-denied"?"⛔ លេខកូដមិនត្រឹមត្រូវ ឬប្រឡងបានបិទ/អស់ម៉ោង":"📶 អ៊ីនធឺណិតខ្សោយ · សូមព្យាយាមម្ដងទៀត")}
   /* មួយឈ្មោះ មួយឧបករណ៍ */
   let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=rand();LS.set("dv_"+K,dv)}
-  try{await retry(()=>setDoc(doc(db,"exv",K),{t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp(),lv:0,lt:0,cp:0}),"កំពុងចុះឈ្មោះ",3)}
-  catch(e){if(e&&e.code==="permission-denied"&&!had)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។")}
+  let tmo=false;   /* ផុតម៉ោង ប៉ុន្តែអាចសរសេរដល់រួច → ការបដិសេធលើកក្រោយ = របស់ឧបករណ៍នេះ */
+  try{await retry(()=>to(setDoc(doc(db,"exv",K),{t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp(),lv:0,lt:0,cp:0}),12000).catch(e=>{if(e&&e.code==="deadline-exceeded")tmo=true;throw e}),"កំពុងចុះឈ្មោះ",3,0)}
+  catch(e){if(e&&e.code==="permission-denied"&&!had&&!tmo)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។")}
   LS.set("exk_"+id,k);LS.set("exp_"+id,JSON.stringify(P));
   try{const el=document.documentElement,r=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}
-  show(P,false);
+  if(!show(P,false))back("⚠️ មិនអាចបង្ហាញវិញ្ញាសាបានទេ · សូមព្យាយាមម្ដងទៀត");
 }
 /* ---------- ២. បង្ហាញវិញ្ញាសា + ម៉ោងរាប់ថយក្រោយ ---------- */
 function show(P,reload){
+  try{
   app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span></div><div class=paper id=pp>${EXP.html(P,P.ab?{v:me.ab==="ខ"?"b":"a",lbl:me.ab==="ខ"?"ខ":"ក"}:{})}</div>
     <p class=note style="text-align:center">✍️ សរសេរចម្លើយលើក្រដាស · អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ</p>`;
   math($("pp"));if(EXP.fit)EXP.fit($("pp"));if(EXP.shrink)EXP.shrink($("pp"));
@@ -118,8 +140,15 @@ function show(P,reload){
   const f=()=>{const s=Math.max(0,Math.round((endMs-Date.now())/1000)),t=$("tm");if(t){t.textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));t.classList.toggle("low",s<=300)}
     if(!s){clearInterval(tick);timeUp()}};
   tick=setInterval(f,1000);f();
-  /* ពិនិត្យម៉ោងថ្មីពីគ្រូ (បន្ថែមម៉ោង ឬបិទមុន) រៀងរាល់ ៦០ វិនាទី */
-  setInterval(()=>{getDoc(doc(db,"exm",id)).then(d=>{if(!d.exists())return;const m=d.data();if(!m.open){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}else if(+m.endMs!==endMs){endMs=+m.endMs;over=false}}).catch(e=>{if(e&&e.code==="permission-denied"){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}})},60000);
+  /* ពិនិត្យម៉ោងថ្មីពីគ្រូ (បន្ថែមម៉ោង ឬបិទមុន) រៀងរាល់ ៦០ វិនាទី · Refresh → ពិនិត្យភ្លាម (នៅពីក្រោយ) */
+  const chk=()=>to(getDoc(doc(db,"exm",id)),9000).then(d=>{if(!d.exists())return;const m=d.data();LS.set("exm_"+id,JSON.stringify(m));if(!m.open){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}else if(+m.endMs!==endMs){endMs=+m.endMs;over=false}}).catch(e=>{if(e&&e.code==="permission-denied"){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}});
+  clearInterval(show.poll);show.poll=setInterval(chk,60000);if(reload)chk();
+  return true;
+  }catch(e){
+    console.error("show:",e);acOn=false;clearInterval(tick);
+    app.innerHTML=`<div class="card msg"><div class=big>⚠️</div><h2>មិនអាចបង្ហាញវិញ្ញាសាបានទេ</h2><p class=note>សូមចុចផ្ទុកឡើងវិញ</p><button class=btn onclick="location.reload()">🔄 ផ្ទុកឡើងវិញ</button></div>`;
+    return false;
+  }
 }
 function timeUp(t){if(over)return;over=true;acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();msg("⏰",t||"អស់ម៉ោងប្រឡង","សូមឈប់សរសេរ ហើយប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
 /* ---------- ៣. ការពារការលួចមើល ---------- */
@@ -137,7 +166,7 @@ window.addEventListener("blur",away);window.addEventListener("focus",back);windo
 const no=e=>{if(!acOn||over)return;const inp=e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="SELECT");if(e.type==="contextmenu"||e.type==="selectstart"||e.type==="dragstart"){if(!inp)e.preventDefault();return}
   e.preventDefault();AC.cp++;acSave();warn("មិនអនុញ្ញាតឱ្យចម្លងវិញ្ញាសាទេ","ការព្យាយាមនេះត្រូវបានកត់ត្រា (លើកទី "+kn(AC.cp)+")")};
 ["copy","cut","paste","contextmenu","selectstart","dragstart"].forEach(t=>document.addEventListener(t,no,true));
-start();
+start().catch(e=>{console.error("start:",e);app.innerHTML=`<div class="card msg"><div class=big>⚠️</div><h2>មិនអាចផ្ទុកបានទេ</h2><button class=btn onclick="location.reload()">🔄 ផ្ទុកឡើងវិញ</button></div>`});
 </script>
 </body>
 </html>
