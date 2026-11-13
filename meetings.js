@@ -147,10 +147,12 @@ function docHtml(m){
    "<div class=mt-ft><div class=mt-dt><div>"+esc(lunar(m.d))+"</div><div>"+esc(greg(m.d))+"</div></div>"+
     "<div class=mt-cols><div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div></div>"+
      (AU?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានគណៈកម្មការ</div>"+sig(pz?idByName(pz.n):"")+"<div class=moul>"+esc(pz?pz.n:"")+"</div></div>"
-      :P?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូចែករំលែក</div>"+sig(sh[0]?idByName(sh[0].n):"")+"<div class=moul>"+esc(sh.map(function(a){return a.n}).join(" · "))+"</div></div>"
+      :P?"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូចែករំលែក</div>"+sig(sh[0]?idByName(sh[0].n):"")+"<div class=moul>"+esc(sh.map(function(a){return a.n}).join(" · "))+"</div></div>"+
+         "<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>គ្រូកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div>"
       :R?"<div></div>"   /* ប្រជុំរួម៖ គ្មានហត្ថលេខាកណ្ដាល (ទុកកន្លែងទំនេរ ឱ្យអ្នកកត់ត្រានៅខាងស្ដាំដដែល) */
-       :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>")+
-     "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div></div></div>"+
+       :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>"+
+         "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div>")+
+     "</div></div>"+
   "</div>";
 }
 
@@ -259,7 +261,7 @@ function newMt(){
   /* សមាសភាពស្រាប់ = តាមប្រជុំចុងក្រោយ (ដើមឡើយ ៨ នាក់ក្នុងក្រុម) */
   var ids=list(),n=nextN(fTy),d=new Date(),p=function(x){return("0"+x).slice(-2)};
   var last=fTy!=="p"&&ids.length?mts[ids[0]].at:null;
-  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:last&&last.length?JSON.parse(JSON.stringify(last)):fTy==="p"?[myAt()]:conv(AT0,fTy),ag:fTy==="a"?AGA:"",pr:"",dc:"",rc:who.id,rn:who.name};
+  return{ty:fTy,n:n,d:d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()),pl:"BT",md:"ដោយផ្ទាល់",st:"11:20",en:"12:20",at:last&&last.length?JSON.parse(JSON.stringify(last)):(fTy==="p"?[myAt(),{t:"លោកគ្រូ",n:"",r:"គ្រូចែករំលែក"}]:conv(AT0,fTy)),ag:fTy==="a"?AGA:"",pr:"",dc:"",rc:who.id,rn:who.name};
 }
 function drawEdit(){
   if(isDL(tyOf(edit.m)))return drawEditDL();
