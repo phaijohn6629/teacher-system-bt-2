@@ -311,6 +311,308 @@ P4[22]=[function(){var lb=["ម្ហូប","សាលា","ភ្លើងទ�
       [A(Math.round(arr[k]*36)/10,null,"num","° =")],"$"+arr[k]+"\\%\\times360^\\circ="+(Math.round(arr[k]*36)/10)+"^\\circ$")}];
 Object.keys(P4).forEach(function(l){var L=P4[l];G[l][4]=function(){return pick(L)()}});
 
+
+/* ===== ពិពិធកម្មទម្រង់លំហាត់ (២០២៦-១១) — មេរៀន×កម្រិតនីមួយៗ ≥ ៤ ទម្រង់ · គណនាផ្ទាល់ · រកអញ្ញាត · បញ្ហាជីវិតពិត · ត្រិះរិះ =====
+   ជ្រើសចម្លើយមុន រួចបង្កើតទិន្នន័យ · kd = s7_… · vx(l,lv,[…]) → ទម្រង់ថ្មីនីមួយៗមានឱកាសស្មើទម្រង់ដើម */
+function K(kd,q,a,s,f){var o=Q(q,a,s,f);o.kd=kd;return o}
+function vx(l,lv,L){var o=G[l][lv];G[l][lv]=function(){var i=Math.floor(Math.random()*(L.length+1));return i<L.length?L[i]():o()}}
+function ang(v){return v+"^\\circ"}
+function mo(v){return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
+function fsum(n,N){var f;do{f=[];var r=N;for(var i=0;i<n-1;i++){var v=ri(1,Math.max(1,Math.floor(r/(n-i))*2-1));f.push(v);r-=v}f.push(r)}while(f.some(function(v){return v<1}));return f}
+function pf(n){var o={2:0,3:0,5:0},m=n;[2,3,5].forEach(function(p){while(m%p===0){o[p]++;m/=p}});return o}
+/* ១ ចំនួនគត់ */
+vx(1,1,[
+ function(){var b=ri(2,9),k=ri(2,12),c=ri(2,30),a=b*k;return K("s7_div","គណនា $"+a+"\\div"+b+"+"+c+"$",[A(k+c,null,"num","=")],"ចែកមុន បូកក្រោយ ៖ $"+k+"+"+c+"="+(k+c)+"$")},
+ function(){var a=ri(2,6),p=ri(2,9)*500,b=ri(2,6),q=ri(1,5)*500;return K("s7_wd1","ទិញសៀវភៅ $"+a+"$ ក្បាល តម្លៃ $"+mo(p)+"$ រៀល/ក្បាល និងប៊ិច $"+b+"$ ដើម តម្លៃ $"+mo(q)+"$ រៀល/ដើម ។ ចំណាយសរុបប៉ុន្មានរៀល?",[A(a*p+b*q,null,"num","រៀល =")],"$"+a+"\\times"+mo(p)+"+"+b+"\\times"+mo(q)+"="+mo(a*p+b*q)+"$ រៀល")},
+ function(){var a=ri(2,20),b=ri(2,9),x=ri(2,9);return K("s7_miss","រកចំនួនដែលបាត់ $\\square$ ៖ $"+a+"+\\square\\times"+b+"="+(a+x*b)+"$",[A(x,null,"num","□ =")],"$\\square\\times"+b+"="+(x*b)+"$ ⇒ $\\square="+x+"$")}]);
+vx(1,2,[
+ function(){var a=ri(2,9),b=ri(1,9),c=ri(1,9),d=ri(1,a*(b+c));return K("s7_br2","គណនា $"+a+"\\times("+b+"+"+c+")-"+d+"$",[A(a*(b+c)-d,null,"num","=")],"$"+a+"\\times"+(b+c)+"-"+d+"="+(a*(b+c)-d)+"$")},
+ function(){var a=ri(20,60),b=ri(5,19),c=ri(5,15),d=ri(1,c-1);return K("s7_nest","គណនា $"+a+"-["+b+"-("+c+"-"+d+")]$",[A(a-b+c-d,null,"num","=")],"ខាងក្នុងមុន ៖ $"+c+"-"+d+"="+(c-d)+"$ · $"+b+"-"+(c-d)+"="+(b-c+d)+"$ ⇒ $"+a+"-"+(b-c+d)+"="+(a-b+c-d)+"$")},
+ function(){var a=ri(2,6),p=ri(2,8)*500,M=a*p+ri(1,20)*500;return K("s7_chg","ដារ៉ាមានលុយ $"+mo(M)+"$ រៀល ទិញនំ $"+a+"$ ដុំ តម្លៃ $"+mo(p)+"$ រៀល/ដុំ ។ តើនៅសល់ប៉ុន្មានរៀល?",[A(M-a*p,null,"num","រៀល =")],"$"+mo(M)+"-"+a+"\\times"+mo(p)+"="+mo(M-a*p)+"$ រៀល")}]);
+vx(1,3,[
+ function(){var a=ri(2,9),b=ri(1,4),c=ri(1,6),d=ri(1,6),v=a*a+b*b*b-c*d;return K("s7_pw","គណនា $"+a+"^2+"+b+"^3-"+c+"\\times"+d+"$",[A(v,null,"num","=")],"$"+(a*a)+"+"+(b*b*b)+"-"+(c*d)+"="+v+"$")},
+ function(){var a=ri(12,89),n=pick([99,101,999]);return K("s7_dist","គណនាឱ្យរហ័ស (លក្ខណៈបំបែក) $"+a+"\\times"+n+"$",[A(a*n,null,"num","=")],"$"+a+"\\times("+(n>100?"100"+(n===101?"+1":"0-1"):"100-1")+")="+(a*n)+"$")},
+ function(){var a=ri(4,12),c=ri(2,9),a2=a*a,k=ri(1,Math.floor((a2-1)/c)),b=a2-c*k;
+   return K("s7_frc","គណនា $\\dfrac{"+a+"^2-"+b+"}{"+c+"}$",[A(k,null,"num","=")],"$\\dfrac{"+a2+"-"+b+"}{"+c+"}=\\dfrac{"+(c*k)+"}{"+c+"}="+k+"$")}]);
+/* ២ គូចែក និងពហុគុណ */
+vx(2,1,[
+ function(){var n=pick([12,18,20,24,28,30,36,40,45,48,60,72]),c=0;for(var i=1;i<=n;i++)if(n%i===0)c++;return K("s7_ndiv","តើ $"+n+"$ មានតួចែក (វិជ្ជមាន) ប៉ុន្មាន?",[A(c,null,"num","ចំនួន =")],"រាយតួចែក ៖ $"+[].concat.apply([],Array.apply(null,{length:n}).map(function(_,i){return n%(i+1)?[]:[i+1]})).join(",")+"$ ⇒ $"+c+"$")},
+ function(){var a=ri(1,4),b=ri(0,3),c=ri(0,2),n=Math.pow(2,a)*Math.pow(3,b)*Math.pow(5,c);return K("s7_pf","បំបែក $"+n+"$ ជាផលគុណកត្តាបឋម $"+n+"=2^a\\times3^b\\times5^c$ ។ រក $a$ , $b$ , $c$",[A(a,null,"num","a ="),A(b,null,"num","b ="),A(c,null,"num","c =")],"$"+n+"=2^{"+a+"}\\times3^{"+b+"}\\times5^{"+c+"}$")},
+ function(){var d1=ri(1,9),d2=ri(0,9),x=(9-(d1+d2)%9)%9;while(x===0){d2=(d2+1)%10;x=(9-(d1+d2)%9)%9}return K("s7_d9","រកខ្ទង់ $x$ ($0\\le x\\le9$) ដើម្បីឱ្យចំនួន $\\overline{"+d1+"x"+d2+"}$ ចែកដាច់នឹង $9$",[A(x,null,"num","x =")],"ផលបូកខ្ទង់ $"+d1+"+x+"+d2+"$ ត្រូវជាពហុគុណនៃ $9$ ⇒ $x="+x+"$")}]);
+vx(2,2,[
+ function(){var g=ri(2,9),p=ri(2,7),q=ri(2,7);while(gcd(p,q)!==1||p===q)q=ri(2,7);var a=g*p,b=g*q;return K("s7_gl","រក $\\text{PGCD}("+a+","+b+")$ និង $\\text{PPCM}("+a+","+b+")$",[A(g,null,"num","PGCD ="),A(g*p*q,null,"num","PPCM =")],"$"+a+"="+g+"\\times"+p+"$ , $"+b+"="+g+"\\times"+q+"$ ⇒ PGCD $="+g+"$ · PPCM $="+g+"\\times"+p+"\\times"+q+"="+(g*p*q)+"$")},
+ function(){var g=ri(2,9),p=ri(1,7),q=ri(2,8);while(gcd(p,q)!==1||p===q)q=ri(2,8);var a=g*p,b=g*q;return K("s7_gp","ចំនួនពីរមានផលគុណ $"+(a*b)+"$ និង PGCD ស្មើ $"+g+"$ ។ គណនា PPCM",[A(a*b/g,null,"num","PPCM =")],"$\\text{PGCD}\\times\\text{PPCM}=a\\times b$ ⇒ $\\text{PPCM}=\\dfrac{"+(a*b)+"}{"+g+"}="+(a*b/g)+"$")},
+ function(){var g=ri(2,8),m=[ri(2,6),ri(2,6),ri(2,6)];while(gcd(gcd(m[0],m[1]),m[2])!==1)m[2]++;return K("s7_g3","រក $\\text{PGCD}("+m.map(function(v){return v*g}).join(",")+")$",[A(g,null,"num","PGCD =")],"ចំនួនទាំងបីចែកដាច់នឹង $"+g+"$ ហើយ $"+m.join(",")+"$ គ្មានតួចែករួមក្រៅពី $1$ ⇒ $"+g+"$")}]);
+vx(2,3,[
+ function(){var g=pick([2,3,4,5,6]),p=ri(2,6),q=ri(2,6);while(gcd(p,q)!==1)q++;return K("s7_tile","គេចង់ក្រាលការ៉ូរាងការេ (ធំបំផុត ទំហំដូចគ្នា មិនកាត់) លើបន្ទប់ $"+(g*p)+"\\text{ dm}\\times"+(g*q)+"\\text{ dm}$ ។ (ក) ជ្រុងការ៉ូប៉ុន្មាន dm? (ខ) ត្រូវការការ៉ូប៉ុន្មានដុំ?",[A(g,null,"num","(ក) ="),A(p*q,null,"num","(ខ) =")],"ជ្រុង $=\\text{PGCD}("+(g*p)+","+(g*q)+")="+g+"$ ⇒ $"+p+"\\times"+q+"="+(p*q)+"$ ដុំ")},
+ function(){var g=ri(3,12),p=ri(2,7),q=ri(2,7);while(gcd(p,q)!==1||p===q)q=ri(2,7);return K("s7_pack","មានស្ករគ្រាប់ $"+(g*p)+"$ និងនំ $"+(g*q)+"$ ។ ចង់ចែកឱ្យក្មេងច្រើនបំផុត ដោយម្នាក់ៗបានស្ករស្មើគ្នា និងនំស្មើគ្នា (មិនសល់) ។ (ក) ក្មេងប៉ុន្មាននាក់? (ខ) ម្នាក់បានស្ករប៉ុន្មានគ្រាប់?",[A(g,null,"num","(ក) ="),A(p,null,"num","(ខ) =")],"$\\text{PGCD}("+(g*p)+","+(g*q)+")="+g+"$ នាក់ · ស្ករ $"+(g*p)+"\\div"+g+"="+p+"$")},
+ function(){var a=pick([4,6,8,10,12,15]),b=pick([6,9,10,15,20]);while(b===a)b=pick([6,9,10,15,20]);var L=lcm(a,b),T=pick([1,2,3,5]),n=Math.floor(60*T/L);return K("s7_lt","ភ្លើងពីរ ព្រិចរៀងរាល់ $"+a+"$ វិនាទី និង $"+b+"$ វិនាទី ។ វាព្រិចព្រមគ្នានៅពេលចាប់ផ្ដើម ។ ក្នុង $"+T+"$ នាទីបន្ទាប់ វាព្រិចព្រមគ្នាប៉ុន្មានដងទៀត?",[A(n,null,"num","ដង =")],"ព្រមគ្នារៀងរាល់ $\\text{PPCM}("+a+","+b+")="+L+"$ វិនាទី ⇒ $\\left\\lfloor\\dfrac{"+(60*T)+"}{"+L+"}\\right\\rfloor="+n+"$ ដង")}]);
+/* ៣ ចំនួនគត់រ៉ឺឡាទីប */
+vx(3,1,[
+ function(){var a=nz(-20,20),b=nz(-20,20);return K("s7_sub","គណនា $"+a+"-"+sgp(b)+"$",[A(a-b,null,"num","=")],"ដក = បូកនឹងចំនួនផ្ទុយ ៖ $"+a+sg(-b,0)+"="+(a-b)+"$")},
+ function(){var a=ri(-5,30),b=ri(3,25);return K("s7_tmp","សីតុណ្ហភាពពេលថ្ងៃត្រង់ $"+a+"^\\circ\\text{C}$ ។ ពេលយប់ធ្លាក់ចុះ $"+b+"^\\circ\\text{C}$ ។ តើពេលយប់សីតុណ្ហភាពប៉ុន្មាន?",[A(a-b,null,"num","°C =")],"$"+a+"-"+b+"="+(a-b)+"$")},
+ function(){var L=[nz(-20,20),nz(-20,20),nz(-20,20),nz(-20,20),nz(-20,20)];return K("s7_min","រកចំនួនតូចបំផុតក្នុងចំណោម $"+L.join(",\\ ")+"$",[A(Math.min.apply(null,L),null,"num","=")],"ចំនួនអវិជ្ជមានដែលមានតម្លៃដាច់ខាតធំ គឺតូចជាង ⇒ $"+Math.min.apply(null,L)+"$")}]);
+vx(3,2,[
+ function(){var b=nz(-9,9),k=nz(-9,9);return K("s7_dv","គណនា $"+(b*k)+"\\div"+sgp(b)+"$",[A(k,null,"num","=")],"សញ្ញា ៖ "+(b*k*b>0?"ដូចគ្នា ⇒ វិជ្ជមាន":"ផ្ទុយគ្នា ⇒ អវិជ្ជមាន")+" ⇒ $"+k+"$")},
+ function(){var a=nz(-15,15),b=nz(-15,15),c=nz(-15,15),v=Math.abs(a)-Math.abs(b)+Math.abs(c);return K("s7_abs","គណនា $|"+a+"|-|"+b+"|+|"+c+"|$",[A(v,null,"num","=")],"$"+Math.abs(a)+"-"+Math.abs(b)+"+"+Math.abs(c)+"="+v+"$")},
+ function(){var d=ri(10,40),u=ri(3,15),w=ri(3,15);return K("s7_dive","អ្នកមុជទឹកនៅជម្រៅ $-"+d+"$ m ។ គាត់ឡើង $"+u+"$ m រួចចុះ $"+w+"$ m ។ តើគាត់នៅជម្រៅប៉ុន្មាន?",[A(-d+u-w,null,"num","m =")],"$-"+d+"+"+u+"-"+w+"="+(-d+u-w)+"$")}]);
+vx(3,3,[
+ function(){var a=ri(2,9),b=ri(1,4),v=a*a+b*b*b;return K("s7_neg","គណនា $(-"+a+")^2-(-"+b+")^3$",[A(v,null,"num","=")],"$(-"+a+")^2="+(a*a)+"$ (ស្វ័យគុណគូ) · $(-"+b+")^3=-"+(b*b*b)+"$ ⇒ $"+(a*a)+"+"+(b*b*b)+"="+v+"$")},
+ function(){var n=ri(2,9),m=ri(n+1,15),s=0;for(var i=-n;i<=m;i++)s+=i;return K("s7_ssum","គណនា $(-"+n+")+(-"+(n-1)+")+\\cdots+"+(m-1)+"+"+m+"$ (ចំនួនគត់តគ្នាពី $-"+n+"$ ដល់ $"+m+"$)",[A(s,null,"num","=")],"ពី $-"+n+"$ ដល់ $"+n+"$ ផ្ទុយគ្នាលុបគ្នា ⇒ $"+(n+1)+"+\\cdots+"+m+"="+s+"$")},
+ function(){var a=nz(-6,6),b=nz(1,6),e=nz(-4,4),k=nz(-4,4),c=e*k,d=1;var v=-a*b+k;return K("s7_mx","គណនា $"+sgp(a)+"\\times(-"+b+")+"+sgp(c)+"\\div"+sgp(e)+"$",[A(v,null,"num","=")],"$"+(-a*b)+sg(k,0)+"="+v+"$")}]);
+/* ៤ ប្រភាគ */
+vx(4,1,[
+ function(){var b=ri(2,9),d=ri(2,9),a=ri(1,b-1),c=ri(1,d-1);if(a*d<c*b){var t=a;a=c;c=t;t=b;b=d;d=t}var r=fr(a*d-c*b,b*d);return K("s7_fs","គណនា $\\dfrac{"+a+"}{"+b+"}-\\dfrac{"+c+"}{"+d+"}$",[A(r.s,r.t,"num","=")],"ភាគបែងរួម $"+(b*d)+"$ ៖ $\\dfrac{"+(a*d)+"-"+(c*b)+"}{"+(b*d)+"}="+r.t+"$")},
+ function(){var n=ri(1,9),d=ri(2,12);while(gcd(n,d)!==1||n===d)n=ri(1,9);var k=ri(2,9),r=fr(n,d);return K("s7_fsim","សម្រួលប្រភាគ $\\dfrac{"+(n*k)+"}{"+(d*k)+"}$ ជាប្រភាគមិនអាចសម្រួលបាន",[A(r.s,r.t,"num","=")],"ចែកភាគយក និងភាគបែងនឹង $"+k+"$ ⇒ $"+r.t+"$")},
+ function(){var b=ri(2,9),a=ri(1,b-1),N=b*ri(2,12);return K("s7_fof","រក $\\dfrac{"+a+"}{"+b+"}$ នៃ $"+N+"$",[A(N*a/b,null,"num","=")],"$"+N+"\\times\\dfrac{"+a+"}{"+b+"}="+(N/b)+"\\times"+a+"="+(N*a/b)+"$")}]);
+vx(4,2,[
+ function(){var a=ri(1,9),b=ri(2,9),c=ri(1,9),d=ri(2,9),r=fr(a*d,b*c);return K("s7_fd","គណនា $\\dfrac{"+a+"}{"+b+"}\\div\\dfrac{"+c+"}{"+d+"}$",[A(r.s,r.t,"num","=")],"$\\dfrac{"+a+"}{"+b+"}\\times\\dfrac{"+d+"}{"+c+"}="+r.t+"$")},
+ function(){var d=ri(2,9),r=ri(1,d-1),q=ri(1,9),f=fr(q*d+r,d);return K("s7_mix","សរសេរចំនួនចម្រុះ $"+q+"\\dfrac{"+r+"}{"+d+"}$ ជាប្រភាគ (មិនអាចសម្រួលបាន)",[A(f.s,f.t,"num","=")],"$\\dfrac{"+q+"\\times"+d+"+"+r+"}{"+d+"}="+f.t+"$")},
+ function(){var a=ri(1,8),b=ri(2,9),c=ri(1,8),d=ri(2,9);while(a*d===b*c)c=ri(1,8);var big=a*d>b*c?fr(a,b):fr(c,d);return K("s7_fc","ប្រៀបធៀប $\\dfrac{"+a+"}{"+b+"}$ និង $\\dfrac{"+c+"}{"+d+"}$ ។ សរសេរប្រភាគដែលធំជាង",[A(big.s,big.t,"num","ធំជាង =")],"ផលគុណឆ្កាង ៖ $"+a+"\\times"+d+"="+(a*d)+"$ , $"+c+"\\times"+b+"="+(c*b)+"$ ⇒ $"+big.t+"$")}]);
+vx(4,3,[
+ function(){var b=pick([3,4,5,6,8]),d=pick([3,4,5,6,8]),a=1,c=1,r=fr(b*d-a*d-c*b,b*d);while(r.n<=0){d++;r=fr(b*d-a*d-c*b,b*d)}return K("s7_fw","ដារ៉ាចំណាយ $\\dfrac{"+a+"}{"+b+"}$ នៃប្រាក់ទិញសៀវភៅ និង $\\dfrac{"+c+"}{"+d+"}$ នៃប្រាក់ទិញប៊ិច ។ តើនៅសល់ប៉ុន្មានភាគនៃប្រាក់?",[A(r.s,r.t,"num","=")],"$1-\\dfrac{"+a+"}{"+b+"}-\\dfrac{"+c+"}{"+d+"}="+r.t+"$")},
+ function(){var b=ri(2,9),a=ri(1,b),d=ri(2,6),c=ri(1,d-1),r=fr(a*(d-c),b*d);return K("s7_frem","ធុងទឹកមួយមានទឹក $\\dfrac{"+a+"}{"+b+"}$ នៃធុង ។ គេប្រើអស់ $\\dfrac{"+c+"}{"+d+"}$ នៃទឹកដែលមាន ។ តើទឹកនៅសល់ប៉ុន្មានភាគនៃធុង?",[A(r.s,r.t,"num","=")],"សល់ $1-\\dfrac{"+c+"}{"+d+"}=\\dfrac{"+(d-c)+"}{"+d+"}$ នៃទឹក ⇒ $\\dfrac{"+a+"}{"+b+"}\\times\\dfrac{"+(d-c)+"}{"+d+"}="+r.t+"$")},
+ function(){var a=ri(1,9),b=ri(2,9),c=ri(1,9),d=ri(2,9),x=fr(c*b,d*a);return K("s7_fx","រក $x$ ដែល $\\dfrac{"+a+"}{"+b+"}x=\\dfrac{"+c+"}{"+d+"}$",[A(x.s,x.t,"num","x =")],"$x=\\dfrac{"+c+"}{"+d+"}\\div\\dfrac{"+a+"}{"+b+"}=\\dfrac{"+c+"}{"+d+"}\\times\\dfrac{"+b+"}{"+a+"}="+x.t+"$")}]);
+/* ៥ ចំនួនទសភាគ */
+vx(5,1,[
+ function(){var n=ri(1001,9999),v=Math.floor((n+50)/100)/10;return K("s7_rnd","បង្គត់ $"+dec(n,3)+"$ ត្រឹមខ្ទង់ភាគដប់",[A(v,null,"num","≈")],"មើលខ្ទង់ភាគរយ ៖ $"+dec(n,3)+"\\approx"+v+"$")},
+ function(){var L=[ri(100,999),ri(100,999),ri(100,999),ri(100,999)],p=pick([2,3]);return K("s7_dmax","រកចំនួនធំបំផុតក្នុងចំណោម $"+L.map(function(v){return dec(v,p)}).join(",\\ ")+"$",[A(dec(Math.max.apply(null,L),p),null,"num","=")],"ប្រៀបធៀបខ្ទង់ពីឆ្វេង ⇒ $"+dec(Math.max.apply(null,L),p)+"$")},
+ function(){var n=ri(11,9999),p=pick([1,2,3]),m=pick([10,100,1000]),t=Math.random()<.5;return t?K("s7_x10","គណនា $"+dec(n,p)+"\\times"+m+"$",[A(String(n*m/Math.pow(10,p)),null,"num","=")],"ផ្លាស់ក្បៀសទៅស្ដាំ $"+(String(m).length-1)+"$ ខ្ទង់ ⇒ $"+(n*m/Math.pow(10,p))+"$")
+   :K("s7_x10","គណនា $"+n+"\\div"+m+"$",[A(dec(n,String(m).length-1),null,"num","=")],"ផ្លាស់ក្បៀសទៅឆ្វេង ⇒ $"+dec(n,String(m).length-1)+"$")}]);
+vx(5,2,[
+ function(){var b=ri(2,9),q=ri(11,99);return K("s7_dd","គណនា $"+dec(b*q,1)+"\\div"+b+"$",[A(dec(q,1),null,"num","=")],"$"+(b*q)+"\\div"+b+"="+q+"$ ⇒ $"+dec(q,1)+"$")},
+ function(){var v=ri(11,49),p=ri(2,9)*1000;return K("s7_dp","ទិញផ្លែស្វាយ $"+dec(v,1)+"$ kg តម្លៃ $"+mo(p)+"$ រៀល/kg ។ ត្រូវបង់ប៉ុន្មានរៀល?",[A(v*p/10,null,"num","រៀល =")],"$"+dec(v,1)+"\\times"+mo(p)+"="+mo(v*p/10)+"$ រៀល")},
+ function(){var b=ri(2,9),n=ri(3,12),r=ri(0,b-1),a=b*n+r;return K("s7_cut","ខ្សែមួយវែង $"+dec(a,1)+"$ m កាត់ជាដុំៗវែង $"+dec(b,1)+"$ m ។ (ក) បានប៉ុន្មានដុំ? (ខ) សល់ប៉ុន្មាន m?",[A(n,null,"num","(ក) ="),A(dec(r,1),null,"num","(ខ) =")],"$"+dec(a,1)+"="+n+"\\times"+dec(b,1)+"+"+dec(r,1)+"$")}]);
+vx(5,3,[
+ function(){var n=ri(1,99),f=fr(n,100);return K("s7_d2f","សរសេរ $"+dec(n,2)+"$ ជាប្រភាគមិនអាចសម្រួលបាន",[A(f.s,f.t,"num","=")],"$"+dec(n,2)+"=\\dfrac{"+n+"}{100}="+f.t+"$")},
+ function(){var x=ri(11,49),b=ri(2,6),d=ri(2,5),y=ri(11,49),c=d*y;return K("s7_dmix","គណនា $"+dec(x,1)+"\\times"+b+"+"+dec(c,1)+"\\div"+d+"$",[A(dec(x*b+y,1),null,"num","=")],"$"+dec(x*b,1)+"+"+dec(y,1)+"="+dec(x*b+y,1)+"$")},
+ function(){var n=pick([3,4,5]),L=[];for(var i=0;i<n-1;i++)L.push(ri(11,99));var m=ri(20,80);L.push(m*n-sum(L));while(L[n-1]<=0){L[n-1]+=n;m++}return K("s7_dav","គណនាមធ្យមនៃ $"+L.map(function(v){return dec(v,1)}).join(",\\ ")+"$",[A(dec(sum(L)/n,1),null,"num","=")],"ផលបូក $="+dec(sum(L),1)+"$ ⇒ $\\dfrac{"+dec(sum(L),1)+"}{"+n+"}="+dec(sum(L)/n,1)+"$")}]);
+/* ៦ ភាគរយ */
+vx(6,1,[
+ function(){var p=ri(1,99),f=fr(p,100);return K("s7_p2f","សរសេរ $"+p+"\\%$ ជាប្រភាគមិនអាចសម្រួលបាន",[A(f.s,f.t,"num","=")],"$"+p+"\\%=\\dfrac{"+p+"}{100}="+f.t+"$")},
+ function(){var b=pick([2,4,5,10,20,25,50]),a=ri(1,b-1);return K("s7_fp","សរសេរ $\\dfrac{"+a+"}{"+b+"}$ ជាភាគរយ",[A(a*100/b,null,"num","% =")],"$\\dfrac{"+a+"}{"+b+"}\\times100="+(a*100/b)+"\\%$")},
+ function(){var n=ri(1,150);return K("s7_dp2","សរសេរ $"+dec(n,2)+"$ ជាភាគរយ",[A(n,null,"num","% =")],"$"+dec(n,2)+"\\times100="+n+"\\%$")}]);
+vx(6,2,[
+ function(){var N=pick([20,25,40,50]),p=pick([20,40,60,80]),g=N*p/100;return K("s7_cls","ថ្នាក់មួយមានសិស្ស $"+N+"$ នាក់ ក្នុងនោះសិស្សស្រី $"+p+"\\%$ ។ តើមានសិស្សប្រុសប៉ុន្មាននាក់?",[A(N-g,null,"num","ប្រុស =")],"ស្រី $="+N+"\\times\\dfrac{"+p+"}{100}="+g+"$ ⇒ ប្រុស $="+(N-g)+"$")},
+ function(){var P=ri(2,20)*1000,p=pick([10,20,25,50]),S=P*(100+p)/100;return K("s7_prof","អ្នកលក់ទិញទំនិញ $"+mo(P)+"$ រៀល ហើយលក់វិញ $"+mo(S)+"$ រៀល ។ តើគាត់ចំណេញប៉ុន្មានភាគរយ?",[A(p,null,"num","% =")],"ចំណេញ $="+mo(S-P)+"$ ⇒ $\\dfrac{"+mo(S-P)+"}{"+mo(P)+"}\\times100="+p+"\\%$")},
+ function(){var P=ri(1,30)*1000;return K("s7_vat","ទំនិញតម្លៃ $"+mo(P)+"$ រៀល (មិនទាន់គិតអាករ) ។ បូកអាករ $10\\%$ តើត្រូវបង់ប៉ុន្មានរៀល?",[A(P*11/10,null,"num","រៀល =")],"$"+mo(P)+"\\times\\dfrac{110}{100}="+mo(P*11/10)+"$ រៀល")}]);
+vx(6,3,[
+ function(){var P=ri(2,40)*1000,p=pick([10,20,25,40,50]),F=P*(100-p)/100;return K("s7_orig","ក្រោយបញ្ចុះតម្លៃ $"+p+"\\%$ អាវមួយនៅសល់តម្លៃ $"+mo(F)+"$ រៀល ។ តើតម្លៃដើមប៉ុន្មានរៀល?",[A(P,null,"num","រៀល =")],"$"+(100-p)+"\\%$ នៃតម្លៃដើម $="+mo(F)+"$ ⇒ $\\dfrac{"+mo(F)+"\\times100}{"+(100-p)+"}="+mo(P)+"$ រៀល")},
+ function(){var P=ri(1,20)*100000,r=pick([2,4,5,6,8,10]),n=ri(1,5),I=P*r*n/100;return K("s7_si","ដាក់ប្រាក់ $"+mo(P)+"$ រៀល ការប្រាក់ $"+r+"\\%$ ក្នុងមួយឆ្នាំ (ការប្រាក់សាមញ្ញ) ។ ក្រោយ $"+n+"$ ឆ្នាំ ទទួលការប្រាក់ប៉ុន្មានរៀល?",[A(I,null,"num","រៀល =")],"$"+mo(P)+"\\times\\dfrac{"+r+"}{100}\\times"+n+"="+mo(I)+"$ រៀល")},
+ function(){var a=pick([20,25,40,50,80,200]),p=pick([5,10,20,25,50]),b=a*(100+p)/100;while(b!==Math.round(b)){p=pick([10,20,25,50]);b=a*(100+p)/100}return K("s7_inc","ឆ្នាំមុន សាលាមានសិស្ស $"+a+"$ នាក់ ឆ្នាំនេះមាន $"+b+"$ នាក់ ។ តើកើនឡើងប៉ុន្មានភាគរយ?",[A(p,null,"num","% =")],"$\\dfrac{"+b+"-"+a+"}{"+a+"}\\times100="+p+"\\%$")}]);
+/* ៧ ង្វាស់រង្វាល់ */
+vx(7,1,[
+ function(){var v=ri(2,30);return K("s7_ar","បំប្លែង $"+v+"\\text{ m}^2$ ទៅជា $\\text{cm}^2$",[A(v*10000,null,"num","cm² =")],"$1\\text{ m}^2=10\\,000\\text{ cm}^2$ ⇒ $"+mo(v*10000)+"$")},
+ function(){var t=Math.random()<.5,v=ri(2,12);return t?K("s7_tm","បំប្លែង $"+v+"$ ម៉ោង ទៅជានាទី",[A(v*60,null,"num","នាទី =")],"$"+v+"\\times60="+(v*60)+"$"):K("s7_tm","បំប្លែង $"+v+"$ នាទី ទៅជាវិនាទី",[A(v*60,null,"num","វិនាទី =")],"$"+v+"\\times60="+(v*60)+"$")},
+ function(){var v=ri(150,9500);return K("s7_mkm","បំប្លែង $"+v+"\\text{ m}$ ទៅជា $\\text{km}$",[A(dec(v,3),null,"num","km =")],"$"+v+"\\div1000="+dec(v,3)+"$")}]);
+vx(7,2,[
+ function(){var v=ri(2,25);return K("s7_vl","ធុងមួយមានចំណុះ $"+v+"\\text{ dm}^3$ ។ តើស្មើប៉ុន្មាន ml?",[A(v*1000,null,"num","ml =")],"$1\\text{ dm}^3=1\\text{ l}=1000\\text{ ml}$ ⇒ $"+mo(v*1000)+"$ ml")},
+ function(){var v=ri(3,60),t=ri(2,5);return K("s7_v","ឡានមួយបើកបាន $"+(v*t)+"$ km ក្នុងរយៈពេល $"+t+"$ ម៉ោង ។ គណនាល្បឿនមធ្យម (km/h)",[A(v,null,"num","km/h =")],"$v=\\dfrac{d}{t}=\\dfrac{"+(v*t)+"}{"+t+"}="+v+"$ km/h")},
+ function(){var a=ri(1,5),b=ri(100,900),c=ri(100,900);return K("s7_kg","កញ្ចប់ទីមួយទម្ងន់ $"+a+"\\text{ kg }"+b+"\\text{ g}$ កញ្ចប់ទីពីរ $"+c+"\\text{ g}$ ។ ទម្ងន់សរុបប៉ុន្មាន g?",[A(a*1000+b+c,null,"num","g =")],"$"+(a*1000+b)+"+"+c+"="+(a*1000+b+c)+"$ g")}]);
+vx(7,3,[
+ function(){var h=ri(6,15),m=ri(0,59),t=ri(20,200),e=h*60+m+t;return K("s7_clk","ឡានចេញដំណើរម៉ោង $"+h+"$ និង $"+m+"$ នាទី ហើយធ្វើដំណើរ $"+t+"$ នាទី ។ តើមកដល់ម៉ោងប៉ុន្មាន? (សរសេរម៉ោង និងនាទី)",[A(Math.floor(e/60),null,"num","ម៉ោង ="),A(e%60,null,"num","នាទី =")],"$"+(h*60+m)+"+"+t+"="+e+"$ នាទី $="+Math.floor(e/60)+"$ ម៉ោង $"+(e%60)+"$ នាទី")},
+ function(){var v=12*ri(2,8),t=pick([15,20,30,40,45]);return K("s7_dt","ម៉ូតូបើកល្បឿន $"+v+"$ km/h រយៈពេល $"+t+"$ នាទី ។ តើបានចម្ងាយប៉ុន្មាន km?",[A(v*t/60,null,"num","km =")],"$"+t+"$ នាទី $=\\dfrac{"+t+"}{60}$ ម៉ោង ⇒ $"+v+"\\times\\dfrac{"+t+"}{60}="+(v*t/60)+"$ km")},
+ function(){var b=pick([200,250,400,500]),n=ri(4,40),a=b*n/1000;while(a!==Math.round(a)){n++;a=b*n/1000}return K("s7_tank","ធុងទឹកមួយមាន $"+a+"$ l ។ ប្រើជារៀងរាល់ថ្ងៃ $"+b+"$ ml ។ តើប្រើបានប៉ុន្មានថ្ងៃ?",[A(n,null,"num","ថ្ងៃ =")],"$"+a+"\\text{ l}="+(a*1000)+"\\text{ ml}$ ⇒ $\\dfrac{"+(a*1000)+"}{"+b+"}="+n+"$ ថ្ងៃ")}]);
+/* ៨ កន្សោមពីជគណិត (អថេរ x តែមួយក្នុងចម្លើយកន្សោម) */
+vx(8,1,[
+ function(){var a=nz(-5,5),b=nz(-5,5),x=nz(-4,4),y=nz(-4,4);return K("s7_xy","គណនាតម្លៃ $"+co(a,"x",true)+co(b,"y")+"$ ពេល $x="+x+"$ និង $y="+y+"$",[A(a*x+b*y,null,"num","=")],"$"+a+"\\times"+sgp(x)+sg(b,0)+"\\times"+sgp(y)+"="+(a*x+b*y)+"$")},
+ function(){var x=nz(-6,6),a=ri(-9,9);return K("s7_x2","គណនាតម្លៃ $x^2"+sg(a,0)+"$ ពេល $x="+x+"$",[A(x*x+a,null,"num","=")],"$"+sgp(x)+"^2"+sg(a,0)+"="+(x*x)+sg(a,0)+"="+(x*x+a)+"$")},
+ function(){var a=ri(1,9),b=ri(2,5),k=ri(1,9);return K("s7_wr","ចំនួន $x$ បូក $"+a+"$ រួចគុណនឹង $"+b+"$ ។ សរសេរកន្សោម រួចគណនាតម្លៃពេល $x="+k+"$",[A(b*(k+a),null,"num","=")],"កន្សោម $"+b+"(x+"+a+")$ ⇒ $"+b+"\\times"+(k+a)+"="+(b*(k+a))+"$")}]);
+vx(8,2,[
+ function(){var a=ri(2,6),b=nz(-6,6),c=nz(-5,5),e=[a+c,a*b];if(!e[0])c++,e=[a+c,a*b];return K("s7_dexp","សម្រួល $"+a+"(x"+sg(b,0)+")"+co(c,"x")+"$",[A(poly(e),polyT(e),"expr","=")],"$"+co(a,"x",true)+sg(a*b,0)+co(c,"x")+"="+polyT(e)+"$")},
+ function(){var a=ri(1,9);return K("s7_per","ចតុកោណកែងមួយមានបណ្ដោយ $x+"+a+"$ និងទទឹង $x$ ។ សរសេរកន្សោមបរិមាត្រ (សម្រួល)",[A("4x+"+(2*a),"4x+"+(2*a),"expr","P =")],"$P=2(x+"+a+"+x)=4x+"+(2*a)+"$")},
+ function(){var a=nz(-6,6),b=ri(-9,9),c=nz(-6,6),d=ri(-9,9);while(a===c)c=nz(-6,6);var e=[a-c,b-d];return K("s7_minus","សម្រួល $("+poly([a,b])+")-("+poly([c,d])+")$",[A(poly(e),polyT(e),"expr","=")],"ដកវង់ក្រចក → ប្ដូរសញ្ញា ⇒ $"+polyT(e)+"$")}]);
+vx(8,3,[
+ function(){var a=ri(2,9),b=nz(-9,9);return K("s7_fac","ដាក់ជាផលគុណកត្តារួម $"+a+"x"+sg(a*b,0)+"=a(x+b)$ (យក $a>0$ ធំបំផុត) ។ រក $a$ និង $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"កត្តារួម $"+a+"$ ⇒ $"+a+"(x"+sg(b,0)+")$")},
+ function(){var a=ri(2,5),b=ri(-5,5),c=ri(2,5),d=ri(-5,5),k=nz(-3,3),v=a*(k+b)-c*(k-d);return K("s7_sv","សម្រួល រួចគណនាតម្លៃ $"+a+"(x"+sg(b,0)+")-"+c+"(x"+sg(-d,0)+")$ ពេល $x="+k+"$",[A(v,null,"num","=")],"$="+polyT([a-c,a*b+c*d])+"$ ⇒ ពេល $x="+k+"$ ៖ $"+v+"$")},
+ function(){var a=ri(1,9),b=ri(2,9);return K("s7_rarea","ចតុកោណកែងមួយមានបណ្ដោយ $x+"+a+"$ និងទទឹង $"+b+"$ ។ សរសេរកន្សោមផ្ទៃក្រឡា (ពន្លាត)",[A(b+"x+"+(a*b),b+"x+"+(a*b),"expr","S =")],"$S="+b+"(x+"+a+")="+b+"x+"+(a*b)+"$")}]);
+/* ៩ សមីការ */
+vx(9,1,[
+ function(){var a=nz(-9,9),x=ri(-9,9);return K("s7_ax","ដោះស្រាយ $"+co(a,"x",true)+"="+(a*x)+"$",[A(x,null,"num","x =")],"$x=\\dfrac{"+(a*x)+"}{"+a+"}="+x+"$")},
+ function(){var a=ri(2,9),b=ri(-9,9);return K("s7_xd","ដោះស្រាយ $\\dfrac{x}{"+a+"}="+b+"$",[A(a*b,null,"num","x =")],"$x="+a+"\\times"+sgp(b)+"="+(a*b)+"$")},
+ function(){var a=ri(-9,20),x=ri(-9,20);return K("s7_amx","ដោះស្រាយ $"+a+"-x="+(a-x)+"$",[A(x,null,"num","x =")],"$x="+a+"-"+sgp(a-x)+"="+x+"$")}]);
+vx(9,2,[
+ function(){var a=nz(-6,6),c=nz(-6,6);while(c===a)c=nz(-6,6);var x=ri(-6,6),b=ri(-9,9),d=(a-c)*x+b;return K("s7_bth","ដោះស្រាយ $"+co(a,"x",true)+sg(b,0)+"="+co(c,"x",true)+sg(d,0)+"$",[A(x,null,"num","x =")],"$"+(a-c)+"x="+(d-b)+"$ ⇒ $x="+x+"$")},
+ function(){var a=nz(-5,5),b=nz(-6,6),x=ri(-6,6);return K("s7_p","ដោះស្រាយ $"+a+"(x"+sg(b,0)+")="+(a*(x+b))+"$",[A(x,null,"num","x =")],"$x"+sg(b,0)+"="+(x+b)+"$ ⇒ $x="+x+"$")},
+ function(){var k=ri(5,20),d=ri(20,35);return K("s7_age","ឪពុកចាស់ជាងកូន $"+d+"$ ឆ្នាំ ។ ផលបូកអាយុទាំងពីរ $"+(2*k+d)+"$ ឆ្នាំ ។ រកអាយុកូន",[A(k,null,"num","កូន =")],"$x+(x+"+d+")="+(2*k+d)+"$ ⇒ $2x="+(2*k)+"$ ⇒ $x="+k+"$")}]);
+vx(9,3,[
+ function(){var n=ri(-10,40);return K("s7_cons","ផលបូកនៃចំនួនគត់តគ្នា $3$ ស្មើ $"+(3*n+3)+"$ ។ រកចំនួនតូចបំផុត",[A(n,null,"num","=")],"$x+(x+1)+(x+2)="+(3*n+3)+"$ ⇒ $3x="+(3*n)+"$ ⇒ $x="+n+"$")},
+ function(){var w=ri(2,15),k=ri(2,4),P=2*(k*w+w);return K("s7_rk","ចតុកោណកែងមួយមានបរិមាត្រ $"+P+"$ cm ហើយបណ្ដោយស្មើ $"+k+"$ ដងនៃទទឹង ។ រកទទឹង",[A(w,null,"num","ទទឹង =")],"$2("+k+"x+x)="+P+"$ ⇒ $"+(2*k+2)+"x="+P+"$ ⇒ $x="+w+"$ cm")},
+ function(){var b=ri(2,6),c=ri(-6,8),a=ri(-9,9);return K("s7_fx1","ដោះស្រាយ $\\dfrac{x"+sg(a,0)+"}{"+b+"}="+c+"$",[A(b*c-a,null,"num","x =")],"$x"+sg(a,0)+"="+(b*c)+"$ ⇒ $x="+(b*c-a)+"$")}]);
+/* ១០ វិសមភាព */
+vx(10,1,[
+ function(){var a=ri(1,9),b=ri(-9,9);return K("s7_gt","ដោះស្រាយ $x-"+a+">"+b+"$ ៖ ចម្លើយ $x>k$ ។ រក $k$",[A(a+b,null,"num","k =")],"$x>"+b+"+"+a+"="+(a+b)+"$")},
+ function(){var k=ri(3,20);return K("s7_cnt","តើមានចំនួនគត់វិជ្ជមាន $x$ ប៉ុន្មាន ដែល $x<"+k+"$ ?",[A(k-1,null,"num","ចំនួន =")],"$x\\in\\{1,2,\\dots,"+(k-1)+"\\}$ ⇒ $"+(k-1)+"$")},
+ function(){var k=ri(-9,15);return K("s7_mint","រកចំនួនគត់តូចបំផុត ដែល $x>"+k+"$",[A(k+1,null,"num","x =")],"ចំនួនគត់បន្ទាប់ពី $"+k+"$ គឺ $"+(k+1)+"$")}]);
+vx(10,2,[
+ function(){var a=ri(2,6),b=ri(-20,20),k=fr(-b,a);return K("s7_negi","ដោះស្រាយ $-"+a+"x<"+b+"$ ៖ ចម្លើយ $x>k$ ។ រក $k$",[A(k.s,k.t,"num","k =")],"ចែកនឹង $-"+a+"<0$ ប្ដូរសញ្ញា ⇒ $x>"+k.t+"$")},
+ function(){var a=ri(2,6),b=ri(-9,9),c=ri(-9,9),k=fr(c-b,a);return K("s7_le","ដោះស្រាយ $"+a+"x"+sg(b,0)+"\\le "+c+"$ ៖ ចម្លើយ $x\\le k$ ។ រក $k$",[A(k.s,k.t,"num","k =")],"$"+a+"x\\le"+(c-b)+"$ ⇒ $x\\le"+k.t+"$")},
+ function(){var a=pick([25,40,50]),W=ri(10,40)*100+ri(0,a-1);return K("s7_load","ឡានមួយដឹកបានមិនលើស $"+W+"$ kg ។ បាវអង្ករមួយទម្ងន់ $"+a+"$ kg ។ តើដឹកបានច្រើនបំផុតប៉ុន្មានបាវ?",[A(Math.floor(W/a),null,"num","បាវ =")],"$"+a+"x\\le"+W+"$ ⇒ $x\\le"+fr(W,a).t+"$ ⇒ $"+Math.floor(W/a)+"$ បាវ")}]);
+vx(10,3,[
+ function(){var a=ri(2,6),b=ri(-9,9),c=ri(-9,20),q=Math.floor((c-b)/a)+1,kk=fr(c-b,a);return K("s7_sm","រកចំនួនគត់តូចបំផុត ដែលផ្ទៀងផ្ទាត់ $"+a+"x"+sg(b,0)+">"+c+"$",[A(q,null,"num","x =")],"$x>"+kk.t+"$ ⇒ ចំនួនគត់តូចបំផុត $"+q+"$")},
+ function(){var a=ri(-8,5),b=a+ri(2,10);return K("s7_rng","តើមានចំនួនគត់ $x$ ប៉ុន្មាន ដែល $"+a+"<x\\le"+b+"$ ?",[A(b-a,null,"num","ចំនួន =")],"$x\\in\\{"+(a+1)+",\\dots,"+b+"\\}$ ⇒ $"+b+"-("+a+")="+(b-a)+"$")},
+ function(){var s=pick([500,1000,1500,2000]),M=ri(0,10)*1000,T=M+s*ri(5,30)+pick([0,500].filter(function(v){return v<s})),n=Math.ceil((T-M)/s);return K("s7_save","ស្រីនីមានប្រាក់ $"+mo(M)+"$ រៀល ហើយសន្សំថែម $"+mo(s)+"$ រៀល/ថ្ងៃ ។ តើត្រូវសន្សំយ៉ាងតិចប៉ុន្មានថ្ងៃ ដើម្បីមានយ៉ាងតិច $"+mo(T)+"$ រៀល?",[A(n,null,"num","ថ្ងៃ =")],"$"+mo(M)+"+"+mo(s)+"x\\ge"+mo(T)+"$ ⇒ $x\\ge"+fr(T-M,s).t+"$ ⇒ $"+n+"$ ថ្ងៃ")}]);
+/* ១១ ផលធៀប និងសមាមាត្រ */
+vx(11,1,[
+ function(){var p=ri(1,9),q=ri(1,9);while(gcd(p,q)!==1)q=ri(1,9);var k=pick([5,10,20,25]);return K("s7_unit","សរសេរផលធៀប $"+(p*k)+"\\text{ cm}:"+(q*k)+"\\text{ mm}$ ជា $a:b$ (មិនអាចសម្រួលទៀត)",[A(fr(10*p,q).n,null,"num","a ="),A(fr(10*p,q).d,null,"num","b =")],"$"+(p*k)+"\\text{ cm}="+(p*k*10)+"\\text{ mm}$ ⇒ $"+(p*k*10)+":"+(q*k)+"="+fr(10*p,q).n+":"+fr(10*p,q).d+"$")},
+ function(){var b=ri(5,25),g=ri(5,25),f=fr(g,b+g);return K("s7_cr","ថ្នាក់មួយមានសិស្សប្រុស $"+b+"$ និងស្រី $"+g+"$ ។ សរសេរផលធៀប ស្រី : សិស្សសរុប ជា $a:b$ (មិនអាចសម្រួល)",[A(f.n,null,"num","a ="),A(f.d,null,"num","b =")],"$"+g+":"+(b+g)+"="+f.n+":"+f.d+"$")},
+ function(){var S=pick([10000,20000,50000,100000]),d=ri(2,15),km=d*S/100000;return K("s7_map","ផែនទីមាត្រដ្ឋាន $1:"+mo(S)+"$ ។ ចម្ងាយលើផែនទី $"+d+"$ cm ស្មើប៉ុន្មាន km ពិត?",[A(km,null,"num","km =")],"$"+d+"\\times"+mo(S)+"="+mo(d*S)+"$ cm $="+km+"$ km")}]);
+vx(11,2,[
+ function(){var a=pick([200,250,500]),p=ri(2,9)*500,b=a*ri(2,4);return K("s7_up","ស្ករមួយកញ្ចប់ $"+a+"$ g តម្លៃ $"+mo(p)+"$ រៀល ។ តើស្ករ $"+b+"$ g តម្លៃប៉ុន្មានរៀល?",[A(p*b/a,null,"num","រៀល =")],"$\\dfrac{"+b+"}{"+a+"}\\times"+mo(p)+"="+mo(p*b/a)+"$ រៀល")},
+ function(){var n=pick([2,4,5]),u=ri(2,9)*50,m=n*ri(2,4);return K("s7_rec","រូបមន្តនំមួយ ត្រូវការម្សៅ $"+(n*u)+"$ g សម្រាប់ $"+n+"$ នាក់ ។ សម្រាប់ $"+m+"$ នាក់ ត្រូវការម្សៅប៉ុន្មាន g?",[A(u*m,null,"num","g =")],"ម្នាក់ $"+u+"$ g ⇒ $"+m+"\\times"+u+"="+(u*m)+"$ g")},
+ function(){var m=pick([2,3,4,6]),d=pick([6,8,12]),W=m*d,L=[2,3,4,6,8,12].filter(function(x){return x!==m&&W%x===0}),m2=pick(L);return K("s7_inv","កម្មករ $"+m+"$ នាក់ ធ្វើការងារមួយចប់ក្នុង $"+d+"$ ថ្ងៃ ។ កម្មករ $"+m2+"$ នាក់ ធ្វើចប់ក្នុងប៉ុន្មានថ្ងៃ?",[A(W/m2,null,"num","ថ្ងៃ =")],"សមាមាត្រច្រាស ៖ $\\dfrac{"+m+"\\times"+d+"}{"+m2+"}="+(W/m2)+"$ ថ្ងៃ")}]);
+vx(11,3,[
+ function(){var a=ri(1,4),b=ri(1,4),c=ri(1,4),k=ri(2,10)*1000;return K("s7_3","ចែកប្រាក់ $"+mo((a+b+c)*k)+"$ រៀល ឱ្យបីនាក់តាមផលធៀប $"+a+":"+b+":"+c+"$ ។ ម្នាក់ៗបានប៉ុន្មានរៀល?",[A(a*k,null,"num","ទី១ ="),A(b*k,null,"num","ទី២ ="),A(c*k,null,"num","ទី៣ =")],"មួយចំណែក $="+mo(k)+"$ ⇒ $"+mo(a*k)+"$ , $"+mo(b*k)+"$ , $"+mo(c*k)+"$")},
+ function(){var p=ri(1,5),q=p+ri(1,4);while(gcd(p,q)!==1)q++;var k=ri(2,8);return K("s7_dif","ផលធៀបអាយុ ប្អូន : បង $="+p+":"+q+"$ ។ បងចាស់ជាងប្អូន $"+((q-p)*k)+"$ ឆ្នាំ ។ រកអាយុម្នាក់ៗ",[A(p*k,null,"num","ប្អូន ="),A(q*k,null,"num","បង =")],"ផលដកចំណែក $"+(q-p)+"$ ត្រូវនឹង $"+((q-p)*k)+"$ ឆ្នាំ ⇒ មួយចំណែក $"+k+"$ ⇒ $"+(p*k)+"$ និង $"+(q*k)+"$")},
+ function(){var p=ri(1,4),q=ri(2,6),k=ri(2,9);return K("s7_juice","ទឹកក្រូចលាយទឹកតាមផលធៀប $"+p+":"+q+"$ ។ បើប្រើទឹកក្រូច $"+(p*k)+"$ l ត្រូវប្រើទឹកប៉ុន្មាន l?",[A(q*k,null,"num","l =")],"$\\dfrac{"+p+"}{"+q+"}=\\dfrac{"+(p*k)+"}{x}$ ⇒ $x="+(q*k)+"$")}]);
+/* ១២ សញ្ញាណដំបូងនៃរូបធរណីមាត្រ */
+vx(12,1,[
+ function(){var a=ri(2,12),b=ri(2,12);return K("s7_bc","ចំណុច $A,B,C$ នៅលើបន្ទាត់តែមួយតាមលំដាប់នេះ ។ $AC="+(a+b)+"$ cm , $AB="+a+"$ cm ។ គណនា $BC$",[A(b,null,"num","BC =")],"$BC=AC-AB="+b+"$ cm")},
+ function(){var m=ri(2,15);return K("s7_mid","$M$ ជាចំណុចកណ្ដាលនៃ $[AB]$ ហើយ $AM="+m+"$ cm ។ គណនា $AB$",[A(2*m,null,"num","AB =")],"$AB=2AM="+(2*m)+"$ cm")},
+ function(){var n=pick([2,3,4,5,6]),k=ri(2,8);return K("s7_divs","អង្កត់ $[AB]="+(n*k)+"$ cm ត្រូវចែកជា $"+n+"$ ផ្នែកស្មើៗគ្នា ។ ផ្នែកនីមួយៗវែងប៉ុន្មាន cm?",[A(k,null,"num","=")],"$"+(n*k)+"\\div"+n+"="+k+"$ cm")}]);
+vx(12,2,[
+ function(){var a=ri(2,9),b=ri(2,9),c=ri(2,9);return K("s7_abcd","ចំណុច $A,B,C,D$ នៅលើបន្ទាត់តែមួយតាមលំដាប់នេះ ។ $AB="+a+"$ , $BC="+b+"$ , $CD="+c+"$ (cm) ។ គណនា $AD$ និង $BD$",[A(a+b+c,null,"num","AD ="),A(b+c,null,"num","BD =")],"$AD="+a+"+"+b+"+"+c+"="+(a+b+c)+"$ · $BD="+b+"+"+c+"="+(b+c)+"$")},
+ function(){var a=ri(1,8),b=ri(1,8);return K("s7_mn","$A,B,C$ នៅលើបន្ទាត់តាមលំដាប់នេះ ។ $AB="+(2*a)+"$ cm , $BC="+(2*b)+"$ cm ។ $M$ ជាចំណុចកណ្ដាល $[AB]$ និង $N$ ជាចំណុចកណ្ដាល $[BC]$ ។ គណនា $MN$",[A(a+b,null,"num","MN =")],"$MN=MB+BN="+a+"+"+b+"="+(a+b)+"$ cm")},
+ function(){var k=ri(2,8),t=pick([2,3]);return K("s7_k","$B\\in[AC]$ ដែល $AB="+t+"BC$ និង $AC="+((t+1)*k)+"$ cm ។ គណនា $AB$",[A(t*k,null,"num","AB =")],"$AC=AB+BC="+(t+1)+"BC$ ⇒ $BC="+k+"$ ⇒ $AB="+(t*k)+"$ cm")}]);
+vx(12,3,[
+ function(){var x=ri(2,10),a=ri(1,6);return K("s7_xseg","$A,B,C$ នៅលើបន្ទាត់តាមលំដាប់នេះ ។ $AB=x+"+a+"$ , $BC=x$ ហើយ $AC="+(2*x+a)+"$ ។ រក $x$",[A(x,null,"num","x =")],"$(x+"+a+")+x="+(2*x+a)+"$ ⇒ $2x="+(2*x)+"$ ⇒ $x="+x+"$")},
+ function(){var n=ri(3,10);return K("s7_ints","បន្ទាត់ $"+n+"$ ក្នុងប្លង់ គ្មានពីរណាស្របគ្នា និងគ្មានបីណាកាត់ត្រង់ចំណុចតែមួយ ។ តើមានចំណុចប្រសព្វប៉ុន្មាន?",[A(n*(n-1)/2,null,"num","ចំនួន =")],"បន្ទាត់ពីរៗកាត់គ្នាមួយចំណុច ⇒ $\\dfrac{"+n+"\\times"+(n-1)+"}{2}="+(n*(n-1)/2)+"$")},
+ function(){var x=ri(3,12),a=ri(1,x-1),b=x-a;return K("s7_mx3","$M$ ជាចំណុចកណ្ដាលនៃ $[AB]$ ដែល $AM=x+"+a+"$ និង $MB=2x-"+b+"$ ។ រក $x$ និង $AB$",[A(x,null,"num","x ="),A(2*(x+a),null,"num","AB =")],"$x+"+a+"=2x-"+b+"$ ⇒ $x="+x+"$ ⇒ $AB=2("+x+"+"+a+")="+(2*(x+a))+"$")}]);
+/* ១៣ មុំ */
+vx(13,1,[
+ function(){var d=2*ri(1,30);return K("s7_cd","មុំពីរបំពេញគ្នា ហើយមុំមួយធំជាងមុំមួយទៀត $"+ang(d)+"$ ។ គណនាមុំធំ",[A((90+d)/2,null,"num","=")],"$x+(x-"+d+")=90$ ⇒ $x="+((90+d)/2)+"^\\circ$")},
+ function(){var k=pick([1,2,5,8,9]),x=90*k/(k+1);return K("s7_ck","មុំមួយស្មើ $"+k+"$ ដងនៃមុំបំពេញរបស់វា ។ គណនាមុំនោះ",[A(x,null,"num","=")],"$x="+k+"(90-x)$ ⇒ $"+(k+1)+"x="+(90*k)+"$ ⇒ $x="+ang(x)+"$")},
+ function(){var a=ri(60,150),b=ri(60,150);return K("s7_360","មុំបីជុំវិញចំណុច $O$ (មិនជាន់គ្នា) មាន $"+ang(a)+"$ , $"+ang(b)+"$ និង $x$ ។ គណនា $x$",[A(360-a-b,null,"num","x =")],"មុំជុំ $=360^\\circ$ ⇒ $x=360-"+a+"-"+b+"="+ang(360-a-b)+"$")}]);
+vx(13,2,[
+ function(){var d=2*ri(5,60);return K("s7_sd","មុំពីរបន្ថែមគ្នា ហើយផលដករបស់វា $"+ang(d)+"$ ។ គណនាមុំតូច",[A((180-d)/2,null,"num","=")],"$x+(x+"+d+")=180$ ⇒ $x="+ang((180-d)/2)+"$")},
+ function(){var k=pick([1,2,3,4,5,8,9]),x=180*k/(k+1);return K("s7_sk","មុំមួយស្មើ $"+k+"$ ដងនៃមុំបន្ថែមរបស់វា ។ គណនាមុំនោះ",[A(x,null,"num","=")],"$x="+k+"(180-x)$ ⇒ $x="+ang(x)+"$")},
+ function(){var a=2*ri(20,85);return K("s7_bis","$[OC)$ ជាកន្លះបន្ទាត់ពុះមុំ $\\widehat{AOB}="+ang(a)+"$ ។ គណនា $\\widehat{AOC}$",[A(a/2,null,"num","=")],"$\\widehat{AOC}=\\dfrac{"+a+"}{2}="+ang(a/2)+"$")}]);
+vx(13,3,[
+ function(){var x=ri(10,30),a=ri(1,x-1),b=x-a,v=2*x+a;return K("s7_vx","មុំទល់កំពូលពីរ មានរង្វាស់ $(2x+"+a+")^\\circ$ និង $(3x-"+b+")^\\circ$ ។ រក $x$ និងរង្វាស់មុំ",[A(x,null,"num","x ="),A(v,null,"num","មុំ =")],"មុំទល់កំពូលស្មើគ្នា ⇒ $2x+"+a+"=3x-"+b+"$ ⇒ $x="+x+"$ ⇒ $"+ang(v)+"$")},
+ function(){var x=ri(20,50),a=ri(0,20),b=180-3*x-a;return K("s7_lx","មុំជាប់គ្នាពីរនៅលើបន្ទាត់ត្រង់ មានរង្វាស់ $(x+"+a+")^\\circ$ និង $(2x"+sg(b,0)+")^\\circ$ ។ រក $x$",[A(x,null,"num","x =")],"$x+"+a+"+2x"+sg(b,0)+"=180$ ⇒ $3x="+(3*x)+"$ ⇒ $x="+x+"$")},
+ function(){var p=ri(1,5),q=ri(1,8);while(180%(p+q)!==0||p===q)q=ri(1,8);var k=180/(p+q);return K("s7_rq","មុំពីរបន្ថែមគ្នា មានផលធៀប $"+p+":"+q+"$ ។ គណនាមុំធំ",[A(Math.max(p,q)*k,null,"num","=")],"មួយចំណែក $=\\dfrac{180}{"+(p+q)+"}="+k+"^\\circ$ ⇒ $"+ang(Math.max(p,q)*k)+"$")}]);
+/* ១៤ បន្ទាត់ស្រប បន្ទាត់កែង */
+vx(14,1,[
+ function(){var a=ri(30,150);return K("s7_alt","$(d_1)\\parallel(d_2)$ ហើយបន្ទាត់ $(t)$ កាត់វា ។ មុំឆ្លាស់ក្នុងមួយស្មើ $"+ang(a)+"$ ។ មុំឆ្លាស់ក្នុងមួយទៀតស្មើប៉ុន្មាន?",[A(a,null,"num","=")],"មុំឆ្លាស់ក្នុងស្មើគ្នា ⇒ $"+ang(a)+"$")},
+ function(){var a=ri(30,150);return K("s7_vert","$(d_1)\\parallel(d_2)$ ។ មុំត្រូវគ្នាមួយស្មើ $"+ang(a)+"$ ។ គណនាមុំបន្ថែមរបស់វា (មុំជាប់នៅលើបន្ទាត់ $(d_2)$)",[A(180-a,null,"num","=")],"$180^\\circ-"+ang(a)+"="+ang(180-a)+"$")},
+ function(){var t=pick(["$(d_1)\\perp(t)$ និង $(d_2)\\parallel(d_1)$","$(d_1)\\perp(t)$ និង $(d_2)\\perp(d_1)$"]),v=t.indexOf("parallel")>0?90:0;return K("s7_perp",t+" ។ តើមុំរវាង $(d_2)$ និង $(t)$ ស្មើប៉ុន្មានដឺក្រេ? ($0$ បើស្របគ្នា)",[A(v,null,"num","=")],v?"បន្ទាត់កែងនឹងបន្ទាត់មួយ ក៏កែងនឹងបន្ទាត់ស្របរបស់វា ⇒ $90^\\circ$":"បន្ទាត់ពីរកែងនឹងបន្ទាត់តែមួយ ស្របគ្នា ⇒ $(d_2)\\parallel(t)$ ⇒ $0$")}]);
+vx(14,2,[
+ function(){var x=ri(5,30),a=ri(2,4),b=ri(0,20),c=a*x+b;return K("s7_cx","$(d_1)\\parallel(d_2)$ ។ មុំត្រូវគ្នាពីរ មានរង្វាស់ $("+a+"x+"+b+")^\\circ$ និង $"+ang(c)+"$ ។ រក $x$",[A(x,null,"num","x =")],"$"+a+"x+"+b+"="+c+"$ ⇒ $x="+x+"$")},
+ function(){var a=ri(20,70),b=ri(20,70);return K("s7_z","$(d_1)\\parallel(d_2)$ ។ ចំណុច $M$ នៅចន្លោះបន្ទាត់ទាំងពីរ ។ $[MA)$ បង្កើតមុំ $"+ang(a)+"$ ជាមួយ $(d_1)$ ហើយ $[MB)$ បង្កើតមុំ $"+ang(b)+"$ ជាមួយ $(d_2)$ (មុំឆ្លាស់) ។ គណនា $\\widehat{AMB}$",[A(a+b,null,"num","=")],"គូសបន្ទាត់ស្របកាត់តាម $M$ ⇒ $\\widehat{AMB}="+a+"+"+b+"="+ang(a+b)+"$")},
+ function(){var p=ri(1,5),q=ri(1,8);while(180%(p+q)!==0||p===q)q=ri(1,8);var k=180/(p+q);return K("s7_ci","$(d_1)\\parallel(d_2)$ ។ មុំក្នុងម្ខាងពីរ មានផលធៀប $"+p+":"+q+"$ ។ គណនាមុំតូច",[A(Math.min(p,q)*k,null,"num","=")],"មុំក្នុងម្ខាងបន្ថែមគ្នា ⇒ មួយចំណែក $"+k+"^\\circ$ ⇒ $"+ang(Math.min(p,q)*k)+"$")}]);
+vx(14,3,[
+ function(){var x=ri(10,30),a=ri(1,3),c=ri(1,3),b=ri(0,20),d=180-(a+c)*x-b;return K("s7_cix","$(d_1)\\parallel(d_2)$ ។ មុំក្នុងម្ខាងពីរ មានរង្វាស់ $("+co(a,"x",true)+"+"+b+")^\\circ$ និង $("+co(c,"x",true)+sg(d,0)+")^\\circ$ ។ រក $x$",[A(x,null,"num","x =")],"$"+(a+c)+"x+"+(b+d)+"=180$ ⇒ $x="+x+"$")},
+ function(){var a=ri(20,70),b=ri(20,70);return K("s7_zb","$(d_1)\\parallel(d_2)$ ហើយ $M$ នៅចន្លោះវា ។ $\\widehat{AMB}="+ang(a+b)+"$ ហើយមុំរវាង $[MA)$ និង $(d_1)$ ស្មើ $"+ang(a)+"$ ។ គណនាមុំរវាង $[MB)$ និង $(d_2)$",[A(b,null,"num","=")],"$\\widehat{AMB}$ = ផលបូកមុំឆ្លាស់ទាំងពីរ ⇒ $"+(a+b)+"-"+a+"="+ang(b)+"$")},
+ function(){var d=2*ri(5,60);return K("s7_cid","$(d_1)\\parallel(d_2)$ ។ មុំក្នុងម្ខាងមួយ ធំជាងមុំមួយទៀត $"+ang(d)+"$ ។ គណនាមុំធំ",[A((180+d)/2,null,"num","=")],"$x+(x-"+d+")=180$ ⇒ $x="+ang((180+d)/2)+"$")}]);
+/* ១៥ ត្រីកោណ */
+vx(15,1,[
+ function(){var a=ri(15,75);return K("s7_rt","ត្រីកោណ $ABC$ កែងត្រង់ $A$ មាន $\\widehat B="+ang(a)+"$ ។ គណនា $\\widehat C$",[A(90-a,null,"num","=")],"$\\widehat B+\\widehat C=90^\\circ$ ⇒ $"+ang(90-a)+"$")},
+ function(){var p=ri(1,5),q=ri(1,5),r=ri(1,6);while(180%(p+q+r)!==0)r++;var k=180/(p+q+r);return K("s7_tr","មុំទាំងបីនៃត្រីកោណមួយ មានផលធៀប $"+p+":"+q+":"+r+"$ ។ គណនាមុំធំបំផុត",[A(Math.max(p,q,r)*k,null,"num","=")],"មួយចំណែក $=\\dfrac{180}{"+(p+q+r)+"}="+k+"^\\circ$ ⇒ $"+ang(Math.max(p,q,r)*k)+"$")},
+ function(){var a=ri(5,15),b=ri(3,2*a-1);return K("s7_tp","ត្រីកោណ $ABC$ សមបាតត្រង់ $A$ មាន $AB=AC="+a+"$ cm និង $BC="+b+"$ cm ។ គណនាបរិមាត្រ",[A(2*a+b,null,"num","P =")],"$"+a+"+"+a+"+"+b+"="+(2*a+b)+"$ cm")}]);
+vx(15,2,[
+ function(){var a=ri(30,80),b=ri(30,80);return K("s7_ex2","មុំក្រៅត្រង់កំពូល $C$ នៃត្រីកោណ $ABC$ ស្មើ $"+ang(a+b)+"$ ហើយ $\\widehat A="+ang(a)+"$ ។ គណនា $\\widehat B$",[A(b,null,"num","=")],"មុំក្រៅ $=\\widehat A+\\widehat B$ ⇒ $\\widehat B="+(a+b)+"-"+a+"="+ang(b)+"$")},
+ function(){var a=2*ri(10,80);return K("s7_ie","ត្រីកោណ $ABC$ សមបាតត្រង់ $A$ មាន $\\widehat A="+ang(a)+"$ ។ គណនាមុំក្រៅត្រង់កំពូល $B$",[A(180-(180-a)/2,null,"num","=")],"$\\widehat B=\\dfrac{180-"+a+"}{2}="+ang((180-a)/2)+"$ ⇒ មុំក្រៅ $=180-"+((180-a)/2)+"="+ang(180-(180-a)/2)+"$")},
+ function(){var a=ri(3,15),b=ri(3,15);return K("s7_ti","ត្រីកោណមួយមានជ្រុងពីរ $"+a+"$ cm និង $"+b+"$ cm ។ ជ្រុងទីបីជាចំនួនគត់ (cm) ។ តើវាធំបំផុតអាចប៉ុន្មាន?",[A(a+b-1,null,"num","=")],"វិសមភាពត្រីកោណ ៖ ជ្រុងទីបី $<"+a+"+"+b+"="+(a+b)+"$ ⇒ ធំបំផុត $"+(a+b-1)+"$")}]);
+vx(15,3,[
+ function(){var x=ri(10,30),a=ri(1,10),b=ri(1,10),c=180-6*x-a-b;while(c<-30||c>40){x=ri(10,30);c=180-6*x-a-b}return K("s7_x3","មុំទាំងបីនៃត្រីកោណ មានរង្វាស់ $(x+"+a+")^\\circ$ , $(2x+"+b+")^\\circ$ និង $(3x"+sg(c,0)+")^\\circ$ ។ រក $x$",[A(x,null,"num","x =")],"$6x+"+(a+b+c)+"=180$ ⇒ $x="+x+"$")},
+ function(){var a=ri(2,12),b=ri(2,12);return K("s7_tc","ត្រីកោណមួយមានជ្រុងពីរ $"+a+"$ និង $"+b+"$ ។ ជ្រុងទីបីជាចំនួនគត់ ។ តើជ្រុងទីបីអាចមានតម្លៃប៉ុន្មានផ្សេងគ្នា?",[A(2*Math.min(a,b)-1,null,"num","ចំនួន =")],"$"+Math.abs(a-b)+"<c<"+(a+b)+"$ ⇒ $c\\in\\{"+(Math.abs(a-b)+1)+",\\dots,"+(a+b-1)+"\\}$ ⇒ $"+(2*Math.min(a,b)-1)+"$ តម្លៃ")},
+ function(){var a=ri(4,15),b=ri(2,2*a-1);return K("s7_ip","ត្រីកោណសមបាតមួយមានបរិមាត្រ $"+(2*a+b)+"$ cm និងបាត $"+b+"$ cm ។ គណនាជ្រុងអង្គនីមួយៗ",[A(a,null,"num","=")],"$\\dfrac{"+(2*a+b)+"-"+b+"}{2}="+a+"$ cm")}]);
+/* ១៦ បរិមាត្រ និងផ្ទៃក្រឡា */
+vx(16,1,[
+ function(){var a=ri(2,20);return K("s7_sq","ការេមួយមានជ្រុង $"+a+"$ cm ។ គណនាបរិមាត្រ និងផ្ទៃក្រឡា",[A(4*a,null,"num","P ="),A(a*a,null,"num","S =")],"$P=4\\times"+a+"="+(4*a)+"$ · $S="+a+"^2="+(a*a)+"$")},
+ function(){var b=ri(2,20),h=ri(2,15);return K("s7_pa","ប្រលេឡូក្រាមមានបាត $"+b+"$ cm និងកម្ពស់ $"+h+"$ cm ។ គណនាផ្ទៃក្រឡា",[A(b*h,null,"num","S =")],"$S=b\\times h="+(b*h)+"$ cm²")},
+ function(){var a=ri(3,20),b=ri(2,15);return K("s7_rw","ចតុកោណកែងមួយមានផ្ទៃក្រឡា $"+(a*b)+"$ cm² និងបណ្ដោយ $"+a+"$ cm ។ គណនាទទឹង",[A(b,null,"num","=")],"$\\dfrac{"+(a*b)+"}{"+a+"}="+b+"$ cm")}]);
+vx(16,2,[
+ function(){var p=ri(2,15),q=ri(2,15);return K("s7_rh","ចតុកោណស្មើមួយមានអង្កត់ទ្រូង $"+(2*p)+"$ cm និង $"+q+"$ cm ។ គណនាផ្ទៃក្រឡា",[A(p*q,null,"num","S =")],"$S=\\dfrac{d_1\\times d_2}{2}=\\dfrac{"+(2*p)+"\\times"+q+"}{2}="+(p*q)+"$")},
+ function(){var b=ri(2,20),h=ri(2,16);if(b*h%2)h++;return K("s7_th","ត្រីកោណមួយមានផ្ទៃក្រឡា $"+(b*h/2)+"$ cm² និងបាត $"+b+"$ cm ។ គណនាកម្ពស់",[A(h,null,"num","h =")],"$h=\\dfrac{2S}{b}=\\dfrac{"+(b*h)+"}{"+b+"}="+h+"$ cm")},
+ function(){var a=ri(2,20);return K("s7_sqp","ការេមួយមានបរិមាត្រ $"+(4*a)+"$ cm ។ គណនាផ្ទៃក្រឡា",[A(a*a,null,"num","S =")],"ជ្រុង $=\\dfrac{"+(4*a)+"}{4}="+a+"$ ⇒ $S="+(a*a)+"$ cm²")}]);
+vx(16,3,[
+ function(){var a=ri(8,20),b=ri(6,15),c=ri(2,a-3),d=ri(2,b-3);return K("s7_L","រូបរាង L បានពីការកាត់ចតុកោណកែង $"+c+"\\times"+d+"$ ចេញពីជ្រុងមួយនៃចតុកោណកែង $"+a+"\\times"+b+"$ (cm) ។ គណនាផ្ទៃក្រឡារូប L",[A(a*b-c*d,null,"num","S =")],"$"+a+"\\times"+b+"-"+c+"\\times"+d+"="+(a*b-c*d)+"$ cm²")},
+ function(){var a=ri(3,6),b=ri(3,8),c=1,d=2,S=a*b-c*d,ks=[2,3,4,5,6,8,10].filter(function(v){return S%v===0});while(!ks.length){b++;S=a*b-c*d;ks=[2,3,4,5,6,8,10].filter(function(v){return S%v===0})}var k=pick(ks);return K("s7_pt","ជញ្ជាំងមួយ $"+a+"\\text{ m}\\times"+b+"\\text{ m}$ មានទ្វារ $"+c+"\\text{ m}\\times"+d+"\\text{ m}$ ។ ថ្នាំ $1$ l លាបបាន $"+k+"\\text{ m}^2$ ។ តើត្រូវការថ្នាំប៉ុន្មាន l?",[A(S/k,null,"num","l =")],"ផ្ទៃលាប $="+(a*b)+"-"+(c*d)+"="+S+"$ m² ⇒ $\\dfrac{"+S+"}{"+k+"}="+(S/k)+"$ l")},
+ function(){var a=ri(2,8),b=ri(2,8);return K("s7_tl","បន្ទប់មួយ $"+a+"\\text{ m}\\times"+b+"\\text{ m}$ ក្រាលការ៉ូរាងការេជ្រុង $50$ cm ។ តើត្រូវការការ៉ូប៉ុន្មានដុំ?",[A(4*a*b,null,"num","ដុំ =")],"$1\\text{ m}^2$ ត្រូវការ $4$ ដុំ ⇒ $4\\times"+(a*b)+"="+(4*a*b)+"$")}]);
+/* ១៧ រង្វង់ */
+vx(17,1,[
+ function(){var d=ri(2,30);return K("s7_cdi","គណនាបរិមាត្ររង្វង់ដែលមានអង្កត់ផ្ចិត $"+d+"$ cm (ទុក $\\pi$)",[A(d+"*pi",d+"\\pi","num","C =")],"$C=\\pi d="+d+"\\pi$ cm")},
+ function(){var r=ri(2,15);return K("s7_semi","គណនាប្រវែងធ្នូកន្លះរង្វង់ ដែលមានកាំ $"+r+"$ cm (ទុក $\\pi$)",[A(r+"*pi",r+"\\pi","num","=")],"$\\dfrac{2\\pi r}{2}=\\pi r="+r+"\\pi$ cm")},
+ function(){var r=ri(10,40),n=ri(2,10);return K("s7_whl","កង់មួយមានកាំ $"+r+"$ cm ។ កង់វិល $"+n+"$ ជុំ ។ តើវាធ្វើដំណើរបានប៉ុន្មាន cm? (ទុក $\\pi$)",[A(2*r*n+"*pi",(2*r*n)+"\\pi","num","=")],"មួយជុំ $=2\\pi\\times"+r+"="+(2*r)+"\\pi$ ⇒ $"+n+"\\times"+(2*r)+"\\pi="+(2*r*n)+"\\pi$ cm")}]);
+vx(17,2,[
+ function(){var r=ri(2,12),S=fr(r*r,2);return K("s7_sa","គណនាផ្ទៃក្រឡាកន្លះថាស ដែលមានកាំ $"+r+"$ cm (ទុក $\\pi$)",[A(S.s+"*pi",(S.d===1?S.t:"\\dfrac{"+S.n+"}{"+S.d+"}")+"\\pi","num","S =")],"$\\dfrac{\\pi r^2}{2}=\\dfrac{"+(r*r)+"\\pi}{2}$")},
+ function(){var r=ri(1,8),R=r+ri(1,6);return K("s7_ann","រង្វង់ពីរមានផ្ចិតរួម កាំ $"+R+"$ cm និង $"+r+"$ cm ។ គណនាផ្ទៃក្រឡាចន្លោះរង្វង់ទាំងពីរ (ទុក $\\pi$)",[A((R*R-r*r)+"*pi",(R*R-r*r)+"\\pi","num","S =")],"$\\pi("+R+"^2-"+r+"^2)="+(R*R-r*r)+"\\pi$ cm²")},
+ function(){var r=2*ri(1,8);return K("s7_q","គណនាផ្ទៃក្រឡាមួយភាគបួននៃថាស ដែលមានកាំ $"+r+"$ cm (ទុក $\\pi$)",[A(r*r/4+"*pi",(r*r/4)+"\\pi","num","S =")],"$\\dfrac{\\pi\\times"+(r*r)+"}{4}="+(r*r/4)+"\\pi$ cm²")}]);
+vx(17,3,[
+ function(){var r=ri(2,15);return K("s7_rad","ថាសមួយមានផ្ទៃក្រឡា $"+(r*r)+"\\pi$ cm² ។ គណនាកាំ និងបរិមាត្រ (ទុក $\\pi$)",[A(r,null,"num","r ="),A(2*r+"*pi",(2*r)+"\\pi","num","C =")],"$\\pi r^2="+(r*r)+"\\pi$ ⇒ $r="+r+"$ ⇒ $C="+(2*r)+"\\pi$")},
+ function(){var r=ri(2,12);return K("s7_ps","គណនាបរិមាត្ររូបកន្លះថាស (ធ្នូ + អង្កត់ផ្ចិត) ដែលមានកាំ $"+r+"$ cm (ទុក $\\pi$)",[A(r+"*pi+"+(2*r),r+"\\pi+"+(2*r),"num","P =")],"ធ្នូ $="+r+"\\pi$ · អង្កត់ផ្ចិត $="+(2*r)+"$ ⇒ $P="+r+"\\pi+"+(2*r)+"$ cm")},
+ function(){var r=ri(1,8);return K("s7_sqc","ការេមួយមានជ្រុង $"+(2*r)+"$ cm មានថាសចារឹកក្នុង (ប៉ះជ្រុងទាំងបួន) ។ គណនាផ្ទៃក្រឡាផ្នែកនៃការេ ដែលនៅក្រៅថាស (ទុក $\\pi$)",[A((4*r*r)+"-"+(r*r)+"*pi",(4*r*r)+"-"+(r*r)+"\\pi","num","S =")],"កាំ $="+r+"$ ⇒ $"+(2*r)+"^2-\\pi\\times"+r+"^2="+(4*r*r)+"-"+(r*r)+"\\pi$ cm²")}]);
+/* ១៨ មាឌ */
+vx(18,1,[
+ function(){var a=ri(2,12);return K("s7_cv","គូបមួយមានគែម $"+a+"$ cm ។ គណនាមាឌ",[A(a*a*a,null,"num","V =")],"$V=a^3="+(a*a*a)+"$ cm³")},
+ function(){var a=ri(2,12);return K("s7_cs","គូបមួយមានគែម $"+a+"$ cm ។ គណនាផ្ទៃក្រឡាសរុប",[A(6*a*a,null,"num","S =")],"$S=6a^2=6\\times"+(a*a)+"="+(6*a*a)+"$ cm²")},
+ function(){var a=ri(2,10),b=ri(2,10),c=ri(2,10);return K("s7_lit","ធុងទឹករាងប្រលេពីប៉ែតកែង វិមាត្រ $"+a+"\\text{ dm}\\times"+b+"\\text{ dm}\\times"+c+"\\text{ dm}$ ។ តើវាផ្ទុកទឹកបានប៉ុន្មានលីត្រ?",[A(a*b*c,null,"num","l =")],"$V="+(a*b*c)+"\\text{ dm}^3="+(a*b*c)+"$ l")}]);
+vx(18,2,[
+ function(){var a=ri(2,10),b=ri(2,10),h=ri(2,10);return K("s7_bh","ប្រលេពីប៉ែតកែងមួយមានមាឌ $"+(a*b*h)+"$ cm³ និងបាត $"+a+"\\times"+b+"$ cm ។ គណនាកម្ពស់",[A(h,null,"num","h =")],"$h=\\dfrac{"+(a*b*h)+"}{"+(a*b)+"}="+h+"$ cm")},
+ function(){var a=ri(3,12),b=ri(3,10),c=ri(2,8);return K("s7_open","ប្រអប់គ្មានគម្រប (រាងប្រលេពីប៉ែតកែង) បាត $"+a+"\\times"+b+"$ cm និងកម្ពស់ $"+c+"$ cm ។ តើត្រូវប្រើក្រដាសកាតុងប៉ុន្មាន cm²?",[A(a*b+2*c*(a+b),null,"num","S =")],"បាត $"+(a*b)+"$ + ផ្ទៃខាង $2("+a+"+"+b+")\\times"+c+"="+(2*c*(a+b))+"$ ⇒ $"+(a*b+2*c*(a+b))+"$")},
+ function(){var a=ri(2,10),b=ri(2,10),h=ri(2,12);if(a*b%2)a++;return K("s7_prism","ព្រីសមួយមានបាតជាត្រីកោណកែង ដែលមានជ្រុងជាប់មុំកែង $"+a+"$ cm និង $"+b+"$ cm ហើយកម្ពស់ព្រីស $"+h+"$ cm ។ គណនាមាឌ",[A(a*b/2*h,null,"num","V =")],"$V=S_B\\times h=\\dfrac{"+a+"\\times"+b+"}{2}\\times"+h+"="+(a*b/2*h)+"$ cm³")}]);
+vx(18,3,[
+ function(){var a=ri(2,8),b=ri(2,8),c=ri(2,8),k=pick([2,4,5,8]),V=a*b*c;while(V%k)c++,V=a*b*c;return K("s7_fill","ធុងទឹកវិមាត្រ $"+a+"\\times"+b+"\\times"+c+"$ dm ។ ម៉ាស៊ីនបូមទឹក $"+k+"$ l/នាទី ។ តើប៉ុន្មាននាទីទើបពេញធុង?",[A(V/k,null,"num","នាទី =")],"$V="+V+"$ dm³ $="+V+"$ l ⇒ $\\dfrac{"+V+"}{"+k+"}="+(V/k)+"$ នាទី")},
+ function(){var d=ri(1,4),p=ri(2,6),q=ri(2,6),r=ri(2,6);return K("s7_cubes","ប្រអប់ $"+(d*p)+"\\times"+(d*q)+"\\times"+(d*r)+"$ cm ដាក់គូបតូចៗគែម $"+d+"$ cm ឱ្យពេញ ។ តើដាក់បានប៉ុន្មានគូប?",[A(p*q*r,null,"num","គូប =")],"$"+p+"\\times"+q+"\\times"+r+"="+(p*q*r)+"$")},
+ function(){var k=ri(2,5);return K("s7_k3","បើគែមគូបកើនឡើង $"+k+"$ ដង តើមាឌកើនឡើងប៉ុន្មានដង?",[A(k*k*k,null,"num","ដង =")],"$V'=("+k+"a)^3="+(k*k*k)+"a^3$ ⇒ $"+(k*k*k)+"$ ដង")}]);
+/* ១៩ ភាពឆ្លុះ */
+vx(19,1,[
+ function(){var a=nz(-8,8),b=nz(-8,8);return K("s7_so","រកកូអរដោនេ $A'$ ឆ្លុះនៃ $A("+a+";"+b+")$ ធៀបនឹងគល់ $O$",[A(-a,null,"num","x' ="),A(-b,null,"num","y' =")],"ឆ្លុះធៀបនឹង $O$ ⇒ $A'("+(-a)+";"+(-b)+")$")},
+ function(){var a=nz(-8,8),b=nz(-8,8);return K("s7_sx","រកកូអរដោនេ $A'$ ឆ្លុះនៃ $A("+a+";"+b+")$ ធៀបនឹងអ័ក្ស $x'x$",[A(a,null,"num","x' ="),A(-b,null,"num","y' =")],"អាប់ស៊ីសដដែល អរដោនេប្ដូរសញ្ញា ⇒ $A'("+a+";"+(-b)+")$")},
+ function(){var a=ri(2,15);return K("s7_iso","អង្កត់ $[AB]$ វែង $"+a+"$ cm ហើយ $[A'B']$ ជារូបឆ្លុះរបស់វា ធៀបនឹងបន្ទាត់ $(d)$ ។ គណនា $A'B'$",[A(a,null,"num","=")],"ភាពឆ្លុះរក្សាប្រវែង ⇒ $A'B'="+a+"$ cm")}]);
+vx(19,2,[
+ function(){var a=nz(-8,8),b=nz(-8,8);return K("s7_sy","រកកូអរដោនេ $A'$ ឆ្លុះនៃ $A("+a+";"+b+")$ ធៀបនឹងអ័ក្ស $y'y$",[A(-a,null,"num","x' ="),A(b,null,"num","y' =")],"អាប់ស៊ីសប្ដូរសញ្ញា ⇒ $A'("+(-a)+";"+b+")$")},
+ function(){var a=ri(20,160);return K("s7_sang","$\\widehat{ABC}="+ang(a)+"$ ។ $\\widehat{A'B'C'}$ ជារូបឆ្លុះរបស់វាធៀបនឹងចំណុច $O$ ។ គណនា $\\widehat{A'B'C'}$",[A(a,null,"num","=")],"ភាពឆ្លុះរក្សារង្វាស់មុំ ⇒ $"+ang(a)+"$")},
+ function(){var k=nz(-4,4),a=ri(-6,6),b=nz(-6,6);while(a===k)a=ri(-6,6);return K("s7_xk","រកកូអរដោនេ $A'$ ឆ្លុះនៃ $A("+a+";"+b+")$ ធៀបនឹងបន្ទាត់ឈរ $x="+k+"$",[A(2*k-a,null,"num","x' ="),A(b,null,"num","y' =")],"$x=\\dfrac{x_A+x'}{2}$ ⇒ $x'=2\\times"+sgp(k)+"-"+sgp(a)+"="+(2*k-a)+"$ · $y'="+b+"$")}]);
+var CSY=[["ការេ",1],["ចតុកោណកែង",1],["ត្រីកោណសម័ង្ស",0],["ត្រីកោណសមបាត",0],["ចតុកោណស្មើ",1],["ឆកោណនិយ័ត",1],["បញ្ចកោណនិយ័ត",0],["ប្រលេឡូក្រាម",1]];
+vx(19,3,[
+ function(){var L=pick([["H",2],["A",1],["X",2],["N",0],["Z",0],["E",1],["M",1],["T",1],["S",0]]);return K("s7_let","តើអក្សរ $\\text{"+L[0]+"}$ (សរសេរជាអក្សរពុម្ពធំ) មានអ័ក្សឆ្លុះប៉ុន្មាន?",[A(L[1],null,"num","ចំនួន =")],"អក្សរ $\\text{"+L[0]+"}$ មានអ័ក្សឆ្លុះ $"+L[1]+"$")},
+ function(){var L=CSY.slice().sort(function(){return Math.random()-.5}).slice(0,4),n=L.filter(function(x){return x[1]}).length;return K("s7_csym","ក្នុងចំណោមរូប ៖ "+L.map(function(x){return x[0]}).join(" · ")+" តើមានប៉ុន្មានរូបដែលមានផ្ចិតឆ្លុះ?",[A(n,null,"num","ចំនួន =")],"មានផ្ចិតឆ្លុះ ៖ "+(L.filter(function(x){return x[1]}).map(function(x){return x[0]}).join(" · ")||"គ្មាន")+" ⇒ $"+n+"$")},
+ function(){var n=ri(3,12);return K("s7_reg","ពហុកោណនិយ័ត $"+n+"$ ជ្រុង មានអ័ក្សឆ្លុះប៉ុន្មាន?",[A(n,null,"num","ចំនួន =")],"ពហុកោណនិយ័ត $n$ ជ្រុង មានអ័ក្សឆ្លុះ $n$ ⇒ $"+n+"$")}]);
+/* ២០ ប្រូបាប */
+vx(20,1,[
+ function(){var b=pick([4,5,8,10,20]),a=ri(1,b-1),p=fr(a,b),q=fr(b-a,b);return K("s7_comp","ប្រូបាបដែលថ្ងៃស្អែកភ្លៀង គឺ $"+p.t+"$ ។ តើប្រូបាបដែលថ្ងៃស្អែកមិនភ្លៀង ស្មើប៉ុន្មាន?",[A(q.s,q.t,"num","P =")],"$1-"+p.t+"="+q.t+"$")},
+ function(){var n=pick([4,5,6,8,10]),r=ri(1,n-1),p=fr(r,n);return K("s7_spin","កង់វិលចែកជា $"+n+"$ ផ្នែកស្មើគ្នា ក្នុងនោះ $"+r+"$ ផ្នែកពណ៌ខៀវ ។ ប្រូបាបដែលព្រួញឈប់លើពណ៌ខៀវ?",[A(p.s,p.t,"num","P =")],"$P=\\dfrac{"+r+"}{"+n+"}="+p.t+"$")},
+ function(){var C=pick([["ចេញលេខ $8$",0],["ចេញលេខតិចជាង $7$",1],["ចេញលេខ $0$",0],["ចេញលេខធំជាង $0$",1]]);return K("s7_imp","បោះគ្រាប់ឡុកឡាក់មួយ (មុខ $1$ ដល់ $6$) ។ ប្រូបាបដែល"+C[0]+" ស្មើប៉ុន្មាន?",[A(C[1],null,"num","P =")],C[1]?"ព្រឹត្តិការណ៍ប្រាកដ ⇒ $1$":"ព្រឹត្តិការណ៍មិនអាច ⇒ $0$")}]);
+vx(20,2,[
+ function(){var r=ri(1,8),b=ri(1,8),g=ri(1,8),p=fr(b+g,r+b+g);return K("s7_not","ថង់មួយមានបាល់ក្រហម $"+r+"$ ខៀវ $"+b+"$ និងបៃតង $"+g+"$ ។ ចាប់មួយដោយចៃដន្យ ។ ប្រូបាបដែលមិនមែនពណ៌ក្រហម?",[A(p.s,p.t,"num","P =")],"$\\dfrac{"+(b+g)+"}{"+(r+b+g)+"}="+p.t+"$")},
+ function(){var b=ri(10,25),g=ri(10,25),p=fr(g,b+g);return K("s7_girl","ថ្នាក់មួយមានសិស្សប្រុស $"+b+"$ និងស្រី $"+g+"$ ។ គ្រូហៅឈ្មោះសិស្សម្នាក់ដោយចៃដន្យ ។ ប្រូបាបដែលជាសិស្សស្រី?",[A(p.s,p.t,"num","P =")],"$\\dfrac{"+g+"}{"+(b+g)+"}="+p.t+"$")},
+ function(){var N=6*ri(5,50);return K("s7_exp","បោះគ្រាប់ឡុកឡាក់ $"+N+"$ ដង ។ តើរំពឹងថាចេញលេខ $6$ ប្រហែលប៉ុន្មានដង?",[A(N/6,null,"num","ដង =")],"$"+N+"\\times\\dfrac16="+(N/6)+"$")}]);
+vx(20,3,[
+ function(){var C=pick([["ក្បាលទាំងពីរ",fr(1,4),"$\\{កក\\}$"],["យ៉ាងហោចណាស់ក្បាលម្ដង",fr(3,4),"$\\{កក,កខ,ខក\\}$"],["មួយក្បាល មួយកន្ទុយ",fr(1,2),"$\\{កខ,ខក\\}$"]]);return K("s7_2c","បោះកាក់មួយ $2$ ដង ។ ប្រូបាបដែលចេញ "+C[0]+"?",[A(C[1].s,C[1].t,"num","P =")],"លទ្ធផលអាចមាន ៖ ក្បាល-ក្បាល · ក្បាល-កន្ទុយ · កន្ទុយ-ក្បាល · កន្ទុយ-កន្ទុយ ($4$) ⇒ $P="+C[1].t+"$")},
+ function(){var d=pick([3,4,5,6,8,10]),n=ri(1,d-1),k=ri(2,6),N=d*k;var p=fr(n,d);return K("s7_fn","ថង់មួយមានបាល់ $"+N+"$ ។ ប្រូបាបចាប់បានបាល់ក្រហម គឺ $"+p.t+"$ ។ តើមានបាល់ក្រហមប៉ុន្មាន?",[A(N*p.n/p.d,null,"num","ក្រហម =")],"$"+N+"\\times"+p.t+"="+(N*p.n/p.d)+"$")},
+ function(){var r=ri(1,6),b=ri(1,8),k=ri(1,5),p=fr(r+k,r+b+k);return K("s7_add","ថង់មួយមានបាល់ក្រហម $"+r+"$ និងស $"+b+"$ ។ គេដាក់បាល់ក្រហមថែម $"+k+"$ ។ ប្រូបាបចាប់បានបាល់ក្រហម ស្មើប៉ុន្មាន?",[A(p.s,p.t,"num","P =")],"ក្រហម $"+(r+k)+"$ សរុប $"+(r+b+k)+"$ ⇒ $"+p.t+"$")}]);
+/* ២១ ក្រាបសសរ */
+function f5(){return[1,2,3,4,5].map(function(){return ri(1,12)})}
+vx(21,1,[
+ function(){var xs=[1,2,3,4,5],f;do{f=f5()}while(f.filter(function(v){return v===Math.max.apply(null,f)}).length>1);return K("s7_bmax","ពីក្រាបសសរ តើសប្ដាហ៍ទីប៉ុន្មានដែលខ្ចីសៀវភៅច្រើនបំផុត?",[A(f.indexOf(Math.max.apply(null,f))+1,null,"num","សប្ដាហ៍ទី =")],"សសរខ្ពស់បំផុត $("+Math.max.apply(null,f)+")$",bars(xs,f))},
+ function(){var xs=[1,2,3,4,5],f=f5(),i=ri(0,3),j=ri(i+1,4);return K("s7_b2","ពីក្រាបសសរ តើសប្ដាហ៍ទី $"+(i+1)+"$ និងទី $"+(j+1)+"$ ខ្ចីសៀវភៅសរុបប៉ុន្មានក្បាល?",[A(f[i]+f[j],null,"num","=")],"$"+f[i]+"+"+f[j]+"="+(f[i]+f[j])+"$",bars(xs,f))},
+ function(){var xs=[1,2,3,4,5],f=f5(),k=ri(4,10),n=f.filter(function(v){return v<k}).length;return K("s7_bl","ពីក្រាបសសរ តើមានប៉ុន្មានសប្ដាហ៍ ដែលខ្ចីតិចជាង $"+k+"$ ក្បាល?",[A(n,null,"num","=")],"សសរទាបជាង $"+k+"$ ៖ $"+n+"$ សប្ដាហ៍",bars(xs,f))}]);
+vx(21,2,[
+ function(){var xs=[1,2,3,4,5],f=f5(),i=ri(0,4),j=ri(0,4);while(j===i||f[j]>=f[i]){f=f5();i=ri(0,4);j=ri(0,4)}return K("s7_bd","ពីក្រាបសសរ តើសប្ដាហ៍ទី $"+(i+1)+"$ ខ្ចីច្រើនជាងសប្ដាហ៍ទី $"+(j+1)+"$ ប៉ុន្មានក្បាល?",[A(f[i]-f[j],null,"num","=")],"$"+f[i]+"-"+f[j]+"="+(f[i]-f[j])+"$",bars(xs,f))},
+ function(){var xs=[1,2,3,4,5],N=pick([20,25,50]),f=fsum(5,N),i=ri(0,4);return K("s7_bp","ពីក្រាបសសរ (សរុប $"+N+"$ ក្បាល) តើសប្ដាហ៍ទី $"+(i+1)+"$ ស្មើប៉ុន្មានភាគរយនៃសរុប?",[A(f[i]*100/N,null,"num","% =")],"$\\dfrac{"+f[i]+"}{"+N+"}\\times100="+(f[i]*100/N)+"\\%$",bars(xs,f))},
+ function(){var xs=[1,2,3,4,5],f=f5(),m=sum(f)/5,n=f.filter(function(v){return v>m}).length;return K("s7_bm","ពីក្រាបសសរ តើមានប៉ុន្មានសប្ដាហ៍ ដែលខ្ចីច្រើនជាងមធ្យម?",[A(n,null,"num","=")],"មធ្យម $=\\dfrac{"+sum(f)+"}{5}="+fr(sum(f),5).t+"$ ⇒ $"+n+"$ សប្ដាហ៍",bars(xs,f))}]);
+vx(21,3,[
+ function(){var f=f5(),T=sum(f);return K("s7_bmiss","ក្នុង $5$ សប្ដាហ៍ ខ្ចីសៀវភៅសរុប $"+T+"$ ក្បាល ។ ក្រាបបង្ហាញតែ $4$ សប្ដាហ៍ដំបូង ។ តើសប្ដាហ៍ទី $5$ ខ្ចីប៉ុន្មានក្បាល?",[A(f[4],null,"num","=")],"$"+T+"-("+f.slice(0,4).join("+")+")="+f[4]+"$",bars([1,2,3,4],f.slice(0,4)))},
+ function(){var f=f5(),m=ri(5,10);f[4]=5*m-sum(f.slice(0,4));while(f[4]<1||f[4]>20){f=f5();f[4]=5*m-sum(f.slice(0,4))}return K("s7_bmx","មធ្យមចំនួនសៀវភៅខ្ចីក្នុង $5$ សប្ដាហ៍ គឺ $"+m+"$ ក្បាល ។ ក្រាបបង្ហាញ $4$ សប្ដាហ៍ដំបូង ។ រកចំនួនក្នុងសប្ដាហ៍ទី $5$",[A(f[4],null,"num","=")],"សរុប $=5\\times"+m+"="+(5*m)+"$ ⇒ $"+(5*m)+"-"+sum(f.slice(0,4))+"="+f[4]+"$",bars([1,2,3,4],f.slice(0,4)))},
+ function(){var f,d;do{f=f5();d=[1,2,3,4].map(function(i){return f[i]-f[i-1]})}while(Math.max.apply(null,d)<=0||d.filter(function(v){return v===Math.max.apply(null,d)}).length>1);var k=d.indexOf(Math.max.apply(null,d));return K("s7_binc","ពីក្រាបសសរ ចន្លោះសប្ដាហ៍ពីរជាប់គ្នាណា ដែលកើនច្រើនបំផុត? តើកើនប៉ុន្មានក្បាល?",[A(Math.max.apply(null,d),null,"num","=")],"កើនច្រើនបំផុតពីសប្ដាហ៍ទី $"+(k+1)+"$ ទៅទី $"+(k+2)+"$ ៖ $"+f[k+1]+"-"+f[k]+"="+Math.max.apply(null,d)+"$",bars([1,2,3,4,5],f))}]);
+/* ២២ ក្រាបចំណិត (មួយចំណែក = ៣០°) */
+vx(22,1,[
+ function(){var p=pick([10,20,25,30,40,50,75]);return K("s7_ppa","ក្នុងក្រាបចំណិត ផ្នែកមួយតំណាង $"+p+"\\%$ ។ តើមុំផ្ចិតរបស់វាប៉ុន្មានដឺក្រេ?",[A(p*36/10,null,"num","=")],"$\\dfrac{"+p+"}{100}\\times360^\\circ="+ang(p*36/10)+"$")},
+ function(){var lb=pick(SP),u=parts(),i=ri(0,2),j=ri(i+1,3),p=fr((u[i]+u[j])*100,12);return K("s7_p2","ពីក្រាបចំណិត តើ «"+lb[i]+"» និង «"+lb[j]+"» រួមគ្នាមានប៉ុន្មានភាគរយ?",[A(p.s,p.t,"num","% =")],"$\\dfrac{"+((u[i]+u[j])*30)+"}{360}\\times100="+p.t+"\\%$",pie(lb,u,true))},
+ function(){var lb=pick(SP),u=parts(),k=ri(0,3),f=fr(u[k],12);return K("s7_pf2","ពីក្រាបចំណិត តើ «"+lb[k]+"» ជាប្រភាគប៉ុន្មាននៃរង្វង់ទាំងមូល?",[A(f.s,f.t,"num","=")],"$\\dfrac{"+(u[k]*30)+"}{360}="+f.t+"$",pie(lb,u,true))}]);
+vx(22,2,[
+ function(){var lb=pick(SP),u=parts(),i=ri(0,3),j=ri(0,3),m=ri(2,6);while(u[i]<=u[j]){u=parts();i=ri(0,3);j=ri(0,3)}return K("s7_pd","សិស្សសរុប $"+(12*m)+"$ នាក់ ។ ពីក្រាបចំណិត តើ «"+lb[i]+"» ច្រើនជាង «"+lb[j]+"» ប៉ុន្មាននាក់?",[A((u[i]-u[j])*m,null,"num","=")],"$("+u[i]+"-"+u[j]+")\\times\\dfrac{"+(12*m)+"}{12}="+((u[i]-u[j])*m)+"$",pie(lb,u,true))},
+ function(){var lb=pick(SP),u=parts(),k=ri(0,3),m=ri(2,6);return K("s7_ptot","ពីក្រាបចំណិត «"+lb[k]+"» មានសិស្ស $"+(u[k]*m)+"$ នាក់ ។ តើសិស្សសរុបប៉ុន្មាននាក់?",[A(12*m,null,"num","=")],"$\\dfrac{"+(u[k]*30)+"}{360}N="+(u[k]*m)+"$ ⇒ $N="+(12*m)+"$",pie(lb,u,true))},
+ function(){var N=pick([40,60,80,120,200]),p=pick([10,15,20,25,30,40,45]);while(N*p%100)p=pick([10,20,25,30,40]);return K("s7_pn","សិស្ស $"+N+"$ នាក់ ក្នុងនោះ $"+p+"\\%$ ចូលចិត្តកីឡាបាល់ទាត់ ។ តើប៉ុន្មាននាក់?",[A(N*p/100,null,"num","=")],"$"+N+"\\times\\dfrac{"+p+"}{100}="+(N*p/100)+"$")}]);
+vx(22,3,[
+ function(){var u=ri(1,9),c=u*ri(1,6),N=12*c/u;return K("s7_an","ក្នុងក្រាបចំណិត ផ្នែក «ចូលចិត្តអាន» មានមុំផ្ចិត $"+ang(u*30)+"$ ហើយមានសិស្ស $"+c+"$ នាក់ ។ តើសិស្សសរុបប៉ុន្មាននាក់?",[A(N,null,"num","=")],"$\\dfrac{"+(u*30)+"}{360}N="+c+"$ ⇒ $N="+N+"$")},
+ function(){var a=18*ri(2,6),b=18*ri(2,6),c=18*ri(2,6),d=360-a-b-c;while(d<18){a=18*ri(2,5);b=18*ri(2,5);c=18*ri(2,5);d=360-a-b-c}return K("s7_rest","ក្រាបចំណិតមាន $4$ ផ្នែក ។ មុំផ្ចិតបីផ្នែកគឺ $"+ang(a)+"$ , $"+ang(b)+"$ , $"+ang(c)+"$ ។ គណនាមុំផ្ចិតផ្នែកទីបួន និងភាគរយរបស់វា",[A(d,null,"num","មុំ ="),A(d*5/18,null,"num","% =")],"$360-"+a+"-"+b+"-"+c+"="+ang(d)+"$ ⇒ $\\dfrac{"+d+"}{360}\\times100="+(d*5/18)+"\\%$")},
+ function(){var a=18*ri(1,19);return K("s7_ap","ផ្នែកមួយក្នុងក្រាបចំណិត មានមុំផ្ចិត $"+ang(a)+"$ ។ តើវាតំណាងប៉ុន្មានភាគរយ?",[A(a*5/18,null,"num","% =")],"$\\dfrac{"+a+"}{360}\\times100="+(a*5/18)+"\\%$")}]);
+/* គំរូដើម (គ្មាន kd) → kd = b{មេរៀន}_{កម្រិត} (ម៉ាស៊ីនប្រឡងស្គាល់ទម្រង់ច្បាស់) */
+Object.keys(G).forEach(function(l){[1,2,3].forEach(function(v){var o=G[l][v];if(o)G[l][v]=function(){var x=o();if(x&&!x.kd)x.kd="b"+l+"_"+v;return x}})});
+
 var LES=[
   ["ចំនួន",[[1,"ចំនួនគត់"],[2,"គូចែក និងពហុគុណ"],[3,"ចំនួនគត់រ៉ឺឡាទីប"],[4,"ប្រភាគ"],[5,"ចំនួនទសភាគ"],[6,"ភាគរយ"],[7,"ង្វាស់រង្វាល់"]]],
   ["ពីជគណិត",[[8,"កន្សោមពីជគណិត"],[9,"សមីការដឺក្រេទីមួយមានមួយអញ្ញាត"],[10,"វិសមភាព"],[11,"ផលធៀប និងសមាមាត្រ"]]],

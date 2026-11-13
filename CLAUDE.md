@@ -30,11 +30,12 @@
 - Before every push: run `python3 tools/bump.py` (bumps `?v=` for changed JS/CSS) and `./tests/run.sh` (all lines must be `bad 0`), then bump the cache name `C` in `sw.js`.
 - Exam/practice generators are lazy-loaded: their `?v=` lives inside `exam.js` (`bump.py` handles it).
 - Question generators: `G[lesson][level]()` returns `{q, a:[A(v,tex,kind,label)], s, fig, kd}`. Every template must have a unique `kd`, because the exam engine detects repeats by `kd`. Build the answer first, then derive the data from it.
-  - Grade 9: add forms with `vx(lesson, level, [fn…])`. Base templates are auto-labeled `kd = b{lesson}_{level}`. `tests/practice.js` fails if any grade 9 lesson×level has fewer than 4 forms.
+  - Grades 7, 8, 9: add forms with `vx(lesson, level, [fn…])` (`kd` prefixes `s7_`, `s8_`, `n_`). Base templates are auto-labeled `kd = b{lesson}_{level}`. `tests/practice.js` fails if any grade 7/8/9 lesson×level has fewer than 4 forms.
+  - Never write a retry loop that can fail to terminate (e.g. waiting for a perfect square or a divisor that may not exist). Pick the answer first and derive the data from it.
   - Grade 9 probability: multiplication rule only (no combinations).
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v12`)
+## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v13`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -72,7 +73,8 @@
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
 
-### ✅ Exam question variety — `practice9.js`, `exam.js`
+### ✅ Exam question variety — `practice7.js`, `practice8.js`, `practice9.js`, `exam.js`
+- Grade 7 (22 lessons) and grade 8 (19 lessons): each lesson×level went from 1 form to 4 (≈370 new forms: computation, find the unknown, real-life, reasoning). In the engine simulation, paper ខ uses the same form as paper ក in ≈98% of items.
 - Grade 9: about 125 new question forms (direct computation, find the unknown, applied, reasoning). Every lesson×level has ≥4 forms (most have 5–6). Fixed two broken templates: a degenerate midpoint and an impossible pentagon apothem.
 - `exam.js` `mkItem()`: anti-repetition by **form** (`shapeOf` = `kd`, or a text/LaTeX fallback for other grades).
   - Within a section, it prefers forms not yet used.
@@ -82,7 +84,7 @@
 - The exam generator makes open-response items, so there are no auto-generated distractors. Multiple-choice options exist only in the quiz bank (`quiz.js`), entered by teachers.
 
 ## Remaining Tasks
-- Next: add question forms to the other grades (7, 8, 10, 11, 12) using the grade 9 pattern (`vx` + `kd` + a form-count test).
+- Next: add question forms to grades 10, 11 and 12 using the same pattern (`vx` + `kd` + extend the form-count test).
 - **Not yet tested on the live site / real phones:**
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.
