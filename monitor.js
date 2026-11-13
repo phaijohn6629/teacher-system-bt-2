@@ -29,7 +29,7 @@ function accOf(x){if(!x)return{};if(x.acc)return jcopy(x.acc);return x.id?{h:{id
 function buildT(k){
   var d=mcd.r[k],c=d&&clsOf(d.o,d.cn);if(!c)return null;
   return{by:"t",at:0,ack:d.ack||0,tn:teacherOf(d.o).name||d.o,cn:c.n,
-    st:c.st.map(function(s){var o={n:s.n};if(s.id)o.id=s.id;if(s.g)o.g=s.g;if(s.ab&&Object.keys(s.ab).length)o.ab=jcopy(s.ab);return o}),
+    st:c.st.map(function(s){var o={n:s.n};if(s.id)o.id=s.id;if(s.g)o.g=s.g;if(s.r00)o.r00=s.r00;if(s.ab&&Object.keys(s.ab).length)o.ab=jcopy(s.ab);return o}),
     org:jcopy(c.org||null),seat:jcopy(c.seat||null),
     sch:window.SCHX?SCHX.schOf(d.o).filter(function(x){return x[2]===c.n&&x[4]!=="D"}):[],
     sca:window.ATT?ATT.periodsAll(c.n):[],   /* ម៉ោងសិក្សាទាំងអស់នៃថ្នាក់ (គ្រប់គ្រូ) សម្រាប់ស្រង់វត្តមានតាមម៉ោង */
@@ -60,7 +60,7 @@ function teachApply(){
     var c=clsOf(d.o,j.cn);
     if(c){
       var by={};(j.st||[]).forEach(function(s){by[skey(s)]=s});
-      c.st.forEach(function(s){var x=by[skey(s)];if(!x)return;if(x.ab&&Object.keys(x.ab).length)s.ab=jcopy(x.ab);else delete s.ab});
+      c.st.forEach(function(s){var x=by[skey(s)];if(!x)return;if(x.r00)s.r00=jcopy(x.r00);if(x.ab&&Object.keys(x.ab).length)s.ab=jcopy(x.ab);else delete s.ab});
       if(j.seat)c.seat=jcopy(j.seat);
       chR=true;
     }

@@ -57,7 +57,7 @@ function mkItem(g,ls,lv){
   if(!x)return{q:"(បង្កើតមិនបាន · ចុច 🔄 ម្ដងទៀត)",fig:"",ans:"",sol:""};
   if(!sessionAvoid[g+"|"+ls]) sessionAvoid[g+"|"+ls] = [];
   sessionAvoid[g+"|"+ls].push(x.q);
-  if(sessionAvoid[g+"|"+ls].length > 20) sessionAvoid[g+"|"+ls].shift();
+  if(sessionAvoid[g+"|"+ls].length > 50) sessionAvoid[g+"|"+ls].shift();
   return{q:x.q,fig:x.fig||"",ans:(x.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · "),sol:x.s||"",al:(x.a||[]).map(function(a){return a.l||""}),at:(x.a||[]).map(function(a){return a.t}),mk:x.mk||0,mks:x.mks||null,ex:!!x.ex,kd:x.kd||""};
 }
 function isT(s){return/^t:/.test(String(s.lv))}
