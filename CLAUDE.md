@@ -29,7 +29,6 @@
   - Integrated `abMap` into `exam.js`'s online exam opening logic to pass A/B paper assignment to students.
 
 - **Remaining Tasks for Next Session**:
-- **UI Implementation**: Implemented "🎲 ចាប់ក្រុម 3D" modal with 3D card flip animation in `classorg.js`.
-- **UI Implementation**: Implemented "👆 ចាប់រើសអ្នកឡើងបទបង្ហាញ" (Animated Pointer Hand) functionality (UI scaffolding) - pending full animation logic.
 - **Validation**: Verify if `r00` is being populated correctly in the `j` field.
 - **Verification**: Test online exam A/B paper assignment sync with `abMap` in `classorg.js`.
+- **Polish**: Final UI tweaks for animated presenter selection and confetti.

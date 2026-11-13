@@ -158,9 +158,18 @@ $("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើស�
 /* 🎲 ចាប់ក្រុម 3D & 👆 ដៃរត់ */
 function initPickerUI(){
   var m=document.createElement("div");m.className="modal";m.id="pickerModal";
-  m.innerHTML=`<div class=modal-content><h2 class=moul>ចាប់ក្រុម 3D</h2><div id=cardContainer></div><div style="margin-top:20px"><button class=primary onclick="startPicker()">ចាប់ផ្តើម</button> <button onclick="closePicker()">បិទ</button></div></div>`;
+  m.innerHTML=`<div class=modal-content><h2 class=moul>ចាប់ក្រុម 3D</h2><div id=cardContainer></div><div style="margin-top:20px"><button class=primary onclick="startPicker()">ចាប់ផ្តើម</button> <button class=primary onclick="pickPresenter()">👆 រើសក្រុមឡើងបទបង្ហាញ</button> <button onclick="closePicker()">បិទ</button></div></div>`;
   document.body.appendChild(m);
 }
+function pickPresenter() {
+  var groups = document.querySelectorAll('.og-g');
+  if (groups.length === 0) return;
+  animatePointer(Array.from(groups), function(target) {
+    target.style.outline = "4px solid var(--accent)";
+    alert("ក្រុមដែលត្រូវឡើងបទបង្ហាញគឺ៖ " + target.querySelector('.og-gn').innerText);
+  });
+}
+window.pickPresenter = pickPresenter;
 function startPicker(){
   var c=cls(),G=groups(c);
   var cc=$("cardContainer");cc.innerHTML="";
@@ -242,6 +251,7 @@ function renderSeat(c,ed){
   $("ogBody").innerHTML="<div class=bar style='margin-top:4px'>"+
     "<label>ប្លង់៖</label><select id=seLay "+(ed?"":"disabled")+">"+Object.keys(LAY).map(function(k){return"<option value="+k+(k===S.lay?" selected":"")+">"+LAY[k].lbl+"</option>"}).join("")+"</select>"+
     (ed?"<button type=button data-sa=rand>🎲 ចៃដន្យ</button><button type=button data-sa=mix>🎲 ចៃដន្យ (ឆ្លាស់ប្រុស-ស្រី)</button><button type=button data-sa=abc>🔤 តាមអក្ខរក្រម</button><button type=button class=danger data-sa=clr>សម្អាត</button>":"")+
+    "<button type=button class=primary onclick='pickSeatPresenter()'>👆 ចាប់រើសតុ/សិស្ស</button>"+
     "</div>"+
     (over?"<p class=cxwarn>⚠️ សិស្ស "+kn(c.st.length)+" នាក់ ច្រើនជាងកៅអី "+kn(N)+"។ សូមជ្រើសប្លង់តុ ២ នាក់។</p>":"")+
     (ed?"<p class=note style='margin:0 0 8px'>✋ <b>រៀបដោយដៃ</b>៖ ចុចលើសិស្សក្នុងបញ្ជីខាងក្រោម (ឬលើកៅអី) រួចចុចកៅអីដែលចង់ដាក់ — បើកៅអីនោះមានសិស្ស នឹងប្ដូរកន្លែងគ្នា។ ចុចកៅអីដដែលពីរដង ដើម្បីដកសិស្សចេញ។</p>":"")+
@@ -295,4 +305,49 @@ function seatPrint(c){
    "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
    "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>";
 }
+  window.animatePointer = animatePointer;
+
+  function pickSeatPresenter() {
+    var seats = document.querySelectorAll('.seat:not(.empty)');
+    if (seats.length === 0) return;
+    animatePointer(Array.from(seats), function(target) {
+      target.style.outline = "4px solid var(--accent)";
+      alert("សិស្សដែលត្រូវឡើងបទបង្ហាញគឺ៖ " + target.querySelector('b').innerText);
+    });
+  }
+  window.pickSeatPresenter = pickSeatPresenter;
+
+  /* 👆 ដៃរត់ & សំឡេង & Confetti */
+	var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+	function playTick() {
+		var osc = audioCtx.createOscillator();
+		var gain = audioCtx.createGain();
+		osc.connect(gain); gain.connect(audioCtx.destination);
+		osc.frequency.value = 880; gain.gain.value = 0.1;
+		osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+	}
+	function fireConfetti() {
+		for (var i = 0; i < 50; i++) {
+			var c = document.createElement("div"); c.className = "confetti";
+			c.style.left = Math.random() * 100 + "%"; c.style.backgroundColor = 'hsl(' + Math.random() * 360 + ', 70%, 60%)';
+			document.body.appendChild(c);
+			setTimeout(function() { c.remove() }, 1000);
+		}
+	}
+	function animatePointer(targets, onFinish) {
+		var hand = document.createElement("div"); hand.className = "hand-pointer"; hand.innerHTML = "👆";
+		document.body.appendChild(hand);
+		var i = 0, speed = 100, count = 0, max = targets.length * 3 + Math.floor(Math.random() * targets.length);
+		function tick() {
+			var rect = targets[i % targets.length].getBoundingClientRect();
+			hand.style.left = (rect.left + rect.width / 2) + "px";
+			hand.style.top = (rect.top - 30) + "px";
+			playTick();
+			i++; count++; speed += count < targets.length ? 0 : 10;
+			if (count < max) setTimeout(tick, speed);
+			else { fireConfetti(); setTimeout(function() { hand.remove(); onFinish(targets[(i-1) % targets.length]) }, 500) }
+		}
+		tick();
+	}
+	window.animatePointer = animatePointer;
 })();
