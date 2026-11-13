@@ -351,3 +351,4 @@ function seatPrint(c){
 	}
 	window.animatePointer = animatePointer;
 })();
+
