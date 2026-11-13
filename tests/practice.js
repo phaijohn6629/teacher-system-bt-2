@@ -17,6 +17,6 @@ Object.keys(GR).forEach(function(g){var en=!!GR[g].en,G=GR[g].G;Object.keys(G).f
     if(en&&a.k==="num"){try{var e=X.ev(X.parse(a.v));if(!isFinite(e[0])||Math.abs(e[1])>1e-9)B("VAL "+(q.kd||"")+" "+a.v)}catch(e){B("PARSE "+(q.kd||"")+" "+a.v)}}})}})})});
 /* ក្រដាសប្រឡង Cambridge ពេញ */
 Object.keys(window.CAMPAPERS||{}).forEach(function(g){Object.keys(CAMPAPERS[g]).forEach(function(k){CAMPAPERS[g][k].secs.forEach(function(s){if(!GR[g].G[s[0]]||!GR[g].G[s[0]][s[1]])B("PAPER missing g"+g+" "+k+" "+s)})})});
-/* ថ្នាក់ទី៧ ទី៨ ទី៩៖ មេរៀន×កម្រិតនីមួយៗ ត្រូវមានយ៉ាងតិច ៤ ទម្រង់ (kd) ផ្សេងគ្នា — ការពារកុំឱ្យវិញ្ញាសាត្រឡប់ទៅដដែលៗ */
-[7,8,9].forEach(function(g){Object.keys(GR[g].G).forEach(function(l){[1,2,3].forEach(function(v){var k={};for(var i=0;i<300;i++){var q=GR[g].G[l][v]();k[q.kd||"?"]=1}if(Object.keys(k).length<4)B("FORMS g"+g+" l"+l+" v"+v+" only "+Object.keys(k).length)})})});
+/* ថ្នាក់ទី៧ ទី៨ ទី៩ ទី១០៖ មេរៀន×កម្រិតនីមួយៗ ត្រូវមានយ៉ាងតិច ៤ ទម្រង់ (kd) ផ្សេងគ្នា — ការពារកុំឱ្យវិញ្ញាសាត្រឡប់ទៅដដែលៗ */
+[7,8,9,10].forEach(function(g){Object.keys(GR[g].G).forEach(function(l){[1,2,3].forEach(function(v){var k={};for(var i=0;i<300;i++){var q=GR[g].G[l][v]();k[q.kd||"?"]=1}if(Object.keys(k).length<4)B("FORMS g"+g+" l"+l+" v"+v+" only "+Object.keys(k).length)})})});
 print("practice: grades "+Object.keys(GR).length+" made "+tot+" bad "+bad);

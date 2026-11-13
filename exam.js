@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=3","practice9.js?v=5","practice8.js?v=3","practice7.js?v=3"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=4","practiceen5.js?v=2","practiceen6.js?v=2"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=4","practice10.js?v=4","practice9.js?v=5","practice8.js?v=3","practice7.js?v=3"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=4","practiceen5.js?v=2","practiceen6.js?v=2"],genP=null,kxP=null;
 var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
