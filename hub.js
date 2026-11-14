@@ -222,10 +222,16 @@ var STARTER={9:S9};
 /* @VIDEOS-START (សរសេរដោយ tools/upload_youtube.py) */
 var VIDEOS={"10_31_1": {"u": "https://youtu.be/aY4-lCqIIw0","t": "ដំណោះស្រាយសមីការដឺក្រេទី២ ដោយប្រើឌីសគ្រីមីណង់ - ថ្នាក់ទី១០"},"12_22_1": {"u": "https://youtu.be/QLkvlUGpiPU","t": "លីមីតរាងមិនកំណត់ 1^∞ និងវិធីដោះស្រាយ - ថ្នាក់ទី១២"},"12_22_2": {"u": "https://youtu.be/opDKfGPJVN8","t": "គន្លឹះលីមីតត្រីកោណមាត្រ៖ ប្ដូរអថេរ x→a ទៅ t→0 - ថ្នាក់ទី១២"},"12_22_3": {"u": "https://youtu.be/0jAoXY9hGc0","t": "លំហាត់លីមីតត្រីកោណមាត្រ៖ (cos x − cos 3x)/x² - ថ្នាក់ទី១២"},"12_22_4": {"u": "https://youtu.be/p2K-n6tVsNw","t": "លំហាត់ ៥.១.២ គណនាលីមីតត្រីកោណមាត្រដោយប្ដូរអថេរ - ថ្នាក់ទី១២"},"12_22_5": {"u": "https://youtu.be/82l-7HNJ4Io","t": "លំហាត់អនុវត្តបន្ថែមលីមីត ១/៣ - ថ្នាក់ទី១២"},"12_22_6": {"u": "https://youtu.be/OiXTV_z_L5s","t": "លំហាត់អនុវត្តបន្ថែមលីមីត ២/៣ - ថ្នាក់ទី១២"},"12_22_7": {"u": "https://youtu.be/KSNFAamfOoo","t": "លំហាត់អនុវត្តបន្ថែមលីមីត ៣/៣ - ថ្នាក់ទី១២"},"12_42_1": {"u": "https://youtu.be/TnHa4Hctr7M","t": "មេរៀន៖ លីមីតនៃអនុគមន៍អិចស្ប៉ូណង់ស្យែល - ថ្នាក់ទី១២"},"12_42_2": {"u": "https://youtu.be/DGjNnhjMDn8","t": "លំហាត់អនុវត្តលីមីតអិចស្ប៉ូណង់ស្យែល ១ - ថ្នាក់ទី១២"},"12_43_1": {"u": "https://youtu.be/P3KbLc_KXzI","t": "មេរៀន៖ លីមីតនៃអនុគមន៍លោការីត - ថ្នាក់ទី១២"},"12_43_2": {"u": "https://youtu.be/h7YBzu4yXUA","t": "លំហាត់អនុវត្តលីមីតលោការីត ១ - ថ្នាក់ទី១២"}};
 /* @VIDEOS-END */
-function withVids(g,l,subs){var p=g+"_"+l+"_";
+/* lv (កម្រិតដែលសិស្សឃើញ) → គន្លឹះខាងក្នុង (LVO=[1,5,2,6,3,4]) · "all"/ទទេ = គ្រប់កម្រិត */
+var VLV={"1":1,"2":5,"3":2,"4":6,"5":3,"pisa":4};
+function withVids(g,l,subs){var p=g+"_"+l+"_",n0=subs.length;   /* n0 = ចំណុចរងដើម (មុនបន្ថែមវីដេអូ) */
   Object.keys(VIDEOS).filter(function(k){return k.indexOf(p)===0}).map(function(k){return[+k.slice(p.length),VIDEOS[k]]}).sort(function(a,b){return a[0]-b[0]})
-    .forEach(function(x){var i=x[0],v=x[1]||{};if(!v.u)return;if(i<subs.length){if(!subs[i].v)subs[i].v=v.u}else{var s=U("🎬 "+(v.t||"វីដេអូពន្យល់"),null,"",[],"",[]);s.v=v.u;subs.push(s)}});
+    .forEach(function(x){var i=x[0],v=x[1]||{},key=VLV[String(v.lv||"all")];if(!v.u)return;
+      if(i<n0&&!key){if(!subs[i].v)subs[i].v=v.u;return}   /* គ្រប់កម្រិត → ភ្ជាប់ទៅចំណុចរងដែលមានស្រាប់ */
+      var s=U("🎬 "+(v.t||"វីដេអូពន្យល់"),key?[key]:null,"",[],"",[]);s.v=v.u;subs.push(s)});   /* កម្រិតជាក់លាក់ → ចំណុចរងវីដេអូដាច់ដោយឡែក */
   return subs}
+/* ចំណុចរង «វីដេអូតាមកម្រិត» = មានតែវីដេអូ (គ្មានសង្ខេប · រូបមន្ត · គន្លឹះ) និងមាន lv → មិនបង្ហាញក្នុងកម្រិតផ្សេង (រួមទាំង PISA) */
+function lvVid(x){return!!(x&&x.v&&!x.s&&!(x.f&&x.f.length)&&!x.k&&x.lv&&x.lv.length)}
 
 /* ---------- PISA (គ្រប់មេរៀន) ---------- */
 function pisaSub(en){return en?U("🌐 From real life to mathematics",[4],"Read the situation twice and underline the numbers and the question.\n- Name the unknown (what is asked)\n- Write the relationship as an equation, ratio or formula\n- Solve, then check that the answer makes sense (units, whole numbers, realistic size)",
@@ -305,10 +311,11 @@ function body(t){
 var L={km:{hub:"មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ",pt:" ចំណុច",sum:"មេរៀនសង្ខេប",f:"រូបមន្តសំខាន់ៗ",k:"គន្លឹះដោះស្រាយ",ex:"ឧទាហរណ៍គំរូ",sol:"មើលដំណោះស្រាយ",v:"ចាក់វីដេអូពន្យល់",nov:"មិនទាន់មានវីដេអូ",tch:"✍️ គ្រូបានកែសម្រួល",read:"អានមុនធ្វើលំហាត់"},
        en:{hub:"Summary · formulas · tips · video",pt:" topics",sum:"Summary",f:"Key formulas",k:"Solving tips",ex:"Worked examples",sol:"Show solution",v:"Play video",nov:"No video yet",tch:"✍️ Edited by your teacher",read:"Read before practising"}};
 var OPEN={},OPENALL={};
-function pickSubs(subs,v){
-  if(v===4){var a=subs.slice();if(!subs.some(function(x){return x.lv&&x.lv.indexOf(4)>=0}))a.push(pisaSub(false));return a}
+function pickSubs(subs,v,en){
+  if(v===4){var a=subs.filter(function(x){return!lvVid(x)||x.lv.indexOf(4)>=0});   /* PISA៖ មាតិកាទាំងអស់ + វីដេអូ PISA ប៉ុណ្ណោះ */
+    if(!subs.some(function(x){return x.lv&&x.lv.indexOf(4)>=0&&!lvVid(x)}))a.push(pisaSub(en));return a}
   var r=subs.filter(function(x){return!x.lv||!x.lv.length||x.lv.indexOf(v)>=0});
-  return r.length?r:subs;
+  return r.length?r:subs.filter(function(x){return!lvVid(x)});   /* គ្មានអ្វីត្រូវ → មាតិកាទូទៅ (មិនយកវីដេអូកម្រិតផ្សេង) */
 }
 function subHtml(x,key,tx,open){
   var vv=vparse(x.v),h="<details class=hub-s data-hk='"+esc(key)+"'"+(open?" open":"")+"><summary><span class=hub-st>"+esc(x.t)+"</span><span class=hub-ic>"+(x.s?"📖":"")+(x.f&&x.f.length?"📐":"")+(x.k||x.ex&&x.ex.length?"💡":"")+(vv?"🎬":"")+"</span></summary><div class=hub-sb>";
@@ -321,8 +328,7 @@ function subHtml(x,key,tx,open){
   return h+"</div></details>";
 }
 function html(g,l,v,name,en){
-  var tx=en?L.en:L.km,d=data(g,l,name,en),subs=pickSubs(d.subs,v);
-  if(v===4&&!subs.some(function(x){return x.lv&&x.lv.indexOf(4)>=0}))subs[subs.length-1]=pisaSub(en);
+  var tx=en?L.en:L.km,d=data(g,l,name,en),subs=pickSubs(d.subs,v,en);
   var gk=g+"_"+l,open=OPENALL[gk]!==false;
   return"<details class=hub id=hub data-hg='"+gk+"'"+(open?" open":"")+"><summary class=hub-h><span>📚 "+tx.hub+"</span><small>"+subs.length+tx.pt+(d.src==="teacher"?" · "+tx.tch:"")+" · "+tx.read+"</small></summary><div class=hub-in>"+
     subs.map(function(x,i){var key=gk+"_"+v+"_"+i;return subHtml(x,key,tx,!!OPEN[key])}).join("")+"</div></details>";

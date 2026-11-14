@@ -9,6 +9,7 @@
   .venv/bin/python tools/upload_youtube.py --link https://youtu.be/XXXX --grade 9 --lesson 1 --topic 1.2   # ភ្ជាប់តំណដែលមានស្រាប់ (មិនបង្ហោះ)
   ... --playlist "លីមីតនៃអនុគមន៍ - ថ្នាក់ទី១២"                         # បង្ហោះ + បញ្ចូល Playlist (រក ឬបង្កើត)
   .venv/bin/python tools/upload_youtube.py --playlist "ឈ្មោះ" --add URL1,URL2   # បញ្ចូលវីដេអូមានស្រាប់ទៅ Playlist
+  ... --level 1|2|3|4|5|pisa|all   # បង្ហាញតែក្នុងកម្រិតនោះ (លំនាំដើម all) · ឯកសារ/ចំណងជើងដដែលក្នុង ថ្នាក់+មេរៀន+កម្រិត ដដែល → រំលង (--force)
 
 --topic ៖ លេខចំណុចរង (1 = ទីមួយ) · ឬលេខចំណងជើង «1.2» / «១.២» (រកក្នុងមាតិកាគំរូ) · ទុកទទេ = បង្កើតចំណុចរង «🎬 …» ថ្មី
 ឯកសារសម្ងាត់ client_secrets.json និង token.json នៅថតគម្រោង ហើយមាននៅក្នុង .gitignore (មិន push)
@@ -158,10 +159,14 @@ def starter_titles(s, g, l):
     return []
 
 
-def topic_index(s, g, l, topic, vids):
+def topic_index(s, g, l, topic, vids, level="all"):
     titles = starter_titles(s, g, l)
     base = len(titles) if titles else 1   # គ្មានមាតិកាគំរូ → ចំណុចរងទូទៅ ១
     used = [int(k.split("_")[2]) for k in vids if k.startswith("%d_%d_" % (g, l))]
+    if level != "all":   # វីដេអូតាមកម្រិត → ចំណុចរង «🎬» ដាច់ដោយឡែកជានិច្ច (hub.js មិនភ្ជាប់ចូលចំណុចរងដែលមានស្រាប់)
+        if topic:
+            print("ℹ️ --level %s៖ វីដេអូបង្ហាញជាចំណុចរង «🎬» ដាច់ដោយឡែក (មិនភ្ជាប់ក្នុង %s)" % (level, topic))
+        return max([base - 1] + used) + 1, None
     if not topic:
         return max([base - 1] + used) + 1, None
     t = str(topic).strip()
@@ -175,17 +180,19 @@ def topic_index(s, g, l, topic, vids):
     return max([base - 1] + used) + 1, None
 
 
-def put_hub(g, l, topic, url, title):
+def put_hub(g, l, topic, url, title, level="all"):
     s = hub_text()
     m, vids = videos_block(s)
-    i, ti = topic_index(s, g, l, topic, vids)
+    i, ti = topic_index(s, g, l, topic, vids, level)
     key = "%d_%d_%d" % (g, l, i)
     vids[key] = {"u": url, "t": title}
+    if level != "all":
+        vids[key]["lv"] = level
     body = json.dumps(dict(sorted(vids.items(), key=lambda kv: [int(x) for x in kv[0].split("_")])), ensure_ascii=False, indent=0).replace("\n", "")
     s2 = s[:m.start(1)] + body + s[m.end(1):]
     with open(HUB, "w", encoding="utf-8") as f:
         f.write(s2)
-    print("🧩 hub.js ← VIDEOS[%s] (%s)" % (key, ti or "ចំណុចរង «🎬 %s» ថ្មី" % title))
+    print("🧩 hub.js ← VIDEOS[%s] (%s · កម្រិត %s)" % (key, ti or "ចំណុចរង «🎬 %s» ថ្មី" % title, LVNAME.get(level, level)))
     teacher_override(g, l)
     return key
 
@@ -242,6 +249,60 @@ def upload(yt, path, title, desc, privacy, tags):
                 continue
             raise
     return resp["id"]
+
+
+# ---------------- ការពារការបង្ហោះជាន់គ្នា ----------------
+LEVELS = ["1", "2", "3", "4", "5", "pisa", "all"]
+LVNAME = {"1": "Level 1", "2": "Level 2", "3": "Level 3", "4": "Level 4", "5": "Level 5", "pisa": "PISA", "all": "គ្រប់កម្រិត"}
+
+
+def log_entries():
+    try:
+        with open(LOG, encoding="utf-8") as f:
+            a = json.load(f)
+    except Exception:
+        return []
+    for e in a:   # កំណត់ត្រាចាស់គ្មាន g/l/lv → ទាញពី hub key «g_l_i»
+        if "g" not in e and e.get("hub"):
+            p = e["hub"].split("_")
+            e["g"], e["l"] = int(p[0]), int(p[1])
+        e.setdefault("lv", "all")
+    return a
+
+
+def norm(t):
+    return re.sub(r"\s+", " ", str(t or "")).strip().lower()
+
+
+def find_dup(file=None, title=None, g=None, l=None, level="all", url=None):
+    """ឯកសារ .mp4 / ចំណងជើង / តំណ ដូចគ្នា ធ្លាប់ចូល ថ្នាក់+មេរៀន+កម្រិត ដដែល (ឬបង្ហោះរួច ពេលគ្មាន --grade) → ហេតុផល"""
+    fb, tt = (os.path.basename(file) if file else None), norm(title)
+    for e in log_entries():
+        what = ("ឯកសារ «%s»" % fb if fb and e.get("file") == fb else "ចំណងជើង «%s»" % title if tt and norm(e.get("title")) == tt
+                else "តំណ %s" % url if url and e.get("url", "")[-11:] == url[-11:] else None)
+        if not what:
+            continue
+        if g is None:
+            return "%s ធ្លាប់បង្ហោះរួច (%s · %s)" % (what, e.get("url"), e.get("at", "")[:10])
+        if e.get("g") == g and e.get("l") == l and e.get("lv", "all") == level:
+            return "%s ធ្លាប់ចូល ថ្នាក់ %d មេរៀន %d (%s) រួច · %s" % (what, g, l, LVNAME.get(level, level), e.get("url"))
+    if g is not None:
+        _, vids = videos_block(hub_text())
+        for k, v in vids.items():
+            if not k.startswith("%d_%d_" % (g, l)) or str(v.get("lv", "all")) != level:
+                continue
+            if (tt and norm(v.get("t")) == tt) or (url and v.get("u", "")[-11:] == url[-11:]):
+                return "hub.js មានរួច៖ VIDEOS[%s] «%s» %s (%s)" % (k, v.get("t"), v.get("u"), LVNAME.get(level, level))
+    return None
+
+
+def skip_if_dup(a, **kw):
+    why = find_dup(**kw)
+    if why and not a.force:
+        print("⏭️ រំលង (ការពារជាន់គ្នា)៖ " + why + "\n   (ប្រើ --force ដើម្បីបង្ហោះ/ភ្ជាប់ម្ដងទៀត)")
+        sys.exit(0)
+    if why:
+        print("⚠️ --force៖ " + why)
 
 
 # ---------------- Playlist ----------------
@@ -327,6 +388,8 @@ def main():
     ap.add_argument("--grade", type=int, help="ថ្នាក់ (7–12)")
     ap.add_argument("--lesson", type=int, help="លេខមេរៀនក្នុងទំព័រហ្វឹកហាត់")
     ap.add_argument("--topic", help="ចំណុចរង៖ លេខរៀង (1,2,…) ឬ «1.2» / «១.២»")
+    ap.add_argument("--level", choices=LEVELS, default="all", help="កម្រិតដែលបង្ហាញវីដេអូ (1–5 · pisa · all = គ្រប់កម្រិត)")
+    ap.add_argument("--force", action="store_true", help="បង្ហោះ/ភ្ជាប់ ទោះធ្លាប់មានរួច (មិនពិនិត្យជាន់គ្នា)")
     ap.add_argument("--tags", default="គណិតវិទ្យា,Rean-Maths,Manim,Khmer Math", help="ស្លាក (ក្បៀស)")
     ap.add_argument("--link", help="មិនបង្ហោះ · ភ្ជាប់តំណ YouTube ដែលមានស្រាប់ទៅ hub.js")
     ap.add_argument("--auth-only", action="store_true", help="Login ហើយបង្ហាញ Channel តែប៉ុណ្ណោះ")
@@ -345,17 +408,21 @@ def main():
         if a.grade is None:
             die("--link ត្រូវការ --grade និង --lesson")
         url = "https://youtu.be/" + m.group(1)
+        skip_if_dup(a, title=a.title, g=a.grade, l=a.lesson, level=a.level, url=url)
         if a.dry_run:
-            print("🔎 dry-run៖ នឹងភ្ជាប់", url, "→ ថ្នាក់", a.grade, "មេរៀន", a.lesson, "ចំណុចរង", a.topic or "(ថ្មី)")
+            print("🔎 dry-run៖ នឹងភ្ជាប់", url, "→ ថ្នាក់", a.grade, "មេរៀន", a.lesson, "ចំណុចរង", a.topic or "(ថ្មី)", "·", LVNAME[a.level])
             return
-        put_hub(a.grade, a.lesson, a.topic, url, a.title or "វីដេអូពន្យល់")
+        put_hub(a.grade, a.lesson, a.topic, url, a.title or "វីដេអូពន្យល់", a.level)
         print("👉 បន្ទាប់៖ python3 tools/bump.py && ./tests/run.sh រួច commit/push")
         return
 
+    if not a.auth_only and not a.add:   # ពិនិត្យជាន់គ្នាមុន Login/បង្ហោះ (មិនចំណាយកូតា)
+        p0 = resolve_file(a.file)
+        skip_if_dup(a, file=p0, title=a.title or nice_title(p0), g=a.grade, l=a.lesson, level=a.level)
     if a.dry_run and not a.auth_only:
         path = resolve_file(a.file)
         print("🔎 dry-run៖", path, "·", a.title or nice_title(path), "·", a.privacy,
-              "· hub:", ("ថ្នាក់ %d មេរៀន %d ចំណុចរង %s" % (a.grade, a.lesson, a.topic or "(ថ្មី)")) if a.grade else "—")
+              "· hub:", ("ថ្នាក់ %d មេរៀន %d ចំណុចរង %s · %s" % (a.grade, a.lesson, a.topic or "(ថ្មី)", LVNAME[a.level])) if a.grade else "—")
         return
 
     c = creds()
@@ -391,9 +458,10 @@ def main():
             add_to_playlist(yt, a.playlist, a.playlist_privacy, [vid])
         except Exception as e:   # វីដេអូបង្ហោះរួចហើយ → កុំឱ្យបរាជ័យ Playlist បង្អាក់ hub.js
             print("⚠️ មិនអាចបញ្ចូល Playlist បានទេ (%s) · រត់ម្ដងទៀត៖ --playlist \"%s\" --add %s" % (str(e)[:80], a.playlist, url))
-    key = put_hub(a.grade, a.lesson, a.topic, url, title) if a.grade else None
+    key = put_hub(a.grade, a.lesson, a.topic, url, title, a.level) if a.grade else None
     log({"at": datetime.datetime.now().isoformat(timespec="seconds"), "file": os.path.basename(path), "title": title,
-         "url": url, "privacy": a.privacy, "channel": cname, "hub": key, "playlist": a.playlist or ""})
+         "url": url, "privacy": a.privacy, "channel": cname, "hub": key, "playlist": a.playlist or "",
+         "g": a.grade, "l": a.lesson, "lv": a.level})
     if key:
         print("👉 បន្ទាប់៖ python3 tools/bump.py && ./tests/run.sh រួច commit/push (ឬប្រាប់ Claude)")
 

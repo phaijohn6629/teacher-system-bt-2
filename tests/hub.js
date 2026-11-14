@@ -33,6 +33,20 @@ if(HUB.html(9,1,1,"x",false).indexOf("១.១")<0)B("clear → starter failed");
  ["https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view?usp=sharing","gd"],["https://drive.google.com/open?id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345","gd"],
  ["https://example.org/manim/scene.mp4","mp4"],["https://example.org/v.webm?x=1","mp4"]].forEach(function(t){var v=HUB.vparse(t[0]);if(!v||v.k!==t[1])B("VIDEO "+t[0])});
 ["http://youtu.be/dQw4w9WgXcQ","javascript:alert(1)","https://evil.example/x","https://example.org/a.mp4\"><script>","data:video/mp4;base64,AAA",""].forEach(function(u){if(HUB.vparse(u))B("VIDEO accepted "+u)});
-/* 🎬 VIDEOS (tools/upload_youtube.py)៖ គន្លឹះ g_l_i · តំណវីដេអូត្រឹមត្រូវ */
-Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u))B("VIDEOS "+k)});
+/* 🎬 VIDEOS (tools/upload_youtube.py)៖ គន្លឹះ g_l_i · តំណវីដេអូត្រឹមត្រូវ · lv ∈ 1–5 · pisa · all */
+Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u)||(v.lv!=null&&["1","2","3","4","5","pisa","all"].indexOf(String(v.lv))<0))B("VIDEOS "+k)});
+/* វីដេអូតាមកម្រិត៖ Level នីមួយៗឃើញតែវីដេអូរបស់ខ្លួន + all · មិនជាន់គ្នា · PISA នៅមានកាតជីវិតពិត */
+(function(){var V=HUB.VIDEOS,save=JSON.stringify(V),LV={"1":1,"2":5,"3":2,"4":6,"5":3,"pisa":4},id=function(c){return"https://youtu.be/"+(c+"AAAAAAAAAAA").slice(0,11)};
+  [[9,1],[12,22]].forEach(function(gl){var base=gl[0]===9?3:1,i=base;
+    Object.keys(V).forEach(function(k){if(k.indexOf(gl[0]+"_"+gl[1]+"_")===0)delete V[k]});
+    V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("all"),t:"ALL"};
+    Object.keys(LV).forEach(function(lv){V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("L"+lv),t:"LV"+lv,lv:lv}});
+    V[gl[0]+"_"+gl[1]+"_0"]={u:id("T0"),t:"T0",lv:"3"};   /* កម្រិតជាក់លាក់លើចំណុចរងមានស្រាប់ → ដាច់ដោយឡែក មិនភ្ជាប់ក្នុងចំណុចរង */
+    Object.keys(LV).forEach(function(lv){var h=HUB.html(gl[0],gl[1],LV[lv],"x",false);n++;
+      Object.keys(LV).forEach(function(o){var has=h.indexOf(id("L"+o))>=0;if(has!==(o===lv))B("LEVEL g"+gl.join("/")+" view "+lv+" shows L"+o+"="+has)});
+      if(h.indexOf(id("all"))<0)B("ALL missing g"+gl.join("/")+" view "+lv);
+      if((h.indexOf(id("T0"))>=0)!==(lv==="3"))B("T0 leak g"+gl.join("/")+" view "+lv);
+      if(lv==="pisa"&&h.indexOf("🌐")<0)B("PISA card missing g"+gl.join("/"))});
+    var st=gl[0]===9?HUB.starter(9,1):HUB.generic("x",false,12,22);if(st[0].v===id("T0"))B("level video attached into sub")});
+  Object.keys(V).forEach(function(k){delete V[k]});var o=JSON.parse(save);Object.keys(o).forEach(function(k){V[k]=o[k]})})();
 print("hub: subtopics "+n+" bad "+bad);

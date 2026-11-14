@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v27`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v28`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -103,6 +103,9 @@
   - `--file X.mp4 --title "…" --desc "…" --privacy public --grade 9 --lesson 1 --topic 1.2` uploads, prints `https://youtu.be/…`, and writes `VIDEOS["9_1_1"]` into `hub.js`.
   - `--topic`: a 1-based index, or a heading number such as `1.2`/`១.២` matched against the starter titles. Without it, a new «🎬 title» sub-topic is appended.
   - `--link https://youtu.be/… --grade … --lesson … [--topic …]` attaches an existing video without uploading. `--dry-run` previews.
+  - `--level 1|2|3|4|5|pisa|all` (default `all`) stores `lv` in the `VIDEOS` entry. Level names map to internal keys (1→1, 2→5, 3→2, 4→6, 5→3, pisa→4). A level-specific video always becomes its own «🎬» sub-topic with `lv:[key]`, shown **only** at that level (never attached into an existing sub-topic).
+  - In `hub.js`, `lvVid()` marks a video-only sub-topic that has `lv`. `pickSubs` keeps those out of other levels: PISA shows all content plus PISA videos only, and the fallback when nothing matches excludes other levels' videos. The PISA modelling card still appears. Old entries without `lv` = all levels.
+  - Duplicate guard (`find_dup`, checked before login/upload so no quota is spent): the same `.mp4` filename, title or link already logged in `tools/youtube_uploads.json` (old entries derive `g`/`l` from `hub`) or present in `VIDEOS` for the same grade+lesson+level is skipped with a notice. Without `--grade`, any previous upload of the same file or title is skipped. Override with `--force`.
   - `--playlist "name"` adds the uploaded video to that playlist: it finds the playlist by exact title or creates it (`--playlist-privacy`, default unlisted), and skips videos already in it.
   - `--playlist "name" --add URL1,URL2,…` adds existing videos in the given order without uploading.
   - Scopes are `youtube.upload` + `youtube.force-ssl` (playlists, video edits). An older `token.json` without them is deleted automatically and asks for login again.
