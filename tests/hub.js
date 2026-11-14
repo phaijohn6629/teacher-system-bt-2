@@ -37,8 +37,9 @@ if(HUB.html(9,1,1,"x",false).indexOf("១.១")<0)B("clear → starter failed");
 Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u)||(v.lv!=null&&["1","2","3","4","5","pisa","all"].indexOf(String(v.lv))<0))B("VIDEOS "+k)});
 /* វីដេអូតាមកម្រិត៖ Level នីមួយៗឃើញតែវីដេអូរបស់ខ្លួន + all · មិនជាន់គ្នា · PISA នៅមានកាតជីវិតពិត */
 (function(){var V=HUB.VIDEOS,save=JSON.stringify(V),LV={"1":1,"2":5,"3":2,"4":6,"5":3,"pisa":4},id=function(c){return"https://youtu.be/"+(c+"AAAAAAAAAAA").slice(0,11)};
-  [[9,1],[12,22]].forEach(function(gl){var base=gl[0]===9?3:1,i=base;
+  [[9,1],[12,22]].forEach(function(gl){
     Object.keys(V).forEach(function(k){if(k.indexOf(gl[0]+"_"+gl[1]+"_")===0)delete V[k]});
+    var base=(gl[0]===9?HUB.starter(9,1):HUB.generic("x",false,12,22)).length,i=base;
     V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("all"),t:"ALL"};
     Object.keys(LV).forEach(function(lv){V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("L"+lv),t:"LV"+lv,lv:lv}});
     V[gl[0]+"_"+gl[1]+"_0"]={u:id("T0"),t:"T0",lv:"3"};   /* កម្រិតជាក់លាក់លើចំណុចរងមានស្រាប់ → ដាច់ដោយឡែក មិនភ្ជាប់ក្នុងចំណុចរង */

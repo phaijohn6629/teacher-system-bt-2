@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v28`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v29`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -188,6 +188,12 @@
 - Sub-topics are filtered by level (`sub.lv`; empty = all levels). 🌐 PISA shows every sub-topic plus a «real life → mathematics» modelling card.
 - Open/closed state survives `draw()` (check, 🔄), because `hub.js` stores `toggle` events keyed by `g_l_v_i`.
 - Video player (modal): YouTube (→ `youtube-nocookie` embed), Google Drive (→ `/preview`), and https MP4/WebM files. Anything else is rejected (`HUB.vparse`). Inside a `<dialog>` the player mounts in the dialog (top layer).
+- Grade 9 starter content was completed on 2026-11-14 with sub-topics appended at the **end** of each lesson through `add9(l,[…])`, so existing sub-topic indices and `VIDEOS` keys stay stable:
+  - `AD(…)` «★ កម្រិត ៤–៥» (`lv` = Level 4/5) in 11 lessons, filling gaps found by comparing the hub with the real L4/L5 forms: successive % / 3-part ratio / average speed; $x^2+y^2$ from $x+y$, $xy$; median from a frequency table and corrected mean; two-dice sums; triangle area from coordinates; collinearity and perpendicular bisector; digit problems and no-solution systems; two circles and the tangential quadrilateral; sector arc and area; Pythagoras with leg sums; hexagon apothem and area, interior:exterior ratio; volume formulas and melting; sin/cos via tan.
+  - `PZ(…)` «🌐 ជីវិតពិត» (`lv` = PISA) in all 18 lessons, with worked examples matching the actual PISA forms (promotions, tax on the excess, plans, lifts, surveys, salary median, traffic lights, maps and Wi-Fi, linear models, wheels and circumference, clock angles, shadows and mirrors, scale models, kites and elevation with eye height). A lesson PISA sub-topic replaces the generic modelling card, and its tips start with the modelling steps.
+  - Lesson 4.2 (fraction equations) is now also shown at Level 5.
+  - Verified: all 31 example answers recomputed. In headless Chrome, all 18 lessons × 6 levels with every sub-topic open showed 0 KaTeX errors and 0 unrendered `$`. 🌐 appears only in PISA; ★ appears in Level 4/5 (and in PISA, which by design shows all of the lesson's concept sub-topics).
+  - `tools/upload_youtube.py` `starter_titles()` also counts `add9` sub-topics, so new «all» videos never attach to a ★/🌐 sub-topic by index.
 - Data priority: teacher version (Firestore `hub/{g}_{l}` = `{o,g,l,j,r,u}`) > starter content in `hub.js` (grade 9: 18 lessons, 39 sub-topics) > generic tips with the lesson name (other grades; English for Cambridge).
 - Students read through the Firestore **REST** API (no SDK). A fresh fetch runs on the first view of each lesson per page load (so opening the page or pressing Refresh shows teacher edits at once). After that the result is cached in localStorage `hub{g}_{l}` for 1 min; on failure there is a 1 min backoff. The practice flow never waits on it.
 - Teacher editor: «📖 មេរៀនសង្ខេប» tab → «🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់».

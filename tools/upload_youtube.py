@@ -153,10 +153,14 @@ def starter_titles(s, g, l):
     if not m:
         return []
     blk = re.split(r"\n(\d+):\[", "\n" + m.group(1))
+    out = []
     for i in range(1, len(blk) - 1, 2):
         if int(blk[i]) == l:
-            return re.findall(r'U\("([^"]+)"', blk[i + 1])
-    return []
+            out = re.findall(r'U\("([^"]+)"', blk[i + 1])
+    # ចំណុចរងបន្ថែមនៅចុងមេរៀន៖ add9(l,[AD("★ …"), PZ("🌐 …")]) (តាមលំដាប់)
+    for a in re.finditer(r"\nadd%d\(%d,\[(.*?)\]\);" % (g, l), s, re.S):
+        out += [("★ " if k == "AD" else "🌐 ") + t for k, t in re.findall(r'\b(AD|PZ)\("([^"]+)"', a.group(1))]
+    return out
 
 
 def topic_index(s, g, l, topic, vids, level="all"):
