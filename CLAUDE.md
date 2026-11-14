@@ -17,6 +17,8 @@
 | `exam.js` | Exam builder (teacher side) | បង្កើតវិញ្ញាសាប្រឡង · វិញ្ញាសា ក/ខ · បើកប្រឡងអនឡាញ |
 | `exam.html` | Online exam page (student side) | ទំព័រសិស្សមើលវិញ្ញាសា (សរសេរចម្លើយលើក្រដាស) |
 | `expaper.js` | Exam paper renderer | បង្ហាញ/បោះពុម្ពវិញ្ញាសា (ប្រើទាំង exam.js និង exam.html) |
+| `hub.js` | Practice learning hub (Flipped Classroom) | ផ្ទាំងសិក្សាពីលើលំហាត់៖ មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ តាមចំណុចរង + មាតិកាគំរូថ្នាក់ទី៩ |
+| `lessons.js` / `lessonedit.js` | Slide lessons + teacher CMS | មេរៀនសង្ខេបជាស្លាយ (ផ្ទាំង p20) · កម្មវិធីកែរបស់គ្រូ (រួមទាំង «🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់») |
 | `practice*.js` | Question generators per grade | ម៉ាស៊ីនបង្កើតលំហាត់តាមថ្នាក់ (ប្រើទាំងទំព័រហ្វឹកហាត់ និងវិញ្ញាសា) |
 | `exgen.js` | Cambodian-format exam templates | គំរូលំហាត់ប្រឡងទម្រង់កម្ពុជា (BacII · ឌីប្លូម) |
 | `att.js` | Attendance logic | គ្រប់គ្រងការចុះវត្តមាន |
@@ -39,9 +41,10 @@
   - `fill56()` in `practice.js` back-fills missing keys 5/6 from neighbouring levels (5 ← 1|2, 6 ← 2|3) for every grade registered via `X.reg`. A grade with its own content defines `G[l][5]`/`G[l][6]` before `X.reg`, and fill56 then leaves them alone.
   - Grade 9 new forms use `kd` prefixes `g9_` and `g9p_` (PISA). Levels 2/4 are set with `lvset(l,5|6,[fn…])`. `tests/practice.js` fails if any grade 9 lesson×level (all 6) has fewer than 6 forms.
 - Anything rendered from `script.js` `refreshView()` (called on every cloud snapshot) must be idempotent: never rebuild a view that is already showing the same data, or open selects close and previews flicker.
+- `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v18`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v19`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -83,6 +86,19 @@
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
 
+### ✅ Practice learning hub (Flipped Classroom) — `hub.js`, `practice.js`, `practice.html`, `lessonedit.js`, `style.css`, `firestore.rules`
+- `practice.html`: a collapsible «📚 មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ» panel sits between the level bar and the questions. Each sub-topic is its own `<details>` with 📖 summary, 📐 formula box (KaTeX display), 💡 tips plus worked examples (solution hidden behind «👁»), and 🎬 a video button.
+- Sub-topics are filtered by level (`sub.lv`; empty = all levels). 🌐 PISA shows every sub-topic plus a «real life → mathematics» modelling card.
+- Open/closed state survives `draw()` (check, 🔄), because `hub.js` stores `toggle` events keyed by `g_l_v_i`.
+- Video player (modal): YouTube (→ `youtube-nocookie` embed), Google Drive (→ `/preview`), and https MP4/WebM files. Anything else is rejected (`HUB.vparse`). Inside a `<dialog>` the player mounts in the dialog (top layer).
+- Data priority: teacher version (Firestore `hub/{g}_{l}` = `{o,g,l,j,r,u}`) > starter content in `hub.js` (grade 9: 18 lessons, 39 sub-topics) > generic tips with the lesson name (other grades; English for Cambridge).
+- Students read through the Firestore **REST** API (no SDK). The result is cached in localStorage `hub{g}_{l}` for 10 min; on failure there is a 10 min backoff. The practice flow never waits on it.
+- Teacher editor: «📖 មេរៀនសង្ខេប» tab → «🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់».
+  - Choose grade and lesson; sub-topic tabs (add, move, duplicate, delete); level checkboxes; summary, formulas (one LaTeX per line), tips, examples, video URL with validity chip and «▶ សាកចាក់»; live preview.
+  - Drafts autosave to localStorage `hubDraft_{g}_{l}`. Save runs a transaction with a version check (`r` +1, `tx.update` when the doc exists); on a conflict it asks before overwriting. «↺ ត្រឡប់ទៅលំនាំដើម» deletes the teacher version.
+- Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
+- Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
+
 ### ✅ 5 levels + 🌐 PISA — `practice.js`, `practice.html`, `practice9.js`, `exam.js`, `quiz.js`
 - Every grade shows 6 level buttons in a 6-column grid on desktop and a 3×2 grid on phone. On phone, the lesson title moves to its own line under the 6 cups. Each lesson card has 6 trophies, and «បន្តទៅកម្រិតបន្ទាប់» follows `LVO`.
 - Answer timers per level: `SOLT={1:120,5:180,2:240,6:300,3:360,4:360}`.
@@ -107,9 +123,10 @@
 
 ## Status
 - ✅ **All planned code tasks are completed.** No code work is pending.
-- Optional future work: give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
+- Optional future work: starter hub content for grades 7, 8, 10, 11, 12 and Cambridge (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
 
 ## Recommended manual checks (live site / real phones — not automatable here)
+  - **Publish `firestore.rules`** (new `hub/` rule), then save one hub lesson as a teacher and open it on a phone (students see changes within 10 min).
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.
   - Refresh during a quiz/exam on a weak connection (verified only in a Node simulation with an unresponsive Firestore).

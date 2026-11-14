@@ -28,7 +28,7 @@ window.LSC={
   tools:function(){
     var el=$("lsTools");if(!el)return;
     if(!loaded&&!loading&&who){load().then(function(){LSX.render()})}
-    el.innerHTML=isT()?"<button type=button class=primary data-lse=new>＋ បង្កើតមេរៀនថ្មី</button><button type=button data-lse=reload title='ផ្ទុកមេរៀនរបស់គ្រូទាំងអស់ម្ដងទៀត'>🔄</button>"+(loading?"<span class=note>កំពុងផ្ទុក…</span>":""):"";
+    el.innerHTML=isT()?"<button type=button class=primary data-lse=new>＋ បង្កើតមេរៀនថ្មី</button><button type=button data-lse=hub title='មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ ពីលើលំហាត់ក្នុងទំព័រហ្វឹកហាត់ (practice.html)'>🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់</button><button type=button data-lse=reload title='ផ្ទុកមេរៀនរបស់គ្រូទាំងអស់ម្ដងទៀត'>🔄</button>"+(loading?"<span class=note>កំពុងផ្ទុក…</span>":""):"";
   },
   acts:function(l,g,ch){
     if(!isT())return"";
@@ -151,6 +151,7 @@ $("p20").addEventListener("click",function(e){
   var b=e.target.closest("[data-lse]");if(!b||!isT()||b.closest("#dlgLsEd"))return;
   var q=b.dataset.lse.split("|"),a=q[0];
   if(a==="new")return edit(blank());
+  if(a==="hub")return hubOpen();
   if(a==="reload"){loaded=false;load().then(function(){LSX.render()});LSX.render();return}
   if(a==="edit"){var x=CUS[q[1]];if(x&&canE(x))edit({id:x.id,o:x.o,g:x.g,ch:x.ch,cht:x.cht,t:x.t,m:x.m,s:jc(x.s),sel:0});return}
   if(a==="del"){
@@ -163,4 +164,122 @@ $("p20").addEventListener("click",function(e){
     if(l)edit({id:"",o:who.id,g:g,ch:ch,cht:c.t,t:l.t+" (កែសម្រួល)",m:l.m||"",s:jc(l.s),sel:0});
   }
 });
+
+/* =================== 🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់ (Flipped Classroom) ===================
+   Firestore hub/{ថ្នាក់}_{មេរៀន} = {o:គ្រូចុងក្រោយ, g, l, j:JSON{subs:[…]}, r:កំណែ (កើន ១ ម្ដងៗ), u}
+   សិស្សអានលើ practice.html (hub.js) · គ្រូសកម្មណាក៏កែបាន (មាតិការួមរបស់មេរៀន) · រក្សាទុកដោយ Transaction (ពិនិត្យកំណែ r)
+   សេចក្ដីព្រាងរក្សាក្នុង localStorage hubDraft_{g}_{l} រហូតដល់រក្សាទុកជោគជ័យ */
+var HE=null,hubT=null;
+var HLV=[[1,"១"],[5,"២"],[2,"៣"],[6,"៤"],[3,"៥"],[4,"🌐 PISA"]];
+function hubD(){var d=$("dlgHub");if(!d){d=document.createElement("dialog");d.id="dlgHub";d.className="wide ls-ed hub-ed";document.body.appendChild(d);hubBind(d)}return d}
+function hubLes(g){var o=[];((window.PRACT&&PRACT.GR[g]&&PRACT.GR[g].les)||[]).forEach(function(c){c[1].forEach(function(x){o.push(x)})});return o}
+function hubName(g,l){var x=hubLes(g).filter(function(x){return x[0]===l})[0];return x?x[1]:""}
+function hubOpen(){
+  var d=hubD();d.innerHTML="<p style='padding:30px;text-align:center'>⏳ កំពុងផ្ទុកបញ្ជីមេរៀន…</p>";if(!d.open)d.showModal();
+  var go=function(){var g=HE?HE.g:9,L=hubLes(g);hubLoad(g,HE&&HE.l?HE.l:L.length?L[0][0]:1)};
+  if(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[9])return go();
+  (window.EXAM?EXAM.gen():Promise.reject("noexam")).then(go,function(e){console.error(e);d.innerHTML="<p style='padding:30px;text-align:center'>⚠️ មិនអាចផ្ទុកបញ្ជីមេរៀនបានទេ · សូមពិនិត្យអ៊ីនធឺណិត</p><div class=dlgf><button type=button data-he=close>បិទ</button></div>"});
+}
+function hubLoad(g,l){
+  var d=hubD(),name=hubName(g,l);
+  d.innerHTML="<p style='padding:30px;text-align:center'>⏳ កំពុងផ្ទុក…</p>";
+  FB.getDoc(FB.doc(db,"hub",g+"_"+l)).then(function(sn){
+    var v=sn.exists()?sn.data():null,subs=null;
+    if(v){try{subs=JSON.parse(v.j).subs}catch(e){subs=null}}
+    var src=subs?"teacher":HUB.starter(g,l)?"starter":"generic";
+    if(!subs)subs=HUB.starter(g,l)||HUB.generic(name,false);
+    HE={g:g,l:l,name:name,subs:subs,r:v?+v.r||0:0,src:src,by:v?v.o:"",at:v?v.u:"",sel:0,dirty:false};
+    var dr=null;try{dr=JSON.parse(localStorage.getItem("hubDraft_"+g+"_"+l)||"null")}catch(e){}
+    if(dr&&dr.subs&&confirm("មានសេចក្ដីព្រាងមិនទាន់រក្សាទុក ("+String(dr.t||"").slice(0,16).replace("T"," ")+") សម្រាប់មេរៀននេះ ។ បើកសេចក្ដីព្រាងនោះ?")){HE.subs=dr.subs;HE.dirty=true}
+    else if(dr)try{localStorage.removeItem("hubDraft_"+g+"_"+l)}catch(e){}
+    if(HUB.put&&v&&subs)HUB.put(g,l,{subs:subs});
+    hubDraw();
+  },function(e){console.error(e);d.innerHTML="<p style='padding:30px;text-align:center'>⚠️ មិនអាចផ្ទុកបានទេ"+(e&&e.code==="permission-denied"?" · សូម Admin Publish firestore.rules កំណែថ្មី (មាន hub)":"")+"</p><div class=dlgf><button type=button data-he=close>បិទ</button></div>"});
+}
+function hubBlank(){return{t:"",lv:[],s:"",f:[],k:"",ex:[],v:""}}
+function vChip(u){if(!String(u||"").trim())return"<small class=note>គ្មានវីដេអូ (ទុកទទេបាន)</small>";var v=HUB.vparse(u);return v?"<small class=hub-ok>✅ "+({yt:"YouTube",gd:"Google Drive",mp4:"ឯកសារវីដេអូ"})[v.k]+"</small> <button type=button data-he=vtest>▶ សាកចាក់</button>":"<small class=hub-bad>⚠️ តំណមិនស្គាល់ · ប្រើ YouTube · Google Drive (ចែករំលែក «Anyone with the link») ឬ https://….mp4</small>"}
+function hubDraw(){
+  var d=hubD(),x=HE.subs[HE.sel],G=[7,8,9,10,11,12],L=hubLes(HE.g);
+  var src=HE.src==="teacher"?"✍️ កំណែគ្រូ"+(HE.by?" ("+esc(teacherOf(HE.by).name||HE.by)+(HE.at?" · "+esc(String(HE.at).slice(0,10)):"")+")":"")+" · កំណែ "+kn(HE.r):HE.src==="starter"?"📦 មាតិកាគំរូ (មិនទាន់កែ)":"📄 ទូទៅ (មិនទាន់មានមាតិកា)";
+  var h="<div class=lse-wrap><div class=lse-l><h2 style='margin:0 0 6px'>🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់</h2><p class=note style='margin:0 0 8px'>បង្ហាញពីលើលំហាត់ក្នុងទំព័រហ្វឹកហាត់ ៖ មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ តាមចំណុចរង</p>"+
+    "<div class=lse-meta><label>ថ្នាក់<select data-hm=g>"+G.map(function(g){return"<option value="+g+(g===HE.g?" selected":"")+">ថ្នាក់ទី"+kn(g)+"</option>"}).join("")+"</select></label>"+
+    "<label class=w>មេរៀន<select data-hm=l>"+L.map(function(y){return"<option value="+y[0]+(y[0]===HE.l?" selected":"")+">"+kn(y[0])+". "+esc(y[1])+"</option>"}).join("")+"</select></label></div>"+
+    "<p class=note style='margin:4px 0'>"+src+(HE.dirty?" · <b style='color:#b45309'>● មិនទាន់រក្សាទុក</b>":"")+"</p>"+
+    "<div class=lse-tabs>"+HE.subs.map(function(s,i){return"<button type=button data-hs="+i+(i===HE.sel?" class=on":"")+">"+esc((s.t||"(គ្មានចំណងជើង)").slice(0,22))+"</button>"}).join("")+"<button type=button data-he=add>＋ ចំណុចរង</button></div>";
+  if(x){
+    h+="<div class=lse-sl><div class=lse-slh><label class=w>ចំណងជើងចំណុចរង *<input data-hf=t value='"+esc(x.t)+"' placeholder='ឧ. ១.២ សម្រួលរ៉ាឌីកាល់'></label>"+
+      "<span class=lse-mv><button type=button data-he=up title='ទៅមុខ'"+(HE.sel?"":" disabled")+">◀</button><button type=button data-he=dn title='ទៅក្រោយ'"+(HE.sel<HE.subs.length-1?"":" disabled")+">▶</button><button type=button data-he=dup title='ចម្លង'>⧉</button><button type=button class=danger data-he=del title='លុប'"+(HE.subs.length>1?"":" disabled")+">🗑️</button></span></div>"+
+      "<div class=hub-lvs><span>បង្ហាញក្នុងកម្រិត ៖</span>"+HLV.map(function(v){return"<label><input type=checkbox data-hlv="+v[0]+((x.lv||[]).indexOf(v[0])>=0?" checked":"")+">"+v[1]+"</label>"}).join("")+"<small class=note>(មិនធីក = គ្រប់កម្រិត)</small></div>"+
+      "<label class=hub-fld>📖 មេរៀនសង្ខេប<textarea rows=4 data-hf=s placeholder='មួយបន្ទាត់មួយចំណុច · «- » = ចំណុចបញ្ជី · គណិតក្នុង $…$'>"+esc(x.s||"")+"</textarea></label>"+
+      "<label class=hub-fld>📐 រូបមន្តសំខាន់ៗ <small>(មួយបន្ទាត់មួយរូបមន្ត · LaTeX គ្មាន $ · ឧ. <code>(a+b)^2=a^2+2ab+b^2</code>)</small><textarea rows=3 data-hf=f spellcheck=false>"+esc((x.f||[]).join("\n"))+"</textarea></label>"+
+      "<label class=hub-fld>💡 គន្លឹះដោះស្រាយ<textarea rows=3 data-hf=k placeholder='វិធីរហ័ស · ជំហានគិត · ចំណុចប្រយ័ត្ន'>"+esc(x.k||"")+"</textarea></label>"+
+      "<div class=hub-fld>✏️ ឧទាហរណ៍គំរូ"+(x.ex||[]).map(function(e,i){return"<div class=hub-exr><textarea rows=2 data-hx='"+i+"|0' placeholder='សំណួរ'>"+esc(e[0]||"")+"</textarea><textarea rows=2 data-hx='"+i+"|1' placeholder='ដំណោះស្រាយ'>"+esc(e[1]||"")+"</textarea><button type=button class=danger data-he='exdel|"+i+"'>✕</button></div>"}).join("")+"<button type=button data-he=exadd>＋ ឧទាហរណ៍</button></div>"+
+      "<label class=hub-fld>🎬 តំណវីដេអូ (Python/Manim · YouTube · Google Drive · MP4)<input data-hf=v value='"+esc(x.v||"")+"' placeholder='https://youtu.be/…'></label><div id=hubVc>"+vChip(x.v)+"</div></div>";
+  }
+  h+="</div><div class=lse-r><div class=lse-pvh>👁️ មើលជាមុន (ដូចសិស្សឃើញ)</div><div class=hub-pv id=hubPv></div></div></div>"+
+    "<div class=dlgf><a class=note href='practice.html#g="+HE.g+"&l="+HE.l+"&v=1' target=_blank rel=noopener>📱 បើកទំព័រសិស្ស</a>"+(HE.src==="teacher"?"<button type=button data-he=reset title='លុបកំណែគ្រូ ហើយប្រើមាតិកាគំរូវិញ'>↺ ត្រឡប់ទៅលំនាំដើម</button>":"")+
+    "<button type=button data-he=close>បិទ</button><button type=button class=primary data-he=save>💾 រក្សាទុក</button></div>";
+  d.innerHTML=h;hubPv();
+}
+function hubPv(){clearTimeout(hubT);hubT=setTimeout(function(){var el=$("hubPv");if(!el||!HE)return;var x=HE.subs[HE.sel];el.innerHTML=x?HUB.subHtml(x,false):"";LSX.math(el)},250)}
+function hubDirty(){HE.dirty=true;try{localStorage.setItem("hubDraft_"+HE.g+"_"+HE.l,JSON.stringify({subs:HE.subs,t:new Date().toISOString()}))}catch(e){}hubPv()}
+function hubClean(){return HE.subs.map(function(x){var o={t:String(x.t||"").trim(),lv:(x.lv||[]).slice(),s:x.s||"",f:(x.f||[]).map(function(f){return String(f).trim()}).filter(Boolean),k:x.k||"",ex:(x.ex||[]).filter(function(e){return(e[0]||"").trim()||(e[1]||"").trim()}),v:String(x.v||"").trim()};if(!o.lv.length)delete o.lv;return o})}
+function hubLeave(){return!HE||!HE.dirty||confirm("មានការកែមិនទាន់រក្សាទុក ។ បោះបង់ការកែ? (សេចក្ដីព្រាងនៅតែរក្សាក្នុងឧបករណ៍នេះ)")}
+function hubSave(){
+  var subs=hubClean();
+  if(subs.some(function(x){return!x.t})){alert("សូមបញ្ចូលចំណងជើងគ្រប់ចំណុចរង");return}
+  var bv=subs.filter(function(x){return x.v&&!HUB.vparse(x.v)})[0];if(bv){alert("តំណវីដេអូមិនត្រឹមត្រូវ ក្នុង «"+bv.t+"»");return}
+  var j=JSON.stringify({subs:subs});if(j.length>190000){alert("មាតិកាធំពេក ("+Math.round(j.length/1024)+" KB / ១៩០ KB)");return}
+  var g=HE.g,l=HE.l,ref=FB.doc(db,"hub",g+"_"+l),base=HE.r,b=$("dlgHub").querySelector("[data-he=save]");if(b){b.disabled=true;b.textContent="⏳ កំពុងរក្សាទុក…"}
+  var run=function(force){return FB.runTransaction(db,function(tx){return tx.get(ref).then(function(sn){
+    var cur=sn.exists()?+sn.data().r||0:0;if(cur!==base&&!force)throw{code:"conflict",cur:cur,by:sn.exists()?sn.data().o:""};
+    var doc={o:who.id,g:g,l:l,j:j,r:cur+1,u:new Date().toISOString()};
+    if(sn.exists())tx.update(ref,doc);else tx.set(ref,doc);return doc.r})})};
+  var ok=function(r){HE.r=r;HE.subs=subs;HE.src="teacher";HE.by=who.id;HE.at=new Date().toISOString();HE.dirty=false;
+    try{localStorage.removeItem("hubDraft_"+g+"_"+l)}catch(e){}HUB.put(g,l,{subs:subs});hubDraw();notify("បានរក្សាទុកផ្ទាំងសិក្សា «"+HE.name+"»")};
+  var fail=function(e){
+    if(b){b.disabled=false;b.textContent="💾 រក្សាទុក"}
+    if(e&&e.code==="conflict"){if(confirm("គ្រូម្នាក់ទៀត ("+(teacherOf(e.by).name||e.by||"?")+") បានរក្សាទុកកំណែថ្មីជាងនេះ ។ សរសេរជាន់ពីលើ?\n(ចុច Cancel ដើម្បីផ្ទុកកំណែថ្មីមកមើលសិន · សេចក្ដីព្រាងរបស់អ្នកនៅតែរក្សាទុក)")){base=e.cur;run(true).then(ok,fail)}else hubLoad(g,l);return}
+    console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិរក្សាទុក · សូម Admin Publish firestore.rules កំណែថ្មី (មាន hub)":"មិនអាចរក្សាទុកបានទេ · សូមពិនិត្យអ៊ីនធឺណិត (សេចក្ដីព្រាងនៅតែរក្សាក្នុងឧបករណ៍)");
+  };
+  run(false).then(ok,fail);
+}
+function hubBind(d){
+  d.addEventListener("input",function(e){
+    var t=e.target;if(!HE)return;var x=HE.subs[HE.sel];
+    if(t.dataset.hf&&x){var k=t.dataset.hf;x[k]=k==="f"?t.value.split("\n"):t.value;
+      if(k==="t"){var b=d.querySelector("[data-hs='"+HE.sel+"']");if(b)b.textContent=(t.value||"(គ្មានចំណងជើង)").slice(0,22)}
+      if(k==="v"){var c=$("hubVc");if(c)c.innerHTML=vChip(t.value)}
+      return hubDirty()}
+    if(t.dataset.hx&&x){var q=t.dataset.hx.split("|");x.ex[+q[0]][+q[1]]=t.value;return hubDirty()}
+  });
+  d.addEventListener("change",function(e){
+    var t=e.target;if(!HE)return;
+    if(t.dataset.hm){var g=t.dataset.hm==="g"?+t.value:HE.g,l=t.dataset.hm==="l"?+t.value:0;
+      if(!hubLeave()){t.value=t.dataset.hm==="g"?HE.g:HE.l;return}
+      if(!l){var L=hubLes(g);l=L.length?L[0][0]:1}return hubLoad(g,l)}
+    if(t.dataset.hlv){var x=HE.subs[HE.sel];x.lv=HLV.map(function(v){return v[0]}).filter(function(v){var c=d.querySelector("[data-hlv='"+v+"']");return c&&c.checked});hubDirty()}
+  });
+  d.addEventListener("click",function(e){
+    var b=e.target.closest("[data-hs],[data-he]");if(!b)return;
+    if(b.dataset.hs!=null){HE.sel=+b.dataset.hs;return hubDraw()}
+    var q=b.dataset.he.split("|"),a=q[0],s=HE&&HE.subs,x=s&&s[HE.sel];
+    if(a==="close"){if(hubLeave()){d.close()}return}
+    if(!HE)return;
+    if(a==="save")return hubSave();
+    if(a==="vtest")return HUB.vopen(x.v,x.t);
+    if(a==="reset"){if(!confirm("លុបកំណែគ្រូរបស់មេរៀននេះ ហើយត្រឡប់ទៅមាតិកាគំរូ?\nសិស្សនឹងឃើញមាតិកាគំរូវិញ (ក្នុងរយៈពេល ១០ នាទី)។"))return;
+      FB.deleteDoc(FB.doc(db,"hub",HE.g+"_"+HE.l)).then(function(){HUB.clear(HE.g,HE.l);try{localStorage.removeItem("hubDraft_"+HE.g+"_"+HE.l)}catch(e){}HE.dirty=false;notify("បានត្រឡប់ទៅលំនាំដើម");hubLoad(HE.g,HE.l)},function(e){console.error(e);alert("មិនអាចលុបបានទេ (ត្រូវជាអ្នករក្សាទុកចុងក្រោយ ឬ Admin)")});return}
+    if(a==="add"){s.push(hubBlank());HE.sel=s.length-1}
+    else if(a==="up"&&HE.sel){s.splice(HE.sel-1,0,s.splice(HE.sel,1)[0]);HE.sel--}
+    else if(a==="dn"&&HE.sel<s.length-1){s.splice(HE.sel+1,0,s.splice(HE.sel,1)[0]);HE.sel++}
+    else if(a==="dup"){s.splice(HE.sel+1,0,jc(x));HE.sel++}
+    else if(a==="del"&&s.length>1){if(!confirm("លុបចំណុចរង «"+(x.t||"")+"»?"))return;s.splice(HE.sel,1);HE.sel=Math.max(0,HE.sel-1)}
+    else if(a==="exadd"){x.ex=x.ex||[];x.ex.push(["",""])}
+    else if(a==="exdel"){x.ex.splice(+q[1],1)}
+    else return;
+    hubDirty();hubDraw();
+  });
+  d.addEventListener("cancel",function(e){if(HE&&HE.dirty&&!hubLeave())e.preventDefault()});
+}
 })();

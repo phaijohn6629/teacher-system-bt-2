@@ -823,7 +823,7 @@ function draw(){
   var l=S.l,v=S.v;
   var h=document.documentElement.lang=T("km","en");
   var h="<div class=bar><button type=button data-a=home>‹ "+T("មេរៀនទាំងអស់","All topics")+"</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='"+T("តំណ/QR សម្រាប់ចែករំលែក","Link / QR code")+"'>📱</button></div>"+
-    "<div class=lv style='--n:"+lvls(l).length+"'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+lv(k)[0]+"<small>"+lv(k)[1]+"</small></button>"}).join("")+"</div><ol class=qs>";
+    "<div class=lv style='--n:"+lvls(l).length+"'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+lv(k)[0]+"<small>"+lv(k)[1]+"</small></button>"}).join("")+"</div>"+(window.HUB?HUB.html(S.g,l,v,lname(l),EN()):"")+"<ol class=qs>";
   S.qs.forEach(function(q,i){
     h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+q.q+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
       q.a.map(function(a,j){return"<label class=in>"+(a.l?"<span class=lb>"+esc(a.l)+"</span>":"")+"<input data-q="+i+" data-p="+j+" autocomplete=off autocapitalize=off spellcheck=false inputmode=text value='"+esc(a.u||"")+"'"+(q.st==="ok"?" readonly":"")+"><span class=mk>"+(a.r==null?"":a.r?"✅":"❌")+"</span><span class=pv id=pv"+i+"_"+j+"></span></label>"}).join("")+
@@ -834,6 +834,7 @@ function draw(){
   h+="</ol><div class=foot><button type=button class=check data-a=check>✔ "+T("ពិនិត្យចម្លើយ","Check answers")+"</button><span class=score>"+N(ok)+" / "+N(S.qs.length)+T(" ត្រូវ"," correct")+"</span><button type=button data-a=new>🔄 "+T("លំហាត់ថ្មី","New questions")+"</button></div>";
   $("app").innerHTML=h;math($("app"));
   [].forEach.call($("app").querySelectorAll("input[data-q]"),function(inp){preview(inp)});
+  if(window.HUB)try{HUB.after(S.g,l,v,lname(l),EN(),math)}catch(e){}   /* 📚 ផ្ទាំងសិក្សា៖ ទាញកំណែគ្រូនៅពីក្រោយ (មិនប៉ះលំហាត់) */
 }
 function preview(inp){
   var pv=$("pv"+inp.dataset.q+"_"+inp.dataset.p);if(!pv)return;

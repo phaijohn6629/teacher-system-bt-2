@@ -277,6 +277,26 @@ service cloud.firestore {
     }
     // ===================== ហាត់លំហាត់៖ តារាងហាត់ថ្នាក់ =====================
     // តំណហាត់ថ្នាក់ (គ្រូបង្កើត)៖ សិស្សអានបានដោយគ្មាន Login តែពេលបើក
+    // 🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់ (hub.js · lessonedit.js)៖ doc ID = "<ថ្នាក់>_<មេរៀន>"
+    // សិស្សអានបាន (គ្មាន Login · REST) · គ្រូសកម្មណាក៏កែបាន (o = ខ្លួនឯង · r កើន ១ ម្ដងៗ) · អ្នករក្សាទុកចុងក្រោយ ឬ Admin លុប (= ត្រឡប់ទៅមាតិកាគំរូ)
+    match /hub/{id} {
+      allow get: if true;
+      allow list: if active();
+      allow create: if active()
+        && request.resource.data.keys().hasOnly(['o','g','l','j','r','u'])
+        && request.resource.data.o == myId()
+        && request.resource.data.g is int && request.resource.data.l is int
+        && id == string(request.resource.data.g) + '_' + string(request.resource.data.l)
+        && request.resource.data.j is string && request.resource.data.j.size() < 200000
+        && request.resource.data.r == 1;
+      allow update: if active()
+        && request.resource.data.keys().hasOnly(['o','g','l','j','r','u'])
+        && request.resource.data.o == myId()
+        && request.resource.data.g == resource.data.g && request.resource.data.l == resource.data.l
+        && request.resource.data.j is string && request.resource.data.j.size() < 200000
+        && request.resource.data.r == resource.data.r + 1;
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
     match /pcls/{code} {
       allow get: if resource.data.open == true || active();
       allow list: if active();
