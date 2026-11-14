@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v30`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v31`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -193,6 +193,13 @@
   - 42 exponential: properties (L1–2); equations and inequalities (L2–4); ★ quadratic in eˣ; ★ derivative, tangent and minimum; 🌐 doubling, half-life and interest.
   - 43 logarithm: properties (L1–2); equations and inequalities with domain (L2–5); ★ quadratic in ln x and derivative; 🌐 dB, pH, Richter and doubling time.
   - Exercise-form findings: every exp/ln/trig/1^∞ **limit** exercise lives in 12·22, and 42/43 are equations, inequalities, derivatives and variation. The 11 Rean-Maths videos are therefore placed in 12·22 by the levels where those forms appear: exp lesson L2–3, exp practice L3–4, log lesson and practice, 1^∞, trig tip and trig demo L4–5, exercise 5.1.2 and practice 1–3/3 L5. The exp/log videos are also in 42/43 at L4–5.
+  - **Package 2** (31 derivative · 32 applications/variation · 41 rational functions and graphing), matched to the real forms:
+    - 31: polynomial/root rules (L1–2); reference functions + linear chain (L2–4); ★ product, quotient, uⁿ, (ax+b)/(cx+d); 🌐 velocity and flow rate.
+    - 32: tangent line and velocity (L1–3); variation table and relative extrema (L2–4); ★ optimisation (x+k/x, fixed perimeter, sum→product, closed can r³=V/2π, profit); 🌐 river fence L/4 and open box a/6.
+    - 41: asymptotes and domain (L1–3); oblique asymptote by division and N=ad−bc (L2–4); ★ centre of symmetry, intercepts, min of x+k/x and the graphing steps; 🌐 dilution m/(V+x) and average cost → c.
+    - Checks: 36 numeric checks of every example (numeric derivative, extremum search, limits) gave 0 wrong. 24 views showed 0 KaTeX errors, 0 raw `$`, and 24/24 practice sets OK.
+    - A visual check caught two clipped formulas (fixed perimeter, closed can); they were split or shortened. Keep each formula short enough to fit a half-width box.
+  - 12·22 Level 5: the three «លំហាត់អនុវត្តបន្ថែម ១–៣» videos were collapsed into one **playlist** entry (`PLEGSjUxJctik`), so Level 5 went from 9 to 7 items. `HUB.vparse` accepts playlist links (`youtube.com/playlist?list=…` or `watch?…&list=…` without `v`) and embeds them as `videoseries?list=…`.
   - `VIDEOS.lv` accepts a list (`"4,5"`) via `vlvKeys()`, and `--level 4,5` in the uploader (normalised order). `youtube_uploads.json` records each video's primary placement plus `also`.
   - Verified: 28 example answers recomputed. In headless Chrome, 3 lessons × 6 levels with every sub-topic open showed 0 KaTeX errors and 0 raw `$`, and 18/18 practice sets still check ✅.
   - Bug found and fixed: titles were plain `"…"` strings, so `\f`/`\i`/`\l` were lost (`\frac` turned into a form-feed). `tests/hub.js` now fails on control characters or LaTeX words missing `\` (verified by injecting both mistakes). **Write sub-topic titles that contain LaTeX as `"…\\frac…"` or use `R\`…\``.**

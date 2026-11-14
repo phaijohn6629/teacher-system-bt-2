@@ -22,7 +22,7 @@ ids.forEach(function(l){
   if(HUB.html(9,l,4,"x",false).indexOf("🌐")<0)B("NO PISA SUB l"+l);
 });
 /* ថ្នាក់ទី១២ (Gold-Standard)៖ មេរៀន 22 · 42 · 43 ពេញលេញ · គ្រប់កម្រិតមានចំណុចរង · PISA មានចំណុចរងផ្ទាល់ */
-[22,42,43].forEach(function(l){var s=HUB.starter(12,l);if(!s){B("NO STARTER g12 l"+l);return}
+[22,42,43,31,32,41].forEach(function(l){var s=HUB.starter(12,l);if(!s){B("NO STARTER g12 l"+l);return}
   s.forEach(function(x){n++;if(/^🎬/.test(x.t))return;if(!x.t||!x.s||!x.f||!x.f.length||!x.k)B("INCOMPLETE g12 l"+l+" "+x.t);
     [x.s,x.k].concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){if(!bal(t))B("BAL g12 l"+l+" "+String(t).slice(0,60));if(mathKh(t))B("KH-IN-MATH g12 l"+l+" "+String(t).slice(0,80))});
     x.f.forEach(function(f){if(KH.test(f))B("KH-IN-FORMULA g12 l"+l+" "+f);if(!bal(f)||/\$/.test(f))B("FBAL g12 l"+l+" "+f)})});
@@ -43,7 +43,7 @@ if(HUB.html(9,1,1,"x",false).indexOf("១.១")<0)B("clear → starter failed");
 /* វីដេអូ */
 [["https://www.youtube.com/watch?v=dQw4w9WgXcQ","yt"],["https://youtu.be/dQw4w9WgXcQ?t=3","yt"],["https://youtube.com/shorts/dQw4w9WgXcQ","yt"],["https://m.youtube.com/watch?feature=x&v=dQw4w9WgXcQ","yt"],
  ["https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view?usp=sharing","gd"],["https://drive.google.com/open?id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345","gd"],
- ["https://example.org/manim/scene.mp4","mp4"],["https://example.org/v.webm?x=1","mp4"]].forEach(function(t){var v=HUB.vparse(t[0]);if(!v||v.k!==t[1])B("VIDEO "+t[0])});
+ ["https://www.youtube.com/playlist?list=PLEGSjUxJctik","yt"],["https://example.org/manim/scene.mp4","mp4"],["https://example.org/v.webm?x=1","mp4"]].forEach(function(t){var v=HUB.vparse(t[0]);if(!v||v.k!==t[1])B("VIDEO "+t[0])});
 ["http://youtu.be/dQw4w9WgXcQ","javascript:alert(1)","https://evil.example/x","https://example.org/a.mp4\"><script>","data:video/mp4;base64,AAA",""].forEach(function(u){if(HUB.vparse(u))B("VIDEO accepted "+u)});
 /* 🎬 VIDEOS (tools/upload_youtube.py)៖ គន្លឹះ g_l_i · តំណវីដេអូត្រឹមត្រូវ · lv ∈ 1–5 · pisa · all */
 Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u)||(v.lv!=null&&String(v.lv).split(",").some(function(x){return["1","2","3","4","5","pisa","all"].indexOf(x.trim())<0})))B("VIDEOS "+k)});
