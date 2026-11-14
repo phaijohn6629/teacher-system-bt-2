@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v29`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v30`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -188,6 +188,14 @@
 - Sub-topics are filtered by level (`sub.lv`; empty = all levels). 🌐 PISA shows every sub-topic plus a «real life → mathematics» modelling card.
 - Open/closed state survives `draw()` (check, 🔄), because `hub.js` stores `toggle` events keyed by `g_l_v_i`.
 - Video player (modal): YouTube (→ `youtube-nocookie` embed), Google Drive (→ `/preview`), and https MP4/WebM files. Anything else is rejected (`HUB.vparse`). Inside a `<dialog>` the player mounts in the dialog (top layer).
+- **Grade 12 Gold-Standard module** (`S12`, `STARTER={9:S9,12:S12}`), matched to the real forms in `practice.js` `G[22]`/`G[42]`/`G[43]`:
+  - 22 limits: direct substitution (L1–2); 0/0 by factoring, conjugate and cube root (L2–4); limits at infinity (L3–4); reference limits sin/e/ln/aˣ (L2–5); ★ 1^∞; ★ advanced trig and change of variable; ★ finding a, b and growth comparison; 🌐 logistic population and continuous interest.
+  - 42 exponential: properties (L1–2); equations and inequalities (L2–4); ★ quadratic in eˣ; ★ derivative, tangent and minimum; 🌐 doubling, half-life and interest.
+  - 43 logarithm: properties (L1–2); equations and inequalities with domain (L2–5); ★ quadratic in ln x and derivative; 🌐 dB, pH, Richter and doubling time.
+  - Exercise-form findings: every exp/ln/trig/1^∞ **limit** exercise lives in 12·22, and 42/43 are equations, inequalities, derivatives and variation. The 11 Rean-Maths videos are therefore placed in 12·22 by the levels where those forms appear: exp lesson L2–3, exp practice L3–4, log lesson and practice, 1^∞, trig tip and trig demo L4–5, exercise 5.1.2 and practice 1–3/3 L5. The exp/log videos are also in 42/43 at L4–5.
+  - `VIDEOS.lv` accepts a list (`"4,5"`) via `vlvKeys()`, and `--level 4,5` in the uploader (normalised order). `youtube_uploads.json` records each video's primary placement plus `also`.
+  - Verified: 28 example answers recomputed. In headless Chrome, 3 lessons × 6 levels with every sub-topic open showed 0 KaTeX errors and 0 raw `$`, and 18/18 practice sets still check ✅.
+  - Bug found and fixed: titles were plain `"…"` strings, so `\f`/`\i`/`\l` were lost (`\frac` turned into a form-feed). `tests/hub.js` now fails on control characters or LaTeX words missing `\` (verified by injecting both mistakes). **Write sub-topic titles that contain LaTeX as `"…\\frac…"` or use `R\`…\``.**
 - Grade 9 starter content was completed on 2026-11-14 with sub-topics appended at the **end** of each lesson through `add9(l,[…])`, so existing sub-topic indices and `VIDEOS` keys stay stable:
   - `AD(…)` «★ កម្រិត ៤–៥» (`lv` = Level 4/5) in 11 lessons, filling gaps found by comparing the hub with the real L4/L5 forms: successive % / 3-part ratio / average speed; $x^2+y^2$ from $x+y$, $xy$; median from a frequency table and corrected mean; two-dice sums; triangle area from coordinates; collinearity and perpendicular bisector; digit problems and no-solution systems; two circles and the tangential quadrilateral; sector arc and area; Pythagoras with leg sums; hexagon apothem and area, interior:exterior ratio; volume formulas and melting; sin/cos via tan.
   - `PZ(…)` «🌐 ជីវិតពិត» (`lv` = PISA) in all 18 lessons, with worked examples matching the actual PISA forms (promotions, tax on the excess, plans, lifts, surveys, salary median, traffic lights, maps and Wi-Fi, linear models, wheels and circumference, clock angles, shadows and mirrors, scale models, kites and elevation with eye height). A lesson PISA sub-topic replaces the generic modelling card, and its tips start with the modelling steps.

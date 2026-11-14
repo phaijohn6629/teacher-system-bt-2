@@ -21,6 +21,18 @@ ids.forEach(function(l){
   HUB.LV.forEach(function(v){var h=HUB.html(9,l,v,"x",false);var k=(h.match(/class=hub-s /g)||[]).length;if(!k)B("EMPTY l"+l+" v"+v);if(!bal(h.replace(/<[^>]*>/g,"")))B("HTMLBAL l"+l+" v"+v)});
   if(HUB.html(9,l,4,"x",false).indexOf("🌐")<0)B("NO PISA SUB l"+l);
 });
+/* ថ្នាក់ទី១២ (Gold-Standard)៖ មេរៀន 22 · 42 · 43 ពេញលេញ · គ្រប់កម្រិតមានចំណុចរង · PISA មានចំណុចរងផ្ទាល់ */
+[22,42,43].forEach(function(l){var s=HUB.starter(12,l);if(!s){B("NO STARTER g12 l"+l);return}
+  s.forEach(function(x){n++;if(/^🎬/.test(x.t))return;if(!x.t||!x.s||!x.f||!x.f.length||!x.k)B("INCOMPLETE g12 l"+l+" "+x.t);
+    [x.s,x.k].concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){if(!bal(t))B("BAL g12 l"+l+" "+String(t).slice(0,60));if(mathKh(t))B("KH-IN-MATH g12 l"+l+" "+String(t).slice(0,80))});
+    x.f.forEach(function(f){if(KH.test(f))B("KH-IN-FORMULA g12 l"+l+" "+f);if(!bal(f)||/\$/.test(f))B("FBAL g12 l"+l+" "+f)})});
+  HUB.LV.forEach(function(v){var h=HUB.html(12,l,v,"x",false);if(!(h.match(/class=hub-s /g)||[]).length)B("EMPTY g12 l"+l+" v"+v)});
+  if(!s.some(function(x){return x.lv&&x.lv.indexOf(4)>=0&&!x.v}))B("NO PISA SUB g12 l"+l)});
+/* 🛡️ string ធម្មតា "…" ធ្វើឱ្យ \f \i \l បាត់/ក្លាយជាតួអក្សរបញ្ជា ៖ គ្មានតួអក្សរបញ្ជា និងគ្មានពាក្យ LaTeX ខ្វះ \ ក្នុង $…$ */
+[9,12].forEach(function(g){for(var l=1;l<=60;l++){var st=HUB.starter(g,l);if(!st)continue;st.forEach(function(x){
+  [x.t,x.s,x.k].concat(x.f||[]).concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){t=String(t||"");
+    if(/[\u0000-\u0009\u000b-\u001f]/.test(t))B("CTRL-CHAR g"+g+" l"+l+" "+JSON.stringify(t.slice(0,40)));
+    (t.match(/\$[^$]*\$/g)||[]).concat(x.f||[]).forEach(function(m){if(/(^|[^\\a-zA-Z])(frac|dfrac|infty|sqrt|lim|ln|sin|cos|tan|cdot|theta|ell|pi)(?![a-zA-Z])/.test(m))B("NO-BACKSLASH g"+g+" l"+l+" "+m.slice(0,50))})})})}});
 /* ថ្នាក់គ្មានមាតិកាគំរូ → ទូទៅ (មិនទទេ) · Cambridge ជាភាសាអង់គ្លេស */
 [7,8,10,11,12].forEach(function(g){var h=HUB.html(g,1,1,"ឈ្មោះមេរៀន",false);if(h.indexOf("ឈ្មោះមេរៀន")<0)B("GENERIC g"+g)});
 if(KH.test(HUB.html(110,1,1,"Number",true).replace(/data-[a-z]+='[^']*'/g,"")))B("KH-IN-EN generic");
@@ -34,20 +46,22 @@ if(HUB.html(9,1,1,"x",false).indexOf("១.១")<0)B("clear → starter failed");
  ["https://example.org/manim/scene.mp4","mp4"],["https://example.org/v.webm?x=1","mp4"]].forEach(function(t){var v=HUB.vparse(t[0]);if(!v||v.k!==t[1])B("VIDEO "+t[0])});
 ["http://youtu.be/dQw4w9WgXcQ","javascript:alert(1)","https://evil.example/x","https://example.org/a.mp4\"><script>","data:video/mp4;base64,AAA",""].forEach(function(u){if(HUB.vparse(u))B("VIDEO accepted "+u)});
 /* 🎬 VIDEOS (tools/upload_youtube.py)៖ គន្លឹះ g_l_i · តំណវីដេអូត្រឹមត្រូវ · lv ∈ 1–5 · pisa · all */
-Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u)||(v.lv!=null&&["1","2","3","4","5","pisa","all"].indexOf(String(v.lv))<0))B("VIDEOS "+k)});
+Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u)||(v.lv!=null&&String(v.lv).split(",").some(function(x){return["1","2","3","4","5","pisa","all"].indexOf(x.trim())<0})))B("VIDEOS "+k)});
 /* វីដេអូតាមកម្រិត៖ Level នីមួយៗឃើញតែវីដេអូរបស់ខ្លួន + all · មិនជាន់គ្នា · PISA នៅមានកាតជីវិតពិត */
 (function(){var V=HUB.VIDEOS,save=JSON.stringify(V),LV={"1":1,"2":5,"3":2,"4":6,"5":3,"pisa":4},id=function(c){return"https://youtu.be/"+(c+"AAAAAAAAAAA").slice(0,11)};
-  [[9,1],[12,22]].forEach(function(gl){
+  [[9,1],[12,22],[11,51]].forEach(function(gl){
     Object.keys(V).forEach(function(k){if(k.indexOf(gl[0]+"_"+gl[1]+"_")===0)delete V[k]});
-    var base=(gl[0]===9?HUB.starter(9,1):HUB.generic("x",false,12,22)).length,i=base;
+    var base=(HUB.starter(gl[0],gl[1])||HUB.generic("x",false,gl[0],gl[1])).length,i=base;
     V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("all"),t:"ALL"};
     Object.keys(LV).forEach(function(lv){V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("L"+lv),t:"LV"+lv,lv:lv}});
-    V[gl[0]+"_"+gl[1]+"_0"]={u:id("T0"),t:"T0",lv:"3"};   /* កម្រិតជាក់លាក់លើចំណុចរងមានស្រាប់ → ដាច់ដោយឡែក មិនភ្ជាប់ក្នុងចំណុចរង */
+    V[gl[0]+"_"+gl[1]+"_0"]={u:id("T0"),t:"T0",lv:"3"};
+    V[gl[0]+"_"+gl[1]+"_"+(i++)]={u:id("M45"),t:"M45",lv:"4,5"};   /* បញ្ជីកម្រិត */   /* កម្រិតជាក់លាក់លើចំណុចរងមានស្រាប់ → ដាច់ដោយឡែក មិនភ្ជាប់ក្នុងចំណុចរង */
     Object.keys(LV).forEach(function(lv){var h=HUB.html(gl[0],gl[1],LV[lv],"x",false);n++;
       Object.keys(LV).forEach(function(o){var has=h.indexOf(id("L"+o))>=0;if(has!==(o===lv))B("LEVEL g"+gl.join("/")+" view "+lv+" shows L"+o+"="+has)});
       if(h.indexOf(id("all"))<0)B("ALL missing g"+gl.join("/")+" view "+lv);
       if((h.indexOf(id("T0"))>=0)!==(lv==="3"))B("T0 leak g"+gl.join("/")+" view "+lv);
+      if((h.indexOf(id("M45"))>=0)!==(lv==="4"||lv==="5"))B("M45 g"+gl.join("/")+" view "+lv);
       if(lv==="pisa"&&h.indexOf("🌐")<0)B("PISA card missing g"+gl.join("/"))});
-    var st=gl[0]===9?HUB.starter(9,1):HUB.generic("x",false,12,22);if(st[0].v===id("T0"))B("level video attached into sub")});
+    var st=HUB.starter(gl[0],gl[1])||HUB.generic("x",false,gl[0],gl[1]);if(st[0].v===id("T0"))B("level video attached into sub")});
   Object.keys(V).forEach(function(k){delete V[k]});var o=JSON.parse(save);Object.keys(o).forEach(function(k){V[k]=o[k]})})();
 print("hub: subtopics "+n+" bad "+bad);

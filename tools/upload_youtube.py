@@ -257,7 +257,28 @@ def upload(yt, path, title, desc, privacy, tags):
 
 # ---------------- ការពារការបង្ហោះជាន់គ្នា ----------------
 LEVELS = ["1", "2", "3", "4", "5", "pisa", "all"]
+
+
+def level_arg(x):
+    """--level ៖ មួយ ឬបញ្ជី «4,5» · តម្រៀបតាមលំដាប់ 1–5, pisa · all = គ្រប់កម្រិត"""
+    a = [p.strip().lower() for p in str(x).split(",") if p.strip()]
+    if not a or any(p not in LEVELS for p in a):
+        raise argparse.ArgumentTypeError("ត្រូវជា 1,2,3,4,5,pisa,all ឬបញ្ជី ឧ. 4,5")
+    if "all" in a:
+        return "all"
+    return ",".join(sorted(set(a), key=LEVELS.index))
 LVNAME = {"1": "Level 1", "2": "Level 2", "3": "Level 3", "4": "Level 4", "5": "Level 5", "pisa": "PISA", "all": "គ្រប់កម្រិត"}
+
+
+class _LvName(dict):
+    def get(self, k, d=None):
+        return " + ".join(dict.get(self, p, p) for p in str(k).split(","))
+
+    def __getitem__(self, k):
+        return self.get(k)
+
+
+LVNAME = _LvName(LVNAME)
 
 
 def log_entries():
@@ -392,7 +413,7 @@ def main():
     ap.add_argument("--grade", type=int, help="ថ្នាក់ (7–12)")
     ap.add_argument("--lesson", type=int, help="លេខមេរៀនក្នុងទំព័រហ្វឹកហាត់")
     ap.add_argument("--topic", help="ចំណុចរង៖ លេខរៀង (1,2,…) ឬ «1.2» / «១.២»")
-    ap.add_argument("--level", choices=LEVELS, default="all", help="កម្រិតដែលបង្ហាញវីដេអូ (1–5 · pisa · all = គ្រប់កម្រិត)")
+    ap.add_argument("--level", type=level_arg, default="all", help="កម្រិតដែលបង្ហាញវីដេអូ (1–5 · pisa · all · ឬបញ្ជី ឧ. 4,5)")
     ap.add_argument("--force", action="store_true", help="បង្ហោះ/ភ្ជាប់ ទោះធ្លាប់មានរួច (មិនពិនិត្យជាន់គ្នា)")
     ap.add_argument("--tags", default="គណិតវិទ្យា,Rean-Maths,Manim,Khmer Math", help="ស្លាក (ក្បៀស)")
     ap.add_argument("--link", help="មិនបង្ហោះ · ភ្ជាប់តំណ YouTube ដែលមានស្រាប់ទៅ hub.js")
