@@ -216,8 +216,10 @@ def upload(yt, path, title, desc, privacy, tags):
                 tries += 1
                 time.sleep(2 ** tries)
                 continue
-            if e.resp.status == 403 and b"quotaExceeded" in (e.content or b""):
-                die("អស់កូតា YouTube API ប្រចាំថ្ងៃ (≈ ៦ វីដេអូ/ថ្ងៃ) · សូមសាកថ្ងៃស្អែក")
+            if b"quotaExceeded" in (e.content or b""):
+                die("អស់កូតា YouTube API ប្រចាំថ្ងៃ (≈ ៦ វីដេអូ/ថ្ងៃ · កំណត់ឡើងវិញម៉ោង ០០:០០ Pacific ≈ ១៤:០០–១៥:០០ ម៉ោងកម្ពុជា) · សូមសាកថ្ងៃស្អែក", 3)
+            if b"uploadLimitExceeded" in (e.content or b""):
+                die("Channel បានដល់កំណត់ចំនួនបង្ហោះប្រចាំថ្ងៃ (uploadLimitExceeded) · សូមសាកថ្ងៃស្អែក", 3)
             if e.resp.status == 401:
                 die("សិទ្ធិ Login មិនត្រឹមត្រូវ · លុប token.json ហើយរត់ --auth-only ម្ដងទៀត")
             raise
