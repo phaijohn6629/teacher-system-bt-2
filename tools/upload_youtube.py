@@ -7,6 +7,8 @@
   .venv/bin/python tools/upload_youtube.py --file ExpLimitsLesson.mp4 \\
       --title "លីមីតអិចស្ប៉ូណង់ស្យែល" --grade 12 --lesson 3 --topic 1.2 --privacy public
   .venv/bin/python tools/upload_youtube.py --link https://youtu.be/XXXX --grade 9 --lesson 1 --topic 1.2   # ភ្ជាប់តំណដែលមានស្រាប់ (មិនបង្ហោះ)
+  ... --playlist "លីមីតនៃអនុគមន៍ - ថ្នាក់ទី១២"                         # បង្ហោះ + បញ្ចូល Playlist (រក ឬបង្កើត)
+  .venv/bin/python tools/upload_youtube.py --playlist "ឈ្មោះ" --add URL1,URL2   # បញ្ចូលវីដេអូមានស្រាប់ទៅ Playlist
 
 --topic ៖ លេខចំណុចរង (1 = ទីមួយ) · ឬលេខចំណងជើង «1.2» / «១.២» (រកក្នុងមាតិកាគំរូ) · ទុកទទេ = បង្កើតចំណុចរង «🎬 …» ថ្មី
 ឯកសារសម្ងាត់ client_secrets.json និង token.json នៅថតគម្រោង ហើយមាននៅក្នុង .gitignore (មិន push)
@@ -20,7 +22,8 @@ SECRETS = os.path.join(ROOT, "client_secrets.json")
 TOKEN = os.path.join(ROOT, "token.json")
 HUB = os.path.join(ROOT, "hub.js")
 LOG = os.path.join(ROOT, "tools", "youtube_uploads.json")
-SCOPES = ["https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube.readonly"]
+# upload = បង្ហោះ · force-ssl = អាន/គ្រប់គ្រង Playlist · កែព័ត៌មានវីដេអូ (មិនលុប Channel)
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload", "https://www.googleapis.com/auth/youtube.force-ssl"]
 PROJECT = "math-teacher-system-bt"
 KH = str.maketrans("0123456789", "០១២៣៤៥៦៧៨៩")
 CHANNEL_HINT = "rean"
@@ -40,6 +43,14 @@ def creds():
     except ImportError:
         die("មិនទាន់ដំឡើងបណ្ណាល័យ · រត់៖ python3 -m venv .venv && .venv/bin/pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib")
     c = None
+    if os.path.exists(TOKEN):
+        try:
+            have = set(json.load(open(TOKEN)).get("scopes") or [])
+            if not set(SCOPES) <= have:
+                print("🔑 token.json មិនទាន់មានសិទ្ធិថ្មី (Playlist) → ត្រូវ Login អនុញ្ញាតម្ដងទៀត")
+                os.remove(TOKEN)
+        except Exception:
+            pass
     if os.path.exists(TOKEN):
         try:
             c = Credentials.from_authorized_user_file(TOKEN, SCOPES)
@@ -233,6 +244,67 @@ def upload(yt, path, title, desc, privacy, tags):
     return resp["id"]
 
 
+# ---------------- Playlist ----------------
+def vid_of(x):
+    m = re.search(r"(?:youtu\.be/|v=|shorts/|embed/)([\w-]{11})", x) or re.fullmatch(r"([\w-]{11})", x.strip())
+    if not m:
+        die("តំណ/ID វីដេអូមិនត្រឹមត្រូវ៖ " + x)
+    return m.group(1)
+
+
+def find_playlist(yt, name, privacy, create=True):
+    tok = None
+    while True:
+        r = yt.playlists().list(part="snippet,status", mine=True, maxResults=50, pageToken=tok).execute()
+        for it in r.get("items", []):
+            if it["snippet"]["title"].strip() == name.strip():
+                return it["id"], False
+        tok = r.get("nextPageToken")
+        if not tok:
+            break
+    if not create:
+        return None, False
+    body = {"snippet": {"title": name[:150], "description": "📚 " + name + " · Rean-Maths · វិទ្យាល័យបឹងត្របែក (NGS)",
+                        "defaultLanguage": "km"}, "status": {"privacyStatus": privacy}}
+    r = yt.playlists().insert(part="snippet,status", body=body).execute()
+    return r["id"], True
+
+
+def playlist_ids(yt, pid):
+    from googleapiclient.errors import HttpError
+    out, tok = [], None
+    while True:
+        for i in range(4):   # Playlist ទើបបង្កើត → YouTube អាចឆ្លើយ 404 មួយរយៈ
+            try:
+                r = yt.playlistItems().list(part="contentDetails", playlistId=pid, maxResults=50, pageToken=tok).execute()
+                break
+            except HttpError as e:
+                if e.resp.status != 404 or i == 3:
+                    if e.resp.status == 404:
+                        return out
+                    raise
+                time.sleep(2 * (i + 1))
+        out += [it["contentDetails"]["videoId"] for it in r.get("items", [])]
+        tok = r.get("nextPageToken")
+        if not tok:
+            return out
+
+
+def add_to_playlist(yt, name, privacy, vids):
+    """រក Playlist តាមឈ្មោះ (ឬបង្កើត) រួចបញ្ចូលវីដេអូតាមលំដាប់ · វីដេអូដែលមានរួច → រំលង"""
+    pid, new = find_playlist(yt, name, privacy)
+    print("📂 Playlist «%s» %s · https://www.youtube.com/playlist?list=%s" % (name, "(បង្កើតថ្មី)" if new else "(មានស្រាប់)", pid))
+    have = set() if new else set(playlist_ids(yt, pid))
+    for v in vids:
+        if v in have:
+            print("   ↷ មានរួច  https://youtu.be/" + v)
+            continue
+        yt.playlistItems().insert(part="snippet", body={"snippet": {"playlistId": pid, "resourceId": {"kind": "youtube#video", "videoId": v}}}).execute()
+        have.add(v)
+        print("   ＋ បញ្ចូល https://youtu.be/" + v)
+    return pid
+
+
 def log(entry):
     a = []
     if os.path.exists(LOG):
@@ -259,6 +331,9 @@ def main():
     ap.add_argument("--link", help="មិនបង្ហោះ · ភ្ជាប់តំណ YouTube ដែលមានស្រាប់ទៅ hub.js")
     ap.add_argument("--auth-only", action="store_true", help="Login ហើយបង្ហាញ Channel តែប៉ុណ្ណោះ")
     ap.add_argument("--dry-run", action="store_true", help="បង្ហាញអ្វីដែលនឹងធ្វើ (មិនបង្ហោះ មិនកែ hub.js)")
+    ap.add_argument("--playlist", help="ឈ្មោះ Playlist · រកដែលមានស្រាប់ ឬបង្កើតថ្មី ហើយបញ្ចូលវីដេអូ")
+    ap.add_argument("--playlist-privacy", choices=["unlisted", "public", "private"], default="unlisted", help="ពេលបង្កើត Playlist ថ្មី")
+    ap.add_argument("--add", help="ជាមួយ --playlist៖ បញ្ចូលវីដេអូដែលមានស្រាប់ (តំណ/ID ក្បៀស តាមលំដាប់) ដោយមិនបង្ហោះ")
     a = ap.parse_args()
     if (a.grade is None) != (a.lesson is None):
         die("ត្រូវបញ្ជាក់ --grade និង --lesson ជាមួយគ្នា")
@@ -292,6 +367,13 @@ def main():
     if a.auth_only:
         print("✅ token.json រួចរាល់ · លើកក្រោយបង្ហោះដោយមិនចាំបាច់ Login")
         return
+    if a.add:
+        if not a.playlist:
+            die("--add ត្រូវការ --playlist")
+        if CHANNEL_HINT not in cname.lower():
+            die("ឈប់ ដើម្បីកុំកែ Playlist ខុស Channel")
+        add_to_playlist(yt, a.playlist, a.playlist_privacy, [vid_of(x) for x in a.add.split(",") if x.strip()])
+        return
     if CHANNEL_HINT not in cname.lower():
         die("ឈប់ ដើម្បីកុំបង្ហោះខុស Channel")
 
@@ -304,9 +386,14 @@ def main():
     vid = upload(yt, path, title, desc, a.privacy, tags)
     url = "https://youtu.be/" + vid
     print("\n✅ បង្ហោះរួច៖ " + url + "  (" + a.privacy + ")")
+    if a.playlist:
+        try:
+            add_to_playlist(yt, a.playlist, a.playlist_privacy, [vid])
+        except Exception as e:   # វីដេអូបង្ហោះរួចហើយ → កុំឱ្យបរាជ័យ Playlist បង្អាក់ hub.js
+            print("⚠️ មិនអាចបញ្ចូល Playlist បានទេ (%s) · រត់ម្ដងទៀត៖ --playlist \"%s\" --add %s" % (str(e)[:80], a.playlist, url))
     key = put_hub(a.grade, a.lesson, a.topic, url, title) if a.grade else None
     log({"at": datetime.datetime.now().isoformat(timespec="seconds"), "file": os.path.basename(path), "title": title,
-         "url": url, "privacy": a.privacy, "channel": cname, "hub": key})
+         "url": url, "privacy": a.privacy, "channel": cname, "hub": key, "playlist": a.playlist or ""})
     if key:
         print("👉 បន្ទាប់៖ python3 tools/bump.py && ./tests/run.sh រួច commit/push (ឬប្រាប់ Claude)")
 

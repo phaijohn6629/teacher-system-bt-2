@@ -103,6 +103,10 @@
   - `--file X.mp4 --title "…" --desc "…" --privacy public --grade 9 --lesson 1 --topic 1.2` uploads, prints `https://youtu.be/…`, and writes `VIDEOS["9_1_1"]` into `hub.js`.
   - `--topic`: a 1-based index, or a heading number such as `1.2`/`១.២` matched against the starter titles. Without it, a new «🎬 title» sub-topic is appended.
   - `--link https://youtu.be/… --grade … --lesson … [--topic …]` attaches an existing video without uploading. `--dry-run` previews.
+  - `--playlist "name"` adds the uploaded video to that playlist: it finds the playlist by exact title or creates it (`--playlist-privacy`, default unlisted), and skips videos already in it.
+  - `--playlist "name" --add URL1,URL2,…` adds existing videos in the given order without uploading.
+  - Scopes are `youtube.upload` + `youtube.force-ssl` (playlists, video edits). An older `token.json` without them is deleted automatically and asks for login again.
+  - Playlist «លីមីតនៃអនុគមន៍ - ថ្នាក់ទី១២» = https://www.youtube.com/playlist?list=PLEGSjUxJctik (unlisted, 11 videos: exp → log lessons, 1^∞, trig tip, then practice). A newly created playlist can return 404 on `playlistItems.list` for a few seconds; the script handles this.
 - Safety: it refuses to upload if the token's channel name doesn't contain «rean» (prevents posting to the wrong channel). It handles resumable 8 MB chunks with retries, and gives clear messages for a quota limit (~6 uploads/day) or a revoked token. Every upload is logged in `tools/youtube_uploads.json`.
 - `hub.js`: `VIDEOS` sits between `@VIDEOS-START`/`@VIDEOS-END` (the only part the script edits). `withVids()` applies it to starter and generic content (also in the teacher editor). A teacher version in Firestore takes priority, and the script warns when `hub/{g}_{l}` exists.
 - After a hub change: `python3 tools/bump.py && ./tests/run.sh` (`tests/hub.js` validates every `VIDEOS` key and link), bump `sw.js`, then commit and push.
