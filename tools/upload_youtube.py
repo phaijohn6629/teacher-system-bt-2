@@ -76,7 +76,21 @@ def youtube(c):
 
 
 def channel(yt):
-    r = yt.channels().list(part="snippet", mine=True).execute()
+    from googleapiclient.errors import HttpError
+    try:
+        r = yt.channels().list(part="snippet", mine=True).execute()
+    except HttpError as e:
+        why = (e.content or b"").decode("utf-8", "ignore")
+        if "authenticatedUserAccountSuspended" in why:
+            try:
+                os.remove(TOKEN)
+            except OSError:
+                pass
+            die("YouTube ឆ្លើយថា Channel/គណនីដែលបានជ្រើស ត្រូវបានផ្អាក (suspended) · token ត្រូវបានលុប\n"
+                "   → ពិនិត្យ https://studio.youtube.com ឬជ្រើស Channel «Rean-Maths» ផ្សេង ហើយរត់ --auth-only ម្ដងទៀត")
+        if e.resp.status in (401, 403):
+            die("គ្មានសិទ្ធិចូល YouTube (" + str(e.resp.status) + ") · លុប token.json ហើយរត់ --auth-only ម្ដងទៀត")
+        raise
     it = r.get("items") or []
     if not it:
         die("គណនីនេះមិនមាន YouTube Channel ទេ")
