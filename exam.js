@@ -119,12 +119,12 @@ function migrate(){var F=window.FB,key="exMig2_"+who.id;try{if(localStorage.getI
    ចងចាំខ្ញុំ = localStorage · មិនចងចាំ (ឧបករណ៍រួម) = sessionStorage (លុបពេលបិទ Tab) */
 function ST(){try{return window.FBPERSIST?localStorage:sessionStorage}catch(e){return null}}
 function sGet(k){try{var s=ST();return s?JSON.parse(s.getItem(k)||"null"):null}catch(e){return null}}
-function sPut(k,v){try{var s=ST();if(s)s.setItem(k,JSON.stringify(v))}catch(e){}}
+function sPut(k,v){try{var s=ST();if(s){if(window.LSG)LSG.set(s,k,JSON.stringify(v));else s.setItem(k,JSON.stringify(v))}}catch(e){}}
 function lKey(){return"exList_"+(who&&who.id||"")+(isAdm()?"_a":"")}
 function lPut(){if(X.list)sPut(lKey(),X.list)}
-function cPut(E,u){try{if(!E||!E.id)return;var j=JSON.stringify({u:u||"",E:E});if(j.length>400000)return;var s=ST();if(!s)return;
-  var ix=(sGet("exCi")||[]).filter(function(x){return x!==E.id});ix.unshift(E.id);ix.slice(8).forEach(function(id){s.removeItem("exC_"+id)});
-  s.setItem("exC_"+E.id,j);s.setItem("exCi",JSON.stringify(ix.slice(0,8)))}catch(e){}}
+function cPut(E,u){try{if(!E||!E.id)return;var j=JSON.stringify({u:u||"",E:E});if(j.length>300000)return;   /* 🧹 ≤ 300 KB × ៦ វិញ្ញាសា */var s=ST();if(!s)return;
+  var ix=(sGet("exCi")||[]).filter(function(x){return x!==E.id});ix.unshift(E.id);ix.slice(6).forEach(function(id){s.removeItem("exC_"+id)});
+  if(window.LSG?LSG.set(s,"exC_"+E.id,j):(s.setItem("exC_"+E.id,j),1))s.setItem("exCi",JSON.stringify(ix.slice(0,6)))}catch(e){}}
 function cGet(id){var c=sGet("exC_"+id);return c&&c.E?c:null}
 function upList(E){if(!X.list)X.list=[];var s=sumOf(E),y={id:E.id,o:s.o,cls:s.cls,t:s.t,u:s.u||E.u,ns:s.ns,pts:s.pts,dur:s.dur,on:s.on},i=X.list.map(function(z){return z.id}).indexOf(E.id);
   if(i>=0)X.list[i]=y;else X.list.unshift(y);X.list.sort(function(a,b){return(b.u||"").localeCompare(a.u||"")});lPut()}

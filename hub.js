@@ -237,7 +237,8 @@ function generic(name,en){return[en?U("📖 "+name,null,"Your teacher has not ad
 /* ---------- ទិន្នន័យ៖ គ្រូ (Firestore) > គំរូ > ទូទៅ ---------- */
 function ck(g,l){return"hub"+g+"_"+l}
 function cacheGet(g,l){try{return JSON.parse(localStorage.getItem(ck(g,l))||"null")}catch(e){return null}}
-function cacheSet(g,l,o){try{localStorage.setItem(ck(g,l),JSON.stringify(o))}catch(e){}}
+function cacheSet(g,l,o){var v=JSON.stringify(o);if(window.LSG){LSG.set(localStorage,ck(g,l),v);return}try{localStorage.setItem(ck(g,l),v)}catch(e){}}
+try{if(window.LSG)LSG.ttl(/^hub\d+_\d+$/,30)}catch(e){}   /* 🧹 cache មេរៀនដែលមិនបានបើក > ៣០ ថ្ងៃ */
 function starter(g,l){var s=STARTER[g]&&STARTER[g][l];return s?JSON.parse(JSON.stringify(s)):null}
 function valid(d){return d&&Array.isArray(d.subs)&&d.subs.every(function(x){return x&&typeof x.t==="string"})}
 function data(g,l,name,en){

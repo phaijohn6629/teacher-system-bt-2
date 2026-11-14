@@ -12,8 +12,8 @@
   "v": 4
  },
  "classorg.js": {
-  "hash": "6297cf341a4502cb620de16b6209460e342bef98",
-  "v": 14
+  "hash": "ff8307f26a257549d046014168214899572110be",
+  "v": 15
  },
  "colmap.js": {
   "hash": "6b41c1ad3eacef0f6ae772855b5a0c6d706ce43d",
@@ -52,12 +52,12 @@
   "v": 1
  },
  "exam.js": {
-  "hash": "0734a927d14422ac3f127402ae6d91d512c034ad",
-  "v": 48
+  "hash": "e31628d46dd35c34960841e605966a023f030d71",
+  "v": 49
  },
  "excerpt.js": {
-  "hash": "f5d86441bf8490d4f3a3f8b5c2d62ed4e2bb9560",
-  "v": 17
+  "hash": "f2ac3817cdb7268e931b34a7a9259f3a22146859",
+  "v": 18
  },
  "exgen.js": {
   "hash": "1208abbbd120f67fc83860133c2cbbf3d0f556a3",
@@ -72,32 +72,36 @@
   "v": 7
  },
  "hub.js": {
-  "hash": "c5a7e68b9b729afbb7488dcafb37dc8afab48519",
-  "v": 3
+  "hash": "47222771488dce80ea79baf505d362d43eb2162c",
+  "v": 4
  },
  "khcal.js": {
   "hash": "652046b95b4b8a94b974a0cc061aea9f9ffe20ea",
   "v": 1
  },
  "lessonedit.js": {
-  "hash": "a2af1a28952aa4a60ebdc5031f71c120c445cb60",
-  "v": 3
- },
- "lessons.js": {
-  "hash": "1e470103f2b72f8057f1babb40c2d1a6c77a901e",
+  "hash": "7ac775e5d949d5bc6cc1887d98ef4155acd5dfb9",
   "v": 4
  },
+ "lessons.js": {
+  "hash": "b14081cbdf87169a40f7a9a862a7368b0df12b84",
+  "v": 5
+ },
+ "lsguard.js": {
+  "hash": "35c285186489024c5ec07bcaaf90c9561b03cc51",
+  "v": 2
+ },
  "meetings.js": {
-  "hash": "5cf86a495814f709aa425141d2fe6b6d51656d33",
-  "v": 13
+  "hash": "85c0421795fb46261c2d0b809452913dd4d60e23",
+  "v": 14
  },
  "modern.css": {
   "hash": "4c8d857a4aac133ec3279333cdcdabaa8e0f45f3",
   "v": 21
  },
  "monitor.js": {
-  "hash": "eab810ec26f5f03be3deb8d0bb72e65272e73f1a",
-  "v": 7
+  "hash": "a867d873db7df4140e8948b352bbb9665fb5d6a7",
+  "v": 8
  },
  "monthly.js": {
   "hash": "609a766e394daf86a5718766c4b9a6709616f46b",
@@ -160,27 +164,31 @@
   "v": 1
  },
  "quiz.js": {
-  "hash": "8af22856048d03b41209e0b40ae326a3d3cdb4e0",
-  "v": 31
+  "hash": "43a98bd647f2b7d84ab6a5c01aec5b0b197c84bb",
+  "v": 32
  },
  "sched.js": {
-  "hash": "e745af528b1a8efec4d085a0b71b6ddaf264120b",
-  "v": 23
+  "hash": "631862de5aa9d4048aa73c74c992b303b5e0e77b",
+  "v": 24
  },
  "script.js": {
-  "hash": "2c8649a993741853ae32a556d079e34af50dde8d",
-  "v": 79
+  "hash": "5891f1e9bc71340d03247683f9461e9f8d4db051",
+  "v": 80
+ },
+ "storeadm.js": {
+  "hash": "7e7525271a314501027e8838ddbb8db9c11c9e7d",
+  "v": 2
  },
  "style.css": {
-  "hash": "528a79f058eca76fe7d10877edb6e533bc88d8ab",
-  "v": 93
+  "hash": "1b5b46bde5eb4eee43cc1e524835cbc9fd757ac8",
+  "v": 94
  },
  "timer.js": {
   "hash": "94ff44a2adff4fd242f5fb9155336d7d8ec64731",
   "v": 1
  },
  "walker.js": {
-  "hash": "e7df72b986a92a6e4cc00311bf9ae9fd3b203783",
-  "v": 4
+  "hash": "16e0cf2e1a0365fa3e2a5fc8bfd1cfa1cb90713c",
+  "v": 5
  }
 }

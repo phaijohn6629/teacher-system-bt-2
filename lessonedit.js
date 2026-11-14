@@ -62,7 +62,7 @@ function draw(){
       "<span class=lse-mv><button type=button data-lse=slup title='ទៅមុខ'"+(E.sel?"":" disabled")+">◀</button><button type=button data-lse=sldn title='ទៅក្រោយ'"+(E.sel<E.s.length-1?"":" disabled")+">▶</button><button type=button data-lse=sldup title='ចម្លងស្លាយ'>⧉</button><button type=button class=danger data-lse=sldel title='លុបស្លាយ'"+(E.s.length>1?"":" disabled")+">🗑️</button></span></div>"+
     sl.b.map(function(b,i){
       var body;
-      if(b.k==="img")body="<div class=lse-img>"+(b.b?"<img src='"+b.b+"' alt=''>":"")+"<label class=lse-file>📷 "+(b.b?"ប្ដូររូប":"ជ្រើសរូបភាព")+"<input type=file accept='image/*' data-lb='"+i+"|file'></label></div>";
+      if(b.k==="img")body="<div class=lse-img>"+(b.b?"<img src='"+safeSrc(b.b)+"' alt=''>":"")+"<label class=lse-file>📷 "+(b.b?"ប្ដូររូប":"ជ្រើសរូបភាព")+"<input type=file accept='image/*' data-lb='"+i+"|file'></label></div>";
       else if(b.k==="plot")body="<textarea rows=4 data-lb='"+i+"|raw' spellcheck=false placeholder='{\"p\":[[1,1,\"z\",\"#b83a2e\"]],\"v\":true}'>"+esc(b._raw||"")+"</textarea>"+(b._bad?"<small class=lse-bad>⚠️ JSON មិនត្រឹមត្រូវ</small>":"");
       else body="<textarea rows=4 data-lb='"+i+"|b' placeholder='មួយបន្ទាត់មួយចំណុច · «- » = ចំណុចបញ្ជី · រូបមន្ត $\\frac{a}{b}$ ឬ $$x^2$$'>"+esc(b.b||"")+"</textarea>";
       return"<div class=lse-b><div class=lse-bh><select data-lb='"+i+"|k'>"+opt(KN,b.k)+"</select><input data-lb='"+i+"|h' value='"+esc(b.h||"")+"' placeholder='ចំណងជើងប្លុក (ទុកទទេ = លំនាំដើម)'>"+

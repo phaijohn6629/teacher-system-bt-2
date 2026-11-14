@@ -138,16 +138,32 @@ service cloud.firestore {
 
     // ===================== គណនីប្រធានថ្នាក់ (មួយក្នុងមួយថ្នាក់) =====================
     // doc ID = "<ID គ្រូ>_<ថ្នាក់>" · គ្រូម្ចាស់ ឬ Admin គ្រប់គ្រង · ប្រធានថ្នាក់អាន/កែបានតែ j (វត្តមាន · ប្លង់តុ · សម្រង់អត្ថបទ)
+    // 🔐 គ្មានលេខសម្ងាត់ (pw) ក្នុង mc ទៀតទេ (ប្រធានថ្នាក់អាន mc បាន) → mcp/{k}
+    function noPw() {
+      let a = request.resource.data.get('acc', {});
+      return !request.resource.data.keys().hasAny(['pw'])
+        && !('pw' in a.get('h', {})) && !('pw' in a.get('v1', {})) && !('pw' in a.get('v2', {}));
+    }
     match /mc/{k} {
       allow read: if isAdmin() || (active() && resource.data.o == myId()) || isMonitorOf(k);
       allow create: if (isAdmin() || isOwner(request.resource.data.o))
         && k.split('_')[0] == request.resource.data.o
-        && request.resource.data.j.size() < 900000;
+        && request.resource.data.j.size() < 900000 && noPw();
       allow update: if ((isAdmin() || isOwner(resource.data.o))
             && request.resource.data.o == resource.data.o
-            && request.resource.data.j.size() < 900000)
+            && request.resource.data.j.size() < 900000 && noPw())
         || (isMonitorOf(k) && changedOnly(['j']) && request.resource.data.j.size() < 900000);
       allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
+
+    // 🔐 លេខសម្ងាត់គណនីប្រធាន/អនុប្រធាន៖ doc ID = ដូច mc · គ្រូម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ (ប្រធានថ្នាក់មិនអាចអាន)
+    match /mcp/{k} {
+      allow read, delete: if isAdmin() || (active() && resource.data.o == myId());
+      allow create, update: if (isAdmin() || (active() && request.resource.data.o == myId()
+            && k.split('_')[0] == myId() && (resource == null || resource.data.o == myId())))
+        && k.split('_')[0] == request.resource.data.o
+        && request.resource.data.keys().hasOnly(['o', 'p'])
+        && request.resource.data.p is map && request.resource.data.p.size() <= 5;
     }
 
     // ===================== ប្រវត្តិសកម្មភាពប្រធាន/អនុប្រធានថ្នាក់ =====================
@@ -178,7 +194,8 @@ service cloud.firestore {
     // doc ID = លេខសម្គាល់គ្រូ · ម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ អាន/សរសេរ
     match /sig/{tid} {
       allow read: if isAdmin() || isOwner(resource.data.o);
-      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid
+        && request.resource.data.get('j', '') is string && request.resource.data.get('j', '').size() < 500000;   // 🗄️ រូបហត្ថលេខា ≤ ~500 KB
       allow delete: if isAdmin() || isOwner(tid);
     }
 
@@ -271,7 +288,13 @@ service cloud.firestore {
     // រូបភាពក្នុងតេស្ត៖ doc ID = "<តេស្ត>_<លំហាត់>" · សិស្សអានបានពេលតេស្តបើក (គ្មាន Login)
     match /timg/{id} {
       allow get: if active() || get(/databases/$(database)/documents/tests/$(resource.data.t)).data.open == true;
-      allow create, update: if (isAdmin() || isOwner(request.resource.data.o))
+      allow list: if isAdmin();   // 🗄️ សម្អាតរូបនៃតេស្តចាស់ (storeadm.js)
+      // 🛡️ update ពិនិត្យម្ចាស់ចាស់ (កុំឱ្យគ្រូផ្សេងសរសេរជាន់ដោយដាក់ o = ខ្លួនឯង) · id = "<តេស្ត>_<លំហាត់>"
+      allow create: if (isAdmin() || isOwner(request.resource.data.o))
+        && id.matches(request.resource.data.t + '_.+')
+        && request.resource.data.d is string && request.resource.data.d.size() < 900000;
+      allow update: if (isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o))
+        && request.resource.data.t == resource.data.t
         && request.resource.data.d is string && request.resource.data.d.size() < 900000;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
@@ -301,12 +324,16 @@ service cloud.firestore {
       allow get: if resource.data.open == true || active();
       allow list: if active();
       allow create: if isAdmin() || isOwner(request.resource.data.o);
-      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+      allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);   // 🛡️ ម្ចាស់មិនអាចផ្ទេរ o
+      allow delete: if isAdmin() || isOwner(resource.data.o);
     }
     // ពានរង្វាន់សិស្ស៖ doc ID = "<កូដ>_<k>" · សរសេរបាន (គ្មាន Login) តែពេលតំណបើក · វាលកំណត់ · អានបានតែគ្រូ
     match /prt/{id} {
       allow create, update: if request.resource.data.keys().hasOnly(['c','k','n','g','t','u'])
         && id == request.resource.data.c + '_' + request.resource.data.k
+        && request.resource.data.c is string && request.resource.data.c.size() <= 40
+        && request.resource.data.k is string && request.resource.data.k.size() <= 64
+        && request.resource.data.g is int && request.resource.data.g >= 1 && request.resource.data.g <= 200
         && request.resource.data.n is string && request.resource.data.n.size() <= 100
         && request.resource.data.t is map && request.resource.data.t.size() <= 300
         && request.resource.data.u == request.time
@@ -356,11 +383,13 @@ service cloud.firestore {
       allow get: if resource.data.open == true || active();
       allow list: if active();
       allow create: if isAdmin() || isOwner(request.resource.data.o);
-      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+      allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);   // 🛡️ ម្ចាស់មិនអាចផ្ទេរ o
+      allow delete: if isAdmin() || isOwner(resource.data.o);
     }
     // ចម្លើយត្រឹមត្រូវ៖ តែម្ចាស់តេស្ត ឬ Admin
     match /tkeys/{id} {
-      allow read, update, delete: if isAdmin() || isOwner(resource.data.o);
+      allow read, delete: if isAdmin() || isOwner(resource.data.o);
+      allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);
       allow create: if isAdmin() || isOwner(request.resource.data.o);
     }
     // ===================== សុវត្ថិភាពតេស្ត (test.html · គ្មាន Login) =====================
@@ -384,6 +413,11 @@ service cloud.firestore {
         && request.resource.data.get('cp', 0) is int && request.resource.data.get('cp', 0) <= 10000
         && request.resource.data.get('ax', false) is bool
         && sid == request.resource.data.t + '_' + request.resource.data.sid
+        && request.resource.data.t is string && request.resource.data.t.size() <= 64
+        && request.resource.data.sid is string && request.resource.data.sid.size() <= 64
+        && request.resource.data.get('at', '') is string && request.resource.data.get('at', '').size() <= 40
+        && request.resource.data.get('dur', 0) is int && request.resource.data.get('dur', 0) >= 0 && request.resource.data.get('dur', 0) <= 86400
+        && request.resource.data.get('dv', '') is string && request.resource.data.get('dv', '').size() <= 64
         && request.resource.data.sn is string && request.resource.data.sn.size() <= 100
         && request.resource.data.a is map && request.resource.data.a.size() <= 200
         && tdoc(request.resource.data.t).open == true
@@ -435,7 +469,8 @@ service cloud.firestore {
     match /exams/{id} {
       allow read: if isAdmin() || (active() && resource.data.o == myId());
       allow create: if isAdmin() || isOwner(request.resource.data.o);
-      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+      allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);   // 🛡️ ម្ចាស់មិនអាចផ្ទេរ o
+      allow delete: if isAdmin() || isOwner(resource.data.o);
     }
     // exm/{id} = ព័ត៌មានប្រឡងអនឡាញ (សិស្សអានបានពេលបើក) · endMs = ម៉ោងបញ្ចប់
     function exmDoc(id) { return get(/databases/$(database)/documents/exm/$(id)).data; }
@@ -444,12 +479,15 @@ service cloud.firestore {
       allow get: if resource.data.open == true || active();
       allow list: if active();
       allow create: if isAdmin() || isOwner(request.resource.data.o);
-      allow update, delete: if isAdmin() || isOwner(resource.data.o);
+      allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);   // 🛡️ ម្ចាស់មិនអាចផ្ទេរ o
+      allow delete: if isAdmin() || isOwner(resource.data.o);
     }
     // exq/{id}_{លេខកូដ} = វិញ្ញាសា (គ្មានចម្លើយ) · អានបានតែពេលប្រឡងបើក និងមុនអស់ម៉ោង (+៥ នាទី) · ត្រូវដឹងលេខកូដ (doc ID)
     match /exq/{qid} {
       allow get: if active() || exmLive(resource.data.t);
-      allow create, update: if isAdmin() || isOwner(request.resource.data.o);
+      // 🛡️ update ពិនិត្យម្ចាស់ចាស់ (មុននេះ គ្រូផ្សេងអាចសរសេរជាន់វិញ្ញាសាអនឡាញបាន ដោយដាក់ o = ខ្លួនឯង)
+      allow create: if isAdmin() || (isOwner(request.resource.data.o) && qid.matches(request.resource.data.t + '_.+'));
+      allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o && request.resource.data.t == resource.data.t);
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
     // exv/{id}_{សិស្ស} = សិស្សកំពុងមើល · មួយឈ្មោះ មួយឧបករណ៍ (dv) · កែបានតែ lv/lt/cp ដោយឧបករណ៍ដដែល (k2 = dv|លេខរៀងថ្មី)

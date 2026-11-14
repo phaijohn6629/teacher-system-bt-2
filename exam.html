@@ -2,6 +2,8 @@
 <html lang="km">
 <head>
 <meta charset="UTF-8">
+<!-- 🛡️ CSP៖ ទំព័រសិស្ស — Script បានតែពីគម្រោង · cdnjs · Firebase · គ្មាន iframe -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.gstatic.com; frame-src 'none'; default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.googleapis.com https://www.gstatic.com https://cdnjs.cloudflare.com https://accounts.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>ប្រឡង · វិទ្យាល័យបឹងត្របែក</title>
@@ -48,6 +50,7 @@ setTimeout(window.bootFail,12000);
 <div id="net" class="net" hidden></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="lsguard.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="fig.js?v=7"></script>
 <script src="expaper.js?v=24"></script>
@@ -67,7 +70,8 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);
 const math=el=>{try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false,macros:{"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"}})}catch(e){}};
 const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</div><h2>${t}</h2><p class=note>${s||""}</p></div>`};
-const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+try{window.LSG&&LSG.sweep(id)}catch(e){}   /* 🧹 លុបទិន្នន័យប្រឡងចាស់ (> ២១ ថ្ងៃ) */
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{if(window.LSG){LSG.set(localStorage,k,v,id);return}try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
 const isNet=e=>!(e&&["permission-denied","not-found","invalid-argument","failed-precondition","already-exists"].includes(e.code));
 function waitOnline(ms){return new Promise(r=>{let t;const done=()=>{clearTimeout(t);window.removeEventListener("online",done);r()};t=setTimeout(done,ms);window.addEventListener("online",done)})}
 /* ម៉ោងកំណត់៖ Firestore Lite គ្មាន timeout ផ្ទាល់ខ្លួន → អ៊ីនធឺណិតខ្សោយអាចរង់ចាំរហូត · ផុតម៉ោង = កំហុសបណ្ដាញ (ព្យាយាមម្ដងទៀត) */

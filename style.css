@@ -954,3 +954,6 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .hub-vf{position:relative;aspect-ratio:16/9;background:#000}.hub-vf iframe,.hub-vf video{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media (max-width:860px){.hub-exr{grid-template-columns:1fr}.hub-pv{min-height:240px}}
 .sync-spin{display:inline-block;animation:syncSpin 1.2s linear infinite}@keyframes syncSpin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.sync-spin{animation:none}}
+/* 🗄️ ទំហំផ្ទុក (storeadm.js) */
+.sto-grid{display:flex;flex-wrap:wrap;gap:4px 10px;margin:8px 0;font-size:13px}.sto-grid span{background:var(--soft);border-radius:8px;padding:2px 8px}.sto-er{color:var(--danger,#dc2626)}
+.sto-big{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}.sto-big th,.sto-big td{border-bottom:1px solid var(--line);padding:3px 6px;text-align:left}

@@ -85,7 +85,7 @@ function qimg(k){
   return QIM[k];
 }
 function figHtml(q,k){return(q.fg&&window.FIG?FIG.svg(q.fg):"")+(q.im?"<div class=qz-im data-qim='"+esc(k)+"'><span class=note>🖼️ កំពុងផ្ទុករូប…</span></div>":"")}
-function loadImgs(el){[].forEach.call(el.querySelectorAll("[data-qim]"),function(b){qimg(b.dataset.qim).then(function(u){b.innerHTML=u?"<img src='"+u+"' alt=''>":"<span class=note>⚠️ រកមិនឃើញរូប</span>"})})}
+function loadImgs(el){[].forEach.call(el.querySelectorAll("[data-qim]"),function(b){qimg(b.dataset.qim).then(function(u){b.innerHTML=u?"<img src='"+safeSrc(u)+"' alt=''>":"<span class=note>⚠️ រកមិនឃើញរូប</span>"})})}
 /* រូបភាព → JPEG (ទទឹងអតិបរមា ៩០០px · ≤ ~២៥០KB) */
 function shrinkImg(f,cb){
   var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
@@ -331,11 +331,11 @@ function qDialog(q){
     "<div class=full><label>មើលជាមុន</label><div id=qdP class=qz-prev></div></div></div>"+
     "<div class=dlgf><button type=button id=qdX>បោះបង់</button><button type=button class=primary id=qdS>រក្សាទុក</button></div></form>";
   var img=null,imgCh=false,k0=q.id?qid(q.by||who.id,q.id):"";
-  function imShow(){$("qdIm").innerHTML=img?"<img src='"+img+"' alt=''>":"<span class=note>គ្មានរូប</span>";$("qdIX").hidden=!img;prev()}
+  function imShow(){$("qdIm").innerHTML=img?"<img src='"+safeSrc(img)+"' alt=''>":"<span class=note>គ្មានរូប</span>";$("qdIX").hidden=!img;prev()}
   if(q.im&&k0){setTimeout(function(){qimg(k0).then(function(u){if(!imgCh){img=u||null;imShow()}})},0)}
   function setImg(f){shrinkImg(f,function(u){img=u;imgCh=true;imShow()})}
   function prev(){
-    var t=$("qdT").value,h="<div class=qz-qt>"+tx($("qdQ").value)+"</div>"+(window.FIG?FIG.svg($("qdF").value):"")+(img?"<div class=qz-im><img src='"+img+"' alt=''></div>":"");
+    var t=$("qdT").value,h="<div class=qz-qt>"+tx($("qdQ").value)+"</div>"+(window.FIG?FIG.svg($("qdF").value):"")+(img?"<div class=qz-im><img src='"+safeSrc(img)+"' alt=''></div>":"");
     if(t==="mc")h+="<ol class=qz-ch type=A>"+[0,1,2,3].map(function(i){var ck=d.querySelector("input[name=qdA]:checked");return"<li"+(ck&&+ck.value===i?" class=ok":"")+">"+tx($("qdC"+i).value)+"</li>"}).join("")+"</ol>";
     else h+="<div class=qz-num>ចម្លើយ៖ <b>"+tx($("qdN").value)+"</b></div>";
     $("qdP").innerHTML=h;math($("qdP"));

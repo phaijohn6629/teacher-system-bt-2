@@ -27,7 +27,7 @@ var GH=[230,330,160,28,195,280,100,0];   /* ពណ៌ក្រុម (hue) */
 function chart(c){
   var t=teacherOf(ogT),h=holder(c,"h"),v1=holder(c,"v1"),v2=holder(c,"v2"),G=groups(c),n=G.length,tot=c.st.length;
   function av(s,ro){var ph=s&&c.org&&c.org.ph&&c.org.ph[key(s)];
-    return"<div class=og-av"+(s&&ro?" data-ogph='"+ro+"' title='ចុចដើម្បីដាក់រូប'":"")+">"+(ph?"<img src='"+ph+"' alt=''>":"<span>"+(s?ini(s.n):"?")+"</span>")+"</div>"}
+    return"<div class=og-av"+(s&&ro?" data-ogph='"+ro+"' title='ចុចដើម្បីដាក់រូប'":"")+">"+(ph?"<img src='"+safeSrc(ph)+"' alt=''>":"<span>"+(s?ini(s.n):"?")+"</span>")+"</div>"}
   function box(cls2,ico,title,inner,name,sub){
     return"<div class='og-box "+cls2+"'><div class=og-bar><span class=og-ic>"+ico+"</span>"+title+"</div><div class=og-in>"+inner+
       "<div class=og-n>"+(name?esc(name):"<span class=og-dot>……………………</span>")+"</div>"+(sub?"<div class=og-sub>"+sub+"</div>":"")+"</div></div>"}
@@ -71,7 +71,7 @@ function renderOrg(){
     return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(s.n)+"</td><td>"+esc(s.g||"")+"</td>"+
       "<td><select data-og='"+i+"|ro' "+(ed?"":"disabled")+">"+rOpt(r.ro||"")+"</select></td>"+
       "<td><select data-og='"+i+"|g' "+(ed?"":"disabled")+">"+gOpt(r.g||0)+"</select></td>"+
-      "<td>"+((r.ro==="h"||r.ro==="v1"||r.ro==="v2")&&ed?(c.org.ph&&c.org.ph[key(s)]?"<img class=og-mini src='"+c.org.ph[key(s)]+"' alt=''> <button type=button data-ogph="+r.ro+">ប្ដូរ</button> <button type=button class=danger data-ogdel='"+esc(key(s))+"'>✕</button>":"<button type=button data-ogph="+r.ro+">📷 ដាក់រូប</button>"):"")+"</td></tr>"}).join("");
+      "<td>"+((r.ro==="h"||r.ro==="v1"||r.ro==="v2")&&ed?(c.org.ph&&c.org.ph[key(s)]?"<img class=og-mini src='"+safeSrc(c.org.ph[key(s)])+"' alt=''> <button type=button data-ogph="+r.ro+">ប្ដូរ</button> <button type=button class=danger data-ogdel='"+esc(key(s))+"'>✕</button>":"<button type=button data-ogph="+r.ro+">📷 ដាក់រូប</button>"):"")+"</td></tr>"}).join("");
   var none=c.st.filter(function(s){var r=rOf(c,s);return!(r.g>=1)&&r.ro!=="h"&&r.ro!=="v1"&&r.ro!=="v2"}).length;
   $("ogBody").innerHTML="<div class=og-wrap>"+
    "<div class=og-pv><h3>គំនូសតាង</h3><div class=og-card>"+chart(c)+"</div></div>"+
@@ -235,7 +235,7 @@ function seatGrid(c,edit,anim){
         var pa=s&&S.abMap[key(s)],ab=pa?"<em class='sb-ab "+(pa==="ខ"?"b":"a")+"' title='វិញ្ញាសា "+pa+"'>"+pa+"</em>":"";
         d+="<div class='seat"+(s?(s.g==="ស្រី"?" f":s.g==="ប្រុស"?" m":" u"):" empty")+(sel?" sel":"")+"'"+(edit?" data-seat="+i:"")+(anim&&s?" style='animation-delay:"+(i*18)+"ms'":"")+">"+
           "<span class=sn>"+kn(i+1)+"</span>"+badge+ab+
-          (s?"<span class=sav>"+(ph?"<img src='"+ph+"' alt=''>":ini(s.n))+"</span><b>"+esc(s.n)+"</b>":"<span class='sav e'>＋</span><i>ទំនេរ</i>")+"</div>";
+          (s?"<span class=sav>"+(ph?"<img src='"+safeSrc(ph)+"' alt=''>":ini(s.n))+"</span><b>"+esc(s.n)+"</b>":"<span class='sav e'>＋</span><i>ទំនេរ</i>")+"</div>";
       }
       if(!any&&!showEmpty)continue;
       row+="<div class='desk p"+L.per+"'><div class=desk-top>"+d+"</div><div class=desk-legs></div></div>";nd++;

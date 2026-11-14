@@ -310,7 +310,7 @@ function body(t){
 var KI={def:["📘","និយមន័យ"],ex:["✏️","ឧទាហរណ៍"],sol:["✅","ចម្លើយ"],tip:["💡","គន្លឹះ"],warn:["⚠️","ប្រយ័ត្ន"],sum:["📌","សង្ខេប"],plot:["📈",""],img:["🖼️",""]};
 function blk(b,i){
   var ki=KI[b.k]||KI.def,h=b.h!=null?b.h:ki[1];
-  if(b.k==="img")return"<figure class='ls-blk ls-imgb' style='--d:"+i+"'>"+(/^data:image\//.test(b.b||"")?"<img src='"+b.b+"' alt=''>":"<div class=ls-noimg>🖼️ គ្មានរូបភាព</div>")+(h?"<figcaption class=ls-cap>"+esc(ds(h))+"</figcaption>":"")+"</figure>";
+  if(b.k==="img")return"<figure class='ls-blk ls-imgb' style='--d:"+i+"'>"+(/^data:image\//.test(b.b||"")?"<img src='"+safeSrc(b.b)+"' alt=''>":"<div class=ls-noimg>🖼️ គ្មានរូបភាព</div>")+(h?"<figcaption class=ls-cap>"+esc(ds(h))+"</figcaption>":"")+"</figure>";
   if(b.k==="plot"&&(!b.b||typeof b.b!=="object"))return"<div class='ls-blk ls-warn' style='--d:"+i+"'><div class=ls-bb><p>⚠️ ទិន្នន័យក្រាហ្វមិនត្រឹមត្រូវ</p></div></div>";
   if(b.k==="plot")return"<div class='ls-blk ls-plotb' style='--d:"+i+"'>"+plot(b.b)+(h?"<div class=ls-cap>"+esc(ds(h))+"</div>":"")+"</div>";
   return"<div class='ls-blk ls-"+b.k+"' style='--d:"+i+"'><div class=ls-bh><span aria-hidden=true>"+ki[0]+"</span> "+esc(ds(h||ki[1]))+"</div><div class=ls-bb>"+body(b.b)+"</div></div>";

@@ -2,7 +2,7 @@
    គណនីប្រធាន/អនុប្រធានថ្នាក់ — គ្រូបង្កើតពីផ្ទាំង «សិស្ស និងអវត្តមាន»
    មួយថ្នាក់មានរហូតដល់ ៣ គណនី (ប្រធាន · អនុប្រធានទី១ · អនុប្រធានទី២) ភ្ជាប់ជាមួយសិស្សម្នាក់ៗ
    គណនីទាំងនេះចូលបានតែ៖ វត្តមាន · ប្លង់តុ · សម្រង់អត្ថបទ នៃថ្នាក់ខ្លួន (មិនអាចកែអ្វីផ្សេងទៀតទេ)
-   Firestore mc/{ID គ្រូ}_{ថ្នាក់} = {o, acc:{h|v1|v2:{id,uid,pw,en,sk,sn}}, j}
+   Firestore mc/{ID គ្រូ}_{ថ្នាក់} = {o, acc:{h|v1|v2:{id,uid,en,sk,sn}}, j} · លេខសម្ងាត់៖ mcp/{k} = {o, p:{h|v1|v2:pw}} (គ្រូម្ចាស់/Admin តែប៉ុណ្ណោះ)
      j = {by:"t"|"m", at, ack, tn, cn, st:[សិស្ស+អវត្តមាន], org, seat, sch:[ម៉ោងនៃថ្នាក់], cxr:[ជួរសម្រង់], cx:{"ថ្ងៃ|ម៉ោង":{c,ls,a}}}
      by="m" និង at > ack → កម្មវិធីរបស់គ្រូបញ្ចូលទិន្នន័យប្រធានថ្នាក់ទៅក្នុងទិន្នន័យគ្រូ
      ការសរសេរ mc ទាំងសងខាងប្រើ transaction (អានថ្មី → បញ្ចូលការកែ → សរសេរ) ដើម្បីកុំឱ្យជាន់គ្នា
@@ -45,10 +45,24 @@ MAP.mc={
       r[k]={o:x.o,cn:j&&j.cn||"",j:j,acc:accOf(x),ack:Math.max(j&&j.ack||0,old&&old.ack||0),raw:x};
     });
     mcd={r:r};
-    if(isMon())monLoad();else setTimeout(teachApply,0);
+    Object.keys(r).forEach(mergePw);
+    if(isMon())monLoad();else{setTimeout(teachApply,0);Object.keys(r).forEach(function(k){if(hasPw(r[k].raw))setTimeout(function(){migPw(k)},0)})}
   }
 };
 function mref(k){return FB.doc(db,"mc",k)}
+/* 🔐 លេខសម្ងាត់គណនីប្រធាន/អនុប្រធាន៖ mcp/{k} = {o, p:{h|v1|v2:pw}} (គ្រូម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ)
+   មិនរក្សាក្នុង mc/{k} ទៀតទេ ព្រោះប្រធានថ្នាក់អាន mc បាន (មិនឱ្យសិស្សឃើញលេខសម្ងាត់អ្នកផ្សេង) · ទាញពេលត្រូវការ (👁 · ចម្លង · ប្ដូរ · លុប) */
+function pref(k){return FB.doc(db,"mcp",k)}
+var pwm={},pwMig={},pwMigFail=false;
+function hasPw(x){if(!x)return false;if(x.pw)return true;var a=x.acc||{};return Object.keys(a).some(function(r){return a[r]&&a[r].pw})}
+function mergePw(k){var d=mcd.r[k],p=pwm[k];if(!d||!p)return;Object.keys(d.acc||{}).forEach(function(r){if(p[r]&&!d.acc[r].pw)d.acc[r].pw=p[r]})}
+function ensurePw(k){if(pwm[k])return Promise.resolve(pwm[k]);
+  return FB.getDoc(pref(k)).then(function(sn){pwm[k]=sn.exists()?(sn.data().p||{}):{};mergePw(k);return pwm[k]},function(e){console.warn("mcp:",e);pwm[k]={};return pwm[k]})}
+/* ឯកសារចាស់ដែលមាន pw → សរសេរឡើងវិញដោយគ្មាន pw (accTx ផ្ទេរទៅ mcp) · ម្ដងក្នុងមួយ Session */
+function migPw(k){
+  var d=mcd.r[k];if(!d||pwMig[k]||pwMigFail||!(isAdm()||who.id===d.o))return;pwMig[k]=1;
+  accTx(k,d.o,d.cn,function(){}).then(function(){console.info("mc pw moved:",k)},function(e){console.warn("mc pw migrate:",k,e);if(e&&e.code==="permission-denied")pwMigFail=true});
+}
 
 /* ---------- ខាងគ្រូ៖ បញ្ចូលទិន្នន័យដែលប្រធានថ្នាក់បានកែ ---------- */
 function teachApply(){
@@ -83,8 +97,9 @@ function tWrite(){
         if(!sn.exists())return;
         var cur=sn.data(),cj=pj(cur.j);
         if(cj&&cj.by==="m"&&cj.at>(cj.ack||0)&&cj.at>(d.ack||0))return;
-        if(cur.j===js&&cur.acc)return;
-        var up={j:js};if(!cur.acc)up.acc=accOf(cur);   /* ឯកសារទម្រង់ចាស់ {id,uid,pw,en} → បន្ថែម acc (កុំឱ្យសរសេរដដែលៗរាល់ Sync) */
+        if(cur.j===js&&cur.acc&&!hasPw(cur))return;
+        if((!cur.acc||hasPw(cur))&&!pwMigFail){migPw(k);return}   /* មាន pw → ផ្ទេរទៅ mcp ជាមុន (ការ Sync បន្ទាប់នឹងធ្វើបច្ចុប្បន្នភាព j) */
+        var up={j:js};if(!cur.acc)up.acc=accOf(cur);   /* rules មិនទាន់ Publish (mcp) → របៀបចាស់ */
         tx.update(mref(k),up);
       });
     }).catch(function(e){console.warn("mc write:",k,e)});
@@ -159,7 +174,7 @@ function loadLog(k,tid){
   },function(e){console.error("mclog:",e);logs[k]="err";box()});
 }
 function setBusy(b){busy=b;box()}
-function fail(e){setBusy(false);console.error(e);alert("មិនបានសម្រេច៖ "+(typeof authErr==="function"?authErr(e):e&&e.message||e))}
+function fail(e){setBusy(false);console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន mcp)":"មិនបានសម្រេច៖ "+(typeof authErr==="function"?authErr(e):e&&e.message||e))}
 function creds(a){return"លេខសម្គាល់៖ "+a.id+"\nលេខសម្ងាត់៖ "+a.pw+"\nគេហទំព័រ៖ "+location.origin+location.pathname}
 function mkUser(id,pw,n){
   var tid=n?id+"-"+(n+1):id;
@@ -174,12 +189,18 @@ function accTx(k,tid,cn,fn){
   if(!mcd.r[k])mcd.r[k]={o:tid,cn:cn,j:null,acc:{},ack:0,raw:null};
   var j0=JSON.stringify(buildT(k)||{});
   return FB.runTransaction(db,function(tx){
-    return tx.get(mref(k)).then(function(sn){
-      var cur=sn.exists()?sn.data():null,acc=accOf(cur);fn(acc);
-      if(!Object.keys(acc).length&&cur){tx.delete(mref(k));return acc}
-      tx.set(mref(k),{o:tid,acc:acc,j:cur&&cur.j||j0});return acc;
+    return Promise.all([tx.get(mref(k)),tx.get(pref(k))]).then(function(g){
+      var sn=g[0],ps=g[1],cur=sn.exists()?sn.data():null,acc=accOf(cur),pm=ps.exists()?(ps.data().p||{}):{};
+      Object.keys(acc).forEach(function(r){if(!acc[r].pw&&pm[r])acc[r].pw=pm[r]});
+      fn(acc);
+      var clean={},pw={};Object.keys(acc).forEach(function(r){var x=jcopy(acc[r]);if(x.pw)pw[r]=x.pw;delete x.pw;clean[r]=x});
+      if(!Object.keys(acc).length&&cur){tx.delete(mref(k));if(ps.exists())tx.delete(pref(k));return acc}
+      tx.set(mref(k),{o:tid,acc:clean,j:cur&&cur.j||j0});   /* គ្មាន pw ក្នុង mc */
+      if(Object.keys(pw).length)tx.set(pref(k),{o:tid,p:pw});else if(ps.exists())tx.delete(pref(k));
+      return acc;
     });
-  }).then(function(acc){mcd.r[k].acc=acc;if(!Object.keys(acc).length)delete mcd.r[k];return acc});
+  }).then(function(acc){var p={};Object.keys(acc).forEach(function(r){if(acc[r].pw)p[r]=acc[r].pw});pwm[k]=p;
+    if(mcd.r[k])mcd.r[k].acc=acc;if(!Object.keys(acc).length)delete mcd.r[k];return acc});
 }
 $("p8").addEventListener("change",function(e){
   var s=e.target.closest("[data-monst]");if(s){var c=curCls();if(c)pick0[mkey(rt,c.n)+s.dataset.monst]=s.value;return}
@@ -191,6 +212,7 @@ $("p8").addEventListener("click",function(e){
   var q=b.dataset.mon.split("|"),a=q[0],r=q[1],tid=rt,k=mkey(tid,c.n),d=mcd.r[k],ac=d&&r?d.acc[r]:null,R=RO.filter(function(x){return x[0]===r})[0];
   if(a==="log"){logOpen[k]=!logOpen[k];if(logOpen[k])loadLog(k,tid);else box();return}
   if(a==="logr"){loadLog(k,tid);return}
+  if(ac&&!ac.pw&&!pwm[k]&&/^(eye|copy|pw|del)$/.test(a)){ensurePw(k).then(function(){b.click()});return}   /* ទាញលេខសម្ងាត់ពី mcp ពេលត្រូវការ */
   if(a==="eye"){showPw[k+r]=!showPw[k+r];box();return}
   if(a==="copy"&&ac){
     var t=creds(ac);
@@ -327,7 +349,7 @@ function migrateCls(tid,oldCn,newCn){
   var ok=mkey(tid,oldCn),nk=mkey(tid,newCn),d=mcd.r[ok],R={h:"H",v1:"V1",v2:"V2"},out=[];
   if(!d)return Promise.resolve(0);
   var accs=d.acc||{};
-  return Object.keys(accs).reduce(function(p,r){return p.then(function(){
+  return ensurePw(ok).then(function(){return Object.keys(accs).reduce(function(p,r){return p.then(function(){
     var a=accs[r];
     return signMon(a).then(function(cr){return FB.deleteUser(cr.user)}).catch(function(e){console.warn("old monitor:",e)})
       .then(function(){return FB.signOut(FB.sauth).catch(function(){})})
@@ -341,7 +363,7 @@ function migrateCls(tid,oldCn,newCn){
           }).then(function(){out.push([r,{id:x.id,uid:uid,pw:pw,en:a.en!==false,sk:a.sk||"",sn:a.sn||""}])});
         });
       });
-  })},Promise.resolve()).then(function(){
+  })},Promise.resolve())}).then(function(){
     mcd.r[nk]={o:tid,cn:newCn,j:null,acc:{},ack:d.ack||0,raw:null};
     return accTx(nk,tid,newCn,function(acc){out.forEach(function(x){acc[x[0]]=x[1]})});
   }).then(function(){delete mcd.r[ok];return FB.deleteDoc(FB.doc(db,"mc",ok)).catch(function(){})}).then(function(){out.forEach(function(x){showPw[nk+x[0]]=true});return out.length});

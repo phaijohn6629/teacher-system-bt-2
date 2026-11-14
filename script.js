@@ -73,6 +73,8 @@ var MK=["តុលា","វិច្ឆិកា","ធ្នូ","មករា",
 
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+/* 🛡️ src រូបភាពពីទិន្នន័យអ្នកប្រើ (ហត្ថលេខា · រូបសិស្ស · រូបលំហាត់ …)៖ ទទួលតែ data:image base64 ឬ https គ្មានសញ្ញាពិសេស → ការពារ XSS (' onerror=…) */
+function safeSrc(u){u=String(u==null?"":u);return/^data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,[A-Za-z0-9+\/=\s]+$/.test(u)||/^https:\/\/[^\s'"<>`\\]+$/.test(u)?u:""}
 function csvSafe(v){var s=String(v==null?"":v);return(/^[=+@\t\r]/.test(s)||/^-[^0-9.]/.test(s))?"'"+s:s}
 function notify(msg){if(window.WALKER)WALKER.toast(msg);var t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._tm);t._tm=setTimeout(function(){t.classList.remove("show")},2600)}
 function notifyErr(e){notify(authErr(e))}
@@ -529,7 +531,7 @@ function wpFoot(id,name,lbl){
   var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
   return"<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
    "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>"+esc(lbl||"ហត្ថលេខា និងឈ្មោះ")+"</div>"+
-   "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(name||"")+"</b></div></div></div>";
+   "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(name||"")+"</b></div></div></div>";
 }
 $("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
 $("mo").innerHTML=MK.map(function(m,i){return"<option value="+i+">"+m+"</option>"}).join("");
@@ -1632,7 +1634,7 @@ function reportHTML(){
   var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"";
   var role=(t.rl||"សមាជិក")+"ក្រុមបច្ចេកទេស";
   var rows=L.map(function(e){
-    var cc=(e.c||"").split(/\r?\n/).filter(Boolean),ims=(wimg[e.u]||[]).map(function(s){return"<img src='"+s+"' class=wim>"}).join("");
+    var cc=(e.c||"").split(/\r?\n/).filter(Boolean),ims=(wimg[e.u]||[]).map(function(s){return"<img src='"+safeSrc(s)+"' class=wim>"}).join("");
     return"<tr><td>"+fdd(e.d)+"</td><td>"+(dur(e.a,e.b)||"")+(e.a&&e.b?"<br>("+ft(e.a)+"-"+ft(e.b)+")"+ampm(e.b):"")+"</td><td style='text-align:left'>"+cc.map(function(x,i){return esc(x)}).join("<br>")+"</td><td>"+ims+"</td></tr>";
   }).join("");
   return"<div class='pg rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
@@ -1789,7 +1791,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=13"],ls:["lessons.js?v=4","hub.js?v=3","lessonedit.js?v=3"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hub.js?v=4","lessonedit.js?v=4"]};
 var NEED={p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
@@ -2103,7 +2105,7 @@ function validBackup(o){
   return objs.every(function(k){return o[k]==null||typeof o[k]==="object"});
 }
 /* Backup៖ ទិន្នន័យក្នុង memory (ទម្រង់ចាស់ · Restore បាន) + Admin៖ គ្រប់ collection ពី Cloud (cloud.{collection}.{id}) */
-var BKC=["app","cfg","users","tasks","rs","wr","ah","sched","ts","cx","mc","mclog","lsn","sig","profiles","lib","exrows","obsrows","qb","qbq","qimg","pcls","prt","mt","plc","tests","tkeys","subs","timg"];
+var BKC=["app","cfg","users","tasks","rs","wr","ah","sched","ts","cx","mc","mclog","lsn","sig","profiles","lib","exrows","obsrows","qb","qbq","qimg","pcls","prt","mt","plc","tests","tkeys","subs","timg","mcp","hub","att","exams"];
 function bkCloud(){
   var F=window.FB,out={},err=[];if(!F||!window.db||!F.getDocs)return Promise.resolve({cloud:null,err:["offline"]});
   var one=function(c,q){return F.getDocs(q||F.collection(window.db,c)).then(function(sn){var o=out[c]||(out[c]={});sn.forEach(function(d){o[d.id]=d.data()})}).catch(function(e){err.push(c+": "+(e.code||e.message))})};
@@ -2676,7 +2678,10 @@ var snapT={};
 function snapSave(k){
   if(window.FBPERSIST||!srvOk(k))return;
   clearTimeout(snapT[k]);snapT[k]=setTimeout(function(){
-    try{var j=JSON.stringify(sy.cache[k]||{});if(j.length>1500000)sessionStorage.removeItem(snapK(k));else sessionStorage.setItem(snapK(k),j)}catch(e){try{sessionStorage.removeItem(snapK(k))}catch(x){}}
+    try{var j=JSON.stringify(sy.cache[k]||{}),tot=j.length;
+      Object.keys(MAP).forEach(function(x){if(x!==k){var v=sessionStorage.getItem(snapK(x));if(v)tot+=v.length}});
+      /* 🧹 snapshot សរុប ≤ ~2.5 MB (sessionStorage ក៏ផ្ទុក Login របស់ Firebase) · ធំពេក → មិនរក្សា key នេះ */
+      if(j.length>1500000||tot>1300000)sessionStorage.removeItem(snapK(k));else if(!(window.LSG?LSG.set(sessionStorage,snapK(k),j):(sessionStorage.setItem(snapK(k),j),1)))sessionStorage.removeItem(snapK(k))}catch(e){try{sessionStorage.removeItem(snapK(k))}catch(x){}}
   },800);
 }
 function snapLoad(){
@@ -2761,7 +2766,7 @@ initProfileMenu();
 
 /* ===== ⚙️ ការកំណត់៖ ប្រមូលការកំណត់ទាំងអស់មកកន្លែងតែមួយ (ការកំណត់ក្នុងផ្ទាំងដើមនៅប្រើបានដដែល) ===== */
 function lsGet(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(x){return d}}
-function lsSet(k,v){try{localStorage.setItem(k,v)}catch(x){}}
+function lsSet(k,v){if(window.LSG){LSG.set(localStorage,k,v);return}try{localStorage.setItem(k,v)}catch(x){}}
 function openSettings(){
   if(!who)return;
   var m=$("dlgSet");
@@ -2771,6 +2776,7 @@ function openSettings(){
       var b=e.target.closest("[data-st]");if(!b){if(e.target===m)m.close();return}
       var k=b.dataset.st;
       if(k==="x")return m.close();
+      if(k.indexOf("sto")===0){if(window.STOADM)STOADM.act(k);return}
       if(k==="prof"){m.close();openProfile();return}
       if(k==="pass"){m.close();$("btnPass").click();return}
       if(k==="sig"){m.close();show("p13");setTimeout(function(){var s=document.querySelector("#tsBody [data-sg]");if(s)s.scrollIntoView({behavior:"smooth",block:"center"})},150);return}
@@ -2813,7 +2819,7 @@ function openSettings(){
     "<div><label for=stYear>ឆ្នាំសិក្សា</label><select id=stYear "+(adm?"":"disabled")+">"+yo+"</select></div>"+
     (adm?"<div class=full><label for=stDrive>Google Drive Client ID (សម្រាប់រក្សាលទ្ធផលតេស្តចូល Drive របស់គ្រូ)</label><input id=stDrive placeholder='xxxxxxxx.apps.googleusercontent.com'></div>":"")+"</div>"+
     (adm?"<div class=st-g style='margin-top:10px'><button type=button data-st=tch>👥 គ្រប់គ្រងគ្រូ និងគណនី<small>បន្ថែម · កែ · តួនាទី · សិទ្ធិប្រើ</small></button><button type=button data-st=grade>📊 ស្តង់ដារពិន្ទុ និងនិទ្ទេស<small>ពិន្ទុអតិបរមា · ភាគរយ A–F</small></button><button type=button data-st=obs>🔍 កម្រិតនិទ្ទេសសង្កេត<small>ភាគរយនៃ ១៦៥</small></button></div>":"")+
-   "</section></div><div class=dlgf><button type=button data-st=x class=primary>បិទ</button></div>";
+   "</section>"+(window.STOADM?STOADM.html():"")+"</div><div class=dlgf><button type=button data-st=x class=primary>បិទ</button></div>";
   m.showModal();
   if(adm&&window.FB)window.FB.getDoc(window.FB.doc(window.db,"cfg","drive")).then(function(d){var i=$("stDrive");if(i&&d.exists())i.value=d.data().cid||""}).catch(function(){});
 }

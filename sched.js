@@ -349,7 +349,7 @@ function renderTS(){
     "<div><label>កាលបរិច្ឆេទ (គ្រិស្តសករាជ)</label><input type=date data-f='ft.md' value='"+esc(ft.md||"")+"' "+(ro?"readonly":"")+"></div>"+
     khDateHtml("m",ft.md,ft.mk,ro)+"</fieldset>"+
     "<fieldset><legend>ហត្ថលេខារបស់ខ្ញុំ (រូបភាព)</legend>"+
-    "<div style='min-height:64px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--line);border-radius:8px;background:#fff;padding:4px'>"+(getSig(tsT)?"<img src='"+getSig(tsT)+"' alt='' style='max-height:60px;max-width:100%'>":"<span class=note style='margin:0;color:#666'>មិនទាន់មានហត្ថលេខា</span>")+"</div>"+
+    "<div style='min-height:64px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--line);border-radius:8px;background:#fff;padding:4px'>"+(getSig(tsT)?"<img src='"+safeSrc(getSig(tsT))+"' alt='' style='max-height:60px;max-width:100%'>":"<span class=note style='margin:0;color:#666'>មិនទាន់មានហត្ថលេខា</span>")+"</div>"+
     "<div class=kh-row><button type=button data-sg=up "+(ro?"disabled":"")+">📤 ផ្ទុករូបហត្ថលេខា</button><button type=button data-sg=draw "+(ro?"disabled":"")+">✍️ គូរហត្ថលេខា</button>"+(getSig(tsT)?"<button type=button class=danger data-sg=del "+(ro?"disabled":"")+">លុប</button>":"")+"</div>"+
     "<label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-sgo "+(ft.sgo==="0"?"":"checked")+" "+(ro?"disabled":"")+" style='width:auto;margin:0'> បោះពុម្ពជាមួយហត្ថលេខា</label>"+
     "<p class=note style='margin:0'>ហត្ថលេខាត្រូវរក្សាទុកម្ដង ហើយប្រើរាល់ខែ។ រូបដែលមានផ្ទៃសខ្មៅ ឬរូបថតក្រដាសសអាចប្រើបាន (ផ្ទៃសត្រូវបានលុបឱ្យថ្លា)។</p></fieldset></div>";
@@ -550,7 +550,7 @@ function tsPrintHTML(){
    "</div>"+
    "<table class=tsx-g><tbody>"+body+"</tbody></table>"+
    "<div class=tsx-c><b class=moul style='font-size:10.5pt'>សូមបញ្ជាក់ថា ព័ត៌មានខាងលើនេះ ពិតជាត្រឹមត្រូវប្រាកដមែន</b><div class=en style='font-size:7.5pt;font-weight:700;margin-top:3px'>I declare that the above information is correct and true to the best of my knowledge</div></div>"+
-   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0>"+(sigT?"<img src='"+sigT+"' class=sgi alt=''>":"")+"</i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=\"ul nm\">"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k&&ft.klu==="1"?"<div class=khl>"+esc(sd.k)+"</div>":"")+"</div>"+
+   "<div class=tsx-s><div><div class=sr><span>ហត្ថលេខារបស់បុគ្គលិក ៖</span><i class=sg0>"+(sigT?"<img src='"+safeSrc(sigT)+"' class=sgi alt=''>":"")+"</i></div><div class=sr><span>ឈ្មោះបុគ្គលិក ៖</span><b class=\"ul nm\">"+esc(t.name||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(sd.g)+"</span></div>"+(sd.k&&ft.klu==="1"?"<div class=khl>"+esc(sd.k)+"</div>":"")+"</div>"+
    "<div><div class=sr><span>ហត្ថលេខាគណៈគ្រប់គ្រង ៖</span><i class=sg0></i></div><div class=sr><span>ឈ្មោះគណៈគ្រប់គ្រង ៖</span><b class=ul>"+esc(ft.mn||"")+"</b></div><div class=sr><span>កាលបរិច្ឆេទ ៖</span><span class=ul>"+esc(md.g)+"</span></div>"+(md.k?"<div class=khl>"+esc(md.k)+"</div>":"")+"</div></div>"+
   "</div>";
   /* ===== Workplan ===== */
@@ -576,7 +576,7 @@ function tsPrintHTML(){
   wp+="<tr class=wn><td colspan=7><b>Notes:</b> "+esc((rec&&rec.wn)||"")+"</td></tr></tbody></table>"+
    "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
    "<div class=wpr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+(wg?esc(wg):"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
-   "<div class=sb>"+(sig?"<img src='"+sig+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
+   "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
   return ts+wp;
 }
 $("tsPr").onclick=function(){

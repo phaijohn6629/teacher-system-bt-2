@@ -49,7 +49,7 @@ function svg(img){
    "<g class=wk-armL><path d='M18 50 L10 66' /></g><g class=wk-armR><path d='M42 50 L50 66' /></g>"+
    "<rect x=17 y=43 width=26 height=30 rx=9 fill='url(#wkShirt)' />"+
    "<circle cx=30 cy=24 r=21 fill='#fff' />"+
-   (img?"<image href='"+img+"' x=10 y=4 width=40 height=40 clip-path='url(#wkClip)' preserveAspectRatio='xMidYMid slice' />":
+   (img?"<image href='"+(window.safeSrc?safeSrc(img):"")+"' x=10 y=4 width=40 height=40 clip-path='url(#wkClip)' preserveAspectRatio='xMidYMid slice' />":
         "<circle cx=30 cy=24 r=20 fill='#fde68a' /><text x=30 y=31 text-anchor=middle font-size=18 font-weight=700 fill='#7c3aed'>"+ini+"</text>")+
    "<circle cx=30 cy=24 r=20 fill=none stroke='#1f2937' stroke-width=1.5 /></svg>";
 }

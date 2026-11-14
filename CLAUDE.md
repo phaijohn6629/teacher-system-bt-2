@@ -23,6 +23,8 @@
 | `exgen.js` | Cambodian-format exam templates | គំរូលំហាត់ប្រឡងទម្រង់កម្ពុជា (BacII · ឌីប្លូម) |
 | `att.js` | Attendance logic | គ្រប់គ្រងការចុះវត្តមាន |
 | `meetings.js` | Meeting minutes / PLC | កំណត់ហេតុប្រជុំ និង PLC |
+| `lsguard.js` | Browser storage guard | ការពារ localStorage/sessionStorage ពេញ (សម្អាតស្វ័យប្រវត្តិ · TTL) — គ្រប់ទំព័រ |
+| `storeadm.js` | Storage panel in ⚙️ Settings | ទំហំផ្ទុកឧបករណ៍ · ចំនួន/ទំហំឯកសារ Firestore · សម្អាតតេស្តចាស់ (Admin) |
 | `sw.js` | PWA Service Worker | គ្រប់គ្រង Cache សម្រាប់ PWA ដើម្បីបើកលឿន |
 | `index.html` | Main Entry Point | ទំព័រមេសម្រាប់ផ្ទុក UI និងហៅដំណើរការកម្មវិធី |
 
@@ -41,10 +43,16 @@
   - `fill56()` in `practice.js` back-fills missing keys 5/6 from neighbouring levels (5 ← 1|2, 6 ← 2|3) for every grade registered via `X.reg`. A grade with its own content defines `G[l][5]`/`G[l][6]` before `X.reg`, and fill56 then leaves them alone.
   - Grade 9 new forms use `kd` prefixes `g9_` and `g9p_` (PISA). Levels 2/4 are set with `lvset(l,5|6,[fn…])`. `tests/practice.js` fails if any grade 9 lesson×level (all 6) has fewer than 6 forms.
 - Anything rendered from `script.js` `refreshView()` (called on every cloud snapshot) must be idempotent: never rebuild a view that is already showing the same data, or open selects close and previews flicker.
+- Security:
+  - Every user-supplied image `src` (signatures, student photos, question images, lesson images) goes through `safeSrc()` (script.js), which accepts only `data:image/…;base64` or quote-free `https://`.
+  - Text goes through `esc()`. Never put user data in `innerHTML` raw.
+  - Monitor passwords live in `mcp/{k}` (owner/Admin only), never in `mc`.
+  - Every page has a CSP `<meta>` (GitHub Pages can't send headers). When adding an external script, iframe or fetch host, add it to the CSP of the page that uses it.
+- Storage: write large or optional browser caches through `LSG.set(storage,k,v)` (`lsguard.js`), which frees caches and retries when the quota is full. Never delete `pend_*` (unsent answers), `firebase:*` or settings.
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v22`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v23`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -85,6 +93,40 @@
 - `exam.js`: `mkItem` avoids duplicates against the session history plus the items already in the section.
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
+
+### ✅ Security audit & storage protection (2026-11-14)
+- **Rules (`firestore.rules` — must be published):**
+  - `exq` and `timg` `update` now check the **existing** owner. Before, any teacher could overwrite another teacher's live online exam or test images by setting `o` to themselves.
+  - Owners can no longer transfer `o` on `exams`/`tests`/`exm`/`pcls`/`tkeys` updates.
+  - `subs` (no-login student answers): type and size checks on `t`, `sid`, `at`, `dur` (0–86400), `dv`. They were already create-only (no update/delete), and scores are computed by the teacher from `tkeys`, never sent by students. `test.html` clamps `dur`.
+  - `prt`: types for `c`, `k`, `g`.
+  - `sig`: `j` must be a string under 500 KB.
+  - `timg`: Admin `list` (for cleanup).
+- **Monitor passwords:** they were stored in plain text in `mc/{k}.acc`, which class monitors (students) can read, so a monitor could see the vice-monitors' passwords.
+  - They now live in `mcp/{k}` = `{o, p:{h,v1,v2}}`, readable only by the owner teacher and Admin. The `mc` rules reject any `pw`.
+  - `accTx` writes `mc` and `mcp` in one transaction. Passwords are fetched on demand (👁, copy, change, delete, class rename).
+  - Legacy docs migrate automatically when the owner opens the app (`migPw`). If the rules aren't published yet (`permission-denied`), it falls back to the old behaviour.
+- **XSS:** 18 places built `<img src='…'>` from user data (signatures, student photos that monitors can edit, question bank images, lesson images, test images in `test.html`). Values like `x' onerror=…` could run script for teachers or Admin; they now go through `safeSrc()`. Names, answers and error logs were already escaped (`esc`/`tx`).
+- **Secrets:** none hard-coded. The Firebase `apiKey` is a public identifier; security relies on the rules.
+- **CSP** `<meta>` on `index.html`, `practice.html`, `test.html` and `exam.html`:
+  - Scripts are allowed only from self, cdnjs, gstatic (Firebase) and Google Sign-in. `'unsafe-inline'` is needed for inline `onclick`; `'unsafe-eval'` only on `index.html`, for html2pdf polyfills.
+  - Network: `*.googleapis.com`, gstatic, cdnjs, Google accounts. Frames: YouTube (nocookie), Drive, Google accounts, firebaseapp.
+  - `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`. Verified with real network in headless Chrome: 0 violations on all 4 pages.
+- **Browser storage (`lsguard.js`):**
+  - Student pages never deleted per-test keys, so shared phones accumulated them toward the 5 MB quota. `LSG.sweep(id)` now drops tests or exams not opened for more than 21 days (index `lsT`), but **never** `pend_*` (unsent answers).
+  - `LSG.set` frees re-downloadable caches on `QuotaExceededError` (hub → exam content → snapshots → old test copies) and retries.
+  - Hub cache TTL is 30 days. The exam content cache is 6 × ≤300 KB. The startup snapshot total is ≤ ~2.6 MB, because sessionStorage also holds the Firebase session.
+- **⚙️ Settings → «🗄️ ទំហំផ្ទុក» (`storeadm.js`):**
+  - Device usage, with «🧹 សម្អាត cache» (keeps login, settings and unsent answers).
+  - Admin only: document counts per collection (`getCountFromServer`, cheap) and «📏 រកឯកសារធំ» (top 12 documents as a % of the 1 MB limit; reads all docs in 14 collections, so it asks first).
+  - «🗑️ លុបតេស្តចាស់» deletes closed **general** tests older than N months (default 12), with their `subs`, `st`, `rcpt`, `timg` and `tkeys`. It shows counts and asks first, and never touches tests linked to monthly scores (`kind` t1/t2).
+  - «🗑️ លុបកំណត់ត្រាអ្នកមើលប្រឡង» deletes `exv` records of exams that ended more than 30 days ago.
+  - Backup (`BKC`) now also includes `mcp`, `hub`, `att` and `exams`.
+- Tests: `tests/storage.js` (sweep, quota recovery, TTL, `safeSrc`). Headless check with a fake Firebase as Admin: the cleanup deleted exactly the 6 documents of the old general test and kept the monthly-linked and recent tests.
+- **Known limits:**
+  - Rules cannot bound the size of each answer inside the `subs.a` map; the 1 MB document limit still applies.
+  - `'unsafe-inline'` remains until inline `onclick` handlers are removed.
+  - Clickjacking (`frame-ancestors`) can't be set from a `<meta>` on GitHub Pages.
 
 ### ✅ «ប្រឡងបើក» list never stuck on «⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…» — `exam.js`
 - **Causes found:**
@@ -161,6 +203,7 @@
 - Optional future work: starter hub content for grades 7, 8, 10, 11, 12 and Cambridge (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
 
 ## Recommended manual checks (live site / real phones — not automatable here)
+  - **Publish `firestore.rules`** (2026-11-14 security update: `mcp`, `exq`/`timg` owner checks, `subs`/`prt`/`sig` validation). Then open «ប្រធានថ្នាក់» once as each teacher so old monitor passwords move to `mcp`, and check 👁 still shows them.
   - **Publish `firestore.rules`** (new `hub/` rule), then save one hub lesson as a teacher and open it on a phone (students see changes on open/Refresh, or within 1 min).
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.

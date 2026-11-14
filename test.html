@@ -2,6 +2,8 @@
 <html lang="km">
 <head>
 <meta charset="UTF-8">
+<!-- 🛡️ CSP៖ ទំព័រសិស្ស — Script បានតែពីគម្រោង · cdnjs · Firebase · គ្មាន iframe -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.gstatic.com; frame-src 'none'; default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.googleapis.com https://www.gstatic.com https://cdnjs.cloudflare.com https://accounts.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>តេស្ត · វិទ្យាល័យបឹងត្របែក</title>
@@ -56,6 +58,7 @@ setTimeout(window.bootFail,12000);
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="lsguard.js?v=2"></script>
 <script src="fig.js?v=7"></script>
 <style>
 .net{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;background:#1e293b;color:#fff;border-radius:999px;padding:8px 16px;font-size:.85rem;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:92vw;text-align:center}
@@ -88,7 +91,8 @@ const msg=(i,t,s)=>{app.innerHTML=`<div class="card msg"><div class=big>${i}</di
 function rng(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}
   return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}}
 function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}},
+try{window.LSG&&LSG.sweep(id)}catch(e){}   /* 🧹 លុបទិន្នន័យតេស្តចាស់ (> ២១ ថ្ងៃ · មិនលុបចម្លើយមិនទាន់ផ្ញើ) */
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{if(window.LSG){LSG.set(localStorage,k,v,id);return}try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}},
   json:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v}catch(e){return d}}};
 /* កំហុសពិតប្រាកដ (មិនមែនបណ្ដាញ) → មិនព្យាយាមម្ដងទៀត */
 const isNet=e=>!(e&&["permission-denied","not-found","invalid-argument","failed-precondition","already-exists","st-deny","already"].includes(e.code));
@@ -240,7 +244,7 @@ function take0(fast){
 }
 /* រូបលំហាត់ (timg/{តេស្ត}_{លំហាត់}) · បរាជ័យ → ព្យាយាម ៣ ដង រួចចុចដើម្បីផ្ទុកម្ដងទៀត */
 function loadImg(el,n){
-  getDoc(doc(db,"timg",id+"_"+el.dataset.im)).then(d=>{el.innerHTML=d.exists()?`<img src="${d.data().d}" alt="">`:""})
+  getDoc(doc(db,"timg",id+"_"+el.dataset.im)).then(d=>{const u=d.exists()?String(d.data().d||""):"";el.innerHTML=/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+\/=\s]+$/.test(u)||/^https:\/\/[^\s'"<>`\\]+$/.test(u)?`<img src="${u}" alt="">`:""})
     .catch(()=>{if(n<2)return setTimeout(()=>loadImg(el,n+1),2000*(n+1));el.innerHTML=`<span class=retry>🖼️ មិនទាន់ផ្ទុករូប · ចុចដើម្បីផ្ទុកម្ដងទៀត</span>`;el.onclick=()=>{el.onclick=null;el.textContent="🖼️ កំពុងផ្ទុករូប…";loadImg(el,0)}});
 }
 /* ===== ការពារការលួចមើល៖ ចាកចេញ (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់ → កត់ត្រា lv lt cp ===== */
@@ -272,7 +276,7 @@ function prog(){const n=T.items.length,d=T.items.filter(q=>ans[q.id]!=null&&ans[
 function send(auto,why){
   if(sent)return;sent=true;acOn=false;clearInterval(tick);const w=document.querySelector(".ac");if(w)w.remove();
   const a={};T.items.forEach(q=>{if(ans[q.id]!=null&&ans[q.id]!=="")a[q.id]=String(ans[q.id]).slice(0,40)});
-  const p={t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.max(0,Math.round((Date.now()-t0)/1000)),lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,ax:why==="lv",
+  const p={t:id,sid:me.k,sn:me.n,a,at:new Date().toISOString(),dur:Math.min(86400,Math.max(0,Math.round((Date.now()-t0)/1000))),lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,ax:why==="lv",
     _m:why==="lv"?"lv":auto?"auto":""};
   if(V2)p.dv=LS.get("dv_"+K)||"";
   LS.set("pend_"+K,JSON.stringify({p}));
@@ -306,7 +310,7 @@ async function submitOnce(p){
     /* តេស្តចាស់ (Rules ចាស់មិនស្គាល់ rcpt/dv) → ផ្ញើតែ subs */
     const q=Object.assign({},p);delete q.dv;
     try{await to(setDoc(ref,q),15000);return}catch(e2){if(!e2||e2.code!=="permission-denied")throw e2;
-      await to(setDoc(ref,{t:q.t,sid:q.sid,sn:q.sn,a:q.a,at:q.at,dur:q.dur}),15000)}
+      await to(setDoc(ref,{t:q.t,sid:q.sid,sn:q.sn,a:q.a,at:q.at,dur:Math.min(86400,Math.max(0,q.dur|0))}),15000)}
   }
 }
 function done(mode){

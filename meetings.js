@@ -132,7 +132,7 @@ function docHtml(m){
   if(R||P||AU)at=at.map(function(a,i){return{t:a.t,n:a.n,r:String(a.r||"").trim()||RD[ty],i:i}}).sort(function(a,b){return rk(a.r,ty)-rk(b.r,ty)||a.i-b.i});
   var half=Math.ceil(at.length/2);
   var atl=function(a,i){return"<div>"+kn(i+1)+". "+esc((a.t?a.t+" ":"")+a.n)+(a.r?" ("+esc(a.r)+")":"")+"</div>"};
-  var sig=function(id){var s=sg(id);return"<div class=mt-sg>"+(s?"<img src='"+s+"' alt=''>":"")+"</div>"};
+  var sig=function(id){var s=sg(id);return"<div class=mt-sg>"+(s?"<img src='"+safeSrc(s)+"' alt=''>":"")+"</div>"};
   return"<div class='pg mt-doc'>"+
    "<div class=mt-top><div class=mt-sch><img src='"+LOGOBT()+"' alt=''><div class=moul>វិទ្យាល័យបឹងត្របែក</div><div class=moul>សាលារៀនជំនាន់ថ្មី</div></div>"+
     "<div class=mt-kh><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul>ជាតិ សាសនា ព្រះមហាក្សត្រ</div><div class=mt-orn>❧❧❧</div></div></div>"+
@@ -174,7 +174,7 @@ function hdr(){return"<div class=mt-top><div class=mt-sch><img src='"+LOGOBT()+"
 function sec(n,t,body){return"<div class=mt-s>"+n+". "+t+"</div>"+(prHtml(body)||"<p class=mt-p>—</p>")}
 function docDL(m){
   var X=window.SCHX,ty=tyOf(m),o=m.rc||owner("",m),me=data.filter(function(q){return q.id===o})[0],tt=me&&me.g==="ស្រី"?"អ្នកគ្រូ":"លោកគ្រូ";
-  var sig=function(id){var s=X&&id?X.getSig(id):"";return"<div class=mt-sg>"+(s?"<img src='"+s+"' alt=''>":"")+"</div>"};
+  var sig=function(id){var s=X&&id?X.getSig(id):"";return"<div class=mt-sg>"+(s?"<img src='"+safeSrc(s)+"' alt=''>":"")+"</div>"};
   var dt="<div class=mt-dt><div>"+esc(lunar(m.d))+"</div><div>"+esc(greg(m.d))+"</div></div>";
   var col=function(a,b,id,n){return"<div><div>"+(a||"&nbsp;")+"</div><div class=moul>"+b+"</div>"+sig(id)+"<div class=moul>"+esc(n||"")+"</div></div>"};
   var mgr="<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div></div>";
