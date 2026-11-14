@@ -44,7 +44,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v21`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v22`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -85,6 +85,22 @@
 - `exam.js`: `mkItem` avoids duplicates against the session history plus the items already in the section.
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
+
+### ✅ «ប្រឡងបើក» list never stuck on «⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…» — `exam.js`
+- **Causes found:**
+  - `loadList()` ran `migrate()` first. On a new device (no `exMig2_` flag), that downloaded every exam **with full content** (Admin: the whole `exams` collection, 60 s timeout) before the list query (another 25 s timeout).
+  - There was no local cache: every visit and every «‹ វិញ្ញាសាទាំងអស់» (`X.list=null`) refetched the list, and opening an exam always waited for the server.
+  - The list was rebuilt on every cloud sync.
+- **Fixes (Stale-While-Revalidate):**
+  - The list summary is cached (`exList_{id}[_a]`) and the 8 most recently opened or saved exams are cached (`exC_{id}` = `{u,E}`, ≤400 KB, index `exCi`). Storage is localStorage when «ចងចាំខ្ញុំ» is on (`FBPERSIST`), otherwise sessionStorage.
+  - `render()` shows the cached list at once, and `refreshList()` refreshes it in the background (once per entry or after 60 s). With no cache, an empty list with «＋ វិញ្ញាសាថ្មី» appears after 3.5 s even if the cloud never answers. `loadList()` waits for `FBREADY` if Firebase isn't ready.
+  - `migrate()` now runs in the background **after** the list; if it converted anything, the list reloads.
+  - «បើក» opens instantly from `exC_` and checks the cloud in the background. A newer cloud version replaces it only if the teacher hasn't started editing (`X.dirty`). `save()` refreshes the cache, and «back» updates the list locally (`upList`) without refetching.
+  - `renderList()` is idempotent (`data-exl` marker + HTML compare).
+- Measured in headless Chrome with the real `index.html` and a fake Firebase (40 KB/s, 10 exams ≈ 1.5 MB of content, new device):
+  - Old code: the list never appeared within 90 s.
+  - New code: list in 0.38 s; reopen after Refresh: list and editor instant. With `exams` never answering, an empty list with the new-exam button appears at 3.8 s.
+  - Editor: name/class/level selects work, preview updates, 0 rebuilds across 5 `refreshView()` calls, and the open select keeps its node and value.
 
 ### ✅ Fast startup sync (Stale-While-Revalidate + 2 phases) — `script.js`
 - **Causes found:**

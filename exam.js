@@ -100,7 +100,7 @@ function save(now){
   X.dirty=true;X.status="…";clearTimeout(X.saveT);
   X.saveT=setTimeout(function(){
     var E=X.E;if(!E)return;var F=window.FB,o=Object.assign({},E);delete o.id;
-    E.u=new Date().toISOString();
+    E.u=new Date().toISOString();cPut(E,E.u);
     /* 📦 រក្សាទុកជាពីរឯកសារ៖ exams/{id} = សង្ខេប (បញ្ជីទាញតែនេះ · លឿន) · exams/{id}__c = ខ្លឹមសារពេញ (ទាញពេលបើក) */
     F.setDoc(F.doc(window.db,"exams",E.id+"__c"),{o:E.o,k:"c",u:E.u,j:JSON.stringify(o)}).then(function(){return F.setDoc(F.doc(window.db,"exams",E.id),sumOf(E))}).then(function(){X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
     try{localStorage.setItem("exCk",E.ck||"")}catch(e){}
@@ -111,36 +111,66 @@ function sumOf(E){return{o:E.o,cls:E.cls,t:EXP.head(E),u:E.u,k:"s",ns:(E.secs||[
 /* ផ្ទេរវិញ្ញាសាទម្រង់ចាស់ (ខ្លឹមសារក្នុងឯកសារតែមួយ) → ពីរឯកសារ · ម្ដងគត់ក្នុងឧបករណ៍មួយ */
 function migrate(){var F=window.FB,key="exMig2_"+who.id;try{if(localStorage.getItem(key))return Promise.resolve()}catch(e){}
   var q=isAdm()?F.collection(window.db,"exams"):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id));
-  return tmo(F.getDocs(q),60000).then(function(sn){var todo=[];sn.forEach(function(d){var v=d.data();if(!v.k&&v.j)todo.push([d.id,v])});
+  var todo=[];return tmo(F.getDocs(q),60000).then(function(sn){sn.forEach(function(d){var v=d.data();if(!v.k&&v.j)todo.push([d.id,v])});
     return todo.reduce(function(pr,x){return pr.then(function(){var E;try{E=JSON.parse(x[1].j)}catch(e){return}E.o=E.o||x[1].o;E.u=x[1].u||E.u;
       return F.setDoc(F.doc(window.db,"exams",x[0]+"__c"),{o:x[1].o,k:"c",u:x[1].u||"",j:x[1].j}).then(function(){var s=sumOf(E);s.o=x[1].o;s.cls=x[1].cls||s.cls;s.t=x[1].t||s.t;s.u=x[1].u||s.u;return F.setDoc(F.doc(window.db,"exams",x[0]),s)})})},Promise.resolve())
-  }).then(function(){try{localStorage.setItem(key,"1")}catch(e){}},function(e){console.warn("exam migrate:",e)})}
+  }).then(function(){try{localStorage.setItem(key,"1")}catch(e){}return todo.length},function(e){console.warn("exam migrate:",e);return 0})}
+/* ⚡ Stale-While-Revalidate៖ បញ្ជី (សង្ខេប) + ខ្លឹមសារវិញ្ញាសាដែលបើកថ្មីៗ ទុកក្នុងឧបករណ៍ → បង្ហាញភ្លាម រួចធ្វើបច្ចុប្បន្នភាពពី Cloud នៅពីក្រោយ
+   ចងចាំខ្ញុំ = localStorage · មិនចងចាំ (ឧបករណ៍រួម) = sessionStorage (លុបពេលបិទ Tab) */
+function ST(){try{return window.FBPERSIST?localStorage:sessionStorage}catch(e){return null}}
+function sGet(k){try{var s=ST();return s?JSON.parse(s.getItem(k)||"null"):null}catch(e){return null}}
+function sPut(k,v){try{var s=ST();if(s)s.setItem(k,JSON.stringify(v))}catch(e){}}
+function lKey(){return"exList_"+(who&&who.id||"")+(isAdm()?"_a":"")}
+function lPut(){if(X.list)sPut(lKey(),X.list)}
+function cPut(E,u){try{if(!E||!E.id)return;var j=JSON.stringify({u:u||"",E:E});if(j.length>400000)return;var s=ST();if(!s)return;
+  var ix=(sGet("exCi")||[]).filter(function(x){return x!==E.id});ix.unshift(E.id);ix.slice(8).forEach(function(id){s.removeItem("exC_"+id)});
+  s.setItem("exC_"+E.id,j);s.setItem("exCi",JSON.stringify(ix.slice(0,8)))}catch(e){}}
+function cGet(id){var c=sGet("exC_"+id);return c&&c.E?c:null}
+function upList(E){if(!X.list)X.list=[];var s=sumOf(E),y={id:E.id,o:s.o,cls:s.cls,t:s.t,u:s.u||E.u,ns:s.ns,pts:s.pts,dur:s.dur,on:s.on},i=X.list.map(function(z){return z.id}).indexOf(E.id);
+  if(i>=0)X.list[i]=y;else X.list.unshift(y);X.list.sort(function(a,b){return(b.u||"").localeCompare(a.u||"")});lPut()}
+/* ទាញបញ្ជីពី Cloud (មិនរាំងការបង្ហាញ) · ផ្ទេរទម្រង់ចាស់ (migrate) នៅពីក្រោយ ក្រោយបញ្ជីមកដល់ */
 function loadList(){
   var F=window.FB;
-  return migrate().then(function(){var q=isAdm()?F.query(F.collection(window.db,"exams"),F.where("k","==","s")):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id),F.where("k","==","s"));return tmo(F.getDocs(q),25000)})
-  .then(function(sn){var a=[];sn.forEach(function(d){var v=d.data();a.push({id:d.id,o:v.o,cls:v.cls,t:v.t,u:v.u,ns:v.ns,pts:v.pts,dur:v.dur,on:v.on})});a.sort(function(x,y){return(y.u||"").localeCompare(x.u||"")});X.list=a;X.err=""},
-    function(e){X.list=[];X.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exams)":e&&e.code==="timeout"?"ផ្ទុកបញ្ជីវិញ្ញាសាយូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកបញ្ជីវិញ្ញាសាបានទេ"});
+  if(!F||!window.db)return window.FBREADY?window.FBREADY.then(function(){if(!window.FB)throw{code:"nofb"};return loadList()}):Promise.reject({code:"nofb"});
+  var q;try{q=isAdm()?F.query(F.collection(window.db,"exams"),F.where("k","==","s")):F.query(F.collection(window.db,"exams"),F.where("o","==",who.id),F.where("k","==","s"))}catch(e){return Promise.reject(e)}
+  return tmo(F.getDocs(q),30000).then(function(sn){var a=[];sn.forEach(function(d){var v=d.data();a.push({id:d.id,o:v.o,cls:v.cls,t:v.t,u:v.u,ns:v.ns,pts:v.pts,dur:v.dur,on:v.on})});
+      a.sort(function(x,y){return(y.u||"").localeCompare(x.u||"")});X.list=a;X.err="";X.fresh=true;X.ft=Date.now();lPut();
+      migrate().then(function(n){if(n&&!X.E){X.lp=null;refreshList()}});
+    },
+    function(e){console.warn("exam list:",e);if(!X.list)X.list=[];X.err=e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exams)":e&&e.code==="timeout"?"ទាញបញ្ជីពី Cloud យូរពេក (អ៊ីនធឺណិតយឺត) · បង្ហាញបញ្ជីក្នុងឧបករណ៍":"មិនអាចទាញបញ្ជីពី Cloud បានទេ · បង្ហាញបញ្ជីក្នុងឧបករណ៍"});
+}
+/* ចាប់ផ្ដើមទាញនៅពីក្រោយ (ម្ដងក្នុងពេលតែមួយ) → មកដល់ → គូរបញ្ជីឡើងវិញ (បើនៅលើផ្ទាំងបញ្ជី) */
+function refreshList(){
+  if(X.lp)return;
+  X.lp=loadList().catch(function(e){console.warn(e);if(!X.list)X.list=[]}).then(function(){X.lp=null;clearTimeout(X.lt);if(QVx()==="exam"&&!X.E)render()});
 }
 /* ===================== ផ្ទាំង ===================== */
 function render(){
   var el=body();if(!el)return;
-  if(!X.E&&!X.list&&!X.lp&&window.FB&&window.db)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});   /* ទាញបញ្ជីព្រមគ្នានឹងម៉ាស៊ីន */
+  if(!X.E&&!X.list){var c=sGet(lKey());if(Array.isArray(c))X.list=c}   /* ⚡ បញ្ជីក្នុងឧបករណ៍ → បង្ហាញភ្លាម */
+  if(!X.E&&(!X.fresh||Date.now()-(X.ft||0)>60000))refreshList();   /* ធ្វើបច្ចុប្បន្នភាពពី Cloud នៅពីក្រោយ (ម្ដងក្នុងការចូលផ្ទាំងនីមួយៗ) */
   if(!engReady()&&!genP)gen().catch(function(){});   /* ផ្ទុកនៅពីក្រោយ · បញ្ជីបង្ហាញភ្លាមដោយមិនរង់ចាំ */
   if(X.E&&!engReady()){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(render,function(e){genP=null;el.innerHTML="<p class=cxwarn>⚠️ "+(e&&e.code==="timeout"?"ផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់យូរពេក (អ៊ីនធឺណិតយឺត)":"មិនអាចផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់បានទេ")+" · សូមពិនិត្យអ៊ីនធឺណិត"+retryBtn()+"</p>"});return}
   /* គូរឡើងវិញពីខាងក្រៅ (refreshView ពេល Cloud sync · renderQuiz) ខណៈកំពុងកែវិញ្ញាសាដដែល → កុំគូរឡើងវិញ
      (បើគូរ ៖ select ដែលកំពុងបើកនឹងបិទ មិនអាចជ្រើសបាន · ផ្ទាំងមើលជាមុនលោតចេញលោតចូល) · សកម្មភាពអ្នកប្រើហៅ editor() ផ្ទាល់ */
   if(X.E){if(el.dataset.exid===X.E.id&&el.querySelector("#exPrev"))return;return editor()}
-  if(!X.list){el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…</p>";if(!X.lp)X.lp=loadList().then(function(){X.lp=null;if(QVx()==="exam")render()});return}
+  if(!X.list){   /* លើកដំបូងលើឧបករណ៍នេះ (គ្មាន cache) · ក្រោយ ៣.៥ វិនាទី បង្ហាញទម្រង់ទទេ (ប៊ូតុង «＋ វិញ្ញាសាថ្មី» ប្រើបាន) កុំឱ្យជាប់ ⏳ */
+    if(el.dataset.exid!=="wait"){el.dataset.exid="wait";el.innerHTML="<p class=note>⏳ កំពុងផ្ទុកបញ្ជីវិញ្ញាសា…</p>"}
+    clearTimeout(X.lt);X.lt=setTimeout(function(){if(!X.list){X.list=[];if(QVx()==="exam"&&!X.E)render()}},3500);return}
   try{renderList(el)}catch(e){console.error("exam list:",e);el.innerHTML="<p class=cxwarn>⚠️ បង្ហាញបញ្ជីវិញ្ញាសាមិនបាន"+retryBtn()+"</p>"}
 }
 function renderList(el){
-  el.dataset.exid="";
-  el.innerHTML="<div class=bar><b>📝 ប្រឡងទម្រង់បើក</b><span class=note style='margin:0'>បង្កើតវិញ្ញាសាស្វ័យប្រវត្តិ · បោះពុម្ព ឬបើកឱ្យសិស្សមើលលើទូរស័ព្ទ (សរសេរចម្លើយលើក្រដាស)</span><button type=button class=primary data-ex=new>＋ វិញ្ញាសាថ្មី</button></div>"+
+  var h=listHtml();if(el.dataset.exid==="list"&&el._exh===h&&el.querySelector("[data-exl]"))return;   /* idempotent៖ refreshView ពេល Cloud sync មិនគូរឡើងវិញ */
+  el.dataset.exid="list";el._exh=h;el.innerHTML=h;
+}
+function listHtml(){
+  return"<div class=bar data-exl><b>📝 ប្រឡងទម្រង់បើក</b><span class=note style='margin:0'>បង្កើតវិញ្ញាសាស្វ័យប្រវត្តិ · បោះពុម្ព ឬបើកឱ្យសិស្សមើលលើទូរស័ព្ទ (សរសេរចម្លើយលើក្រដាស)</span><button type=button class=primary data-ex=new>＋ វិញ្ញាសាថ្មី</button></div>"+
     (X.err?"<p class=cxwarn>⚠️ "+esc(X.err)+retryBtn()+"</p>":"")+
     (X.list.length?"<div class=qr-list>"+X.list.map(function(x){var on=x.on&&x.on.open&&x.on.endMs>Date.now();
       return"<div class=qr-card><div><b>"+esc(x.t||"វិញ្ញាសា")+"</b><small>"+esc(x.cls||"")+" · "+(x.ns!=null?kn(x.ns)+" ផ្នែក · "+kn(x.pts||0)+" ពិន្ទុ · "+kn(x.dur||0)+" នាទី":"")+" · "+esc((x.u||"").slice(0,10))+(isAdm()&&x.o!==who.id?" · "+esc((teacherOf(x.o)||{}).name||x.o):"")+"</small></div>"+
         "<span class='qr-st"+(on?" on":"")+"'>"+(on?"🟢 កំពុងប្រឡងអនឡាញ":"📄 ក្រដាស")+"</span><button type=button class=primary data-ex='open|"+x.id+"'>បើក</button><button type=button data-ex='dup|"+x.id+"' title='ចម្លងជាវិញ្ញាសាថ្មី'>📑</button><button type=button class=danger data-ex='del|"+x.id+"'>🗑️</button></div>"}).join("")+"</div>"
-      :"<p class=note>មិនទាន់មានវិញ្ញាសាទេ។ ចុច «＋ វិញ្ញាសាថ្មី» ដើម្បីចាប់ផ្ដើម។</p>");
+      :X.lp?"<p class=note>⏳ កំពុងទាញបញ្ជីពី Cloud… (អាចចុច «＋ វិញ្ញាសាថ្មី» បានភ្លាម)</p>":"<p class=note>មិនទាន់មានវិញ្ញាសាទេ។ ចុច «＋ វិញ្ញាសាថ្មី» ដើម្បីចាប់ផ្ដើម។</p>")+
+    (X.lp&&X.list.length?"<p class=note style='margin-top:6px'>🔄 កំពុងធ្វើបច្ចុប្បន្នភាពពី Cloud…</p>":"");
 }
 function lsOpts(g,sel){return lsList(g).map(function(c){return"<optgroup label='"+esc(c[0])+"'>"+c[1].map(function(x){return"<option value="+x[0]+(+x[0]===+sel?" selected":"")+">"+esc(x[1])+"</option>"}).join("")+"</optgroup>"}).join("")}
 function editor(){
@@ -280,18 +310,27 @@ function showLink(){
 /* ---------- ព្រឹត្តិការណ៍ ---------- */
 function act(a,q){
   var E=X.E,g=E?gOf(E):0,F=window.FB;
-  if(a==="reload"){genP=null;X.list=null;X.lp=null;X.err="";render();return}
+  if(a==="reload"){genP=null;X.err="";X.fresh=false;render();return}
   if(a==="new"){if(!engReady()){body().innerHTML="<p class=note>⏳ កំពុងផ្ទុកម៉ាស៊ីនបង្កើតលំហាត់…</p>";tmo(gen(),45000).then(function(){act("new",q)},function(){render()});return}X.E=newExam();X.status="";save(true);render();return}
-  if(a==="open"||a==="dup"){var x=(X.list||[]).filter(function(y){return y.id===q[1]})[0];if(!x)return;body().innerHTML="<p class=note>⏳ កំពុងបើកវិញ្ញាសា…</p>";
-    tmo(F.getDoc(F.doc(window.db,"exams",x.id+"__c")),25000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j)throw{code:"nf"};var e2=JSON.parse(v.j);e2.id=x.id;
-    if(a==="dup"){e2.id=uid();e2.o=who.id;e2.on=null;e2.cr=new Date().toISOString();e2.title=e2.title;X.E=e2;save(true)}else{X.E=e2;X.status=""}
-    render();if(X.E.on&&X.E.on.open)watch()}).catch(function(e){console.error("exam open:",e);alert(e&&e.code==="timeout"?"បើកវិញ្ញាសាយូរពេក (អ៊ីនធឺណិតយឺត) · សូមព្យាយាមម្ដងទៀត":"មិនអាចបើកវិញ្ញាសានេះបានទេ");render()});return}
+  if(a==="open"||a==="dup"){var x=(X.list||[]).filter(function(y){return y.id===q[1]})[0];if(!x)return;
+    var use=function(e2,u){var E2=JSON.parse(JSON.stringify(e2));E2.id=x.id;
+      if(a==="dup"){E2.id=uid();E2.o=who.id;E2.on=null;E2.cr=new Date().toISOString();X.E=E2;save(true)}else{X.E=E2;X.status="";cPut(E2,u)}
+      render();if(X.E.on&&X.E.on.open)watch()};
+    var c=cGet(x.id);
+    if(c){use(c.E,c.u);   /* ⚡ បើកភ្លាមពីឧបករណ៍ · ពិនិត្យកំណែថ្មីពី Cloud នៅពីក្រោយ */
+      if(a==="open")tmo(F.getDoc(F.doc(window.db,"exams",x.id+"__c")),30000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j||v.u===c.u)return;
+        if(!X.E||X.E.id!==x.id||X.dirty){return}   /* កំពុងកែ → កុំជាន់ (ការរក្សាទុកនឹងសរសេរកំណែនេះ) */
+        var e2=JSON.parse(v.j);e2.id=x.id;X.E=e2;cPut(e2,v.u);var el=body();if(el)el.dataset.exid="";render();notify("បានធ្វើបច្ចុប្បន្នភាពវិញ្ញាសាពី Cloud")}).catch(function(e){console.warn("exam refresh:",e)});
+      return}
+    body().dataset.exid="";body().innerHTML="<p class=note>⏳ កំពុងបើកវិញ្ញាសា…</p>";
+    tmo(F.getDoc(F.doc(window.db,"exams",x.id+"__c")),25000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j)throw{code:"nf"};use(JSON.parse(v.j),v.u)})
+      .catch(function(e){console.error("exam open:",e);alert(e&&e.code==="timeout"?"បើកវិញ្ញាសាយូរពេក (អ៊ីនធឺណិតយឺត) · សូមព្យាយាមម្ដងទៀត":"មិនអាចបើកវិញ្ញាសានេះបានទេ");render()});return}
   if(a==="del"){var y=(X.list||[]).filter(function(z){return z.id===q[1]})[0];if(!y||!confirm("លុបវិញ្ញាសា «"+(y.t||"")+"»?"))return;
     var e3={on:y.on};
     Promise.all([F.deleteDoc(F.doc(window.db,"exams",y.id)),F.deleteDoc(F.doc(window.db,"exams",y.id+"__c")).catch(function(){}),F.deleteDoc(F.doc(window.db,"exm",y.id)).catch(function(){}),e3.on&&e3.on.code?F.deleteDoc(F.doc(window.db,"exq",y.id+"_"+e3.on.code)).catch(function(){}):0])
-      .then(function(){X.list=X.list.filter(function(z){return z.id!==y.id});render();notify("បានលុបវិញ្ញាសា")},function(){alert("មិនអាចលុបបានទេ")});return}
+      .then(function(){X.list=X.list.filter(function(z){return z.id!==y.id});lPut();try{var st=ST();if(st)st.removeItem("exC_"+y.id)}catch(e){}render();notify("បានលុបវិញ្ញាសា")},function(){alert("មិនអាចលុបបានទេ")});return}
   if(!E)return;
-  if(a==="back"){if(X.dirty)save(true);unwatch();X.E=null;X.list=null;render();return}
+  if(a==="back"){if(X.dirty)save(true);unwatch();upList(E);X.E=null;X.fresh=false;render();return}   /* បញ្ជីបង្ហាញភ្លាម (រួមទាំងការកែចុងក្រោយ) · ធ្វើបច្ចុប្បន្នភាពនៅពីក្រោយ */
   if(a==="pr"){printIt(q[1]);return}
   if(a==="online"){if(E.on&&E.on.open)showLink();else goOnline();return}
   if(a==="stop"){stopOnline();return}
