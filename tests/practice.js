@@ -21,4 +21,9 @@ Object.keys(window.CAMPAPERS||{}).forEach(function(g){Object.keys(CAMPAPERS[g]).
 [7,8,9,10,11,12].forEach(function(g){Object.keys(GR[g].G).forEach(function(l){[1,2,3].forEach(function(v){var k={};for(var i=0;i<300;i++){var q=GR[g].G[l][v]();k[q.kd||"?"]=1}if(Object.keys(k).length<4)B("FORMS g"+g+" l"+l+" v"+v+" only "+Object.keys(k).length)})})});
 /* ថ្នាក់ទី៩៖ ៥ កម្រិត + PISA (គន្លឹះ 1,5,2,6,3,4) — មេរៀន×កម្រិតនីមួយៗ ≥ ៦ ទម្រង់ (kd) */
 Object.keys(GR[9].G).forEach(function(l){[1,5,2,6,3,4].forEach(function(v){var k={};for(var i=0;i<600;i++){var q=GR[9].G[l][v]();k[q.kd||"?"]=1}if(Object.keys(k).length<6||k["?"])B("FORMS9 l"+l+" v"+v+" only "+Object.keys(k).length)})});
+/* ឫសគូប/ឫសទី៤៖ ∛ ∜ cbrt root(n,x) · គុណបង្កប់ (11∛5) · ឫសគូបនៃចំនួនអវិជ្ជមាន */
+[["11∛(5)","11*5^(1/3)"],["11 ∛(5)","11*5^(1/3)"],["11∛5","11*5^(1/3)"],["11*∛5","11*5^(1/3)"],["១១∛៥","11*5^(1/3)"],["11cbrt(5)","11*5^(1/3)"],["11 root(3, 5)","11*5^(1/3)"],
+ ["2∜3","2*3^(1/4)"],["root(4;16)","2"],["∛(-8)","-2"],["∛8+√4","4"],["∛2∛4","2"],["root(5,32)x","2x"]].forEach(function(c){var r=X.check(c[0],c[1],/x/.test(c[1])?"expr":"num");if(!r.ok)B("ROOT "+c[0]+" ≠ "+c[1]+" "+(r.err||""))});
+["11∛5","2∜3","root(5,x)"].forEach(function(u){try{var t=window.PRACT.tex(X.parse(u));if(!/\\sqrt\[[345]\]/.test(t))B("ROOTTEX "+u+" "+t)}catch(e){B("ROOTTEX "+u+" "+e)}});
+if(X.check("11∛5","11*5^(1/2)","num").ok)B("ROOT false positive");
 print("practice: grades "+Object.keys(GR).length+" made "+tot+" bad "+bad);

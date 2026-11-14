@@ -20,7 +20,7 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 /* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
-function ENG(){return["practice.js?v=17","exgen.js?v=20"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
+function ENG(){return["practice.js?v=18","exgen.js?v=20"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
 function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
   if(engReady())return Promise.resolve();

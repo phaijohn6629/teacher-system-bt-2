@@ -56,7 +56,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v35`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v36`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -228,6 +228,11 @@
   - Drafts autosave to localStorage `hubDraft_{g}_{l}`. Save runs a transaction with a version check (`r` +1, `tx.update` when the doc exists); on a conflict it asks before overwriting. «↺ ត្រឡប់ទៅលំនាំដើម» deletes the teacher version.
 - Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
 - Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
+
+### ✅ Answer parser: cube and 4th roots — `practice.js`
+- `norm()` maps `∛`→`cbrt`, `∜`→`qrt`, and `root(n,x)` / `root(n;x)`→`rtN@(x)` (before `,`→`.`). `FN` has `cbrt`/`qrt`; `atom()` reads `rtN@`. Implicit multiplication works like `√` (`11∛5`, `11 ∛(5)`, `11*∛5`, `១១∛៥`).
+- Real odd roots of negatives: `∛(-8) = -2`. `tex()` → `\sqrt[n]{…}`. The keyboard has a «∛» key (inserts `∛(`).
+- `tests/practice.js` checks 13 root forms, TeX output, and that `11∛5` ≠ `11√5`.
 
 ### ✅ Shared edit of bank questions + audit trail — `quiz.js`, `firestore.rules` (**must be published**)
 - Every teacher/Admin sees ✏️ on every bank question (bank list and the test draft «៣. វិញ្ញាសា», where the edited item is refreshed in `mk.items`). The lesson-point select is also open to all. 🗑️ delete and multi-select stay owner/Admin only.

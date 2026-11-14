@@ -13,10 +13,11 @@ function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){retur
 function kn(n){return String(n).replace(/\d/g,function(d){return"០១២៣៤៥៦៧៨៩"[d]})}
 
 /* =================== កន្សោមគណិត៖ AST · គណនាជាចំនួនកុំផ្លិច · LaTeX =================== */
-var FN={sqrt:1,ln:1,log:1,exp:1,sin:1,cos:1,tan:1,abs:1,arg:1};
+var FN={sqrt:1,cbrt:1,qrt:1,ln:1,log:1,exp:1,sin:1,cos:1,tan:1,abs:1,arg:1};   /* cbrt = ∛ · qrt = ∜ · root(n,x) → rtN@ */
 function norm(s){
   return String(s||"").replace(/[០-៩]/g,function(c){return"០១២៣៤៥៦៧៨៩".indexOf(c)})
-    .replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/[−–]/g,"-").replace(/√/g,"sqrt").replace(/π/g,"pi")
+    .replace(/[×·]/g,"*").replace(/÷/g,"/").replace(/[−–]/g,"-").replace(/√/g,"sqrt").replace(/∛/g,"cbrt").replace(/∜/g,"qrt").replace(/π/g,"pi")
+    .replace(/root\s*\(\s*([0-9០-៩]+)\s*[,;]/gi,function(m,n){return"rt"+n+"@("})
     .replace(/²/g,"^2").replace(/³/g,"^3").replace(/∞/g,"inf").replace(/,/g,".").replace(/\s+/g,"").toLowerCase();
 }
 function parse(src){
@@ -25,6 +26,7 @@ function parse(src){
     var c=s[i];if(c==null)throw"មិនពេញលេញ";
     if(c==="("){i++;var e=expr();if(s[i]!==")")throw"ខ្វះ )";i++;return{t:"p",a:e}}
     var m=/^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));if(m){i+=m[0].length;return{t:"n",v:+m[0],s:m[0]}}
+    m=/^rt(\d+)@/.exec(s.slice(i));if(m){i+=m[0].length;var ra=pow();return{t:"f",f:"rt",n:+m[1],a:ra}}   /* root(n,x) */
     m=/^[a-z]+/.exec(s.slice(i));if(!m)throw"មិនស្គាល់ «"+c+"»";
     var w=m[0];
     for(var L=w.length;L>1;L--){var f=w.slice(0,L);if(FN[f]){i+=L;var a=pow();return{t:"f",f:f,a:a}}}
@@ -75,6 +77,8 @@ function ev(t,x){
     case"f":var v=ev(t.a,x);
       switch(t.f){
         case"sqrt":return v[1]||v[0]<0?cpow(v,[.5,0]):[Math.sqrt(v[0]),0];
+        case"cbrt":case"qrt":case"rt":var rn=t.f==="cbrt"?3:t.f==="qrt"?4:t.n;if(!rn)return[NaN,NaN];   /* ឫសពិត៖ ∛(-8) = -2 */
+          if(!v[1]&&(v[0]>=0||rn%2))return[(v[0]<0?-1:1)*Math.pow(Math.abs(v[0]),1/rn),0];return cpow(v,[1/rn,0]);
         case"ln":return v[1]||v[0]<=0?(v[0]<=0&&!v[1]?[NaN,NaN]:clog(v)):[Math.log(v[0]),0];
         case"log":return real(v,function(u){return Math.log(u)/Math.LN10});
         case"exp":return cexp(v);case"abs":return[cabs(v),0];case"arg":return[Math.atan2(v[1],v[0]),0];
@@ -95,7 +99,7 @@ function tex(t){
     case"/":return"\\frac{"+tex(t.l.t==="p"?t.l.a:t.l)+"}{"+tex(t.r.t==="p"?t.r.a:t.r)+"}";
     case"^":return(t.l.t==="n"||t.l.t==="x"||t.l.t==="c"||t.l.t==="i"||t.l.t==="p"?tex(t.l):"{"+tex(t.l)+"}")+"^{"+tex(t.r.t==="p"?t.r.a:t.r)+"}";
     case"f":var a=t.a.t==="p"?t.a.a:t.a;
-      if(t.f==="sqrt")return"\\sqrt{"+tex(a)+"}";if(t.f==="abs")return"\\left|"+tex(a)+"\\right|";if(t.f==="exp")return"e^{"+tex(a)+"}";
+      if(t.f==="sqrt")return"\\sqrt{"+tex(a)+"}";if(t.f==="cbrt"||t.f==="qrt"||t.f==="rt")return"\\sqrt["+(t.f==="cbrt"?3:t.f==="qrt"?4:t.n)+"]{"+tex(a)+"}";if(t.f==="abs")return"\\left|"+tex(a)+"\\right|";if(t.f==="exp")return"e^{"+tex(a)+"}";
       return"\\"+(t.f==="arg"?"arg":t.f)+(t.a.t==="p"?tex(t.a):"\\,"+tex(a));
   }
   return"?";
@@ -874,7 +878,7 @@ function qr(){
   if(window.QRCode)go();else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=go;document.head.appendChild(s)}
 }
 /* ---------- ក្ដារចុចនិមិត្តសញ្ញាគណិត ---------- */
-var KEYS=[["√","√("],["π","π"],["i","i"],["x","x"],["^","^"],["²","^2"],["⁄","/"],["(","("],[")",")"],["e","e"],["ln","ln("],["∞","∞"],["sin","sin("],["cos","cos("],["−","-"],["⌫","BS"]];
+var KEYS=[["√","√("],["∛","∛("],["π","π"],["i","i"],["x","x"],["^","^"],["²","^2"],["⁄","/"],["(","("],[")",")"],["e","e"],["ln","ln("],["∞","∞"],["sin","sin("],["cos","cos("],["−","-"],["⌫","BS"]];
 var lastInp=null;
 function kb(){
   var k=document.createElement("div");k.id="kb";k.className="kb";k.hidden=true;
