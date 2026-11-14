@@ -377,7 +377,7 @@ function cxPrintHTML(){
   var plc=(ft.pl&&ft.pl!=="ភ្នំពេញ")?ft.pl:"រាជធានីភ្នំពេញ",wg="ថ្ងៃទី "+kh(wa[2])+" ខែ "+M[wa[1]-1]+" ឆ្នាំ"+kh(wa[0]);
   var wl=ft.klu==="1"?((ft.d&&ft.kt)?ft.kt:KhCal.fmt(wa[0],wa[1],wa[2])):"",sig=(ft.sgo==="0")?"":getSig(cxT);
   var rows=(rec.rows||[]).filter(function(r){return cxOk(r)}),cl=[];rows.forEach(function(r){if(r.cls&&cl.indexOf(r.cls)<0)cl.push(r.cls)});cl.sort();
-  return"<div class='pg cxp'>"+
+  return"<div class='pg cxp'>"+"<div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
    "<div class=cxh><img src='"+LOGOBT()+"' class=cxlogo style='border-radius:50%' alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
     "<div class=moul style='font-size:13pt'>សម្រង់អត្ថបទប្រចាំខែ</div><div class=cxper>"+esc(per)+"</div></div></div>"+
    "<div class=cxi><div><span>បុគ្គលិកឈ្មោះ៖</span> <b>"+esc(t.name||"")+"</b></div><div><span>មុខវិជ្ជា៖</span> <b>"+esc(rec.sb||t.sub||"គណិតវិទ្យា")+"</b></div><div><span>ថ្នាក់៖</span> <b>"+esc(cl.join(", "))+"</b></div></div>"+
@@ -386,7 +386,7 @@ function cxPrintHTML(){
      var n=0;if(i&&rows[i-1].d===r.d)n=-1;else while(i+n<rows.length&&rows[i+n].d===r.d)n++;   /* ថ្ងៃដូចគ្នា → បញ្ចូលក្រឡាកាលបរិច្ឆេទ */
      return(n<0?"":"<tbody>")+"<tr>"+(n<0?"":"<td class=cd"+(n>1?" rowspan="+n:"")+">"+esc(cxDateTxt(r.d))+"</td>")+"<td class='cp ccl'><b>"+esc(r.cls||"")+"</b></td><td class=cp>"+cxPLabel(r.p)+(cxPTime(r.p)?"<br><small>"+cxPTime(r.p)+"</small>":"")+"</td><td class=cc>"+esc(r.c||"").replace(/\n/g,"<br>")+"</td><td class=ca>"+esc(r.a||"").replace(/\n/g,"<br>")+"</td></tr>"+(i+1<rows.length&&rows[i+1].d===r.d?"":"</tbody>")}).join(""):"<tbody><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr></tbody>")+
    "</table>"+
-   "<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
+   "<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងឯកភាព<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
    "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+esc(wg)+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
    "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
 }

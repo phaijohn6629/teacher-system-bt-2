@@ -979,3 +979,25 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 /* 🗄️ ទំហំផ្ទុក (storeadm.js) */
 .sto-grid{display:flex;flex-wrap:wrap;gap:4px 10px;margin:8px 0;font-size:13px}.sto-grid span{background:var(--soft);border-radius:8px;padding:2px 8px}.sto-er{color:var(--danger,#dc2626)}
 .sto-big{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}.sto-big th,.sto-big td{border-bottom:1px solid var(--line);padding:3px 6px;text-align:left}
+
+/* ===== ឯកសាររដ្ឋបាលផ្លូវការ (ស្តង់ដារ)៖ ហ្វុង · តារាង · ជើងហត្ថលេខា ៣ ជួរ · បោះពុម្ព A4 =====
+   តួ = Khmer OS Battambang (specificity 0 → ទម្រង់ Timesheet .tsx ដែលមានហ្វុងផ្ទាល់ នៅដដែល) · ចំណងជើង/បាវចនា/ឈ្មោះសាលា/ហត្ថលេខា = Khmer OS Muol Light */
+:where(#prt,#cardBody) :where(.pg){font-family:"Khmer OS Battambang","Battambang","Khmer OS Siemreap","Siemreap",serif}
+:where(#prt,#cardBody) .pg:not(.land){line-height:1.8}
+:where(#prt,#cardBody) .pg:not(.land) table.ct :is(th,td){line-height:1.7;padding:5px 7px}
+.pg .hd .moul{line-height:1.9}
+.pg :is(h1,h2,h3).moul,.pg .hl>div:first-child b,.pg .cxh .moul,.pg .cxf .moul{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400;line-height:1.9}
+.pg .hl>div:first-child b{font-size:11pt}
+.cxf .cxm{text-align:center;flex:0 1 auto}
+@media print{
+  @page{size:A4;margin:12mm 15mm}
+  body.pm #prt *{box-shadow:none!important;text-shadow:none!important}
+  body.pm #prt :is(button,select,.no-print,.hub-x,[data-noprint]){display:none!important}
+  body.pm #prt,body.pm #prt .pg{background:#fff!important;color:#000!important}
+  body.pm #prt table.ct{border-collapse:collapse;border:1px solid #000}
+  body.pm #prt table.ct :is(th,td){border:1px solid #000!important;color:#000!important;background:#fff}
+  body.pm #prt table.ct th{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.pm #prt thead{display:table-header-group}
+  body.pm #prt tr,body.pm #prt .cxf,body.pm #prt .sig{break-inside:avoid;page-break-inside:avoid}
+  body.pm #prt .cxf,body.pm #prt .sig{break-before:avoid;page-break-before:avoid}
+}

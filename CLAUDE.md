@@ -56,7 +56,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v36`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v37`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -228,6 +228,12 @@
   - Drafts autosave to localStorage `hubDraft_{g}_{l}`. Save runs a transaction with a version check (`r` +1, `tx.update` when the doc exists); on a conflict it asks before overwriting. «↺ ត្រឡប់ទៅលំនាំដើម» deletes the teacher version.
 - Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
 - Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
+
+### ✅ Official admin documents: header, footer, fonts, print — `script.js`, `sched.js`, `monthly.js`, `excerpt.js`, `style.css`
+- Audit: every `.pg` admin document has the national motto (`.hd`) and the school block. The motto was added to the lesson-plan count (`kPrintHTML`) and the monthly excerpt (`excerpt.js`). Meeting minutes (`meetings.js`) and the Timesheet/weekly-plan forms keep their own complete layouts.
+- Footer `wpFoot(id,name,lbl,mid)`: left «បានឃើញ និងឯកភាព / ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី»; `mid` adds «បានឃើញ និងពិនិត្យ / ប្រធានក្រុមបច្ចេកទេស»; right = lunar date (`KhCal`), «រាជធានីភ្នំពេញ ថ្ងៃទី…», role, signature image, name. `mid` is on for teacher-prepared documents: work report, results analysis, monthly scores, teaching-aids table (which used to have a dotted date) and the schedule (which had **no footer**). The observation sheet and the other forms got the same left label.
+- Fonts: `.pg` body = Khmer OS Battambang → Battambang (zero-specificity `:where`, so `.tsx` keeps its own font), line-height 1.8, table cells 1.7 with padding; titles, motto, school name and footer headings = Khmer OS Muol Light → Moul, weight 400. `SCHX.fontsOk()` now `document.fonts.load()`s Muol Light/Moul/Battambang (≤1.5 s), and `realPrint` waits for it.
+- Print: `@page` A4 12 mm × 15 mm (named `land` page unchanged); `table.ct` black 1 px borders and collapse; `thead` repeats; rows and footers never split, and a footer never starts a page alone; buttons/selects and shadows hidden.
 
 ### ✅ Answer parser: cube and 4th roots — `practice.js`
 - `norm()` maps `∛`→`cbrt`, `∜`→`qrt`, and `root(n,x)` / `root(n;x)`→`rtN@(x)` (before `,`→`.`). `FN` has `cbrt`/`qrt`; `atom()` reads `rtN@`. Implicit multiplication works like `√` (`11∛5`, `11 ∛(5)`, `11*∛5`, `១១∛៥`).

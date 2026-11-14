@@ -206,7 +206,7 @@ function schedPrint(){
     }
     h+="</tr>";if(BRK[p])h+="<tr><td colspan=7 style='background:#eee;font-size:7pt'>"+kh(BRK[p])+"</td></tr>";
   }
-  h+="</tbody></table><p style='font-size:9pt'>ម៉ោងបង្រៀនមូលដ្ឋាន "+kh(s.b)+" ម៉ោង/សប្ដាហ៍"+(s.i?" · ម៉ោងលើសក្នុង "+kh(s.i)+" ម៉ោង":"")+(s.o?" · ម៉ោងលើសក្រៅ (ចាប់ពី 4pm) "+kh(s.o)+" ម៉ោង":"")+"</p></div>";
+  h+="</tbody></table><p style='font-size:9pt'>ម៉ោងបង្រៀនមូលដ្ឋាន "+kh(s.b)+" ម៉ោង/សប្ដាហ៍"+(s.i?" · ម៉ោងលើសក្នុង "+kh(s.i)+" ម៉ោង":"")+(s.o?" · ម៉ោងលើសក្រៅ (ចាប់ពី 4pm) "+kh(s.o)+" ម៉ោង":"")+"</p>"+(typeof wpFoot==="function"?wpFoot(stT,tname(stT),"គ្រូបង្រៀន",true):"")+"</div>";
   fontsOk().then(function(){printFit(h)});
 }
 $("stPr").onclick=schedPrint;
@@ -471,7 +471,9 @@ $("tsFill").onclick=function(){
 
 
 /* បោះពុម្ពដោយបង្រួមស្វ័យប្រវត្តិឱ្យចូលតែមួយទំព័រ (ទោះមានព័ត៌មានច្រើនប៉ុណ្ណាក៏ដោយ) */
-function fontsOk(){return Promise.race([(document.fonts&&document.fonts.ready)||Promise.resolve(),new Promise(function(r){setTimeout(r,600)})])}
+/* ផ្ទុកហ្វុងឯកសារផ្លូវការជាមុន (Muol Light · Moul · Battambang) ទោះមិនទាន់មានលើអេក្រង់ · យូរបំផុត ១.៥ វិនាទី */
+function fontsOk(){var F=document.fonts,L=F&&F.load?Promise.all(['10pt "Khmer OS Muol Light"','10pt "Moul"','10pt "Battambang"','bold 10pt "Battambang"'].map(function(f){return F.load(f,"ក្សា").catch(function(){})})).then(function(){return F.ready}):Promise.resolve();
+  return Promise.race([L,new Promise(function(r){setTimeout(r,1500)})])}
 function fitHtml(html){
   var p=$("prt");p.innerHTML=html;
   p.style.cssText="display:block;position:absolute;left:-10000px;top:0;width:281mm";
@@ -574,7 +576,7 @@ function tsPrintHTML(){
     wp+=ds+"</tr>"+cs+"</tr>";
   });
   wp+="<tr class=wn><td colspan=7><b>Notes:</b> "+esc((rec&&rec.wn)||"")+"</td></tr></tbody></table>"+
-   "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងត្រួតពិនិត្យ<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
+   "<div class=wpf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងឯកភាព<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
    "<div class=wpr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>"+esc(plc)+" "+(wg?esc(wg):"ថ្ងៃទី......ខែ......ឆ្នាំ......")+"</div><div class=sn>ហត្ថលេខា និងឈ្មោះ</div>"+
    "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(t.name||"")+"</b></div></div></div></div>";
   return ts+wp;

@@ -235,7 +235,7 @@ $("msPr").onclick=function(){
    "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
    "<h2 class=moul style='text-align:center;font-size:13pt;margin:4px 0 2px'>តារាងពិន្ទុប្រចាំខែ</h2><p style='text-align:center;margin:0 0 6px'>ថ្នាក់ <b>"+esc(c.n)+"</b> · "+moTxt()+" · គ្រូ៖ <b>"+esc(tn(mT))+"</b></p>"+
    "<table class=ct><thead><tr>"+A[0].map(function(x){return"<th>"+esc(x)+"</th>"}).join("")+"</tr></thead><tbody>"+A.slice(1).map(function(r){return"<tr>"+r.map(function(x,j){return"<td"+(j===1?" style='text-align:left'":"")+">"+esc(x)+"</td>"}).join("")+"</tr>"}).join("")+"</tbody></table>"+
-   wpFoot(mT,tn(mT),"គ្រូបង្រៀន")+"</div>";
+   wpFoot(mT,tn(mT),"គ្រូបង្រៀន",true)+"</div>";
   window.SCHX.fontsOk().then(function(){doPrint(h)});
 };
 })();
