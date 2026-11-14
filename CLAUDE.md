@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v34`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v35`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -227,6 +227,11 @@
 - Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
 - Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
 
+### ✅ Shared edit of bank questions + audit trail — `quiz.js`, `firestore.rules` (**must be published**)
+- Every teacher/Admin sees ✏️ on every bank question (bank list and the test draft «៣. វិញ្ញាសា», where the edited item is refreshed in `mk.items`). The lesson-point select is also open to all. 🗑️ delete and multi-select stay owner/Admin only.
+- Audit: `o` = original author, never changed; `qDoc` writes `ub` (last editor id) and `u` (time). Cards show «បញ្ចូលដោយ៖ X | កែចុងក្រោយដោយ៖ Y (date)».
+- Rules: `qbq` update = any active teacher, `o` unchanged, and non-owners must set `ub` = themselves. `qimg` create/update/delete is also allowed to any active teacher when `qbq/{id}` exists.
+
 ### ✅ MCQ test report: per-question breakdown + student mistakes — `quiz.js`, `style.css`
 - Data was already there: `subs/{t}_{sid}.a[qid]` holds every chosen answer (MC = **original** choice index 0–3 before the per-student shuffle; num = text). No change to `test.html` or the rules was needed.
 - «📊 វិភាគតាមលំហាត់» (`qBreak`): for each question, «✅ ត្រូវ X នាក់ · ❌ ខុស Y នាក់ · ⬜ មិនឆ្លើយ Z នាក់ ក្នុងចំណោម N នាក់».
@@ -265,6 +270,7 @@
 
 ## Recommended manual checks (live site / real phones — not automatable here)
   - **Publish `firestore.rules`** (2026-11-14 security update: `mcp`, `exq`/`timg` owner checks, `subs`/`prt`/`sig` validation). Then open «ប្រធានថ្នាក់» once as each teacher so old monitor passwords move to `mcp`, and check 👁 still shows them.
+  - **Publish `firestore.rules`** (shared `qbq`/`qimg` edit), then edit another teacher's question and check «កែចុងក្រោយដោយ».
   - **Publish `firestore.rules`** (new `hub/` rule), then save one hub lesson as a teacher and open it on a phone (students see changes on open/Refresh, or within 1 min).
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.

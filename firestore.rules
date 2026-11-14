@@ -272,18 +272,21 @@ service cloud.firestore {
       allow create: if (isAdmin() || isOwner(request.resource.data.o))
         && id.split('_')[0] == request.resource.data.o
         && request.resource.data.q is string && request.resource.data.q.size() < 30000;
-      allow update: if (isAdmin() || isOwner(resource.data.o))
+      // កែ៖ គ្រូគ្រប់រូប (កែកំហុសមុនប្រឡង) · o = អ្នកបញ្ចូលដើម មិនប្ដូរ · ub = អ្នកកែ ត្រូវជាខ្លួនឯង · លុប៖ តែម្ចាស់/Admin
+      allow update: if active()
         && request.resource.data.o == resource.data.o
+        && (isAdmin() || isOwner(resource.data.o) || request.resource.data.get('ub', '') == myId())
         && request.resource.data.q is string && request.resource.data.q.size() < 30000;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
     // រូបភាពលំហាត់ (ធនាគារ)៖ doc ID = ដូច qbq · គ្រូទាំងអស់អាន · ម្ចាស់ ឬ Admin សរសេរ
     match /qimg/{id} {
       allow read: if active();
-      allow create, update: if (isAdmin() || isOwner(request.resource.data.o))
+      // រូបលំហាត់៖ ម្ចាស់ ឬគ្រូណាក៏បាន បើលំហាត់ qbq/{id} មាន (កែលំហាត់គ្រូផ្សេង)
+      allow create, update: if (isAdmin() || isOwner(request.resource.data.o) || (active() && exists(/databases/$(database)/documents/qbq/$(id))))
         && id.split('_')[0] == request.resource.data.o
         && request.resource.data.d is string && request.resource.data.d.size() < 900000;
-      allow delete: if isAdmin() || isOwner(resource.data.o);
+      allow delete: if isAdmin() || isOwner(resource.data.o) || (active() && exists(/databases/$(database)/documents/qbq/$(id)));
     }
     // រូបភាពក្នុងតេស្ត៖ doc ID = "<តេស្ត>_<លំហាត់>" · សិស្សអានបានពេលតេស្តបើក (គ្មាន Login)
     match /timg/{id} {

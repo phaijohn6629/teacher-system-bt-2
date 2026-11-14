@@ -76,7 +76,7 @@ function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/
 /* ធនាគារលំហាត់៖ តាមដានផ្ទាល់ (onSnapshot) តែថ្នាក់ដែលកំពុងប្រើ · qb = {ID គ្រូ:[លំហាត់]} (គណនាពីឯកសារ qbq/ + ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ) */
 var QD={},LEG={},qkP={},qkU={},CNT={},qbErr="",legP=null,legReg=null,GR=[7,8,9,10,11,12];   /* qkP["ថ្នាក់|មេរៀន"] = ការតាមដាន · CNT[ថ្នាក់] = ចំនួនលំហាត់តាមមេរៀន (ពី Server) */
 function qid(o,id){return o+"_"+id}
-function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(+v.pt)q.pt=+v.pt;if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;if(v.fg)q.fg=v.fg;if(v.sl)q.sl=v.sl;if(v.im)q.im=true;return q}
+function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(+v.pt)q.pt=+v.pt;if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;if(v.fg)q.fg=v.fg;if(v.sl)q.sl=v.sl;if(v.ub)q.ub=v.ub;if(v.u)q.u=v.u;if(v.im)q.im=true;return q}
 /* រូបភាពលំហាត់៖ qimg/{ID គ្រូ}_{id} = {o, d:dataURL} (ទាញតែពេលបង្ហាញ · ចងចាំក្នុង QIM) */
 var QIM={};
 function qimg(k){
@@ -189,7 +189,7 @@ function ptOpts(g,ls,sel){return"<option value=0>— មិនកំណត់ (�
 /* បង្កើតតេស្ត៖ mk.pt[មេរៀន] = {លេខចំណុច:true} · មិនធីកចំណុចណា = យកទាំងមេរៀន · 0 = លំហាត់មិនទាន់កំណត់ចំណុច */
 function ptSel(ls){var o=mk.pt&&mk.pt[ls];return o&&Object.keys(o).some(function(k){return o[k]})?o:null}
 function inMk(q){if(!mk.ls[q.ls])return false;var s=ptSel(q.ls);return!s||!!s[+q.pt||0]}
-function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(+q.pt)d.pt=+q.pt;if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;if(q.fg)d.fg=q.fg;if(q.sl)d.sl=String(q.sl).slice(0,8000);if(q.im)d.im=true;return d}
+function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(+q.pt)d.pt=+q.pt;if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;if(q.fg)d.fg=q.fg;if(q.sl)d.sl=String(q.sl).slice(0,8000);if(q.im)d.im=true;if(who&&who.id)d.ub=who.id;return d}   /* o = អ្នកបញ្ចូលដើម (មិនប្ដូរ) · ub/u = អ្នកកែចុងក្រោយ/ពេល */
 function saveQ(o,q){var old=QD[qid(o,q.id)];if(old)cntChanged(old.q.g);cntChanged(+q.g);return FB.setDoc(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q)).catch(function(e){alert("មិនអាចរក្សាទុកលំហាត់បានទេ · "+qErr(e));throw e})}
 function saveMany(o,list){
   list.forEach(function(q){cntChanged(+q.g)});
@@ -270,8 +270,8 @@ function renderBank(){
   h+=list.length?"<div class=qz-list>"+list.map(function(q){
     var own=q.by===who.id||isAdm();
     var sk=q.by+"|"+q.id;
-    return"<div class='qz-q"+(SEL[sk]?" sel":"")+"'><div class=qz-qh>"+(own?"<input type=checkbox class=qz-sel data-qs='"+sk+"'"+(SEL[sk]?" checked":"")+" title='ជ្រើស'>":"")+"<span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span>"+(pts.length?(own?"<select class=qz-pt data-qp='"+q.by+"|"+q.id+"' title='ចំណុចនៃមេរៀន'>"+ptOpts(q.g,q.ls,q.pt).replace("— មិនកំណត់ (ទាំងមេរៀន) —","⚠️ ជ្រើសចំណុច…")+"</select>":(q.pt?"<span class=qz-bl>"+esc(ptName(q.g,q.ls,q.pt))+"</span>":"")):"")+"<span class=qz-by>"+esc(tn(q.by)||q.by)+"</span>"+
-      (own?"<button type=button data-qe='"+q.by+"|"+q.id+"'>✏️</button><button type=button class=danger data-qd='"+q.by+"|"+q.id+"'>🗑️</button>":"")+"</div>"+
+    return"<div class='qz-q"+(SEL[sk]?" sel":"")+"'><div class=qz-qh>"+(own?"<input type=checkbox class=qz-sel data-qs='"+sk+"'"+(SEL[sk]?" checked":"")+" title='ជ្រើស'>":"")+"<span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span>"+(q.bl?"<span class=qz-bl>"+esc(q.bl)+"</span>":"")+"<span class=qz-ls>ថ្នាក់ទី"+kn(q.g)+" · "+esc(lsName(q.g,q.ls))+"</span>"+(pts.length?(true?"<select class=qz-pt data-qp='"+q.by+"|"+q.id+"' title='ចំណុចនៃមេរៀន'>"+ptOpts(q.g,q.ls,q.pt).replace("— មិនកំណត់ (ទាំងមេរៀន) —","⚠️ ជ្រើសចំណុច…")+"</select>":(q.pt?"<span class=qz-bl>"+esc(ptName(q.g,q.ls,q.pt))+"</span>":"")):"")+"<span class=qz-by>"+audit(q)+"</span>"+
+      "<button type=button data-qe='"+q.by+"|"+q.id+"' title='កែសម្រួល (គ្រូគ្រប់រូប)'>✏️</button>"+(own?"<button type=button class=danger data-qd='"+q.by+"|"+q.id+"'>🗑️</button>":"")+"</div>"+
       "<div class=qz-qt>"+tx(q.q)+"</div>"+figHtml(q,qid(q.by,q.id))+
       (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"+
       (more>0?"<button type=button class=qz-more data-qa=more>⬇️ បង្ហាញបន្ថែម ("+kn(Math.min(more,QB_PAGE))+" ក្នុងចំណោម "+kn(more)+" នៅសល់)</button>":"")
@@ -310,6 +310,8 @@ function autoDlg(){
   d.onchange=function(e){var k=e.target.dataset.pa;if(!k||!S[k])return;S[k].pt=+e.target.value;S[k].c=S[k].pt?"h":"n";$("paSum").innerHTML=sum()};
   draw();d.showModal();
 }
+/* បញ្ចូលដោយ (o) · កែចុងក្រោយដោយ (ub · u) */
+function audit(q){var o=tn(q.by)||q.by,h="បញ្ចូលដោយ៖ "+esc(o);if(q.ub&&q.ub!==q.by)h+=" | កែចុងក្រោយដោយ៖ "+esc(tn(q.ub)||q.ub)+(q.u?" ("+esc(String(q.u).slice(0,10))+")":"");return h}
 function qDialog(q){
   var d=$("qzDlg");
   if(!d){d=document.createElement("dialog");d.id="qzDlg";d.className="wide";document.body.appendChild(d)}
@@ -371,7 +373,8 @@ function qDialog(q){
     var pi=!imgCh?Promise.resolve():img?FB.setDoc(FB.doc(db,"qimg",k),{o:owner,d:img}).then(function(){QIM[k]=Promise.resolve(img)})
       :FB.deleteDoc(FB.doc(db,"qimg",k)).catch(function(){}).then(function(){delete QIM[k]});
     pi.catch(function(e){alert("មិនអាចរក្សាទុករូបភាពបានទេ · "+qErr(e));throw e})
-      .then(function(){return saveQ(owner,o)}).then(function(){d.close();fG=o.g;fL=o.ls;renderQuiz();notify("បានរក្សាទុកលំហាត់")},function(){sb.disabled=false});
+      .then(function(){return saveQ(owner,o)}).then(function(){d.close();
+        if(mk.items&&QV==="make"){o.ub=who.id;o.u=new Date().toISOString();mk.items=mk.items.map(function(x){return x.by===owner&&x.id===o.id?Object.assign({by:owner},o):x})}else{fG=o.g;fL=o.ls}renderQuiz();notify("បានរក្សាទុកលំហាត់")},function(){sb.disabled=false});
   };
   d.showModal();imShow();
 }
@@ -552,7 +555,7 @@ function renderMake(){
     "<button type=button class=primary data-qa=shuffle style='width:100%;margin-top:10px'>🎲 ក្រឡុកលំហាត់</button></div></div>";
   if(mk.items){
     h+="<div class=card><h3>៣. វិញ្ញាសា ("+kn(mk.items.length)+" លំហាត់)</h3><div class=qz-list>"+mk.items.map(function(q,i){
-      return"<div class=qz-q><div class=qz-qh><b>លំហាត់ទី"+kn(i+1)+"</b><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span><span class=qz-ls>"+esc(lsName(q.g,q.ls))+"</span></div><div class=qz-qt>"+tx(q.q)+"</div>"+
+      return"<div class=qz-q><div class=qz-qh><b>លំហាត់ទី"+kn(i+1)+"</b><span class='qz-lv l"+q.lv+"'>"+LV[q.lv]+"</span><span class=qz-ls>"+esc(lsName(q.g,q.ls))+"</span><span class=qz-by>"+audit(q)+"</span><button type=button data-qe='"+q.by+"|"+q.id+"' title='កែសម្រួលលំហាត់នេះ (មុនបើកតេស្ត)'>✏️</button></div><div class=qz-qt>"+tx(q.q)+"</div>"+
         (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c2,j){return"<li"+(j===+q.a?" class=ok":"")+">"+tx(c2)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"+
       "<div class=bar style='margin-top:10px'><button type=button data-qa=shuffle>🎲 ក្រឡុកម្ដងទៀត</button><button type=button class=primary data-qa=open>🚀 បើកតេស្តឱ្យសិស្សធ្វើ</button></div>"+
       "<p class=note>សិស្សម្នាក់ៗទទួលបានលំដាប់លំហាត់ និងលំដាប់ជម្រើស ក ខ គ ឃ ខុសៗគ្នា ដើម្បីកុំឱ្យចម្លងគ្នា។</p></div>";
