@@ -7,4 +7,6 @@ for t in "syntax.js -- $(ls *.js | tr '\n' ' ')" exgen.js practice.js hub.js sto
   out=$(eval "$J tests/$t" 2>&1); last=$(print -r -- "$out" | tail -1); print -r -- "$last"
   if ! print -r -- "$last" | grep -q ' bad 0$'; then print -r -- "$out" | tail -25; fail=1; fi
 done
+out=$(python3 tools/localize_mcq.py --selftest 2>&1); last=$(print -r -- "$out" | tail -1); print -r -- "$last"
+if ! print -r -- "$last" | grep -q " bad 0$"; then print -r -- "$out" | tail -25; fail=1; fi
 exit $fail

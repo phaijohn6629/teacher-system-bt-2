@@ -26,10 +26,12 @@
 | `lsguard.js` | Browser storage guard | ការពារ localStorage/sessionStorage ពេញ (សម្អាតស្វ័យប្រវត្តិ · TTL) — គ្រប់ទំព័រ |
 | `storeadm.js` | Storage panel in ⚙️ Settings | ទំហំផ្ទុកឧបករណ៍ · ចំនួន/ទំហំឯកសារ Firestore · សម្អាតតេស្តចាស់ (Admin) |
 | `tools/upload_youtube.py` | Manim → YouTube uploader | បង្ហោះវីដេអូទៅ Channel «Rean-Maths» ហើយភ្ជាប់តំណទៅ `hub.js` (`VIDEOS`) |
+| `tools/localize_mcq.py` | Bank localizer (Khmer context + LaTeX) | កែលំហាត់ qbq ឱ្យត្រូវបរិបទកម្ពុជា + ជួសជុល LaTeX (`--dry-run` → `--apply` · `--restore`) · ច្បាប់ក្នុង `tools/localize_rules.json` |
 | `sw.js` | PWA Service Worker | គ្រប់គ្រង Cache សម្រាប់ PWA ដើម្បីបើកលឿន |
 | `index.html` | Main Entry Point | ទំព័រមេសម្រាប់ផ្ទុក UI និងហៅដំណើរការកម្មវិធី |
 
 ## Rules
+- `tools/localize_mcq.py` needs `firebase-admin-key.json` (Service Account, gitignored). It edits only `q`/`ch`/`sl`, never `a` or choice order; a field whose digits would change is skipped. Currency or units that need number conversion are only flagged. `--apply` writes a backup in `tools/localize_backup_*.json` (gitignored) and uses one transaction per doc (`tx.update`, `ub=AUTO-KH`).
 - Use `tx.update` for Firestore updates to avoid overwriting existing fields (crucial for supporting new data).
 - Use Firebase transactions for any write operations on shared data (e.g., `mc` collection).
 - Before every push: run `python3 tools/bump.py` (bumps `?v=` for changed JS/CSS) and `./tests/run.sh` (all lines must be `bad 0`), then bump the cache name `C` in `sw.js`.
