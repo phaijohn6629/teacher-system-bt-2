@@ -1799,6 +1799,7 @@ function lazy(g){
 }
 setTimeout(function(){var go=function(){Object.keys(LAZY).forEach(function(g){lazy(g).catch(function(){})})};if(window.requestIdleCallback)requestIdleCallback(go,{timeout:6000});else go()},2500);
 function show(p){
+  if(p!=="p0"&&sy.started&&!sy.ph2)phase2();   /* ⚡ បើកផ្ទាំងផ្សេង → ទាញទិន្នន័យដំណាក់កាលទី២ ភ្លាម */
   var need=(NEED[p]||[]).filter(function(g){return!lzD[g]});
   if(need.length){
     ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].forEach(function(x){$(x).hidden=x!==p});
@@ -2589,17 +2590,21 @@ function sameAsSynced(k){   /* Cloud បញ្ជូនមកវិញនូវ�
 }
 function applyCloud(k){
   var cache=sy.cache[k]||{},has=Object.keys(cache).length>0;
-  if(sameAsSynced(k))return;   /* កុំគូរទំព័រឡើងវិញ (មិនឱ្យបាត់ cursor ពេលកំពុងសរសេរ) */
+  if(sameAsSynced(k)){snapSave(k);return}   /* កុំគូរទំព័រឡើងវិញ (មិនឱ្យបាត់ cursor ពេលកំពុងសរសេរ) */
   if(has){
     MAP[k].load(cache);
     var s={};Object.keys(cache).forEach(function(p){s[p]=sj(cache[p])});sy.synced[k]=s;
   }else if(!sy.synced[k])sy.synced[k]={};
-  sy.first[k]=1;if($("syncBar"))syncDiag();
+  sy.first[k]=1;firstDone(k);if($("syncBar"))syncDiag();
   if(k==="teachers")afterTeachers();
   if(k==="rs"&&isAdm())migrateRs();
   trySeed(k);
-  refreshView();
+  snapSave(k);
+  refreshSoon();
 }
+/* ⚡ ទិន្នន័យហូរចូលជាបន្តបន្ទាប់ពេលចាប់ផ្ដើម → គូរទំព័រម្ដងក្នុងមួយ frame (មិនមែន ១៣ ដង) */
+var rvT=0;
+function refreshSoon(){if(rvT)return;rvT=setTimeout(function(){rvT=0;refreshView()},16)}
 function onData(k){
   if(Object.keys(sy.got[k]).length<sy.need[k])return;   /* រង់ចាំរហូតទាំងអស់បានមកដល់ */
   if(!sy.first[k]){   /* លើកដំបូង៖ យកទិន្នន័យ Cloud ជានិច្ច (ការកែមុនផ្ទុករួច មិនត្រូវបានសរសេរ) */
@@ -2611,7 +2616,7 @@ function onData(k){
   applyCloud(k);
 }
 function subscribe(k){
-  var subs=subsFor(k);
+  sy.subd[k]=1;var subs=subsFor(k);
   sy.need[k]=subs.length;sy.got[k]={};sy.cache[k]={};
   subs.forEach(function(s,si){
     var ref;
@@ -2620,7 +2625,9 @@ function subscribe(k){
     else ref=window.FB.collection(window.db,s.col);
     var un=window.FB.onSnapshot(ref,{includeMetadataChanges:true},function(sn){
       /* លើកដំបូង៖ កុំទទួល snapshot «ទទេ» ពី cache (ពេល offline/យឺត) — រង់ចាំ Server · snapshot ពី cache ដែលមានទិន្នន័យ ទទួលបាន */
-      if(!sy.first[k]&&sn.metadata&&sn.metadata.fromCache&&(s.doc?!sn.exists():sn.empty!==false&&!sn.size))return;
+      var emp=s.doc?!sn.exists():sn.empty!==false&&!sn.size,eid=k+"|"+si,fc=!!(sn.metadata&&sn.metadata.fromCache);
+      if(!fc&&!!sy.E[eid]!==emp)seSet(eid,emp);   /* ចងចាំថា Server ឆ្លើយ «ទទេ» (ឧ. Timesheet របស់គ្រូថ្មី) */
+      if(!sy.first[k]&&fc&&emp&&!sy.E[eid])return;   /* ទទេពី cache តែ Server មិនធ្លាប់ថាទទេ → រង់ចាំ Server */
       (sy.ok||(sy.ok={}))[k]=1;
       var cache=sy.cache[k];
       if(s.doc){if(sn.exists())cache[s.doc]=sn.data();else delete cache[s.doc]}
@@ -2638,16 +2645,58 @@ function subscribe(k){
   });
 }
 function srvOk(k){return Object.keys((sy.srv||{})[k]||{}).length>=(sy.need[k]||1)}
-function stopSync(){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[]}
+function stopSync(){unsubs.forEach(function(f){try{f()}catch(e){}});unsubs=[];sy.started=false}
+/* ⚡ ចាប់ផ្ដើម Sync (Stale-While-Revalidate + ២ ដំណាក់កាល)
+   ០) Session មិន «ចងចាំខ្ញុំ» (គ្មាន cache Firestore ក្នុងឧបករណ៍)៖ បង្ហាញ snapshot ចុងក្រោយពី sessionStorage ភ្លាម (snapLoad)
+   ១) ទិន្នន័យចាំបាច់សម្រាប់ Dashboard (CRIT) មុនគេ · រង់ចាំ Promise.allSettled + Timeout ៣ វិនាទី
+   ២) ផ្នែកធំៗផ្សេងទៀត + រូបថតប្រវត្តិរូប នៅពីក្រោយ (ឬភ្លាមពេលគ្រូបើកផ្ទាំងផ្សេង · show())
+   ការសរសេរនៅតែការពារដោយ flush(): មុនទិន្នន័យលើកដំបូង = បដិសេធ · មិនទាន់បញ្ជាក់ពី Server = ពន្យារ ≤ ២០ វិនាទី */
+var CRIT=["teachers","tasks","rs","sched","sig","mc"],CRIT_MS=3000;
+function critKeys(){return who&&who.role==="monitor"?["mc"]:CRIT.filter(function(k){return MAP[k]})}
+function firstDone(k){var w=sy.wait&&sy.wait[k];if(w){delete sy.wait[k];w()}}
 function startSync(){
   stopSync();try{bkRemind()}catch(e){console.error(e)}
   sy.cache={};sy.got={};sy.first={};sy.synced={};sy.seeded={};sy.touch={};sy.ok={};sy.err={};sy.srv={};sy.t0=Date.now();
-  Object.keys(MAP).forEach(subscribe);
-  subProfiles();
+  sy.E=seGet();sy.wait={};sy.ph2=false;sy.started=true;sy.subd={};
+  var crit=critKeys();
+  var waits=crit.map(function(k){return new Promise(function(ok){sy.wait[k]=ok})});
+  snapLoad();
+  crit.forEach(subscribe);
+  Promise.race([Promise.allSettled(waits),new Promise(function(ok){setTimeout(ok,CRIT_MS)})]).then(phase2);
   diagArm();
 }
+function phase2(){
+  if(sy.ph2||!sy.started)return;sy.ph2=true;
+  Object.keys(MAP).forEach(function(k){if(!sy.subd[k])subscribe(k)});
+  subProfiles();
+}
+/* 💾 snapshot ក្នុង sessionStorage (តែ Session មិនចងចាំ · លុបពេលបិទ Tab) · ចងចាំខ្ញុំ = Firestore IndexedDB cache រួចហើយ */
+function snapK(k){return"syS_"+(prof&&prof.uid||"")+"_"+k}
+var snapT={};
+function snapSave(k){
+  if(window.FBPERSIST||!srvOk(k))return;
+  clearTimeout(snapT[k]);snapT[k]=setTimeout(function(){
+    try{var j=JSON.stringify(sy.cache[k]||{});if(j.length>1500000)sessionStorage.removeItem(snapK(k));else sessionStorage.setItem(snapK(k),j)}catch(e){try{sessionStorage.removeItem(snapK(k))}catch(x){}}
+  },800);
+}
+function snapLoad(){
+  if(window.FBPERSIST)return;
+  var any=false;
+  Object.keys(MAP).forEach(function(k){
+    var c=null;try{c=JSON.parse(sessionStorage.getItem(snapK(k))||"null")}catch(e){}
+    if(!c||typeof c!=="object")return;
+    try{MAP[k].load(c)}catch(e){console.warn("snap:",k,e);return}
+    var s={};Object.keys(c).forEach(function(p){s[p]=sj(c[p])});sy.synced[k]=s;
+    sy.first[k]=1;firstDone(k);any=true;
+    if(k==="teachers")afterTeachers();
+  });
+  if(any)refreshSoon();
+}
+function seKey(){return"syE_"+(prof&&prof.uid||"")}
+function seGet(){try{return JSON.parse(localStorage.getItem(seKey())||"{}")||{}}catch(e){return{}}}
+function seSet(id,emp){if(emp)sy.E[id]=1;else delete sy.E[id];try{localStorage.setItem(seKey(),JSON.stringify(sy.E))}catch(e){}}
 function diagArm(){var b=$("syncBar");if(b)b.remove();sy.diagOn=false;sy.diagLog=false;sy.diagD=Date.now();clearTimeout(sy.diagT);clearTimeout(sy.diagT2);
-  sy.diagT=setTimeout(function(){sy.diagOn=true;syncDiag()},12000);sy.diagT2=setTimeout(syncDiag,30500)}
+  sy.diagT=setTimeout(function(){sy.diagOn=true;syncDiag()},1500);   /* សញ្ញា Sync តូចនៅជ្រុង (មិនរាំងស្ទះ) */sy.diagT2=setTimeout(syncDiag,30500)}
 /* 📶 ទូរស័ព្ទ៖ ត្រឡប់មកទំព័រវិញ / អ៊ីនធឺណិតមកវិញ → តភ្ជាប់ Firestore ឡើងវិញភ្លាម (កុំរង់ចាំ backoff រហូតដល់ ១ នាទី) */
 var hidAt=0;
 function kick(why){
@@ -2670,7 +2719,11 @@ function syncDiag(){
   if(!b){b=document.createElement("div");b.id="syncBar";document.body.appendChild(b)}
   b.setAttribute("role",hard?"alert":"status");
   b.style.cssText="position:fixed;left:50%;transform:translateX(-50%);top:8px;z-index:9999;max-width:min(680px,94vw);background:"+(hard?"#b91c1c":"#334155")+";color:#fff;padding:"+(hard?"10px 14px":"6px 12px")+";border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:"+(hard?14:13)+"px;line-height:1.6;opacity:"+(hard?1:.92);
-  if(!hard){b.innerHTML="⏳ កំពុងទាញទិន្នន័យពី Cloud… <small>("+esc(miss.map(function(k){return SYN[k]||k}).join(" · "))+")</small>";return}
+  if(!hard){   /* 🔄 សញ្ញាតូចនៅជ្រុងខាងលើស្ដាំ · មិនរាំងស្ទះការងារ · ឈ្មោះទិន្នន័យក្នុង title */
+    b.style.cssText="position:fixed;right:10px;top:10px;z-index:9999;background:rgba(51,65,85,.88);color:#fff;padding:3px 10px;border-radius:999px;font-size:12px;line-height:1.6;box-shadow:0 2px 8px rgba(0,0,0,.2);pointer-events:auto;cursor:default";
+    b.title="កំពុងធ្វើបច្ចុប្បន្នភាព៖ "+miss.map(function(k){return SYN[k]||k}).join(" · ");
+    b.innerHTML="<span class=sync-spin aria-hidden=true>🔄</span> Sync <small>"+kn(miss.length)+"</small>";return}
+  b.title="";
   var why=!navigator.onLine?"ឧបករណ៍មិនមានអ៊ីនធឺណិត":/permission/.test(c0)?"គ្មានសិទ្ធិអាន (Rules)":/resource-exhausted|quota/i.test(c0)?"អស់កូតាអាន Firestore ប្រចាំថ្ងៃ":/unavailable|deadline/i.test(c0)?"មិនអាចភ្ជាប់ Server បាន":c0?c0:"Server មិនទាន់ឆ្លើយតប (អ៊ីនធឺណិតយឺត ឬត្រូវបានរារាំង)";
   b.innerHTML="⚠️ <b>មិនទាន់ទាញទិន្នន័យពី Cloud បាន៖</b> "+esc(miss.map(function(k){return SYN[k]||k}).join(" · "))+"<br><small>មូលហេតុ៖ "+esc(why)+(codes.length?" ("+esc(codes.join(", "))+")":"")+"</small> "+
     "<button type=button id=syncRe style='margin-left:6px;background:#fff;color:#b91c1c;border:0;border-radius:8px;padding:3px 10px;font-weight:700;cursor:pointer'>🔄 ទាញម្ដងទៀត</button>";

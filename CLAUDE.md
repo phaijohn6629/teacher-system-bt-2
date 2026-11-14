@@ -44,7 +44,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v20`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v21`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -85,6 +85,25 @@
 - `exam.js`: `mkItem` avoids duplicates against the session history plus the items already in the section.
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
+
+### ✅ Fast startup sync (Stale-While-Revalidate + 2 phases) — `script.js`
+- **Causes found:**
+  - Without «ចងចាំខ្ញុំ», Firestore uses a memory cache, so every open or Refresh waited for the network.
+  - The first-load guard rejected empty cache snapshots, so collections that are genuinely empty (e.g. a new teacher's Timesheet, signature, `cx`, `mc`) waited for the server on every open, even on remembered devices.
+  - All 13 collections plus every profile photo (`profiles`, large data URLs) were requested at once, competing for bandwidth with the Dashboard data.
+  - Every arriving collection triggered a full `refreshView()`.
+- **Fixes:**
+  - `snapLoad`/`snapSave`: non-remembered sessions keep a per-key snapshot of server-confirmed data in **sessionStorage** (`syS_{uid}_{k}`, ≤1.5 MB per key, cleared on tab close and on logout). It is shown instantly on Refresh. Remembered devices already have the Firestore IndexedDB cache.
+  - `syE_{uid}` (localStorage) remembers which subscriptions the server last returned empty; an empty cache snapshot for those is accepted immediately.
+  - Two phases: `CRIT=["teachers","tasks","rs","sched","sig","mc"]` (monitor: `mc`) subscribe first. `Promise.allSettled` of their first data races a 3 s timeout, then `phase2()` subscribes the rest plus `subProfiles()`. `show(p)` for any tab other than `p0` starts phase 2 immediately.
+  - `applyCloud` uses `refreshSoon()` (one render per frame).
+  - The sync indicator is a small «🔄 Sync N» pill at the top-right from 1.5 s (missing data listed in its `title`). The red bar still appears only on real errors, when offline, or after 30 s.
+- Writes stay protected by `flush()`: blocked before the first data arrives, and delayed (≤20 s) until server-confirmed. A snapshot shown from cache never causes a write by itself (it becomes `sy.synced`).
+- Measured in headless Chrome against the real `index.html` with a fake Firebase (HTTPS-mapped `www.gstatic.com`, shared 40 KB/s link, 300 ms RTT):
+  - Refresh in the same session: critical data 600 → 40 ms, all data 6.8 s → 40 ms.
+  - Remembered device with empty collections: critical data 580 → 90 ms.
+  - A collection that never answers: Dashboard unaffected; small pill instead of the 12 s bar.
+  - No spurious writes in any scenario.
 
 ### ✅ Practice learning hub (Flipped Classroom) — `hub.js`, `practice.js`, `practice.html`, `lessonedit.js`, `style.css`, `firestore.rules`
 - `practice.html`: a collapsible «📚 មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ» panel sits between the level bar and the questions. Each sub-topic is its own `<details>` with 📖 summary, 📐 formula box (KaTeX display), 💡 tips plus worked examples (solution hidden behind «👁»), and 🎬 a video button.
