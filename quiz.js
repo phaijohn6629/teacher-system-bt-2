@@ -76,7 +76,7 @@ function testLink(id){return location.origin+location.pathname.replace(/[^\/]*$/
 /* ធនាគារលំហាត់៖ តាមដានផ្ទាល់ (onSnapshot) តែថ្នាក់ដែលកំពុងប្រើ · qb = {ID គ្រូ:[លំហាត់]} (គណនាពីឯកសារ qbq/ + ទម្រង់ចាស់ដែលមិនទាន់ផ្ទេរ) */
 var QD={},LEG={},qkP={},qkU={},CNT={},qbErr="",legP=null,legReg=null,GR=[7,8,9,10,11,12];   /* qkP["ថ្នាក់|មេរៀន"] = ការតាមដាន · CNT[ថ្នាក់] = ចំនួនលំហាត់តាមមេរៀន (ពី Server) */
 function qid(o,id){return o+"_"+id}
-function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(+v.pt)q.pt=+v.pt;if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;if(v.fg)q.fg=v.fg;if(v.im)q.im=true;return q}
+function toQ(v){var q={id:v.id,g:+v.g,ls:v.ls,lv:+v.lv||1,t:v.t,q:v.q||"",a:v.a};if(+v.pt)q.pt=+v.pt;if(v.ch)q.ch=v.ch;if(v.bl)q.bl=v.bl;if(v.fg)q.fg=v.fg;if(v.sl)q.sl=v.sl;if(v.im)q.im=true;return q}
 /* រូបភាពលំហាត់៖ qimg/{ID គ្រូ}_{id} = {o, d:dataURL} (ទាញតែពេលបង្ហាញ · ចងចាំក្នុង QIM) */
 var QIM={};
 function qimg(k){
@@ -189,7 +189,7 @@ function ptOpts(g,ls,sel){return"<option value=0>— មិនកំណត់ (�
 /* បង្កើតតេស្ត៖ mk.pt[មេរៀន] = {លេខចំណុច:true} · មិនធីកចំណុចណា = យកទាំងមេរៀន · 0 = លំហាត់មិនទាន់កំណត់ចំណុច */
 function ptSel(ls){var o=mk.pt&&mk.pt[ls];return o&&Object.keys(o).some(function(k){return o[k]})?o:null}
 function inMk(q){if(!mk.ls[q.ls])return false;var s=ptSel(q.ls);return!s||!!s[+q.pt||0]}
-function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(+q.pt)d.pt=+q.pt;if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;if(q.fg)d.fg=q.fg;if(q.im)d.im=true;return d}
+function qDoc(o,q){var d={o:o,id:q.id,g:+q.g,ls:q.ls,lv:+q.lv||1,t:q.t,q:q.q||"",a:q.a,u:new Date().toISOString()};if(+q.pt)d.pt=+q.pt;if(q.ch)d.ch=q.ch;if(q.bl)d.bl=q.bl;if(q.fg)d.fg=q.fg;if(q.sl)d.sl=String(q.sl).slice(0,8000);if(q.im)d.im=true;return d}
 function saveQ(o,q){var old=QD[qid(o,q.id)];if(old)cntChanged(old.q.g);cntChanged(+q.g);return FB.setDoc(FB.doc(db,"qbq",qid(o,q.id)),qDoc(o,q)).catch(function(e){alert("មិនអាចរក្សាទុកលំហាត់បានទេ · "+qErr(e));throw e})}
 function saveMany(o,list){
   list.forEach(function(q){cntChanged(+q.g)});
@@ -328,6 +328,7 @@ function qDialog(q){
     "<div class='full qd-img'><label>🖼️ រូបភាព (ជ្រើស ឬ Ctrl+V បិទភ្ជាប់រូបថតអេក្រង់)</label><div class=qd-imr><div id=qdIm class=qd-imp></div><label class=qd-file>📷 ជ្រើសរូប<input type=file accept='image/*' id=qdIF></label><button type=button id=qdIX class=danger hidden>✕ ដករូប</button></div></div>"+
     "<div class=full id=qdMC"+(q.t==="mc"?"":" hidden")+"><label>ជម្រើស (ចុចរង្វង់ = ចម្លើយត្រូវ)</label>"+[0,1,2,3].map(function(i){return"<div class=qd-ch><input type=radio name=qdA value="+i+(q.t==="mc"&&+q.a===i?" checked":"")+"><b>"+"ABCD"[i]+".</b><input id=qdC"+i+" value='"+esc((q.ch||[])[i]||"")+"'></div>"}).join("")+"</div>"+
     "<div class=full id=qdNUM"+(q.t==="num"?"":" hidden")+"><label>ចម្លើយត្រឹមត្រូវ (លេខ ឧ. 2.5 ឬ 1/3)</label><input id=qdN value='"+esc(q.t==="num"?q.a:"")+"'></div>"+
+    "<div class=full><label>💡 ដំណោះស្រាយ (ស្រេចចិត្ត · គ្រូមើលក្នុងរបាយការណ៍ · សិស្សមិនឃើញ)</label><textarea id=qdSl rows=2 placeholder='ឧ. $\\Delta=b^2-4ac=9$ ⇒ $x=\\frac{-b\\pm 3}{2a}$'>"+esc(q.sl||"")+"</textarea></div>"+
     "<div class=full><label>មើលជាមុន</label><div id=qdP class=qz-prev></div></div></div>"+
     "<div class=dlgf><button type=button id=qdX>បោះបង់</button><button type=button class=primary id=qdS>រក្សាទុក</button></div></form>";
   var img=null,imgCh=false,k0=q.id?qid(q.by||who.id,q.id):"";
@@ -338,6 +339,7 @@ function qDialog(q){
     var t=$("qdT").value,h="<div class=qz-qt>"+tx($("qdQ").value)+"</div>"+(window.FIG?FIG.svg($("qdF").value):"")+(img?"<div class=qz-im><img src='"+safeSrc(img)+"' alt=''></div>":"");
     if(t==="mc")h+="<ol class=qz-ch type=A>"+[0,1,2,3].map(function(i){var ck=d.querySelector("input[name=qdA]:checked");return"<li"+(ck&&+ck.value===i?" class=ok":"")+">"+tx($("qdC"+i).value)+"</li>"}).join("")+"</ol>";
     else h+="<div class=qz-num>ចម្លើយ៖ <b>"+tx($("qdN").value)+"</b></div>";
+    if($("qdSl").value.trim())h+="<div class=qr-sol>💡 "+tx($("qdSl").value)+"</div>";
     $("qdP").innerHTML=h;math($("qdP"));
   }
   var pt=0;d.oninput=function(){clearTimeout(pt);pt=setTimeout(prev,250)};
@@ -363,6 +365,7 @@ function qDialog(q){
       if(o.ch.filter(Boolean).length<2){alert("សូមបញ្ចូលជម្រើសយ៉ាងតិច ២");return}if(!ck||!o.ch[+ck.value]){alert("សូមចុចរង្វង់ចម្លើយត្រូវ");return}o.a=+ck.value}
     else{o.a=$("qdN").value.trim();if(!o.a){alert("សូមបញ្ចូលចម្លើយត្រឹមត្រូវ");return}}
     var fg=$("qdF").value.trim();if(fg)o.fg=fg;
+    var sl=$("qdSl").value.trim();if(sl)o.sl=sl;
     if(img)o.im=true;
     var owner=q.by||who.id,sb=$("qdS"),k=qid(owner,o.id);sb.disabled=true;
     var pi=!imgCh?Promise.resolve():img?FB.setDoc(FB.doc(db,"qimg",k),{o:owner,d:img}).then(function(){QIM[k]=Promise.resolve(img)})
@@ -584,7 +587,7 @@ function genPc(){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRa
 function openTest2(){
   var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return;
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
-  mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)}});
+  mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)};if(q.sl)keys[q.id].s=String(q.sl).slice(0,4000)});
   var names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
   var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
   var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
@@ -678,13 +681,59 @@ function renderRes(){
     (v2?"<div class=qr-sec>🔒 <b>តេស្តមានការការពារ</b> · មួយឈ្មោះ មួយឧបករណ៍ · ផ្ញើបានក្នុងរយៈពេលកំណត់"+(t.dur?" (+១០ នាទី)":"")+(t.pc?" · 🔑 លេខកូដចូល <b class=qz-pcb>"+esc(pcOf[t.id]||"…")+"</b>":"")+"</div>":"<div class=qr-sec off>ℹ️ តេស្តនេះបង្កើតមុនការការពារថ្មី (គ្មានលេខកូដ · គ្មានការកំណត់ឧបករណ៍)</div>")+
     "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div>"+(v2?"<div><b style='color:#d97706'>"+kn(prog.length)+"</b>⏳ កំពុងធ្វើ</div>":"")+"<div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div><b style='color:#b91c1c'>"+kn(R.filter(function(r){return r.s.lv||r.s.cp}).length)+"</b>🚩 សង្ស័យ</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
     "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th><th title='ចាកចេញពីផ្ទាំងតេស្ត (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់'>🚩 សង្ស័យ</th><th></th></tr></thead><tbody>"+
-    (R.length||prog.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(r.s.sn)+"</td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td><td><button type=button class=qr-rs data-qrs='"+esc(r.s.sid)+"' title='លុបចម្លើយនេះ ហើយអនុញ្ញាតឱ្យសិស្សធ្វើម្ដងទៀត'>🔄</button></td></tr>"}).join("")+
+    (R.length||prog.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm><button type=button class=qr-stb data-qst='"+esc(r.s.sid)+"' title='មើលក្រដាសកិច្ចការលម្អិតរបស់សិស្សនេះ'>"+esc(r.s.sn)+" <small>📄</small></button></td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td><td><button type=button class=qr-rs data-qrs='"+esc(r.s.sid)+"' title='លុបចម្លើយនេះ ហើយអនុញ្ញាតឱ្យសិស្សធ្វើម្ដងទៀត'>🔄</button></td></tr>"}).join("")+
       prog.map(function(x){return"<tr class=qr-ip><td>⏳</td><td class=nm>"+esc(x.sn||x.sid)+"</td><td colspan=5>កំពុងធ្វើ · ចាប់ផ្ដើម "+esc(stTime(x.at))+(t.dur?" · ផុតម៉ោង "+esc(stTime(x.at,t.dur)):"")+"</td><td><button type=button class=qr-rs data-qrs='"+esc(x.sid)+"' title='អនុញ្ញាតឱ្យចាប់ផ្ដើមម្ដងទៀត (ឧ. ប្ដូរឧបករណ៍ ឬមានអ្នកផ្សេងប្រើឈ្មោះនេះ)'>🔄</button></td></tr>"}).join(""):"<tr><td colspan=8 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
     (miss.length?"<p class=note>មិនទាន់ធ្វើ ("+kn(miss.length)+")៖ "+miss.map(function(x){return esc(x.n)}).join(" · ")+"</p>":"")+
-    "<h3 style='margin:16px 0 8px'>អត្រាឆ្លើយត្រូវតាមលំហាត់</h3><div class=qz-list>"+t.items.map(function(q,i){
-      var k=K[q.id],ok=R.filter(function(r){return k&&correct({t:k.t,a:k.a},r.s.a&&r.s.a[q.id])}).length,p=R.length?ok/R.length*100:0;
-      return"<div class=qz-q><div class=qz-qh><b>លំហាត់ទី"+kn(i+1)+"</b><span class=qr-rate style='--p:"+p+"%'>"+p.toFixed(0)+"% ត្រូវ</span></div><div class=qz-qt>"+tx(q.q)+"</div></div>"}).join("")+"</div>";
+    "<h3 style='margin:16px 0 8px'>📊 វិភាគតាមលំហាត់</h3><div class=qz-list>"+t.items.map(function(q,i){return qBreak(t,q,i,K[q.id],R)}).join("")+"</div>";
   $("qzBody").innerHTML=h;math($("qzBody"));
+}
+/* ---------- 📊 វិភាគតាមលំហាត់ · ❌ បញ្ជីសិស្សធ្វើខុស · 📄 ក្រដាសកិច្ចការសិស្សម្នាក់ៗ ----------
+   ទិន្នន័យ៖ subs.a[លំហាត់] = ចម្លើយដែលសិស្សរើស (MC = លេខជម្រើសដើម 0–3 មុនក្រឡុក · num = អត្ថបទ) · tkeys.a[លំហាត់] = {t,a,s?}
+   s = ដំណោះស្រាយ (តេស្តថ្មី) · តេស្តចាស់ → រកក្នុងធនាគារលំហាត់តាម id (បើមាន) · ជម្រើសបង្ហាញជា A–D តាមលំដាប់ក្នុងធនាគារ (សិស្សឃើញក្រឡុក) */
+var ABCD="ABCD",WOPEN={};
+function ansOf(r,q){var a=r.s.a&&r.s.a[q.id];return a==null||a===""?null:String(a)}
+function ansTx(q,a){if(a==null)return"<i class=qr-blank>— មិនបានឆ្លើយ —</i>";if(q.t==="mc"){var j=+a;return"<b>"+(ABCD[j]||"?")+".</b> "+tx((q.ch||[])[j]||"")}return"<b>"+tx(a)+"</b>"}
+function solOf(q,k){if(k&&k.s)return k.s;var b=allQ().filter(function(x){return x.id===q.id&&x.sl})[0];return b?b.sl:""}
+function isOk(q,k,a){return!!k&&correct({t:k.t,a:k.a},a)}
+function qStat(q,k,R){var o={ok:[],bad:[],blank:[],dist:{}};R.forEach(function(r){var a=ansOf(r,q);if(a==null){o.blank.push(r);return}(isOk(q,k,a)?o.ok:o.bad).push(r);var d=q.t==="mc"?String(+a):normNum(a);o.dist[d]=(o.dist[d]||0)+1});return o}
+function qBreak(t,q,i,k,R){
+  var S=qStat(q,k,R),N=R.length,p=N?S.ok.length/N*100:0,W=S.bad.concat(S.blank),pc=function(n){return N?Math.round(n/N*100):0},h="";
+  h+="<div class=qz-q data-qq='"+esc(q.id)+"'><div class=qz-qh><b>លំហាត់ទី"+kn(i+1)+"</b><span class=qr-rate style='--p:"+p+"%'>"+p.toFixed(0)+"% ត្រូវ</span></div><div class=qz-qt>"+tx(q.q)+"</div>"+(q.fg&&window.FIG?FIG.svg(q.fg):"")+
+    "<div class=qr-cnt><span class=qr-ok>✅ ត្រូវ <b>"+kn(S.ok.length)+"</b> នាក់</span><span class=qr-bad>❌ ខុស <b>"+kn(S.bad.length)+"</b> នាក់</span>"+(S.blank.length?"<span class=qr-bl>⬜ មិនឆ្លើយ <b>"+kn(S.blank.length)+"</b> នាក់</span>":"")+"<span class=qr-of>ក្នុងចំណោម "+kn(N)+" នាក់</span></div>";
+  if(q.t==="mc"){
+    var top=-1,tn=0;(q.ch||[]).forEach(function(c,j){var n=S.dist[String(j)]||0;if(k&&+k.a!==j&&n>tn){tn=n;top=j}});
+    h+="<div class=qr-dist>"+(q.ch||[]).map(function(c,j){if(!c)return"";var n=S.dist[String(j)]||0,ok=k&&+k.a===j;
+      return"<div class='qr-dr"+(ok?" ok":j===top?" top":"")+"'><span class=qr-dl>"+ABCD[j]+"</span><span class=qr-dc>"+tx(c)+"</span><span class=qr-db><i style='width:"+pc(n)+"%'></i></span><span class=qr-dn>"+kn(n)+" នាក់ · "+kn(pc(n))+"%"+(ok?" ✓":j===top?" ⚠️ ច្រឡំច្រើនជាងគេ":"")+"</span></div>"}).join("")+"</div>";
+  }else{
+    var wr=Object.keys(S.dist).filter(function(v){return!isOk(q,k,v)}).sort(function(a,b){return S.dist[b]-S.dist[a]}).slice(0,5);
+    h+="<div class=qr-dist><div class='qr-dr ok'><span class=qr-dl>✓</span><span class=qr-dc>ចម្លើយត្រូវ៖ <b>"+(k?tx(String(k.a)):"…")+"</b></span><span class=qr-db><i style='width:"+pc(S.ok.length)+"%'></i></span><span class=qr-dn>"+kn(S.ok.length)+" នាក់</span></div>"+
+      wr.map(function(v,x){return"<div class='qr-dr"+(x?"":" top")+"'><span class=qr-dl>✗</span><span class=qr-dc>"+tx(v)+"</span><span class=qr-db><i style='width:"+pc(S.dist[v])+"%'></i></span><span class=qr-dn>"+kn(S.dist[v])+" នាក់"+(x?"":" ⚠️ ច្រើនជាងគេ")+"</span></div>"}).join("")+"</div>";
+  }
+  if(W.length){var wk=t.id+"_"+q.id;
+    h+="<details class=qr-wd data-wk='"+esc(wk)+"'"+(WOPEN[wk]?" open":"")+"><summary>👁 មើលបញ្ជីសិស្សធ្វើខុស ("+kn(W.length)+" នាក់)</summary><div class=wrap><table class=qr-wt><thead><tr><th>ឈ្មោះសិស្ស</th><th>សិស្សរើស</th><th>ចម្លើយត្រូវ</th></tr></thead><tbody>"+
+      W.map(function(r){return"<tr><td class=nm><button type=button class=qr-stb data-qst='"+esc(r.s.sid)+"' data-qsq='"+esc(q.id)+"'>"+esc(r.s.sn)+"</button></td><td class=qr-bad>"+ansTx(q,ansOf(r,q))+"</td><td class=qr-ok>"+(k?ansTx(q,String(k.a)):"…")+"</td></tr>"}).join("")+"</tbody></table></div></details>";}
+  var sl=solOf(q,k),sk="s_"+t.id+"_"+q.id;if(sl)h+="<details class=qr-sd2 data-wk='"+esc(sk)+"'"+(WOPEN[sk]?" open":"")+"><summary>💡 ដំណោះស្រាយ</summary><div class=qr-sol>"+tx(sl)+"</div></details>";
+  return h+"</div>";
+}
+/* 📄 ក្រដាសកិច្ចការលម្អិត៖ គ្រប់លំហាត់ (ត្រូវ/ខុស · សិស្សរើស · ចម្លើយត្រូវ · ដំណោះស្រាយ) · តម្រង «តែខុស» · ‹ › ប្ដូរសិស្ស */
+var SDBAD=false;
+function stDlg(sid,focus){
+  var t=curTest;if(!t)return;var R=grade(t),ix=-1;R.forEach(function(r,i){if(r.s.sid===sid)ix=i});if(ix<0)return;
+  var r=R[ix],K=keyOf[t.id]||{},d=$("qrSd");
+  if(!d){d=document.createElement("dialog");d.id="qrSd";d.className="wide";document.body.appendChild(d);
+    d.addEventListener("click",function(e){if(e.target===d){d.close();return}var b=e.target.closest("[data-sdg]");if(b){stDlg(b.dataset.sdg);return}if(e.target.id==="qrSdX")d.close()});
+    d.addEventListener("change",function(e){if(e.target.id==="qrSdB"){SDBAD=e.target.checked;$("qrSdL").classList.toggle("only-bad",SDBAD)}})}
+  var nb=0,rows=t.items.map(function(q,i){var k=K[q.id],a=ansOf(r,q),ok=a!=null&&isOk(q,k,a);if(!ok)nb++;var sl=solOf(q,k);
+    return"<div class='qr-sq "+(ok?"ok":"bad")+"' id='qrSq_"+esc(q.id)+"'><div class=qz-qh><b>លំហាត់ទី"+kn(i+1)+"</b><span class=qr-mk>"+(ok?"✅ ត្រូវ":a==null?"⬜ មិនបានឆ្លើយ":"❌ ខុស")+"</span></div><div class=qz-qt>"+tx(q.q)+"</div>"+(q.fg&&window.FIG?FIG.svg(q.fg):"")+
+      (q.t==="mc"?"<ol class=qr-ch>"+(q.ch||[]).map(function(c,j){if(!c)return"";var isK=k&&+k.a===j,isA=a!=null&&+a===j;return"<li class='"+(isK?"key ":"")+(isA?(isK?"me ok":"me bad"):"")+"'><b>"+ABCD[j]+".</b> "+tx(c)+(isA?" <em>← សិស្សរើស</em>":"")+(isK?" <em class=k>✓ ចម្លើយត្រូវ</em>":"")+"</li>"}).join("")+"</ol>"
+        :"<div class=qr-na><span>សិស្សឆ្លើយ៖ "+ansTx(q,a)+"</span><span class=qr-ok>ចម្លើយត្រូវ៖ "+(k?ansTx(q,String(k.a)):"…")+"</span></div>")+
+      (sl?"<details class=qr-sd2"+(ok?"":" open")+"><summary>💡 ដំណោះស្រាយ</summary><div class=qr-sol>"+tx(sl)+"</div></details>":"")+"</div>"}).join("");
+  d.innerHTML="<div class=dlgb><div class=qr-sdh><button type=button data-sdg='"+(ix>0?esc(R[ix-1].s.sid):"")+"'"+(ix>0?"":" disabled")+" title='សិស្សមុន'>‹</button><div><h2 style='margin:0'>📄 "+esc(r.s.sn)+"</h2><small>"+esc(t.title)+" · ពិន្ទុ <b>"+kn(r.sc)+"/"+kn(r.n)+"</b> ("+r.p.toFixed(0)+"%) · ចំណាត់ថ្នាក់ទី"+kn(ix+1)+"/"+kn(R.length)+(r.s.dur?" · "+kn(Math.round(r.s.dur/60))+" នាទី":"")+"</small></div><button type=button data-sdg='"+(ix<R.length-1?esc(R[ix+1].s.sid):"")+"'"+(ix<R.length-1?"":" disabled")+" title='សិស្សបន្ទាប់'>›</button></div>"+
+    "<label class=qr-flt><input type=checkbox id=qrSdB"+(SDBAD?" checked":"")+"> បង្ហាញតែសំណួរដែលធ្វើខុស ("+kn(nb)+")</label>"+
+    "<div id=qrSdL class='qr-sdl"+(SDBAD?" only-bad":"")+"'>"+rows+(nb?"":"<p class='note qr-allok'>🎉 ត្រូវទាំងអស់</p>")+"</div></div>"+
+    "<div class=dlgf><button type=button id=qrSdX>បិទ</button></div>";
+  math(d);if(!d.open)d.showModal();
+  var f=focus&&document.getElementById("qrSq_"+focus);if(f)setTimeout(function(){f.scrollIntoView({block:"center"});f.classList.add("flash");setTimeout(function(){f.classList.remove("flash")},2500)},50);else{var L=$("qrSdL");if(L)L.scrollTop=0;d.querySelector(".dlgb").scrollTop=0}
 }
 function acCell(s){   /* lv = ចាកចេញ (ដង) · lt = វិនាទី · cp = ចម្លង/បិទភ្ជាប់ · ax = ផ្ញើស្វ័យប្រវត្តិដោយសារចាកចេញ */
   if(s.lv==null&&s.cp==null)return"<span class=note style='margin:0'>—</span>";
@@ -819,6 +868,7 @@ window.DRIVE={tok:driveTok,connect:driveConnect,api:gapi,
   }};
 function nmKey(s){return String(s||"").replace(/[\s​-‍]+/g,"")}
 window.QUIZ={
+  _res:function(t,k,sb){curTest=t;keyOf[t.id]=k;subs=sb;stl=[];QV="res";tOK=true;tests=[t];renderRes()},   /* ជំនួយតេស្ត (headless) */
   KIND:KIND,nmKey:nmKey,
   forMonth:function(tid,cls,mo){   /* {t1:{t,n,by}, t2:{…}} · ប្រសិនបើមានច្រើន យកតេស្តថ្មីបំផុត */
     var self=this;return self.list(tid).then(function(L){
@@ -871,8 +921,10 @@ $("qzBody").addEventListener("change",function(e){
   else if(el.dataset.qp){var qp=el.dataset.qp.split("|"),qq=(qb[qp[0]]||[]).filter(function(x){return x.id===qp[1]})[0];if(qq){var nq=Object.assign({},qq);if(+el.value)nq.pt=+el.value;else delete nq.pt;saveQ(qp[0],nq).then(function(){notify("បានកំណត់ចំណុច")})}}
   else if(el.dataset.mn){mk.n[el.dataset.mn]=Math.max(0,+el.value||0)}
 });
+$("qzBody").addEventListener("toggle",function(e){var w=e.target.dataset&&e.target.dataset.wk;if(w)WOPEN[w]=e.target.open},true);   /* បើក/បិទ «បញ្ជីខុស» នៅដដែល ពេលសិស្សផ្ញើថ្មី */
 $("qzBody").addEventListener("click",function(e){
-  var b=e.target.closest("[data-qa],[data-qe],[data-qd],[data-qo],[data-qrs]");if(!b)return;
+  var b=e.target.closest("[data-qa],[data-qe],[data-qd],[data-qo],[data-qrs],[data-qst]");if(!b)return;
+  if(b.dataset.qst){stDlg(b.dataset.qst,b.dataset.qsq);return}
   if(b.dataset.qe){var p=b.dataset.qe.split("|"),q=(qb[p[0]]||[]).filter(function(x){return x.id===p[1]})[0];if(q)qDialog(Object.assign({by:p[0]},q));return}
   if(b.dataset.qd){var p2=b.dataset.qd.split("|");if(!confirm("លុបលំហាត់នេះ?"))return;delQ(p2[0],p2[1]).then(function(){renderBank();notify("បានលុបលំហាត់")});return}
   if(b.dataset.qo){curTest=tests.filter(function(t){return t.id===b.dataset.qo})[0];watchSubs(curTest);renderRes();return}

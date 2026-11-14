@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v33`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v34`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -226,6 +226,16 @@
   - Drafts autosave to localStorage `hubDraft_{g}_{l}`. Save runs a transaction with a version check (`r` +1, `tx.update` when the doc exists); on a conflict it asks before overwriting. «↺ ត្រឡប់ទៅលំនាំដើម» deletes the teacher version.
 - Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
 - Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
+
+### ✅ MCQ test report: per-question breakdown + student mistakes — `quiz.js`, `style.css`
+- Data was already there: `subs/{t}_{sid}.a[qid]` holds every chosen answer (MC = **original** choice index 0–3 before the per-student shuffle; num = text). No change to `test.html` or the rules was needed.
+- «📊 វិភាគតាមលំហាត់» (`qBreak`): for each question, «✅ ត្រូវ X នាក់ · ❌ ខុស Y នាក់ · ⬜ មិនឆ្លើយ Z នាក់ ក្នុងចំណោម N នាក់».
+  - MC: choice distribution A–D (bank order, because students see shuffled letters) with bars, the correct choice in green and the most-chosen wrong choice flagged «⚠️ ច្រឡំច្រើនជាងគេ».
+  - num: the top 5 wrong answers.
+  - «👁 មើលបញ្ជីសិស្សធ្វើខុស (X នាក់)» `<details>`: name · chosen answer · correct answer. Its open state survives re-renders on new submissions (`WOPEN`, keyed `t_q`).
+- 📄 Student attempt detail (`stDlg`): click a name in the table or the wrong list. It shows every question with ✅/❌/⬜, choices marked «← សិស្សរើស» / «✓ ចម្លើយត្រូវ», solution (opened on wrong ones), a «បង្ហាញតែសំណួរដែលធ្វើខុស» filter (CSS-only, kept across students), and ‹ › to move between students. Opening it from the wrong list scrolls to that question.
+- 💡 Solutions: the bank editor has an optional `sl` field (`qDoc`/`toQ`, ≤8000 chars). New tests copy it into **`tkeys`** (`keys[q].s`, teacher-only, never into `tests/`). Old tests fall back to the bank item with the same id.
+- `QUIZ._res(t,keys,subs)` is a headless test helper. Headless check (35 students, 6 questions incl. `$d<R$`, a figure, num answers, blanks; plus a legacy run with no `s` and some subs lacking `a`): every count and the wrong-list size match, 0 KaTeX errors, 0 raw `$`, details stay open, filter/next/focus work, 0 JS errors, no horizontal scroll at 390 px (`.qz-list>.qz-q{min-width:0}`).
 
 ### ✅ 5 levels + 🌐 PISA — `practice.js`, `practice.html`, `practice9.js`, `exam.js`, `quiz.js`
 - Every grade shows 6 level buttons in a 6-column grid on desktop and a 3×2 grid on phone. On phone, the lesson title moves to its own line under the 6 cups. Each lesson card has 6 trophies, and «បន្តទៅកម្រិតបន្ទាប់» follows `LVO`.
