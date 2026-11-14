@@ -187,7 +187,7 @@ function hubLoad(g,l){
     var v=sn.exists()?sn.data():null,subs=null;
     if(v){try{subs=JSON.parse(v.j).subs}catch(e){subs=null}}
     var src=subs?"teacher":HUB.starter(g,l)?"starter":"generic";
-    if(!subs)subs=HUB.starter(g,l)||HUB.generic(name,false);
+    if(!subs)subs=HUB.starter(g,l)||HUB.generic(name,false,g,l);
     HE={g:g,l:l,name:name,subs:subs,r:v?+v.r||0:0,src:src,by:v?v.o:"",at:v?v.u:"",sel:0,dirty:false};
     var dr=null;try{dr=JSON.parse(localStorage.getItem("hubDraft_"+g+"_"+l)||"null")}catch(e){}
     if(dr&&dr.subs&&confirm("មានសេចក្ដីព្រាងមិនទាន់រក្សាទុក ("+String(dr.t||"").slice(0,16).replace("T"," ")+") សម្រាប់មេរៀននេះ ។ បើកសេចក្ដីព្រាងនោះ?")){HE.subs=dr.subs;HE.dirty=true}

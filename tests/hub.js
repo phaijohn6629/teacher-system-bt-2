@@ -12,7 +12,7 @@ function mathKh(t){var m=String(t).replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,functio
 var LES=PRACT.GR[9].les,ids=[];LES.forEach(function(c){c[1].forEach(function(x){ids.push(x[0])})});
 ids.forEach(function(l){
   var s=HUB.starter(9,l);if(!s||!s.length){B("NO STARTER l"+l);return}
-  s.forEach(function(x){n++;
+  s.forEach(function(x){n++;if(/^🎬/.test(x.t)){if(!HUB.vparse(x.v))B("BAD VIDEO l"+l+" "+x.v);return}
     if(!x.t||!x.s||!x.f||!x.f.length||!x.k)B("INCOMPLETE l"+l+" "+x.t);
     [x.s,x.k].concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){if(!bal(t))B("BAL l"+l+" "+String(t).slice(0,60));if(mathKh(t))B("KH-IN-MATH l"+l+" "+String(t).slice(0,80))});
     x.f.forEach(function(f){if(KH.test(f))B("KH-IN-FORMULA l"+l+" "+f);if(!bal(f)||/\$/.test(f))B("FBAL l"+l+" "+f)});
@@ -33,4 +33,6 @@ if(HUB.html(9,1,1,"x",false).indexOf("១.១")<0)B("clear → starter failed");
  ["https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view?usp=sharing","gd"],["https://drive.google.com/open?id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345","gd"],
  ["https://example.org/manim/scene.mp4","mp4"],["https://example.org/v.webm?x=1","mp4"]].forEach(function(t){var v=HUB.vparse(t[0]);if(!v||v.k!==t[1])B("VIDEO "+t[0])});
 ["http://youtu.be/dQw4w9WgXcQ","javascript:alert(1)","https://evil.example/x","https://example.org/a.mp4\"><script>","data:video/mp4;base64,AAA",""].forEach(function(u){if(HUB.vparse(u))B("VIDEO accepted "+u)});
+/* 🎬 VIDEOS (tools/upload_youtube.py)៖ គន្លឹះ g_l_i · តំណវីដេអូត្រឹមត្រូវ */
+Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d+_\d+$/.test(k)||!v||!HUB.vparse(v.u))B("VIDEOS "+k)});
 print("hub: subtopics "+n+" bad "+bad);

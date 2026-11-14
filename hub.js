@@ -217,6 +217,15 @@ $DE$ ធៀបជាមួយ $AB$ មិនមែន $DB$`,
  [[R`$\cos A=\dfrac45$`,R`$\sin A=\sqrt{1-\dfrac{16}{25}}=\dfrac35$`]])]
 };
 var STARTER={9:S9};
+/* 🎬 វីដេអូ YouTube ដែល tools/upload_youtube.py បញ្ចូលដោយស្វ័យប្រវត្តិ · គន្លឹះ "ថ្នាក់_មេរៀន_លេខចំណុចរង(ចាប់ពី 0)" = {u:តំណ, t:ចំណងជើង}
+   ចំណុចរងដែលមានស្រាប់ → ភ្ជាប់វីដេអូ (បើមិនទាន់មាន) · លេខលើសចំនួនចំណុចរង → បង្កើតចំណុចរង «🎬 …» ថ្មី · កំណែគ្រូ (Firestore) មានអាទិភាពជាង */
+/* @VIDEOS-START (សរសេរដោយ tools/upload_youtube.py) */
+var VIDEOS={};
+/* @VIDEOS-END */
+function withVids(g,l,subs){var p=g+"_"+l+"_";
+  Object.keys(VIDEOS).filter(function(k){return k.indexOf(p)===0}).map(function(k){return[+k.slice(p.length),VIDEOS[k]]}).sort(function(a,b){return a[0]-b[0]})
+    .forEach(function(x){var i=x[0],v=x[1]||{};if(!v.u)return;if(i<subs.length){if(!subs[i].v)subs[i].v=v.u}else{var s=U("🎬 "+(v.t||"វីដេអូពន្យល់"),null,"",[],"",[]);s.v=v.u;subs.push(s)}});
+  return subs}
 
 /* ---------- PISA (គ្រប់មេរៀន) ---------- */
 function pisaSub(en){return en?U("🌐 From real life to mathematics",[4],"Read the situation twice and underline the numbers and the question.\n- Name the unknown (what is asked)\n- Write the relationship as an equation, ratio or formula\n- Solve, then check that the answer makes sense (units, whole numbers, realistic size)",
@@ -239,12 +248,12 @@ function ck(g,l){return"hub"+g+"_"+l}
 function cacheGet(g,l){try{return JSON.parse(localStorage.getItem(ck(g,l))||"null")}catch(e){return null}}
 function cacheSet(g,l,o){var v=JSON.stringify(o);if(window.LSG){LSG.set(localStorage,ck(g,l),v);return}try{localStorage.setItem(ck(g,l),v)}catch(e){}}
 try{if(window.LSG)LSG.ttl(/^hub\d+_\d+$/,30)}catch(e){}   /* 🧹 cache មេរៀនដែលមិនបានបើក > ៣០ ថ្ងៃ */
-function starter(g,l){var s=STARTER[g]&&STARTER[g][l];return s?JSON.parse(JSON.stringify(s)):null}
+function starter(g,l){var s=STARTER[g]&&STARTER[g][l];return s?withVids(g,l,JSON.parse(JSON.stringify(s))):null}
 function valid(d){return d&&Array.isArray(d.subs)&&d.subs.every(function(x){return x&&typeof x.t==="string"})}
 function data(g,l,name,en){
   var c=cacheGet(g,l);if(c&&valid(c.d))return{subs:c.d.subs,src:"teacher"};
   var s=starter(g,l);if(s)return{subs:s,src:"starter"};
-  return{subs:generic(name||"",en),src:"generic"};
+  return{subs:withVids(g,l,generic(name||"",en)),src:"generic"};
 }
 /* 🔄 ទាញកំណែគ្រូ (REST · គ្មាន SDK) · មិនប៉ះពាល់លំហាត់ពេលបរាជ័យ */
 var inflight={},backoff={},fresh={};   /* fresh = បានទាញក្នុងការបើកទំព័រលើកនេះហើយ */
@@ -332,6 +341,6 @@ function after(g,l,v,name,en,math){
   sync(g,l,function(){var el=document.getElementById("hub");if(!el||el.dataset.hg!==g+"_"+l)return;
     var w=document.createElement("div");w.innerHTML=html(g,l,v,name,en);el.replaceWith(w.firstChild);if(math)math(document.getElementById("hub"))});
 }
-window.HUB={html:html,after:after,subHtml:function(x,en){return subHtml(x,"pv",en?L.en:L.km,true)},starter:starter,generic:generic,vparse:vparse,vopen:vopen,
+window.HUB={html:html,after:after,subHtml:function(x,en){return subHtml(x,"pv",en?L.en:L.km,true)},starter:starter,generic:function(n,en,g,l){var s=generic(n,en);return g?withVids(g,l,s):s},VIDEOS:VIDEOS,vparse:vparse,vopen:vopen,
   clear:function(g,l){try{localStorage.removeItem(ck(g,l))}catch(e){}},put:function(g,l,d){cacheSet(g,l,{t:Date.now(),d:d})},LV:[1,5,2,6,3,4]};
 })();

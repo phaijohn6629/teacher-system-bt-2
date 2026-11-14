@@ -1,0 +1,11 @@
+# 🔐 ឯកសារសម្ងាត់ (YouTube / Google OAuth) — មិនត្រូវ push ឡើង GitHub ជាដាច់ខាត
+client_secret*.json
+client_secrets.json
+token.json
+*.token.json
+# Python
+.venv/
+__pycache__/
+*.pyc
+# macOS
+.DS_Store

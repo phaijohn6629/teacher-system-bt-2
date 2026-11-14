@@ -25,6 +25,7 @@
 | `meetings.js` | Meeting minutes / PLC | កំណត់ហេតុប្រជុំ និង PLC |
 | `lsguard.js` | Browser storage guard | ការពារ localStorage/sessionStorage ពេញ (សម្អាតស្វ័យប្រវត្តិ · TTL) — គ្រប់ទំព័រ |
 | `storeadm.js` | Storage panel in ⚙️ Settings | ទំហំផ្ទុកឧបករណ៍ · ចំនួន/ទំហំឯកសារ Firestore · សម្អាតតេស្តចាស់ (Admin) |
+| `tools/upload_youtube.py` | Manim → YouTube uploader | បង្ហោះវីដេអូទៅ Channel «Rean-Maths» ហើយភ្ជាប់តំណទៅ `hub.js` (`VIDEOS`) |
 | `sw.js` | PWA Service Worker | គ្រប់គ្រង Cache សម្រាប់ PWA ដើម្បីបើកលឿន |
 | `index.html` | Main Entry Point | ទំព័រមេសម្រាប់ផ្ទុក UI និងហៅដំណើរការកម្មវិធី |
 
@@ -48,11 +49,12 @@
   - Text goes through `esc()`. Never put user data in `innerHTML` raw.
   - Monitor passwords live in `mcp/{k}` (owner/Admin only), never in `mc`.
   - Every page has a CSP `<meta>` (GitHub Pages can't send headers). When adding an external script, iframe or fetch host, add it to the CSP of the page that uses it.
+- **Secrets never go to git:** `client_secrets.json`, `client_secret*.json` and `token.json` (YouTube OAuth) are in `.gitignore`. Never `git add -f` them, never print their contents, and check `git status` before committing.
 - Storage: write large or optional browser caches through `LSG.set(storage,k,v)` (`lsguard.js`), which frees caches and retries when the quota is full. Never delete `pend_*` (unsent answers), `firebase:*` or settings.
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v23`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v24`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -93,6 +95,17 @@
 - `exam.js`: `mkItem` avoids duplicates against the session history plus the items already in the section.
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
+
+### ✅ YouTube uploader for Manim videos — `tools/upload_youtube.py`, `hub.js`
+- Setup is done once: `.venv` (google-api-python-client, google-auth-oauthlib, google-auth-httplib2) and the OAuth client `client_secrets.json` (Desktop app). Run `.venv/bin/python tools/upload_youtube.py --auth-only` to log in; the browser opens, and you must choose the **Rean-Maths** brand account. This writes `token.json` (mode 600, auto-refresh).
+- Usage (from the project root):
+  - `.venv/bin/python tools/upload_youtube.py` uploads the newest `.mp4` in `/Users/phaijohn/Desktop/ReanMath_Videos` as **unlisted**.
+  - `--file X.mp4 --title "…" --desc "…" --privacy public --grade 9 --lesson 1 --topic 1.2` uploads, prints `https://youtu.be/…`, and writes `VIDEOS["9_1_1"]` into `hub.js`.
+  - `--topic`: a 1-based index, or a heading number such as `1.2`/`១.២` matched against the starter titles. Without it, a new «🎬 title» sub-topic is appended.
+  - `--link https://youtu.be/… --grade … --lesson … [--topic …]` attaches an existing video without uploading. `--dry-run` previews.
+- Safety: it refuses to upload if the token's channel name doesn't contain «rean» (prevents posting to the wrong channel). It handles resumable 8 MB chunks with retries, and gives clear messages for a quota limit (~6 uploads/day) or a revoked token. Every upload is logged in `tools/youtube_uploads.json`.
+- `hub.js`: `VIDEOS` sits between `@VIDEOS-START`/`@VIDEOS-END` (the only part the script edits). `withVids()` applies it to starter and generic content (also in the teacher editor). A teacher version in Firestore takes priority, and the script warns when `hub/{g}_{l}` exists.
+- After a hub change: `python3 tools/bump.py && ./tests/run.sh` (`tests/hub.js` validates every `VIDEOS` key and link), bump `sw.js`, then commit and push.
 
 ### ✅ Security audit & storage protection (2026-11-14)
 - **Rules (`firestore.rules` — must be published):**
