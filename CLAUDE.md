@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v32`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v33`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -200,6 +200,7 @@
     - Checks: 36 numeric checks of every example (numeric derivative, extremum search, limits) gave 0 wrong. 24 views showed 0 KaTeX errors, 0 raw `$`, and 24/24 practice sets OK.
     - A visual check caught two clipped formulas (fixed perimeter, closed can); they were split or shortened. Keep each formula short enough to fit a half-width box.
   - 12·22 Level 5: the three «លំហាត់អនុវត្តបន្ថែម ១–៣» videos were collapsed into one **playlist** entry (`PLEGSjUxJctik`), so Level 5 went from 9 to 7 items. `HUB.vparse` accepts playlist links (`youtube.com/playlist?list=…` or `watch?…&list=…` without `v`) and embeds them as `videoseries?list=…`.
+  - 12·22 one Manim video **per level** (2026-11-14, `12_22_17`…`22`, also appended to the playlist): L1 direct substitution `zKCqsRkwz0c`, L2 0/0 + reference limits `q5SyyPkbzjQ`, L3 mixed medium `7uyN9Jo9TiU`, L4 BacII `b6Yg-zsnHAA`, L5 national/olympiad `4RdfRy2SR50`, PISA real world `nWc9-GoBOkM`. Each shows only at its own level (checked by rendering all 6 levels).
   - `VIDEOS.lv` accepts a list (`"4,5"`) via `vlvKeys()`, and `--level 4,5` in the uploader (normalised order). `youtube_uploads.json` records each video's primary placement plus `also`.
   - Verified: 28 example answers recomputed. In headless Chrome, 3 lessons × 6 levels with every sub-topic open showed 0 KaTeX errors and 0 raw `$`, and 18/18 practice sets still check ✅.
   - Bug found and fixed: titles were plain `"…"` strings, so `\f`/`\i`/`\l` were lost (`\frac` turned into a form-feed). `tests/hub.js` now fails on control characters or LaTeX words missing `\` (verified by injecting both mistakes). **Write sub-topic titles that contain LaTeX as `"…\\frac…"` or use `R\`…\``.**
