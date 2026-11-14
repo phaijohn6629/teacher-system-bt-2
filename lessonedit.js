@@ -268,7 +268,7 @@ function hubBind(d){
     if(!HE)return;
     if(a==="save")return hubSave();
     if(a==="vtest")return HUB.vopen(x.v,x.t);
-    if(a==="reset"){if(!confirm("លុបកំណែគ្រូរបស់មេរៀននេះ ហើយត្រឡប់ទៅមាតិកាគំរូ?\nសិស្សនឹងឃើញមាតិកាគំរូវិញ (ក្នុងរយៈពេល ១០ នាទី)។"))return;
+    if(a==="reset"){if(!confirm("លុបកំណែគ្រូរបស់មេរៀននេះ ហើយត្រឡប់ទៅមាតិកាគំរូ?\nសិស្សនឹងឃើញមាតិកាគំរូវិញ ពេលបើក ឬ Refresh ទំព័រ។"))return;
       FB.deleteDoc(FB.doc(db,"hub",HE.g+"_"+HE.l)).then(function(){HUB.clear(HE.g,HE.l);try{localStorage.removeItem("hubDraft_"+HE.g+"_"+HE.l)}catch(e){}HE.dirty=false;notify("បានត្រឡប់ទៅលំនាំដើម");hubLoad(HE.g,HE.l)},function(e){console.error(e);alert("មិនអាចលុបបានទេ (ត្រូវជាអ្នករក្សាទុកចុងក្រោយ ឬ Admin)")});return}
     if(a==="add"){s.push(hubBlank());HE.sel=s.length-1}
     else if(a==="up"&&HE.sel){s.splice(HE.sel-1,0,s.splice(HE.sel,1)[0]);HE.sel--}

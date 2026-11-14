@@ -44,7 +44,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v19`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v20`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -92,7 +92,7 @@
 - Open/closed state survives `draw()` (check, 🔄), because `hub.js` stores `toggle` events keyed by `g_l_v_i`.
 - Video player (modal): YouTube (→ `youtube-nocookie` embed), Google Drive (→ `/preview`), and https MP4/WebM files. Anything else is rejected (`HUB.vparse`). Inside a `<dialog>` the player mounts in the dialog (top layer).
 - Data priority: teacher version (Firestore `hub/{g}_{l}` = `{o,g,l,j,r,u}`) > starter content in `hub.js` (grade 9: 18 lessons, 39 sub-topics) > generic tips with the lesson name (other grades; English for Cambridge).
-- Students read through the Firestore **REST** API (no SDK). The result is cached in localStorage `hub{g}_{l}` for 10 min; on failure there is a 10 min backoff. The practice flow never waits on it.
+- Students read through the Firestore **REST** API (no SDK). A fresh fetch runs on the first view of each lesson per page load (so opening the page or pressing Refresh shows teacher edits at once). After that the result is cached in localStorage `hub{g}_{l}` for 1 min; on failure there is a 1 min backoff. The practice flow never waits on it.
 - Teacher editor: «📖 មេរៀនសង្ខេប» tab → «🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់».
   - Choose grade and lesson; sub-topic tabs (add, move, duplicate, delete); level checkboxes; summary, formulas (one LaTeX per line), tips, examples, video URL with validity chip and «▶ សាកចាក់»; live preview.
   - Drafts autosave to localStorage `hubDraft_{g}_{l}`. Save runs a transaction with a version check (`r` +1, `tx.update` when the doc exists); on a conflict it asks before overwriting. «↺ ត្រឡប់ទៅលំនាំដើម» deletes the teacher version.
@@ -126,7 +126,7 @@
 - Optional future work: starter hub content for grades 7, 8, 10, 11, 12 and Cambridge (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
 
 ## Recommended manual checks (live site / real phones — not automatable here)
-  - **Publish `firestore.rules`** (new `hub/` rule), then save one hub lesson as a teacher and open it on a phone (students see changes within 10 min).
+  - **Publish `firestore.rules`** (new `hub/` rule), then save one hub lesson as a teacher and open it on a phone (students see changes on open/Refresh, or within 1 min).
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.
   - Refresh during a quiz/exam on a weak connection (verified only in a Node simulation with an unresponsive Firestore).

@@ -1,7 +1,7 @@
 /* ========================================================================
    📚 ផ្ទាំងសិក្សា (Flipped Classroom) — មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ តាមចំណុចរងនៃមេរៀនហ្វឹកហាត់
    - បង្ហាញលើ practice.html ពីលើលំហាត់ (បើក/បិទបាន) · ចំណុចរងបង្ហាញតាមកម្រិត (sub.lv) · 🌐 PISA = គ្រប់ចំណុច + គំរូជីវិតពិត
-   - ទិន្នន័យ៖ (១) គ្រូកែ → Firestore hub/{ថ្នាក់}_{មេរៀន} = {o,g,l,j:JSON,r,u} (សិស្សអានតាម REST គ្មាន SDK · cache ក្នុង localStorage)
+   - ទិន្នន័យ៖ (១) គ្រូកែ → Firestore hub/{ថ្នាក់}_{មេរៀន} = {o,g,l,j:JSON,r,u} (សិស្សអានតាម REST គ្មាន SDK · cache ក្នុង localStorage · ទាញថ្មីរាល់ពេលបើក/Refresh ទំព័រ និងរៀងរាល់ ១ នាទី)
               (២) មាតិកាគំរូក្នុងឯកសារនេះ (ថ្នាក់ទី៩ ពេញ) · (៣) ថ្នាក់ផ្សេង៖ គន្លឹះទូទៅ + ឈ្មោះមេរៀន
    - ចំណុចរង = {t:ចំណងជើង, lv:[គន្លឹះកម្រិត] (ទទេ = គ្រប់កម្រិត), s:មេរៀនសង្ខេប, f:[LaTeX], k:គន្លឹះ, ex:[[សំណួរ,ដំណោះស្រាយ]], v:URL វីដេអូ}
      អត្ថបទ៖ មួយបន្ទាត់មួយចំណុច · «- » = ចំណុចបញ្ជី · គណិតក្នុង $…$
@@ -11,7 +11,7 @@
 (function(){
 "use strict";
 var R=String.raw;
-var PROJ="math-teacher-system-bt",TTL=10*60*1000;
+var PROJ="math-teacher-system-bt",TTL=60*1000;   /* ១ នាទី · បើក/Refresh ទំព័រ = ទាញថ្មីភ្លាម */
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function U(t,lv,s,f,k,ex){return{t:t,lv:lv,s:s,f:f,k:k,ex:ex||[]}}
 var B=[1,5],M=[5,2,6],H=[6,3];   /* កម្រិត ១–២ · ២–៤ · ៤–៥ */
@@ -246,10 +246,11 @@ function data(g,l,name,en){
   return{subs:generic(name||"",en),src:"generic"};
 }
 /* 🔄 ទាញកំណែគ្រូ (REST · គ្មាន SDK) · មិនប៉ះពាល់លំហាត់ពេលបរាជ័យ */
-var inflight={},backoff={};
+var inflight={},backoff={},fresh={};   /* fresh = បានទាញក្នុងការបើកទំព័រលើកនេះហើយ */
 function sync(g,l,cb){
   var k=g+"_"+l,c=cacheGet(g,l);
-  if(inflight[k]||(c&&Date.now()-c.t<TTL)||(backoff[k]&&Date.now()-backoff[k]<TTL))return;   /* បរាជ័យ → កុំសាកម្ដងទៀតរាល់ពេលគូរ */
+  if(inflight[k]||(fresh[k]&&c&&Date.now()-c.t<TTL)||(backoff[k]&&Date.now()-backoff[k]<TTL))return;   /* លើកដំបូងក្នុងទំព័រ → ទាញថ្មីជានិច្ច · បរាជ័យ → រង់ចាំ ១ នាទី */
+  fresh[k]=1;   /* បរាជ័យ → កុំសាកម្ដងទៀតរាល់ពេលគូរ */
   if(typeof fetch!=="function")return;
   inflight[k]=1;
   var ac=window.AbortController?new AbortController():null,tm=setTimeout(function(){if(ac)ac.abort()},7000);

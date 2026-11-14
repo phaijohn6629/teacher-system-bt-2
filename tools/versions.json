@@ -72,16 +72,16 @@
   "v": 7
  },
  "hub.js": {
-  "hash": "83968936a5917f0aa2de4c3c6af86d62f339ec35",
-  "v": 2
+  "hash": "c5a7e68b9b729afbb7488dcafb37dc8afab48519",
+  "v": 3
  },
  "khcal.js": {
   "hash": "652046b95b4b8a94b974a0cc061aea9f9ffe20ea",
   "v": 1
  },
  "lessonedit.js": {
-  "hash": "3eed1875e79accdd64582a9ecfc1fe6c87942889",
-  "v": 2
+  "hash": "a2af1a28952aa4a60ebdc5031f71c120c445cb60",
+  "v": 3
  },
  "lessons.js": {
   "hash": "1e470103f2b72f8057f1babb40c2d1a6c77a901e",
@@ -168,8 +168,8 @@
   "v": 23
  },
  "script.js": {
-  "hash": "ca97f170ad227c19288d89f9c1eb47aa75f4510e",
-  "v": 77
+  "hash": "0d5545df87ad61cd519056078ec315b57e9ce0f4",
+  "v": 78
  },
  "style.css": {
   "hash": "d8e5bded446af70c935c060f81bd0375a7e6b384",
