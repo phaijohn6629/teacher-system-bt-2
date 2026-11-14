@@ -7,6 +7,8 @@
 (function(){
 "use strict";
 var $=function(id){return document.getElementById(id)};
+/* < > ក្នុង $…$ (ឧ. $d<R$) → &lt; &gt; កុំឱ្យ Browser អានជាស្លាក HTML ហើយលុបអត្ថបទ (KaTeX អានវិញជា < >) · ស្លាកពិតក្រៅ $ មិនប៉ះ */
+function mathSafe(t){return String(t==null?"":t).replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/</g,"&lt;").replace(/>/g,"&gt;")})}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function kn(n){return String(n).replace(/\d/g,function(d){return"០១២៣៤៥៦៧៨៩"[d]})}
 
@@ -825,10 +827,10 @@ function draw(){
   var h="<div class=bar><button type=button data-a=home>‹ "+T("មេរៀនទាំងអស់","All topics")+"</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='"+T("តំណ/QR សម្រាប់ចែករំលែក","Link / QR code")+"'>📱</button></div>"+
     "<div class=lv style='--n:"+lvls(l).length+"'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+lv(k)[0]+"<small>"+lv(k)[1]+"</small></button>"}).join("")+"</div>"+(window.HUB?HUB.html(S.g,l,v,lname(l),EN()):"")+"<ol class=qs>";
   S.qs.forEach(function(q,i){
-    h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+q.q+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
+    h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+mathSafe(q.q)+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
       q.a.map(function(a,j){return"<label class=in>"+(a.l?"<span class=lb>"+esc(a.l)+"</span>":"")+"<input data-q="+i+" data-p="+j+" autocomplete=off autocapitalize=off spellcheck=false inputmode=text value='"+esc(a.u||"")+"'"+(q.st==="ok"?" readonly":"")+"><span class=mk>"+(a.r==null?"":a.r?"✅":"❌")+"</span><span class=pv id=pv"+i+"_"+j+"></span></label>"}).join("")+
       "</div>"+solBtn(q,i)+
-      (q.show?"<div class=sol><b>"+T("ចម្លើយ៖","Answer:")+"</b> "+q.a.map(function(a){return(a.l?esc(a.l)+" ":"")+"$"+a.t+"$"}).join(" · ")+(q.s?"<br>"+q.s:"")+"</div>":"")+"</li>";
+      (q.show?"<div class=sol><b>"+T("ចម្លើយ៖","Answer:")+"</b> "+q.a.map(function(a){return(a.l?esc(a.l)+" ":"")+"$"+a.t+"$"}).join(" · ")+(q.s?"<br>"+mathSafe(q.s):"")+"</div>":"")+"</li>";
   });
   var ok=S.qs.filter(function(q){return q.st==="ok"}).length;
   h+="</ol><div class=foot><button type=button class=check data-a=check>✔ "+T("ពិនិត្យចម្លើយ","Check answers")+"</button><span class=score>"+N(ok)+" / "+N(S.qs.length)+T(" ត្រូវ"," correct")+"</span><button type=button data-a=new>🔄 "+T("លំហាត់ថ្មី","New questions")+"</button></div>";

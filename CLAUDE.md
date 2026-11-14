@@ -54,7 +54,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v31`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v32`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -209,6 +209,15 @@
   - Lesson 4.2 (fraction equations) is now also shown at Level 5.
   - Verified: all 31 example answers recomputed. In headless Chrome, all 18 lessons × 6 levels with every sub-topic open showed 0 KaTeX errors and 0 unrendered `$`. 🌐 appears only in PISA; ★ appears in Level 4/5 (and in PISA, which by design shows all of the lesson's concept sub-topics).
   - `tools/upload_youtube.py` `starter_titles()` also counts `add9` sub-topics, so new «all» videos never attach to a ★/🌐 sub-topic by index.
+- **✏️ Auto worked example (Dynamic Summary Engine, step 1)** in every hub (grades 7–12 + Cambridge), placed after the sub-topics:
+  - `exHtml()` calls `PRACT.GR[g].G[l][v]()` for the level the student has selected, and picks one whose text isn't on screen, preferring a `kd` not in the current set (up to 30 tries).
+  - It is cached per `g_l_v` in `EXS`, so `draw()` keeps it, and it is regenerated if a new set happens to contain it.
+  - Shows the question, `FIG.svg`, the answers, and the solution split at `⇒` **outside** `$…$` (`exSteps`) into a numbered list behind «👁». Labels are in English for Cambridge.
+  - «🔄 ឧទាហរណ៍ថ្មី» (`data-hubnew` → `exNew`) replaces only `#hubEx` and re-renders KaTeX there; exercises and typed answers are untouched.
+  - `HUB._reset(k)` is a test helper.
+  - **Bug fixed in passing, also in `practice.js`:** generator text like `$d<R$` made the browser parse `<R…` as an HTML tag and **delete** the rest of the solution or question. `mathSafe()` now escapes `<`/`>` only inside `$…$`, and is used for question, solution and answers in both files.
+  - Tests: `tests/hub.js` renders the example for every grade × lesson × level 3 times (3,816 renders; checks on-screen duplicates, `$` balance per step, no raw `<` in math). Headless Chrome: 1,272 views (all 13 grades incl. Cambridge) gave 0 KaTeX errors; «🔄» kept exercises and typed answers 1272/1272 and produced a new example 1272/1272.
+  - Next steps (planned): step 2 is `formulas.js` (formula metadata keyed by `kd` patterns, per-level table built automatically) plus `tools/formula_coverage.js`; step 3 fills formulas grade by grade; step 4 (optional) expands short generator solutions.
 - Data priority: teacher version (Firestore `hub/{g}_{l}` = `{o,g,l,j,r,u}`) > starter content in `hub.js` (grade 9: 18 lessons, 39 sub-topics) > generic tips with the lesson name (other grades; English for Cambridge).
 - Students read through the Firestore **REST** API (no SDK). A fresh fetch runs on the first view of each lesson per page load (so opening the page or pressing Refresh shows teacher edits at once). After that the result is cached in localStorage `hub{g}_{l}` for 1 min; on failure there is a 1 min backoff. The practice flow never waits on it.
 - Teacher editor: «📖 មេរៀនសង្ខេប» tab → «🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់».

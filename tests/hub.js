@@ -18,7 +18,7 @@ ids.forEach(function(l){
     x.f.forEach(function(f){if(KH.test(f))B("KH-IN-FORMULA l"+l+" "+f);if(!bal(f)||/\$/.test(f))B("FBAL l"+l+" "+f)});
     (x.lv||[]).forEach(function(v){if(HUB.LV.indexOf(v)<0)B("LV l"+l+" "+v)});
   });
-  HUB.LV.forEach(function(v){var h=HUB.html(9,l,v,"x",false);var k=(h.match(/class=hub-s /g)||[]).length;if(!k)B("EMPTY l"+l+" v"+v);if(!bal(h.replace(/<[^>]*>/g,"")))B("HTMLBAL l"+l+" v"+v)});
+  HUB.LV.forEach(function(v){var h=HUB.html(9,l,v,"x",false);var k=(h.match(/class=hub-s /g)||[]).length;if(!k)B("EMPTY l"+l+" v"+v);if(!bal(h.replace(/<\/?[a-zA-Z][^>]*>/g,"")))B("HTMLBAL l"+l+" v"+v)});
   if(HUB.html(9,l,4,"x",false).indexOf("🌐")<0)B("NO PISA SUB l"+l);
 });
 /* ថ្នាក់ទី១២ (Gold-Standard)៖ មេរៀន 22 · 42 · 43 ពេញលេញ · គ្រប់កម្រិតមានចំណុចរង · PISA មានចំណុចរងផ្ទាល់ */
@@ -64,4 +64,13 @@ Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d
       if(lv==="pisa"&&h.indexOf("🌐")<0)B("PISA card missing g"+gl.join("/"))});
     var st=HUB.starter(gl[0],gl[1])||HUB.generic("x",false,gl[0],gl[1]);if(st[0].v===id("T0"))B("level video attached into sub")});
   Object.keys(V).forEach(function(k){delete V[k]});var o=JSON.parse(save);Object.keys(o).forEach(function(k){V[k]=o[k]})})();
+/* ✏️ ឧទាហរណ៍គំរូស្វ័យប្រវត្តិ ៖ គ្រប់ថ្នាក់ (៧–១២ · Cambridge) × គ្រប់មេរៀន × គ្រប់កម្រិត */
+["pisa12.js","practice11.js","practice10.js","practice8.js","practice7.js","practiceen.js","practiceen2.js","practiceen3.js","practiceen4.js","practiceen5.js","practiceen6.js"].forEach(function(f){eval(read(f))});
+(function(){var GR=PRACT.GR,ex=0;Object.keys(GR).forEach(function(g){var en=!!GR[g].en;Object.keys(GR[g].G).forEach(function(l){HUB.LV.forEach(function(v){var G=GR[g].G[l];if(typeof G[v]!=="function")return;
+  for(var r=0;r<3;r++){var on=G[v]();PRACT.S.qs=[on];HUB._reset(g+"_"+l+"_"+v);var h=HUB.html(+g,+l,v,"x",en);ex++;
+    var c=(h.match(/<div class=hub-xc[\s\S]*$/)||[""])[0];if(!c){B("NO EXAMPLE g"+g+" l"+l+" v"+v);return}
+    if(c.indexOf(on.q)>=0&&on.q.length>25)B("EXAMPLE = ON-SCREEN g"+g+" l"+l+" v"+v);
+    (c.match(/<li>[\s\S]*?<\/li>/g)||[]).forEach(function(li){if((li.match(/\$/g)||[]).length%2)B("STEP$ g"+g+" l"+l+" v"+v+" "+li.slice(0,80))});
+    (c.match(/\$[^$]*\$/g)||[]).forEach(function(m){if(/<[a-zA-Z\/!]/.test(m))B("RAW< g"+g+" l"+l+" v"+v+" "+m.slice(0,60))})}})})});
+  PRACT.S.qs=[];n+=ex})();
 print("hub: subtopics "+n+" bad "+bad);

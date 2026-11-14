@@ -552,8 +552,8 @@ function body(t){
   });
   return out+(ul?"</ul>":"");
 }
-var L={km:{hub:"មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ",pt:" ចំណុច",sum:"មេរៀនសង្ខេប",f:"រូបមន្តសំខាន់ៗ",k:"គន្លឹះដោះស្រាយ",ex:"ឧទាហរណ៍គំរូ",sol:"មើលដំណោះស្រាយ",v:"ចាក់វីដេអូពន្យល់",nov:"មិនទាន់មានវីដេអូ",tch:"✍️ គ្រូបានកែសម្រួល",read:"អានមុនធ្វើលំហាត់"},
-       en:{hub:"Summary · formulas · tips · video",pt:" topics",sum:"Summary",f:"Key formulas",k:"Solving tips",ex:"Worked examples",sol:"Show solution",v:"Play video",nov:"No video yet",tch:"✍️ Edited by your teacher",read:"Read before practising"}};
+var L={km:{exa:"ឧទាហរណ៍គំរូ",exn:"ឧទាហរណ៍ថ្មី",ans:"ចម្លើយ៖",hub:"មេរៀនសង្ខេប · រូបមន្ត · គន្លឹះ · វីដេអូ",pt:" ចំណុច",sum:"មេរៀនសង្ខេប",f:"រូបមន្តសំខាន់ៗ",k:"គន្លឹះដោះស្រាយ",ex:"ឧទាហរណ៍គំរូ",sol:"មើលដំណោះស្រាយ",v:"ចាក់វីដេអូពន្យល់",nov:"មិនទាន់មានវីដេអូ",tch:"✍️ គ្រូបានកែសម្រួល",read:"អានមុនធ្វើលំហាត់"},
+       en:{exa:"Worked example",exn:"New example",ans:"Answer:",hub:"Summary · formulas · tips · video",pt:" topics",sum:"Summary",f:"Key formulas",k:"Solving tips",ex:"Worked examples",sol:"Show solution",v:"Play video",nov:"No video yet",tch:"✍️ Edited by your teacher",read:"Read before practising"}};
 var OPEN={},OPENALL={};
 function pickSubs(subs,v,en){
   if(v===4){var a=subs.filter(function(x){return!lvVid(x)||x.lv.indexOf(4)>=0});   /* PISA៖ មាតិកាទាំងអស់ + វីដេអូ PISA ប៉ុណ្ណោះ */
@@ -575,7 +575,45 @@ function html(g,l,v,name,en){
   var tx=en?L.en:L.km,d=data(g,l,name,en),subs=pickSubs(d.subs,v,en);
   var gk=g+"_"+l,open=OPENALL[gk]!==false;
   return"<details class=hub id=hub data-hg='"+gk+"'"+(open?" open":"")+"><summary class=hub-h><span>📚 "+tx.hub+"</span><small>"+subs.length+tx.pt+(d.src==="teacher"?" · "+tx.tch:"")+" · "+tx.read+"</small></summary><div class=hub-in>"+
-    subs.map(function(x,i){var key=gk+"_"+v+"_"+i;return subHtml(x,key,tx,!!OPEN[key])}).join("")+"</div></details>";
+    subs.map(function(x,i){var key=gk+"_"+v+"_"+i;return subHtml(x,key,tx,!!OPEN[key])}).join("")+exHtml(g,l,v,en)+"</div></details>";
+}
+/* ✏️ ឧទាហរណ៍គំរូស្វ័យប្រវត្តិ ៖ ពី practice*.js G[l][v]() នៃកម្រិតដែលសិស្សកំពុងជ្រើស (គ្រប់ថ្នាក់)
+   មិនដូចសំណួរនៅលើអេក្រង់ (អត្ថបទ) និងព្យាយាមយកទម្រង់ (kd) ផ្សេង · រក្សាទុកតាម g_l_v (draw() មិនប្ដូរ) · 🔄 គូរតែកាតនេះ */
+var EXS={},EXEN={};
+var EXL={km:{1:"កម្រិត ១",5:"កម្រិត ២",2:"កម្រិត ៣",6:"កម្រិត ៤",3:"កម្រិត ៥",4:"PISA"},en:{1:"Level 1",5:"Level 2",2:"Level 3",6:"Level 4",3:"Level 5",4:"Real life"}};
+function genOf(g,l,v){var P=window.PRACT,G=P&&P.GR&&P.GR[g]&&P.GR[g].G&&P.GR[g].G[l];return G&&typeof G[v]==="function"?G[v]:null}
+function onScreen(){var S=window.PRACT&&window.PRACT.S;return S&&S.qs||[]}
+function newEx(g,l,v,prev){
+  var f=genOf(g,l,v);if(!f)return null;var txt={},kds={},best=null;
+  onScreen().forEach(function(q){txt[q.q]=1;if(q.kd)kds[q.kd]=1});
+  for(var i=0;i<30;i++){var q;try{q=f()}catch(e){continue}
+    if(!q||!q.q||txt[q.q]||(prev&&q.q===prev.q))continue;
+    if(!best)best=q;if(!q.kd||!kds[q.kd]){best=q;break}}   /* ទម្រង់ផ្សេងពីលំហាត់នៅលើអេក្រង់ (បើមាន) */
+  return best;
+}
+/* < > ក្នុង $…$ (ឧ. $d<R$) → &lt; &gt; កុំឱ្យ Browser អានជាស្លាក HTML ហើយលុបអត្ថបទ (KaTeX អានវិញជា < >) · ស្លាកពិតក្រៅ $ មិនប៉ះ */
+function mathSafe(t){return String(t==null?"":t).replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/</g,"&lt;").replace(/>/g,"&gt;")})}
+/* បំបែកដំណោះស្រាយត្រង់ «⇒» ដែលនៅក្រៅ $…$ → ជំហានម្ដងមួយបន្ទាត់ */
+function exSteps(sol){var out=[],cur="",inM=false,t=String(sol||"");
+  for(var i=0;i<t.length;i++){var c=t[i];if(c==="$")inM=!inM;if(c==="⇒"&&!inM){if(cur.trim())out.push(cur.trim());cur="";continue}cur+=c}
+  if(cur.trim())out.push(cur.trim());return out}
+function exHtml(g,l,v,en){
+  var k=g+"_"+l+"_"+v,q=EXS[k];
+  if(!q||onScreen().some(function(x){return x.q===q.q}))q=EXS[k]=newEx(g,l,v);
+  if(!q)return"";EXEN[k]=en;
+  var tx=en?L.en:L.km,ok="ex_"+k,st=exSteps(q.s);
+  return"<div class=hub-xc id=hubEx data-hx='"+k+"'><div class=hub-xh><b>✏️ "+tx.exa+" · "+(EXL[en?"en":"km"][v]||v)+"</b><button type=button class=hub-xn data-hubnew='"+k+"'>🔄 "+tx.exn+"</button></div>"+
+    "<div class=hub-xq>"+mathSafe(q.q)+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+
+    "<details class=hub-exa data-hk='"+ok+"'"+(OPEN[ok]?" open":"")+"><summary>👁 "+tx.sol+"</summary><div class=hub-xb>"+
+      "<p class=hub-xa><b>"+tx.ans+"</b> "+(q.a||[]).map(function(a){return(a.l?esc(a.l)+" ":"")+mathSafe("$"+a.t+"$")}).join(" · ")+"</p>"+
+      (st.length?"<ol class=hub-xs>"+st.map(function(x){return"<li>"+mathSafe(x)+"</li>"}).join("")+"</ol>":"")+"</div></details></div>";
+}
+function exNew(k){
+  var p=k.split("_"),g=+p[0],l=+p[1],v=+p[2],el=document.getElementById("hubEx");
+  EXS[k]=newEx(g,l,v,EXS[k])||EXS[k];OPEN["ex_"+k]=false;   /* ឧទាហរណ៍ថ្មី → លាក់ដំណោះស្រាយ */
+  if(!el)return;var w=document.createElement("div");w.innerHTML=exHtml(g,l,v,EXEN[k]);
+  var n=w.firstChild;if(!n)return;el.replaceWith(n);
+  if(window.renderMathInElement)try{renderMathInElement(n,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false}],throwOnError:false})}catch(e){}
 }
 /* ព្រឹត្តិការណ៍ (ម្ដងគត់) · រក្សាស្ថានភាពបើក/បិទ ពេល draw() គូរឡើងវិញ */
 var bound=false;
@@ -583,7 +621,8 @@ function bind(){
   if(bound)return;bound=true;
   document.addEventListener("toggle",function(e){var t=e.target;if(!t||!t.dataset)return;
     if(t.dataset.hk)OPEN[t.dataset.hk]=t.open;else if(t.dataset.hg)OPENALL[t.dataset.hg]=t.open},true);
-  document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-hubv]");if(b){e.preventDefault();vopen(b.dataset.hubv,b.dataset.hubt)}});
+  document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-hubv]");if(b){e.preventDefault();vopen(b.dataset.hubv,b.dataset.hubt);return}
+    var x=e.target.closest&&e.target.closest("[data-hubnew]");if(x){e.preventDefault();exNew(x.dataset.hubnew)}});
 }
 /* ហៅក្រោយ draw() ៖ ចងព្រឹត្តិការណ៍ + ទាញកំណែគ្រូ · មានកំណែថ្មី → គូរតែ #hub ឡើងវិញ */
 function after(g,l,v,name,en,math){
@@ -591,6 +630,6 @@ function after(g,l,v,name,en,math){
   sync(g,l,function(){var el=document.getElementById("hub");if(!el||el.dataset.hg!==g+"_"+l)return;
     var w=document.createElement("div");w.innerHTML=html(g,l,v,name,en);el.replaceWith(w.firstChild);if(math)math(document.getElementById("hub"))});
 }
-window.HUB={html:html,after:after,subHtml:function(x,en){return subHtml(x,"pv",en?L.en:L.km,true)},starter:starter,generic:function(n,en,g,l){var s=generic(n,en);return g?withVids(g,l,s):s},VIDEOS:VIDEOS,vparse:vparse,vopen:vopen,
+window.HUB={_reset:function(k){delete EXS[k]},html:html,after:after,subHtml:function(x,en){return subHtml(x,"pv",en?L.en:L.km,true)},starter:starter,generic:function(n,en,g,l){var s=generic(n,en);return g?withVids(g,l,s):s},VIDEOS:VIDEOS,vparse:vparse,vopen:vopen,
   clear:function(g,l){try{localStorage.removeItem(ck(g,l))}catch(e){}},put:function(g,l,d){cacheSet(g,l,{t:Date.now(),d:d})},LV:[1,5,2,6,3,4]};
 })();
