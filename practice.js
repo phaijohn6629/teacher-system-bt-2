@@ -710,15 +710,24 @@ var LES=[
   ["ជំពូកទី៨ កោនិក",[[81,"ប៉ារ៉ាបូល"],[82,"អេលីប"],[83,"អ៊ីពែបូល"]]],
   ["ជំពូកទី១០ វ៉ិចទ័រក្នុងលំហ",[[101,"ផលគុណនៃពីរវ៉ិចទ័រក្នុងលំហ"],[102,"អនុវត្តនៃផលគុណវ៉ិចទ័រ"]]]
 ];
-var LV={1:["កម្រិត ១","មូលដ្ឋាន"],2:["កម្រិត ២","មធ្យម"],3:["កម្រិត ៣","ពិបាក"],4:["🌍 PISA","បញ្ហាជីវិតពិត"]},NQ=6,NQ4=4;
-var LVE={1:["Level 1","Foundation"],2:["Level 2","Core"],3:["Level 3","Extended"],4:["🌍 Real life","Problem solving"]};
+/* ៥ កម្រិត + PISA ។ គន្លឹះខាងក្នុងរក្សាដូចដើម (1,2,3 = PISA 4) ដើម្បីកុំឱ្យវិញ្ញាសា/ពានរង្វាន់ចាស់ខូច ៖
+   បង្ហាញតាមលំដាប់ LVO = [1,5,2,6,3,4] → កម្រិត ១ (1) · ២ (5 ថ្មី) · ៣ (2) · ៤ (6 ថ្មី) · ៥ (3) · PISA (4) */
+var LVO=[1,5,2,6,3,4];
+var LV={1:["កម្រិត ១","មូលដ្ឋានគ្រឹះ"],5:["កម្រិត ២","មូលដ្ឋានបន្ថែម"],2:["កម្រិត ៣","មធ្យម"],6:["កម្រិត ៤","កម្រិតខ្ពស់"],3:["កម្រិត ៥","ពិបាក"],4:["🌐 PISA","បញ្ហាជីវិតពិត"]},NQ=6,NQ4=4;
+var LVE={1:["Level 1","Foundation"],5:["Level 2","Foundation+"],2:["Level 3","Core"],6:["Level 4","Advanced"],3:["Level 5","Extended"],4:["🌐 Real life","Problem solving"]};
 /* 🇬🇧 ថ្នាក់ភាសាអង់គ្លេស (Cambridge) · GR[g].en = true → ផ្ទៃប្រើប្រាស់ជាអង់គ្លេស */
 function EN(){return!!(GR[S.g]&&GR[S.g].en)}function T(k,e){return EN()?e:k}function N(n){return EN()?String(n):kn(n)}function lv(k){return(EN()?LVE:LV)[k]}
 function gname(g){var t=GR[g]&&GR[g].tab;if(!t)return"ថ្នាក់ទី"+kn(g);var p=t.replace(/^\S+\s/,"").split(" · ");return"<b>"+esc(p[0])+"</b>"+(p[1]?"<small>"+esc(p[1])+"</small>":"")}
 /* កម្រិតទី ៤ (PISA) មានតែមេរៀនណាដែលកំណត់ G[l][4] */
-function lvls(l){var g=GR[S.g]&&GR[S.g].G[l];return g&&g[4]?[1,2,3,4]:[1,2,3]}
+function lvls(l){var g=GR[S.g]&&GR[S.g].G[l];return g?LVO.filter(function(k){return!!g[k]}):[1,2,3]}
+function nextLv(l,v){var L=lvls(l),i=L.indexOf(v);return i>=0&&i<L.length-1?L[i+1]:0}
 /* ថ្នាក់នីមួយៗ៖ GR[ថ្នាក់] = {les:[ជំពូក], G:{មេរៀន:{1,2,3}}} · ថ្នាក់ផ្សេងបន្ថែមដោយ PX.reg() (practice11.js …) */
-var GR={12:{les:LES,G:G}};
+/* កម្រិតថ្មី ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) ៖ មេរៀនដែលមិនទាន់មានទម្រង់ផ្ទាល់ → យកពីកម្រិតជិតខាង (ពាក់កណ្ដាលៗ)
+   5 ← កម្រិត ១/៣ ចាស់ (1|2) · 6 ← កម្រិត ៣/៥ ចាស់ (2|3) · ទម្រង់រក្សា kd ដើម (ម៉ាស៊ីនប្រឡងស្គាល់) */
+function fill56(GG){Object.keys(GG).forEach(function(l){var g=GG[l];if(!g||typeof g!=="object")return;
+  if(!g[5]&&g[1]&&g[2])g[5]=function(){return(Math.random()<.5?g[1]:g[2])()};
+  if(!g[6]&&g[2]&&g[3])g[6]=function(){return(Math.random()<.5?g[2]:g[3])()}});return GG}
+var GR={12:{les:LES,G:fill56(G)}};
 
 /* =================== វឌ្ឍនភាព (ក្នុងឧបករណ៍) =================== */
 function PK(){return"prac"+S.g}
@@ -792,16 +801,16 @@ function lname(l){var n="";GR[S.g].les.forEach(function(c){c[1].forEach(function
 function open(l,v){
   S.l=l;S.v=v||1;S.done=false;S.qs=[];
   var seen={};
-  var kind={};   /* ប្រភេទដូចគ្នា (ពាក្យដើមនៃសំណួរ) មិនលើស ២ */
+  var kind={};   /* ទម្រង់ដូចគ្នា៖ ព្យាយាមកុំឱ្យជាន់ (១) · បើទម្រង់មិនគ្រប់ អនុញ្ញាត ២ */
   if(!GR[S.g].G[l][S.v])S.v=1;var nq=S.v===4||(GR[S.g].en&&l>30)?NQ4:NQ;   /* exam-style (មេរៀន ៣១+) = ៤ សំណួរ */
   for(var i=0,tries=0;i<nq&&tries<80;tries++){var q=GR[S.g].G[l][S.v]();var k=q.q,t=q.kd?"kd:"+q.kd:k.replace(/\$[^$]*\$/g,"").slice(0,24)+(q.q.match(/\\(ln|sin|cos|sqrt|log)|e\^/)||[""])[0];
-    if(seen[k]||(kind[t]>=2&&tries<50))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
+    if(seen[k]||(kind[t]>=(tries<40?1:2)&&tries<60))continue;seen[k]=1;kind[t]=(kind[t]||0)+1;q.tries=0;S.qs.push(q);i++}
   location.hash=HS("g="+S.g+"&l="+l+"&v="+S.v);
   draw();window.scrollTo(0,0);
 }
 /* ⏱ ដំណោះស្រាយបើកតែក្រោយ៖ (១) ព្យាយាមឆ្លើយយ៉ាងតិច ១ ដង និង (២) គិតលើលំហាត់នោះគ្រប់រយៈពេលតាមកម្រិត
    គិតម៉ោងពីពេលសិស្សចាប់ផ្ដើមវាយចម្លើយលំហាត់នោះ (q.t0) · ឆ្លើយត្រូវ → មើលបានភ្លាម */
-var SOLT={1:120,2:240,3:360,4:360};
+var SOLT={1:120,5:180,2:240,6:300,3:360,4:360};
 function solT(){var t=SOLT[S.v]||180;return S.g<=9?Math.round(t*.75):t}
 function solLeft(q){return q.t0?Math.max(0,Math.ceil(solT()-(Date.now()-q.t0)/1000)):solT()}
 function mmss(s){return N(Math.floor(s/60)+":"+("0"+s%60).slice(-2))}
@@ -814,7 +823,7 @@ function draw(){
   var l=S.l,v=S.v;
   var h=document.documentElement.lang=T("km","en");
   var h="<div class=bar><button type=button data-a=home>‹ "+T("មេរៀនទាំងអស់","All topics")+"</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='"+T("តំណ/QR សម្រាប់ចែករំលែក","Link / QR code")+"'>📱</button></div>"+
-    "<div class=lv style='grid-template-columns:repeat("+lvls(l).length+",1fr)'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+lv(k)[0]+"<small>"+lv(k)[1]+"</small></button>"}).join("")+"</div><ol class=qs>";
+    "<div class=lv style='--n:"+lvls(l).length+"'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+lv(k)[0]+"<small>"+lv(k)[1]+"</small></button>"}).join("")+"</div><ol class=qs>";
   S.qs.forEach(function(q,i){
     h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+q.q+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
       q.a.map(function(a,j){return"<label class=in>"+(a.l?"<span class=lb>"+esc(a.l)+"</span>":"")+"<input data-q="+i+" data-p="+j+" autocomplete=off autocapitalize=off spellcheck=false inputmode=text value='"+esc(a.u||"")+"'"+(q.st==="ok"?" readonly":"")+"><span class=mk>"+(a.r==null?"":a.r?"✅":"❌")+"</span><span class=pv id=pv"+i+"_"+j+"></span></label>"}).join("")+
@@ -849,9 +858,9 @@ function doCheck(){
   if(n===S.qs.length&&!S.done){S.done=true;setProg(S.l,S.v);trophy()}
 }
 function trophy(){
-  var d=document.createElement("div");d.className="tro";d.innerHTML="<div class=tro-in><div class=big>🏆</div><h2>"+T("អស្ចារ្យណាស់!","Excellent!")+"</h2><p>"+T("អ្នកឆ្លើយត្រូវទាំងអស់ ","You answered everything correctly · ")+esc(lv(S.v)[0])+"<br>"+esc(lname(S.l))+"</p>"+(S.v<lvls(S.l).length?"<button type=button data-next>"+T("បន្តទៅ ","Go on to ")+lv(S.v+1)[0]+" ›</button>":"<button type=button data-home>"+T("ជ្រើសមេរៀនផ្សេង","Choose another topic")+"</button>")+"</div>";
+  var d=document.createElement("div");d.className="tro";d.innerHTML="<div class=tro-in><div class=big>🏆</div><h2>"+T("អស្ចារ្យណាស់!","Excellent!")+"</h2><p>"+T("អ្នកឆ្លើយត្រូវទាំងអស់ ","You answered everything correctly · ")+esc(lv(S.v)[0])+"<br>"+esc(lname(S.l))+"</p>"+(nextLv(S.l,S.v)?"<button type=button data-next>"+T("បន្តទៅ ","Go on to ")+lv(nextLv(S.l,S.v))[0]+" ›</button>":"<button type=button data-home>"+T("ជ្រើសមេរៀនផ្សេង","Choose another topic")+"</button>")+"</div>";
   document.body.appendChild(d);
-  d.onclick=function(e){if(e.target.closest("[data-next]"))open(S.l,S.v+1);else if(e.target.closest("[data-home]"))home();d.remove();if(!e.target.closest("button"))draw()};
+  d.onclick=function(e){if(e.target.closest("[data-next]"))open(S.l,nextLv(S.l,S.v));else if(e.target.closest("[data-home]"))home();d.remove();if(!e.target.closest("button"))draw()};
   draw();
 }
 function qr(){
@@ -918,5 +927,5 @@ function route2(){
 window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S,GR:GR};
 /* ជំនួយសម្រាប់ឯកសារថ្នាក់ផ្សេង (practice11.js …) */
 window.PX={LIM11:LIM11,Q:Q,A:A,ri:ri,nz:nz,pick:pick,fr:fr,sg:sg,co:co,poly:poly,polyT:polyT,cx:cx,cxf:cxf,cxT:cxT,cnk:cnk,sgp:sgp,v3:v3,gcd:gcd,G12:G,
-  reg:function(g,o){GR[g]=o},start:function(){kb();bind();route()}};
+  reg:function(g,o){fill56(o.G);GR[g]=o},start:function(){kb();bind();route()}};
 })();

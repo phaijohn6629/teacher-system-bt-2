@@ -8,7 +8,7 @@ eval(read("practice.js").replace("window.PX={","window.PX={check:check,parse:par
 var X=window.PX,GR=window.PRACT.GR,N=60,bad=0,tot=0;
 function bal(s){var d=(s.replace(/\\\$/g,"").match(/\$/g)||[]).length%2,b=0;for(var i=0;i<s.length;i++){if(s[i]=="{"&&s[i-1]!="\\")b++;if(s[i]=="}"&&s[i-1]!="\\")b--}return!d&&!b}
 function B(m){bad++;if(bad<25)print(m)}
-Object.keys(GR).forEach(function(g){var en=!!GR[g].en,G=GR[g].G;Object.keys(G).forEach(function(l){[1,2,3,4].forEach(function(v){if(!G[l][v])return;for(var i=0;i<N;i++){var q;
+Object.keys(GR).forEach(function(g){var en=!!GR[g].en,G=GR[g].G;Object.keys(G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){if(!G[l][v])return;for(var i=0;i<N;i++){var q;
   try{q=G[l][v]()}catch(e){B("THROW g"+g+" l"+l+" v"+v+" "+e);break}tot++;
   if(!q||!q.a||!q.a.length){B("EMPTY g"+g+" l"+l+" v"+v);continue}
   var all=q.q+JSON.stringify(q.a)+q.s;if(/undefined|NaN|\[object/.test(all))B("BADVAL g"+g+" l"+l+" v"+v+" "+(q.kd||"")+": "+q.q.slice(0,100));
@@ -19,4 +19,6 @@ Object.keys(GR).forEach(function(g){var en=!!GR[g].en,G=GR[g].G;Object.keys(G).f
 Object.keys(window.CAMPAPERS||{}).forEach(function(g){Object.keys(CAMPAPERS[g]).forEach(function(k){CAMPAPERS[g][k].secs.forEach(function(s){if(!GR[g].G[s[0]]||!GR[g].G[s[0]][s[1]])B("PAPER missing g"+g+" "+k+" "+s)})})});
 /* ថ្នាក់ទី៧ ដល់ទី១២៖ មេរៀន×កម្រិតនីមួយៗ ត្រូវមានយ៉ាងតិច ៤ ទម្រង់ (kd) ផ្សេងគ្នា — ការពារកុំឱ្យវិញ្ញាសាត្រឡប់ទៅដដែលៗ */
 [7,8,9,10,11,12].forEach(function(g){Object.keys(GR[g].G).forEach(function(l){[1,2,3].forEach(function(v){var k={};for(var i=0;i<300;i++){var q=GR[g].G[l][v]();k[q.kd||"?"]=1}if(Object.keys(k).length<4)B("FORMS g"+g+" l"+l+" v"+v+" only "+Object.keys(k).length)})})});
+/* ថ្នាក់ទី៩៖ ៥ កម្រិត + PISA (គន្លឹះ 1,5,2,6,3,4) — មេរៀន×កម្រិតនីមួយៗ ≥ ៦ ទម្រង់ (kd) */
+Object.keys(GR[9].G).forEach(function(l){[1,5,2,6,3,4].forEach(function(v){var k={};for(var i=0;i<600;i++){var q=GR[9].G[l][v]();k[q.kd||"?"]=1}if(Object.keys(k).length<6||k["?"])B("FORMS9 l"+l+" v"+v+" only "+Object.keys(k).length)})});
 print("practice: grades "+Object.keys(GR).length+" made "+tot+" bad "+bad);

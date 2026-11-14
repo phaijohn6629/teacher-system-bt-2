@@ -785,15 +785,15 @@ function renderPrac(){
     "<div class=bar style='margin:6px 0 0'><button type=button data-qa=pccp>📋 ចម្លងតំណ</button><button type=button data-qa=pcqr>📱 QR</button><button type=button data-qa=pcnm title='ប្រើបញ្ជីឈ្មោះសិស្សបច្ចុប្បន្នរបស់ថ្នាក់'>🔄 ធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+kn(p.names.length)+")</button><button type=button data-qa=pctg>"+(p.open?"⏸️ បិទតំណ":"▶️ បើកតំណវិញ")+"</button></div></div>";
   if(!rows){$("qzBody").innerHTML=h+"<p class=note>កំពុងផ្ទុកតារាង…</p>";pcRows(p.id).then(renderPrac);return}
   var C=window.CUR&&window.CUR[g],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],done=0;
-  var cnt=function(r,l){var n=0;if(r&&r.t)[1,2,3,4].forEach(function(v){if(r.t[l+"-"+v])n++});return n};
+  var cnt=function(r,l){var n=0;if(r&&r.t)[1,2,3,4,5,6].forEach(function(v){if(r.t[l+"-"+v])n++});return n};   /* កម្រិត ១–៥ + PISA */
   var body=p.names.map(function(x,i){
     var r=rows[x.k],tot=0,last=0;if(r&&r.t)Object.keys(r.t).forEach(function(k){tot++;if(r.t[k]>last)last=r.t[k]});if(tot)done++;
-    return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(x.n)+"</td>"+L.map(function(l){var n=cnt(r,l);return"<td class='pc-c n"+n+"' title='"+esc(lsName(g,l))+"'>"+(n?"🏆".repeat(n):"")+"</td>"}).join("")+
+    return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(x.n)+"</td>"+L.map(function(l){var n=cnt(r,l);return"<td class='pc-c n"+n+"' title='"+esc(lsName(g,l))+"'>"+(n?(n>3?"🏆×"+kn(n):"🏆".repeat(n)):"")+"</td>"}).join("")+
       "<td class=pc-t><b>"+kn(tot)+"</b></td><td class=pc-d>"+(last?kn(new Date(last).toLocaleDateString("en-GB")):"—")+"</td></tr>";
   }).join("");
   h+="<div class=bar><b>🏆 កំណត់ត្រាហ្វឹកហាត់</b><span class=note style='margin:0'>សិស្សបានហ្វឹកហាត់ "+kn(done)+" / "+kn(p.names.length)+" នាក់</span><button type=button data-qa=pcrf>🔄 ផ្ទុកឡើងវិញ</button></div>"+
     "<div class=wrap><table class=pc-tb><thead><tr><th>ល.រ</th><th>ឈ្មោះ</th>"+L.map(function(l){return"<th title='"+esc(lsName(g,l))+"'>"+esc(lsName(g,l).replace(/^ជំពូកទី\S+ · /,"").replace(/^មេរៀនទី\S+ /,"").slice(0,14))+"</th>"}).join("")+"<th>សរុប</th><th>ចុងក្រោយ</th></tr></thead><tbody>"+body+"</tbody></table></div>"+
-    "<p class=note>🏆 មួយ = កម្រិតមួយដែលឆ្លើយត្រូវទាំងអស់ (អតិបរមា ៣ ក្នុងមួយមេរៀន · ៤ បើមានកម្រិត 🌍 PISA)។ ដាក់ម៉ៅស៍លើក្បាលជួរ ដើម្បីមើលឈ្មោះមេរៀនពេញ។</p>";
+    "<p class=note>🏆 មួយ = កម្រិតមួយដែលឆ្លើយត្រូវទាំងអស់ (អតិបរមា ៥ ក្នុងមួយមេរៀន · ៦ បើមានកម្រិត 🌐 PISA)។ ដាក់ម៉ៅស៍លើក្បាលជួរ ដើម្បីមើលឈ្មោះមេរៀនពេញ។</p>";
   $("qzBody").innerHTML=h;
 }
 function pcAct(a){

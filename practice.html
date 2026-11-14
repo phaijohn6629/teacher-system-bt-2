@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <style>
 @font-face{font-family:"Khmer OS Muol Light";src:local("Khmer OS Muol Light"),local("KhmerOSmuollight"),url(fonts/khmer-os-muol-light.ttf) format("truetype");font-display:swap}
-:root{--bg:#eef3fb;--ink:#1c2541;--mute:#5b6787;--card:#fff;--line:#d8e0ef;--brand:#2563eb;--ok:#16a34a;--bad:#dc2626;--l1:#16a34a;--l2:#ea8c0c;--l3:#dc2626;--l4:#0891b2}
+:root{--bg:#eef3fb;--ink:#1c2541;--mute:#5b6787;--card:#fff;--line:#d8e0ef;--brand:#2563eb;--ok:#16a34a;--bad:#dc2626;--l1:#16a34a;--l5:#65a30d;--l2:#ea8c0c;--l6:#ea580c;--l3:#dc2626;--l4:#0891b2}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Khmer OS Siemreap","Siemreap","Kantumruy Pro","Noto Sans Khmer",system-ui,sans-serif;line-height:1.6;padding:0 14px 120px}
 #app{max-width:980px;margin:0 auto;padding-top:14px}
@@ -38,9 +38,13 @@ button:hover{border-color:var(--brand)}
 .cups{display:inline-flex;gap:4px}.cup{font-style:normal;font-size:18px;filter:grayscale(1);opacity:.25}.cup.on{filter:none;opacity:1}
 .tot{text-align:center;margin:20px 0;color:var(--mute)}.link{border:0;background:none;color:var(--brand);text-decoration:underline;padding:0}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px}.bar h1{flex:1;margin:0;font-size:clamp(18px,3.5vw,24px);color:#1e3a8a;min-width:0}
-.lv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:560px){.bar h1{order:5;flex-basis:100%}.bar>.cups{margin-left:auto}.bar .cup{font-size:16px}}
+.lv{display:grid;grid-template-columns:repeat(var(--n,6),1fr);gap:8px;margin-bottom:14px}
+@media (max-width:720px){.lv{grid-template-columns:repeat(3,1fr)}}
+.lv button{min-width:0}.lv small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .lv button{display:flex;flex-direction:column;align-items:center;font-weight:700;border-width:2px;padding:8px}.lv small{font-weight:400;color:var(--mute)}
 .lv .l1{border-color:color-mix(in srgb,var(--l1) 40%,#fff)}.lv .l2{border-color:color-mix(in srgb,var(--l2) 40%,#fff)}.lv .l3{border-color:color-mix(in srgb,var(--l3) 40%,#fff)}
+.lv .l5{border-color:color-mix(in srgb,var(--l5) 40%,#fff)}.lv .l6{border-color:color-mix(in srgb,var(--l6) 40%,#fff)}.lv .l5.on{background:var(--l5);color:#fff}.lv .l6.on{background:var(--l6);color:#fff}
 .lv .l4{border-color:color-mix(in srgb,var(--l4) 40%,#fff)}.lv .l4.on{background:var(--l4);color:#fff}.lv .l1.on{background:var(--l1);color:#fff}.lv .l2.on{background:var(--l2);color:#fff}.lv .l3.on{background:var(--l3);color:#fff}.lv .on small{color:#fff}
 .qs{list-style:none;counter-reset:q;padding:0;margin:0;display:grid;gap:12px}
 .q{counter-increment:q;position:relative;background:var(--card);border:2px solid transparent;border-radius:14px;padding:14px 14px 12px 52px;box-shadow:0 2px 8px rgba(30,58,138,.06)}
@@ -81,11 +85,11 @@ button:hover{border-color:var(--brand)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script src="fig.js?v=7"></script>
-<script src="practice.js?v=14"></script>
+<script src="practice.js?v=15"></script>
 <script src="pisa12.js?v=2"></script>
 <script src="practice11.js?v=5"></script>
 <script src="practice10.js?v=4"></script>
-<script src="practice9.js?v=5"></script>
+<script src="practice9.js?v=6"></script>
 <script src="practice8.js?v=3"></script>
 <script src="practice7.js?v=3"></script>
 <script src="practiceen.js?v=4"></script>

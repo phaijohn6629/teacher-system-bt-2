@@ -9,10 +9,10 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=2","practice11.js?v=5","practice10.js?v=4","practice9.js?v=5","practice8.js?v=3","practice7.js?v=3"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=4","practiceen5.js?v=2","practiceen6.js?v=2"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=2","practice11.js?v=5","practice10.js?v=4","practice9.js?v=6","practice8.js?v=3","practice7.js?v=3"],GENE=["practiceen2.js?v=1","practiceen3.js?v=1"],GEN4=["practiceen4.js?v=4","practiceen5.js?v=2","practiceen6.js?v=2"],genP=null,kxP=null;
 var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
-var LVN={1:"កម្រិត ១ · មូលដ្ឋាន",2:"កម្រិត ២ · មធ្យម",3:"កម្រិត ៣ · ពិបាក",4:"🌍 PISA · ជីវិតពិត"};
+var LVN={1:"កម្រិត ១ · មូលដ្ឋានគ្រឹះ",5:"កម្រិត ២ · មូលដ្ឋានបន្ថែម",2:"កម្រិត ៣ · មធ្យម",6:"កម្រិត ៤ · កម្រិតខ្ពស់",3:"កម្រិត ៥ · ពិបាក",4:"🌐 PISA · ជីវិតពិត"},LVO=[1,5,2,6,3,4];   /* គន្លឹះ 1–4 ដូចដើម (វិញ្ញាសាចាស់មិនខូច) · 5,6 = កម្រិត ២,៤ ថ្មី */
 var TITLES=["ប្រឡងតេស្តប្រចាំខែ","ប្រឡងប្រចាំខែ","ប្រឡងឆមាសទី១","ប្រឡងឆមាសទី២","ប្រឡងសាកល្បង"];
 var X={list:null,E:null,err:"",dirty:false,saveT:0,status:"",vUn:null,views:[],tick:0};
 function ld(src){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
@@ -20,7 +20,7 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 /* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
-function ENG(){return["practice.js?v=14","exgen.js?v=20"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
+function ENG(){return["practice.js?v=15","exgen.js?v=20"].concat(GENS,["practiceen.js?v=4"],GENE,GEN4)}
 function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
   if(engReady())return Promise.resolve();
@@ -172,7 +172,7 @@ function editor(){
     (g===9&&window.EXGEN&&EXGEN.dip?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex=dip style='flex:1'>🎓 វិញ្ញាសាត្រៀមប្រឡងឌីប្លូម (៧ ផ្នែក · ១០០ ពិន្ទុ · ១២០ នាទី)</button></div>":"")+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
-        "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+[1,2,3,4].filter(function(v){return v<4||hasLv4(g,s.ls)}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
+        "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+LVO.filter(function(v){var G0=PRACT.GR[g]&&PRACT.GR[g].G[s.ls];return v===4?hasLv4(g,s.ls):!!(G0&&G0[v])}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
         (isT(s)?"":"<label>លំហាត់រង <input type=number min=1 max=8 data-es='"+i+"|n' value="+s.n+"></label>")+"<label>ពិន្ទុ <input type=number min=0 max=100 step=0.5 data-es='"+i+"|pts' value="+(+s.pts||0)+"></label>"+
         "<button type=button data-ex='rg|"+i+"' title='បង្កើតលំហាត់ផ្នែកនេះឡើងវិញ'>🔄</button><button type=button data-ex='up|"+i+"'"+(i?"":" disabled")+">↑</button><button type=button data-ex='dn|"+i+"'"+(i<E.secs.length-1?"":" disabled")+">↓</button><button type=button class=danger data-ex='rm|"+i+"'>🗑️</button></div>"+
         "<input class=ex-inst data-es='"+i+"|inst' value='"+esc(s.inst)+"' placeholder='សេចក្ដីណែនាំ (ឧ. គណនា · ដោះស្រាយសមីការ)'>"+

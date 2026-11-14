@@ -35,9 +35,13 @@
   - Grade 10 logic items answer `1` = true, `0` = false.
   - Never write a retry loop that can fail to terminate (e.g. waiting for a perfect square or a divisor that may not exist). Pick the answer first and derive the data from it.
   - Grade 9 probability: multiplication rule only (no combinations).
+  - **Level keys (5 levels + PISA):** internal keys stay `1,2,3,4` so saved exams, trophies and progress remain valid. Display order is `LVO=[1,5,2,6,3,4]`: key 1 = Level 1 (basics), **5 = Level 2** (2 steps), 2 = Level 3 (medium), **6 = Level 4** (brackets/fractions), 3 = Level 5 (hard), 4 = 🌐 PISA. Never renumber.
+  - `fill56()` in `practice.js` back-fills missing keys 5/6 from neighbouring levels (5 ← 1|2, 6 ← 2|3) for every grade registered via `X.reg`. A grade with its own content defines `G[l][5]`/`G[l][6]` before `X.reg`, and fill56 then leaves them alone.
+  - Grade 9 new forms use `kd` prefixes `g9_` and `g9p_` (PISA). Levels 2/4 are set with `lvset(l,5|6,[fn…])`. `tests/practice.js` fails if any grade 9 lesson×level (all 6) has fewer than 6 forms.
+- Anything rendered from `script.js` `refreshView()` (called on every cloud snapshot) must be idempotent: never rebuild a view that is already showing the same data, or open selects close and previews flicker.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-13 · `sw.js` cache = `ngs-app-v15`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v18`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -50,7 +54,8 @@
 - `exam.html` renders paper ខ for students assigned ខ.
 
 ### ✅ Seat/student picker speed — `classorg.js`
-- `animatePointer()` picks the winner up front, makes 12 hops with ease-out pacing (~1.6 s), then plays a win chime, fires confetti and shows a name label. A double-click guard prevents overlapping runs.
+- `animatePointer()` picks the winner up front, makes 12 hops with ease-out pacing (~1.6 s), then plays a win chime and fires confetti. A guard prevents overlapping runs.
+- ✅ Spotlight card (`showSpotlight`): a centered card shows the photo or initial, the large name, seat number, paper ក/ខ and role. «🔄 ចាប់ម្ដងទៀត» picks again from students not yet chosen (reset when everyone has been picked or the class changes). Esc, ✓ or a backdrop click closes it. Colours come from theme variables, and it fits a 390 px phone.
 
 ### ✅ Monthly scores Test 1 / Test 2 — `monthly.js`
 - The t1/t2 cells (and their full-score cells) are editable inputs. Auto-sync from quizzes still works.
@@ -68,12 +73,24 @@
 - `tWrite` uses `tx.update`, and adds `acc` when a legacy `mc` doc lacks it (otherwise those docs were rewritten on every sync).
 - `r00` is included in `buildT` and `teachApply`, so it persists across syncs.
 
+### ✅ Exam editor stable during cloud sync — `exam.js`
+- `EXAM.render()` is a no-op while the same exam's editor is on screen (`data-exid` marker), and `prev()` skips unchanged HTML. Before this fix, every sync rebuilt the editor: open selects closed and the preview flickered. Verified in headless Chrome.
+
 ### ✅ Audit fixes of 2026-11-13
 - `meetings.js`: the recorder signature is restored on every meeting type (AU and joint meetings had lost it).
 - `script.js`: a blocking alert is shown before a forced logout.
 - `exam.js`: `mkItem` avoids duplicates against the session history plus the items already in the section.
 - `exgen.js`: dead code removed.
 - Picker modal uses the scoped `.pk-modal` class and is readable in dark mode.
+
+### ✅ 5 levels + 🌐 PISA — `practice.js`, `practice.html`, `practice9.js`, `exam.js`, `quiz.js`
+- Every grade shows 6 level buttons in a 6-column grid on desktop and a 3×2 grid on phone. On phone, the lesson title moves to its own line under the 6 cups. Each lesson card has 6 trophies, and «បន្តទៅកម្រិតបន្ទាប់» follows `LVO`.
+- Answer timers per level: `SOLT={1:120,5:180,2:240,6:300,3:360,4:360}`.
+- `open()` avoids repeating a form within one set (1 per `kd`, relaxed to 2 only when a level has too few forms).
+- The exam level select and the teacher trophy count (`quiz.js`) handle all 6 keys.
+- **Grade 9 (full content):** all 18 lessons × 6 levels have ≥6 own forms (≈330 new forms). PISA gained 4 new real-life scenarios per lesson (shopping and promotions, taxi/plan costs, tax, salary median vs mean, Wi-Fi range, drones, shadows and mirrors, scale models, ladders and kites, everyday probability), and the old PISA templates are now tagged `kd=p{l}_{i}`.
+- Verified: 108/108 lesson×level sets checked in the real `practice.html` (correct answers → all ✅ → trophy → next level, plus 🔄). In the engine simulation, paper ខ matches paper ក's form on ≈98.6% of grade 9 items (PISA 100%).
+- Other grades: levels 2/4 are back-filled by `fill56` and are not yet distinct content.
 
 ### ✅ Exam question variety — `practice7.js` … `practice11.js`, `practice.js` (grade 12), `exam.js`
 - Grades 11 and 12: every lesson×level now has ≥4 forms (≈165 new forms for grade 11 and ≈63 for grade 12's gaps: sequences, exponentials/logarithms, trigonometry, derivatives and their applications, counting/probability, solid geometry, 3D vectors and planes, continuity, rational functions, differential equations, conics). Also fixed grade 11 52.2, which wrote `s(t)` in terms of `x`.
@@ -90,7 +107,7 @@
 
 ## Status
 - ✅ **All planned code tasks are completed.** No code work is pending.
-- Optional future work: raise grades 7, 8, 10 and 11 from 4 to 5–6 forms per cell (grade 9 already has 5–6); add forms to the Cambridge (English) grades.
+- Optional future work: give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
 
 ## Recommended manual checks (live site / real phones — not automatable here)
   - `r00` round-trip between teacher and class monitor (code reviewed only).
