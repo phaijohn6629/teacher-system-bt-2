@@ -406,7 +406,7 @@ function seatPrint(c){
 			hand.style.top = (rect.top + rect.height * 0.55) + "px";
 			if (prev && prev !== el) prev.classList.remove("pick-on"); el.classList.add("pick-on"); prev = el;
 			var last = i === path.length - 1;
-			if (!last) { playTick(); var p = i / (STEPS - 1); i++; setTimeout(tick, 70 + 260 * p * p); return; }
+			if (!last) { playTick(); var p = i / (STEPS - 1); i++; setTimeout(tick, 100 + 365 * p * p); return; }   /* យឺតជាងមុន ~៤០% (សរុប ~២.២ វិនាទី) */
 			/* ឈប់៖ សំឡេងឈ្នះ + confetti + បង្ហាញឈ្មោះភ្លាមៗ */
 			el.classList.remove("pick-on"); el.classList.add("pick-hit"); el.style.outline = "4px solid var(--accent,#f59e0b)";
 			playWin(); fireConfetti(); onFinish(el);

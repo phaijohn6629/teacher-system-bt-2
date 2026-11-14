@@ -918,7 +918,7 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .pk-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;justify-content:center;align-items:center}
 .pk-modal.show{display:flex}
 .pk-box{background:#fff;color:#0f172a;padding:20px;max-height:90vh;overflow:auto;border-radius:10px;width:90%;max-width:600px;text-align:center;position:relative}
-.hand-pointer{position:fixed;font-size:30px;transform:translateX(-50%);transition:left .05s ease-out,top .05s ease-out;z-index:10001;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.hand-pointer{position:fixed;font-size:50px;line-height:1;transform:translateX(-50%);transition:left .09s ease-out,top .09s ease-out;z-index:10001;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
 .confetti{position:fixed;top:-12px;width:9px;height:14px;border-radius:2px;pointer-events:none;z-index:10002;animation:cfFall 1.3s ease-in forwards}
 .pick-on{box-shadow:0 0 0 3px #fbbf24,0 6px 14px rgba(0,0,0,.18)!important;transform:scale(1.06)}
 .pick-hit{animation:pickPop .45s ease-out 2}

@@ -56,7 +56,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v37`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v38`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -69,7 +69,7 @@
 - `exam.html` renders paper ខ for students assigned ខ.
 
 ### ✅ Seat/student picker speed — `classorg.js`
-- `animatePointer()` picks the winner up front, makes 12 hops with ease-out pacing (~1.6 s), then plays a win chime and fires confetti. A guard prevents overlapping runs.
+- `animatePointer()` picks the winner up front, makes 12 hops with ease-out pacing (`100 + 365·p²` ms, ~2.2 s; hand 50 px, 0.09 s glide), then plays a win chime and fires confetti. A guard prevents overlapping runs.
 - ✅ Spotlight card (`showSpotlight`): a centered card shows the photo or initial, the large name, seat number, paper ក/ខ and role. «🔄 ចាប់ម្ដងទៀត» picks again from students not yet chosen (reset when everyone has been picked or the class changes). Esc, ✓ or a backdrop click closes it. Colours come from theme variables, and it fits a 390 px phone.
 
 ### ✅ Monthly scores Test 1 / Test 2 — `monthly.js`
