@@ -220,7 +220,7 @@ var STARTER={9:S9};
 /* 🎬 វីដេអូ YouTube ដែល tools/upload_youtube.py បញ្ចូលដោយស្វ័យប្រវត្តិ · គន្លឹះ "ថ្នាក់_មេរៀន_លេខចំណុចរង(ចាប់ពី 0)" = {u:តំណ, t:ចំណងជើង}
    ចំណុចរងដែលមានស្រាប់ → ភ្ជាប់វីដេអូ (បើមិនទាន់មាន) · លេខលើសចំនួនចំណុចរង → បង្កើតចំណុចរង «🎬 …» ថ្មី · កំណែគ្រូ (Firestore) មានអាទិភាពជាង */
 /* @VIDEOS-START (សរសេរដោយ tools/upload_youtube.py) */
-var VIDEOS={"12_22_1": {"u": "https://youtu.be/h7YBzu4yXUA","t": "លំហាត់អនុវត្តលីមីតលោការីត ១ - ថ្នាក់ទី១២"}};
+var VIDEOS={"12_43_1": {"u": "https://youtu.be/h7YBzu4yXUA","t": "លំហាត់អនុវត្តលីមីតលោការីត ១ - ថ្នាក់ទី១២"}};
 /* @VIDEOS-END */
 function withVids(g,l,subs){var p=g+"_"+l+"_";
   Object.keys(VIDEOS).filter(function(k){return k.indexOf(p)===0}).map(function(k){return[+k.slice(p.length),VIDEOS[k]]}).sort(function(a,b){return a[0]-b[0]})
