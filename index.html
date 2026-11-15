@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4f46e5"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=97">
+<link rel="stylesheet" href="style.css?v=99">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -95,6 +95,7 @@
   <button data-p="p18" aria-selected="false">១៧. ពិន្ទុប្រចាំខែ</button>
   <button data-p="p19" aria-selected="false">១៨. កំណត់ហេតុប្រជុំ</button>
   <button data-p="p20" aria-selected="false">១៩. មេរៀនសង្ខេប</button>
+  <button data-p="p21" aria-selected="false">២០. កិច្ចតែងការបង្រៀន</button>
 </nav>
 
 <!-- ផ្ទាំងទី ១៖ ទិន្នន័យគ្រូ -->
@@ -291,6 +292,42 @@
 
 
 
+<section id="p21" hidden>
+  <div class="lp-hero"><h2>🧩 កិច្ចតែងការបង្រៀន</h2><p>ជ្រើសថ្នាក់ · មេរៀន · វិធីសាស្ត្រ · យុទ្ធវិធី រួចចុច «បង្កើតកិច្ចតែងការ» (ខ្លឹមសារស្វ័យប្រវត្តិនឹងបន្ថែមនៅជំហានបន្ទាប់)</p></div>
+  <div class="lp-wrap">
+    <aside class="lp-ctl card" aria-label="ផ្ទាំងបញ្ជា">
+      <h3>⚙️ ផ្ទាំងបញ្ជា</h3>
+      <label for="lpG">កម្រិតថ្នាក់</label><select id="lpG"></select>
+      <label for="lpL">មេរៀន</label><select id="lpL"></select>
+      <label for="lpM">វិធីសាស្ត្របង្រៀន</label><select id="lpM"></select>
+      <label for="lpT">យុទ្ធវិធីបង្រៀន</label><select id="lpT"></select>
+      <button type="button" id="lpGen" class="primary">✨ បង្កើតកិច្ចតែងការ</button>
+      <p class="note" id="lpSt">ជ្រើសរើសជម្រើស ហើយចុចប៊ូតុងខាងលើ។</p>
+    </aside>
+    <div class="lp-view" aria-label="មើលជាមុន A4">
+      <article class="lp-a4" id="lpA4">
+        <div class="lp-ph" id="lpHead">[ ក្បាលឯកសារ · Header Placeholder ]</div>
+        <h2 class="lp-ti moul">កិច្ចតែងការបង្រៀន</h2>
+        <p class="lp-meta" id="lpMeta">ថ្នាក់ទី… · មេរៀន… · វិធីសាស្ត្រ… · យុទ្ធវិធី…</p>
+        <h3 class="lp-h">១. វត្ថុបំណង</h3>
+        <ul class="lp-ob">
+          <li><b>វិជ្ជាសម្បទា (ចំណេះដឹង)៖</b> <span class="lp-ph">…</span></li>
+          <li><b>បំណិនសម្បទា (ជំនាញ)៖</b> <span class="lp-ph">…</span></li>
+          <li><b>ចរិយាសម្បទា (ឥរិយាបថ)៖</b> <span class="lp-ph">…</span></li>
+        </ul>
+        <h3 class="lp-h">២. សម្ភារៈ និងវិធីសាស្ត្រ</h3>
+        <p><b>សម្ភារៈ៖</b> <span class="lp-ph">…</span></p>
+        <p><b>វិធីសាស្ត្រ / យុទ្ធវិធី៖</b> <span class="lp-ph" id="lpMT">…</span></p>
+        <h3 class="lp-h">៣. ដំណើរការបង្រៀន</h3>
+        <div class="lp-tw"><table class="lp-tb">
+          <thead><tr><th>សកម្មភាពគ្រូ</th><th>ខ្លឹមសារមេរៀន</th><th>សកម្មភាពសិស្ស</th></tr></thead>
+          <tbody id="lpSteps"></tbody>
+        </table></div>
+        <div class="lp-ph lp-ft">[ ជើងឯកសារ · Footer Placeholder ]</div>
+      </article>
+    </div>
+  </div>
+</section>
 <section id="p8" hidden>
   <div class="seg" id="pseg"><button data-pv="1" aria-selected="true">បញ្ជីសិស្ស</button><button data-pv="2" aria-selected="false">អវត្តមានប្រចាំខែ</button><button data-pv="3" aria-selected="false">📚 ថ្នាក់ទាំងអស់</button></div>
   <div class="bar">
@@ -576,7 +613,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=101"></script>
+<script src="script.js?v=102"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

@@ -1804,7 +1804,7 @@ $("lbG").onclick=function(e){
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
 var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=6"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=4","hub.js?v=20","lessonedit.js?v=5"]};
-var NEED={p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
+var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
   lzP[g]=LAZY[g].reduce(function(pr,src){return pr.then(function(){return new Promise(function(ok,no){var s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.body.appendChild(s)})})},Promise.resolve())
@@ -1816,13 +1816,13 @@ function show(p){
   if(p!=="p0"&&sy.started&&!sy.ph2)phase2();   /* ⚡ បើកផ្ទាំងផ្សេង → ទាញទិន្នន័យដំណាក់កាលទី២ ភ្លាម */
   var need=(NEED[p]||[]).filter(function(g){return!lzD[g]});
   if(need.length){
-    ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].forEach(function(x){$(x).hidden=x!==p});
+    ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20","p21"].forEach(function(x){$(x).hidden=x!==p});
     syncNav(p);show.want=p;
     Promise.all(need.map(lazy)).then(function(){if(show.want===p&&!$(p).hidden)show(p)},function(){notify("⚠️ មិនអាចទាញយកផ្ទាំងនេះបានទេ · សូមពិនិត្យអ៊ីនធឺណិត ហើយចុចម្ដងទៀត")});
     return;
   }
   show.want=p;
-  ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].forEach(function(x){$(x).hidden=x!==p});
+  ["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20","p21"].forEach(function(x){$(x).hidden=x!==p});
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){b.setAttribute("aria-selected",b.dataset.p===p)});
   if(p==="p1")render();
   if(p==="p2"){renderK();renderS()}
@@ -1843,15 +1843,43 @@ function show(p){
   if(p==="p18"&&window.renderMs)renderMs();
   if(p==="p19"&&window.renderMt)renderMt();
   if(p==="p20"&&window.renderLs)renderLs();
+  if(p==="p21")renderLp();
   if(p==="p0")renderDash();syncNav(p);
 }
 $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.dataset.p)};
+/* ===== 🧩 កិច្ចតែងការបង្រៀន (p21) · UI Layout + បញ្ជា · ខ្លឹមសារស្វ័យប្រវត្តិនឹងបន្ថែមជំហានបន្ទាប់ ===== */
+var LPM=["5Es (ចូលរួម · ស្វែងរក · ពន្យល់ · ពង្រីក · វាយតម្លៃ)","PBL (រៀនតាមគម្រោង)","Flipped Classroom (ថ្នាក់រៀនបញ្ច្រាស)","រៀនតាមការស្រាវជ្រាវ (Inquiry)","ពន្យល់ និងអនុវត្ត (Direct Instruction)"],
+  LPT=["Think-Pair-Share","Jigsaw (ផ្គុំគំនិត)","ក្រុមសហការ (Cooperative Learning)","Gallery Walk","សំណួរ-ចម្លើយ និងពិភាក្សា","ដោះស្រាយបញ្ហា (Problem Solving)"],
+  LPS=["ការណែនាំមេរៀន (ចាប់អារម្មណ៍)","ស្វែងរក / សិក្សាករណី","ពន្យល់ និងបញ្ជាក់ទ្រឹស្ដី","អនុវត្ត / ពង្រីក","វាយតម្លៃ និងសរុបមេរៀន"];
+function lpFill(id,a){var e=$(id);e.innerHTML=a.map(function(x,i){return"<option value='"+i+"'>"+esc(x)+"</option>"}).join("")}
+function lpLessons(){
+  var g=+$("lpG").value,C=window.CUR&&window.CUR[g],l=$("lpL");
+  if(!C||!C.LS){l.innerHTML="<option value=''>— មិនទាន់ផ្ទុកបញ្ជីមេរៀន —</option>";return}
+  l.innerHTML=Object.keys(C.LS).sort(function(a,b){return a-b}).map(function(n){var x=C.LS[n];return"<option value='"+esc(n)+"'>"+kn(n)+" · "+esc(x[0])+"</option>"}).join("")||"<option value=''>—</option>";
+}
+function lpMeta(){
+  var sel=function(id){var e=$(id);return e.selectedIndex>=0?e.options[e.selectedIndex].text:"…"};
+  $("lpMeta").textContent="ថ្នាក់ទី"+kn($("lpG").value)+" · មេរៀន "+sel("lpL")+" · វិធីសាស្ត្រ "+sel("lpM").split(" (")[0]+" · យុទ្ធវិធី "+sel("lpT").split(" (")[0];
+  $("lpMT").textContent=sel("lpM").split(" (")[0]+" / "+sel("lpT").split(" (")[0];
+}
+function renderLp(){
+  if(!$("lpG"))return;
+  if(!$("lpG").options.length){   /* បំពេញម្ដងគត់ (idempotent · refreshView មិនបិទបញ្ជីដែលកំពុងបើក) */
+    $("lpG").innerHTML=[7,8,9,10,11,12].map(function(g){return"<option value='"+g+"'>ថ្នាក់ទី"+kn(g)+"</option>"}).join("");
+    $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
+    $("lpSteps").innerHTML=LPS.map(function(t,i){return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+esc(t)+"</th></tr><tr class='lp-sb'><td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td></tr>"}).join("");
+    $("lpG").onchange=function(){lpLessons()};
+    $("lpGen").onclick=function(){lpMeta();$("lpSt").textContent="✅ បានធ្វើបច្ចុប្បន្នភាពចំណងជើង · ការបង្កើតខ្លឹមសារស្វ័យប្រវត្តិនឹងបន្ថែមនៅជំហានបន្ទាប់";$("lpA4").scrollIntoView({behavior:"smooth",block:"start"})};
+  }
+  if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
+}
+
 
 /* ===== Dashboard ទំនើប៖ បដាស្វាគមន៍ + កាតស្ថិតិ (Bento) + ម៉ឺនុយអណ្ដែត (modern.css) ===== */
-var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"],["p14","📖","សម្រង់អត្ថបទ"],["p15","📘","កម្មវិធីសិក្សា"],["p16","🏛️","រចនាសម្ព័ន្ធថ្នាក់"],["p17","📝","តេស្ត"],["p18","🗓️","ពិន្ទុប្រចាំខែ"],["p19","🤝","កំណត់ហេតុប្រជុំ"],["p20","📖","មេរៀនសង្ខេប"]];
+var FN=[["p0","🏠","ទំព័រដើម"],["p1","👥","គ្រូ"],["p2","📋","កិច្ចការ"],["p4","🎓","និទស្សន៍"],["p5","📊","លទ្ធផល"],["p6","🔍","សង្កេត"],["p7","📈","ក្រាហ្វិក"],["p8","🧑‍🎓","សិស្ស"],["p9","📝","របាយការណ៍"],["p10","🏆","ស្នាដៃ"],["p11","📚","ឯកសារ"],["p12","🗓️","កាលវិភាគ"],["p13","⏱️","Timesheet"],["p14","📖","សម្រង់អត្ថបទ"],["p15","📘","កម្មវិធីសិក្សា"],["p16","🏛️","រចនាសម្ព័ន្ធថ្នាក់"],["p17","📝","តេស្ត"],["p18","🗓️","ពិន្ទុប្រចាំខែ"],["p19","🤝","កំណត់ហេតុប្រជុំ"],["p20","📖","មេរៀនសង្ខេប"],["p21","🧩","កិច្ចតែងការបង្រៀន"]];
 function buildFnav(){
   var full={};[].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent});
-  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"&&x[0]!=="p9"&&x[0]!=="p11"&&x[0]!=="p13"&&x[0]!=="p14"&&x[0]!=="p15"&&x[0]!=="p16"&&x[0]!=="p17"&&x[0]!=="p18"&&x[0]!=="p19"&&x[0]!=="p20"}).map(function(x){
+  $("fnav").innerHTML=FN.filter(function(x){return x[0]!=="p6"&&x[0]!=="p7"&&x[0]!=="p9"&&x[0]!=="p11"&&x[0]!=="p13"&&x[0]!=="p14"&&x[0]!=="p15"&&x[0]!=="p16"&&x[0]!=="p17"&&x[0]!=="p18"&&x[0]!=="p19"&&x[0]!=="p20"&&x[0]!=="p21"}).map(function(x){
     if(x[0]==="p4")x=["p4","🎓","និទស្សន៍·សង្កេត"];
     if(x[0]==="p5")x=["p5","📊","លទ្ធផលសិក្សា"];
     if(x[0]==="p2")x=["p2","📋","ការងាររដ្ឋបាល"];
@@ -1870,7 +1898,7 @@ $("fnav").onclick=function(e){
   if(e.target.closest("#fnMore")){$("allMenu").hidden=false;return}
   var b=e.target.closest("button[data-p]");if(b)show(b.dataset.p)};
 /* ម៉ឺនុយចំហៀងខាងឆ្វេង (អេក្រង់ធំ ≥1200px)៖ ស្លាយចេញ/ចូល · ចងចាំស្ថានភាពក្នុង localStorage */
-var SNG=[["ទូទៅ",["p0","p1"]],["ការងាររដ្ឋបាល",["p2","p9","p13","p19"]],["មេរៀនសង្ខេប",["p20"]],["និទស្សន៍ · សង្កេត",["p4","p6"]],["លទ្ធផលសិក្សា",["p5","p7","p17","p18","p8"]],["គ្រប់គ្រងថ្នាក់រៀន",["p12","p14","p15","p16"]],["ឯកសារ",["p10","p11"]]];
+var SNG=[["ទូទៅ",["p0","p1"]],["ការងាររដ្ឋបាល",["p2","p9","p13","p19"]],["មេរៀន · កិច្ចតែងការ",["p20","p21"]],["និទស្សន៍ · សង្កេត",["p4","p6"]],["លទ្ធផលសិក្សា",["p5","p7","p17","p18","p8"]],["គ្រប់គ្រងថ្នាក់រៀន",["p12","p14","p15","p16"]],["ឯកសារ",["p10","p11"]]];
 function buildSnav(){
   var ic={},full={};FN.forEach(function(x){ic[x[0]]=x[1]});
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent.replace(/^[០-៩]+\.\s*/,"")});
@@ -1915,7 +1943,7 @@ function avHtml(id,name,sz){
   if(p&&okPhoto(p.photo))return"<img class=av src='"+p.photo+"' alt='' width="+s+" height="+s+" style='width:"+s+"px;height:"+s+"px'>";
   return"<span class=av-i style='width:"+s+"px;height:"+s+"px;font-size:"+Math.round(s*.48)+"px'>"+esc(Array.from(String(name||id).trim())[0]||"?")+"</span>";
 }
-function curPage(){return["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].filter(function(x){return !$(x).hidden})[0]||"p0"}
+function curPage(){return["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20","p21"].filter(function(x){return !$(x).hidden})[0]||"p0"}
 function subProfiles(){
   try{
     var un=window.FB.onSnapshot(window.FB.collection(window.db,"profiles"),function(sn){
@@ -2550,7 +2578,7 @@ document.addEventListener("focusout",function(e){
 function refreshView(){
   if($("appSection").hidden)return;
   if(pickerBusy()){rvWait=true;return}
-  var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20"].filter(function(x){return !$(x).hidden})[0]||"p0";
+  var c=["p0","p1","p2","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15","p16","p17","p18","p19","p20","p21"].filter(function(x){return !$(x).hidden})[0]||"p0";
   keepFocus(function(){show(c)});
 }
 /* គូរទំព័រឡើងវិញ ដោយរក្សាប្រអប់ដែលកំពុងសរសេរ (focus · cursor · អក្សរដែលទើបវាយ) */

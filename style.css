@@ -1001,3 +1001,21 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
   body.pm #prt tr,body.pm #prt .cxf,body.pm #prt .sig{break-inside:avoid;page-break-inside:avoid}
   body.pm #prt .cxf,body.pm #prt .sig{break-before:avoid;page-break-before:avoid}
 }
+
+/* ===== 🧩 កិច្ចតែងការបង្រៀន (p21) ===== */
+.lp-hero{margin:0 0 12px}.lp-hero h2{margin:0}.lp-hero p{margin:2px 0 0;color:var(--mute)}
+.lp-wrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:start}
+.lp-ctl{position:sticky;top:8px;display:grid;gap:6px}.lp-ctl h3{margin:0 0 4px}.lp-ctl label{font-weight:700;font-size:.88rem;margin-top:4px}.lp-ctl select{width:100%;margin:0}.lp-ctl button{margin-top:10px;min-height:44px}
+.lp-view{min-width:0;overflow-x:auto;padding-bottom:8px}
+.lp-a4{box-sizing:border-box;background:#fff;color:#000;width:210mm;max-width:100%;min-height:297mm;margin:0 auto;padding:14mm 15mm;border:1px solid var(--line);border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,.18);font-family:"Khmer OS Battambang","Battambang","Khmer OS Siemreap","Siemreap",serif;line-height:1.8;font-size:11pt}
+.lp-a4 .lp-ti{text-align:center;font-size:14pt;margin:8px 0 2px;font-weight:400;color:#000}.lp-meta{text-align:center;margin:0 0 10px;font-size:10.5pt}
+.lp-h{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:11.5pt;margin:12px 0 4px;color:#000}
+.lp-ob{margin:0;padding-left:20px}.lp-a4 p{margin:2px 0}
+.lp-ph{color:#6b7280;background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 6px,#fff 6px,#fff 12px);border-radius:3px}
+div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}.lp-ft{margin-top:16px}
+.lp-tw{overflow-x:auto}.lp-tb{border-collapse:collapse;width:100%;min-width:480px;font-size:10.5pt}
+.lp-tb th,.lp-tb td{border:1px solid #000;padding:6px 8px;vertical-align:top;color:#000;background:#fff;line-height:1.7}
+.lp-tb thead th{background:#eee;text-align:center;position:static}.lp-tb .lp-sh th{background:#f6f6f6;text-align:left}.lp-tb .lp-sb td{height:34mm;width:33.33%}
+.lp-tb td.lp-ph{background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 6px,#fff 6px,#fff 12px)}
+@media(max-width:860px){.lp-wrap{grid-template-columns:minmax(0,1fr)}.lp-hero p{overflow-wrap:anywhere}.lp-ctl{position:static}.lp-a4{padding:10mm 6mm}}
+@media print{#p21 .lp-ctl,#p21 .lp-hero{display:none!important}}

@@ -57,7 +57,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v48`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v49`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -250,6 +250,12 @@
   - Drafts autosave to localStorage `hubDraft_{g}_{l}`. Save runs a transaction with a version check (`r` +1, `tx.update` when the doc exists); on a conflict it asks before overwriting. «↺ ត្រឡប់ទៅលំនាំដើម» deletes the teacher version.
 - Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
 - Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
+
+### ✅ Teaching lesson-plan generator — UI shell (p21) — `index.html`, `script.js`, `style.css`
+- New tab «២០. កិច្ចតែងការបង្រៀន» (`#p21`, sidebar group «មេរៀន · កិច្ចតែងការ», icon 🧩). **Not** the monthly counts page (`p2` «ចំនួនកិច្ចតែងការ»). `p21` was added to every page list in `script.js` (`show` ×2, `curPage`, the dialog-restore list), to `FN`/`SNG`, and to `NEED` (`cur`, so the grade → lesson list loads).
+- Layout: control panel (grade 7–12, lesson from `window.CUR[g].LS`, method, tactic, «✨ បង្កើតកិច្ចតែងការ») beside an A4 preview (header placeholder, 3 objective domains វិជ្ជាសម្បទា/បំណិនសម្បទា/ចរិយាសម្បទា, materials and method, 5 steps × 3 columns teacher / content / student, footer placeholder). Stacks on phones (`minmax(0,1fr)`); the table scrolls inside `.lp-tw`.
+- `renderLp()` fills the selects once (idempotent), so `refreshView()` never closes an open select. «Generate» only updates the title/meta line: **content generation is not implemented yet**. The project has no Tailwind; existing `style.css` variables are used instead.
+- Headless check (harness with the real HTML and `renderLp` extracted from `script.js`): 6 grades, lessons follow the grade, 5 steps × 3 columns, selection kept on re-render, 0 JS errors.
 
 ### ✅ Lesson-plan counts (កិច្ចតែងការ): only Admin / ប្រធាន / អនុប្រធាន edit — `script.js`, `firestore.rules` (**must be published**)
 - `canK()` = Admin, or `who.rl` ∈ `KLEAD=["ប្រធាន","អនុប្រធាន"]` (the technical-group role in the teacher list, `RL`). They can edit **every** teacher's row; ordinary members (`សមាជិក`) get read-only inputs and a «👁 មើលតែប៉ុណ្ណោះ» note (`#kRO`). `canWrite("tasks/…")` follows `canK()`.
