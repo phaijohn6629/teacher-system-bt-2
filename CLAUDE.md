@@ -56,7 +56,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v39`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v40`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -201,6 +201,7 @@
     - 41: asymptotes and domain (L1–3); oblique asymptote by division and N=ad−bc (L2–4); ★ centre of symmetry, intercepts, min of x+k/x and the graphing steps; 🌐 dilution m/(V+x) and average cost → c.
     - Checks: 36 numeric checks of every example (numeric derivative, extremum search, limits) gave 0 wrong. 24 views showed 0 KaTeX errors, 0 raw `$`, and 24/24 practice sets OK.
     - A visual check caught two clipped formulas (fixed perimeter, closed can); they were split or shortened. Keep each formula short enough to fit a half-width box.
+  - **Package 3 (2026-11-15): grade 12 is complete — all 17 lessons have starter content.** Added 11·complex numbers (algebraic form, ℂ quadratics and square roots, trigonometric form / De Moivre, ★ n-th roots, 🌐 AC impedance), 23·continuity (definition, two-piece parameters, 0/0 extension, ★ three pieces + intermediate value theorem, 🌐 taxi fare), 51·integrals (basic antiderivatives, definite integrals, u′uⁿ and u′/u, ★ area between curves + partial fractions, 🌐 speed → distance), 61·first-order DE (y′=f, y′=ay, y′=ay+b and its limit, particular solutions, ★ growth/half-life, 🌐 population), 62·second-order DE (characteristic equation, initial conditions, ★ particular solutions, 🌐 ball/spring), 71·probability (counting, binomial, ★ expectation/variance, 🌐 guessing an MCQ), 81–83·conics (standard and shifted parabola/ellipse/hyperbola, 🌐 dish antenna, running track, ship positioning), 101·space vectors (dot product, cross product and area, ★ triple product and volume, 🌐 roof beams), and 102·planes/spheres (equations, distances and intersections, ★ orthogonal projection and distance to a line, 🌐 solar panel). Each lesson covers all 6 levels, matched to the real forms (samples from `practice.js`/`pisa12.js`). Every example answer was worked out by hand. `tests/hub.js` now checks all 17 grade 12 lessons (4,017 checks).
   - 12·22 Level 5: the three «លំហាត់អនុវត្តបន្ថែម ១–៣» videos were collapsed into one **playlist** entry (`PLEGSjUxJctik`), so Level 5 went from 9 to 7 items. `HUB.vparse` accepts playlist links (`youtube.com/playlist?list=…` or `watch?…&list=…` without `v`) and embeds them as `videoseries?list=…`.
   - 12·22 one Manim video **per level** (2026-11-14, `12_22_17`…`22`, also appended to the playlist): L1 direct substitution `zKCqsRkwz0c`, L2 0/0 + reference limits `q5SyyPkbzjQ`, L3 mixed medium `7uyN9Jo9TiU`, L4 BacII `b6Yg-zsnHAA`, L5 national/olympiad `4RdfRy2SR50`, PISA real world `nWc9-GoBOkM`. Each shows only at its own level (checked by rendering all 6 levels).
   - `VIDEOS.lv` accepts a list (`"4,5"`) via `vlvKeys()`, and `--level 4,5` in the uploader (normalised order). `youtube_uploads.json` records each video's primary placement plus `also`.
@@ -283,7 +284,7 @@
 
 ## Status
 - ✅ **All planned code tasks are completed.** No code work is pending.
-- Optional future work: starter hub content for grades 7, 8, 10, 11, 12 and Cambridge (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
+- Optional future work: starter hub content for grades 11, 10, 8, 7 and Cambridge (planned next, one grade at a time) (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
 
 ## Recommended manual checks (live site / real phones — not automatable here)
   - **Publish `firestore.rules`** (2026-11-14 security update: `mcp`, `exq`/`timg` owner checks, `subs`/`prt`/`sig` validation). Then open «ប្រធានថ្នាក់» once as each teacher so old monitor passwords move to `mcp`, and check 👁 still shows them.

@@ -22,7 +22,7 @@ ids.forEach(function(l){
   if(HUB.html(9,l,4,"x",false).indexOf("🌐")<0)B("NO PISA SUB l"+l);
 });
 /* ថ្នាក់ទី១២ (Gold-Standard)៖ មេរៀន 22 · 42 · 43 ពេញលេញ · គ្រប់កម្រិតមានចំណុចរង · PISA មានចំណុចរងផ្ទាល់ */
-[22,42,43,31,32,41].forEach(function(l){var s=HUB.starter(12,l);if(!s){B("NO STARTER g12 l"+l);return}
+[11,22,23,31,32,41,42,43,51,61,62,71,81,82,83,101,102].forEach(function(l){var s=HUB.starter(12,l);if(!s){B("NO STARTER g12 l"+l);return}
   s.forEach(function(x){n++;if(/^🎬/.test(x.t))return;if(!x.t||!x.s||!x.f||!x.f.length||!x.k)B("INCOMPLETE g12 l"+l+" "+x.t);
     [x.s,x.k].concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){if(!bal(t))B("BAL g12 l"+l+" "+String(t).slice(0,60));if(mathKh(t))B("KH-IN-MATH g12 l"+l+" "+String(t).slice(0,80))});
     x.f.forEach(function(f){if(KH.test(f))B("KH-IN-FORMULA g12 l"+l+" "+f);if(!bal(f)||/\$/.test(f))B("FBAL g12 l"+l+" "+f)})});
