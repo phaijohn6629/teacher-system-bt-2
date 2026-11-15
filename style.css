@@ -1008,10 +1008,14 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .lp-ctl{position:sticky;top:8px;display:grid;gap:6px}.lp-ctl h3{margin:0 0 4px}.lp-ctl label{font-weight:700;font-size:.88rem;margin-top:4px}.lp-ctl select,.lp-ctl input[type=date]{width:100%;margin:0}.lp-ctl button{margin-top:10px;min-height:44px}
 .lp-view{min-width:0;overflow-x:auto;padding-bottom:8px}
 .lp-a4{box-sizing:border-box;background:#fff;color:#000;width:210mm;max-width:100%;min-height:297mm;margin:0 auto;padding:14mm 15mm;border:1px solid var(--line);border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,.18);font-family:"Khmer OS Battambang","Battambang","Khmer OS Siemreap","Siemreap",serif;line-height:1.8;font-size:11pt}
-.lp-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-.lp-hl{display:flex;flex-direction:column;font-size:8.5pt;line-height:1.55;color:#000}.lp-hl b{font-weight:700;font-size:9pt}
-.lp-hr{display:flex;flex-direction:column;font-size:9pt;line-height:1.9;color:#000;min-width:58mm}.lp-hr .lp-mu{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:8.5pt}.lp-hr i{display:inline-block;min-width:32mm;border-bottom:1px dotted #000;height:1em;vertical-align:baseline}
-.lp-a4 .lp-ti{text-align:center;font-size:16pt;margin:10px 0 4px;font-weight:400;line-height:1.9;color:#000}
+.lp-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:14px 18px;flex-wrap:wrap;margin:2px 0 8px}
+.lp-hl{display:flex;flex-direction:column;flex:0 0 auto;font-size:8.5pt;line-height:1.55;color:#000}.lp-hl b{font-weight:700;font-size:9pt}
+/* ព័ត៌មានលម្អិត ៖ Grid ៣ ជួរឈរ (ស្លាក · ៖ · តម្លៃ) → សញ្ញា «៖» ត្រង់ជួរគ្នាគ្រប់បន្ទាត់ */
+.lp-mg{display:grid;grid-template-columns:max-content 4mm minmax(0,1fr);column-gap:2mm;row-gap:1px;align-items:baseline;flex:1 1 80mm;min-width:0;max-width:110mm;font-size:9.5pt;line-height:1.75;color:#000}
+.lp-mg .k{font-weight:700;white-space:nowrap}.lp-mg b{font-weight:400;text-align:center}.lp-mg .v{overflow-wrap:anywhere}
+.lp-mg .lp-mu,.lp-hr .lp-mu{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:9pt}
+.lp-mg i{display:inline-block;min-width:34mm;border-bottom:1px dotted #000;height:1em;vertical-align:baseline}
+.lp-a4 .lp-ti{text-align:center;font-size:17pt;margin:0 0 8px;font-weight:400;line-height:1.9;color:#000}
 .lp-a4 .katex{font-size:1.02em}.lp-tb .katex{font-size:1em}.lp-meta{text-align:center;margin:0 0 10px;font-size:10.5pt}
 .lp-h{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:11.5pt;margin:12px 0 4px;color:#000}
 .lp-ob{margin:0;padding-left:20px}.lp-a4 p{margin:2px 0}
