@@ -1008,8 +1008,8 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .lp-ctl{position:sticky;top:8px;display:grid;gap:6px}.lp-ctl h3{margin:0 0 4px}.lp-ctl label{font-weight:700;font-size:.88rem;margin-top:4px}.lp-ctl select,.lp-ctl input[type=date]{width:100%;margin:0}.lp-ctl button{margin-top:10px;min-height:44px}
 .lp-view{min-width:0;overflow-x:auto;padding-bottom:8px}
 .lp-a4{box-sizing:border-box;background:#fff;color:#000;width:210mm;max-width:100%;min-height:297mm;margin:0 auto;padding:14mm 15mm;border:1px solid var(--line);border-radius:4px;box-shadow:0 6px 24px rgba(0,0,0,.18);font-family:"Khmer OS Battambang","Battambang","Khmer OS Siemreap","Siemreap",serif;line-height:1.8;font-size:11pt}
-.lp-hd{margin:2px 0 6px;padding-bottom:5px;border-bottom:1px solid #000}   /* ក្រុមឈ្មោះសាលា + បន្ទាត់ក្រោមតែមួយ (ដូចគំរូ) · គ្មានប្រអប់ព័ទ្ធ */
-.lp-hl{display:flex;flex-direction:column;font-size:8.5pt;line-height:1.55;color:#000}.lp-hl b{font-weight:700;font-size:9.5pt}
+/* បន្ទះក្បាល (មើលជាមុន) ៖ ដូចគំរូ sample.pdf — ឈ្មោះសាលាខាងឆ្វេង · Website/Facebook ខាងស្ដាំ · បន្ទាត់ក្រោម · ពេលបោះពុម្ពប្ដូរជា @page margin box រត់រាល់ទំព័រ */
+.lp-band{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid #000;color:#000;font-size:8.5pt;line-height:1.5}.lp-band b{font-weight:700;font-size:10pt}.lp-band span{text-align:right}
 /* ព័ត៌មានលម្អិត ៖ បញ្ជីពេញទទឹងក្រោមចំណងជើង · Grid ៣ ជួរឈរ (ស្លាក · ៖ · តម្លៃ) → «៖» ត្រង់ជួរគ្នា · ស្លាក = Muol Light */
 .lp-mg{display:grid;grid-template-columns:max-content 4mm minmax(0,1fr);column-gap:2mm;row-gap:0;align-items:baseline;margin:0 0 8px 16mm;font-size:10pt;line-height:1.85;color:#000}
 .lp-mg .k{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:9.5pt;white-space:nowrap}.lp-mg b{font-weight:400;text-align:center}.lp-mg .v{overflow-wrap:anywhere}
@@ -1022,23 +1022,26 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .lp-ph{color:#6b7280;background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 6px,#fff 6px,#fff 12px);border-radius:3px}
 div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 /* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទខាងស្ដាំលើ · ៣ ផ្នែក (គណៈគ្រប់គ្រង · ក្រុមបច្ចេកទេស · គ្រូបង្រៀន) · ហ្វុង Muol Light ដូចឯកសាររដ្ឋបាលផ្សេង */
-.lp-mg .lp-sub{display:block;margin-top:1px;font-size:8.5pt}.lp-pnv{text-align:right;font:9pt "Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;color:#000;margin-top:10px}
+.lp-mg .lp-sub{display:block;margin-top:1px;font-size:8.5pt}.lp-pnv{display:flex;justify-content:space-between;gap:10px;margin-top:12px;padding-top:4px;border-top:1px solid #000;font:9pt "Khmer OS Battambang","Battambang",serif;color:#000}.lp-pnv b{font-family:"Khmer OS Muol Light","Moul",serif;font-weight:400}.lp-pnv #lpPN{font-family:"Khmer OS Muol Light","Moul",serif}
 /* 🖨️ លេខទំព័រខ្មែររត់ស្វ័យប្រវត្តិ (Muol Light) ៖ ទំព័រសេស = ខាងស្ដាំ · ទំព័រគូ = ខាងឆ្វេង · ទំព័រទី១ = ស្ដាំ */
-@page lpdoc{size:A4;margin:14mm 15mm 18mm}
-@page lpdoc:right{@bottom-right{content:counter(page,khmer);font:9pt "Khmer OS Muol Light","Moul",serif;color:#000}}
-@page lpdoc:left{@bottom-left{content:counter(page,khmer);font:9pt "Khmer OS Muol Light","Moul",serif;color:#000}}
+@page lpdoc{size:A4;margin:26mm 15mm 20mm;
+  @top-left{content:"វិទ្យាល័យព្រះស៊ីសុវត្ថិ, សាលារៀនជំនាន់ថ្មី (NGS)";font:700 9.5pt "Khmer OS Battambang","Battambang",serif;color:#000;vertical-align:bottom;border-bottom:.75pt solid #000;padding-bottom:1.5mm;white-space:nowrap}
+  @top-right{content:"Website: www.preahsisowath.edu.kh\A Facebook: New Generation School, Preah Sisowath";white-space:pre;text-align:right;font:8.5pt "Khmer OS Battambang","Battambang",serif;color:#000;vertical-align:bottom;border-bottom:.75pt solid #000;padding-bottom:1.5mm}}
+/* ជើងរត់ ៖ ទំព័រសេស (ទី១ ក៏ជាទំព័រសេស) = «បង្រៀនដោយលោកគ្រូ ៖ ឈ្មោះ» ឆ្វេង + «ទំព័រទី N» ស្ដាំ · ទំព័រគូ = ត្រឡប់ផ្ទុយ (ឈ្មោះ = lpPrint() បញ្ចូល @page ថាមវន្ត) */
+@page lpdoc:right{@bottom-right{content:"ទំព័រទី " counter(page,khmer);font:9pt "Khmer OS Muol Light","Moul",serif;color:#000;border-top:.75pt solid #000;padding-top:1.5mm;vertical-align:top}@bottom-left{font:9pt "Khmer OS Battambang","Battambang",serif;color:#000;border-top:.75pt solid #000;padding-top:1.5mm;vertical-align:top;white-space:nowrap}}
+@page lpdoc:left{@bottom-left{content:"ទំព័រទី " counter(page,khmer);font:9pt "Khmer OS Muol Light","Moul",serif;color:#000;border-top:.75pt solid #000;padding-top:1.5mm;vertical-align:top}@bottom-right{font:9pt "Khmer OS Battambang","Battambang",serif;color:#000;border-top:.75pt solid #000;padding-top:1.5mm;vertical-align:top;white-space:nowrap}}
 @media print{
   .lp-print{page:lpdoc}
   body.pm #prt .lp-a4{width:auto;max-width:none;min-height:0;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}
-  body.pm #prt .lp-pnv{display:none}body.pm #prt .lp-ph,body.pm #prt .lp-tb td.lp-ph{background:none!important}
+  body.pm #prt .lp-pnv,body.pm #prt .lp-band{display:none}body.pm #prt .lp-ph,body.pm #prt .lp-tb td.lp-ph{background:none!important}
   body.pm #prt .lp-tw{overflow:visible}body.pm #prt .lp-tb{min-width:0}body.pm #prt .lp-tb .lp-sb td{height:auto}
 }
 .lp-sg{margin-top:18px;color:#000;break-inside:avoid;page-break-inside:avoid}
-.lp-sd{display:flex;flex-direction:column;align-items:flex-end;font-size:9.5pt;line-height:1.7;margin-bottom:4px}
+.lp-sd{display:flex;flex-direction:column;align-items:flex-end;font-size:9.5pt;line-height:1.7;margin-bottom:4px}.lp-sd #lpSL{font-size:8.5pt}
 .lp-sc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6mm;text-align:center;align-items:start}
 .lp-sx{display:flex;flex-direction:column;align-items:center;min-width:0}.lp-sx .lp-mu{font-size:9pt;line-height:1.8}
 /* ប្លុកចំណងជើងតួនាទី៖ កម្ពស់ស្មើ ៣ បន្ទាត់ → ទីតាំងហត្ថលេខា និងឈ្មោះ ត្រង់កម្រិតតែមួយគ្រប់ផ្នែក ទោះចំណងជើងបែកជា ២ ឬ ៣ បន្ទាត់ */
-.lp-tt{display:flex;flex-direction:column;align-items:center;font-size:9pt;min-height:5.4em}
+.lp-tt{display:flex;flex-direction:column;align-items:center;font-size:9pt;min-height:5.4em}.lp-tt.lp-t1{min-height:1.8em}.lp-t2{display:flex;flex-direction:column;align-items:center;font-size:9pt;line-height:1.8;min-height:3.6em;text-align:center}
 .lp-sp{display:block;height:20mm}.lp-nm{font-size:9.5pt!important}
 .lp-two{display:flex;gap:3mm;justify-content:center;width:100%}.lp-two>div{display:flex;flex-direction:column;align-items:center;flex:1 1 0;min-width:0}
 .lp-sg .lp-mu{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400}

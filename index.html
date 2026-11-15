@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=109">
+<link rel="stylesheet" href="style.css?v=110">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -305,15 +305,17 @@
       <label for="lpT">យុទ្ធវិធីបង្រៀន</label><select id="lpT"></select>
       <label for="lpD">កាលបរិច្ឆេទបង្រៀន</label><input type="date" id="lpD">
       <label for="lpW">សប្តាហ៍ទី</label><select id="lpW"></select>
+      <label for="lpTn">គ្រូបង្រៀន (បង្រៀនដោយ)</label><select id="lpTn"></select>
+      <label for="lpMg">គណៈគ្រប់គ្រង</label><select id="lpMg"></select>
+      <label for="lpTh">ប្រធានក្រុមបច្ចេកទេស</label><select id="lpTh"></select>
+      <label for="lpTd">ជ.ប្រធានក្រុមបច្ចេកទេស</label><select id="lpTd"></select>
       <button type="button" id="lpGen" class="primary">✨ បង្កើតកិច្ចតែងការ</button>
       <button type="button" id="lpPr">🖨️ បោះពុម្ព / PDF</button>
       <p class="note" id="lpSt">ជ្រើសរើសជម្រើស ហើយចុចប៊ូតុងខាងលើ។</p>
     </aside>
     <div class="lp-view" aria-label="មើលជាមុន A4">
       <article class="lp-a4" id="lpA4">
-        <div class="lp-hd">
-          <div class="lp-hl"><b>វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី (NGS)</b><span>Website: www.preahsisowath.edu.kh</span><span>Facebook: New Generation School, Preah Sisowath</span></div>
-        </div>
+        <div class="lp-band"><b>វិទ្យាល័យព្រះស៊ីសុវត្ថិ, សាលារៀនជំនាន់ថ្មី (NGS)</b><span>Website: www.preahsisowath.edu.kh<br>Facebook: New Generation School, Preah Sisowath</span></div>
         <h2 class="lp-ti moul">កិច្ចតែងការបង្រៀន</h2>
         <div class="lp-mg" id="lpMG">
           <span class="k">ថ្នាក់ទី</span><b>៖</b><span class="v" id="lpHG"><i></i></span>
@@ -339,15 +341,15 @@
           <tbody id="lpSteps"></tbody>
         </table></div>
         <div class="lp-sg" id="lpSG">
-          <div class="lp-sd"><span id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span>ហត្ថលេខា</span></div>
+          <div class="lp-sd"><span id="lpSL"></span><span id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span>ហត្ថលេខា</span></div>
           <div class="lp-sc">
-            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងឯកភាព</span><span class="lp-mu">ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm">គីម មិថុនា</span></div>
-            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងពិនិត្យ</span><span class="lp-mu">ជ.ប្រធានក្រុមបច្ចេកទេស</span></div>
-              <div class="lp-two"><div><i class="lp-sp"></i><span class="lp-mu lp-nm">មេត បញ្ញារិទ្ធ</span></div><div><i class="lp-sp"></i><span class="lp-mu lp-nm">ផៃ ចន</span></div></div></div>
+            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងឯកភាព</span><span class="lp-mu">ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSM">…</span></div>
+            <div class="lp-sx"><div class="lp-tt lp-t1"><span class="lp-mu">បានឃើញ និងពិនិត្យ</span></div>
+              <div class="lp-two"><div><div class="lp-t2"><span class="lp-mu">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div><div><div class="lp-t2"><span class="lp-mu">ជ.ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSV">…</span></div></div></div>
             <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងពិនិត្យ</span><span class="lp-mu">ជ.គ្រូបង្រៀន</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpST">…</span></div>
           </div>
         </div>
-        <div class="lp-pnv" id="lpPN">ទំព័រ ១</div>
+        <div class="lp-pnv"><span>បង្រៀនដោយលោកគ្រូ ៖ <b id="lpFT">…</b></span><span id="lpPN">ទំព័រទី ១</span></div>
       </article>
     </div>
   </div>
@@ -637,7 +639,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=110"></script>
+<script src="script.js?v=112"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

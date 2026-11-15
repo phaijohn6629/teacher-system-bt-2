@@ -1929,22 +1929,47 @@ function lpHeader(){
   v("lpHD",lpDateTxt());
 }
 /* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) · ឈ្មោះគ្រូបង្រៀន = អ្នកដែលកំពុង Login (គ្មាន → តម្លៃ «បង្រៀនដោយ» ក្នុងក្បាល) */
+var lpPSig="";
+/* 👥 ឈ្មោះអ្នកចុះហត្ថលេខា ជ្រើសបានពីបញ្ជីគ្រូ (data) · លំនាំដើម៖ គ្រូ = អ្នក Login · ប្រធាន/ជ.ប្រធានក្រុមបច្ចេកទេស = គ្រូដែលមានតួនាទី «ប្រធាន»/«អនុប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គណៈគ្រប់គ្រង = ឈ្មោះថេរ */
+function lpPeople(){
+  var T=(typeof data!=="undefined"&&data&&data.filter)?data.filter(function(t){return t&&t.name}):[],me=(typeof who!=="undefined"&&who)?who:null;
+  var sig=T.map(function(t){return t.id+"|"+t.name+"|"+t.rl}).join(",")+"#"+(me?me.id+"|"+me.name:"");
+  if(sig===lpPSig&&$("lpTn").options.length)return;lpPSig=sig;
+  var all=T.map(function(t){return"<option value='"+esc(t.id)+"'>"+esc(t.name)+"</option>"}).join(""),role=function(r){var t=T.filter(function(x){return x.rl===r})[0];return t?String(t.id):null};
+  function fill(id,fixed,def){
+    var e=$(id),prev=e.value;e.innerHTML=(fixed?"<option value='__f'>"+esc(fixed)+"</option>":"")+all;
+    var has=function(v){return v!=null&&[].some.call(e.options,function(o){return o.value===v})};
+    e.value=has(prev)?prev:has(def)?def:(e.options[0]?e.options[0].value:"");
+  }
+  var inT=me&&T.some(function(t){return String(t.id)===String(me.id)});
+  fill("lpTn",me?null:"ដែ ចន",me?String(me.id):null);
+  if(me&&!inT)$("lpTn").insertAdjacentHTML("afterbegin","<option value='__me'>"+esc(me.name||me.id)+"</option>"),$("lpTn").value="__me";
+  fill("lpMg","គីម មិថុនា","__f");fill("lpTh","មេត បញ្ញារិទ្ធ",role("ប្រធាន"));fill("lpTd","ផៃ ចន",role("អនុប្រធាន"));
+}
+function lpNm(id){var e=$(id);return e&&e.selectedIndex>=0?e.options[e.selectedIndex].text:""}
+/* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) + ចន្ទគតិ (KhCal) · ឈ្មោះ ៤ ពី Dropdown */
 function lpFooter(){
   var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec($("lpD").value),n=new Date(),dd=n.getDate(),mm=n.getMonth(),yy=n.getFullYear();
   if(m){dd=+m[3];mm=+m[2]-1;yy=+m[1]}
   $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
-  var tn=(typeof who!=="undefined"&&who&&who.name)||($("lpHT")&&$("lpHT").textContent)||"";
-  $("lpST").textContent=tn;
+  var lu="";try{lu=window.KhCal?KhCal.fmt(yy,mm+1,dd):""}catch(e){}$("lpSL").textContent=lu;
+  var tn=lpNm("lpTn");
+  $("lpST").textContent=tn;$("lpFT").textContent=tn;$("lpHT").textContent=tn;
+  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");$("lpSV").textContent=lpNm("lpTd");
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់លេខទំព័រខ្មែរ ៖ ទំព័រសេស = ខាងស្ដាំ · ទំព័រគូ = ខាងឆ្វេង (style.css) */
 function lpPrint(){
   var A=$("lpA4");if(!A||typeof realPrint!=="function")return;
+  var q=function(t){return String(t).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/[\r\n]+/g," ")},nm='"បង្រៀនដោយលោកគ្រូ ៖ '+q(lpNm("lpTn"))+'"';
+  var st=$("lpDyn")||document.head.appendChild(document.createElement("style"));st.id="lpDyn";
+  st.textContent="@page lpdoc:right{@bottom-left{content:"+nm+"}}@page lpdoc:left{@bottom-right{content:"+nm+"}}";   /* ឈ្មោះគ្រូ ក្នុងជើងរត់ (CSS មិនអាចយកពី DOM) */
+  if(!lpPrint.ap){lpPrint.ap=1;window.addEventListener("afterprint",function(){var e=$("lpDyn");if(e)e.textContent=""})}
   realPrint("<div class='lp-print'>"+A.outerHTML.replace(/ id="[^"]*"/g,"")+"</div>");
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 function generateLessonPlan(){
   var g=$("lpG").value,l=$("lpL").value,sb=$("lpS").value,P=lessonPlanDB[g+"_"+l+(sb?"#"+sb:"")];
-  lpMeta();lpHeader();lpFooter();
+  lpPeople();lpMeta();lpHeader();lpFooter();
   if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច · ចំណុចរងទី២ ទម្រង់ពីជគណិត)";return false}
   lpRender(P);
   $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
@@ -1983,6 +2008,7 @@ function renderLp(){
     $("lpGen").onclick=generateLessonPlan;
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
+  lpPeople();
 }
 
 
