@@ -1851,6 +1851,61 @@ $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.datas
 var LPM=["5Es (ចូលរួម · ស្វែងរក · ពន្យល់ · ពង្រីក · វាយតម្លៃ)","PBL (រៀនតាមគម្រោង)","Flipped Classroom (ថ្នាក់រៀនបញ្ច្រាស)","រៀនតាមការស្រាវជ្រាវ (Inquiry)","ពន្យល់ និងអនុវត្ត (Direct Instruction)"],
   LPT=["Think-Pair-Share","Jigsaw (ផ្គុំគំនិត)","ក្រុមសហការ (Cooperative Learning)","Gallery Walk","សំណួរ-ចម្លើយ និងពិភាក្សា","ដោះស្រាយបញ្ហា (Problem Solving)"],
   LPS=["ការណែនាំមេរៀន (ចាប់អារម្មណ៍)","ស្វែងរក / សិក្សាករណី","ពន្យល់ និងបញ្ជាក់ទ្រឹស្ដី","អនុវត្ត / ពង្រីក","វាយតម្លៃ និងសរុបមេរៀន"];
+/* 📚 ទិន្នន័យគំរូ (key = «ថ្នាក់_លេខមេរៀនក្នុងប្រព័ន្ធ» · លេខមេរៀន = ជំពូក×១០ + មេរៀន ឧ. 12_11 = ថ្នាក់ទី១២ ជំពូក១ មេរៀន១) · បន្ថែមមេរៀនថ្មីដោយចម្លងទម្រង់នេះ
+   obj = វត្ថុបំណង ៣ វិស័យ (ប្រភេទ: បញ្ជីអក្សរ) · mat = សម្ភារៈ · dur = រយៈពេលសរុប (នាទី) · steps[5] = {n: ឈ្មោះជំហាន, t: នាទី, tc: សកម្មភាពគ្រូ[], ct: ខ្លឹមសារមេរៀន[], st: សកម្មភាពសិស្ស[]} */
+var lessonPlanDB={
+  "12_11":{
+    title:"ចំនួនកុំផ្លិច · ទម្រង់ពីជគណិត",dur:45,
+    obj:{
+      knowledge:["ស្គាល់និយមន័យចំនួនកុំផ្លិច z = a + bi (ផ្នែកពិត a · ផ្នែកនិមិត្ត b) និង i² = −1","ដឹងលក្ខខណ្ឌស្មើគ្នានៃចំនួនកុំផ្លិចពីរ និងចំនួនកុំផ្លិចឆ្លាស់ z̄ = a − bi"],
+      skills:["គណនាផលបូក ផលដក និងផលគុណនៃចំនួនកុំផ្លិចទម្រង់ពីជគណិត","រកផ្នែកពិត និងផ្នែកនិមិត្ត ហើយរកចំនួនពិត x, y ពីសមភាពនៃចំនួនកុំផ្លិច"],
+      attitude:["មានការចាប់អារម្មណ៍ និងអត់ធ្មត់ក្នុងការសិក្សាចំនួនប្រភេទថ្មី","សហការ និងចែករំលែកគំនិតក្នុងក្រុម"]},
+    mat:["សៀវភៅសិក្សាគណិតវិទ្យាថ្នាក់ទី១២","ក្តារខៀន ដីស/ប៊ិច","សន្លឹកលំហាត់ ១ សន្លឹក/ក្រុម","ម៉ាស៊ីនគិតលេខ (បើមាន)"],
+    steps:[
+      {n:"រដ្ឋបាលថ្នាក់",t:3,
+       tc:["សួរសុខទុក្ខ និងស្រង់វត្តមានសិស្ស","ពិនិត្យអនាម័យ និងការរៀបចំសម្ភារៈរៀន"],
+       ct:["ស្រង់វត្តមាន","ប្រាប់ឈ្មោះមេរៀន៖ «ចំនួនកុំផ្លិច · ទម្រង់ពីជគណិត»"],
+       st:["ឈរគោរពគ្រូ និងឆ្លើយតបវត្តមាន","រៀបចំសៀវភៅ និងសម្ភារៈឱ្យរួចរាល់"]},
+      {n:"រំលឹកមេរៀនចាស់",t:7,
+       tc:["សួរសំណួរខ្លី ៖ ដោះស្រាយសមីការ x² − 4 = 0 និង x² + 4 = 0 ក្នុងសំណុំចំនួនពិត","ណែនាំថាសមីការទី២ គ្មានឫសពិត → ត្រូវការចំនួនប្រភេទថ្មី"],
+       ct:["សមីការដឺក្រេទី២ និងឌីស្គ្រីមីណង់ Δ = b² − 4ac","Δ < 0 ⇒ គ្មានឫសពិត"],
+       st:["ឆ្លើយសំណួរម្នាក់ៗ ឬលើកដៃ","ទទួលស្គាល់ថា x² = −4 មិនមានចម្លើយជាចំនួនពិត"]},
+      {n:"មេរៀនថ្មី",t:20,
+       tc:["និយាយអំពី i ដែល i² = −1 ហើយសរសេរនិយមន័យ z = a + bi","ពន្យល់ផ្នែកពិត Re(z) និងផ្នែកនិមិត្ត Im(z) · សមភាព និងចំនួនឆ្លាស់","បង្ហាញវិធីបូក ដក គុណ ជាមួយឧទាហរណ៍ ១–២"],
+       ct:["និយមន័យ ៖ z = a + bi (a, b ∈ ℝ) · i² = −1","សមភាព ៖ a + bi = c + di ⇔ a = c និង b = d","ឆ្លាស់ ៖ z̄ = a − bi · z·z̄ = a² + b²","ឧទាហរណ៍ ៖ (2 − 2i)(−6 + 5i) = −12 + 10i + 12i − 10i² = −2 + 22i"],
+       st:["ស្តាប់ ចម្លងចំណាំ និងសួរបើមិនយល់","គណនាជាមួយគ្រូលើក្តារ","សរសេរនិយមន័យ និងរូបមន្តក្នុងសៀវភៅ"]},
+      {n:"ពង្រឹង និងអនុវត្ត",t:10,
+       tc:["ចែកសន្លឹកលំហាត់ឱ្យក្រុម ៤ នាក់ (Think-Pair-Share)","ដើរពិនិត្យ ណែនាំក្រុមដែលជួបបញ្ហា ហើយអញ្ជើញក្រុមមួយមកដោះស្រាយលើក្តារ"],
+       ct:["១. គណនា (3 + 2i) + (1 − 5i) និង (1 + i)(1 − i)","២. រកចំនួនពិត x, y ដែល (x + 2) + (y − 3)i = 3 − 3i","៣. គណនា i²⁰²⁴"],
+       st:["គិតម្នាក់ឯង → ពិភាក្សាជាគូ → ចែករំលែកក្នុងក្រុម","តំណាងក្រុមដោះស្រាយលើក្តារ ហើយពន្យល់","ត្រួតពិនិត្យចម្លើយគ្នាទៅវិញទៅមក"]},
+      {n:"បណ្តាំផ្ញើ",t:5,
+       tc:["សង្ខេបចំណុចសំខាន់ៗនៃមេរៀន","ផ្ដល់កិច្ចការផ្ទះ ហើយប្រាប់មេរៀនបន្ទាប់ ៖ ម៉ូឌុល និងកុំផ្លិចឆ្លាស់"],
+       ct:["កិច្ចការផ្ទះ ៖ លំហាត់ ៣ ចំណុចក្នុងសៀវភៅ (គណនា · រកផ្នែកពិត/និមិត្ត)","មេរៀនបន្ទាប់ ៖ ចែកចំនួនកុំផ្លិច ម៉ូឌុល និងឫសការ៉េ"],
+       st:["ចម្លងកិច្ចការផ្ទះ","សួរសំណួរចុងក្រោយ","ឈរអរគុណគ្រូ"]}
+    ]
+  }
+};
+function lpLi(a){return(a&&a.length)?"<ul class=lp-ul>"+a.map(function(x){return"<li>"+esc(x)+"</li>"}).join("")+"</ul>":""}
+function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.toggle("lp-ph",!html)}
+function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null → ត្រឡប់ទៅ Placeholder */
+  var O=P&&P.obj||{};
+  ["knowledge","skills","attitude"].forEach(function(k,i){var a=O[k];lpSet("lpOb"+i,a?(a.length>1?"<ul class=lp-ul>"+a.map(function(x){return"<li>"+esc(x)+"</li>"}).join("")+"</ul>":esc(a[0])):"")});
+  lpSet("lpMat",P&&P.mat?esc(P.mat.join(" · ")):"");
+  $("lpSteps").innerHTML=LPS.map(function(t,i){
+    var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(S.t)+" នាទី":""):esc(t);
+    return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+h+"</th></tr><tr class='lp-sb"+(S?" lp-fill":"")+"'>"+
+      (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
+}
+/* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
+function generateLessonPlan(){
+  var g=$("lpG").value,l=$("lpL").value,P=lessonPlanDB[g+"_"+l];
+  lpMeta();
+  if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់មេរៀននេះទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច)";return false}
+  lpRender(P);
+  $("lpMeta").textContent+=" · "+kn(P.dur)+" នាទី";
+  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
+  $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
+}
 function lpFill(id,a){var e=$(id);e.innerHTML=a.map(function(x,i){return"<option value='"+i+"'>"+esc(x)+"</option>"}).join("")}
 function lpLessons(){
   var g=+$("lpG").value,C=window.CUR&&window.CUR[g],l=$("lpL");
@@ -1867,9 +1922,9 @@ function renderLp(){
   if(!$("lpG").options.length){   /* បំពេញម្ដងគត់ (idempotent · refreshView មិនបិទបញ្ជីដែលកំពុងបើក) */
     $("lpG").innerHTML=[7,8,9,10,11,12].map(function(g){return"<option value='"+g+"'>ថ្នាក់ទី"+kn(g)+"</option>"}).join("");
     $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
-    $("lpSteps").innerHTML=LPS.map(function(t,i){return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+esc(t)+"</th></tr><tr class='lp-sb'><td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td></tr>"}).join("");
+    lpRender(null);
     $("lpG").onchange=function(){lpLessons()};
-    $("lpGen").onclick=function(){lpMeta();$("lpSt").textContent="✅ បានធ្វើបច្ចុប្បន្នភាពចំណងជើង · ការបង្កើតខ្លឹមសារស្វ័យប្រវត្តិនឹងបន្ថែមនៅជំហានបន្ទាប់";$("lpA4").scrollIntoView({behavior:"smooth",block:"start"})};
+    $("lpGen").onclick=generateLessonPlan;
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
 }

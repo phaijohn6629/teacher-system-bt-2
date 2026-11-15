@@ -57,7 +57,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v49`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v50`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -254,6 +254,7 @@
 ### ✅ Teaching lesson-plan generator — UI shell (p21) — `index.html`, `script.js`, `style.css`
 - New tab «២០. កិច្ចតែងការបង្រៀន» (`#p21`, sidebar group «មេរៀន · កិច្ចតែងការ», icon 🧩). **Not** the monthly counts page (`p2` «ចំនួនកិច្ចតែងការ»). `p21` was added to every page list in `script.js` (`show` ×2, `curPage`, the dialog-restore list), to `FN`/`SNG`, and to `NEED` (`cur`, so the grade → lesson list loads).
 - Layout: control panel (grade 7–12, lesson from `window.CUR[g].LS`, method, tactic, «✨ បង្កើតកិច្ចតែងការ») beside an A4 preview (header placeholder, 3 objective domains វិជ្ជាសម្បទា/បំណិនសម្បទា/ចរិយាសម្បទា, materials and method, 5 steps × 3 columns teacher / content / student, footer placeholder). Stacks on phones (`minmax(0,1fr)`); the table scrolls inside `.lp-tw`.
+- **Generate (2026-11-15):** `lessonPlanDB` in `script.js` (key `{grade}_{system lesson no.}`, lesson no. = chapter×10 + lesson) holds `title`, `dur`, `obj{knowledge,skills,attitude}`, `mat`, and `steps[5]` = `{n,t,tc,ct,st}` (name, minutes, teacher activity, content, student activity). `generateLessonPlan()` reads the 4 dropdowns, looks up the plan, and `lpRender()` injects objectives, materials and the 5×3 table (`esc()` on every string; unicode maths, no KaTeX). Only **12_11** (complex numbers, algebraic form, 45 min) exists; any other lesson restores the placeholders and shows a notice. Method and tactic are shown in the meta line only and don't change the content yet. To add a lesson, copy the object shape.
 - `renderLp()` fills the selects once (idempotent), so `refreshView()` never closes an open select. «Generate» only updates the title/meta line: **content generation is not implemented yet**. The project has no Tailwind; existing `style.css` variables are used instead.
 - Headless check (harness with the real HTML and `renderLp` extracted from `script.js`): 6 grades, lessons follow the grade, 5 steps × 3 columns, selection kept on re-render, 0 JS errors.
 

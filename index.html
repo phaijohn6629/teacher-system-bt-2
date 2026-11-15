@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4f46e5"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=99">
+<link rel="stylesheet" href="style.css?v=101">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -311,12 +311,12 @@
         <p class="lp-meta" id="lpMeta">ថ្នាក់ទី… · មេរៀន… · វិធីសាស្ត្រ… · យុទ្ធវិធី…</p>
         <h3 class="lp-h">១. វត្ថុបំណង</h3>
         <ul class="lp-ob">
-          <li><b>វិជ្ជាសម្បទា (ចំណេះដឹង)៖</b> <span class="lp-ph">…</span></li>
-          <li><b>បំណិនសម្បទា (ជំនាញ)៖</b> <span class="lp-ph">…</span></li>
-          <li><b>ចរិយាសម្បទា (ឥរិយាបថ)៖</b> <span class="lp-ph">…</span></li>
+          <li><b>វិជ្ជាសម្បទា (ចំណេះដឹង)៖</b> <span class="lp-ph" id="lpOb0">…</span></li>
+          <li><b>បំណិនសម្បទា (ជំនាញ)៖</b> <span class="lp-ph" id="lpOb1">…</span></li>
+          <li><b>ចរិយាសម្បទា (ឥរិយាបថ)៖</b> <span class="lp-ph" id="lpOb2">…</span></li>
         </ul>
         <h3 class="lp-h">២. សម្ភារៈ និងវិធីសាស្ត្រ</h3>
-        <p><b>សម្ភារៈ៖</b> <span class="lp-ph">…</span></p>
+        <p><b>សម្ភារៈ៖</b> <span class="lp-ph" id="lpMat">…</span></p>
         <p><b>វិធីសាស្ត្រ / យុទ្ធវិធី៖</b> <span class="lp-ph" id="lpMT">…</span></p>
         <h3 class="lp-h">៣. ដំណើរការបង្រៀន</h3>
         <div class="lp-tw"><table class="lp-tb">
@@ -613,7 +613,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=102"></script>
+<script src="script.js?v=104"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>
