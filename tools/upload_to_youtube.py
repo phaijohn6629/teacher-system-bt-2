@@ -24,10 +24,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VID = "/Users/phaijohn/Desktop/ReanMath_Videos"
 PLAYLIST = "គណិតវិទ្យា ថ្នាក់ទី១២ - ដេរីវេ"
 FOOT = "វិទ្យាល័យបឹងត្របែក ( NGS ) • រៀនគណិតវិទ្យា - Rean Math"
-GRADE, LESSON = 12, 31   # hub.js ៖ ថ្នាក់ 12 មេរៀន 31 = ដេរីវេ
+GRADE = 12
 
 # (--level, ឈ្មោះឯកសារ, ឈ្មោះកម្រិតក្នុងចំណងជើង, ការពិពណ៌នាមេរៀន)
-ITEMS = [
+DERIV = [
     ("1", "Deriv_1_Level1Basic", "កម្រិត ១៖ ដេរីវេមូលដ្ឋាន (Basic Derivatives)",
      "ដេរីវេនៃពហុធា និងឫស · រូបមន្ត (xⁿ)′ = n·xⁿ⁻¹ · ដេរីវេនៃផលបូក និងមេគុណថេរ។"),
     ("2", "Deriv_2_Level2ProductQuotient", "កម្រិត ២៖ ផលគុណ និងផលចែក (Product & Quotient)",
@@ -43,9 +43,30 @@ ITEMS = [
 ]
 
 
-def find(name):
-    """ស្វែងរកក្នុង G12_Deriv_FINAL មុន · រួចក្នុង ReanMath_Videos/<name>/<name>.mp4"""
-    for p in (os.path.join(VID, "G12_Deriv_FINAL", name + ".mp4"), os.path.join(VID, name, name + ".mp4")):
+CONT = [
+    ("1", "Cont_1_Level1Basic", "កម្រិត ១៖ មូលដ្ឋានគ្រឹះនៃភាពជាប់",
+     "និយមន័យភាពជាប់ត្រង់មួយចំណុច លីមីតឆ្វេង-ស្ដាំ និងភាពជាប់នៃអនុគមន៍ពហុធា។"),
+    ("2", "Cont_2_Level2Rational", "កម្រិត ២៖ អនុគមន៍សនិទាន (Rational)",
+     "ភាពជាប់នៃអនុគមន៍សនិទាន ដែនកំណត់ និងចំណុចដាច់។"),
+    ("3", "Cont_3_Level3TrigExpLog", "កម្រិត ៣៖ ត្រីកោណមាត្រ អិចស្ប៉ូណង់ស្យែល និងលោការីត",
+     "ភាពជាប់នៃអនុគមន៍ត្រីកោណមាត្រ អិចស្ប៉ូណង់ស្យែល និងលោការីត។"),
+    ("4", "Cont_4_Level4PiecewiseAdv", "កម្រិត ៤៖ អនុគមន៍ផ្នែក និងទ្រឹស្តីបទតម្លៃកណ្តាល",
+     "អនុគមន៍ពីរបំណែក ការរកប៉ារ៉ាម៉ែត្រ និងទ្រឹស្តីបទតម្លៃកណ្តាល។"),
+    ("5", "Cont_5_Level5Mastery", "កម្រិត ៥៖ កម្រិតខ្ពស់ (Mastery)",
+     "លំហាត់ភាពជាប់កម្រិតខ្ពស់ ក្នុងទម្រង់ប្រឡងថ្នាក់ជាតិ។"),
+    ("pisa", "Cont_PISA_RealWorld", "PISA និងបញ្ហាជីវិតពិត (Real-world)",
+     "លំហាត់អនុវត្តភាពជាប់ក្នុងជីវិតពិត ជាទម្រង់ PISA។"),
+]
+# set → (មេរៀនក្នុង hub.js, ឈ្មោះមេរៀន, ថតវីដេអូ, Playlist, ទិន្នន័យ)
+SETS = {
+    "deriv": (31, "មេរៀនដេរីវេ", "G12_Deriv_FINAL", PLAYLIST, DERIV),
+    "cont": (23, "មេរៀនភាពជាប់នៃអនុគមន៍", "G12_Cont_FINAL", "គណិតវិទ្យា ថ្នាក់ទី១២ - ភាពជាប់នៃអនុគមន៍", CONT),
+}
+
+
+def find(name, folder):
+    """ស្វែងរកក្នុងថត FINAL មុន · រួចក្នុង ReanMath_Videos/<name>/<name>.mp4"""
+    for p in (os.path.join(VID, folder, name + ".mp4"), os.path.join(VID, name, name + ".mp4")):
         if os.path.isfile(p):
             return p
     return None
@@ -54,17 +75,19 @@ def find(name):
 def main():
     ap = argparse.ArgumentParser(description="បង្ហោះវីដេអូដេរីវេ ថ្នាក់ទី១២ ទាំង ៦ ភាគ")
     ap.add_argument("--privacy", choices=["unlisted", "public", "private"], default="unlisted")
+    ap.add_argument("--set", choices=sorted(SETS), default="deriv", help="មេរៀន ៖ deriv (ដេរីវេ · លំនាំដើម) ឬ cont (ភាពជាប់)")
     ap.add_argument("--only", help="កម្រិតខ្លះ ឧ. 1,2 ឬ pisa")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--no-hub", action="store_true", help="មិនភ្ជាប់ទៅ hub.js (បង្ហោះតែ YouTube)")
     a = ap.parse_args()
+    LESSON, LNAME, FOLDER, PLAYLIST_, ITEMS = SETS[a.set]
     only = set(x.strip().lower() for x in a.only.split(",")) if a.only else None
 
     todo, missing = [], []
     for lv, name, lvname, about in ITEMS:
         if only and lv not in only:
             continue
-        p = find(name)
+        p = find(name, FOLDER)
         (todo if p else missing).append((lv, name, lvname, about, p))
     for m in missing:
         print("⚠️ រកមិនឃើញឯកសារ៖ %s.mp4 (រំលង)" % m[1])
@@ -73,11 +96,11 @@ def main():
 
     py = sys.executable
     for lv, name, lvname, about, path in todo:
-        title = "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនដេរីវេ [%s]" % lvname
-        desc = ("📚 គណិតវិទ្យា ថ្នាក់ទី១២ · មេរៀនដេរីវេនៃអនុគមន៍ · %s\n\n%s\n\n"
-                "ទំព័រហ្វឹកហាត់៖ មេរៀនដេរីវេ (ថ្នាក់ទី១២) តាមកម្រិត ១–៥ និង PISA\n\n%s") % (lvname, about, FOOT)
+        title = "គណិតវិទ្យា ថ្នាក់ទី១២ - %s [%s]" % (LNAME, lvname)
+        desc = ("📚 គណិតវិទ្យា ថ្នាក់ទី១២ · %s · %s\n\n%s\n\n"
+                "ទំព័រហ្វឹកហាត់៖ %s (ថ្នាក់ទី១២) តាមកម្រិត ១–៥ និង PISA\n\n%s") % (LNAME, lvname, about, LNAME, FOOT)
         cmd = [py, os.path.join(ROOT, "tools", "upload_youtube.py"), "--file", path, "--title", title, "--desc", desc,
-               "--privacy", a.privacy, "--playlist", PLAYLIST, "--playlist-privacy", a.privacy, "--tags", "គណិតវិទ្យា,ថ្នាក់ទី១២,ដេរីវេ,Rean-Maths,Manim,Khmer Math"]
+               "--privacy", a.privacy, "--playlist", PLAYLIST_, "--playlist-privacy", a.privacy, "--tags", "គណិតវិទ្យា,ថ្នាក់ទី១២,%s,Rean-Maths,Manim,Khmer Math" % LNAME.replace("មេរៀន", "")]
         if not a.no_hub:
             cmd += ["--grade", str(GRADE), "--lesson", str(LESSON), "--level", lv]
         if a.dry_run:
