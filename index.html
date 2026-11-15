@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=108">
+<link rel="stylesheet" href="style.css?v=109">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -311,16 +311,18 @@
     </aside>
     <div class="lp-view" aria-label="មើលជាមុន A4">
       <article class="lp-a4" id="lpA4">
-        <h2 class="lp-ti moul">កិច្ចតែងការបង្រៀន</h2>
         <div class="lp-hd">
           <div class="lp-hl"><b>វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី (NGS)</b><span>Website: www.preahsisowath.edu.kh</span><span>Facebook: New Generation School, Preah Sisowath</span></div>
-          <div class="lp-mg" id="lpMG">
-            <span class="k">ថ្នាក់ទី</span><b>៖</b><span class="v" id="lpHG"><i></i></span>
-            <span class="k">មេរៀនទី</span><b>៖</b><span class="v" id="lpHL"><i></i></span>
-            <span class="k">រយៈពេល</span><b>៖</b><span class="v">៩០ នាទី (ម៉ោងទី១ ៤៥ នាទី · ម៉ោងទី២ ៤៥ នាទី)</span>
-            <span class="k">កាលបរិច្ឆេទ</span><b>៖</b><span class="v" id="lpHD"><i></i></span>
-            <span class="k">បង្រៀនដោយ</span><b>៖</b><span class="v"><span class="lp-mu" id="lpHT">ដែ ចន</span></span>
-          </div>
+        </div>
+        <h2 class="lp-ti moul">កិច្ចតែងការបង្រៀន</h2>
+        <div class="lp-mg" id="lpMG">
+          <span class="k">ថ្នាក់ទី</span><b>៖</b><span class="v" id="lpHG"><i></i></span>
+          <span class="k">មុខវិជ្ជា</span><b>៖</b><span class="v"><span class="lp-mu">គណិតវិទ្យា</span></span>
+          <span class="k" id="lpKC">ជំពូកទី</span><b>៖</b><span class="v" id="lpHC"><i></i></span>
+          <span class="k" id="lpKL">មេរៀនទី</span><b>៖</b><span class="v" id="lpHL"><i></i></span>
+          <span class="k">រយៈពេល</span><b>៖</b><span class="v">៩០ នាទី (ម៉ោងទី១ ៤៥ នាទី · ម៉ោងទី២ ៤៥ នាទី)</span>
+          <span class="k">កាលបរិច្ឆេទ</span><b>៖</b><span class="v" id="lpHD"><i></i></span>
+          <span class="k">បង្រៀនដោយ</span><b>៖</b><span class="v"><span class="lp-mu" id="lpHT">ដែ ចន</span></span>
         </div>
         <h3 class="lp-h">១. វត្ថុបំណង</h3>
         <ul class="lp-ob">
@@ -635,7 +637,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=109"></script>
+<script src="script.js?v=110"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

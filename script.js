@@ -1921,8 +1921,11 @@ function lpDateTxt(){
 function lpHeader(){
   var v=function(id,t){$(id).innerHTML=t?"<span class=lp-mu>"+esc(t)+"</span>":"<i></i>"},e=$("lpL");
   v("lpHG",$("lpG").value?kn($("lpG").value):"");
-  v("lpHL",e.selectedIndex>=0&&e.value!==""?e.options[e.selectedIndex].text:"");
-  var st=lpSubTxt();if(st&&$("lpHL").firstChild&&$("lpHL").firstChild.className==="lp-mu")$("lpHL").insertAdjacentHTML("beforeend","<span class='lp-mu lp-sub'>"+esc(st)+"</span>");
+  /* LS[n] = [ឈ្មោះមេរៀន, ម៉ោង, "", លេខជំពូក, ឈ្មោះជំពូក, លេខមេរៀន] → «ជំពូកទី១ ៖ ចំនួនកុំផ្លិច» · «មេរៀនទី១ ៖ ឈ្មោះមេរៀន» + ឈ្មោះចំណុចរង */
+  var C=window.CUR&&window.CUR[+$("lpG").value],L=C&&C.LS&&e.value!==""?C.LS[e.value]:null;
+  $("lpKC").textContent="ជំពូកទី"+(L&&L[3]!=null?kn(L[3]):"");v("lpHC",L?L[4]:"");
+  $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
+  var st=lpSubTxt();if(st&&L)$("lpHL").insertAdjacentHTML("beforeend","<span class='lp-mu lp-sub'>"+esc(st)+"</span>");
   v("lpHD",lpDateTxt());
 }
 /* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) · ឈ្មោះគ្រូបង្រៀន = អ្នកដែលកំពុង Login (គ្មាន → តម្លៃ «បង្រៀនដោយ» ក្នុងក្បាល) */
