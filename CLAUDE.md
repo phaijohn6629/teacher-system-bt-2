@@ -27,6 +27,7 @@
 | `storeadm.js` | Storage panel in ⚙️ Settings | ទំហំផ្ទុកឧបករណ៍ · ចំនួន/ទំហំឯកសារ Firestore · សម្អាតតេស្តចាស់ (Admin) |
 | `tools/upload_youtube.py` | Manim → YouTube uploader | បង្ហោះវីដេអូទៅ Channel «Rean-Maths» ហើយភ្ជាប់តំណទៅ `hub.js` (`VIDEOS`) |
 | `tools/localize_mcq.py` | Bank localizer (Khmer context + LaTeX) | កែលំហាត់ qbq ឱ្យត្រូវបរិបទកម្ពុជា + ជួសជុល LaTeX (`--dry-run` → `--apply` · `--restore`) · ច្បាប់ក្នុង `tools/localize_rules.json` |
+| `tools/import_summaries.js` | Hub summary importer | នាំចូលមេរៀនសង្ខេបពី `data/summaries_data.json` → `hubdata.js` (ពិនិត្យ `$` · LaTeX · កម្រិត · លេខមេរៀន) |
 | `sw.js` | PWA Service Worker | គ្រប់គ្រង Cache សម្រាប់ PWA ដើម្បីបើកលឿន |
 | `index.html` | Main Entry Point | ទំព័រមេសម្រាប់ផ្ទុក UI និងហៅដំណើរការកម្មវិធី |
 
@@ -56,7 +57,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v40`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v41`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -222,6 +223,10 @@
   - **Bug fixed in passing, also in `practice.js`:** generator text like `$d<R$` made the browser parse `<R…` as an HTML tag and **delete** the rest of the solution or question. `mathSafe()` now escapes `<`/`>` only inside `$…$`, and is used for question, solution and answers in both files.
   - Tests: `tests/hub.js` renders the example for every grade × lesson × level 3 times (3,816 renders; checks on-screen duplicates, `$` balance per step, no raw `<` in math). Headless Chrome: 1,272 views (all 13 grades incl. Cambridge) gave 0 KaTeX errors; «🔄» kept exercises and typed answers 1272/1272 and produced a new example 1272/1272.
   - Next steps (planned): step 2 is `formulas.js` (formula metadata keyed by `kd` patterns, per-level table built automatically) plus `tools/formula_coverage.js`; step 3 fills formulas grade by grade; step 4 (optional) expands short generator solutions.
+- **Imported summaries (grades 7, 8, 10, 11 …):** run `node tools/import_summaries.js [--check] [--file …]`. It reads `data/summaries_data.json` (format in `data/summaries_data.example.json`: `{grade:{lesson:[{t,lv,s,f,k,ex}]}}`, where `lv` is the **display** level 1–5 or `"pisa"`, mapped to the internal keys), validates it, and writes `hubdata.js` (`window.HUBDATA`, merged per lesson).
+  - Errors (nothing written): unknown grade or lesson (from `practice*.js` `les`), grade 9/12 without `--force`, missing t/s/k/f, `$` or `\` in titles, odd `$`, unbalanced `{}`, Khmer or newlines inside `$…$`, `$` or Khmer in `f`, control characters (a JSON `"\frac"` written with a single backslash). Warnings: levels with no sub-topic, LaTeX words missing `\`.
+  - `hubdata.js` loads before `hub.js` in `practice.html` and in `LAZY.ls`; `hub.js` merges it into `STARTER` without overriding built-in lessons. `tests/hub.js` validates every `HUBDATA` lesson.
+  - `curriculum*.js` are the syllabus (lesson schedule) files, not summaries.
 - Data priority: teacher version (Firestore `hub/{g}_{l}` = `{o,g,l,j,r,u}`) > starter content in `hub.js` (grade 9: 18 lessons, 39 sub-topics) > generic tips with the lesson name (other grades; English for Cambridge).
 - Students read through the Firestore **REST** API (no SDK). A fresh fetch runs on the first view of each lesson per page load (so opening the page or pressing Refresh shows teacher edits at once). After that the result is cached in localStorage `hub{g}_{l}` for 1 min; on failure there is a 1 min backoff. The practice flow never waits on it.
 - Teacher editor: «📖 មេរៀនសង្ខេប» tab → «🎓 ផ្ទាំងសិក្សាហ្វឹកហាត់».

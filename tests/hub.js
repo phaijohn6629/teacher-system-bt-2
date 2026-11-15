@@ -4,7 +4,7 @@
    ដំណើរការពីថតគម្រោង៖ jsc tests/hub.js */
 var H=function(){return P};var P=new Proxy(H,{get:function(t,k){if(k===Symbol.toPrimitive)return function(){return""};if(k==="length")return 0;return P},apply:function(){return P},construct:function(){return P}});
 var window=this;var document=P,localStorage={_:{},getItem:function(k){return this._[k]||null},setItem:function(k,v){this._[k]=String(v)},removeItem:function(k){delete this._[k]}},location={hash:"",search:""},navigator={},setInterval=function(){},setTimeout=function(){},addEventListener=function(){},console={log:print,error:print,warn:print};
-eval(read("practice.js"));eval(read("practice9.js"));eval(read("hub.js"));
+eval(read("practice.js"));eval(read("practice9.js"));eval(read("hubdata.js"));eval(read("hub.js"));
 var bad=0,n=0,KH=/[ក-៿]/;
 function B(m){bad++;if(bad<25)print(m)}
 function bal(t){var d=(String(t).match(/\$/g)||[]).length;if(d%2)return false;var c=0;for(var i=0;i<t.length;i++){if(t[i]==="{")c++;else if(t[i]==="}"){c--;if(c<0)return false}}return c===0}
@@ -28,6 +28,11 @@ ids.forEach(function(l){
     x.f.forEach(function(f){if(KH.test(f))B("KH-IN-FORMULA g12 l"+l+" "+f);if(!bal(f)||/\$/.test(f))B("FBAL g12 l"+l+" "+f)})});
   HUB.LV.forEach(function(v){var h=HUB.html(12,l,v,"x",false);if(!(h.match(/class=hub-s /g)||[]).length)B("EMPTY g12 l"+l+" v"+v)});
   if(!s.some(function(x){return x.lv&&x.lv.indexOf(4)>=0&&!x.v}))B("NO PISA SUB g12 l"+l)});
+/* 📥 hubdata.js (tools/import_summaries.js) ៖ ទម្រង់គ្រប់ចំណុចរង + បញ្ចូលទៅ STARTER បានត្រឹមត្រូវ */
+Object.keys(window.HUBDATA||{}).forEach(function(g){Object.keys(HUBDATA[g]).forEach(function(l){var s=HUB.starter(+g,+l);if(!s||!s.length){B("HUBDATA not merged g"+g+" l"+l);return}
+  s.forEach(function(x){n++;if(/^🎬/.test(x.t))return;if(!x.t||!x.s||!x.f||!x.f.length||!x.k)B("INCOMPLETE g"+g+" l"+l+" "+x.t);
+    [x.s,x.k].concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){if(!bal(t))B("BAL g"+g+" l"+l+" "+String(t).slice(0,60));if(mathKh(t))B("KH-IN-MATH g"+g+" l"+l)});
+    x.f.forEach(function(f){if(KH.test(f)||/\$/.test(f))B("FORMULA g"+g+" l"+l+" "+f)})})})});
 /* 🛡️ string ធម្មតា "…" ធ្វើឱ្យ \f \i \l បាត់/ក្លាយជាតួអក្សរបញ្ជា ៖ គ្មានតួអក្សរបញ្ជា និងគ្មានពាក្យ LaTeX ខ្វះ \ ក្នុង $…$ */
 [9,12].forEach(function(g){for(var l=1;l<=60;l++){var st=HUB.starter(g,l);if(!st)continue;st.forEach(function(x){
   [x.t,x.s,x.k].concat(x.f||[]).concat((x.ex||[]).reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){t=String(t||"");

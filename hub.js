@@ -640,6 +640,8 @@ S12[102]=[U("១០២.១ សមីការប្លង់ និងស្វ�
  R`- ខ្នាត ៖ m × m = m²`,
  [[R`$\overrightarrow{AB}(0;2;0)$ · $\overrightarrow{AC}(0;2;3)$ (m)`,R`$\overrightarrow{AB}\times\overrightarrow{AC}=(6;0;0)$ ⇒ $S=3$ m²`]])];
 var STARTER={9:S9,12:S12};
+/* 📥 មេរៀនសង្ខេបដែលនាំចូលពី data/summaries_data.json (tools/import_summaries.js → hubdata.js) · មិនជាន់ថ្នាក់ដែលមានក្នុង hub.js */
+(function(D){if(!D)return;Object.keys(D).forEach(function(g){var o=STARTER[g]||{},own=!!STARTER[g];Object.keys(D[g]).forEach(function(l){if(own&&o[l])return;o[l]=D[g][l].map(function(x){return U(x.t,x.lv||[],x.s,x.f,x.k,x.ex)})});STARTER[g]=o})})(window.HUBDATA);
 /* 🎬 វីដេអូ YouTube ដែល tools/upload_youtube.py បញ្ចូលដោយស្វ័យប្រវត្តិ · គន្លឹះ "ថ្នាក់_មេរៀន_លេខចំណុចរង(ចាប់ពី 0)" = {u:តំណ, t:ចំណងជើង}
    ចំណុចរងដែលមានស្រាប់ → ភ្ជាប់វីដេអូ (បើមិនទាន់មាន) · លេខលើសចំនួនចំណុចរង → បង្កើតចំណុចរង «🎬 …» ថ្មី · កំណែគ្រូ (Firestore) មានអាទិភាពជាង */
 /* @VIDEOS-START (សរសេរដោយ tools/upload_youtube.py) */
