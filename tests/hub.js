@@ -39,7 +39,8 @@ Object.keys(window.HUBDATA||{}).forEach(function(g){Object.keys(HUBDATA[g]).forE
     if(/[\u0000-\u0009\u000b-\u001f]/.test(t))B("CTRL-CHAR g"+g+" l"+l+" "+JSON.stringify(t.slice(0,40)));
     (t.match(/\$[^$]*\$/g)||[]).concat(x.f||[]).forEach(function(m){if(/(^|[^\\a-zA-Z])(frac|dfrac|infty|sqrt|lim|ln|sin|cos|tan|cdot|theta|ell|pi)(?![a-zA-Z])/.test(m))B("NO-BACKSLASH g"+g+" l"+l+" "+m.slice(0,50))})})})}});
 /* ថ្នាក់គ្មានមាតិកាគំរូ → ទូទៅ (មិនទទេ) · Cambridge ជាភាសាអង់គ្លេស */
-[7,8,10,11,12].forEach(function(g){var h=HUB.html(g,1,1,"ឈ្មោះមេរៀន",false);if(h.indexOf("ឈ្មោះមេរៀន")<0)B("GENERIC g"+g)});
+/* ខ្លឹមសារទូទៅ (generic) ៖ មេរៀនដែលគ្មានមេរៀនសង្ខេប (លេខ 999 · មេរៀនទី ១ ឥឡូវមាន starter/hubdata ហើយ) */
+[7,8,10,11,12].forEach(function(g){if(HUB.starter(g,999))B("GENERIC999 g"+g);var h=HUB.html(g,999,1,"ឈ្មោះមេរៀន",false);if(h.indexOf("ឈ្មោះមេរៀន")<0)B("GENERIC g"+g)});
 if(KH.test(HUB.html(110,1,1,"Number",true).replace(/data-[a-z]+='[^']*'/g,"")))B("KH-IN-EN generic");
 /* គ្រូកែ (cache) មានអាទិភាព · escape */
 HUB.put(9,1,{subs:[{t:"<script>x</script>",s:"<img src=x onerror=alert(1)>",f:["x^2"],k:"",ex:[],v:"javascript:alert(1)"}]});

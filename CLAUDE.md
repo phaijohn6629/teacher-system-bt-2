@@ -57,7 +57,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v41`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v42`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -226,6 +226,7 @@
 - **Imported summaries (grades 7, 8, 10, 11 …):** run `node tools/import_summaries.js [--check] [--file …]`. It reads `data/summaries_data.json` (format in `data/summaries_data.example.json`: `{grade:{lesson:[{t,lv,s,f,k,ex}]}}`, where `lv` is the **display** level 1–5 or `"pisa"`, mapped to the internal keys), validates it, and writes `hubdata.js` (`window.HUBDATA`, merged per lesson).
   - Errors (nothing written): unknown grade or lesson (from `practice*.js` `les`), grade 9/12 without `--force`, missing t/s/k/f, `$` or `\` in titles, odd `$`, unbalanced `{}`, Khmer or newlines inside `$…$`, `$` or Khmer in `f`, control characters (a JSON `"\frac"` written with a single backslash). Warnings: levels with no sub-topic, LaTeX words missing `\`.
   - `hubdata.js` loads before `hub.js` in `practice.html` and in `LAZY.ls`; `hub.js` merges it into `STARTER` without overriding built-in lessons. `tests/hub.js` validates every `HUBDATA` lesson.
+  - 2026-11-15: grades 7, 8, 10 and 11 imported (87 lessons, 1 all-level sub-topic each, 0 errors). The `GENERIC` test now uses lesson 999, because lesson 1 of grades 7/8 has content now.
   - `curriculum*.js` are the syllabus (lesson schedule) files, not summaries.
 - Data priority: teacher version (Firestore `hub/{g}_{l}` = `{o,g,l,j,r,u}`) > starter content in `hub.js` (grade 9: 18 lessons, 39 sub-topics) > generic tips with the lesson name (other grades; English for Cambridge).
 - Students read through the Firestore **REST** API (no SDK). A fresh fetch runs on the first view of each lesson per page load (so opening the page or pressing Refresh shows teacher edits at once). After that the result is cached in localStorage `hub{g}_{l}` for 1 min; on failure there is a 1 min backoff. The practice flow never waits on it.
