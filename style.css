@@ -1020,7 +1020,18 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .lp-h{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:11.5pt;margin:12px 0 4px;color:#000}
 .lp-ob{margin:0;padding-left:20px}.lp-a4 p{margin:2px 0}
 .lp-ph{color:#6b7280;background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 6px,#fff 6px,#fff 12px);border-radius:3px}
-div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}.lp-ft{margin-top:16px}
+div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
+/* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទខាងស្ដាំលើ · ៣ ផ្នែក (គណៈគ្រប់គ្រង · ក្រុមបច្ចេកទេស · គ្រូបង្រៀន) · ហ្វុង Muol Light ដូចឯកសាររដ្ឋបាលផ្សេង */
+.lp-sg{margin-top:18px;color:#000;break-inside:avoid;page-break-inside:avoid}
+.lp-sd{display:flex;flex-direction:column;align-items:flex-end;font-size:9.5pt;line-height:1.7;margin-bottom:4px}
+.lp-sc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6mm;text-align:center;align-items:start}
+.lp-sx{display:flex;flex-direction:column;align-items:center;min-width:0}.lp-sx .lp-mu{font-size:9pt;line-height:1.8}
+/* ប្លុកចំណងជើងតួនាទី៖ កម្ពស់ស្មើ ៣ បន្ទាត់ → ទីតាំងហត្ថលេខា និងឈ្មោះ ត្រង់កម្រិតតែមួយគ្រប់ផ្នែក ទោះចំណងជើងបែកជា ២ ឬ ៣ បន្ទាត់ */
+.lp-tt{display:flex;flex-direction:column;align-items:center;font-size:9pt;min-height:5.4em}
+.lp-sp{display:block;height:20mm}.lp-nm{font-size:9.5pt!important}
+.lp-two{display:flex;gap:3mm;justify-content:center;width:100%}.lp-two>div{display:flex;flex-direction:column;align-items:center;flex:1 1 0;min-width:0}
+.lp-sg .lp-mu{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400}
+@media(max-width:560px){.lp-sc{grid-template-columns:minmax(0,1fr)}.lp-sp{height:14mm}.lp-tt{min-height:0}}
 .lp-tw{overflow-x:auto}.lp-tb{border-collapse:collapse;width:100%;min-width:480px;font-size:10.5pt}
 .lp-tb th,.lp-tb td{border:1px solid #000;padding:6px 8px;vertical-align:top;color:#000;background:#fff;line-height:1.7}
 .lp-tb thead th{background:#eee;text-align:center;position:static}.lp-tb .lp-sh th{background:#f6f6f6;text-align:left}.lp-tb .lp-sb td{height:34mm;width:33.33%}.lp-tb .lp-fill td{height:auto}.lp-ul{margin:0;padding-left:16px}.lp-ul li{margin:0 0 3px}.lp-ob .lp-ul{display:block;margin:0}

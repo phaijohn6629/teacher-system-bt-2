@@ -1923,10 +1923,18 @@ function lpHeader(){
   v("lpHL",e.selectedIndex>=0&&e.value!==""?e.options[e.selectedIndex].text:"");
   v("lpHD",lpDateTxt());
 }
+/* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) · ឈ្មោះគ្រូបង្រៀន = អ្នកដែលកំពុង Login (គ្មាន → តម្លៃ «បង្រៀនដោយ» ក្នុងក្បាល) */
+function lpFooter(){
+  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec($("lpD").value),n=new Date(),dd=n.getDate(),mm=n.getMonth(),yy=n.getFullYear();
+  if(m){dd=+m[3];mm=+m[2]-1;yy=+m[1]}
+  $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
+  var tn=(typeof who!=="undefined"&&who&&who.name)||($("lpHT")&&$("lpHT").textContent)||"";
+  $("lpST").textContent=tn;
+}
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 function generateLessonPlan(){
   var g=$("lpG").value,l=$("lpL").value,P=lessonPlanDB[g+"_"+l];
-  lpMeta();lpHeader();
+  lpMeta();lpHeader();lpFooter();
   if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់មេរៀននេះទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច)";return false}
   lpRender(P);
   $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
@@ -1948,7 +1956,7 @@ function renderLp(){
     $("lpG").innerHTML=[7,8,9,10,11,12].map(function(g){return"<option value='"+g+"'>ថ្នាក់ទី"+kn(g)+"</option>"}).join("");
     $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
-    lpRender(null);
+    lpRender(null);lpFooter();
     $("lpG").onchange=function(){lpLessons()};
     $("lpGen").onclick=generateLessonPlan;
   }
