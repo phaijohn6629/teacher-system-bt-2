@@ -14,7 +14,8 @@
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4f46e5"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
-<link rel="stylesheet" href="style.css?v=101">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<link rel="stylesheet" href="style.css?v=102">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -306,7 +307,10 @@
     </aside>
     <div class="lp-view" aria-label="មើលជាមុន A4">
       <article class="lp-a4" id="lpA4">
-        <div class="lp-ph" id="lpHead">[ ក្បាលឯកសារ · Header Placeholder ]</div>
+        <div class="lp-hd">
+          <div class="lp-hl"><b>វិទ្យាល័យព្រះស៊ីសុវត្ថិ សាលារៀនជំនាន់ថ្មី (NGS)</b><span>Website: www.preahsisowath.edu.kh</span><span>Facebook: New Generation School, Preah Sisowath</span></div>
+          <div class="lp-hr"><span>កាលបរិច្ឆេទ៖ <i></i></span><span>ថ្នាក់៖ <i></i></span><span>រយៈពេល៖ <i></i></span></div>
+        </div>
         <h2 class="lp-ti moul">កិច្ចតែងការបង្រៀន</h2>
         <p class="lp-meta" id="lpMeta">ថ្នាក់ទី… · មេរៀន… · វិធីសាស្ត្រ… · យុទ្ធវិធី…</p>
         <h3 class="lp-h">១. វត្ថុបំណង</h3>
@@ -613,7 +617,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=104"></script>
+<script src="script.js?v=105"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>
