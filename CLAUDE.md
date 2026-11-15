@@ -57,7 +57,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v45`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v46`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -217,6 +217,7 @@
   - 12·22 Level 5: the three «លំហាត់អនុវត្តបន្ថែម ១–៣» videos were collapsed into one **playlist** entry (`PLEGSjUxJctik`), so Level 5 went from 9 to 7 items. `HUB.vparse` accepts playlist links (`youtube.com/playlist?list=…` or `watch?…&list=…` without `v`) and embeds them as `videoseries?list=…`.
   - 12·22 one Manim video **per level** (2026-11-14, `12_22_17`…`22`, also appended to the playlist): L1 direct substitution `zKCqsRkwz0c`, L2 0/0 + reference limits `q5SyyPkbzjQ`, L3 mixed medium `7uyN9Jo9TiU`, L4 BacII `b6Yg-zsnHAA`, L5 national/olympiad `4RdfRy2SR50`, PISA real world `nWc9-GoBOkM`. Each shows only at its own level (checked by rendering all 6 levels).
   - 12·11 complex numbers: one Manim video **per level** (2026-11-15, `12_11_1`…`6`, uploaded unlisted into playlist «ចំនួនកុំផ្លិច - ថ្នាក់ទី១២» = https://www.youtube.com/playlist?list=PLXp0DDMI7MJM): L1 basics `g2cfsqv75JQ`, L2 conjugate and division `47HfatgyJOU`, L3 trig form `dVzN2SFVSeI`, L4 De Moivre and roots `pQx9pp4Jlso`, L5 mastery `fCz1NCNnBww`, PISA real world `Hd4eimd3qY4`. Each shows only at its own level (checked by rendering all 6 levels). Grade 12 lives in `hub.js`, so `hubdata.js` is unchanged.
+  - 12·31 derivative: one Manim video **per level**, **public** (2026-11-15, `12_31_1`…`6`, uploaded with `tools/upload_to_youtube.py` — a wrapper over `upload_youtube.py` that sets titles/descriptions/playlist from a table; videos are looked up in `G12_Deriv_FINAL` then `ReanMath_Videos/<name>/`). Playlist «គណិតវិទ្យា ថ្នាក់ទី១២ - ដេរីវេ» (public) = https://www.youtube.com/playlist?list=PLFXAy6h17Jq4. L1 `zwVm8MQlhec`, L2 `tz80QorqYAc`, L3 `E8eO8f2xemE`, L4 `JoRdFfOT-k8`, L5 `Nui-ctwP4Uc`, PISA `SXBB6shsAfA`. Each shows only at its own level.
   - `VIDEOS.lv` accepts a list (`"4,5"`) via `vlvKeys()`, and `--level 4,5` in the uploader (normalised order). `youtube_uploads.json` records each video's primary placement plus `also`.
   - Verified: 28 example answers recomputed. In headless Chrome, 3 lessons × 6 levels with every sub-topic open showed 0 KaTeX errors and 0 raw `$`, and 18/18 practice sets still check ✅.
   - Bug found and fixed: titles were plain `"…"` strings, so `\f`/`\i`/`\l` were lost (`\frac` turned into a form-feed). `tests/hub.js` now fails on control characters or LaTeX words missing `\` (verified by injecting both mistakes). **Write sub-topic titles that contain LaTeX as `"…\\frac…"` or use `R\`…\``.**
