@@ -2716,15 +2716,17 @@ function seSet(id,emp){if(emp)sy.E[id]=1;else delete sy.E[id];try{localStorage.s
 function diagArm(){var b=$("syncBar");if(b)b.remove();sy.diagOn=false;sy.diagLog=false;sy.diagD=Date.now();clearTimeout(sy.diagT);clearTimeout(sy.diagT2);
   sy.diagT=setTimeout(function(){sy.diagOn=true;syncDiag()},1500);   /* សញ្ញា Sync តូចនៅជ្រុង (មិនរាំងស្ទះ) */sy.diagT2=setTimeout(syncDiag,30500)}
 /* 📶 ទូរស័ព្ទ៖ ត្រឡប់មកទំព័រវិញ / អ៊ីនធឺណិតមកវិញ → តភ្ជាប់ Firestore ឡើងវិញភ្លាម (កុំរង់ចាំ backoff រហូតដល់ ១ នាទី) */
-var hidAt=0;
+/* ⚡ Quota៖ ការផ្ដាច់/ភ្ជាប់ឡើងវិញ ធ្វើឱ្យ Listener ទាំងអស់ចុះឈ្មោះម្ដងទៀត (អាន) → ម្ដងយ៉ាងច្រើនក្នុង ២ នាទី · លាក់ទំព័រ ≥ ៣០ វិនាទី · SDK តភ្ជាប់ឡើងវិញដោយខ្លួនឯងស្រាប់ */
+var hidAt=0,kickAt=0,KICK_GAP=120000,HIDE_MIN=30000;
 function kick(why){
   if(!who||!window.db||!window.FB||!window.FB.disableNetwork||sy.kicking)return;
   if(!navigator.onLine){notify("⚠️ កំពុងដាច់ការតភ្ជាប់!"); return;}
-  sy.kicking=1;console.info("reconnect:",why);
+  if(Date.now()-kickAt<KICK_GAP){console.info("reconnect skipped (cooldown):",why);return}
+  kickAt=Date.now();sy.kicking=1;console.info("reconnect:",why);
   window.FB.disableNetwork(window.db).catch(function(){}).then(function(){return window.FB.enableNetwork(window.db)}).catch(function(e){console.error("reconnect:",e); notify("មិនអាចតភ្ជាប់ឡើងវិញបានទេ!")}).then(function(){sy.kicking=0});
   if(Object.keys(MAP).some(function(k){return!sy.first[k]}))diagArm();
 }
-document.addEventListener("visibilitychange",function(){if(document.hidden){hidAt=Date.now();return}if(hidAt&&Date.now()-hidAt>8000)kick("visible")});
+document.addEventListener("visibilitychange",function(){if(document.hidden){hidAt=Date.now();return}if(hidAt&&Date.now()-hidAt>HIDE_MIN)kick("visible")});
 window.addEventListener("online",function(){kick("online")});
 /* 🩺 ទិន្នន័យមិនមកពី Cloud ក្រោយ ១២ វិនាទី → របារព្រមាន (ទិន្នន័យណា · មូលហេតុ) + ប៊ូតុងទាញម្ដងទៀត */
 var SYN={teachers:"បញ្ជីគ្រូ",tasks:"កិច្ចតែងការ",rs:"ថ្នាក់/សិស្ស",ex:"ថ្នាក់និទស្សន៍",obs:"សង្កេតថ្នាក់",wr:"របាយការណ៍",ah:"ស្នាដៃ",lib:"ឯកសារ",sched:"កាលវិភាគ",ts:"Timesheet",sig:"ហត្ថលេខា",cx:"សម្រង់អត្ថបទ",mc:"ប្រធានថ្នាក់"};

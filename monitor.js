@@ -85,24 +85,29 @@ function teachApply(){
   if(any){tSched(0);if(typeof refreshView==="function")refreshView()}
 }
 /* សរសេរ mc ពីខាងគ្រូ៖ រំលងបើប្រធានថ្នាក់មានការកែដែលគ្រូមិនទាន់បញ្ចូល (នឹងបញ្ចូលពេលទទួលបាន) */
-var tTm=null;
+/* ⚡ Quota៖ ប្រៀបធៀបជាមួយ Cloud (raw.j ពី onSnapshot) និង tLast ក្នុងម៉ាស៊ីនជាមុន · ដូចគ្នា → គ្មាន Transaction (tx.get = BatchGetDocuments) */
+var tTm=null,tLast={};
 function tSched(ms){clearTimeout(tTm);tTm=setTimeout(tWrite,ms==null?1500:ms)}
 function tWrite(){
   if(isMon()||!who||!window.FB||!FB.runTransaction)return;
   Object.keys(mcd.r).forEach(function(k){
     var d=mcd.r[k];if(!(isAdm()||who.id===d.o))return;
-    var j=buildT(k);if(!j)return;var js=JSON.stringify(j);
-    FB.runTransaction(db,function(tx){
+    if(d.j&&d.j.by==="m"&&d.j.at>(d.ack||0))return;            /* ប្រធានថ្នាក់មានការកែមិនទាន់បញ្ចូល → teachApply មុន */
+    var j=buildT(k);if(!j)return;var js=JSON.stringify(j),raw=d.raw||{};
+    if(tLast[k]===js)return;                                      /* បានសរសេរដូចនេះរួចហើយ (រង់ចាំ snapshot) */
+    if(raw.j===js&&raw.acc&&!hasPw(raw)){tLast[k]=js;return}      /* Cloud មានទិន្នន័យដូចគ្នាហើយ → មិនសរសេរ */
+    var done=false;
+    FB.runTransaction(db,function(tx){done=false;
       return tx.get(mref(k)).then(function(sn){
         if(!sn.exists())return;
         var cur=sn.data(),cj=pj(cur.j);
         if(cj&&cj.by==="m"&&cj.at>(cj.ack||0)&&cj.at>(d.ack||0))return;
-        if(cur.j===js&&cur.acc&&!hasPw(cur))return;
+        if(cur.j===js&&cur.acc&&!hasPw(cur)){done=true;return}
         if((!cur.acc||hasPw(cur))&&!pwMigFail){migPw(k);return}   /* មាន pw → ផ្ទេរទៅ mcp ជាមុន (ការ Sync បន្ទាប់នឹងធ្វើបច្ចុប្បន្នភាព j) */
         var up={j:js};if(!cur.acc)up.acc=accOf(cur);   /* rules មិនទាន់ Publish (mcp) → របៀបចាស់ */
-        tx.update(mref(k),up);
+        tx.update(mref(k),up);done=true;
       });
-    }).catch(function(e){console.warn("mc write:",k,e)});
+    }).then(function(){if(done)tLast[k]=js}).catch(function(e){console.warn("mc write:",k,e)});
   });
 }
 var _push=window.push;
