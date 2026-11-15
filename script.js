@@ -1958,11 +1958,13 @@ function lpFooter(){
   $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");$("lpSV").textContent=lpNm("lpTd");
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់លេខទំព័រខ្មែរ ៖ ទំព័រសេស = ខាងស្ដាំ · ទំព័រគូ = ខាងឆ្វេង (style.css) */
+function lpLogoUrl(){try{return typeof LOGOBT==="function"?LOGOBT():new URL("logo-bt.jpg",location.href).href}catch(e){return"logo-bt.jpg"}}
 function lpPrint(){
   var A=$("lpA4");if(!A||typeof realPrint!=="function")return;
   var q=function(t){return String(t).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/[\r\n]+/g," ")},nm='"បង្រៀនដោយលោកគ្រូ ៖ '+q(lpNm("lpTn"))+'"';
   var st=$("lpDyn")||document.head.appendChild(document.createElement("style"));st.id="lpDyn";
-  st.textContent="@page lpdoc:right{@bottom-left{content:"+nm+"}}@page lpdoc:left{@bottom-right{content:"+nm+"}}";   /* ឈ្មោះគ្រូ ក្នុងជើងរត់ (CSS មិនអាចយកពី DOM) */
+  var lg=lpLogoUrl();   /* ឡូហ្គោសាលា ក្នុងបន្ទះក្បាលរត់ (background នៃ @top-left) */
+  st.textContent="@page lpdoc{@top-left{background:url(\""+q(lg)+"\") no-repeat left bottom;background-size:auto 11mm}}@page lpdoc:right{@bottom-left{content:"+nm+"}}@page lpdoc:left{@bottom-right{content:"+nm+"}}";   /* ឈ្មោះគ្រូ ក្នុងជើងរត់ (CSS មិនអាចយកពី DOM) */
   if(!lpPrint.ap){lpPrint.ap=1;window.addEventListener("afterprint",function(){var e=$("lpDyn");if(e)e.textContent=""})}
   realPrint("<div class='lp-print'>"+A.outerHTML.replace(/ id="[^"]*"/g,"")+"</div>");
 }
@@ -2009,6 +2011,7 @@ function renderLp(){
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
   lpPeople();
+  if($("lpLogo"))$("lpLogo").src=lpLogoUrl();
 }
 
 
