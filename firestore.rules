@@ -69,9 +69,12 @@ service cloud.firestore {
     // ===================== ទិន្នន័យរបស់គ្រូម្នាក់ៗ =====================
     // doc ID = លេខសម្គាល់គ្រូ (ឧ. T002) ហើយ field "o" = ម្ចាស់ (ត្រូវដូច doc ID)
     // កិច្ចការ និងលទ្ធផលសិក្សា៖ គ្រូគ្រប់គ្នាអានបាន ម្ចាស់ ឬ Admin សរសេរ
+    // កិច្ចតែងការ៖ តែ Admin · ប្រធាន · អនុប្រធាន (cfg/klead.ids ដែល Admin សរសេរពីតួនាទីក្នុងបញ្ជីគ្រូ) · សមាជិកមើលតែប៉ុណ្ណោះ
     match /tasks/{tid} {
       allow read: if active();
-      allow create, update: if (isAdmin() || isOwner(tid)) && request.resource.data.o == tid;
+      allow create, update: if (isAdmin() || (active() && exists(/databases/$(database)/documents/cfg/klead)
+          && myId() in get(/databases/$(database)/documents/cfg/klead).data.ids))
+        && request.resource.data.o == tid;
       allow delete: if isAdmin();
     }
     match /rs/{tid} {

@@ -98,7 +98,7 @@ function load(){
   return JSON.parse(JSON.stringify(SEED));
 }
 function loadK(){try{var s=sessionStorage.getItem(KEY+"-k");if(s)return JSON.parse(s)}catch(e){}return{}}   /* កុំប្រើទិន្នន័យគំរូ (SK) — ធ្លាប់ជាន់ទិន្នន័យពិតក្នុង Cloud */
-function save(){try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem(KEY+"-k",JSON.stringify(tasks));if(isAdm()&&sy.teachersReady)push("teachers");push("tasks");}catch(e){alert("មិនអាចរក្សាទុកទិន្នន័យបានទេ!")}}
+function save(){try{sessionStorage.setItem(KEY,JSON.stringify(data));sessionStorage.setItem(KEY+"-k",JSON.stringify(tasks));if(isAdm()&&sy.teachersReady){push("teachers");syncKLead()}push("tasks");}catch(e){alert("មិនអាចរក្សាទុកទិន្នន័យបានទេ!")}}
 
 function tTouch(id){(sy.touch||(sy.touch={}))[id]=1}   /* កិច្ចតែងការដែលបានកែដោយដៃ (Admin សរសេរតែគ្រូទាំងនេះ) */
 function gk(id){if(!tasks[id])tasks[id]={lv:D2.slice(),w:{}};if(!tasks[id].lv||!tasks[id].lv.length)tasks[id].lv=["កម្រិត ១"];return tasks[id]}
@@ -115,6 +115,16 @@ function mt(m){var s=0;data.forEach(function(t){gk(t.id).lv.forEach(function(_,l
    - គ្មានលេខសម្ងាត់ក្នុងទិន្នន័យកម្មវិធីទៀតទេ */
 var EMAIL_DOMAIN="bt-teachers.example.com",usersById={},prof=null,unsubs=[],forcePass=false;
 function isAdm(){return !!(who&&who.role==="admin")}
+/* កិច្ចតែងការ៖ តែ Admin · ប្រធាន · អនុប្រធាន (ក្រុមបច្ចេកទេស) វាយបញ្ចូល/កែបាន · សមាជិក = មើលតែប៉ុណ្ណោះ */
+var KLEAD=["ប្រធាន","អនុប្រធាន"];
+function canK(){return isAdm()||!!(who&&who.role!=="monitor"&&KLEAD.indexOf(who.rl)>=0)}
+/* Rules មិនអាចអានតួនាទីក្នុង app/teachers → Admin សរសេរបញ្ជី ID ប្រធាន/អនុប្រធាន ទៅ cfg/klead (ពេលតួនាទីប្ដូរ) */
+function syncKLead(){
+  if(!isAdm()||!sy.teachersReady||!window.FB||!window.db)return;
+  var ids=data.filter(function(t){return t&&KLEAD.indexOf(t.rl)>=0}).map(function(t){return String(t.id)}).sort(),j=JSON.stringify(ids);
+  if(syncKLead.j===j)return;syncKLead.j=j;
+  window.FB.setDoc(window.FB.doc(window.db,"cfg","klead"),{ids:ids,u:new Date().toISOString()}).catch(function(e){syncKLead.j="";console.warn("klead:",e)});
+}
 function idEmail(id){return String(id).trim().toLowerCase()+"@"+EMAIL_DOMAIN}
 function genPw(){
   var c="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789",a=new Uint32Array(10),s="";
@@ -479,9 +489,7 @@ function renderK(f){
     k.lv.forEach(function(lv,l){
       var w=gw(t.id,cur,l);
       w.forEach(function(v,i){cs[i]+=+v||0});
-      var isMe = (who && who.id === t.id);
-      var isAdmin = (isAdm());
-      var canEdit = (isAdmin || isMe);
+      var canEdit = canK();
       var btns=(canEdit?"<button type=button class=sm-btn data-kl='add|"+t.id+"' title='បន្ថែមកម្រិតថ្នាក់'>+</button>"+(k.lv.length>1?"<button type=button class='sm-btn danger' data-kl='del|"+t.id+"' title='លុបកម្រិតថ្នាក់ចុងក្រោយ'>−</button>":""):"");
       b+="<tr>"+(l?"":"<td class=nm rowspan="+k.lv.length+">"+esc(t.name)+"<div style='margin-top:4px'>"+btns+"</div></td>")+
         "<td><select class=lv aria-label='កម្រិតថ្នាក់' data-p='"+t.id+"|"+l+"|L' "+(canEdit?"":"disabled")+">"+lvop(lv)+"</select></td>"+
@@ -490,6 +498,8 @@ function renderK(f){
     });
   });
   for(var m=0;m<11;m++)all+=mt(m);
+  var kn0=$("kRO");if(!kn0&&$("kt")){kn0=document.createElement("p");kn0.id="kRO";kn0.className="note";$("kt").parentNode.insertBefore(kn0,$("kt"))}
+  if(kn0){kn0.hidden=canK();kn0.textContent="👁 មើលតែប៉ុណ្ណោះ · មានតែប្រធាន និងអនុប្រធានក្រុមបច្ចេកទេស ទើបអាចបញ្ចូល/កែចំនួនកិច្ចតែងការបាន"}
   $("kt").innerHTML="<thead><tr><th>ឈ្មោះសមាជិក</th><th>កម្រិតថ្នាក់</th>"+WK.map(function(x){return"<th>"+x+"</th>"}).join("")+"<th>សរុបខែ</th><th>សរុបទាំងអស់</th></tr></thead><tbody>"+b+"<tr class=tr id='ktr-foot'><td colspan=2>សរុប (ខែ"+MK[cur]+")</td>"+cs.map(function(c){return"<td>"+c+"</td>"}).join("")+"<td>"+mt(cur)+"</td><td>"+all+"</td></tr></tbody>";
   if(p){var e=$("kt").querySelector("[data-p='"+p+"']");if(e)e.focus()}
 }
@@ -542,7 +552,7 @@ $("mo").onchange=function(){cur=+this.value;renderK()};
 $("kt").onclick=function(e){
   var b=e.target.closest("button[data-kl]");if(!b)return;
   var a=b.dataset.kl.split("|"),id=a[1];
-  if(!isAdm() && who.id !== id) { alert("លោកគ្រូអាចកែប្រែបានតែកិច្ចតែងការផ្ទាល់ខ្លួនប៉ុណ្ណោះ!"); return; }
+  if(!canK()) { alert("មានតែប្រធាន និងអនុប្រធាន ទើបអាចបញ្ចូល/កែចំនួនកិច្ចតែងការបាន"); return; }
   var k=gk(id);tTouch(id);
   if(a[0]==="add"){k.lv.push("10")}
   else if(a[0]==="del"&&k.lv.length>1){
@@ -555,7 +565,7 @@ $("kt").onclick=function(e){
 $("kt").oninput=function(e){
   var p=e.target.dataset.p;if(!p)return;
   var a=p.split("|"),id=a[0],l=+a[1];
-  if(!isAdm() && who.id !== id) { alert("លោកគ្រូអាចកែប្រែបានតែកិច្ចតែងការផ្ទាល់ខ្លួនប៉ុណ្ណោះ!"); renderK(); return; }
+  if(!canK()) { alert("មានតែប្រធាន និងអនុប្រធាន ទើបអាចបញ្ចូល/កែចំនួនកិច្ចតែងការបាន"); renderK(); return; }
   tTouch(id);
   if(a[2]==="L"){gk(id).lv[l]=e.target.value;save();return}
   gw(id,cur,l)[+a[2]]=Math.max(0,+e.target.value||0);
@@ -2451,7 +2461,8 @@ function subsFor(k){
 function canWrite(p,d,isNew){
   if(isAdm())return true;
   var m=p.split("/"),c=m[0],id=m[1],me=who.id;
-  if(c==="tasks"||c==="rs"||c==="wr"||c==="ah")return id===me;
+  if(c==="tasks")return canK();   /* ប្រធាន/អនុប្រធាន៖ គ្រប់គ្រូ · សមាជិក៖ មើលតែប៉ុណ្ណោះ */
+  if(c==="rs"||c==="wr"||c==="ah")return id===me;
   if(c==="sched"||c==="sig")return id===me;
   if(c==="mc")return who.role==="monitor"?id===who.mk:String(id).split("_")[0]===me;
   if(who.role==="monitor")return false;
@@ -2571,7 +2582,7 @@ function afterTeachers(){
   else if(isAdm()){ensureSelf();dirty=true}
   try{sessionStorage.setItem(KEY,JSON.stringify(data))}catch(e){}
   if(dirty&&isAdm())push("teachers");
-  sy.teachersReady=true;
+  sy.teachersReady=true;syncKLead();
   updateUserInfo();render();
   if(sy.first.obs)trySeed("obs");
 }

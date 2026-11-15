@@ -56,7 +56,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v38`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v39`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -229,6 +229,10 @@
 - Rules `match /hub/{id}`: public `get`; any active teacher can create (`r==1`) or update (`r` +1, same `g`/`l`, `o`=self, `j`<200 KB); the last saver or Admin can delete. **Must be published in Firebase Console** before teachers can save; until then students see the starter content.
 - Tests: `tests/hub.js` (starter completeness, every level has ≥1 sub-topic, no Khmer inside `$…$` or formulas, video URL accept/reject, escaping of teacher text). Verified in headless Chrome: 108/108 lesson×level sets show the hub, all correct answers → ✅ + trophy, state kept; editor flow create → update → conflict → reset → switch lesson.
 
+### ✅ Lesson-plan counts (កិច្ចតែងការ): only Admin / ប្រធាន / អនុប្រធាន edit — `script.js`, `firestore.rules` (**must be published**)
+- `canK()` = Admin, or `who.rl` ∈ `KLEAD=["ប្រធាន","អនុប្រធាន"]` (the technical-group role in the teacher list, `RL`). They can edit **every** teacher's row; ordinary members (`សមាជិក`) get read-only inputs and a «👁 មើលតែប៉ុណ្ណោះ» note (`#kRO`). `canWrite("tasks/…")` follows `canK()`.
+- Rules can't read roles from `app/teachers`, so Admin's client writes `cfg/klead = {ids:[…],u}` (`syncKLead()`, on load and on every teacher save, skipped when unchanged). The `tasks` rule allows `isAdmin()` or `myId() in cfg/klead.ids` (`o == tid` kept). Admin must open the app once after publishing so `cfg/klead` exists.
+
 ### ✅ Official admin documents: header, footer, fonts, print — `script.js`, `sched.js`, `monthly.js`, `excerpt.js`, `style.css`
 - Audit: every `.pg` admin document has the national motto (`.hd`) and the school block. The motto was added to the lesson-plan count (`kPrintHTML`) and the monthly excerpt (`excerpt.js`). Meeting minutes (`meetings.js`) and the Timesheet/weekly-plan forms keep their own complete layouts.
 - Footer `wpFoot(id,name,lbl,mid)`: left «បានឃើញ និងឯកភាព / ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី»; `mid` adds «បានឃើញ និងពិនិត្យ / ប្រធានក្រុមបច្ចេកទេស»; right = lunar date (`KhCal`), «រាជធានីភ្នំពេញ ថ្ងៃទី…», role, signature image, name. `mid` is on for teacher-prepared documents: work report, results analysis, monthly scores, teaching-aids table (which used to have a dotted date) and the schedule (which had **no footer**). The observation sheet and the other forms got the same left label.
@@ -283,6 +287,7 @@
 
 ## Recommended manual checks (live site / real phones — not automatable here)
   - **Publish `firestore.rules`** (2026-11-14 security update: `mcp`, `exq`/`timg` owner checks, `subs`/`prt`/`sig` validation). Then open «ប្រធានថ្នាក់» once as each teacher so old monitor passwords move to `mcp`, and check 👁 still shows them.
+  - **Publish `firestore.rules`** (`tasks` = Admin/ប្រធាន/អនុប្រធាន via `cfg/klead`), then open the app once as Admin, and test as a deputy and as a member.
   - **Publish `firestore.rules`** (shared `qbq`/`qimg` edit), then edit another teacher's question and check «កែចុងក្រោយដោយ».
   - **Publish `firestore.rules`** (new `hub/` rule), then save one hub lesson as a teacher and open it on a phone (students see changes on open/Refresh, or within 1 min).
   - `r00` round-trip between teacher and class monitor (code reviewed only).
