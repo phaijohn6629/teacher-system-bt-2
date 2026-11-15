@@ -485,5 +485,83 @@
   "g": 12,
   "l": 23,
   "lv": "pisa"
+ },
+ {
+  "at": "2026-11-15T17:35:32",
+  "file": "DerivApp_1_Level1TangentBasic.mp4",
+  "title": "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនអនុវត្តន៍នៃដេរីវេ [កម្រិត ១៖ មូលដ្ឋានគ្រឹះបន្ទាត់ប៉ះ]",
+  "url": "https://youtu.be/_x10Ftpvo1Q",
+  "privacy": "public",
+  "channel": "Rean-Maths",
+  "hub": "12_32_1",
+  "playlist": "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ",
+  "g": 12,
+  "l": 32,
+  "lv": "1"
+ },
+ {
+  "at": "2026-11-15T17:35:38",
+  "file": "DerivApp_2_Level2TangentGraph.mp4",
+  "title": "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនអនុវត្តន៍នៃដេរីវេ [កម្រិត ២៖ សមីការបន្ទាត់ប៉ះក្រាហ្វ]",
+  "url": "https://youtu.be/dZsBXT1owfg",
+  "privacy": "public",
+  "channel": "Rean-Maths",
+  "hub": "12_32_2",
+  "playlist": "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ",
+  "g": 12,
+  "l": 32,
+  "lv": "2"
+ },
+ {
+  "at": "2026-11-15T17:35:45",
+  "file": "DerivApp_3_Level3Monotonicity.mp4",
+  "title": "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនអនុវត្តន៍នៃដេរីវេ [កម្រិត ៣៖ អថេរភាព និងបរមាធៀប]",
+  "url": "https://youtu.be/7rQII4dBWC4",
+  "privacy": "public",
+  "channel": "Rean-Maths",
+  "hub": "12_32_3",
+  "playlist": "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ",
+  "g": 12,
+  "l": 32,
+  "lv": "3"
+ },
+ {
+  "at": "2026-11-15T17:35:52",
+  "file": "DerivApp_4_Level4Extrema.mp4",
+  "title": "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនអនុវត្តន៍នៃដេរីវេ [កម្រិត ៤៖ ចំណោទបរមាកម្មស៊ីជម្រៅ]",
+  "url": "https://youtu.be/3xThCGoPpW0",
+  "privacy": "public",
+  "channel": "Rean-Maths",
+  "hub": "12_32_4",
+  "playlist": "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ",
+  "g": 12,
+  "l": 32,
+  "lv": "4"
+ },
+ {
+  "at": "2026-11-15T17:35:59",
+  "file": "DerivApp_5_Level5Optimization.mp4",
+  "title": "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនអនុវត្តន៍នៃដេរីវេ [កម្រិត ៥៖ បរមាកម្មកម្រិតខ្ពស់]",
+  "url": "https://youtu.be/Snnqt0iBtf0",
+  "privacy": "public",
+  "channel": "Rean-Maths",
+  "hub": "12_32_5",
+  "playlist": "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ",
+  "g": 12,
+  "l": 32,
+  "lv": "5"
+ },
+ {
+  "at": "2026-11-15T17:36:05",
+  "file": "DerivApp_PISA_RealWorld.mp4",
+  "title": "គណិតវិទ្យា ថ្នាក់ទី១២ - មេរៀនអនុវត្តន៍នៃដេរីវេ [PISA និងបញ្ហាជីវិតពិត (Real-world)]",
+  "url": "https://youtu.be/bJAGFqK5ZJA",
+  "privacy": "public",
+  "channel": "Rean-Maths",
+  "hub": "12_32_6",
+  "playlist": "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ",
+  "g": 12,
+  "l": 32,
+  "lv": "pisa"
  }
 ]

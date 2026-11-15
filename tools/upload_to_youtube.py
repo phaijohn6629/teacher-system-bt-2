@@ -57,9 +57,24 @@ CONT = [
     ("pisa", "Cont_PISA_RealWorld", "PISA និងបញ្ហាជីវិតពិត (Real-world)",
      "លំហាត់អនុវត្តភាពជាប់ក្នុងជីវិតពិត ជាទម្រង់ PISA។"),
 ]
+DAPP = [
+    ("1", "DerivApp_1_Level1TangentBasic", "កម្រិត ១៖ មូលដ្ឋានគ្រឹះបន្ទាត់ប៉ះ",
+     "ដេរីវេជាមេគុណប្រាប់ទិសនៃបន្ទាត់ប៉ះក្រាហ្វ និងល្បឿនខណៈ។"),
+    ("2", "DerivApp_2_Level2TangentGraph", "កម្រិត ២៖ សមីការបន្ទាត់ប៉ះក្រាហ្វ",
+     "សរសេរសមីការបន្ទាត់ប៉ះក្រាហ្វត្រង់ចំណុចមួយ y − f(a) = f′(a)(x − a)។"),
+    ("3", "DerivApp_3_Level3Monotonicity", "កម្រិត ៣៖ អថេរភាព និងបរមាធៀប",
+     "សិក្សាអថេរភាពតាមសញ្ញាដេរីវេ តារាងអថេរភាព និងបរមាធៀប។"),
+    ("4", "DerivApp_4_Level4Extrema", "កម្រិត ៤៖ ចំណោទបរមាកម្មស៊ីជម្រៅ",
+     "ចំណោទតម្លៃធំបំផុត-តូចបំផុត ដែលតម្រូវឱ្យបង្កើតអនុគមន៍ និងសិក្សាបរមា។"),
+    ("5", "DerivApp_5_Level5Optimization", "កម្រិត ៥៖ បរមាកម្មកម្រិតខ្ពស់",
+     "ចំណោទបរមាកម្ម (Optimization) កម្រិតខ្ពស់ ក្នុងទម្រង់ប្រឡងថ្នាក់ជាតិ។"),
+    ("pisa", "DerivApp_PISA_RealWorld", "PISA និងបញ្ហាជីវិតពិត (Real-world)",
+     "ការអនុវត្តដេរីវេក្នុងជីវិតពិត ជាទម្រង់ PISA។"),
+]
 # set → (មេរៀនក្នុង hub.js, ឈ្មោះមេរៀន, ថតវីដេអូ, Playlist, ទិន្នន័យ)
 SETS = {
     "deriv": (31, "មេរៀនដេរីវេ", "G12_Deriv_FINAL", PLAYLIST, DERIV),
+    "derivapp": (32, "មេរៀនអនុវត្តន៍នៃដេរីវេ", "G12_DerivApp_FINAL", "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ", DAPP),
     "cont": (23, "មេរៀនភាពជាប់នៃអនុគមន៍", "G12_Cont_FINAL", "គណិតវិទ្យា ថ្នាក់ទី១២ - ភាពជាប់នៃអនុគមន៍", CONT),
 }
 
@@ -75,7 +90,7 @@ def find(name, folder):
 def main():
     ap = argparse.ArgumentParser(description="បង្ហោះវីដេអូដេរីវេ ថ្នាក់ទី១២ ទាំង ៦ ភាគ")
     ap.add_argument("--privacy", choices=["unlisted", "public", "private"], default="unlisted")
-    ap.add_argument("--set", choices=sorted(SETS), default="deriv", help="មេរៀន ៖ deriv (ដេរីវេ · លំនាំដើម) ឬ cont (ភាពជាប់)")
+    ap.add_argument("--set", choices=sorted(SETS), default="deriv", help="មេរៀន ៖ deriv (ដេរីវេ ៣១ · លំនាំដើម) · derivapp (អនុវត្តន៍ដេរីវេ ៣២) · cont (ភាពជាប់ ២៣)")
     ap.add_argument("--only", help="កម្រិតខ្លះ ឧ. 1,2 ឬ pisa")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--no-hub", action="store_true", help="មិនភ្ជាប់ទៅ hub.js (បង្ហោះតែ YouTube)")
