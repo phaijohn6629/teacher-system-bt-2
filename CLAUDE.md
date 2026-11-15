@@ -57,7 +57,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v43`)
+## Current State (up to date as of 2026-11-14 · `sw.js` cache = `ngs-app-v44`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -93,6 +93,12 @@
 - `tWrite()` (teacher → `mc`) used to open **one transaction per `mc` doc** (`tx.get` = BatchGetDocuments) on every `push("rs"|"cx")`, even when nothing had changed. It now builds `j` locally and skips when it equals the cloud copy (`raw.j` from the snapshot, with `acc` present and no `pw`) or the last value it wrote (`tLast[k]`). It also skips while the monitor has unacked edits. A transaction runs only for a real change.
 - `kick()` (disable/enable network, which re-registers every listener): at most once per 2 min (`KICK_GAP`), and only after the page was hidden ≥ 30 s (`HIDE_MIN`, was 8 s). The SDK reconnects by itself anyway.
 - The monitor side already wrote only when `M.D` has edits (`mWrite`).
+- Exams/tests (2026-11-15):
+  - `exam.js` `save()`: debounce 1.2 → 2.5 s, and no write when the content equals the last successful save (`X.lastW[id]`). The summary doc is still written with every content write, because its `u` tells other devices to refetch.
+  - «បើក» with a cached copy skips the background full-content `getDoc` when the list's `u` equals the cached `u`.
+  - `exam.html`: the `exm` check went from every 60 s to every 2 min, never while the tab is hidden, immediately on return after ≥ 1 min, and it stops at time-up. For 40 students × 60 min that is ≈ 1,200 reads instead of 2,400.
+  - `quiz.js` results: the extra REST read of all `subs` runs only if the listener hasn't answered within 2 s (before, every results open read all submissions twice).
+  - Checked and left alone: `expaper.js` has no Firestore calls; `test.html` reads only once per action; the `exv` listener lives only while an online exam is open (`unwatch`); `migrate()` runs once per device.
 
 ### ✅ Exam editor stable during cloud sync — `exam.js`
 - `EXAM.render()` is a no-op while the same exam's editor is on screen (`data-exid` marker), and `prev()` skips unchanged HTML. Before this fix, every sync rebuilt the editor: open selects closed and the preview flickered. Verified in headless Chrome.

@@ -96,15 +96,19 @@ function camDef(E){var c=parseInt(E.cls)||0;return 100+(c>=6&&c<=12?c:10)}
 function resetSecs(E){var g=gOf(E),L=lsList(g),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(g,f0[0])]:[];if(E.ab)E.secs.forEach(function(s){fill(s,g,"itB")})}
 function P(E){return{camg:E.camg,gt:E.fmt==="cam"&&window.PRACT&&PRACT.GR[gOf(E)]?PRACT.GR[gOf(E)].title:"",calc:E.calc!==false,font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
 /* ---------- រក្សាទុក (exams/{id}) ---------- */
+/* ⚡ Quota៖ រង់ចាំ ២.៥ វិនាទីក្រោយការកែចុងក្រោយ · មិនសរសេរបើខ្លឹមសារដូចលើកមុនដែលបានរក្សាទុក (X.lastW តាមវិញ្ញាសា) */
 function save(now){
   X.dirty=true;X.status="…";clearTimeout(X.saveT);
   X.saveT=setTimeout(function(){
-    var E=X.E;if(!E)return;var F=window.FB,o=Object.assign({},E);delete o.id;
-    E.u=new Date().toISOString();cPut(E,E.u);
+    var E=X.E;if(!E)return;var F=window.FB,o=Object.assign({},E);delete o.id;delete o.u;
+    var jj=JSON.stringify(o),last=(X.lastW||(X.lastW={}))[E.id]||{};
+    if(last.j===jj){X.dirty=false;X.status="✅ បានរក្សាទុក";stat();return}   /* គ្មានអ្វីប្ដូរ → មិនសរសេរ */
+    E.u=new Date().toISOString();cPut(E,E.u);o.u=E.u;
     /* 📦 រក្សាទុកជាពីរឯកសារ៖ exams/{id} = សង្ខេប (បញ្ជីទាញតែនេះ · លឿន) · exams/{id}__c = ខ្លឹមសារពេញ (ទាញពេលបើក) */
-    F.setDoc(F.doc(window.db,"exams",E.id+"__c"),{o:E.o,k:"c",u:E.u,j:JSON.stringify(o)}).then(function(){return F.setDoc(F.doc(window.db,"exams",E.id),sumOf(E))}).then(function(){X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
+    /* សង្ខេបត្រូវសរសេរជាមួយជានិច្ច (u ថ្មី → ឧបករណ៍ផ្សេងដឹងថាត្រូវទាញខ្លឹមសារថ្មី) */
+    F.setDoc(F.doc(window.db,"exams",E.id+"__c"),{o:E.o,k:"c",u:E.u,j:JSON.stringify(o)}).then(function(){return F.setDoc(F.doc(window.db,"exams",E.id),sumOf(E))}).then(function(){X.lastW[E.id]={j:jj};X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
     try{localStorage.setItem("exCk",E.ck||"")}catch(e){}
-  },now?0:1200);stat();
+  },now?0:2500);stat();
 }
 function stat(){var s=$("exSt");if(s)s.textContent=X.status}
 function sumOf(E){return{o:E.o,cls:E.cls,t:EXP.head(E),u:E.u,k:"s",ns:(E.secs||[]).length,pts:EXP.total(E),dur:+E.dur||0,fmt:E.fmt||"",on:E.on&&E.on.open?{open:true,endMs:E.on.endMs||0,code:E.on.code||""}:null}}
@@ -318,7 +322,7 @@ function act(a,q){
       render();if(X.E.on&&X.E.on.open)watch()};
     var c=cGet(x.id);
     if(c){use(c.E,c.u);   /* ⚡ បើកភ្លាមពីឧបករណ៍ · ពិនិត្យកំណែថ្មីពី Cloud នៅពីក្រោយ */
-      if(a==="open")tmo(F.getDoc(F.doc(window.db,"exams",x.id+"__c")),30000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j||v.u===c.u)return;
+      if(a==="open"&&!(x.u&&c.u&&x.u===c.u))tmo(F.getDoc(   /* បញ្ជីប្រាប់ថាកំណែដូចក្នុងឧបករណ៍ → មិនបាច់អានខ្លឹមសារពេញ */F.doc(window.db,"exams",x.id+"__c")),30000).then(function(d){var v=d.exists()?d.data():null;if(!v||!v.j||v.u===c.u)return;
         if(!X.E||X.E.id!==x.id||X.dirty){return}   /* កំពុងកែ → កុំជាន់ (ការរក្សាទុកនឹងសរសេរកំណែនេះ) */
         var e2=JSON.parse(v.j);e2.id=x.id;X.E=e2;cPut(e2,v.u);var el=body();if(el)el.dataset.exid="";render();notify("បានធ្វើបច្ចុប្បន្នភាពវិញ្ញាសាពី Cloud")}).catch(function(e){console.warn("exam refresh:",e)});
       return}

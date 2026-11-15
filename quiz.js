@@ -654,7 +654,8 @@ function watchSubs(t){
   /* v2៖ សិស្សដែលកំពុងធ្វើ (st/) → «⏳ កំពុងធ្វើ» · គ្រូអនុញ្ញាតឱ្យធ្វើម្ដងទៀតបាន */
   if((t.v||1)>=2)stUn=FB.onSnapshot(FB.query(FB.collection(window.db,"st"),FB.where("t","==",t.id)),function(sn){var a=[];sn.forEach(function(d){a.push(d.data())});stl=a;resSoon(t,false)},function(e){console.warn("st:",e)});
   /* បង្ហាញភ្លាមតាម REST · បន្ទាប់មក onSnapshot តាមដានសិស្សផ្ញើថ្មី */
-  qGet("subs",["t","==",t.id]).then(function(sn){if(!first||curTest!==t)return;var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,true)}).catch(function(){});
+  /* ⚡ Quota៖ Listener អានរួចហើយ → REST តែពេល Listener យឺត (> ២ វិនាទី) កុំអានដដែលពីរដង */
+  setTimeout(function(){if(!first||curTest!==t)return;qGet("subs",["t","==",t.id]).then(function(sn){if(!first||curTest!==t)return;var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,true)}).catch(function(){})},2000);
   subUn=FB.onSnapshot(FB.query(FB.collection(window.db,"subs"),FB.where("t","==",t.id)),function(sn){
     var a=[];sn.forEach(function(d){a.push(d.data())});subs=a;resSoon(t,first);first=false;autoDrive(t);
   },function(e){console.error("subs:",e)});

@@ -146,7 +146,10 @@ function show(P,reload){
   tick=setInterval(f,1000);f();
   /* ពិនិត្យម៉ោងថ្មីពីគ្រូ (បន្ថែមម៉ោង ឬបិទមុន) រៀងរាល់ ៦០ វិនាទី · Refresh → ពិនិត្យភ្លាម (នៅពីក្រោយ) */
   const chk=()=>to(getDoc(doc(db,"exm",id)),9000).then(d=>{if(!d.exists())return;const m=d.data();LS.set("exm_"+id,JSON.stringify(m));if(!m.open){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}else if(+m.endMs!==endMs){endMs=+m.endMs;over=false}}).catch(e=>{if(e&&e.code==="permission-denied"){clearInterval(tick);timeUp("គ្រូបានបិទប្រឡង")}});
-  clearInterval(show.poll);show.poll=setInterval(chk,60000);if(reload)chk();
+  /* ⚡ Quota៖ ២ នាទីម្ដង · មិនអានពេលទំព័រលាក់ · ត្រឡប់មកវិញ (≥ ១ នាទី) → ពិនិត្យភ្លាម */
+  let lastChk=Date.now();const chk2=()=>{if(over||document.hidden)return;lastChk=Date.now();chk()};
+  clearInterval(show.poll);show.poll=setInterval(chk2,120000);if(reload)chk();
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&Date.now()-lastChk>60000)chk2()});
   return true;
   }catch(e){
     console.error("show:",e);acOn=false;clearInterval(tick);
@@ -154,7 +157,7 @@ function show(P,reload){
     return false;
   }
 }
-function timeUp(t){if(over)return;over=true;acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();msg("⏰",t||"អស់ម៉ោងប្រឡង","សូមឈប់សរសេរ ហើយប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
+function timeUp(t){if(over)return;over=true;clearInterval(show.poll);acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();msg("⏰",t||"អស់ម៉ោងប្រឡង","សូមឈប់សរសេរ ហើយប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
 /* ---------- ៣. ការពារការលួចមើល ---------- */
 function acSave(){LS.set("ac_"+K,JSON.stringify(AC));push()}
 /* ផ្ញើចំនួនទៅគ្រូ (k2 = dv|លេខរៀង · Rules ពិនិត្យថាជាឧបករណ៍ដដែល) */
