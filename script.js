@@ -1909,10 +1909,21 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
     return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+h+"</th></tr><tr class='lp-sb"+(S?" lp-fill":"")+"'>"+
       (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
 }
+/* 🗓️ កាលបរិច្ឆេទ + សប្តាហ៍ → បន្ទាត់ «កាលបរិច្ឆេទ» នៃក្បាល A4 · លេខខ្មែរ · ហ្វុង Muol Light · មិនជ្រើស → ចំណុចចុចៗទទេ */
+function lpDateTxt(){
+  var d=$("lpD").value,w=$("lpW").value,m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d),t="";
+  if(m)t="ថ្ងៃទី"+kn(+m[3])+" ខែ"+M[+m[2]-1]+" ឆ្នាំ"+kn(m[1]);
+  if(w)t+=(t?" · ":"")+"សប្តាហ៍ទី"+kn(w);
+  return t;
+}
+function lpHeader(){
+  var t=lpDateTxt();
+  $("lpHD").innerHTML="កាលបរិច្ឆេទ៖ "+(t?"<span class=lp-mu>"+esc(t)+"</span>":"<i></i>");
+}
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 function generateLessonPlan(){
   var g=$("lpG").value,l=$("lpL").value,P=lessonPlanDB[g+"_"+l];
-  lpMeta();
+  lpMeta();lpHeader();
   if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់មេរៀននេះទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច)";return false}
   lpRender(P);
   $("lpMeta").textContent+=" · "+kn(P.dur)+" នាទី";
@@ -1935,6 +1946,7 @@ function renderLp(){
   if(!$("lpG").options.length){   /* បំពេញម្ដងគត់ (idempotent · refreshView មិនបិទបញ្ជីដែលកំពុងបើក) */
     $("lpG").innerHTML=[7,8,9,10,11,12].map(function(g){return"<option value='"+g+"'>ថ្នាក់ទី"+kn(g)+"</option>"}).join("");
     $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
+    $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);
     $("lpG").onchange=function(){lpLessons()};
     $("lpGen").onclick=generateLessonPlan;
