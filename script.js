@@ -1885,6 +1885,7 @@ var lessonPlanDB={
     ]
   }
 };
+lessonPlanDB["12_11#2"]=lessonPlanDB["12_11"];   /* ចំណុចរងទី២ «ចំនួនកុំផ្លិចទម្រង់ពីជគណិត» · key = ថ្នាក់_មេរៀន#ចំណុចរង · គ្មាន # = ទាំងមេរៀន */
 /* 🔣 KaTeX ៖ «$…$» ឬ «$$…$$» → រូបមន្ត · អត្ថបទក្រៅ $ ត្រូវ esc() ជានិច្ច (មិនទុកចិត្ត HTML) · KaTeX មិនទាន់ផ្ទុក → បង្ហាញអត្ថបទដើម ហើយគូរម្ដងទៀតពេលផ្ទុករួច */
 function lpMath(t){
   t=String(t==null?"":t);var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
@@ -1921,6 +1922,7 @@ function lpHeader(){
   var v=function(id,t){$(id).innerHTML=t?"<span class=lp-mu>"+esc(t)+"</span>":"<i></i>"},e=$("lpL");
   v("lpHG",$("lpG").value?kn($("lpG").value):"");
   v("lpHL",e.selectedIndex>=0&&e.value!==""?e.options[e.selectedIndex].text:"");
+  var st=lpSubTxt();if(st&&$("lpHL").firstChild&&$("lpHL").firstChild.className==="lp-mu")$("lpHL").insertAdjacentHTML("beforeend","<span class='lp-mu lp-sub'>"+esc(st)+"</span>");
   v("lpHD",lpDateTxt());
 }
 /* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) · ឈ្មោះគ្រូបង្រៀន = អ្នកដែលកំពុង Login (គ្មាន → តម្លៃ «បង្រៀនដោយ» ក្នុងក្បាល) */
@@ -1931,20 +1933,37 @@ function lpFooter(){
   var tn=(typeof who!=="undefined"&&who&&who.name)||($("lpHT")&&$("lpHT").textContent)||"";
   $("lpST").textContent=tn;
 }
+/* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់លេខទំព័រខ្មែរ ៖ ទំព័រសេស = ខាងស្ដាំ · ទំព័រគូ = ខាងឆ្វេង (style.css) */
+function lpPrint(){
+  var A=$("lpA4");if(!A||typeof realPrint!=="function")return;
+  realPrint("<div class='lp-print'>"+A.outerHTML.replace(/ id="[^"]*"/g,"")+"</div>");
+}
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 function generateLessonPlan(){
-  var g=$("lpG").value,l=$("lpL").value,P=lessonPlanDB[g+"_"+l];
+  var g=$("lpG").value,l=$("lpL").value,sb=$("lpS").value,P=lessonPlanDB[g+"_"+l+(sb?"#"+sb:"")];
   lpMeta();lpHeader();lpFooter();
-  if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់មេរៀននេះទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច)";return false}
+  if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច · ចំណុចរងទី២ ទម្រង់ពីជគណិត)";return false}
   lpRender(P);
   $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
 }
+/* 📑 ចំណុចរងនៃមេរៀន ពីកម្មវិធីសិក្សាលម្អិត CUR[g].W («1. ឯកតានិមិត្ត» → [1,"ឯកតានិមិត្ត"]) · ក. ខ. (ចំណុចតូចជាងនេះ) មិនរាប់ */
+function lpPts(g,l){
+  var C=window.CUR&&window.CUR[g],o=[],seen={};if(!C)return o;
+  (C.W||[]).forEach(function(w){(w.x||[]).forEach(function(s){if(s.t!=="L"||+s.n!==+l)return;
+    (s.s||[]).forEach(function(t){var m=/^\s*(\d+)\s*[.)]\s*(.+)$/.exec(t);if(m&&!seen[m[1]]){seen[m[1]]=1;o.push([+m[1],m[2].trim()])}})})});
+  return o.sort(function(a,b){return a[0]-b[0]});
+}
+function lpSubs(){
+  $("lpS").innerHTML="<option value=''>— ទាំងមេរៀន —</option>"+lpPts(+$("lpG").value,$("lpL").value).map(function(x){return"<option value='"+x[0]+"'>"+kn(x[0])+". "+esc(x[1])+"</option>"}).join("");
+}
+function lpSubTxt(){var e=$("lpS");return e.value!==""&&e.selectedIndex>0?e.options[e.selectedIndex].text:""}
 function lpFill(id,a){var e=$(id);e.innerHTML=a.map(function(x,i){return"<option value='"+i+"'>"+esc(x)+"</option>"}).join("")}
 function lpLessons(){
   var g=+$("lpG").value,C=window.CUR&&window.CUR[g],l=$("lpL");
   if(!C||!C.LS){l.innerHTML="<option value=''>— មិនទាន់ផ្ទុកបញ្ជីមេរៀន —</option>";return}
   l.innerHTML=Object.keys(C.LS).sort(function(a,b){return a-b}).map(function(n){var x=C.LS[n];return"<option value='"+esc(n)+"'>"+kn(n)+" · "+esc(x[0])+"</option>"}).join("")||"<option value=''>—</option>";
+  lpSubs();
 }
 function lpMeta(){
   var sel=function(id){var e=$(id);return e.selectedIndex>=0?e.options[e.selectedIndex].text:"…"};
@@ -1957,7 +1976,7 @@ function renderLp(){
     $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);lpFooter();
-    $("lpG").onchange=function(){lpLessons()};
+    $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=lpSubs;$("lpPr").onclick=lpPrint;
     $("lpGen").onclick=generateLessonPlan;
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();

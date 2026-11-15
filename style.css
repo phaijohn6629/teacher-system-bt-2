@@ -1022,6 +1022,17 @@ dialog.ls-ed .dlgf{display:flex;gap:8px;align-items:center;justify-content:flex-
 .lp-ph{color:#6b7280;background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 6px,#fff 6px,#fff 12px);border-radius:3px}
 div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 /* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទខាងស្ដាំលើ · ៣ ផ្នែក (គណៈគ្រប់គ្រង · ក្រុមបច្ចេកទេស · គ្រូបង្រៀន) · ហ្វុង Muol Light ដូចឯកសាររដ្ឋបាលផ្សេង */
+.lp-mg .lp-sub{display:block;margin-top:1px;font-size:8.5pt}.lp-pnv{text-align:right;font:9pt "Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;color:#000;margin-top:10px}
+/* 🖨️ លេខទំព័រខ្មែររត់ស្វ័យប្រវត្តិ (Muol Light) ៖ ទំព័រសេស = ខាងស្ដាំ · ទំព័រគូ = ខាងឆ្វេង · ទំព័រទី១ = ស្ដាំ */
+@page lpdoc{size:A4;margin:14mm 15mm 18mm}
+@page lpdoc:right{@bottom-right{content:counter(page,khmer);font:9pt "Khmer OS Muol Light","Moul",serif;color:#000}}
+@page lpdoc:left{@bottom-left{content:counter(page,khmer);font:9pt "Khmer OS Muol Light","Moul",serif;color:#000}}
+@media print{
+  .lp-print{page:lpdoc}
+  body.pm #prt .lp-a4{width:auto;max-width:none;min-height:0;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}
+  body.pm #prt .lp-pnv{display:none}body.pm #prt .lp-ph,body.pm #prt .lp-tb td.lp-ph{background:none!important}
+  body.pm #prt .lp-tw{overflow:visible}body.pm #prt .lp-tb{min-width:0}body.pm #prt .lp-tb .lp-sb td{height:auto}
+}
 .lp-sg{margin-top:18px;color:#000;break-inside:avoid;page-break-inside:avoid}
 .lp-sd{display:flex;flex-direction:column;align-items:flex-end;font-size:9.5pt;line-height:1.7;margin-bottom:4px}
 .lp-sc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6mm;text-align:center;align-items:start}
