@@ -1950,15 +1950,15 @@ function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.to
 function lpWaN(x,t){
   x=String(x);var m=(x.match(/\$/g)||[]).length/2,sb=(x.match(/(^|\s)[កខគឃង]\/|(^|\s)[កខគឃង]\)|(^|\s)[0-9១-៩]\)/g)||[]).length,
     cx=(x.match(/\\(frac|dfrac|sqrt|lim|begin|sum|int|cos|sin|tan|ln|log)/g)||[]).length,ln=x.replace(/\$[^$]*\$/g,"").length;
-  var n=2+t+sb*2.5+Math.max(0,m-2)*.4+cx*.5+Math.max(0,ln-100)/80;
-  return Math.max(3,Math.min(11,Math.round(n)));
+  var n=1.5+t+sb*2.5+Math.max(0,m-2)*.4+cx*.5+Math.max(0,ln-100)/80;
+  return Math.max(3,Math.min(9,Math.round(n)));
 }
 function lpWsRender(P){
   var ws=$("lpWS");if(!ws)return;
   var ex=P&&P.ex?P.ex:{pre:[],drill:[],hw:[],ws:(P&&P.worksheet)||[],key:[]};
   var it=[].concat(ex.drill||[],ex.ws||[],ex.hw||[]).filter(function(x,i,a){return x&&a.indexOf(x)===i});
   if(!P||!it.length){ws.hidden=true;ws.innerHTML="";return}
-  var MX=(P.steps&&P.title&&P.title.indexOf(" + ")>0)?10:8;   /* កំណត់ចំនួនលំហាត់ ៖ សន្លឹកមិនលើស ~៣ ទំព័រ */
+  var MX=7;   /* កំណត់ចំនួនលំហាត់ ៖ សន្លឹកមិនលើស ~៣ ទំព័រ */
   if(it.length>MX){var pick=[];for(var z=0;z<MX;z++)pick.push(it[Math.round(z*(it.length-1)/(MX-1))]);it=pick.filter(function(x,i,a){return a.indexOf(x)===i})}
   var n=it.length,n1=Math.max(1,Math.round(n*.4)),n3=n>=5?Math.max(1,Math.round(n*.2)):0,n2=n-n1-n3,W=[2,3,4],T=[];
   it.forEach(function(x,i){T.push(i<n1?0:i<n1+n2?1:2)});
@@ -2078,7 +2078,7 @@ function lpPaginate(){
     u.pre.forEach(function(p){var c=lpCl(p);body.appendChild(c);added.push(c)});
     if(u.rows){
       tw=body.lastElementChild&&body.lastElementChild.classList.contains("lp-tw")&&!u.pre.length?body.lastElementChild:null;
-      var made=false;if(!tw){tw=document.createElement("div");tw.className="lp-tw";tw.innerHTML="<table class=lp-tb></table>";tw.firstChild.appendChild(lpCl(u.th));tw.firstChild.appendChild(document.createElement("tbody"));body.appendChild(tw);added.push(tw);made=true}
+      var made=false;if(!tw){tw=document.createElement("div");tw.className="lp-tw";tw.innerHTML="<table class=lp-tb><colgroup><col style='width:28%'><col style='width:46%'><col style='width:26%'></colgroup></table>";tw.firstChild.appendChild(lpCl(u.th));tw.firstChild.appendChild(document.createElement("tbody"));body.appendChild(tw);added.push(tw);made=true}
       var tb=tw.querySelector("tbody");u.rows.forEach(function(r){var c=lpCl(r);tb.appendChild(c);if(!made)added.push(c)});
     }else u.els.forEach(function(e){var c=lpCl(e);body.appendChild(c);added.push(c)});
     return added},
@@ -2112,8 +2112,15 @@ function lpPaginate(){
     if(body.children.length&&guard++<400){mk();place(u,idx);return}
     put(u)}
   for(var ui=0;ui<UM.length;ui++)place(UM[ui],ui);
+  lpFitMath(S);
   sheets.forEach(function(s,i){var n=document.createElement("span");n.className="lp-pb "+((i+1)%2?"r":"l");n.textContent=kn(i+1);s.appendChild(n)});
   lpPSrc=src;return true;
+}
+/* 📐 រូបមន្តដែលវែងជាងជួរឈរ → បង្រួមទំហំស្វ័យប្រវត្តិ (មិនកាត់ មិនធ្លាយ) */
+function lpFitMath(root){
+  [].forEach.call(root.querySelectorAll(".lp-tb td .lp-mp"),function(m){
+    var td=m.closest("td"),w=td?td.clientWidth-20:0,sw=m.scrollWidth;
+    if(w>40&&sw>w){m.style.zoom=Math.max(.6,w/sw).toFixed(3)}});
 }
 function lpPages(){clearTimeout(lpPT);lpPT=setTimeout(function(){if(lpPaginate())lpPR=0;else if(lpPR++<8)lpPages()},90)}
 /* 🗓️ កាលបរិច្ឆេទ + សប្តាហ៍ → បន្ទាត់ «កាលបរិច្ឆេទ» នៃក្បាល A4 · លេខខ្មែរ · ហ្វុង Muol Light · មិនជ្រើស → ចំណុចចុចៗទទេ */
