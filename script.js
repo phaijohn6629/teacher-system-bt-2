@@ -1064,9 +1064,21 @@ $("rpa").onclick=function(){var c=curCls();if(!c||!c.st.length){alert("មិន
 $("cxCard").onclick=function(){$("dlgCard").close()};
 $("prCard").onclick=function(){doPrint($("cardBody").innerHTML)};
 function doPrint(html){outChoose(html)}
+/* ហ្វុងរៀបចំជាមុន (ផ្ទុកម្ដងពេលបើកកម្មវិធី) → realPrint ហៅ window.print() ភ្លាមៗក្នុង click handler ·
+   Safari (macOS) មិនអនុញ្ញាត print() បន្ទាប់ពី Promise/setTimeout ក្រោយ user gesture */
+var FONTS_READY=false;
+(function(){
+  var F=document.fonts,done=function(){FONTS_READY=true};
+  if(!F||!F.load){done();return}
+  var go=function(){Promise.all(['10pt "Khmer OS Muol Light"','10pt "Moul"','10pt "Battambang"','bold 10pt "Battambang"'].map(function(f){return F.load(f,"ក្សា").catch(function(){})})).then(done,done)};
+  if(document.readyState==="complete")go();else window.addEventListener("load",go);
+  setTimeout(done,6000);
+})();
 function realPrint(html){
   $("prt").innerHTML=html;document.body.classList.add("pm");
-  (window.SCHX&&SCHX.fontsOk?SCHX.fontsOk():Promise.resolve()).then(function(){setTimeout(function(){window.print();setTimeout(prtClean,120000)},60)});   /* រង់ចាំហ្វុង Muol/Battambang កុំឱ្យលោតទៅហ្វុងប្រព័ន្ធ */
+  var go=function(){window.print();setTimeout(prtClean,120000)};
+  if(FONTS_READY||!(window.SCHX&&SCHX.fontsOk))go();   /* synchronous */
+  else SCHX.fontsOk().then(function(){FONTS_READY=true;go()});
 }
 /* ជម្រើសបោះពុម្ព៖ «🖨️ បោះពុម្ព» (ផ្ទាំងបោះពុម្ពរបស់ប្រព័ន្ធ) ឬ «📄 ទាញយក PDF» (បង្កើតក្នុង browser ភ្លាម មិនឆ្លងកាត់ម៉ាស៊ីនបោះពុម្ព) */
 var H2P_URL="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
@@ -2130,8 +2142,9 @@ function lpPaginate(){
       if(!k)ua.remove();if(k===n)tb.innerHTML="";
     });
     return{a:A,b:B,rest:rest,kept:kept}};
-  var guard=0;
+  var guard=0,lastTH=null;
   function place(u,idx){
+    if(u.rows&&u.th)lastTH=u.th;
     if(u.nw&&body.children.length)mk();
     var a=put(u);if(!over())return;
     undo(a);
@@ -2143,6 +2156,11 @@ function lpPaginate(){
         var v={pre:u.pre,rows:u.rows.slice(0,-1).concat([sp.a]),th:u.th};a=put(v);
         if(!over()){UM.splice(idx+1,0,{pre:[],rows:[sp.b],th:u.th});return}
         undo(a)}}
+    /* ហត្ថលេខាមិនត្រូវនៅតែឯងលើសន្លឹកថ្មី ៖ ដកជួរតារាងចុងក្រោយពីសន្លឹកមុនមកជាមួយ */
+    if(u.els&&u.els[0]&&u.els[0].classList.contains("lp-sg")&&lastTH&&guard<400){
+      var lt=body.lastElementChild,trs=lt&&lt.classList.contains("lp-tw")?lt.querySelectorAll("tbody tr"):[];
+      if(trs.length>1){var tr=trs[trs.length-1];tr.parentNode.removeChild(tr);UM.splice(idx,0,{pre:[],rows:[tr],th:lastTH});guard++;mk();place(UM[idx],idx);return}
+    }
     if(body.children.length&&guard++<400){mk();place(u,idx);return}
     put(u)}
   for(var ui=0;ui<UM.length;ui++)place(UM[ui],ui);
@@ -2720,7 +2738,6 @@ $("fileRestore").onchange=function(e){
   reader.readAsText(file);
 };
 
-$("btnPrint").onclick=function(){window.print()};
 $("btnTheme").onclick=function(){
   var curTheme=document.documentElement.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
   setTheme(curTheme==="dark"?"light":"dark");

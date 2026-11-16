@@ -12,7 +12,7 @@
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js" crossorigin><link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js" crossorigin><link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin><link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin><link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4f46e5"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
-<script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
+<script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){var t=0,u=function(){if(Date.now()-t>6e4){t=Date.now();try{r.update()}catch(e){}}};document.addEventListener("visibilitychange",function(){if(!document.hidden)u()});window.addEventListener("focus",u)}).catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <link rel="stylesheet" href="style.css?v=131">
@@ -47,7 +47,6 @@
   <div class="hdr-acts">
     <button id="btnBackup" title="ទាញយកទិន្នន័យទាំងអស់ទុកក្នុងកុំព្យូទ័រ">💾 បម្រុងទុក (Backup)</button>
     <button id="btnBackupD" hidden title="ផ្ញើ Backup ពេញលេញទៅ Google Drive">☁️ Backup ទៅ Drive</button>
-    <button id="btnPrint" title="បោះពុម្ព ឬរក្សាទុកជា PDF">🖨️ បោះពុម្ព</button>
     <button id="btnTheme" title="ប្ដូរពណ៌ផ្ទៃ">🌓 ពណ៌ផ្ទៃ</button>
     <div class="profile-menu">
       <button type="button" id="profileTrigger" class="profile-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="profileDropdown">
@@ -652,7 +651,7 @@
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
 <script src="lessonplans.js?v=4"></script>
-<script src="script.js?v=143"></script>
+<script src="script.js?v=144"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>
