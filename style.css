@@ -1167,3 +1167,5 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
   body.pm #prt .lp-print2 .lp-tb tr,body.pm #prt .lp-print2 .lp-sg,body.pm #prt .lp-print2 .lp-sc,body.pm #prt .lp-print2 .lp-wq,body.pm #prt .lp-print2 img,body.pm #prt .lp-print2 .lp-fg{break-inside:avoid;page-break-inside:avoid}
   body.pm #prt .lp-print2 .katex{text-rendering:auto}
 }
+
+@media print{body.pm #lpSheets,body.pm #lpA4{display:none!important}}

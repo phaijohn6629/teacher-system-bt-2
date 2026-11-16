@@ -1066,7 +1066,7 @@ $("prCard").onclick=function(){doPrint($("cardBody").innerHTML)};
 function doPrint(html){outChoose(html)}
 function realPrint(html){
   $("prt").innerHTML=html;document.body.classList.add("pm");
-  (window.SCHX&&SCHX.fontsOk?SCHX.fontsOk():Promise.resolve()).then(function(){setTimeout(function(){window.print()},60)});   /* រង់ចាំហ្វុង Muol/Battambang កុំឱ្យលោតទៅហ្វុងប្រព័ន្ធ */
+  (window.SCHX&&SCHX.fontsOk?SCHX.fontsOk():Promise.resolve()).then(function(){setTimeout(function(){window.print();setTimeout(prtClean,120000)},60)});   /* រង់ចាំហ្វុង Muol/Battambang កុំឱ្យលោតទៅហ្វុងប្រព័ន្ធ */
 }
 /* ជម្រើសបោះពុម្ព៖ «🖨️ បោះពុម្ព» (ផ្ទាំងបោះពុម្ពរបស់ប្រព័ន្ធ) ឬ «📄 ទាញយក PDF» (បង្កើតក្នុង browser ភ្លាម មិនឆ្លងកាត់ម៉ាស៊ីនបោះពុម្ព) */
 var H2P_URL="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
@@ -1166,7 +1166,10 @@ function pdfPaginate(w,pageH,contentW){
     pg.style.overflow="hidden";pg.style.boxSizing="border-box";
   });
 }
-window.addEventListener("afterprint",function(){document.body.classList.remove("pm");$("prt").innerHTML="";if(window.lpRestore)lpRestore()});
+/* សម្អាត #prt ក្រោយបោះពុម្ព ៖ Safari ខ្លះមិនបាញ់ afterprint → ប្រើទាំង afterprint · matchMedia("print") · setTimeout ជំនួយ (មិនប៉ះ DOM កម្មវិធីទេ · CSS @media print លាក់ត្រឹម body.pm ពេលកំពុងព្រីន) */
+function prtClean(){if(!document.body.classList.contains("pm"))return;document.body.classList.remove("pm");var p=$("prt");if(p)p.innerHTML=""}
+window.addEventListener("afterprint",prtClean);
+try{var _mq=window.matchMedia("print");var _mf=function(e){if(!e.matches)setTimeout(prtClean,300)};if(_mq.addEventListener)_mq.addEventListener("change",_mf);else if(_mq.addListener)_mq.addListener(_mf)}catch(e){}
 /* 💾 ប៊ូតុងរក្សាទុក (ការងាររដ្ឋបាល)៖ បង្ហាញស្ថានភាពពិត (មិនទាន់ · កំពុង · បាន ម៉ោង… · បរាជ័យ) · ចុច = រក្សាទុកភ្លាម
    p2 កិច្ចតែងការ (tasks) · p9 របាយការណ៍ (wr) · p13 Timesheet (ts) · p19 កំណត់ហេតុប្រជុំ (meetings.js · MTSAVE) */
 var SVK={p2:"tasks",p9:"wr",p13:"ts",p19:"mt"},svAt={},svWas={};
@@ -2211,19 +2214,7 @@ function lpPrint(){
   lpPSrc="";if(!lpPaginate()||!A.children.length){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
   /* បោះពុម្ពពីសន្លឹក A4 ដែលបានបែងចែករួច (WYSIWYG) ៖ មិនឱ្យ browser កាត់តារាងឬបាត់ស៊ុម */
   var html="<div class='lp-print2'>"+A.innerHTML.replace(/ id="[^"]*"/g,"")+"</div>";
-  lpStash();   /* ដកសន្លឹកមើលជាមុន + ប្រភព A4 ចេញពី DOM ជាបណ្ដោះអាសន្ន (ត្រូវការតែច្បាប់ចម្លងក្នុង #prt) → KaTeX/តារាងមិនត្រូវគណនា Layout ពីរដង */
   realPrint(html);
-}
-var LPSTASH=null;
-function lpStash(){
-  lpRestore();var o=[];
-  ["lpSheets","lpA4"].forEach(function(id){var e=$(id);if(!e||!e.firstChild)return;var f=document.createDocumentFragment();while(e.firstChild)f.appendChild(e.firstChild);o.push([e,f])});
-  LPSTASH=o;
-}
-function lpRestore(){
-  if(!LPSTASH)return;
-  LPSTASH.forEach(function(x){x[0].innerHTML="";x[0].appendChild(x[1])});
-  LPSTASH=null;lpPSrc="";if(typeof lpPages==="function")lpPages();
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 /* 🤖 កិច្ចតែងការស្វ័យប្រវត្តិ សម្រាប់ចំណុចរងដែលមិនទាន់មានគំរូ ៖ ខ្លឹមសារ/ឧទាហរណ៍/លំហាត់ពីម៉ាស៊ីនលំហាត់ (practice*.js) + មេរៀនសង្ខេប (hub) · សកម្មភាពតាមវិធីសាស្ត្រ (5Es · PBL …) និងយុទ្ធវិធី (TPS · KWL …) ដែលបានជ្រើស */
