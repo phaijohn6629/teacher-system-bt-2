@@ -2247,13 +2247,18 @@ function lpAutoMark(){
 }
 window.addEventListener("beforeprint",lpAutoMark);
 try{var _lq=window.matchMedia("print");var _lf=function(e){if(e.matches)lpAutoMark()};if(_lq.addEventListener)_lq.addEventListener("change",_lf);else if(_lq.addListener)_lq.addListener(_lf)}catch(e){}
+var LPBP=0;   /* beforeprint បាញ់ពេលណា → ដឹងថា Safari បានបើកផ្ទាំង print ពិតឬអត់ */
+window.addEventListener("beforeprint",function(){LPBP=Date.now()});
 function lpPrint(){
   var S=$("lpSheets");
   if(!S||!S.children.length){
     if(!lpPaginate()||!S||!S.children.length){alert("សូមចុច «✨ បង្កើតកិច្ចតែងការ» ជាមុនសិន");return}
   }
-  try{console.log("lpPrint: sheets="+S.children.length+" → window.print()")}catch(e){}
-  try{window.print()}catch(e){console.error("lpPrint:",e);alert("មិនអាចបើកផ្ទាំងបោះពុម្ពបាន៖ "+e.message+"\nសូមប្រើ ⌘P (Ctrl+P) ជំនួស")}
+  var t0=Date.now();
+  try{window.print()}catch(e){console.error("lpPrint:",e)}
+  /* Safari ខ្លះព្រងើយ window.print() ពី button → ព្យាយាម execCommand("print") (ក្នុង gesture ដដែល) បើ beforeprint មិនបាញ់ */
+  if(!(LPBP>=t0)){try{document.execCommand("print",false,null)}catch(e){}}
+  setTimeout(function(){if(!(LPBP>=t0)&&window.notify)notify("ផ្ទាំងបោះពុម្ពមិនបើក — សូមចុច ⌘P (Ctrl+P) ឬ File → Print (កិច្ចតែងការនឹងចេញដូចគ្នា)")},900);
 }
 window.lpPrint=lpPrint;
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
