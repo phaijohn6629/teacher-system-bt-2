@@ -1115,3 +1115,24 @@ body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer
 /* ផ្នែក ២ តម្រឹមដូចវិធីសាស្ត្រ (ទាំងពីរចូល ២ ស.ម · ក្បាលជួរ + រង្វង់ដូចគ្នា) */
 .lp-cn{margin-left:2cm}.lp-cn .lp-mt,.lp-cn .lp-sl{margin-left:0}
 @media(max-width:560px){.lp-cn{margin-left:8mm}}
+
+/* ===== សន្លឹកកិច្ចការ Flipped Classroom ===== */
+.lp-wh{border:2px solid #1e3a8a;border-radius:3mm;padding:3mm 4mm;margin:0 0 4mm;display:grid;grid-template-columns:1fr 34mm;gap:2mm 4mm;background:#f5f8ff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.lp-wht{font:15pt/1.8 "Khmer OS Muol Light","Moul",serif;color:#1e3a8a;text-align:center}.lp-whs{text-align:center;font-size:9.5pt}.lp-whl{text-align:center;font-size:10.5pt;margin-top:1mm}
+.lp-whp{border:2px solid #1e3a8a;border-radius:2mm;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font:10pt "Khmer OS Muol Light","Moul",serif;min-height:20mm}.lp-whp i{display:block;width:22mm;height:9mm;border-bottom:1px dotted #000}
+.lp-whf{grid-column:1/-1;display:flex;gap:6mm;font-size:10pt;align-items:flex-end}.lp-whf span{display:flex;align-items:flex-end;gap:2mm;white-space:nowrap}.lp-whf span:first-child{flex:1}.lp-whf i{flex:1;min-width:30mm;border-bottom:1px dotted #000;height:1.2em}.lp-whf i.s{min-width:20mm}
+.lp-wsh{margin:3mm 0 2mm;display:flex;align-items:center;gap:2.5mm;font:11pt/1.7 "Khmer OS Muol Light","Moul",serif;color:var(--c,#1e3a8a);border-bottom:2px solid var(--c,#1e3a8a);padding-bottom:1mm}
+.lp-wsh b{flex:0 0 auto;width:7mm;height:7mm;border-radius:50%;background:var(--c,#1e3a8a);color:#fff;font:9pt/1 "Khmer OS Muol Light","Moul",serif;display:inline-flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}.lp-wsh small{font:9pt "Khmer OS Battambang","Battambang",serif;color:#000}
+.lp-wprb{display:flex;gap:4mm;align-items:flex-start;font-size:10pt}.lp-wqr{width:26mm;height:26mm;flex:0 0 auto;border:1px solid #999;padding:1mm}.lp-wprb p{margin:0 0 2mm}.lp-wpq{margin:1mm 0}
+.lp-wsec{break-inside:avoid;margin-top:3mm}.lp-wsec .lp-wsh{margin-top:0}
+.lp-wk{border:1px dashed var(--c,#1e3a8a);border-left-width:4px;border-radius:2mm;padding:1.5mm 3mm;font-size:9.5pt;background:#fffdf5;line-height:1.7;-webkit-print-color-adjust:exact;print-color-adjust:exact}.lp-wk .lp-ul{margin:0}
+.lp-wq{display:flex;gap:3mm;align-items:flex-start;margin:0 0 3mm;break-inside:avoid;page-break-inside:avoid}
+.lp-wno{flex:0 0 auto;width:7mm;height:7mm;margin-top:1mm;border-radius:2mm;background:var(--c);color:#fff;font:9pt/1 "Khmer OS Muol Light","Moul",serif;display:inline-flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.lp-wb{flex:1;min-width:0}.lp-wtx{font-size:11pt;line-height:1.9}
+.lp-wp{flex:0 0 auto;border:1px solid var(--c);color:var(--c);border-radius:3mm;padding:0 2.5mm;font-size:9pt;line-height:1.8;white-space:nowrap}
+.lp-wa{margin-top:1mm;border:1px solid #cbd5e1;border-radius:2mm;background:repeating-linear-gradient(transparent,transparent 6.2mm,#e2e8f0 6.2mm,#e2e8f0 6.4mm);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.lp-wrb{font-size:10pt;line-height:2}.lp-wrb p{margin:0}.lp-wrb i{display:inline-block;width:100mm;border-bottom:1px dotted #000;height:1em}
+.lp-wsc{width:100%;border-collapse:collapse;margin-top:2mm;text-align:center;font-size:9.5pt}.lp-wsc th,.lp-wsc td{border:1px solid #000;padding:1mm}.lp-wsc td{height:10mm}.lp-wsc th{background:#eee}
+.lp-ws{break-before:page}
+@media(max-width:560px){.lp-wh{grid-template-columns:1fr}}
+.lp-wsec{margin-bottom:2.5mm}.lp-wsc{table-layout:fixed}.lp-wsc th{font-size:8.5pt}

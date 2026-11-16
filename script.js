@@ -1942,14 +1942,42 @@ var lpLast=null,lpSugK="";
 function lpDu(){var e=$("lpDu");return e&&e.value==="90"?90:45}
 function lpDur(){var d=lpDu();$("lpHU").textContent=d===90?"៩០ នាទី (ម៉ោងទី១ ៤៥ នាទី · ម៉ោងទី២ ៤៥ នាទី)":"៤៥ នាទី"}
 function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.toggle("lp-ph",!html)}
+/* 📝 សន្លឹកកិច្ចការស្ដង់ដារ Flipped Classroom ៖ ប្រអប់ក្បាល (ឈ្មោះ · ពិន្ទុ) · ត្រៀមមុនរៀន (QR) · ៣ កម្រិតមានពិន្ទុ + គន្លឹះ + កន្លែងដំណោះស្រាយ · ឆ្លុះបញ្ចាំង · របាយពិន្ទុ */
+function lpWsRender(P){
+  var ws=$("lpWS");if(!ws)return;
+  var ex=P&&P.ex?P.ex:{pre:[],drill:[],hw:[],ws:(P&&P.worksheet)||[],key:[]};
+  var it=[].concat(ex.drill||[],ex.ws||[],ex.hw||[]).filter(function(x,i,a){return x&&a.indexOf(x)===i});
+  if(!P||!it.length){ws.hidden=true;ws.innerHTML="";return}
+  var n=it.length,n1=Math.max(1,Math.round(n*.4)),n3=n>=5?Math.max(1,Math.round(n*.2)):0,n2=n-n1-n3,W=[2,3,4],T=[];
+  it.forEach(function(x,i){T.push(i<n1?0:i<n1+n2?1:2)});
+  var sum=0;T.forEach(function(t){sum+=W[t]});var pt=T.map(function(t){return Math.max(1,Math.round(W[t]*20/sum))}),tot=pt.reduce(function(a,b){return a+b},0);
+  for(var k=pt.length-1;tot!==20&&k>=0;k=(k>0?k-1:pt.length-1)){if(tot<20){pt[k]++;tot++}else if(pt[k]>1){pt[k]--;tot--}if(tot===20)break}
+  var tp=[0,0,0];pt.forEach(function(p,i){tp[T[i]]+=p});
+  var CL=["#15803d","#c2410c","#6d28d9"],TN=["មូលដ្ឋាន ★","ពង្រឹង ★★","ប្រឈម ★★★"],TH=["រូបមន្ត/គន្លឹះសំខាន់ៗដែលត្រូវចាំ","ជំហានដោះស្រាយ ៖ ១) អានលក្ខខណ្ឌ ២) សរសេររូបមន្ត ៣) ជំនួសតម្លៃ ៤) គណនា ៥) ត្រួតពិនិត្យចម្លើយ","ពិនិត្យកំហុសញឹកញាប់ (សញ្ញា ដក/បូក) · សាកល្បងដោះស្រាយតាមវិធីពីរ · ពន្យល់ហេតុផលជាដាច់ខាត"];
+  var h=function(x){return lpMath(x)},G=$("lpG"),gt=G&&G.selectedIndex>=0?G.options[G.selectedIndex].text:"";
+  var qr="",im=$("lpQB")&&$("lpQB").querySelector("img");if(im&&safeSrc(im.getAttribute("src")))qr="<img class=lp-wqr alt='QR' src='"+safeSrc(im.getAttribute("src"))+"'>";
+  var out="<div class=lp-wh><div class=lp-whm><div class=lp-wht>សន្លឹកកិច្ចការ</div><div class=lp-whs>ថ្នាក់រៀនបញ្ច្រាស (Flipped Classroom) · គណិតវិទ្យា "+esc(gt)+"</div><div class=lp-whl>មេរៀន ៖ <b>"+esc(P.title)+"</b></div></div><div class=lp-whp><span>ពិន្ទុ</span><i></i><span>/ ២០</span></div>"+
+    "<div class=lp-whf><span>ឈ្មោះសិស្ស ៖ <i></i></span><span>ថ្នាក់ ៖ <i class=s></i></span><span>កាលបរិច្ឆេទ ៖ <i class=s></i></span></div></div>";
+  var pre=((P.steps&&P.steps[1]&&P.steps[1].tc&&P.steps[1].tc.length?[P.steps[1].tc[0]]:[]).concat(ex.pre&&0?ex.pre:[])).map(function(x){return String(x).replace(/^(សួរសិស្ស|សួរ)\s*[៖:]?\s*/,"").replace(/^ដាក់(លំហាត់|ឧទាហរណ៍)\s*[៖:]?\s*/,"")}).filter(Boolean);
+  out+="<div class=lp-wpre><h4 class=lp-wsh style='--c:#1e3a8a'><b>១</b>ត្រៀមមុនរៀន · នៅផ្ទះ (Pre-class)</h4><div class=lp-wprb>"+qr+"<div><p>📱 ស្កេន QR Code ដើម្បីមើលមេរៀនសង្ខេប/វីដេអូ និងហ្វឹកហាត់ មុនចូលថ្នាក់ រួចឆ្លើយសំណួរពិនិត្យខ្លួនឯង ៖</p>"+
+    pre.map(function(x){return"<div class=lp-wpq>"+h(x)+"</div>"}).join("")+"<div class='lp-wa' style='height:12mm'></div></div></div></div>";
+  var i=0;
+  [0,1,2].forEach(function(t){
+    var idx=[];T.forEach(function(x,j){if(x===t)idx.push(j)});if(!idx.length)return;
+    var kt=t===0&&ex.key&&ex.key.length?"<ul class=lp-ul>"+ex.key.map(function(x){return"<li>"+h(x)+"</li>"}).join("")+"</ul>":esc(TH[t]);
+    out+="<div class=lp-wsec style='--c:"+CL[t]+"'><h4 class=lp-wsh><b>"+kn(t+2)+"</b>កម្រិត"+TN[t]+" <small>("+kn(tp[t])+" ពិន្ទុ)</small></h4><div class=lp-wk><b>💡 គន្លឹះសម្រាប់អ្នកត្រូវការជំនួយ ៖</b> "+kt+"</div></div>";
+    idx.forEach(function(j){i++;out+="<div class=lp-wq style='--c:"+CL[t]+"'><span class=lp-wno>"+kn(i)+"</span><div class=lp-wb><div class=lp-wtx>"+h(it[j])+"</div><div class=lp-wa style='height:"+[16,22,28][t]+"mm'></div></div><span class=lp-wp>"+kn(pt[j])+" ពិន្ទុ</span></div>"});
+  });
+  out+="<div class=lp-wrf><h4 class=lp-wsh style='--c:#0f766e'><b>"+kn(5)+"</b>ឆ្លុះបញ្ចាំង · របាយពិន្ទុ</h4><div class=lp-wrb><p>ខ្ញុំយល់មេរៀននេះ ៖ ☐ ច្បាស់ &nbsp; ☐ មួយចំណែក &nbsp; ☐ មិនទាន់យល់</p><p>ចំណុចដែលខ្ញុំត្រូវសួរគ្រូ ៖ <i></i></p>"+
+    "<table class=lp-wsc><tr><th>កម្រិតមូលដ្ឋាន</th><th>កម្រិតពង្រឹង</th><th>កម្រិតប្រឈម</th><th>ពិន្ទុសរុប</th><th>មតិគ្រូ</th></tr><tr><td>…/"+kn(tp[0])+"</td><td>…/"+kn(tp[1])+"</td><td>…/"+kn(tp[2])+"</td><td>…/២០</td><td></td></tr></table></div></div>";
+  ws.hidden=false;ws.innerHTML=out;
+}
 function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null → ត្រឡប់ទៅ Placeholder */
   var O=P&&P.obj||{};
   ["knowledge","skills","attitude"].forEach(function(k,i){var a=O[k];lpSet("lpOb"+i,a?(a.length>1?lpLi(a):lpMath(a[0])):"")});
   var Mt=P&&P.mat,ms="",mt="";if(Mt){if(Array.isArray(Mt))mt=Mt.join(" · ");else{ms=(Mt.st||[]).join(" · ");mt=(Mt.tc||[]).join(" · ")}}
   lpSet("lpMs",ms?lpMath(ms):"");lpSet("lpMt",mt?lpMath(mt):"");
-  var W=P&&P.worksheet,ws=$("lpWS");
-  if(ws){ws.hidden=!(W&&W.length);$("lpWL").innerHTML=(W||[]).map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("");
-    $("lpWN").textContent=P?P.title:""}
+  lpWsRender(P);
   lpLast=P;if(P&&!window.katex&&!lpRender.w){lpRender.w=1;setTimeout(function(){lpRender.w=0;if(window.katex&&lpLast===P)lpRender(P)},1500)}
   $("lpSteps").innerHTML=LPS.map(function(t,i){
     var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(Math.round(S.t*lpDu()/45))+" នាទី":""):esc(t);
@@ -1978,7 +2006,7 @@ function lpQR(){
   Promise.all(it.map(function(x){return x.m?Promise.resolve(safeSrc(x.m)):lpQData(x.u)})).then(function(src){
     if(sig!==lpQSig)return;
     b.innerHTML=it.map(function(x,i){var s=safeSrc(src[i]);return s?"<figure class=lp-qi><img alt='QR' src='"+s+"'><figcaption>"+esc(x.c||"")+"</figcaption></figure>":""}).join("");
-    lpPages();
+    if(lpLast)lpWsRender(lpLast);lpPages();
   });
 }
 function lpQUI(){
@@ -2020,9 +2048,7 @@ function lpUnits(A){
         if(e.classList.contains("lp-mt")){U.push({pre:first?P0:[],els:[e],keep:1});first=false}
         else[].forEach.call(e.children,function(li){U.push({pre:first?P0:[],els:[ol1(li)]});first=false})});
       if(!k.length&&pre.length)pre.length=0;return}
-    if(c.classList.contains("lp-ws")){
-      var ol=c.querySelector("ol");U.push({pre:pre.splice(0),els:[].filter.call(c.children,function(x){return x.tagName!=="OL"}),nw:true});
-      [].forEach.call(ol.children,function(li,i){var o=document.createElement("ol");o.className=ol.className;o.start=i+1;o.appendChild(li.cloneNode(true));U.push({pre:[],els:[o]})});return}
+    if(c.classList.contains("lp-ws")){var first=true;[].filter.call(c.children,K).forEach(function(x){U.push({pre:first?pre.splice(0):[],els:[x],nw:first});first=false});return}
     U.push({pre:pre.splice(0),els:[c]});
   });
   return U;
@@ -2175,6 +2201,7 @@ function lpCombine(g,l,sel){
       var a=i===0||i===1?[ps[0]]:ps;   /* រដ្ឋបាល · រំលឹក ពីកិច្ចតែងការទី១ */
       var f=function(k){var o=[];a.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){o.push(x)})});return o};
       return{n:s0[i].n,t:T[i],tc:f("tc"),ct:f("ct"),st:f("st"),fg:(i===0||i===1)?s0[i].fg:fg}}),
+    ex:{pre:(ps[0].ex&&ps[0].ex.pre)||[],drill:cat(function(P){return P.ex&&P.ex.drill}),hw:cat(function(P){return P.ex&&P.ex.hw}),ws:cat(function(P){return P.ex&&P.ex.ws}),key:cat(function(P){return P.ex&&P.ex.key}).slice(0,3)},
     worksheet:cat(function(P){return P.worksheet})}};
 }
 function lpFill(id,a){var e=$(id);e.innerHTML=a.map(function(x,i){return"<option value='"+i+"'>"+esc(x)+"</option>"}).join("")}

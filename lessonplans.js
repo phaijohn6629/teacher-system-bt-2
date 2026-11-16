@@ -22,6 +22,7 @@ function mk(o){
       {n:"មេរៀនប្រចាំថ្ងៃ",t:20,tc:n.tc,ct:n.ct,st:n.st||NWST,fg:n.fg},
       {n:"ពង្រឹងពុទ្ធិ",t:10,tc:p.tc||PRTC,ct:p.ct,st:p.st||PRST,fg:p.fg},
       {n:"បណ្តាំផ្ញើ និងកិច្ចការផ្ទះ",t:5,tc:HWTC,ct:o.hw,st:HWST}],
+    ex:{pre:[r.ct[0]],drill:[p.ct[0]],hw:o.hw||[],ws:o.ws||[],key:n.ct.slice(0,2)},
     worksheet:o.ws||null};
 }
 var TPS=["5Es","Think-Pair-Share"],COOP=["ពន្យល់ និងអនុវត្ត","ក្រុមសហការ"];
