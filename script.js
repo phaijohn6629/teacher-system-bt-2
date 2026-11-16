@@ -1973,15 +1973,16 @@ function lpTexify(s){
   }
   return out;
 }
+function lpDF(x){return String(x).replace(/\\frac(?![A-Za-z])/g,"\\dfrac")}   /* ប្រភាគធំ (display style) ក្នុងបន្ទាត់ ដូច \dfrac */
 function lpMath(t){
   t=String(t==null?"":t);
   t=t.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/).map(function(p,i){return i%2?p:lpTexify(p)}).join("");
   var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
   while((m=re.exec(t))){
     out+=lpTx(t.slice(i,m.index));
-    if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];if(/^\s*\\square\s*$/.test(src))src="\\boxed{\\phantom{00000}}";   /* រូបមន្តដែលបម្លែងមិនបាន → ប្រអប់ទទេសម្រាប់សរសេរដោយដៃ */
+    if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];if(/^\s*\\square\s*$/.test(src))src="\\boxed{\\phantom{00000}}";src=lpDF(src);   /* រូបមន្តដែលបម្លែងមិនបាន → ប្រអប់ទទេសម្រាប់សរសេរដោយដៃ */
       if(m[1]!=null)out+=K.renderToString(src,{displayMode:true,throwOnError:false,strict:"ignore"});
-      else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(p,{throwOnError:false,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
+      else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(lpDF(p),{throwOnError:false,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
     else out+=esc(m[0]);
     i=m.index+m[0].length;
   }
