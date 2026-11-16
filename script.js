@@ -1890,17 +1890,17 @@ lpMerge();
 /* 🔣 KaTeX ៖ «$…$» ឬ «$$…$$» → រូបមន្ត · អត្ថបទក្រៅ $ ត្រូវ esc() ជានិច្ច (មិនទុកចិត្ត HTML) · KaTeX មិនទាន់ផ្ទុក → បង្ហាញអត្ថបទដើម ហើយគូរម្ដងទៀតពេលផ្ទុករួច */
 /* ✂️ កន្សោមគណិតវែង → បំណែក (បំបែកត្រង់ = ⇒ ⇔ ជាន់ក្រៅវង់ក្រចក · រួចត្រង់ + − បើវែង) ដើម្បីកុំឱ្យ KaTeX ដាច់កណ្ដាលរូបមន្តក្នុងជួរតូច */
 function lpSplit(s){
-  if(/\\begin|\\left|\\right|\\text/.test(s))return[s];
-  var P=[],cur="",d=0,i=0,c;
+  var P=[],cur="",d=0,e=0,i=0,c;   /* d = ជម្រៅ {([ · e = ជម្រៅ \begin…\end / \left…\right (មិនកាត់ខាងក្នុង) */
   function brk(){if(cur.trim())P.push(cur);cur=""}
   while(i<s.length){
     c=s[i];
     if(c==="\\"){var m=/^\\[a-zA-Z]+/.exec(s.slice(i));
-      if(m){var w=m[0];if(d===0&&/^\\(iff|Rightarrow|Longrightarrow|Leftrightarrow|approx)$/.test(w))brk();cur+=w;i+=w.length;continue}
+      if(m){var w=m[0];if(w==="\\begin"||w==="\\left")e++;else if(w==="\\end"||w==="\\right")e=Math.max(0,e-1);
+        if(d===0&&e===0&&/^\\(iff|Rightarrow|Longrightarrow|Leftrightarrow|approx)$/.test(w))brk();cur+=w;i+=w.length;continue}
       cur+=c+(s[i+1]||"");i+=2;continue}
     if(c==="{"||c==="("||c==="[")d++;else if(c==="}"||c===")"||c==="]")d=Math.max(0,d-1);
-    if(d===0&&c==="="&&!/[<>!]/.test(s[i-1]||""))brk();
-    else if(d===0&&(c==="+"||c==="-")&&cur.replace(/\s/g,"").length>22&&!/[\^_{(=]\s*$/.test(cur)&&cur.trim())brk();
+    if(d===0&&e===0&&c==="="&&!/[<>!]/.test(s[i-1]||""))brk();
+    else if(d===0&&e===0&&(c==="+"||c==="-")&&cur.replace(/\s/g,"").length>22&&!/[\^_{(=]\s*$/.test(cur)&&cur.trim())brk();
     cur+=c;i++;
   }
   brk();return P.length?P:[s];
@@ -1909,7 +1909,7 @@ function lpMath(t){
   t=String(t==null?"":t);var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
   while((m=re.exec(t))){
     out+=esc(t.slice(i,m.index));
-    if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];
+    if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];if(/^\s*\\square\s*$/.test(src))src="\\boxed{\\phantom{00000}}";   /* រូបមន្តដែលបម្លែងមិនបាន → ប្រអប់ទទេសម្រាប់សរសេរដោយដៃ */
       if(m[1]!=null)out+=K.renderToString(src,{displayMode:true,throwOnError:false,strict:"ignore"});
       else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(p,{throwOnError:false,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
     else out+=esc(m[0]);
@@ -1919,7 +1919,17 @@ function lpMath(t){
 }
 /* 📈 រូបភាពគូរស្វ័យប្រវត្តិ (SVG ពី fig.js · ពាក្យបញ្ជា FIG) ក្នុងជួរឈរខ្លឹមសារ */
 function lpFg(a){if(!a||!a.length||!window.FIG)return"";return a.map(function(f){try{return"<div class=lp-fg>"+FIG.svg(f)+"</div>"}catch(e){return""}}).join("")}
+/* ✂️ ចំណុចវែងពេក (>៣២០ តួ) → បំបែកជាចំណុចខ្លីៗ (ត្រង់ «។» ឬចន្លោះ · មិនកាត់ក្នុង $…$) ដើម្បីឱ្យតារាងបំបែកទំព័របាន មិនដាច់/កាត់ */
+function lpChunk(x){
+  x=String(x==null?"":x);if(x.length<=320)return[x];
+  var out=[],cur="",d=0,i,c;
+  for(i=0;i<x.length;i++){c=x[i];cur+=c;if(c==="$")d^=1;
+    if(!d&&c===" "&&cur.length>=120&&(/[។៖:;]\s$/.test(cur)||cur.length>=230)){out.push(cur.trim());cur=""}}
+  if(cur.trim())out.push(cur.trim());
+  return out;
+}
 function lpLi(a,fg){
+  a=a&&[].concat.apply([],a.map(lpChunk));
   var f=(fg&&window.FIG)?fg.map(function(x){try{return"<li class=lp-fgli><div class=lp-fg>"+FIG.svg(x)+"</div></li>"}catch(e){return""}}).join(""):"";
   return((a&&a.length)||f)?"<ul class=lp-ul>"+(a||[]).map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("")+f+"</ul>":"";
 }
@@ -2118,9 +2128,9 @@ function lpPaginate(){
     undo(a);
     var sb=u.rows&&u.rows[u.rows.length-1];
     if(sb&&sb.querySelector("ul li")){
-      var F=[.85,.7,.55,.4,.25];
+      var F=[.9,.8,.7,.6,.5,.4,.3,.22,.15,.1,.06,.03],fresh=body.children.length<=1;   /* ជួរខ្ពស់ជាងទំព័រ → បំបែកជាច្រើនជាន់ (ជួរដែលសល់ត្រូវបំបែកម្ដងទៀតនៅទំព័របន្ទាប់) */
       for(var q=0;q<F.length;q++){
-        var sp=split(sb,F[q]);if(!sp.rest||sp.kept<2)continue;
+        var sp=split(sb,F[q]);if(!sp.rest||sp.kept<(fresh?1:2))continue;
         var v={pre:u.pre,rows:u.rows.slice(0,-1).concat([sp.a]),th:u.th};a=put(v);
         if(!over()){UM.splice(idx+1,0,{pre:[],rows:[sp.b],th:u.th});return}
         undo(a)}}
@@ -2133,9 +2143,9 @@ function lpPaginate(){
 }
 /* 📐 រូបមន្តដែលវែងជាងជួរឈរ → បង្រួមទំហំស្វ័យប្រវត្តិ (មិនកាត់ មិនធ្លាយ) */
 function lpFitMath(root){
-  [].forEach.call(root.querySelectorAll(".lp-tb td .lp-mp"),function(m){
-    var td=m.closest("td"),w=td?td.clientWidth-20:0,sw=m.scrollWidth;
-    if(w>40&&sw>w){m.style.zoom=Math.max(.6,w/sw).toFixed(3)}});
+  [].forEach.call(root.querySelectorAll(".lp-tb td .lp-mp,.lp-tb td .katex-display"),function(m){
+    var td=m.closest("td"),w=td?td.clientWidth-20:0,h=m.querySelector(".katex-html"),sw=Math.max(m.scrollWidth,h?h.getBoundingClientRect().width:0);
+    if(w>40&&sw>w){m.style.zoom=Math.max(.34,w/sw).toFixed(3)}});
 }
 function lpPages(){clearTimeout(lpPT);lpPT=setTimeout(function(){if(lpPaginate())lpPR=0;else if(lpPR++<8)lpPages()},90)}
 /* 🗓️ កាលបរិច្ឆេទ + សប្តាហ៍ → បន្ទាត់ «កាលបរិច្ឆេទ» នៃក្បាល A4 · លេខខ្មែរ · ហ្វុង Muol Light · មិនជ្រើស → ចំណុចចុចៗទទេ */
@@ -2239,13 +2249,15 @@ function lpGen1(){
   $("lpSt").textContent="⏳ កំពុងបង្កើតខ្លឹមសារស្វ័យប្រវត្តិ (ផ្ទុកម៉ាស៊ីនលំហាត់…)";
   return lpAutoBuild(g,l,need).then(lpGenDo,function(){return lpGenDo()});
 }
+/* ⚠️ រូបមន្តដែលបម្លែងពីឯកសារមិនបាន (□) → ប្រាប់គ្រូឱ្យបំពេញដោយដៃមុនព្រីន */
+function lpSqNote(P){var n=(JSON.stringify(P).match(/\\\\square/g)||[]).length;return n?" · ✏️ មាន "+kn(n)+" ប្រអប់ □ ត្រូវបំពេញរូបមន្តដោយដៃ":""}
 function lpGenDo(){
   var g=$("lpG").value,l=$("lpL").value,sel=lpSel(),sb=sel.map(function(x){return x.n}).join("+"),CB=lpCombine(g,l,sel),P=CB.P;
   lpPeople();lpMeta();lpHeader();lpFooter();
   if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sel.length?"ចំណុចរងដែលបានជ្រើស":"មេរៀននេះ")+"ទេ (មានសម្រាប់ ថ្នាក់ទី១២ មេរៀន ១១ · ២២ · ២៣ · ៣១ · ៣២ តាមចំណុចរងដែលមានក្នុងបញ្ជី)";return false}
   if(P.sug&&lpSugK!==g+"_"+l+"#"+sb){lpSugK=g+"_"+l+"#"+sb;[["lpM",P.sug[0]],["lpT",P.sug[1]]].forEach(function(x){var e=$(x[0]);for(var i=0;i<e.options.length;i++)if(e.options[i].text.indexOf(x[1])===0){e.value=e.options[i].value;break}});lpMeta()}
   lpRender(P);lpPages();
-  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(P.auto||sel.some(function(x){var Q=lessonPlanDB[g+"_"+l+"#"+x.n];return Q&&Q.auto})?" · 🤖 មានចំណុចបង្កើតស្វ័យប្រវត្តិ (ពិនិត្យមុនប្រើ)":"")+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"");
+  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(P.auto||sel.some(function(x){var Q=lessonPlanDB[g+"_"+l+"#"+x.n];return Q&&Q.auto})?" · 🤖 មានចំណុចបង្កើតស្វ័យប្រវត្តិ (ពិនិត្យមុនប្រើ)":"")+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"")+lpSqNote(P);
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
 }
 /* 📑 ចំណុចរងនៃមេរៀន ពីកម្មវិធីសិក្សាលម្អិត CUR[g].W («1. ឯកតានិមិត្ត» → [1,"ឯកតានិមិត្ត"]) · ក. ខ. (ចំណុចតូចជាងនេះ) មិនរាប់ */
