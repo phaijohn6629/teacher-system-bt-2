@@ -1197,3 +1197,5 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 .cup tbody.cumo{break-after:avoid;page-break-after:avoid}
 .cup tr.cumo td{background:#e8eefc!important;font-weight:700;text-align:left;padding:1mm 2mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cup tr.cuftr td{border:0!important}
+.cup.cusheet{break-after:page;page-break-after:always;padding:0}
+.cup.cusheet:last-child{break-after:auto;page-break-after:auto}

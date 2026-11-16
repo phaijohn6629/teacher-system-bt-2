@@ -204,6 +204,43 @@ function printTidy(html){
   });
   return d.innerHTML;
 }
+/* 📄 ចែកទំព័រ A4 ដោយខ្លួនឯង (ដូចកិច្ចតែងការ) ៖ វាស់កម្ពស់ក្នុងទំព័រលាក់ · សប្ដាហ៍នីមួយៗមិនដាច់ · ក្បាលតារាងត្រូវដដែលគ្រប់ទំព័រ · មិនពឹង Safari ឱ្យកាត់ទំព័រ */
+function paginate(top,bodyHtml){
+  var LIM=Math.round(258*3.7795),host=document.createElement("div"),S,sheets=[],pending=[];
+  host.style.cssText="position:absolute;left:-99999px;top:0;width:180mm";document.body.appendChild(host);
+  function newSheet(){S=document.createElement("div");S.className="pg cup cusheet";host.appendChild(S);sheets.push(S)}
+  function over(){return S.offsetHeight>LIM}
+  function putBlock(el){S.appendChild(el);if(over()&&S.children.length>1){S.removeChild(el);newSheet();S.appendChild(el)}}
+  function putTable(t){
+    var th=t.querySelector("thead"),gs=[].slice.call(t.children).filter(function(c){return c.tagName==="TBODY"});
+    if(!th){pending.forEach(putBlock);pending=[];putBlock(t);return}
+    var lead=pending,cur=null;pending=[];
+    function open(){cur=t.cloneNode(false);cur.appendChild(th.cloneNode(true));lead.forEach(function(h){S.appendChild(h)});lead=[];S.appendChild(cur)}
+    gs.forEach(function(g){
+      if(!cur)open();
+      cur.appendChild(g);
+      if(over()){
+        cur.removeChild(g);
+        if(!cur.querySelector("tbody")){S.removeChild(cur);[].slice.call(S.children).forEach(function(c){if(c.tagName==="H3"||c.tagName==="H4"){lead.push(c)}});lead.forEach(function(h){if(h.parentNode===S)S.removeChild(h)})}
+        newSheet();cur=null;open();cur.appendChild(g);
+      }
+    });
+  }
+  newSheet();S.insertAdjacentHTML("beforeend",top);
+  var d=document.createElement("div");d.innerHTML=bodyHtml;
+  [].slice.call(d.children).forEach(function(c){
+    if(/^H[34]$/.test(c.tagName)){pending.push(c);return}
+    var ts=c.tagName==="TABLE"?[c]:[].slice.call(c.querySelectorAll("table.cut"));
+    if(ts.length)ts.forEach(putTable);else{pending.forEach(putBlock);pending=[];putBlock(c)}
+  });
+  pending.forEach(putBlock);
+  /* បាតទំព័រ (ហត្ថលេខា) មិនឱ្យនៅតែឯងលើទំព័រថ្មី */
+  if(sheets.length>1){var L=sheets[sheets.length-1],lt=L.querySelectorAll("table.cut"),t2=lt[lt.length-1];
+    if(t2&&t2.querySelectorAll("tbody").length===1&&t2.querySelector("tr.cuftr")&&t2.querySelector("thead")){
+      var P=sheets[sheets.length-2].querySelectorAll("table.cut"),pt=P[P.length-1],pb=pt&&pt.querySelectorAll("tbody");
+      if(pb&&pb.length>1)t2.insertBefore(pb[pb.length-1],t2.querySelector("tbody"))}}
+  var out=sheets.map(function(x){return x.outerHTML}).join("");document.body.removeChild(host);return out;
+}
 function printHtml(){
   var body="";
   if(cuV==="b")body=baseHtml();else if(cuV==="s")body="<h3>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));else body=planHtml(weeksFor(cuM),cuQ).html;
@@ -214,10 +251,11 @@ function printHtml(){
     body=ix>=0?body.slice(0,ix)+"<tr class=cuftr><td colspan="+cs+">"+ftr+"</td></tr>"+body.slice(ix):body+ftr}
   body=printTidy(body);
   var bt=(document.querySelector(".brand-logo")||{}).src||"",sch=(window.inf&&inf().school)||"វិទ្យាល័យបឹងត្របែក";
-  return"<div class='pg cup'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+  var top="<div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
     "<div style='display:flex;align-items:center;gap:10px;margin:4px 0 6px'>"+(bt?"<img src='"+bt+"' class=cul1 alt=''>":"")+"<div><div class=moul style='text-align:left'>"+esc2(sch)+"</div><div>សាលារៀនជំនាន់ថ្មី (NGS)</div></div></div>"+
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:6px 0 2px'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</h2>"+
-    "<div style='text-align:center;margin-bottom:4px'>មុខវិជ្ជា "+esc2(C[cuG].name)+" ឆ្នាំសិក្សា "+esc2(C[cuG].year)+"</div>"+body+"</div>";
+    "<div style='text-align:center;margin-bottom:4px'>មុខវិជ្ជា "+esc2(C[cuG].name)+" ឆ្នាំសិក្សា "+esc2(C[cuG].year)+"</div>";
+  return paginate(top,body);
 }
 $("cuPr").onclick=function(){fontsOk().then(function(){doPrintNow(printHtml())})};
 /* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */
