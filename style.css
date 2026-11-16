@@ -1180,3 +1180,8 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
   body.lpp #lpSheets *{box-shadow:none!important;text-shadow:none!important}
   body.lpp #lpSheets :is(button,select,.no-print){display:none!important}
 }
+
+@media print{
+  html.lpp,body.lpp{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;position:static!important;display:block!important;background:#fff!important}
+  body.lpp #prt,body.lpp dialog,body.lpp .toast{display:none!important}
+}
