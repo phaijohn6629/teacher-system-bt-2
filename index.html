@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=114">
+<link rel="stylesheet" href="style.css?v=118">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -353,7 +353,7 @@
         <div class="lp-sg" id="lpSG">
           <div class="lp-sc">
             <div class="lp-sx"><div class="lp-tt"><span>បានឃើញ និងឯកភាព</span><span class="lp-mu">ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSM">…</span></div>
-            <div class="lp-sx"><div class="lp-tt"><span>បានឃើញ និងត្រួតពិនិត្យ</span><span class="lp-mu">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div>
+            <div class="lp-sx"><div class="lp-tt"><span>បានឃើញ និងត្រួតពិនិត្យ</span><span class="lp-mu" id="lpSHT">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div>
             <div class="lp-sx"><div class="lp-tt"><span class="lp-ln" id="lpSL"></span><span class="lp-dt" id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span class="lp-mu">គ្រូបង្រៀន</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpST">…</span></div>
           </div>
         </div>
@@ -648,7 +648,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=116"></script>
+<script src="script.js?v=119"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

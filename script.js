@@ -2080,11 +2080,18 @@ function lpPeople(){
   if(sig===lpPSig&&$("lpMg").options.length)return;lpPSig=sig;
   var all=T.map(function(t){return"<option value='"+esc(t.id)+"'>"+esc(t.name)+"</option>"}).join(""),role=function(r){var t=T.filter(function(x){return x.rl===r})[0];return t?String(t.id):null};
   function fill(id,fixed,def){
-    var e=$(id),prev=e.value;e.innerHTML="<option value='__f'>"+esc(fixed)+"</option>"+all;
+    var e=$(id),prev=e.value;e.innerHTML=(fixed?"<option value='__f'>"+esc(fixed)+"</option>":"")+all;
     var has=function(v){return v!=null&&[].some.call(e.options,function(o){return o.value===v})};
-    e.value=has(prev)?prev:has(def)?def:"__f";
+    e.value=has(prev)?prev:has(def)?def:fixed?"__f":(e.options[0]?e.options[0].value:"");
   }
-  fill("lpMg","គីម មិថុនា","__f");fill("lpTh","មេត បញ្ញារិទ្ធ",role("ប្រធាន"));
+  fill("lpMg","គីម មិថុនា","__f");fill("lpTh","",role("ប្រធាន"));
+}
+/* ចំណងជើងប្រធានក្រុមបច្ចេកទេស តាមឈ្មោះដែលបានជ្រើស ៖ ម៉េត បញ្ញារិទ្ធ → ជ.ប្រធាន · ផៃ ចន → ប្រធាន · ផ្សេងទៀត → តាមតួនាទីក្នុងបញ្ជីគ្រូ */
+var LPHT={"ម៉េត បញ្ញារិទ្ធ":"ជ.ប្រធានក្រុមបច្ចេកទេស","ផៃ ចន":"ប្រធានក្រុមបច្ចេកទេស"};
+function lpHeadTitle(){
+  var e=$("lpTh"),n=(lpNm("lpTh")||"").replace(/\s+/g," ").trim();if(LPHT[n])return LPHT[n];
+  var t=(typeof data!=="undefined"&&data&&data.filter?data:[]).filter(function(x){return x&&String(x.id)===e.value})[0];
+  return t&&t.rl==="អនុប្រធាន"?"ជ.ប្រធានក្រុមបច្ចេកទេស":"ប្រធានក្រុមបច្ចេកទេស";
 }
 function lpNm(id){var e=$(id);return e&&e.selectedIndex>=0?e.options[e.selectedIndex].text:""}
 function lpMe(){return(typeof who!=="undefined"&&who&&(who.name||who.id))||""}
@@ -2095,7 +2102,7 @@ function lpFooter(){
   $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
   var lu="";try{lu=window.KhCal?KhCal.fmt(yy,mm+1,dd):""}catch(e){}$("lpSL").textContent=lu;
   var tn=lpMe()||"…";$("lpST").textContent=tn;$("lpHT").textContent=tn;
-  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");lpPages();
+  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");$("lpSHT").textContent=lpHeadTitle();lpPages();
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */
 function lpPrint(){
@@ -2143,6 +2150,7 @@ function renderLp(){
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);lpFooter();lpMeta();
     $("lpM").onchange=$("lpT").onchange=function(){lpMeta()};
+    $("lpMg").onchange=$("lpTh").onchange=function(){lpFooter()};
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});
     $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=function(){lpSubs()};$("lpPr").onclick=lpPrint;
     $("lpGen").onclick=generateLessonPlan;
