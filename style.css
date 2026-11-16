@@ -1147,6 +1147,7 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 
 .lp-ul li.lp-fgli{padding-left:0}.lp-ul li.lp-fgli::before{content:none}
 .lp-fg{margin:3px 0;text-align:center}.lp-fg .fig{max-width:100%}.lp-fg svg{width:auto!important;height:auto!important;max-width:100%;max-height:44mm}
+.lp-im{display:block;margin:3px auto;max-width:100%;max-height:44mm;width:auto;height:auto}
 .lp-wa{background:repeating-linear-gradient(transparent,transparent 5.8mm,#e2e8f0 5.8mm,#e2e8f0 6mm)}
 
 /* ===== ជួរឈរតារាងថេរ · រូបមន្តមិនធ្លាយ · Worksheet បង្រួម ===== */

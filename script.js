@@ -1871,7 +1871,7 @@ function lpDetail(t){var k=String(t).split(" (")[0];return LPD[k]||LPD[Object.ke
    obj = វត្ថុបំណង ៣ វិស័យ (ប្រភេទ: បញ្ជីអក្សរ) · mat = សម្ភារៈ · dur = រយៈពេលសរុប (នាទី) · steps[5] = {n: ឈ្មោះជំហាន, t: នាទី, tc: សកម្មភាពគ្រូ[], ct: ខ្លឹមសារមេរៀន[], st: សកម្មភាពសិស្ស[]} */
 var lessonPlanDB={};   /* ទិន្នន័យថ្នាក់ទី១២ នៅក្នុង lp12.js (window.LP_DB) · lessonplans.js (LPX) */
 /* 📦 ផ្ទុកឯកសារទិន្នន័យតាមថ្នាក់ (lp{g}.js → window.LP_DB) ពេលគ្រូជ្រើសថ្នាក់ · បន្ថែមថ្នាក់ថ្មី = បន្ថែមឈ្មោះឯកសារ (មានលេខ ?v=) ក្នុង LPF + sw.js + tools/bump.py ស្វ័យប្រវត្តិ */
-var LPF={7:"lp7.js?v=2",8:"lp8.js?v=2",9:"lp9.js?v=2",10:"lp10.js?v=2",11:"lp11.js?v=2",12:"lp12.js?v=2"},LPP={};
+var LPF={7:"lp7.js?v=3",8:"lp8.js?v=3",9:"lp9.js?v=2",10:"lp10.js?v=3",11:"lp11.js?v=3",12:"lp12.js?v=2"},LPP={};
 function lpMerge(){
   if(window.LP_DB)Object.keys(LP_DB).forEach(function(k){lessonPlanDB[k]=LP_DB[k]});
   if(window.LPX)Object.keys(LPX).forEach(function(k){lessonPlanDB[k]=LPX[k]});   /* កិច្ចតែងការពី lessonplans.js មានអាទិភាពខ្ពស់ជាង */
@@ -1905,17 +1905,23 @@ function lpSplit(s){
   }
   brk();return P.length?P:[s];
 }
+/* 🖼️ រូបភាពក្នុងកិច្ចតែងការ «⟦img:hash⟧» → <img> ពី window.LP_IMG (data:image ក្នុង lp{g}.js · ឆ្លងកាត់ safeSrc) · អត្ថបទផ្សេង esc() */
+function lpTx(t){
+  return String(t).split(/⟦img:([0-9a-f]{10})⟧/).map(function(p,i){
+    if(i%2===0)return esc(p);
+    var u=window.LP_IMG&&safeSrc(window.LP_IMG[p]);return u?"<img class=lp-im alt='' src='"+u+"'>":""}).join("");
+}
 function lpMath(t){
   t=String(t==null?"":t);var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
   while((m=re.exec(t))){
-    out+=esc(t.slice(i,m.index));
+    out+=lpTx(t.slice(i,m.index));
     if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];if(/^\s*\\square\s*$/.test(src))src="\\boxed{\\phantom{00000}}";   /* រូបមន្តដែលបម្លែងមិនបាន → ប្រអប់ទទេសម្រាប់សរសេរដោយដៃ */
       if(m[1]!=null)out+=K.renderToString(src,{displayMode:true,throwOnError:false,strict:"ignore"});
       else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(p,{throwOnError:false,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
     else out+=esc(m[0]);
     i=m.index+m[0].length;
   }
-  return out+esc(t.slice(i));
+  return out+lpTx(t.slice(i));
 }
 /* 📈 រូបភាពគូរស្វ័យប្រវត្តិ (SVG ពី fig.js · ពាក្យបញ្ជា FIG) ក្នុងជួរឈរខ្លឹមសារ */
 function lpFg(a){if(!a||!a.length||!window.FIG)return"";return a.map(function(f){try{return"<div class=lp-fg>"+FIG.svg(f)+"</div>"}catch(e){return""}}).join("")}
@@ -1931,7 +1937,7 @@ function lpChunk(x){
 function lpLi(a,fg){
   a=a&&[].concat.apply([],a.map(lpChunk));
   var f=(fg&&window.FIG)?fg.map(function(x){try{return"<li class=lp-fgli><div class=lp-fg>"+FIG.svg(x)+"</div></li>"}catch(e){return""}}).join(""):"";
-  return((a&&a.length)||f)?"<ul class=lp-ul>"+(a||[]).map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("")+f+"</ul>":"";
+  return((a&&a.length)||f)?"<ul class=lp-ul>"+(a||[]).map(function(x){return/^\s*(⟦img:[0-9a-f]{10}⟧\s*)+$/.test(x)?"<li class=lp-fgli>"+lpMath(x)+"</li>":"<li>"+lpMath(x)+"</li>"}).join("")+f+"</ul>":"";
 }
 var lpLast=null,lpSugK="";
 /* ⏱️ រយៈពេលបង្រៀន ៤៥ ឬ ៩០ នាទី (ជំហាននីមួយៗកាត់/ពង្រីកតាមសមាមាត្រ · ៩០ = ២ ម៉ោង) */
