@@ -1871,7 +1871,7 @@ function lpDetail(t){var k=String(t).split(" (")[0];return LPD[k]||LPD[Object.ke
    obj = វត្ថុបំណង ៣ វិស័យ (ប្រភេទ: បញ្ជីអក្សរ) · mat = សម្ភារៈ · dur = រយៈពេលសរុប (នាទី) · steps[5] = {n: ឈ្មោះជំហាន, t: នាទី, tc: សកម្មភាពគ្រូ[], ct: ខ្លឹមសារមេរៀន[], st: សកម្មភាពសិស្ស[]} */
 var lessonPlanDB={};   /* ទិន្នន័យថ្នាក់ទី១២ នៅក្នុង lp12.js (window.LP_DB) · lessonplans.js (LPX) */
 /* 📦 ផ្ទុកឯកសារទិន្នន័យតាមថ្នាក់ (lp{g}.js → window.LP_DB) ពេលគ្រូជ្រើសថ្នាក់ · បន្ថែមថ្នាក់ថ្មី = បន្ថែមឈ្មោះឯកសារ (មានលេខ ?v=) ក្នុង LPF + sw.js + tools/bump.py ស្វ័យប្រវត្តិ */
-var LPF={12:"lp12.js?v=2"},LPP={};
+var LPF={11:"lp11.js?v=2",12:"lp12.js?v=2"},LPP={};
 function lpMerge(){
   if(window.LP_DB)Object.keys(LP_DB).forEach(function(k){lessonPlanDB[k]=LP_DB[k]});
   if(window.LPX)Object.keys(LPX).forEach(function(k){lessonPlanDB[k]=LPX[k]});   /* កិច្ចតែងការពី lessonplans.js មានអាទិភាពខ្ពស់ជាង */
@@ -2266,7 +2266,7 @@ function lpSubTxt(){return lpSel().map(function(x){return x.t})}
 /* 🧩 បញ្ចូលកិច្ចតែងការច្រើនចំណុចរងជាមួយគ្នា (៩០ នាទី) ៖ វត្ថុបំណង/ខ្លឹមសារ/លំហាត់ត្រូវបានបន្ត · ម៉ោងគោល ៤៥ (ត្រូវគុណតាមរយៈពេលពេលបង្ហាញ) */
 function lpCombine(g,l,sel){
   var ps=[],miss=[];
-  (sel.length?sel:[{n:"",t:""}]).forEach(function(x){var P=lessonPlanDB[g+"_"+l+(x.n?"#"+x.n:"")];if(P)ps.push(P);else miss.push(x.t||"ទាំងមេរៀន")});
+  (sel.length?sel:[{n:"",t:""}]).forEach(function(x){var P=lessonPlanDB[g+"_"+l+(x.n?"#"+x.n:"")];if(P){if(ps.indexOf(P)<0)ps.push(P)}else miss.push(x.t||"ទាំងមេរៀន")});   /* កិច្ចតែងការតែមួយអាចចុះបញ្ជីក្នុងចំណុចរងច្រើន → រួមតែម្ដង */
   if(!ps.length)return{P:null,miss:miss};
   if(ps.length===1)return{P:ps[0],miss:miss};
   var cat=function(f){var o=[];ps.forEach(function(P){(f(P)||[]).forEach(function(x){if(o.indexOf(x)<0)o.push(x)})});return o};
