@@ -2011,7 +2011,9 @@ function lpTexify(s){
   }
   return out;
 }
-function lpDF(x){return String(x).replace(/\\frac(?![A-Za-z])/g,"\\dfrac")}   /* ប្រភាគធំ (display style) ក្នុងបន្ទាត់ ដូច \dfrac */
+function lpDF(x){   /* \frac → \dfrac · រូបមន្តមាន lim/sum/prod/int → \displaystyle (ដែនកំណត់ដាក់ក្រោម lim ស្អាត) */
+  x=String(x).replace(/\\frac(?![A-Za-z])/g,"\\dfrac");
+  return/\\(lim|sum|prod|int|limsup|liminf)(?![A-Za-z])/.test(x)&&!/^\s*\\displaystyle/.test(x)?"\\displaystyle "+x:x}
 function lpMath(t){
   t=String(t==null?"":t);
   t=t.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/).map(function(p,i){return i%2?p:lpTexify(p)}).join("");

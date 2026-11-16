@@ -69,4 +69,8 @@ if(window.EXP&&EXP.html){
 }
 ok(/data-ex='pr\|ka'/.test(X)&&/data-ex='pr\|kb'/.test(X),"editor has separate answer-key buttons ក / ខ");
 ok(/isK=\/\^k\[ab\]\?\$\/\.test\(kind\)/.test(X)&&/isB=kind==="b"\|\|kind==="kb"/.test(X),"printIt handles ka/kb");
+/* ៧) មើលជាមុន ក/ខ ដាច់ពីគ្នា + សង្ខេបវិញ្ញាសាតាមប្លង់តុក្នុងប្រអប់ប្រឡងអនឡាញ */
+ok(/data-ex='pv\|a'/.test(X)&&/data-ex='pv\|b'/.test(X),"preview has separate ក / ខ buttons");
+ok(/function pvOf\(E\)/.test(X)&&/EXP\.html\(P\(X\.E\),\{v:pvOf\(X\.E\)/.test(X),"preview renders the selected paper");
+ok(/function abSummary\(E\)/.test(X)&&/abSummary\(E\)\+"<div id=exV>"/.test(X),"online box lists who gets paper ក / ខ");
 print("exam: checks "+n+" bad "+bad);

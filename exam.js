@@ -214,13 +214,20 @@ function editor(){
         "<div class=ex-its>"+s.it.map(function(x,j){return"<div class=ex-it><b>"+EXP.SUB[j]+".</b><textarea rows=1 data-ei='"+i+"|"+j+"' spellcheck=false>"+esc(x.q)+"</textarea><button type=button data-ex='ri|"+i+"|"+j+"' title='បង្កើតលំហាត់នេះឡើងវិញ'>🔄</button></div>"}).join("")+"</div></div>"}).join("")+
     "<button type=button data-ex=add style='width:100%'>＋ ផ្នែកថ្មី</button>"+
     "<p class=note>💡 ✏️ កែអត្ថបទលំហាត់ផ្ទាល់បាន (LaTeX ក្នុង $…$) · ពេលកែដោយដៃ ចម្លើយក្នុង «🔑 ចម្លើយ» មិនប្ដូរតាមទេ</p></div></div>"+
-    "<div class=card><h3 style='margin-top:0'>👁️ មើលជាមុន</h3><div id=exPrev class=ex-prev></div></div>";
+    "<div class=card><h3 style='margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap'>👁️ មើលជាមុន"+(E.ab?"<span style='display:inline-flex;gap:4px;margin-left:auto'><button type=button data-ex='pv|a' class='"+(pvOf(E)==="a"?"primary":"")+"'>វិញ្ញាសា ក</button><button type=button data-ex='pv|b' class='"+(pvOf(E)==="b"?"primary":"")+"'>វិញ្ញាសា ខ</button></span>":"")+"</h3><div id=exPrev class=ex-prev></div></div>";
   body().innerHTML=h;body().dataset.exid=E.id;prev();
   [].forEach.call(body().querySelectorAll(".ex-it textarea"),function(t){t.style.height=Math.max(36,t.scrollHeight)+"px"});
 }
 var pvT=0;
 /* មើលជាមុន ៖ ខ្លឹមសារដដែល → មិនគូរឡើងវិញ (កុំឱ្យលោតចេញលោតចូល) */
-function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p||!X.E)return;var h="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{lbl:X.E.ab?"ក":""});
+function pvOf(E){return E&&E.ab&&X.pv==="b"?"b":"a"}   /* មើលជាមុន ៖ ក ឬ ខ */
+/* 📋 សិស្សណាបានវិញ្ញាសាណា (តាមប្លង់តុ) ៖ បង្ហាញក្នុងប្រអប់ប្រឡងអនឡាញ */
+function abSummary(E){
+  if(!E||!E.ab)return"";var c=myCls().filter(function(x){return x.n===E.cls})[0];if(!c||!c.st||!c.st.length)return"";
+  var A=[],B=[];c.st.forEach(function(s,i){(abFor(E,c,s,i)==="ខ"?B:A).push(s.n||("សិស្ស "+(i+1)))});
+  var f=function(L){return L.slice(0,60).map(esc).join(" · ")+(L.length>60?" …":"")};
+  return"<div class=note style='margin:6px 0;line-height:1.7'>📄 <b>វិញ្ញាសា ក</b> ("+kn(A.length)+" នាក់)៖ "+f(A)+"<br>📄 <b>វិញ្ញាសា ខ</b> ("+kn(B.length)+" នាក់)៖ "+f(B)+"<br><small>តាមប្លង់តុ ៖ សិស្សអង្គុយក្បែរគ្នាទទួលវិញ្ញាសាខុសគ្នា</small></div>"}
+function prev(){clearTimeout(pvT);pvT=setTimeout(function(){var p=$("exPrev");if(!p||!X.E)return;var h="<style>"+EXP.css+"</style>"+EXP.html(P(X.E),{v:pvOf(X.E),lbl:X.E.ab?(pvOf(X.E)==="b"?"ខ":"ក"):""});
   if(p.dataset.done==="1"&&p._h===h)return;p._h=h;p.dataset.done="";p.innerHTML=h;math(p).then(function(){EXP.fit&&EXP.fit(p);EXP.shrink&&EXP.shrink(p);p.dataset.done="1"})},250)}
 /* ---------- បោះពុម្ព ---------- */
 /* ឈ្មោះឯកសារពេលព្រីន (= document.title) · លេខរៀងស្វ័យប្រវត្តិតាមប្រភេទប្រឡង
@@ -302,7 +309,7 @@ function onlineBox(){
   var E=X.E;
   return"<div class=ex-on><div><b>📱 កំពុងប្រឡងអនឡាញ</b> · នៅសល់ <b id=exLeft class=ex-left>"+left(E.on.endMs)+"</b> · 🔑 លេខកូដចូល <b class=ex-code>"+esc(E.on.code)+"</b></div>"+
     "<div class=bar style='margin:6px 0'><button type=button data-ex=link>🔗 តំណ/QR</button><button type=button data-ex='ext|5'>＋៥ នាទី</button><button type=button data-ex='ext|10'>＋១០ នាទី</button><button type=button class=danger data-ex=stop>⏹ បិទប្រឡង</button></div>"+
-    "<div id=exV>"+viewList()+"</div></div>";
+    abSummary(E)+"<div id=exV>"+viewList()+"</div></div>";
 }
 function showLink(){
   var E=X.E,u=examLink(E.id),d=$("exLink");if(!d){d=document.createElement("dialog");d.id="exLink";document.body.appendChild(d)}
@@ -338,6 +345,7 @@ function act(a,q){
       .then(function(){X.list=X.list.filter(function(z){return z.id!==y.id});lPut();try{var st=ST();if(st)st.removeItem("exC_"+y.id)}catch(e){}render();notify("បានលុបវិញ្ញាសា")},function(){alert("មិនអាចលុបបានទេ")});return}
   if(!E)return;
   if(a==="back"){if(X.dirty)save(true);unwatch();upList(E);X.E=null;X.fresh=false;render();return}   /* បញ្ជីបង្ហាញភ្លាម (រួមទាំងការកែចុងក្រោយ) · ធ្វើបច្ចុប្បន្នភាពនៅពីក្រោយ */
+  if(a==="pv"){X.pv=q[1]==="b"?"b":"a";[].forEach.call(document.querySelectorAll("[data-ex^='pv|']"),function(b){b.classList.toggle("primary",b.dataset.ex==="pv|"+X.pv)});var pe=$("exPrev");if(pe)pe.dataset.done="";prev();return}
   if(a==="pr"){printIt(q[1]);return}
   if(a==="online"){if(E.on&&E.on.open)showLink();else goOnline();return}
   if(a==="stop"){stopOnline();return}
