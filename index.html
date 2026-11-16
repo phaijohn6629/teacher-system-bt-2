@@ -303,6 +303,7 @@
       <label for="lpS">ចំណុចរងនៃមេរៀន</label><select id="lpS"></select>
       <label for="lpM">វិធីសាស្ត្របង្រៀន</label><select id="lpM"></select>
       <label for="lpT">យុទ្ធវិធីបង្រៀន</label><select id="lpT"></select>
+      <label for="lpDu">រយៈពេលបង្រៀន</label><select id="lpDu"><option value="45">៤៥ នាទី (១ ម៉ោង)</option><option value="90">៩០ នាទី (២ ម៉ោង)</option></select>
       <label for="lpD">កាលបរិច្ឆេទបង្រៀន</label><input type="date" id="lpD">
       <label for="lpW">សប្តាហ៍ទី</label><select id="lpW"></select>
       <label for="lpMg">គណៈគ្រប់គ្រង</label><select id="lpMg"></select>
@@ -320,7 +321,7 @@
           <span class="k">មុខវិជ្ជា</span><b>៖</b><span class="v"><span class="lp-mu">គណិតវិទ្យា</span></span>
           <span class="k" id="lpKC">ជំពូកទី</span><b>៖</b><span class="v" id="lpHC"><i></i></span>
           <span class="k" id="lpKL">មេរៀនទី</span><b>៖</b><span class="v" id="lpHL"><i></i></span>
-          <span class="k">រយៈពេល</span><b>៖</b><span class="v"><span class="lp-mu">៩០ នាទី</span></span>
+          <span class="k">រយៈពេល</span><b>៖</b><span class="v"><span class="lp-mu" id="lpHU">៤៥ នាទី</span></span>
           <span class="k">បង្រៀនថ្នាក់</span><b>៖</b><span class="v" id="lpHG"><i></i></span>
           <span class="k">បង្រៀនដោយ</span><b>៖</b><span class="v"><span class="lp-mu" id="lpHT">…</span></span>
         </div>
@@ -649,7 +650,7 @@
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
 <script src="lessonplans.js?v=2"></script>
-<script src="script.js?v=120"></script>
+<script src="script.js?v=121"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

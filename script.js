@@ -1919,6 +1919,9 @@ function lpMath(t){
 function lpFg(a){if(!a||!a.length||!window.FIG)return"";return a.map(function(f){try{return"<div class=lp-fg>"+FIG.svg(f)+"</div>"}catch(e){return""}}).join("")}
 function lpLi(a){return(a&&a.length)?"<ul class=lp-ul>"+a.map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("")+"</ul>":""}
 var lpLast=null,lpSugK="";
+/* ⏱️ រយៈពេលបង្រៀន ៤៥ ឬ ៩០ នាទី (ជំហាននីមួយៗកាត់/ពង្រីកតាមសមាមាត្រ · ៩០ = ២ ម៉ោង) */
+function lpDu(){var e=$("lpDu");return e&&e.value==="90"?90:45}
+function lpDur(){var d=lpDu();$("lpHU").textContent=d===90?"៩០ នាទី (ម៉ោងទី១ ៤៥ នាទី · ម៉ោងទី២ ៤៥ នាទី)":"៤៥ នាទី"}
 function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.toggle("lp-ph",!html)}
 function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null → ត្រឡប់ទៅ Placeholder */
   var O=P&&P.obj||{};
@@ -1930,7 +1933,7 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
     $("lpWN").textContent=P?P.title:""}
   lpLast=P;if(P&&!window.katex&&!lpRender.w){lpRender.w=1;setTimeout(function(){lpRender.w=0;if(window.katex&&lpLast===P)lpRender(P)},1500)}
   $("lpSteps").innerHTML=LPS.map(function(t,i){
-    var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(S.t)+" នាទី":""):esc(t);
+    var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(Math.round(S.t*lpDu()/45))+" នាទី":""):esc(t);
     return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+h+"</th></tr><tr class='lp-sb"+(S?" lp-fill":"")+"'>"+
       (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+lpFg(S.fg)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
   lpPages();
@@ -2072,7 +2075,7 @@ function lpHeader(){
   var C=window.CUR&&window.CUR[+$("lpG").value],L=C&&C.LS&&e.value!==""?C.LS[e.value]:null,st=lpSubTxt();
   $("lpKC").textContent="ជំពូកទី"+(L&&L[3]!=null?kn(L[3]):"");v("lpHC",L?L[4]:"");
   $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
-  v("lpHD",lpDateTxt());
+  v("lpHD",lpDateTxt());lpDur();
   /* ២. ខ្លឹមសារមេរៀន ៖ ចំណងជើងមេរៀន + ចំណុចរង */
   $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+(st?"<span class=lp-sub>"+esc(st)+"</span>":""):"<span class=lp-ph>…</span>";
 }
@@ -2155,6 +2158,7 @@ function renderLp(){
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);lpFooter();lpMeta();
     $("lpM").onchange=$("lpT").onchange=function(){lpMeta()};
+    $("lpDu").onchange=function(){lpDur();lpRender(lpLast)};
     $("lpMg").onchange=$("lpTh").onchange=function(){lpFooter()};
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});
     $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=function(){lpSubs()};$("lpPr").onclick=lpPrint;
