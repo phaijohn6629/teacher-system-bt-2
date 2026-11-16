@@ -64,7 +64,7 @@ function sumHtml(weeks){
         rows.push("<td class='"+(q.s.t==="X"?"cuy":"")+"'>"+(q.s.t==="X"?"<b>"+t+"</b>":t)+"</td><td class=c>"+pad2(q.h)+"</td><td>"+(k===0?esc2(w.note):"")+"</td>");
       });
       rows.forEach(function(r,k){
-        h+="<tr"+(cur?" class=cur":"")+" data-wk='"+wi+"'>"+(first?"<td class=c rowspan="+n+">"+esc2(mo.m)+"</td>":"")+(k===0?"<td class=c rowspan="+rows.length+">"+(wi+1)+"<small>"+esc2(wkLabel(wi))+"</small></td>":"")+r+"</tr>";
+        h+="<tr"+(cur?" class=cur":"")+" data-wk='"+wi+"'>"+(first?"<td class='c cum' rowspan="+n+">"+esc2(mo.m)+"</td>":"")+(k===0?"<td class=c rowspan="+rows.length+">"+(wi+1)+"<small>"+esc2(wkLabel(wi))+"</small></td>":"")+r+"</tr>";
         first=false;
       });
     });
@@ -92,7 +92,7 @@ function planHtml(weeks,q){
     mo.w.forEach(function(k){
       k.rows.forEach(function(r,i){
         var tr="<tr"+(k.wi===curWeek()?" class=cur":"")+" data-wk='"+k.wi+"'>";
-        if(first){tr+="<td class=c rowspan="+n+"><b>"+esc2(mo.m)+"</b></td>";first=false}
+        if(first){tr+="<td class='c cum' rowspan="+n+"><b>"+esc2(mo.m)+"</b></td>";first=false}
         if(i===0)tr+="<td class=c rowspan="+k.rows.length+">"+kh(k.w.w)+"<small>"+esc2(wkLabel(k.wi))+"</small></td>";
         if(r.b)tr+="<td colspan=4 class=cuy><b>"+esc2(r.b)+"</b></td>";
         else{
@@ -176,16 +176,48 @@ function bindFoot(){
   $("cuFcl").onclick=function(){FT.d="";FT.kt="";saveFT();renderFoot()};
 }
 bindFoot();
+/* 🖨️ ធ្វើតារាងឱ្យស្អាតសម្រាប់បោះពុម្ព ៖ គ្មាន rowspan នៃខែ (ជំនួសដោយជួរក្បាលខែ) · សប្ដាហ៍នីមួយៗក្នុង <tbody> មិនដាច់ឆ្លងទំព័រ · ទំហំតម្រឹម A4 (table-layout:fixed) */
+function printTidy(html){
+  var d=document.createElement("div");d.innerHTML=html;
+  [].forEach.call(d.querySelectorAll("table.cut"),function(t){
+    var hr=t.querySelector("thead tr"),tb=t.querySelector("tbody");if(!hr||!tb)return;
+    var isPlan=hr.children[0]&&hr.children[0].textContent.trim()==="ខែ";
+    if(isPlan)hr.removeChild(hr.children[0]);
+    var cols=0;[].forEach.call(hr.children,function(c){cols+=c.colSpan||1});
+    var groups=[],cur=null;
+    [].slice.call(tb.rows).forEach(function(r){
+      if(isPlan&&!r.classList.contains("cus")&&!r.classList.contains("cuftr")){
+        var c0=r.cells[0];
+        if(c0&&c0.classList.contains("cum")){   /* ក្រឡាខែ → ជួរក្បាលខែ */
+          var b=document.createElement("tr");b.className="cumo";b.innerHTML="<td colspan='"+cols+"'>ខែ "+c0.innerHTML+"</td>";
+          groups.push({rows:[b],cls:"cumo"});r.removeChild(c0);cur=null;
+        }
+      }
+      if(isPlan&&r.classList.contains("cus")&&r.cells[0]&&r.cells[0].colSpan>1)r.cells[0].colSpan-=1;
+      var wk=r.getAttribute("data-wk");
+      if(wk!==null){if(cur&&cur.wk===wk)cur.rows.push(r);else{cur={wk:wk,rows:[r],cls:"cuw"};groups.push(cur)}}
+      else{cur=null;groups.push({rows:[r],cls:r.classList.contains("cux")||r.classList.contains("cus")?"cuw":"cuo"})}
+    });
+    var parent=tb.parentNode;
+    groups.forEach(function(g){var b=document.createElement("tbody");b.className=g.cls;g.rows.forEach(function(r){b.appendChild(r)});parent.appendChild(b)});
+    parent.removeChild(tb);
+  });
+  return d.innerHTML;
+}
 function printHtml(){
   var body="";
   if(cuV==="b")body=baseHtml();else if(cuV==="s")body="<h3>ខ. តារាងនៃចំនួនម៉ោងនៃមេរៀននីមួយៗ</h3>"+sumHtml(weeksFor(cuM));else body=planHtml(weeksFor(cuM),cuQ).html;
   body=body.replace(/<div class=wrap[^>]*>/g,"<div>");
   var ftr=footHtml();
   if(cuV==="b")body+="<table class='cut cuft'><tbody><tr class=cuftr><td>"+ftr+"</td></tr></tbody></table>";
-  else{var cs=cuV==="d"?6:5,e="</tbody></table></div>",ix=body.lastIndexOf(e);
+  else{var cs=cuV==="d"?5:4,e="</tbody></table></div>",ix=body.lastIndexOf(e);
     body=ix>=0?body.slice(0,ix)+"<tr class=cuftr><td colspan="+cs+">"+ftr+"</td></tr>"+body.slice(ix):body+ftr}
-  var bt=(document.querySelector(".brand-logo")||{}).src||"";
-  return"<div class='pg cup'><div class=cuh>"+(bt?"<img src='"+bt+"' class=cul alt=''>":"")+"<div class=cuc><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី (NGS)</div><div class=moul style='font-size:12pt;margin-top:2mm'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</div><div style='margin-top:1mm'>មុខវិជ្ជា "+C[cuG].name.replace("គណិតវិទ្យា ","គណិតវិទ្យា ")+" ឆ្នាំសិក្សា "+C[cuG].year+"</div></div>"+(LOGO2?"<img src='"+LOGO2+"' class=cur2 alt=''>":"")+"</div>"+body+"</div>";
+  body=printTidy(body);
+  var bt=(document.querySelector(".brand-logo")||{}).src||"",sch=(window.inf&&inf().school)||"វិទ្យាល័យបឹងត្របែក";
+  return"<div class='pg cup'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+    "<div style='display:flex;align-items:center;gap:10px;margin:4px 0 6px'>"+(bt?"<img src='"+bt+"' class=cul1 alt=''>":"")+"<div><div class=moul style='text-align:left'>"+esc2(sch)+"</div><div>សាលារៀនជំនាន់ថ្មី (NGS)</div></div></div>"+
+    "<h2 class=moul style='text-align:center;font-size:13pt;margin:6px 0 2px'>ចំណែងចែកកម្មវិធីសិក្សាគោល"+(cuV==="d"?" និងលម្អិត":"")+"</h2>"+
+    "<div style='text-align:center;margin-bottom:4px'>មុខវិជ្ជា "+esc2(C[cuG].name)+" ឆ្នាំសិក្សា "+esc2(C[cuG].year)+"</div>"+body+"</div>";
 }
 $("cuPr").onclick=function(){fontsOk().then(function(){doPrintNow(printHtml())})};
 /* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */

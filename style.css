@@ -1188,3 +1188,12 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 .og-rsw{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:start;margin-top:8px}
 .og-rs{width:100%;min-width:0!important;font-size:.78rem}.og-rs td,.og-rs th{padding:2px 4px;text-align:center}.og-rs td.l{text-align:left}
 .og-rs b.ab-a{color:#1d4ed8}.og-rs b.ab-b{color:#b45309}
+
+/* 🖨️ ចំណែងចែកកម្មវិធីសិក្សា (បោះពុម្ព) ៖ តម្រឹម A4 · សប្ដាហ៍មិនដាច់ · logo តែមួយ (BT) */
+.cup .cul1{width:20mm;height:20mm;object-fit:contain;border-radius:50%}
+.cup .cut{table-layout:fixed;width:100%;min-width:0!important;border-collapse:collapse}
+.cup .cut td,.cup .cut th{word-break:break-word;overflow-wrap:anywhere}
+.cup tbody.cuw,.cup tbody.cuo{break-inside:avoid;page-break-inside:avoid}
+.cup tbody.cumo{break-after:avoid;page-break-after:avoid}
+.cup tr.cumo td{background:#e8eefc!important;font-weight:700;text-align:left;padding:1mm 2mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.cup tr.cuftr td{border:0!important}
