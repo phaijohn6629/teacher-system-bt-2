@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=111">
+<link rel="stylesheet" href="style.css?v=112">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -305,51 +305,56 @@
       <label for="lpT">យុទ្ធវិធីបង្រៀន</label><select id="lpT"></select>
       <label for="lpD">កាលបរិច្ឆេទបង្រៀន</label><input type="date" id="lpD">
       <label for="lpW">សប្តាហ៍ទី</label><select id="lpW"></select>
-      <label for="lpTn">គ្រូបង្រៀន (បង្រៀនដោយ)</label><select id="lpTn"></select>
       <label for="lpMg">គណៈគ្រប់គ្រង</label><select id="lpMg"></select>
       <label for="lpTh">ប្រធានក្រុមបច្ចេកទេស</label><select id="lpTh"></select>
-      <label for="lpTd">ជ.ប្រធានក្រុមបច្ចេកទេស</label><select id="lpTd"></select>
       <button type="button" id="lpGen" class="primary">✨ បង្កើតកិច្ចតែងការ</button>
       <button type="button" id="lpPr">🖨️ បោះពុម្ព / PDF</button>
       <p class="note" id="lpSt">ជ្រើសរើសជម្រើស ហើយចុចប៊ូតុងខាងលើ។</p>
     </aside>
     <div class="lp-view" aria-label="មើលជាមុន A4">
       <article class="lp-a4" id="lpA4">
-        <div class="lp-band"><span class="lp-bl"><img id="lpLogo" src="logo-bt.jpg" alt="" width="44" height="44"><b>វិទ្យាល័យបឹងត្របែក</b></span><span>សាលារៀនជំនាន់ថ្មី (NGS)</span></div>
         <h2 class="lp-ti moul">កិច្ចតែងការបង្រៀន</h2>
         <div class="lp-mg" id="lpMG">
-          <span class="k">ថ្នាក់ទី</span><b>៖</b><span class="v" id="lpHG"><i></i></span>
+          <span class="k">កាលបរិច្ឆេទ</span><b>៖</b><span class="v" id="lpHD"><i></i></span>
           <span class="k">មុខវិជ្ជា</span><b>៖</b><span class="v"><span class="lp-mu">គណិតវិទ្យា</span></span>
           <span class="k" id="lpKC">ជំពូកទី</span><b>៖</b><span class="v" id="lpHC"><i></i></span>
           <span class="k" id="lpKL">មេរៀនទី</span><b>៖</b><span class="v" id="lpHL"><i></i></span>
-          <span class="k">រយៈពេល</span><b>៖</b><span class="v">៩០ នាទី (ម៉ោងទី១ ៤៥ នាទី · ម៉ោងទី២ ៤៥ នាទី)</span>
-          <span class="k">កាលបរិច្ឆេទ</span><b>៖</b><span class="v" id="lpHD"><i></i></span>
-          <span class="k">បង្រៀនដោយ</span><b>៖</b><span class="v"><span class="lp-mu" id="lpHT">ដែ ចន</span></span>
+          <span class="k">រយៈពេល</span><b>៖</b><span class="v"><span class="lp-mu">៩០ នាទី</span></span>
+          <span class="k">បង្រៀនថ្នាក់</span><b>៖</b><span class="v" id="lpHG"><i></i></span>
+          <span class="k">បង្រៀនដោយ</span><b>៖</b><span class="v"><span class="lp-mu" id="lpHT">…</span></span>
         </div>
-        <h3 class="lp-h">១. វត្ថុបំណង</h3>
-        <ul class="lp-ob">
-          <li><b>វិជ្ជាសម្បទា (ចំណេះដឹង)៖</b> <span class="lp-ph" id="lpOb0">…</span></li>
-          <li><b>បំណិនសម្បទា (ជំនាញ)៖</b> <span class="lp-ph" id="lpOb1">…</span></li>
-          <li><b>ចរិយាសម្បទា (ឥរិយាបថ)៖</b> <span class="lp-ph" id="lpOb2">…</span></li>
-        </ul>
-        <h3 class="lp-h">២. សម្ភារៈ និងវិធីសាស្ត្រ</h3>
-        <p><b>សម្ភារៈ៖</b> <span class="lp-ph" id="lpMat">…</span></p>
-        <p><b>វិធីសាស្ត្រ / យុទ្ធវិធី៖</b> <span class="lp-ph" id="lpMT">…</span></p>
-        <h3 class="lp-h">៣. ដំណើរការបង្រៀន</h3>
+        <h3 class="lp-h"><span class="lp-bd">១</span>វត្ថុបំណង ៖ <small>បន្ទាប់ពីសិក្សាមេរៀននេះចប់សិស្សនឹង</small></h3>
+        <div class="lp-kv">
+          <span class="k">- វិជ្ជាសម្បទា</span><b>៖</b><span class="v lp-ph" id="lpOb0">…</span>
+          <span class="k">- បំណិនសម្បទា</span><b>៖</b><span class="v lp-ph" id="lpOb1">…</span>
+          <span class="k">- ចរិយាសម្បទា</span><b>៖</b><span class="v lp-ph" id="lpOb2">…</span>
+        </div>
+        <h3 class="lp-h"><span class="lp-bd">២</span>ខ្លឹមសារមេរៀន</h3>
+        <div class="lp-cn" id="lpCN"><span class="lp-ph">…</span></div>
+        <h3 class="lp-h"><span class="lp-bd">៣</span>សម្ភារឧបទេស</h3>
+        <div class="lp-kv">
+          <span class="k">- សម្រាប់សិស្ស</span><b>៖</b><span class="v lp-ph" id="lpMs">…</span>
+          <span class="k">- សម្រាប់គ្រូ</span><b>៖</b><span class="v lp-ph" id="lpMt">…</span>
+        </div>
+        <h3 class="lp-h"><span class="lp-bd">៤</span>វិធីបង្រៀន</h3>
+        <div class="lp-kv">
+          <span class="k">- គោលវិធីបង្រៀន</span><b>៖</b><span class="v">សិស្សមជ្ឈមណ្ឌល</span>
+          <span class="k">- វិធីសាស្ត្របង្រៀន</span><b>៖</b><span class="v" id="lpM1">…</span>
+          <span class="k">- យុទ្ធវិធីបង្រៀន</span><b>៖</b><span class="v" id="lpM2">…</span>
+        </div>
+        <h3 class="lp-h"><span class="lp-bd">៥</span>ដំណើរការបង្រៀន</h3>
         <div class="lp-tw"><table class="lp-tb">
           <thead><tr><th>សកម្មភាពគ្រូ</th><th>ខ្លឹមសារមេរៀន</th><th>សកម្មភាពសិស្ស</th></tr></thead>
           <tbody id="lpSteps"></tbody>
         </table></div>
         <div class="lp-sg" id="lpSG">
-          <div class="lp-sd"><span id="lpSL"></span><span id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span>ហត្ថលេខា</span></div>
           <div class="lp-sc">
             <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងឯកភាព</span><span class="lp-mu">ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSM">…</span></div>
-            <div class="lp-sx"><div class="lp-tt lp-t1"><span class="lp-mu">បានឃើញ និងពិនិត្យ</span></div>
-              <div class="lp-two"><div><div class="lp-t2"><span class="lp-mu">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div><div><div class="lp-t2"><span class="lp-mu">ជ.ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSV">…</span></div></div></div>
-            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងពិនិត្យ</span><span class="lp-mu">ជ.គ្រូបង្រៀន</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpST">…</span></div>
+            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងត្រួតពិនិត្យ</span><span class="lp-mu">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div>
+            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu lp-ln" id="lpSL"></span><span class="lp-mu" id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span class="lp-mu">គ្រូបង្រៀន</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpST">…</span></div>
           </div>
         </div>
-        <div class="lp-pnv"><span>បង្រៀនដោយលោកគ្រូ ៖ <b id="lpFT">…</b></span><span id="lpPN">ទំព័រទី ១</span></div>
+        <div class="lp-pnv"><span id="lpPN">ទំព័រទី ១</span></div>
       </article>
     </div>
   </div>
@@ -639,7 +644,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=113"></script>
+<script src="script.js?v=114"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

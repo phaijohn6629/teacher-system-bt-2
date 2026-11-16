@@ -1850,7 +1850,7 @@ $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.datas
 /* ===== 🧩 កិច្ចតែងការបង្រៀន (p21) · UI Layout + បញ្ជា · ខ្លឹមសារស្វ័យប្រវត្តិនឹងបន្ថែមជំហានបន្ទាប់ ===== */
 var LPM=["5Es (ចូលរួម · ស្វែងរក · ពន្យល់ · ពង្រីក · វាយតម្លៃ)","PBL (រៀនតាមគម្រោង)","Flipped Classroom (ថ្នាក់រៀនបញ្ច្រាស)","រៀនតាមការស្រាវជ្រាវ (Inquiry)","ពន្យល់ និងអនុវត្ត (Direct Instruction)"],
   LPT=["Think-Pair-Share","Jigsaw (ផ្គុំគំនិត)","ក្រុមសហការ (Cooperative Learning)","Gallery Walk","សំណួរ-ចម្លើយ និងពិភាក្សា","ដោះស្រាយបញ្ហា (Problem Solving)"],
-  LPS=["ការណែនាំមេរៀន (ចាប់អារម្មណ៍)","ស្វែងរក / សិក្សាករណី","ពន្យល់ និងបញ្ជាក់ទ្រឹស្ដី","អនុវត្ត / ពង្រីក","វាយតម្លៃ និងសរុបមេរៀន"];
+  LPS=["រដ្ឋបាលថ្នាក់រៀន","រំលឹកមេរៀនចាស់","មេរៀនប្រចាំថ្ងៃ","ពង្រឹងពុទ្ធិ","បណ្តាំផ្ញើ និងកិច្ចការផ្ទះ"];
 /* 📚 ទិន្នន័យគំរូ (key = «ថ្នាក់_លេខមេរៀនក្នុងប្រព័ន្ធ» · លេខមេរៀន = ជំពូក×១០ + មេរៀន ឧ. 12_11 = ថ្នាក់ទី១២ ជំពូក១ មេរៀន១) · បន្ថែមមេរៀនថ្មីដោយចម្លងទម្រង់នេះ
    obj = វត្ថុបំណង ៣ វិស័យ (ប្រភេទ: បញ្ជីអក្សរ) · mat = សម្ភារៈ · dur = រយៈពេលសរុប (នាទី) · steps[5] = {n: ឈ្មោះជំហាន, t: នាទី, tc: សកម្មភាពគ្រូ[], ct: ខ្លឹមសារមេរៀន[], st: សកម្មភាពសិស្ស[]} */
 var lessonPlanDB={
@@ -1860,9 +1860,9 @@ var lessonPlanDB={
       knowledge:["ស្គាល់និយមន័យចំនួនកុំផ្លិច $z=a+bi$ (ផ្នែកពិត $a$ · ផ្នែកនិមិត្ត $b$) និង $i^2=-1$","ដឹងលក្ខខណ្ឌស្មើគ្នានៃចំនួនកុំផ្លិចពីរ និងចំនួនកុំផ្លិចឆ្លាស់ $\\bar z=a-bi$"],
       skills:["គណនាផលបូក ផលដក និងផលគុណនៃចំនួនកុំផ្លិចទម្រង់ពីជគណិត","រកផ្នែកពិត និងផ្នែកនិមិត្ត ហើយរកចំនួនពិត $x,y$ ពីសមភាពនៃចំនួនកុំផ្លិច"],
       attitude:["មានការចាប់អារម្មណ៍ និងអត់ធ្មត់ក្នុងការសិក្សាចំនួនប្រភេទថ្មី","សហការ និងចែករំលែកគំនិតក្នុងក្រុម"]},
-    mat:["សៀវភៅសិក្សាគណិតវិទ្យាថ្នាក់ទី១២","ក្តារខៀន ដីស/ប៊ិច","សន្លឹកលំហាត់ ១ សន្លឹក/ក្រុម","ម៉ាស៊ីនគិតលេខ (បើមាន)"],
+    mat:{st:["សៀវភៅសិក្សាគណិតវិទ្យាថ្នាក់ទី១២","សៀវភៅកិច្ចការផ្ទះ","សៀវភៅកត់ត្រា ប៊ិច បន្ទាត់"],tc:["សៀវភៅសិក្សាគណិតវិទ្យាថ្នាក់ទី១២ សម្រាប់គ្រូ","ក្តារខៀន ដីស/ប៊ិច","សន្លឹកលំហាត់ ១ សន្លឹក/ក្រុម","ម៉ាស៊ីនគិតលេខ (បើមាន)"]},   /* st = សម្រាប់សិស្ស · tc = សម្រាប់គ្រូ (អាចជាបញ្ជីតែមួយ = សម្រាប់គ្រូ) */
     steps:[
-      {n:"រដ្ឋបាលថ្នាក់",t:3,
+      {n:"រដ្ឋបាលថ្នាក់រៀន",t:3,
        tc:["សួរសុខទុក្ខ និងស្រង់វត្តមានសិស្ស","ពិនិត្យអនាម័យ និងការរៀបចំសម្ភារៈរៀន"],
        ct:["ស្រង់វត្តមាន","ប្រាប់ឈ្មោះមេរៀន៖ «ចំនួនកុំផ្លិច · ទម្រង់ពីជគណិត»"],
        st:["ឈរគោរពគ្រូ និងឆ្លើយតបវត្តមាន","រៀបចំសៀវភៅ និងសម្ភារៈឱ្យរួចរាល់"]},
@@ -1870,15 +1870,15 @@ var lessonPlanDB={
        tc:["សួរសំណួរខ្លី ៖ ដោះស្រាយសមីការ $x^2-4=0$ និង $x^2+4=0$ ក្នុងសំណុំចំនួនពិត","ណែនាំថាសមីការទី២ គ្មានឫសពិត → ត្រូវការចំនួនប្រភេទថ្មី"],
        ct:["សមីការដឺក្រេទី២ និងឌីស្គ្រីមីណង់ $\\Delta=b^2-4ac$","$\\Delta<0\\Rightarrow$ គ្មានឫសពិត"],
        st:["ឆ្លើយសំណួរម្នាក់ៗ ឬលើកដៃ","ទទួលស្គាល់ថា $x^2=-4$ មិនមានចម្លើយជាចំនួនពិត"]},
-      {n:"មេរៀនថ្មី",t:20,
+      {n:"មេរៀនប្រចាំថ្ងៃ",t:20,
        tc:["និយាយអំពី $i$ ដែល $i^2=-1$ ហើយសរសេរនិយមន័យ $z=a+bi$","ពន្យល់ផ្នែកពិត $\\operatorname{Re}(z)$ និងផ្នែកនិមិត្ត $\\operatorname{Im}(z)$ · សមភាព និងចំនួនឆ្លាស់","បង្ហាញវិធីបូក ដក គុណ ជាមួយឧទាហរណ៍ ១–២"],
        ct:["និយមន័យ ៖ $z=a+bi$ ($a,b\\in\\mathbb R$) · $i^2=-1$","សមភាព ៖ $a+bi=c+di\\iff a=c$ និង $b=d$","ឆ្លាស់ ៖ $\\bar z=a-bi$ · $z\\bar z=a^2+b^2$","ឧទាហរណ៍ ៖ $(2-2i)(-6+5i)=-12+10i+12i-10i^2=-2+22i$"],
        st:["ស្តាប់ ចម្លងចំណាំ និងសួរបើមិនយល់","គណនាជាមួយគ្រូលើក្តារ","សរសេរនិយមន័យ និងរូបមន្តក្នុងសៀវភៅ"]},
-      {n:"ពង្រឹង និងអនុវត្ត",t:10,
+      {n:"ពង្រឹងពុទ្ធិ",t:10,
        tc:["ចែកសន្លឹកលំហាត់ឱ្យក្រុម ៤ នាក់ (Think-Pair-Share)","ដើរពិនិត្យ ណែនាំក្រុមដែលជួបបញ្ហា ហើយអញ្ជើញក្រុមមួយមកដោះស្រាយលើក្តារ"],
        ct:["១. គណនា $(3+2i)+(1-5i)$ និង $(1+i)(1-i)$","២. រកចំនួនពិត $x,y$ ដែល $(x+2)+(y-3)i=3-3i$","៣. គណនា $i^{2024}$"],
        st:["គិតម្នាក់ឯង → ពិភាក្សាជាគូ → ចែករំលែកក្នុងក្រុម","តំណាងក្រុមដោះស្រាយលើក្តារ ហើយពន្យល់","ត្រួតពិនិត្យចម្លើយគ្នាទៅវិញទៅមក"]},
-      {n:"បណ្តាំផ្ញើ",t:5,
+      {n:"បណ្តាំផ្ញើ និងកិច្ចការផ្ទះ",t:5,
        tc:["សង្ខេបចំណុចសំខាន់ៗនៃមេរៀន","ផ្ដល់កិច្ចការផ្ទះ ហើយប្រាប់មេរៀនបន្ទាប់ ៖ ម៉ូឌុល និងកុំផ្លិចឆ្លាស់"],
        ct:["កិច្ចការផ្ទះ ៖ លំហាត់ ៣ ចំណុចក្នុងសៀវភៅ (គណនា · រកផ្នែកពិត/និមិត្ត)","មេរៀនបន្ទាប់ ៖ ចែកចំនួនកុំផ្លិច ម៉ូឌុល និងឫសការ៉េ"],
        st:["ចម្លងកិច្ចការផ្ទះ","សួរសំណួរចុងក្រោយ","ឈរអរគុណគ្រូ"]}
@@ -1903,7 +1903,8 @@ function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.to
 function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null → ត្រឡប់ទៅ Placeholder */
   var O=P&&P.obj||{};
   ["knowledge","skills","attitude"].forEach(function(k,i){var a=O[k];lpSet("lpOb"+i,a?(a.length>1?lpLi(a):lpMath(a[0])):"")});
-  lpSet("lpMat",P&&P.mat?lpMath(P.mat.join(" · ")):"");
+  var Mt=P&&P.mat,ms="",mt="";if(Mt){if(Array.isArray(Mt))mt=Mt.join(" · ");else{ms=(Mt.st||[]).join(" · ");mt=(Mt.tc||[]).join(" · ")}}
+  lpSet("lpMs",ms?lpMath(ms):"");lpSet("lpMt",mt?lpMath(mt):"");
   lpLast=P;if(P&&!window.katex&&!lpRender.w){lpRender.w=1;setTimeout(function(){lpRender.w=0;if(window.katex&&lpLast===P)lpRender(P)},1500)}
   $("lpSteps").innerHTML=LPS.map(function(t,i){
     var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(S.t)+" នាទី":""):esc(t);
@@ -1920,52 +1921,43 @@ function lpDateTxt(){
 }
 function lpHeader(){
   var v=function(id,t){$(id).innerHTML=t?"<span class=lp-mu>"+esc(t)+"</span>":"<i></i>"},e=$("lpL");
-  v("lpHG",$("lpG").value?kn($("lpG").value):"");
-  /* LS[n] = [ឈ្មោះមេរៀន, ម៉ោង, "", លេខជំពូក, ឈ្មោះជំពូក, លេខមេរៀន] → «ជំពូកទី១ ៖ ចំនួនកុំផ្លិច» · «មេរៀនទី១ ៖ ឈ្មោះមេរៀន» + ឈ្មោះចំណុចរង */
-  var C=window.CUR&&window.CUR[+$("lpG").value],L=C&&C.LS&&e.value!==""?C.LS[e.value]:null;
+  v("lpHG",$("lpG").value?"ថ្នាក់ទី"+kn($("lpG").value):"");
+  /* LS[n] = [ឈ្មោះមេរៀន, ម៉ោង, "", លេខជំពូក, ឈ្មោះជំពូក, លេខមេរៀន] */
+  var C=window.CUR&&window.CUR[+$("lpG").value],L=C&&C.LS&&e.value!==""?C.LS[e.value]:null,st=lpSubTxt();
   $("lpKC").textContent="ជំពូកទី"+(L&&L[3]!=null?kn(L[3]):"");v("lpHC",L?L[4]:"");
   $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
-  var st=lpSubTxt();if(st&&L)$("lpHL").insertAdjacentHTML("beforeend","<span class='lp-mu lp-sub'>"+esc(st)+"</span>");
   v("lpHD",lpDateTxt());
+  /* ២. ខ្លឹមសារមេរៀន ៖ ចំណងជើងមេរៀន + ចំណុចរង */
+  $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+(st?"<span class=lp-sub>"+esc(st)+"</span>":""):"<span class=lp-ph>…</span>";
 }
-/* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) · ឈ្មោះគ្រូបង្រៀន = អ្នកដែលកំពុង Login (គ្មាន → តម្លៃ «បង្រៀនដោយ» ក្នុងក្បាល) */
 var lpPSig="";
-/* 👥 ឈ្មោះអ្នកចុះហត្ថលេខា ជ្រើសបានពីបញ្ជីគ្រូ (data) · លំនាំដើម៖ គ្រូ = អ្នក Login · ប្រធាន/ជ.ប្រធានក្រុមបច្ចេកទេស = គ្រូដែលមានតួនាទី «ប្រធាន»/«អនុប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គណៈគ្រប់គ្រង = ឈ្មោះថេរ */
+/* 👥 គណៈគ្រប់គ្រង + ប្រធានក្រុមបច្ចេកទេស ជ្រើសបានពីបញ្ជីគ្រូ (data) · ប្រធានក្រុម លំនាំដើម = គ្រូដែលមានតួនាទី «ប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គ្រូបង្រៀន = អ្នកដែលកំពុង Login ស្វ័យប្រវត្តិ (គ្មាន Dropdown) */
 function lpPeople(){
-  var T=(typeof data!=="undefined"&&data&&data.filter)?data.filter(function(t){return t&&t.name}):[],me=(typeof who!=="undefined"&&who)?who:null;
-  var sig=T.map(function(t){return t.id+"|"+t.name+"|"+t.rl}).join(",")+"#"+(me?me.id+"|"+me.name:"");
-  if(sig===lpPSig&&$("lpTn").options.length)return;lpPSig=sig;
+  var T=(typeof data!=="undefined"&&data&&data.filter)?data.filter(function(t){return t&&t.name}):[];
+  var sig=T.map(function(t){return t.id+"|"+t.name+"|"+t.rl}).join(",");
+  if(sig===lpPSig&&$("lpMg").options.length)return;lpPSig=sig;
   var all=T.map(function(t){return"<option value='"+esc(t.id)+"'>"+esc(t.name)+"</option>"}).join(""),role=function(r){var t=T.filter(function(x){return x.rl===r})[0];return t?String(t.id):null};
   function fill(id,fixed,def){
-    var e=$(id),prev=e.value;e.innerHTML=(fixed?"<option value='__f'>"+esc(fixed)+"</option>":"")+all;
+    var e=$(id),prev=e.value;e.innerHTML="<option value='__f'>"+esc(fixed)+"</option>"+all;
     var has=function(v){return v!=null&&[].some.call(e.options,function(o){return o.value===v})};
-    e.value=has(prev)?prev:has(def)?def:(e.options[0]?e.options[0].value:"");
+    e.value=has(prev)?prev:has(def)?def:"__f";
   }
-  var inT=me&&T.some(function(t){return String(t.id)===String(me.id)});
-  fill("lpTn",me?null:"ដែ ចន",me?String(me.id):null);
-  if(me&&!inT)$("lpTn").insertAdjacentHTML("afterbegin","<option value='__me'>"+esc(me.name||me.id)+"</option>"),$("lpTn").value="__me";
-  fill("lpMg","គីម មិថុនា","__f");fill("lpTh","មេត បញ្ញារិទ្ធ",role("ប្រធាន"));fill("lpTd","ផៃ ចន",role("អនុប្រធាន"));
+  fill("lpMg","គីម មិថុនា","__f");fill("lpTh","មេត បញ្ញារិទ្ធ",role("ប្រធាន"));
 }
 function lpNm(id){var e=$(id);return e&&e.selectedIndex>=0?e.options[e.selectedIndex].text:""}
-/* ✍️ ជើងហត្ថលេខា ៖ កាលបរិច្ឆេទ = Date Picker (គ្មាន → ថ្ងៃនេះ) + ចន្ទគតិ (KhCal) · ឈ្មោះ ៤ ពី Dropdown */
+function lpMe(){return(typeof who!=="undefined"&&who&&(who.name||who.id))||""}
+/* ✍️ ជើងហត្ថលេខា ៖ ស្ដាំ = កាលបរិច្ឆេទចន្ទគតិ + សុរិយគតិ (Date Picker · គ្មាន → ថ្ងៃនេះ) + «គ្រូបង្រៀន» + ឈ្មោះអ្នក Login */
 function lpFooter(){
   var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec($("lpD").value),n=new Date(),dd=n.getDate(),mm=n.getMonth(),yy=n.getFullYear();
   if(m){dd=+m[3];mm=+m[2]-1;yy=+m[1]}
   $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
   var lu="";try{lu=window.KhCal?KhCal.fmt(yy,mm+1,dd):""}catch(e){}$("lpSL").textContent=lu;
-  var tn=lpNm("lpTn");
-  $("lpST").textContent=tn;$("lpFT").textContent=tn;$("lpHT").textContent=tn;
-  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");$("lpSV").textContent=lpNm("lpTd");
+  var tn=lpMe()||"…";$("lpST").textContent=tn;$("lpHT").textContent=tn;
+  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");
 }
-/* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់លេខទំព័រខ្មែរ ៖ ទំព័រសេស = ខាងស្ដាំ · ទំព័រគូ = ខាងឆ្វេង (style.css) */
-function lpLogoUrl(){try{return typeof LOGOBT==="function"?LOGOBT():new URL("logo-bt.jpg",location.href).href}catch(e){return"logo-bt.jpg"}}
+/* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */
 function lpPrint(){
   var A=$("lpA4");if(!A||typeof realPrint!=="function")return;
-  var q=function(t){return String(t).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/[\r\n]+/g," ")},nm='"បង្រៀនដោយលោកគ្រូ ៖ '+q(lpNm("lpTn"))+'"';
-  var st=$("lpDyn")||document.head.appendChild(document.createElement("style"));st.id="lpDyn";
-  var lg=lpLogoUrl();   /* ឡូហ្គោសាលា ក្នុងបន្ទះក្បាលរត់ (background នៃ @top-left) */
-  st.textContent="@page lpdoc{@top-left{background:url(\""+q(lg)+"\") no-repeat left bottom;background-size:auto 11mm}}@page lpdoc:right{@bottom-left{content:"+nm+"}}@page lpdoc:left{@bottom-right{content:"+nm+"}}";   /* ឈ្មោះគ្រូ ក្នុងជើងរត់ (CSS មិនអាចយកពី DOM) */
-  if(!lpPrint.ap){lpPrint.ap=1;window.addEventListener("afterprint",function(){var e=$("lpDyn");if(e)e.textContent=""})}
   realPrint("<div class='lp-print'>"+A.outerHTML.replace(/ id="[^"]*"/g,"")+"</div>");
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
@@ -1997,7 +1989,7 @@ function lpLessons(){
 }
 function lpMeta(){
   var sel=function(id){var e=$(id);return e.selectedIndex>=0?e.options[e.selectedIndex].text:"…"};
-  $("lpMT").textContent=sel("lpM").split(" (")[0]+" / "+sel("lpT").split(" (")[0];
+  $("lpM1").textContent=sel("lpM").split(" (")[0];$("lpM2").textContent=sel("lpT").split(" (")[0];
 }
 function renderLp(){
   if(!$("lpG"))return;
@@ -2011,7 +2003,6 @@ function renderLp(){
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
   lpPeople();
-  if($("lpLogo"))$("lpLogo").src=lpLogoUrl();
 }
 
 
