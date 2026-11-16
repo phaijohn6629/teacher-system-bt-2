@@ -1111,3 +1111,7 @@ body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer
 @media(max-width:560px){.lp-cn{margin-left:8mm}}
 
 .lp-mp{display:inline-block;white-space:nowrap;vertical-align:baseline}.lp-tb .katex{font-size:.97em}.lp-a4 .katex{white-space:nowrap}
+
+/* ផ្នែក ២ តម្រឹមដូចវិធីសាស្ត្រ (ទាំងពីរចូល ២ ស.ម · ក្បាលជួរ + រង្វង់ដូចគ្នា) */
+.lp-cn{margin-left:2cm}.lp-cn .lp-mt,.lp-cn .lp-sl{margin-left:0}
+@media(max-width:560px){.lp-cn{margin-left:8mm}}

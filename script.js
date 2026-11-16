@@ -2096,7 +2096,7 @@ function lpHeader(){
   $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
   v("lpHD",lpDateTxt());lpDur();
   /* ២. ខ្លឹមសារមេរៀន ៖ ចំណងជើងមេរៀន + ចំណុចរង */
-  $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+(st.length?"<ol class=lp-sl>"+lpSel().map(function(x){return"<li><i>"+kn(x.n)+"</i><span>"+esc(x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""))+"</span></li>"}).join("")+"</ol>":""):"<span class=lp-ph>…</span>";
+  $("lpCN").innerHTML=L?"<div class=lp-mt>"+esc(L[0])+"</div>"+(st.length?"<ol class=lp-sl>"+lpSel().map(function(x){return"<li><i>"+kn(x.n)+"</i><span>"+esc(x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""))+"</span></li>"}).join("")+"</ol>":""):"<span class=lp-ph>…</span>";
 }
 var lpPSig="";
 /* 👥 គណៈគ្រប់គ្រង + ប្រធានក្រុមបច្ចេកទេស ជ្រើសបានពីបញ្ជីគ្រូ (data) · ប្រធានក្រុម លំនាំដើម = គ្រូដែលមានតួនាទី «ប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គ្រូបង្រៀន = អ្នកដែលកំពុង Login ស្វ័យប្រវត្តិ (គ្មាន Dropdown) */
