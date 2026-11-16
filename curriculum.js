@@ -184,19 +184,19 @@ function printTidy(html){
     var isPlan=hr.children[0]&&hr.children[0].textContent.trim()==="ខែ";
     if(isPlan)hr.removeChild(hr.children[0]);
     var cols=0;[].forEach.call(hr.children,function(c){cols+=c.colSpan||1});
-    var groups=[],cur=null;
+    var groups=[],cur=null,band=null;
     [].slice.call(tb.rows).forEach(function(r){
       if(isPlan&&!r.classList.contains("cus")&&!r.classList.contains("cuftr")){
         var c0=r.cells[0];
         if(c0&&c0.classList.contains("cum")){   /* ក្រឡាខែ → ជួរក្បាលខែ */
           var b=document.createElement("tr");b.className="cumo";b.innerHTML="<td colspan='"+cols+"'>ខែ "+c0.innerHTML+"</td>";
-          groups.push({rows:[b],cls:"cumo"});r.removeChild(c0);cur=null;
+          band=b;r.removeChild(c0);cur=null;
         }
       }
       if(isPlan&&r.classList.contains("cus")&&r.cells[0]&&r.cells[0].colSpan>1)r.cells[0].colSpan-=1;
       var wk=r.getAttribute("data-wk");
-      if(wk!==null){if(cur&&cur.wk===wk)cur.rows.push(r);else{cur={wk:wk,rows:[r],cls:"cuw"};groups.push(cur)}}
-      else{cur=null;groups.push({rows:[r],cls:r.classList.contains("cux")||r.classList.contains("cus")?"cuw":"cuo"})}
+      if(wk!==null){if(cur&&cur.wk===wk)cur.rows.push(r);else{cur={wk:wk,rows:band?[band,r]:[r],cls:"cuw"};band=null;groups.push(cur)}}
+      else{cur=null;if(band){groups.push({rows:[band,r],cls:"cuw"});band=null;return}groups.push({rows:[r],cls:r.classList.contains("cux")||r.classList.contains("cus")?"cuw":"cuo"})}
     });
     var parent=tb.parentNode;
     groups.forEach(function(g){var b=document.createElement("tbody");b.className=g.cls;g.rows.forEach(function(r){b.appendChild(r)});parent.appendChild(b)});
