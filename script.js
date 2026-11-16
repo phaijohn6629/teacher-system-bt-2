@@ -1932,13 +1932,42 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
       (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
   lpPages();
 }
-/* 🔳 QR Code (ទំព័រហ្វឹកហាត់ថ្នាក់/មេរៀនដែលបានជ្រើស) · បណ្ណាល័យ QRCode ផ្ទុកពី cdnjs (ដូច quiz.js) */
+/* 🔳 QR Code ១–៤ ផ្ទាល់ខ្លួន (តំណ → បង្កើត QR · ឬ Upload រូប) + ចំណងជើងរង · ទទេ = QR ស្វ័យប្រវត្តិទៅ practice.html · QRCode ពី cdnjs */
+var lpQA=[{},{},{},{}],lpQC={},lpQSig="";
+function lpQLoad(){try{var a=JSON.parse(localStorage.getItem("lpQR")||"[]");if(Array.isArray(a))a.slice(0,4).forEach(function(x,i){if(x&&typeof x==="object")lpQA[i]={u:String(x.u||"").slice(0,500),c:String(x.c||"").slice(0,60),m:safeSrc(x.m)}})}catch(e){}}
+function lpQSave(){lsSet("lpQR",JSON.stringify(lpQA))}
+function lpQData(u){
+  if(lpQC[u])return lpQC[u];
+  return lpQC[u]=new Promise(function(ok){
+    var go=function(){try{var d=document.createElement("div");new QRCode(d,{text:u,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+      setTimeout(function(){var c=d.querySelector("canvas");ok(c?c.toDataURL("image/png"):"")},30)}catch(e){ok("")}};
+    if(window.QRCode)go();else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=go;s.onerror=function(){ok("")};document.head.appendChild(s)}
+  });
+}
 function lpQR(){
-  var b=$("lpQB");if(!b)return;var g=$("lpG").value,l=$("lpL").value;
-  var u=new URL("practice.html",location.href).href.split("#")[0]+(l!==""?"#g="+g+"&l="+l:"#g="+g);
-  if(b.getAttribute("data-u")===u)return;b.setAttribute("data-u",u);$("lpQU").textContent=u.replace(/^https?:\/\//,"");
-  var go=function(){b.innerHTML="";try{new QRCode(b,{text:u,width:96,height:96,correctLevel:QRCode.CorrectLevel.M})}catch(e){}lpPages()};
-  if(window.QRCode)go();else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=go;document.head.appendChild(s)}
+  var b=$("lpQB");if(!b)return;
+  var g=$("lpG").value,l=$("lpL").value,auto=new URL("practice.html",location.href).href.split("#")[0]+(l!==""?"#g="+g+"&l="+l:"#g="+g);
+  var it=lpQA.filter(function(x){return x&&(x.m||/^https?:\/\/\S+$/i.test(x.u||""))});
+  if(!it.length)it=[{u:auto,c:"ហ្វឹកហាត់"}];
+  var sig=JSON.stringify(it.map(function(x){return[x.u,x.c,(x.m||"").length]}));if(sig===lpQSig)return;lpQSig=sig;
+  Promise.all(it.map(function(x){return x.m?Promise.resolve(safeSrc(x.m)):lpQData(x.u)})).then(function(src){
+    if(sig!==lpQSig)return;
+    b.innerHTML=it.map(function(x,i){var s=safeSrc(src[i]);return s?"<figure class=lp-qi><img alt='QR' src='"+s+"'><figcaption>"+esc(x.c||"")+"</figcaption></figure>":""}).join("");
+    lpPages();
+  });
+}
+function lpQUI(){
+  var h=$("lpQ4");if(!h||h.children.length)return;lpQLoad();var t=0;
+  h.innerHTML=[0,1,2,3].map(function(i){var x=lpQA[i];return"<div class=lp-qrow data-i="+i+"><b>"+kn(i+1)+"</b><input class=qu type=url maxlength=500 placeholder='តំណ https://…' value='"+esc(x.u||"")+"'><input class=qc maxlength=60 placeholder='ចំណងជើងរង' value='"+esc(x.c||"")+"'><label class=qf title='Upload រូប QR'>🖼️<input type=file accept='image/*' hidden></label><button type=button class=qx title='លុប'>✕</button><span class=qi>"+(x.m?"✔":"")+"</span></div>"}).join("");
+  var up=function(){lpQSave();clearTimeout(t);t=setTimeout(lpQR,300)};
+  h.oninput=function(e){var r=e.target.closest(".lp-qrow");if(!r)return;var x=lpQA[+r.dataset.i];if(e.target.classList.contains("qu"))x.u=e.target.value.trim();else if(e.target.classList.contains("qc"))x.c=e.target.value;up()};
+  h.onchange=function(e){
+    var f=e.target;if(f.type!=="file"||!f.files[0])return;var r=f.closest(".lp-qrow"),x=lpQA[+r.dataset.i],fr=new FileReader();
+    fr.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,300/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+      x.m=safeSrc(c.toDataURL("image/png"));r.querySelector(".qi").textContent=x.m?"✔":"";up()};im.src=fr.result};
+    fr.readAsDataURL(f.files[0]);f.value="";
+  };
+  h.onclick=function(e){var b=e.target.closest(".qx");if(!b)return;var r=b.closest(".lp-qrow");lpQA[+r.dataset.i]={};r.querySelector(".qu").value="";r.querySelector(".qc").value="";r.querySelector(".qi").textContent="";up()};
 }
 /* 📄 វិធីបង្រៀនលម្អិត (រង្វង់ខៀវតូច) */
 function lpMD(){
@@ -1946,17 +1975,54 @@ function lpMD(){
     return a.length?"<div class=lp-mt>"+esc(lab)+" ៖ "+esc(t.split(" (")[0])+"</div><ol class=lp-sl>"+a.map(function(x,i){return"<li><i>"+kn(i+1)+"</i><span>"+esc(x)+"</span></li>"}).join("")+"</ol>":""};
   $("lpMD").innerHTML=f("lpM","វិធីសាស្ត្រ")+f("lpT","យុទ្ធវិធី");
 }
-/* 📑 បន្ទាត់កាត់ទំព័រ A4 លើអេក្រង់ (ប៉ាន់ស្មាន ១ ទំព័រ = ២៩៧ម.ម) · លេខសេសស្ដាំ លេខគូឆ្វេង · លាក់ពេលបោះពុម្ព */
-function lpPages(){
-  var A=$("lpA4"),G=$("lpPG");if(!A||!G)return;
-  var px=297*96/25.4,ws=$("lpWS");
-  G.innerHTML="";A.style.setProperty("--lpGap","0px");A.style.setProperty("--lpH","0px");
-  if(ws&&!ws.hidden){var top=ws.offsetTop;A.style.setProperty("--lpGap",(Math.ceil(top/px)*px-top)+"px")}
-  var n=Math.max(1,Math.ceil(A.scrollHeight/px-0.001)),h="";
-  A.style.setProperty("--lpH",(n*px)+"px");
-  for(var i=1;i<=n;i++)h+="<div class='lp-pk "+(i%2?"r":"l")+"' style='top:"+(i*px)+"px'><span>ទំព័រទី "+kn(i)+"</span></div>";
-  G.innerHTML=h;
+/* 📑 Smart Pagination លើអេក្រង់ ៖ #lpA4 (ប្រភព · លាក់) → សន្លឹក .lp-sheet A4 ដាច់ៗ (រឹម ១៥/១៥/១៨ ម.ម = ដូចពេលបោះពុម្ព) · ធាតុណាដែលលើសបាតទំព័រ រុញទៅសន្លឹកបន្ទាប់ទាំងមូល (ក្បាលជំហាន+ជួរតារាង · ចំណងជើងមិនទុកតែឯង) · លេខទំព័រ = ផ្លាកលេខខ្មែរ (សេសស្តាំ គូឆ្វេង) */
+var lpPSrc="",lpPT=0,lpPR=0,SHB=264*96/25.4;
+function lpCl(e){var c=e.cloneNode(true);c.removeAttribute("id");[].forEach.call(c.querySelectorAll("[id]"),function(x){x.removeAttribute("id")});return c}
+function lpUnits(A){
+  var U=[],pre=[],nw=false,K=function(e){return e.nodeType===1};
+  [].filter.call(A.children,K).forEach(function(c){
+    if(c.hidden)return;
+    if(c.tagName==="H3"&&c.classList.contains("lp-h")){pre.push(c);return}
+    var u;
+    if(c.classList.contains("lp-tw")){
+      var th=c.querySelector("thead"),rs=[].slice.call(c.querySelectorAll("tbody tr"));
+      for(var i=0;i<rs.length;i+=2)U.push({pre:i?[]:pre.splice(0),rows:[rs[i]].concat(rs[i+1]?[rs[i+1]]:[]),th:th});
+      return}
+    if(c.classList.contains("lp-md")){
+      var k=[].filter.call(c.children,K);
+      for(var j=0;j<k.length;j++){var g=[k[j]];if(k[j].classList.contains("lp-mt")&&k[j+1]){g.push(k[++j])}U.push({pre:j?[]:pre.splice(0),els:g})}
+      if(!k.length&&pre.length)pre.length=0;return}
+    if(c.classList.contains("lp-ws")){
+      var ol=c.querySelector("ol");U.push({pre:pre.splice(0),els:[].filter.call(c.children,function(x){return x.tagName!=="OL"}),nw:true});
+      [].forEach.call(ol.children,function(li,i){var o=document.createElement("ol");o.className=ol.className;o.start=i+1;o.appendChild(li.cloneNode(true));U.push({pre:[],els:[o]})});return}
+    U.push({pre:pre.splice(0),els:[c]});
+  });
+  return U;
 }
+function lpPaginate(){
+  var A=$("lpA4"),S=$("lpSheets");if(!A||!S||!S.getBoundingClientRect().width)return false;
+  var src=A.innerHTML;if(src===lpPSrc&&S.children.length)return true;
+  var sheets=[],cur=null,body=null;
+  var mk=function(){cur=document.createElement("article");cur.className="lp-a4 lp-sheet";body=document.createElement("div");body.className="lp-shb";cur.appendChild(body);S.appendChild(cur);sheets.push(cur)};
+  var over=function(){return body.scrollHeight>body.clientHeight+1};
+  S.innerHTML="";mk();
+  lpUnits(A).forEach(function(u){
+    var put=function(){var added=[],tw=null;
+      u.pre.forEach(function(p){var c=lpCl(p);body.appendChild(c);added.push(c)});
+      if(u.rows){
+        tw=body.lastElementChild&&body.lastElementChild.classList.contains("lp-tw")&&!u.pre.length?body.lastElementChild:null;
+        var made=false;if(!tw){tw=document.createElement("div");tw.className="lp-tw";tw.innerHTML="<table class=lp-tb></table>";tw.firstChild.appendChild(lpCl(u.th));tw.firstChild.appendChild(document.createElement("tbody"));body.appendChild(tw);added.push(tw);made=true}
+        var tb=tw.querySelector("tbody");u.rows.forEach(function(r){var c=lpCl(r);tb.appendChild(c);if(!made)added.push(c)});
+      }else u.els.forEach(function(e){var c=lpCl(e);body.appendChild(c);added.push(c)});
+      return added};
+    if(u.nw&&body.children.length)mk();
+    var a=put();
+    if(over()&&body.children.length>a.length){a.forEach(function(x){x.remove()});mk();put()}
+  });
+  sheets.forEach(function(s,i){var n=document.createElement("span");n.className="lp-pb "+((i+1)%2?"r":"l");n.textContent=kn(i+1);s.appendChild(n)});
+  lpPSrc=src;return true;
+}
+function lpPages(){clearTimeout(lpPT);lpPT=setTimeout(function(){if(lpPaginate())lpPR=0;else if(lpPR++<8)lpPages()},90)}
 /* 🗓️ កាលបរិច្ឆេទ + សប្តាហ៍ → បន្ទាត់ «កាលបរិច្ឆេទ» នៃក្បាល A4 · លេខខ្មែរ · ហ្វុង Muol Light · មិនជ្រើស → ចំណុចចុចៗទទេ */
 var LPWD=["អាទិត្យ","ច័ន្ទ","អង្គារ","ពុធ","ព្រហស្បតិ៍","សុក្រ","សៅរ៍"];   /* getUTCDay() ៖ ០ = អាទិត្យ */
 function lpDateTxt(){
@@ -2023,6 +2089,7 @@ function lpPts(g,l){
   return o.sort(function(a,b){return a[0]-b[0]});
 }
 function lpSubs(){
+  lpQR();
   $("lpS").innerHTML="<option value=''>— ទាំងមេរៀន —</option>"+lpPts(+$("lpG").value,$("lpL").value).map(function(x){return"<option value='"+x[0]+"'>"+kn(x[0])+". "+esc(x[1])+"</option>"}).join("");
 }
 function lpSubTxt(){var e=$("lpS");return e.value!==""&&e.selectedIndex>0?e.options[e.selectedIndex].text:""}
@@ -2039,13 +2106,15 @@ function lpMeta(){
 }
 function renderLp(){
   if(!$("lpG"))return;
+  lpQUI();
   if(!$("lpG").options.length){   /* បំពេញម្ដងគត់ (idempotent · refreshView មិនបិទបញ្ជីដែលកំពុងបើក) */
     $("lpG").innerHTML=[7,8,9,10,11,12].map(function(g){return"<option value='"+g+"'>ថ្នាក់ទី"+kn(g)+"</option>"}).join("");
     $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);lpFooter();lpMeta();
     $("lpM").onchange=$("lpT").onchange=function(){lpMeta()};
-    $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=lpSubs;$("lpPr").onclick=lpPrint;
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});
+    $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=function(){lpSubs()};$("lpPr").onclick=lpPrint;
     $("lpGen").onclick=generateLessonPlan;
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
