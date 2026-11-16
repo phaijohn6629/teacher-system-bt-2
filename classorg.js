@@ -304,7 +304,20 @@ function seatPrint(c){
   var I=inf(),S=cleanSeat(c);
   return"<div class='pg land orgp seatp'><span class='og-cn tl'></span><span class='og-cn tr'></span><span class='og-cn bl'></span><span class='og-cn br'></span>"+
    "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
-   "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>";
+   "<div class=og-ttl><div class=moul>ប្លង់តុ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>ឆ្នាំសិក្សា "+esc(I.year)+" · "+LAY[S.lay].lbl+"</div></div></div>"+seatGrid(c,false)+"</div>"+rosterPrint(c)}
+/* 📋 បញ្ជីឈ្មោះ ក/ខ ·  គ្រប់សិស្សក្នុងថ្នាក់ តាមលេខកៅអី (ស្របនឹងប្លង់តុ) + ចំនួនក/ខ → បោះពុម្ពជាមួយប្លង់តុ */
+function rosterPrint(c){
+  var I=inf(),S=cleanSeat(c),m=byKey(c),rows=[],seated={};
+  S.s.forEach(function(k,i){var s=m[k];if(s){seated[k]=1;rows.push({n:s.n,seat:i+1,ab:S.abMap[k]||abOf(LAY[S.lay],i)})}});
+  var un=c.st.filter(function(s){return!seated[key(s)]});
+  var nA=rows.filter(function(r){return r.ab==="ក"}).length,nB=rows.length-nA;
+  var cell=function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=l>"+esc(r.n)+"</td><td>"+kn(r.seat)+"</td><td><b class='ab-"+(r.ab==="ខ"?"b":"a")+"'>"+r.ab+"</b></td></tr>"};
+  var per=Math.max(1,Math.ceil(rows.length/3)),cols=[0,1,2].map(function(k){var part=rows.slice(k*per,(k+1)*per);
+    return part.length?"<table class='ct og-rs'><thead><tr><th>ល.រ</th><th>ឈ្មោះ</th><th>កៅអី</th><th>វិញ្ញាសា</th></tr></thead><tbody>"+part.map(function(r,i){return cell(r,k*per+i)}).join("")+"</tbody></table>":""}).join("");
+  return"<div class='pg land orgp seatp'><span class='og-cn tl'></span><span class='og-cn tr'></span><span class='og-cn bl'></span><span class='og-cn br'></span>"+
+   "<div class=og-hd><img src='"+LOGOBT()+"' class=og-logo alt=''><div class=og-sch><b>"+esc(I.school)+"</b><br>សាលារៀនជំនាន់ថ្មី (NGS)</div>"+
+   "<div class=og-ttl><div class=moul>បញ្ជីឈ្មោះ ក/ខ ថ្នាក់ "+esc(c.n)+"</div><div class=og-yr>វិញ្ញាសា ក ៖ "+kn(nA)+" នាក់ · វិញ្ញាសា ខ ៖ "+kn(nB)+" នាក់"+(un.length?" · មិនទាន់មានកៅអី ៖ "+kn(un.length)+" នាក់":"")+"</div></div></div>"+
+   "<div class=og-rsw>"+cols+"</div>"+(un.length?"<p class=note>មិនទាន់មានកៅអី (ត្រូវដាក់ក្នុងប្លង់តុ) ៖ "+un.map(function(s){return esc(s.n)}).join(" · ")+"</p>":"")+"</div>";
 }
   /* 👆 ចាប់រើសតុ/សិស្ស · ម្នាក់ៗមិនត្រូវចាប់ម្ដងទៀត រហូតដល់គ្រប់គ្នាត្រូវបានចាប់ (ប្ដូរថ្នាក់ → ចាប់ផ្ដើមថ្មី) */
   var spotDone = {}, spotCls = "";

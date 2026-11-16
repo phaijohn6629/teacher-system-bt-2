@@ -1854,7 +1854,7 @@ function show(p){
   if(p==="p14"&&window.renderCx)renderCx();
   if(p==="p15"&&window.renderCur)renderCur();
   if(p==="p16"&&window.renderOrg)renderOrg();
-  if(p==="p17"&&window.renderQuiz)renderQuiz();
+  if(p==="p17"&&window.renderQuiz)renderQuiz(true);
   if(p==="p18"&&window.renderMs)renderMs();
   if(p==="p19"&&window.renderMt)renderMt();
   if(p==="p20"&&window.renderLs)renderLs();

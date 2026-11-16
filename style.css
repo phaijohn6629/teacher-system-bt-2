@@ -1184,3 +1184,7 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
   html.lpp,body.lpp{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;position:static!important;display:block!important;background:#fff!important}
   body.lpp #prt,body.lpp dialog,body.lpp .toast{display:none!important}
 }
+/* 📋 បញ្ជីឈ្មោះ ក/ខ (បោះពុម្ពជាមួយប្លង់តុ) */
+.og-rsw{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:start;margin-top:8px}
+.og-rs{width:100%;min-width:0!important;font-size:.78rem}.og-rs td,.og-rs th{padding:2px 4px;text-align:center}.og-rs td.l{text-align:left}
+.og-rs b.ab-a{color:#1d4ed8}.og-rs b.ab-b{color:#b45309}

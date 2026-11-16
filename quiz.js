@@ -240,6 +240,8 @@ function bankIdx(){
     return"<button type=button data-qa=ls data-ls="+n+(c?"":" class=z")+"><span>"+esc(lsName(fG,n).replace(/^ជំពូកទី\S+ · /,""))+"</span><em>"+(c==null?(wait?"…":"?"):kn(c))+"</em></button>"}).join("")+"</div>"}).join("")+"</div>";
   return"<p class=note style='margin:0 0 10px'>ថ្នាក់ទី"+kn(fG)+" · "+(wait?"កំពុងរាប់…":"សរុប <b>"+kn(tot)+"</b> លំហាត់")+" · ចុចលើមេរៀន ដើម្បីមើល ឬកែលំហាត់</p>"+h;
 }
+/* 🧱 បញ្ចូល HTML ក្នុង #qzBody តែពេលខ្លឹមសារប្ដូរពិតប្រាកដ → refreshView (Cloud sync) មិនគូរ select/input ឡើងវិញ (បើមិនដូច្នេះ ៖ select ដែលកំពុងបើកបិទ · ជម្រើសលោតត្រឡប់ · អត្ថបទដែលកំពុងវាយបាត់) */
+function setBody(h){var b=$("qzBody"),k=QV+"|"+h;if(b.__h===k&&b.__f&&b.firstChild===b.__f)return false;b.__h=k;b.innerHTML=h;b.__f=b.firstChild;return true}   /* firstChild ត្រូវនៅដដែល → DOM មិនត្រូវបានជំនួសដោយកូដផ្សេង (placeholder, EXAM…) */
 function renderBank(){
   if(!ready(needG())&&!qbErr)return renderQuiz();   /* ថ្នាក់ថ្មីដែលមិនទាន់ទាញ */
   var list=allQ().filter(function(q){return(!fG||q.g===fG)&&(!fL||String(q.ls)===String(fL))&&(!fV||q.lv===fV)&&(!mine||q.by===who.id)});
@@ -254,7 +256,7 @@ function renderBank(){
     "<button type=button class=primary data-qa=new>＋ បន្ថែមលំហាត់</button><button type=button data-qa=tex>📥 នាំចូលពី LaTeX (.tex)</button></div>"+
     (qbErr?"<p class=cxwarn>⚠️ "+esc(qbErr)+" <button type=button data-qa=reload>🔄 ផ្ទុកម្ដងទៀត</button></p>":"");
   /* មិនទាន់ជ្រើសមេរៀន → បង្ហាញតែចំនួនលំហាត់តាមមេរៀន (មិនទាញខ្លឹមសារ ដើម្បីសន្សំការអាន) */
-  if(!fG||!fL){$("qzBody").innerHTML=h+bankIdx();return}
+  if(!fG||!fL){setBody(h+bankIdx());return}
   h+="<p class=note style='margin:0 0 10px'><button type=button class=qz-back data-qa=ls data-ls=''>‹ មេរៀនទាំងអស់</button> សរុប <b>"+kn(list.length)+"</b> លំហាត់ ក្នុងមេរៀននេះ"+(fV||mine?" (តាមតម្រង)":"")+" · សរសេររូបមន្តជា LaTeX ក្នុង <code>$…$</code> ឧ. <code>$\\frac{a}{b}$</code>, <code>$x^2+\\sqrt{3}$</code></p>";
   var nUn=allQ().filter(function(q){return q.g===fG&&String(q.ls)===String(fL)&&!(+q.pt)&&(q.by===who.id||isAdm())}).length;
   if(pts.length&&nUn)h+="<div class=qz-autob>⚠️ មានលំហាត់ <b>"+kn(nUn)+"</b> មិនទាន់កំណត់ចំណុច <button type=button class=primary data-qa=auto>🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ</button><small>ប្រព័ន្ធណែនាំតាមខ្លឹមសារ · អ្នកពិនិត្យ/កែ មុនរក្សាទុក</small></div>";
@@ -276,7 +278,7 @@ function renderBank(){
       (q.t==="mc"?"<ol class=qz-ch type=A>"+q.ch.map(function(c,i){return"<li"+(i===+q.a?" class=ok":"")+">"+tx(c)+"</li>"}).join("")+"</ol>":"<div class=qz-num>ចម្លើយ៖ <b>"+tx(q.a)+"</b></div>")+"</div>"}).join("")+"</div>"+
       (more>0?"<button type=button class=qz-more data-qa=more>⬇️ បង្ហាញបន្ថែម ("+kn(Math.min(more,QB_PAGE))+" ក្នុងចំណោម "+kn(more)+" នៅសល់)</button>":"")
     :"<p class=note>មិនទាន់មានលំហាត់ទេ។ ចុច «＋ បន្ថែមលំហាត់» ដើម្បីចាប់ផ្ដើម។</p>";
-  $("qzBody").innerHTML=h;math($("qzBody"));loadImgs($("qzBody"));selUpd();
+  if(setBody(h)){math($("qzBody"));loadImgs($("qzBody"));selUpd()}
 }
 /* ---------- 🤖 កំណត់ចំណុចស្វ័យប្រវត្តិ (ptauto.js) · លំហាត់មិនទាន់កំណត់ចំណុចក្នុងមេរៀននេះ · គ្រូពិនិត្យ → រក្សាទុកម្ដងទាំងអស់ ---------- */
 function autoDlg(){
@@ -362,11 +364,14 @@ function qDialog(q){
   $("qdS").onclick=function(){
     var t=$("qdT").value,o={id:q.id||uid(),g:+$("qdG").value,ls:+$("qdL").value||"",lv:+$("qdV").value,t:t,q:$("qdQ").value.trim()};if(+$("qdPt").value)o.pt=+$("qdPt").value;
     if(!o.q){alert("សូមសរសេរសំណួរ");return}
+    if(o.q.length>3000){alert("សំណួរវែងពេក (អតិបរមា ៣,០០០ តួអក្សរ)");return}
     if(!o.ls){alert("សូមជ្រើសមេរៀន");return}
     if(t==="mc"){o.ch=[0,1,2,3].map(function(i){return $("qdC"+i).value.trim()});var ck=d.querySelector("input[name=qdA]:checked");
+      if(o.ch.some(function(x){return x.length>600})){alert("ជម្រើសវែងពេក (អតិបរមា ៦០០ តួអក្សរ)");return}
+      var nz=o.ch.filter(Boolean);if(nz.filter(function(x,i){return nz.indexOf(x)!==i}).length&&!confirm("មានជម្រើសដូចគ្នា ២ ឬច្រើន។ បន្តរក្សាទុក?"))return;
       if(o.ch.filter(Boolean).length<2){alert("សូមបញ្ចូលជម្រើសយ៉ាងតិច ២");return}if(!ck||!o.ch[+ck.value]){alert("សូមចុចរង្វង់ចម្លើយត្រូវ");return}o.a=+ck.value}
-    else{o.a=$("qdN").value.trim();if(!o.a){alert("សូមបញ្ចូលចម្លើយត្រឹមត្រូវ");return}}
-    var fg=$("qdF").value.trim();if(fg)o.fg=fg;
+    else{o.a=$("qdN").value.trim();if(!o.a){alert("សូមបញ្ចូលចម្លើយត្រឹមត្រូវ");return}if(o.a.length>200){alert("ចម្លើយវែងពេក (អតិបរមា ២០០ តួអក្សរ)");return}}
+    var fg=$("qdF").value.trim();if(fg.length>4000){alert("កូដរូប (FIG) វែងពេក");return}if(fg)o.fg=fg;
     var sl=$("qdSl").value.trim();if(sl)o.sl=sl;
     if(img)o.im=true;
     var owner=q.by||who.id,sb=$("qdS"),k=qid(owner,o.id);sb.disabled=true;
@@ -540,8 +545,8 @@ function renderMake(){
     "<div class=bar><label>🚫 សិស្សចាកចេញពីផ្ទាំងតេស្ត៖</label><select id=qmX>"+[[0,"កត់ត្រា និងព្រមានតែប៉ុណ្ណោះ"],[1,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ១"],[2,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ២"],[3,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៣"],[5,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៥"]].map(function(o){return"<option value="+o[0]+(o[0]===mk.lx?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select><span class=note style='margin:0'>ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់ → កត់ត្រា និងបង្ហាញក្នុងលទ្ធផល 🚩</span></div>"+
     "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
     (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+(mk.kind==="c"?"ប្រឡងបិទ» ដោយស្វ័យប្រវត្តិ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន)":KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ")+"</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"<button type=button data-qa=goexam style='margin-left:auto' title='វិញ្ញាសាសរសេរលើក្រដាស · បោះពុម្ព ឬមើលអនឡាញ'>📝 ប្រឡងទម្រង់បើក →</button></div>";
-  if(!c){$("qzBody").innerHTML=h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>";return}
-  if(!C){$("qzBody").innerHTML=h+"<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានកម្មវិធីសិក្សា។</p>";return}
+  if(!c){setBody(h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>");return}
+  if(!C){setBody(h+"<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានកម្មវិធីសិក្សា។</p>");return}
   var cnt={};pool.forEach(function(q){if(!inMk(q)&&mk.ls[q.ls])return;var k=q.ls+"_"+q.lv;cnt[k]=(cnt[k]||0)+1});
   if(!CNT[g])loadCnt(g);   /* មេរៀនមិនទាន់ធីក → បង្ហាញតែចំនួនសរុប (count) · ធីក → ទាញលំហាត់ ហើយបង្ហាញតាមកម្រិត */
   var grp={},order=[];Object.keys(C.LS).sort(function(a,b){return a-b}).forEach(function(n){var l=C.LS[n],k=l[3]?"ជំពូកទី"+kn(l[3])+" "+l[4]:(l[2]==="ធ"?"ធរណីមាត្រ":"ពីជគណិត");if(!grp[k]){grp[k]=[];order.push(k)}grp[k].push(n)});
@@ -560,7 +565,7 @@ function renderMake(){
       "<div class=bar style='margin-top:10px'><button type=button data-qa=shuffle>🎲 ក្រឡុកម្ដងទៀត</button><button type=button class=primary data-qa=open>🚀 បើកតេស្តឱ្យសិស្សធ្វើ</button></div>"+
       "<p class=note>សិស្សម្នាក់ៗទទួលបានលំដាប់លំហាត់ និងលំដាប់ជម្រើស ក ខ គ ឃ ខុសៗគ្នា ដើម្បីកុំឱ្យចម្លងគ្នា។</p></div>";
   }
-  $("qzBody").innerHTML=h;math($("qzBody"));
+  if(setBody(h))math($("qzBody"));
 }
 /* ចំណុចនៃមេរៀនដែលបានធីក៖ (ចំនួនលំហាត់តាមចំណុច) · មិនធីក = ទាំងមេរៀន */
 function ptBox(g,n,pool){
@@ -671,7 +676,7 @@ function renderRes(){
       (tests.length?"<div class=qr-list>"+tests.map(function(t){return"<div class=qr-card><div><b>"+esc(t.title)+"</b><small>"+kindBadge(t)+" "+esc(t.cls)+" · "+kn(t.items.length)+" លំហាត់ · "+esc((t.cr||"").slice(0,10))+(isAdm()?" · "+esc(tn(t.o)):"")+"</small></div>"+
       "<span class='qr-st "+(t.open?"on":"")+"'>"+(t.open?"🟢 កំពុងបើក":"⚪ បានបិទ")+"</span><button type=button class=primary data-qo="+t.id+">មើលលទ្ធផល</button></div>"}).join("")+"</div>"
       :"<p class=note>មិនទាន់មានតេស្តទេ។ ចូល «🧪 បង្កើតតេស្ត» ដើម្បីបង្កើត។</p>");
-    $("qzBody").innerHTML=h;return;
+    setBody(h);return;
   }
   var t=curTest,R=grade(t),n=t.items.length,avg=R.length?R.reduce(function(s,r){return s+r.sc},0)/R.length:0,K=keyOf[t.id]||{};
   var done={};R.forEach(function(r){done[r.s.sid]=1});
@@ -689,7 +694,7 @@ function renderRes(){
       prog.map(function(x){return"<tr class=qr-ip><td>⏳</td><td class=nm>"+esc(x.sn||x.sid)+"</td><td colspan=5>កំពុងធ្វើ · ចាប់ផ្ដើម "+esc(stTime(x.at))+(t.dur?" · ផុតម៉ោង "+esc(stTime(x.at,t.dur)):"")+"</td><td><button type=button class=qr-rs data-qrs='"+esc(x.sid)+"' title='អនុញ្ញាតឱ្យចាប់ផ្ដើមម្ដងទៀត (ឧ. ប្ដូរឧបករណ៍ ឬមានអ្នកផ្សេងប្រើឈ្មោះនេះ)'>🔄</button></td></tr>"}).join(""):"<tr><td colspan=8 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
     (miss.length?"<p class=note>មិនទាន់ធ្វើ ("+kn(miss.length)+")៖ "+miss.map(function(x){return esc(x.n)}).join(" · ")+"</p>":"")+
     "<h3 style='margin:16px 0 8px'>📊 វិភាគតាមលំហាត់</h3><div class=qz-list>"+t.items.map(function(q,i){return qBreak(t,q,i,K[q.id],R)}).join("")+"</div>";
-  $("qzBody").innerHTML=h;math($("qzBody"));
+  if(setBody(h))math($("qzBody"));
 }
 /* ---------- 📊 វិភាគតាមលំហាត់ · ❌ បញ្ជីសិស្សធ្វើខុស · 📄 ក្រដាសកិច្ចការសិស្សម្នាក់ៗ ----------
    ទិន្នន័យ៖ subs.a[លំហាត់] = ចម្លើយដែលសិស្សរើស (MC = លេខជម្រើសដើម 0–3 មុនក្រឡុក · num = អត្ថបទ) · tkeys.a[លំហាត់] = {t,a,s?}
@@ -801,8 +806,9 @@ function driveClick(){
 }
 
 /* ===================== គោល ===================== */
-function renderQuiz(){
+function renderQuiz(ext){   /* ext = ហៅពី refreshView (Cloud sync) → កុំរំខាន select/input ដែលកំពុងប្រើ */
   if(!who)return;
+  if(ext===true&&QV!=="exam"){var ae=document.activeElement,qb0=$("qzBody");if(ae&&qb0&&qb0.contains(ae)&&/^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName))return}
   [].forEach.call($("qzSeg").querySelectorAll("[data-qv]"),function(b){b.setAttribute("aria-selected",b.dataset.qv===QV)});drvBtn();
   if(!renderQuiz.g0){renderQuiz.g0=1;var c0=myClasses(who.id)[0],g0=c0?parseInt(c0.n):0;if(!fG&&GR.indexOf(g0)>=0)fG=g0}   /* ចាប់ផ្ដើមនៅថ្នាក់របស់គ្រូ (ទាញតែថ្នាក់នោះ) */
   var gs=needG();
@@ -847,7 +853,7 @@ function renderPrac(){
   h+="<div class=bar><b>🏆 កំណត់ត្រាហ្វឹកហាត់</b><span class=note style='margin:0'>សិស្សបានហ្វឹកហាត់ "+kn(done)+" / "+kn(p.names.length)+" នាក់</span><button type=button data-qa=pcrf>🔄 ផ្ទុកឡើងវិញ</button></div>"+
     "<div class=wrap><table class=pc-tb><thead><tr><th>ល.រ</th><th>ឈ្មោះ</th>"+L.map(function(l){return"<th title='"+esc(lsName(g,l))+"'>"+esc(lsName(g,l).replace(/^ជំពូកទី\S+ · /,"").replace(/^មេរៀនទី\S+ /,"").slice(0,14))+"</th>"}).join("")+"<th>សរុប</th><th>ចុងក្រោយ</th></tr></thead><tbody>"+body+"</tbody></table></div>"+
     "<p class=note>🏆 មួយ = កម្រិតមួយដែលឆ្លើយត្រូវទាំងអស់ (អតិបរមា ៥ ក្នុងមួយមេរៀន · ៦ បើមានកម្រិត 🌐 PISA)។ ដាក់ម៉ៅស៍លើក្បាលជួរ ដើម្បីមើលឈ្មោះមេរៀនពេញ។</p>";
-  $("qzBody").innerHTML=h;
+  setBody(h);
 }
 function pcAct(a){
   var cl=myClasses(who.id),c=cl[PC.ci];if(!c)return;var p=PC.list.filter(function(x){return x.cls===c.n})[0];

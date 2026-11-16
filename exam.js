@@ -102,6 +102,7 @@ function save(now){
   X.saveT=setTimeout(function(){
     var E=X.E;if(!E)return;var F=window.FB,o=Object.assign({},E);delete o.id;delete o.u;
     var jj=JSON.stringify(o),last=(X.lastW||(X.lastW={}))[E.id]||{};
+    if(jj.length>900000){X.status="⚠️ វិញ្ញាសាធំពេក (>៩០០ KB) មិនអាចរក្សាទុកបាន · សូមកាត់បន្ថយចំនួនសំណួរ ឬរូប";stat();return}   /* Firestore ≤ ១ MB ក្នុងមួយឯកសារ */
     if(last.j===jj){X.dirty=false;X.status="✅ បានរក្សាទុក";stat();return}   /* គ្មានអ្វីប្ដូរ → មិនសរសេរ */
     E.u=new Date().toISOString();cPut(E,E.u);o.u=E.u;
     /* 📦 រក្សាទុកជាពីរឯកសារ៖ exams/{id} = សង្ខេប (បញ្ជីទាញតែនេះ · លឿន) · exams/{id}__c = ខ្លឹមសារពេញ (ទាញពេលបើក) */
@@ -374,13 +375,13 @@ function onInput(e){
     if(f==="ab"){E.ab=t.checked;if(E.ab)E.secs.forEach(function(s){fill(s,gOf(E),"itB")});save();editor();return}
     if(f==="cls"){var og=gOf(E);E.cls=t.value;if(gOf(E)!==og&&E.secs.length&&confirm("ថ្នាក់ថ្មីជាកម្រិតផ្សេង។ បង្កើតផ្នែកទាំងអស់ឡើងវិញតាមកម្រិតថ្នាក់ថ្មី?")){var L=lsList(gOf(E)),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(gOf(E),f0[0])]:[]}save();editor();return}
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
-  if(t.dataset.es){var q=t.dataset.es.split("|"),s=E.secs[+q[0]],k=q[1],g=gOf(E);
+  if(t.dataset.es){var q=t.dataset.es.split("|"),s=E.secs[+q[0]],k=q[1],g=gOf(E);if(!s)return;
     if(k==="inst"){s.inst=t.value;save();prev();return}
     if(k==="pts"){s.pts=Math.max(0,+t.value||0);save();prev();var h3=body().querySelectorAll(".card h3 small")[0];if(h3)h3.textContent="សរុប "+kn(EXP.total(E))+" ពិន្ទុ";return}
     if(e.type!=="change")return;
     if(k==="ls"){s.ls=+t.value;var T2=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(isT(s))s.lv=T2&&T2.length?"t:"+T2[0].id:2;else if(T2&&T2.length)s.lv="t:"+T2[0].id;if(s.lv===4&&!hasLv4(g,s.ls))s.lv=3}else if(k==="lv")s.lv=/^t:/.test(t.value)?t.value:+t.value;else if(k==="n")s.n=Math.min(8,Math.max(1,+t.value||1));
     fill(s,g);if(E.ab)fill(s,g,"itB");save();editor();return}
-  if(t.dataset.ei){var p=t.dataset.ei.split("|"),it=E.secs[+p[0]].it[+p[1]];it.q=t.value;t.style.height="auto";t.style.height=Math.max(36,t.scrollHeight)+"px";save();prev()}
+  if(t.dataset.ei){var p=t.dataset.ei.split("|"),sc=E.secs[+p[0]],it=sc&&sc.it&&sc.it[+p[1]];if(!it)return;it.q=String(t.value).slice(0,6000);t.style.height="auto";t.style.height=Math.max(36,t.scrollHeight)+"px";save();prev()}
 }
 var qb=$("qzBody");
 qb.addEventListener("click",function(e){if(QVx()!=="exam")return;var b=e.target.closest("[data-ex]");if(!b||b.disabled)return;var q=b.dataset.ex.split("|");act(q[0],q)});
