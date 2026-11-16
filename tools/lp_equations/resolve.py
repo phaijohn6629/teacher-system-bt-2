@@ -30,7 +30,7 @@ def lat(h):
     if not v: return None
     if v['e']=='wmf' and v['t'] and not (set(v['f'])-{'rows','bigdelim'}): return v['t']
     return None
-def js(s): return s.replace('\\','\\\\')
+def js(s): return s.replace('\\','\\\\').replace('"','\\"')
 def sub_math(m):
     body=m.group(1)
     only=re.fullmatch(r'\s*\\\\sq\{([0-9a-f]{10})\}\s*',body)

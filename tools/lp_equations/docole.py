@@ -2,7 +2,11 @@ DEBUG=0
 import olefile,struct,re,sys
 sys.path.insert(0,'.')
 import m2l
+def eqfields(path):
+    return _eq(path,True)
 def eqlist(path):
+    return _eq(path,False)
+def _eq(path,wantpic):
     o=olefile.OleFileIO(path); wd=o.openstream('WordDocument').read()
     flags=struct.unpack('<H',wd[10:12])[0]; tbl=o.openstream('1Table' if flags&0x200 else '0Table').read()
     p=32; csw=struct.unpack('<H',wd[p:p+2])[0]; p+=2+csw*2
@@ -43,7 +47,7 @@ def eqlist(path):
                             sz={0:1,1:1,2:2,3:4,4:2,5:2,7:3}.get(spra)
                             if spra==6: sz=1+g[q]
                             if DEBUG: print(hex(op),g[q:q+(sz or 0)].hex())
-                            if op==0x680E: res=struct.unpack('<i',g[q:q+4])[0]
+                            if op==0x6A03: res=struct.unpack('<i',g[q:q+4])[0]
                             q+=sz
                         return res
         return None
@@ -61,9 +65,40 @@ def eqlist(path):
         if name and o.exists(f'ObjectPool/{name}/Equation Native'):
             try: tex=m2l.to_tex(o.openstream(f'ObjectPool/{name}/Equation Native').read())[0]
             except Exception as e: tex=None
-        out.append((name,tex))
+        out.append((name,tex,pl_) if wantpic else (name,tex))
     return out
 if __name__=='__main__':
     import glob
     for f in sorted(glob.glob(sys.argv[1])):
         L=eqlist(f);print(f[-40:],len(L),sum(1 for n,t in L if t),[t for n,t in L][:6])
+
+import zlib
+def blip_wmf(data,off):
+    lcb=struct.unpack('<I',data[off:off+4])[0]; cbh=struct.unpack('<H',data[off+4:off+6])[0]
+    p=off+cbh; end=off+lcb
+    def walk(p,end):
+        while p+8<=end:
+            vi,typ,ln=struct.unpack('<HHI',data[p:p+8]); ver=vi&0xF
+            if ver==0xF: 
+                r=walk(p+8,min(end,p+8+ln))
+                if r: return r
+            elif typ==0xF007:
+                cbn=data[p+8+34]; r=walk(p+8+36+cbn,p+8+ln)
+                if r: return r
+            elif typ in (0xF01A,0xF01B,0xF01C):
+                inst=vi>>4; q=p+8+16+(16 if inst in (0x3D5,0x217,0x543,0x6E1) else 0)
+                cbSize,=struct.unpack('<I',data[q:q+4]); cbSave,=struct.unpack('<I',data[q+28:q+32]); comp=data[q+32]; q+=34
+                raw=data[q:q+cbSave]
+                try: raw=zlib.decompress(raw) if comp==0 else raw
+                except Exception: return None
+                return typ,raw
+            p+=8+ln
+        return None
+    return walk(p,end)
+def wmflist(path):
+    o=olefile.OleFileIO(path); wd=o.openstream('WordDocument').read(); data=o.openstream('Data').read()
+    out=[]
+    for name,tex,pl in eqfields(path):
+        r=blip_wmf(data,pl) if pl is not None else None
+        out.append(r)
+    return out

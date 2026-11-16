@@ -2,12 +2,12 @@ import sys,re
 sys.path.insert(0,'.')
 import wmf
 LX={'α':'\\alpha ','β':'\\beta ','χ':'\\chi ','δ':'\\delta ','ε':'\\varepsilon ','φ':'\\varphi ','γ':'\\gamma ','η':'\\eta ','ι':'\\iota ','ϕ':'\\phi ','κ':'\\kappa ','λ':'\\lambda ','μ':'\\mu ','ν':'\\nu ','ο':'o','π':'\\pi ','θ':'\\theta ','ρ':'\\rho ','σ':'\\sigma ','τ':'\\tau ','υ':'\\upsilon ','ϖ':'\\varpi ','ω':'\\omega ','ξ':'\\xi ','ψ':'\\psi ','ζ':'\\zeta ',
-'Δ':'\\Delta ','Φ':'\\Phi ','Γ':'\\Gamma ','Θ':'\\Theta ','Λ':'\\Lambda ','Π':'\\Pi ','Σ':'\\Sigma ','Ω':'\\Omega ','Ψ':'\\Psi ','±':'\\pm ','×':'\\times ','÷':'\\div ','≥':'\\ge ','≤':'\\le ','≠':'\\ne ','≈':'\\approx ','∞':'\\infty ','∂':'\\partial ','√':'\\surd ','∈':'\\in ','∉':'\\notin ','⊂':'\\subset ','⊆':'\\subseteq ','⊃':'\\supset ','∩':'\\cap ','∪':'\\cup ','→':'\\to ','←':'\\leftarrow ','↔':'\\leftrightarrow ','⇒':'\\Rightarrow ','⇐':'\\Leftarrow ','⇔':'\\Leftrightarrow ','•':'\\bullet ','°':'^\\circ ','∫':'\\int ','⋅':'\\cdot ','∅':'\\varnothing ','≡':'\\equiv ','−':'-','′':"'",'∧':'\\wedge ','∨':'\\vee ','¬':'\\neg ','∀':'\\forall ','∃':'\\exists ','∠':'\\angle ','⊥':'\\perp ','∼':'\\sim ','≅':'\\cong ','…':'\\ldots ','∇':'\\nabla ','↑':'\\uparrow ','↓':'\\downarrow ','‖':'\\|','|':'|','{':'\\{ ','}':'\\} ','%':'\\%','#':'\\#','&':'\\&','_':'\\_','$':'\\$','~':'\\sim ','^':'\\wedge ','<':'<','>':'>','\\':'\\backslash ','"':"''"}
+'Δ':'\\Delta ','Φ':'\\Phi ','Γ':'\\Gamma ','Θ':'\\Theta ','Λ':'\\Lambda ','Π':'\\Pi ','Σ':'\\Sigma ','Ω':'\\Omega ','Ψ':'\\Psi ','±':'\\pm ','×':'\\times ','÷':'\\div ','≥':'\\ge ','≤':'\\le ','≠':'\\ne ','≈':'\\approx ','∞':'\\infty ','∂':'\\partial ','√':'\\surd ','∈':'\\in ','∉':'\\notin ','⊂':'\\subset ','⊆':'\\subseteq ','⊃':'\\supset ','∩':'\\cap ','∪':'\\cup ','→':'\\to ','←':'\\leftarrow ','↔':'\\leftrightarrow ','⇒':'\\Rightarrow ','⇐':'\\Leftarrow ','⇔':'\\Leftrightarrow ','•':'\\bullet ','°':'^\\circ ','∫':'\\int ','⋅':'\\cdot ','∅':'\\varnothing ','≡':'\\equiv ','−':'-','′':"'",'∧':'\\wedge ','∨':'\\vee ','¬':'\\neg ','∀':'\\forall ','∃':'\\exists ','∠':'\\angle ','⊥':'\\perp ','∼':'\\sim ','≅':'\\cong ','…':'\\ldots ','∇':'\\nabla ','↑':'\\uparrow ','↓':'\\downarrow ','‖':'\\|','|':'|','{':'\\{ ','}':'\\} ','%':'\\%','#':'\\#','&':'\\&','_':'\\_','$':'\\char"24 ','~':'\\sim ','^':'\\wedge ','<':'<','>':'>','\\':'\\backslash ','"':"''"}
 BIG=set('⎛⎜⎝⎞⎟⎠⎧⎨⎩⎪〈〉⏐')
 RAD=[]
 def glyphs(d):
     del RAD[:]
-    G=[];L=[];flags=set()
+    G=[];L=[];flags=set();VL=[]
     for it in d['items']:
         if it[0]=='t':
             _,x,y,s,f,ta,dx=it;sz=f.get('h',12);txt=wmf.dec(s,f);nm=(f.get('name') or '').lower()
@@ -16,17 +16,21 @@ def glyphs(d):
             for i in range(len(s)-1): xs.append(xs[-1]+(dx[i] if dx and len(dx)==len(s) else sz*0.5))
             for i,ch in enumerate(txt):
                 if ch==' ':continue
-                if ord(ch)>127 and ch not in LX and ch not in '⎡⎛⎤⎞⎢⎣⎜⎝⎥⎦⎟⎠ℝℕ↦': flags.add('uni:'+ch)
+                if ord(ch)>127 and ch not in LX and ch not in '⎡⎛⎤⎞⎢⎣⎜⎝⎥⎦⎟⎠ℝℕ↦□': flags.add('uni:'+ch)
                 sym='symbol' in nm or 'extra' in nm
                 G.append(dict(c=ch,x=xs[i],w=sz*0.5,b=base,s=sz,it=f.get('it',False),sym=sym,nm=nm,acc=('extra' in nm and ch in 'rR'),wd=(dx[i] if dx and len(dx)==len(s) else sz*0.5)))
         elif it[0]=='l' and it[2]==it[4]: L.append((min(it[1],it[3]),max(it[1],it[3]),it[2]))
+        elif it[0]=='l' and it[1]==it[3]: VL.append((it[1],min(it[2],it[4]),max(it[2],it[4])))
         elif it[0]=='pl':
             p=it[1]
             for a,b_ in zip(p,p[1:]):
                 if a[1]==b_[1]:L.append((min(a[0],b_[0]),max(a[0],b_[0]),a[1]))
         elif it[0]=='r':
             if abs(it[4]-it[2])<=70: L.append((min(it[1],it[3]),max(it[1],it[3]),(it[2]+it[4])/2))
-            else: flags.add('shape')
+            else:
+                x0,x1=min(it[1],it[3]),max(it[1],it[3]);y0,y1=min(it[2],it[4]),max(it[2],it[4])
+                if 100<=x1-x0<=900 and 100<=y1-y0<=900: G.append(dict(c='\u25a1',x=x0,w=x1-x0,b=y1,s=y1-y0,it=False,sym=False,nm='box',acc=False,wd=x1-x0))
+                else: flags.add('shape')
         elif it[0]=='pg' and 7<=len(it[1])<=24 and len({p[1] for p in it[1]})>=3:
             pts=it[1];top=min(p[1] for p in pts);bot=max(p[1] for p in pts);xl=min(p[0] for p in pts);xr=max(p[0] for p in pts)
             if xr-xl>(bot-top)*0.5 and sum(1 for p in pts if abs(p[1]-top)<=25)>=2: RAD.append((xl,xr,top,bot))
@@ -39,6 +43,16 @@ def glyphs(d):
             m=min(cand,key=lambda g:abs(g['x']+g['w']/2-cx))
             m['vec']=m.get('vec',0)+1
         G.remove(a)
+    for i1 in range(len(VL)):
+        for i2 in range(i1+1,len(VL)):
+            a,b2=VL[i1],VL[i2]
+            if 100<=abs(a[0]-b2[0])<=900 and abs(a[1]-b2[1])<=25 and abs(a[2]-b2[2])<=25:
+                xl,xr=min(a[0],b2[0]),max(a[0],b2[0]);yt,yb=a[1],a[2]
+                tops=[l for l in L if abs(l[2]-yt)<=25 and l[0]<=xl+25 and l[1]>=xr-25]
+                bots=[l for l in L if abs(l[2]-yb)<=25 and l[0]<=xl+25 and l[1]>=xr-25]
+                if tops and bots:
+                    L=[l for l in L if l not in tops and l not in bots]
+                    G.append(dict(c='\u25a1',x=xl,w=xr-xl,b=yb,s=yb-yt,it=False,sym=False,nm='box',acc=False,wd=xr-xl))
     GR={'(':'⎛⎜⎝',')':'⎞⎟⎠','[':'⎡⎢⎣',']':'⎤⎥⎦'}
     for tgt,chs in GR.items():
         pcs=[g for g in G if g['c'] in chs]
@@ -58,6 +72,7 @@ def tex(g):
     return '\\vec{'+r.strip()+'} ' if g.get('vec') else r
 def tex0(g):
     c=g['c']
+    if c=='\u25a1': return '\\square '
     if c in '⎡⎛': return '('  if c=='⎛' else '['
     if c in '⎤⎞': return ')' if c=='⎞' else ']'
     if c in '⎢⎣⎜⎝⎥⎦⎟⎠⏐': return ''
@@ -161,8 +176,9 @@ def seq(G,L,flags,depth=0,gmx=None):
     out='';state=0;srt=sorted(G,key=lambda g:g['x'])
     for g in srt:
         small=g['s']<mx*0.85
-        up=small and g['b']<mb-g['s']*0.25
-        dn=small and g['b']>mb+g['s']*0.1
+        nb=g['c'] not in '()[]{}|'
+        up=(small and g['b']<mb-g['s']*0.25) or (nb and g['b']<mb-g['s']*0.33)
+        dn=(small and g['b']>mb+g['s']*0.1) or (nb and g['b']>mb+g['s']*0.33)
         st=1 if up else (-1 if dn else 0)
         if g['c'] in BIG and g['c'] not in '⎡⎛⎤⎞⎢⎣⎜⎝⎥⎦⎟⎠':flags.add('bigdelim')
         if st!=state:
@@ -178,6 +194,7 @@ def convert(b):
     d=wmf.parse(b);G,L,flags=glyphs(d)
     if not G:return None,{'empty'}
     t=seq(G,L,flags)
+    t=re.sub(r'_\{\.+\}','',t)
     t=re.sub(r'\[cite_\{?s\}?tart\]','',t); t=re.sub(r'\s+',' ',t).strip()
     t=re.sub(r'\.{3,}',r'\\ldots ',t)
     return t,flags
