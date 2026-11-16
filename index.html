@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=112">
+<link rel="stylesheet" href="style.css?v=113">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -336,12 +336,14 @@
           <span class="k">- សម្រាប់សិស្ស</span><b>៖</b><span class="v lp-ph" id="lpMs">…</span>
           <span class="k">- សម្រាប់គ្រូ</span><b>៖</b><span class="v lp-ph" id="lpMt">…</span>
         </div>
+        <div class="lp-qr" id="lpQR"><div class="lp-qt">QR Code <span>&gt;&gt;&gt;&gt;&gt;</span> ឯកសារ និងតំណភ្ជាប់</div><div class="lp-qb" id="lpQB"></div><small id="lpQU"></small></div>
         <h3 class="lp-h"><span class="lp-bd">៤</span>វិធីបង្រៀន</h3>
         <div class="lp-kv">
           <span class="k">- គោលវិធីបង្រៀន</span><b>៖</b><span class="v">សិស្សមជ្ឈមណ្ឌល</span>
           <span class="k">- វិធីសាស្ត្របង្រៀន</span><b>៖</b><span class="v" id="lpM1">…</span>
           <span class="k">- យុទ្ធវិធីបង្រៀន</span><b>៖</b><span class="v" id="lpM2">…</span>
         </div>
+        <div class="lp-md" id="lpMD"></div>
         <h3 class="lp-h"><span class="lp-bd">៥</span>ដំណើរការបង្រៀន</h3>
         <div class="lp-tw"><table class="lp-tb">
           <thead><tr><th>សកម្មភាពគ្រូ</th><th>ខ្លឹមសារមេរៀន</th><th>សកម្មភាពសិស្ស</th></tr></thead>
@@ -349,12 +351,13 @@
         </table></div>
         <div class="lp-sg" id="lpSG">
           <div class="lp-sc">
-            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងឯកភាព</span><span class="lp-mu">ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSM">…</span></div>
-            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu">បានឃើញ និងត្រួតពិនិត្យ</span><span class="lp-mu">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div>
-            <div class="lp-sx"><div class="lp-tt"><span class="lp-mu lp-ln" id="lpSL"></span><span class="lp-mu" id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span class="lp-mu">គ្រូបង្រៀន</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpST">…</span></div>
+            <div class="lp-sx"><div class="lp-tt"><span>បានឃើញ និងឯកភាព</span><span class="lp-mu">ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSM">…</span></div>
+            <div class="lp-sx"><div class="lp-tt"><span>បានឃើញ និងត្រួតពិនិត្យ</span><span class="lp-mu">ប្រធានក្រុមបច្ចេកទេស</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpSH">…</span></div>
+            <div class="lp-sx"><div class="lp-tt"><span class="lp-ln" id="lpSL"></span><span id="lpSD">រាជធានីភ្នំពេញ, ថ្ងៃទី…</span><span class="lp-mu">គ្រូបង្រៀន</span></div><i class="lp-sp"></i><span class="lp-mu lp-nm" id="lpST">…</span></div>
           </div>
         </div>
-        <div class="lp-pnv"><span id="lpPN">ទំព័រទី ១</span></div>
+        <section class="lp-ws" id="lpWS" hidden><h3 class="lp-wt moul">សន្លឹកកិច្ចការ (Worksheet)</h3><p class="lp-wn" id="lpWN"></p><ol class="lp-wl" id="lpWL"></ol></section>
+        <div class="lp-pg" id="lpPG" aria-hidden="true"></div>
       </article>
     </div>
   </div>
@@ -644,7 +647,7 @@
 <script src="storeadm.js?v=2"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
-<script src="script.js?v=114"></script>
+<script src="script.js?v=115"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>

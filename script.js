@@ -1849,8 +1849,24 @@ function show(p){
 $("tabs").onclick=function(e){var b=e.target.closest("button");if(b)show(b.dataset.p)};
 /* ===== 🧩 កិច្ចតែងការបង្រៀន (p21) · UI Layout + បញ្ជា · ខ្លឹមសារស្វ័យប្រវត្តិនឹងបន្ថែមជំហានបន្ទាប់ ===== */
 var LPM=["5Es (ចូលរួម · ស្វែងរក · ពន្យល់ · ពង្រីក · វាយតម្លៃ)","PBL (រៀនតាមគម្រោង)","Flipped Classroom (ថ្នាក់រៀនបញ្ច្រាស)","រៀនតាមការស្រាវជ្រាវ (Inquiry)","ពន្យល់ និងអនុវត្ត (Direct Instruction)"],
-  LPT=["Think-Pair-Share","Jigsaw (ផ្គុំគំនិត)","ក្រុមសហការ (Cooperative Learning)","Gallery Walk","សំណួរ-ចម្លើយ និងពិភាក្សា","ដោះស្រាយបញ្ហា (Problem Solving)"],
+  LPT=["Think-Pair-Share","KWL (Know · Want · Learned)","Jigsaw (ផ្គុំគំនិត)","ក្រុមសហការ (Cooperative Learning)","Gallery Walk","សំណួរ-ចម្លើយ និងពិភាក្សា","ដោះស្រាយបញ្ហា (Problem Solving)"],
   LPS=["រដ្ឋបាលថ្នាក់រៀន","រំលឹកមេរៀនចាស់","មេរៀនប្រចាំថ្ងៃ","ពង្រឹងពុទ្ធិ","បណ្តាំផ្ញើ និងកិច្ចការផ្ទះ"];
+/* 🧭 ជំហានលម្អិតនៃវិធីសាស្ត្រ/យុទ្ធវិធី (ជ្រើសតាមឈ្មោះមុនវង់ក្រចក) */
+var LPD={
+"5Es":["ចូលរួម (Engage) ៖ ដាក់បញ្ហា/សំណួរទាក់ទាញ ដើម្បីដាស់ចំណាប់អារម្មណ៍","ស្វែងរក (Explore) ៖ សិស្សសកម្មភាព/សាកល្បងជាក្រុម ដោយគ្រូណែនាំ","ពន្យល់ (Explain) ៖ សិស្សបកស្រាយ គ្រូបញ្ជាក់និយមន័យ និងរូបមន្ត","ពង្រីក (Elaborate) ៖ អនុវត្តចំណេះដឹងក្នុងស្ថានភាព/លំហាត់ថ្មី","វាយតម្លៃ (Evaluate) ៖ ត្រួតពិនិត្យការយល់ដឹងតាមសំណួរ ឬលំហាត់ខ្លី"],
+"PBL":["កំណត់បញ្ហា ឬគម្រោងពីជីវិតពិត","រៀបចំផែនការ និងបែងចែកតួនាទីក្នុងក្រុម","ស្រាវជ្រាវ ប្រមូលទិន្នន័យ និងអនុវត្តគម្រោង","បង្ហាញលទ្ធផល និងឆ្លុះបញ្ចាំង/វាយតម្លៃ"],
+"Flipped Classroom":["សិស្សសិក្សាមេរៀនសង្ខេប/វីដេអូនៅផ្ទះមុន","នៅថ្នាក់ ៖ ឆ្លើយសំណួរ និងបំភ្លឺចំណុចមិនទាន់យល់","ហ្វឹកហាត់លំហាត់ជាក្រុម ដោយគ្រូជួយតាមកម្រិត","សង្ខេប និងវាយតម្លៃលទ្ធផលរៀន"],
+"រៀនតាមការស្រាវជ្រាវ":["ដាក់សំណួរ/បញ្ហាស្រាវជ្រាវ","ផ្តើមសម្មតិកម្ម ឬការទស្សន៍ទាយ","ស្វែងរក និងធ្វើតេស្តសម្មតិកម្មតាមឧទាហរណ៍","សន្និដ្ឋាន និងចែករំលែកលទ្ធផល"],
+"ពន្យល់ និងអនុវត្ត":["គ្រូពន្យល់ និយមន័យ និងរូបមន្ត","គ្រូបង្ហាញឧទាហរណ៍លម្អិតលើក្តារ","សិស្សអនុវត្តជាមួយគ្រូ (Guided Practice)","សិស្សអនុវត្តដោយខ្លួនឯង (Independent Practice)"],
+"Think-Pair-Share":["Think ៖ សិស្សគិតដោះស្រាយម្នាក់ឯង","Pair ៖ ពិភាក្សាជាគូ","Share ៖ ចែករំលែកចម្លើយជាមួយថ្នាក់ទាំងមូល"],
+"KWL":["K (Know) ៖ សិស្សរៀបរាប់អ្វីដែលដឹងរួចហើយ","W (Want) ៖ សិស្សសរសេរអ្វីដែលចង់ដឹង","L (Learned) ៖ សិស្សសង្ខេបអ្វីដែលបានរៀនបន្ទាប់ពីមេរៀន"],
+"Jigsaw":["បែងចែកក្រុមមូលដ្ឋាន ហើយផ្តល់ផ្នែកខ្លឹមសារខុសគ្នា","ក្រុមអ្នកជំនាញ ៖ អ្នកកាន់ផ្នែកដូចគ្នាប្រជុំសិក្សា","សិស្សត្រឡប់ក្រុមដើម ហើយបង្រៀនមិត្តរួមក្រុម","វាយតម្លៃសរុបលើខ្លឹមសារទាំងអស់"],
+"ក្រុមសហការ":["បែងចែកក្រុម ៤ នាក់ និងតួនាទី","ដោះស្រាយកិច្ចការរួមគ្នា","តំណាងក្រុមបង្ហាញលទ្ធផល","ក្រុមវាយតម្លៃគ្នាទៅវិញទៅមក"],
+"Gallery Walk":["ក្រុមសរសេរចម្លើយលើក្រដាសធំ","ក្រុមដើរមើលស្នាដៃក្រុមផ្សេង","ផ្តល់មតិ និងសំណួរ","ត្រឡប់កែលម្អស្នាដៃ"],
+"សំណួរ-ចម្លើយ":["គ្រូដាក់សំណួរតាមលំដាប់ងាយ → ពិបាក","សិស្សគិត និងឆ្លើយ","គ្រូផ្តល់មតិ និងសួរតាមដាន"],
+"ដោះស្រាយបញ្ហា":["យល់បញ្ហា និងកំណត់ទិន្នន័យ","រៀបចំផែនការ ឬជ្រើសរូបមន្ត","អនុវត្តដំណោះស្រាយ","ត្រួតពិនិត្យចម្លើយ"]
+};
+function lpDetail(t){var k=String(t).split(" (")[0];return LPD[k]||LPD[Object.keys(LPD).filter(function(x){return String(t).indexOf(x)===0})[0]]||[]}
 /* 📚 ទិន្នន័យគំរូ (key = «ថ្នាក់_លេខមេរៀនក្នុងប្រព័ន្ធ» · លេខមេរៀន = ជំពូក×១០ + មេរៀន ឧ. 12_11 = ថ្នាក់ទី១២ ជំពូក១ មេរៀន១) · បន្ថែមមេរៀនថ្មីដោយចម្លងទម្រង់នេះ
    obj = វត្ថុបំណង ៣ វិស័យ (ប្រភេទ: បញ្ជីអក្សរ) · mat = សម្ភារៈ · dur = រយៈពេលសរុប (នាទី) · steps[5] = {n: ឈ្មោះជំហាន, t: នាទី, tc: សកម្មភាពគ្រូ[], ct: ខ្លឹមសារមេរៀន[], st: សកម្មភាពសិស្ស[]} */
 var lessonPlanDB={
@@ -1861,6 +1877,7 @@ var lessonPlanDB={
       skills:["គណនាផលបូក ផលដក និងផលគុណនៃចំនួនកុំផ្លិចទម្រង់ពីជគណិត","រកផ្នែកពិត និងផ្នែកនិមិត្ត ហើយរកចំនួនពិត $x,y$ ពីសមភាពនៃចំនួនកុំផ្លិច"],
       attitude:["មានការចាប់អារម្មណ៍ និងអត់ធ្មត់ក្នុងការសិក្សាចំនួនប្រភេទថ្មី","សហការ និងចែករំលែកគំនិតក្នុងក្រុម"]},
     mat:{st:["សៀវភៅសិក្សាគណិតវិទ្យាថ្នាក់ទី១២","សៀវភៅកិច្ចការផ្ទះ","សៀវភៅកត់ត្រា ប៊ិច បន្ទាត់"],tc:["សៀវភៅសិក្សាគណិតវិទ្យាថ្នាក់ទី១២ សម្រាប់គ្រូ","ក្តារខៀន ដីស/ប៊ិច","សន្លឹកលំហាត់ ១ សន្លឹក/ក្រុម","ម៉ាស៊ីនគិតលេខ (បើមាន)"]},   /* st = សម្រាប់សិស្ស · tc = សម្រាប់គ្រូ (អាចជាបញ្ជីតែមួយ = សម្រាប់គ្រូ) */
+    worksheet:["គណនា $(3+2i)+(1-5i)$ និង $(2-i)(3+4i)$","រកចំនួនពិត $x,y$ ដែល $(x+2)+(y-3)i=3-3i$","គណនា $i^{2024}$ និង $i^{2025}$","ចូរសរសេរចំនួនកុំផ្លិចឆ្លាស់នៃ $z=5-7i$ ហើយគណនា $z\\bar z$"],
     steps:[
       {n:"រដ្ឋបាលថ្នាក់រៀន",t:3,
        tc:["សួរសុខទុក្ខ និងស្រង់វត្តមានសិស្ស","ពិនិត្យអនាម័យ និងការរៀបចំសម្ភារៈរៀន"],
@@ -1905,11 +1922,40 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
   ["knowledge","skills","attitude"].forEach(function(k,i){var a=O[k];lpSet("lpOb"+i,a?(a.length>1?lpLi(a):lpMath(a[0])):"")});
   var Mt=P&&P.mat,ms="",mt="";if(Mt){if(Array.isArray(Mt))mt=Mt.join(" · ");else{ms=(Mt.st||[]).join(" · ");mt=(Mt.tc||[]).join(" · ")}}
   lpSet("lpMs",ms?lpMath(ms):"");lpSet("lpMt",mt?lpMath(mt):"");
+  var W=P&&P.worksheet,ws=$("lpWS");
+  if(ws){ws.hidden=!(W&&W.length);$("lpWL").innerHTML=(W||[]).map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("");
+    $("lpWN").textContent=P?P.title:""}
   lpLast=P;if(P&&!window.katex&&!lpRender.w){lpRender.w=1;setTimeout(function(){lpRender.w=0;if(window.katex&&lpLast===P)lpRender(P)},1500)}
   $("lpSteps").innerHTML=LPS.map(function(t,i){
     var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(S.t)+" នាទី":""):esc(t);
     return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+h+"</th></tr><tr class='lp-sb"+(S?" lp-fill":"")+"'>"+
       (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
+  lpPages();
+}
+/* 🔳 QR Code (ទំព័រហ្វឹកហាត់ថ្នាក់/មេរៀនដែលបានជ្រើស) · បណ្ណាល័យ QRCode ផ្ទុកពី cdnjs (ដូច quiz.js) */
+function lpQR(){
+  var b=$("lpQB");if(!b)return;var g=$("lpG").value,l=$("lpL").value;
+  var u=new URL("practice.html",location.href).href.split("#")[0]+(l!==""?"#g="+g+"&l="+l:"#g="+g);
+  if(b.getAttribute("data-u")===u)return;b.setAttribute("data-u",u);$("lpQU").textContent=u.replace(/^https?:\/\//,"");
+  var go=function(){b.innerHTML="";try{new QRCode(b,{text:u,width:96,height:96,correctLevel:QRCode.CorrectLevel.M})}catch(e){}lpPages()};
+  if(window.QRCode)go();else{var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";s.onload=go;document.head.appendChild(s)}
+}
+/* 📄 វិធីបង្រៀនលម្អិត (រង្វង់ខៀវតូច) */
+function lpMD(){
+  var f=function(id,lab){var e=$(id),t=e.selectedIndex>=0?e.options[e.selectedIndex].text:"",a=lpDetail(t);
+    return a.length?"<div class=lp-mt>"+esc(lab)+" ៖ "+esc(t.split(" (")[0])+"</div><ol class=lp-sl>"+a.map(function(x,i){return"<li><i>"+kn(i+1)+"</i><span>"+esc(x)+"</span></li>"}).join("")+"</ol>":""};
+  $("lpMD").innerHTML=f("lpM","វិធីសាស្ត្រ")+f("lpT","យុទ្ធវិធី");
+}
+/* 📑 បន្ទាត់កាត់ទំព័រ A4 លើអេក្រង់ (ប៉ាន់ស្មាន ១ ទំព័រ = ២៩៧ម.ម) · លេខសេសស្ដាំ លេខគូឆ្វេង · លាក់ពេលបោះពុម្ព */
+function lpPages(){
+  var A=$("lpA4"),G=$("lpPG");if(!A||!G)return;
+  var px=297*96/25.4,ws=$("lpWS");
+  G.innerHTML="";A.style.setProperty("--lpGap","0px");A.style.setProperty("--lpH","0px");
+  if(ws&&!ws.hidden){var top=ws.offsetTop;A.style.setProperty("--lpGap",(Math.ceil(top/px)*px-top)+"px")}
+  var n=Math.max(1,Math.ceil(A.scrollHeight/px-0.001)),h="";
+  A.style.setProperty("--lpH",(n*px)+"px");
+  for(var i=1;i<=n;i++)h+="<div class='lp-pk "+(i%2?"r":"l")+"' style='top:"+(i*px)+"px'><span>ទំព័រទី "+kn(i)+"</span></div>";
+  G.innerHTML=h;
 }
 /* 🗓️ កាលបរិច្ឆេទ + សប្តាហ៍ → បន្ទាត់ «កាលបរិច្ឆេទ» នៃក្បាល A4 · លេខខ្មែរ · ហ្វុង Muol Light · មិនជ្រើស → ចំណុចចុចៗទទេ */
 var LPWD=["អាទិត្យ","ច័ន្ទ","អង្គារ","ពុធ","ព្រហស្បតិ៍","សុក្រ","សៅរ៍"];   /* getUTCDay() ៖ ០ = អាទិត្យ */
@@ -1953,7 +1999,7 @@ function lpFooter(){
   $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
   var lu="";try{lu=window.KhCal?KhCal.fmt(yy,mm+1,dd):""}catch(e){}$("lpSL").textContent=lu;
   var tn=lpMe()||"…";$("lpST").textContent=tn;$("lpHT").textContent=tn;
-  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");
+  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");lpPages();
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */
 function lpPrint(){
@@ -1964,8 +2010,8 @@ function lpPrint(){
 function generateLessonPlan(){
   var g=$("lpG").value,l=$("lpL").value,sb=$("lpS").value,P=lessonPlanDB[g+"_"+l+(sb?"#"+sb:"")];
   lpPeople();lpMeta();lpHeader();lpFooter();
-  if(!P){lpRender(null);$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច · ចំណុចរងទី២ ទម្រង់ពីជគណិត)";return false}
-  lpRender(P);
+  if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច · ចំណុចរងទី២ ទម្រង់ពីជគណិត)";return false}
+  lpRender(P);lpPages();
   $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
 }
@@ -1989,7 +2035,7 @@ function lpLessons(){
 }
 function lpMeta(){
   var sel=function(id){var e=$(id);return e.selectedIndex>=0?e.options[e.selectedIndex].text:"…"};
-  $("lpM1").textContent=sel("lpM").split(" (")[0];$("lpM2").textContent=sel("lpT").split(" (")[0];
+  $("lpM1").textContent=sel("lpM").split(" (")[0];$("lpM2").textContent=sel("lpT").split(" (")[0];lpMD();lpQR();lpPages();
 }
 function renderLp(){
   if(!$("lpG"))return;
@@ -1997,7 +2043,8 @@ function renderLp(){
     $("lpG").innerHTML=[7,8,9,10,11,12].map(function(g){return"<option value='"+g+"'>ថ្នាក់ទី"+kn(g)+"</option>"}).join("");
     $("lpG").value=12;lpFill("lpM",LPM);lpFill("lpT",LPT);
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
-    lpRender(null);lpFooter();
+    lpRender(null);lpFooter();lpMeta();
+    $("lpM").onchange=$("lpT").onchange=function(){lpMeta()};
     $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=lpSubs;$("lpPr").onclick=lpPrint;
     $("lpGen").onclick=generateLessonPlan;
   }
