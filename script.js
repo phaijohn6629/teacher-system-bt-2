@@ -2159,6 +2159,13 @@ function lpPaginate(){
     /* ហត្ថលេខាមិនត្រូវនៅតែឯងលើសន្លឹកថ្មី ៖ ដកជួរតារាងចុងក្រោយពីសន្លឹកមុនមកជាមួយ */
     if(u.els&&u.els[0]&&u.els[0].classList.contains("lp-sg")&&lastTH&&guard<400){
       var lt=body.lastElementChild,trs=lt&&lt.classList.contains("lp-tw")?lt.querySelectorAll("tbody tr"):[];
+      if(trs.length>0&&trs[trs.length-1].querySelector("ul li")){   /* បំបែកជួរចុងក្រោយ ៖ ផ្នែកលើនៅសន្លឹកនេះ · ផ្នែកក្រោមទៅសន្លឹកថ្មីជាមួយហត្ថលេខា (កុំទុកចន្លោះទទេធំ) */
+        var lastTr=trs[trs.length-1],FS=[.7,.55,.4,.25];
+        for(var fi=0;fi<FS.length;fi++){
+          var sp2=split(lastTr,FS[fi]);
+          if(sp2.rest&&sp2.kept>=1){lastTr.parentNode.replaceChild(sp2.a,lastTr);UM.splice(idx,0,{pre:[],rows:[sp2.b],th:lastTH});guard++;mk();place(UM[idx],idx);return}
+        }
+      }
       if(trs.length>1){
         var tr=trs[trs.length-1],hd=trs.length>2&&trs[trs.length-2].classList.contains("lp-sh")?trs[trs.length-2]:null,rw=hd?[hd,tr]:[tr];   /* ជួរ «ជំហានទី N» ត្រូវទៅជាមួយខ្លឹមសាររបស់វា */
         if(trs.length-rw.length>=1){rw.forEach(function(r){r.parentNode.removeChild(r)});UM.splice(idx,0,{pre:[],rows:rw,th:lastTH});guard++;mk();place(UM[idx],idx);return}
