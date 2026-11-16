@@ -1137,3 +1137,10 @@ body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer
 @media(max-width:560px){.lp-wh{grid-template-columns:1fr}}
 .lp-wsec{margin-bottom:2.5mm}.lp-wsc{table-layout:fixed}.lp-wsc th{font-size:8.5pt}
 .lp-wsc{min-width:0!important;width:100%}
+
+/* ===== បោះពុម្ពពីសន្លឹក A4 ដែលបានបែងចែករួច (WYSIWYG) ===== */
+@page lpsh{size:A4;margin:0}
+.lp-print2{page:lpsh}
+body.pm #prt .lp-print2 .lp-sheet{margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;width:210mm;max-width:none;height:296mm;min-height:0;overflow:hidden;break-after:page;page-break-after:always}
+body.pm #prt .lp-print2 .lp-sheet:last-child{break-after:auto;page-break-after:auto}
+body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adjust:exact}

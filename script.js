@@ -2055,7 +2055,7 @@ function lpUnits(A){
         if(e.classList.contains("lp-mt")){U.push({pre:first?P0:[],els:[e],keep:1});first=false}
         else[].forEach.call(e.children,function(li){U.push({pre:first?P0:[],els:[ol1(li)]});first=false})});
       if(!k.length&&pre.length)pre.length=0;return}
-    if(c.classList.contains("lp-ws")){var first=true;[].filter.call(c.children,K).forEach(function(x){U.push({pre:first?pre.splice(0):[],els:[x],nw:first});first=false});return}
+    if(c.classList.contains("lp-ws")){var first=true;[].filter.call(c.children,K).forEach(function(x){if(x.classList.contains("lp-wsec")){pre.push(x);return}U.push({pre:pre.splice(0),els:[x],nw:first});first=false});return}
     U.push({pre:pre.splice(0),els:[c]});
   });
   return U;
@@ -2165,17 +2165,60 @@ function lpFooter(){
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */
 function lpPrint(){
-  var A=$("lpA4");if(!A||typeof realPrint!=="function")return;
-  realPrint("<div class='lp-print'>"+A.outerHTML.replace(/ id="[^"]*"/g,"")+"</div>");
+  var A=$("lpSheets");if(!A)return;
+  lpPSrc="";if(!lpPaginate()||!A.children.length){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
+  /* បោះពុម្ពពីសន្លឹក A4 ដែលបានបែងចែករួច (WYSIWYG) ៖ មិនឱ្យ browser កាត់តារាងឬបាត់ស៊ុម */
+  realPrint("<div class='lp-print2'>"+A.innerHTML.replace(/ id="[^"]*"/g,"")+"</div>");
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
+/* 🤖 កិច្ចតែងការស្វ័យប្រវត្តិ សម្រាប់ចំណុចរងដែលមិនទាន់មានគំរូ ៖ ខ្លឹមសារ/ឧទាហរណ៍/លំហាត់ពីម៉ាស៊ីនលំហាត់ (practice*.js) + មេរៀនសង្ខេប (hub) · សកម្មភាពតាមវិធីសាស្ត្រ (5Es · PBL …) និងយុទ្ធវិធី (TPS · KWL …) ដែលបានជ្រើស */
+function lpGram(s){s=String(s).replace(/[\s\d០-៩.,:;()៖·\-]+/g,"");var o={};for(var i=0;i<s.length-2;i++)o[s.substr(i,3)]=1;return o}
+function lpSim(a,b){var A=lpGram(a),B=lpGram(b),n=0,u=0,k;for(k in A){u++;if(B[k])n++}for(k in B)if(!A[k])u++;return u?n/u:0}
+function lpSteps(s){var o=[],cur="",d=0,m=String(s||"");for(var i=0;i<m.length;i++){var c=m[i];if(c==="$")d=1-d;if(c==="⇒"&&!d){if(cur.trim())o.push(cur.trim());cur=""}else cur+=c}if(cur.trim())o.push(cur.trim());return o}
+function lpGenQ(g,l,v,seen){
+  var G=window.PRACT&&PRACT.GR&&PRACT.GR[g]&&PRACT.GR[g].G&&PRACT.GR[g].G[l]&&PRACT.GR[g].G[l][v];if(!G)return null;
+  for(var i=0;i<14;i++){try{var q=G();if(q&&q.q&&!seen[q.q]){seen[q.q]=1;return q}}catch(e){}}return null;
+}
+function lpAnsT(q){return(q.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · ")}
+function lpAuto(g,l,n,name,prev){
+  var seen={},Q=function(v){return lpGenQ(g,+l,v,seen)},q1=Q(1),q2=Q(2),q2b=Q(5)||Q(2),q3=Q(3),q3b=Q(3),h1=Q(1),h2=Q(2),h3=Q(3);
+  var mt=($("lpM").options[$("lpM").selectedIndex]||{}).text||"",tt=($("lpT").options[$("lpT").selectedIndex]||{}).text||"",md=lpDetail(mt),td=lpDetail(tt);
+  var hub=null,best=0;try{var st=window.HUB&&HUB.starter&&HUB.starter(+g,+l);(st||[]).forEach(function(x){var s=lpSim(name,x.t);if(s>best){best=s;hub=x}})}catch(e){}
+  if(best<.22)hub=null;
+  var F=hub?(hub.f||[]).slice(0,3).map(function(f){return"$"+f+"$"}):[];
+  var ex=function(q,k){if(!q)return[];var o=["ឧទាហរណ៍ "+kn(k)+" ៖ "+q.q],S=lpSteps(q.s).slice(0,4);S.forEach(function(x,i){o.push("ជំហាន "+kn(i+1)+" ៖ "+x)});o.push("ចម្លើយ ៖ "+lpAnsT(q));return o};
+  var fg=[];[q1,q2].forEach(function(q){if(q&&q.fig)fg.push(q.fig)});
+  var P=LPB.mk({title:name,obj:["ពន្យល់ និងអនុវត្តខ្លឹមសារ «"+name+"» បានត្រឹមត្រូវ","ដោះស្រាយលំហាត់ទាក់ទងនឹង «"+name+"» បានត្រឹមត្រូវ និងស្ទាត់ជំនាញ"],
+    rev:{tc:[q1?"សួរ ៖ "+q1.q:"សួរសិស្សរំលឹកមេរៀនមុន «"+prev+"»","ឱ្យសិស្ស ២ នាក់ឡើងកែកិច្ចការផ្ទះលើក្ដារ"],ct:[q1?"ចម្លើយ ៖ "+lpAnsT(q1):"រំលឹក ៖ «"+prev+"»","ភ្ជាប់ទៅមេរៀនថ្មី ៖ «"+name+"»"]},
+    nw:{tc:(md.length?md.slice(0,4):["ពន្យល់និយមន័យ និងរូបមន្ត","បង្ហាញឧទាហរណ៍លើក្ដារ"]).concat(["ឱ្យសិស្សអនុវត្តតាមយុទ្ធវិធី «"+(tt.split(" (")[0]||"ពិភាក្សា")+"»"]),
+      ct:["មេរៀនទី "+kn(n)+" ៖ "+name].concat(hub?[hub.s].filter(Boolean):[],F,ex(q1,1),ex(q2,2)),
+      st:(td.length?td.slice(0,3):["ស្ដាប់ និងកត់ត្រា"]).concat(["សិស្សធ្វើឧទាហរណ៍តាមគ្រូ"]),fg:fg},
+    pr:{ct:[(q3||q2b||q2||{q:"ដោះស្រាយលំហាត់ពីសៀវភៅពុម្ព"}).q,q3?"ចម្លើយ ៖ "+lpAnsT(q3):"",(q3b?"លំហាត់បន្ថែម ៖ "+q3b.q:"")].filter(Boolean),
+      tc:["ដាក់លំហាត់ឱ្យសិស្សធ្វើតាមយុទ្ធវិធី «"+(tt.split(" (")[0]||"ក្រុម")+"»","ដើរពិនិត្យ និងណែនាំក្រុមដែលជួបការលំបាក"],st:(td.length?td.slice(0,2):["ពិភាក្សាដោះស្រាយជាក្រុម"]).concat(["តំណាងក្រុមឡើងបកស្រាយលើក្ដារ"])},
+    hw:[h1,h2,h3].filter(Boolean).map(function(q){return q.q}),
+    ws:[q1,q2b,q3b,h2].filter(Boolean).map(function(q){return q.q})});
+  P.auto=true;P.ex.key=F;P.ex.drill=[(q2||q1||{}).q].filter(Boolean);P.ex.hw=[h1,h3].filter(Boolean).map(function(q){return q.q});P.ex.ws=[q1,q2b,q3,q3b,h2].filter(Boolean).map(function(q){return q.q});
+  return P;
+}
+function lpAutoBuild(g,l,need){
+  var C=window.CUR&&window.CUR[+g],pts=lpPts(+g,l),lname=C&&C.LS&&C.LS[l]?C.LS[l][0]:"មេរៀន";
+  return Promise.all([window.EXAM&&EXAM.gen?EXAM.gen().catch(function(){}):0,(typeof lazy==="function"?lazy("ls").catch(function(){}):0)]).then(function(){
+    need.forEach(function(x){var i=-1;pts.forEach(function(p,j){if(String(p[0])===String(x.n))i=j});
+      lessonPlanDB[g+"_"+l+"#"+x.n]=lpAuto(g,l,x.n,x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""),i>0?pts[i-1][1]:lname)})});
+}
 function generateLessonPlan(){
+  var g=$("lpG").value,l=$("lpL").value,need=lpSel().filter(function(x){var P=lessonPlanDB[g+"_"+l+"#"+x.n];return!P||P.auto});
+  if(!need.length)return lpGenDo();
+  $("lpSt").textContent="⏳ កំពុងបង្កើតខ្លឹមសារស្វ័យប្រវត្តិ (ផ្ទុកម៉ាស៊ីនលំហាត់…)";
+  return lpAutoBuild(g,l,need).then(lpGenDo,function(){return lpGenDo()});
+}
+function lpGenDo(){
   var g=$("lpG").value,l=$("lpL").value,sel=lpSel(),sb=sel.map(function(x){return x.n}).join("+"),CB=lpCombine(g,l,sel),P=CB.P;
   lpPeople();lpMeta();lpHeader();lpFooter();
   if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sel.length?"ចំណុចរងដែលបានជ្រើស":"មេរៀននេះ")+"ទេ (មានសម្រាប់ ថ្នាក់ទី១២ មេរៀន ១១ · ២២ · ២៣ · ៣១ · ៣២ តាមចំណុចរងដែលមានក្នុងបញ្ជី)";return false}
   if(P.sug&&lpSugK!==g+"_"+l+"#"+sb){lpSugK=g+"_"+l+"#"+sb;[["lpM",P.sug[0]],["lpT",P.sug[1]]].forEach(function(x){var e=$(x[0]);for(var i=0;i<e.options.length;i++)if(e.options[i].text.indexOf(x[1])===0){e.value=e.options[i].value;break}});lpMeta()}
   lpRender(P);lpPages();
-  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"");
+  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(P.auto||sel.some(function(x){var Q=lessonPlanDB[g+"_"+l+"#"+x.n];return Q&&Q.auto})?" · 🤖 មានចំណុចបង្កើតស្វ័យប្រវត្តិ (ពិនិត្យមុនប្រើ)":"")+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"");
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
 }
 /* 📑 ចំណុចរងនៃមេរៀន ពីកម្មវិធីសិក្សាលម្អិត CUR[g].W («1. ឯកតានិមិត្ត» → [1,"ឯកតានិមិត្ត"]) · ក. ខ. (ចំណុចតូចជាងនេះ) មិនរាប់ */

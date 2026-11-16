@@ -279,5 +279,5 @@ X["12_32#3"]=mk({title:"អនុវត្តដេរីវេក្នុង�
  hw:[R`សួរ AI ពី Optimization in business using calculus ហើយលើកឧទាហរណ៍មួយមកបកស្រាយ`],
  ws:[R`ដោយ $C(x)=\frac13x^3-6x^2+40x+100$ ហើយ $MR(x)=100-x$ ។ រកចំនួនផលិតផល $x$ ដែលផ្ដល់ប្រាក់ចំណេញអតិបរមា`,R`ក្រុមហ៊ុនមាន $C(x)=0.5x^2+50x+5000$ និងតម្លៃលក់ $p(x)=150-0.5x$ ៖ រក $R(x)$ និង $P(x)$`,R`ដោយ $R(x)=10x-0.01x^2$ រក $MR(100)$`]});
 
-window.LPX=X;
+window.LPX=X;window.LPB={mk:mk,ADM:ADM,ATT:ATT};
 })();
