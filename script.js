@@ -2248,11 +2248,12 @@ function lpAutoMark(){
 window.addEventListener("beforeprint",lpAutoMark);
 try{var _lq=window.matchMedia("print");var _lf=function(e){if(e.matches)lpAutoMark()};if(_lq.addEventListener)_lq.addEventListener("change",_lf);else if(_lq.addListener)_lq.addListener(_lf)}catch(e){}
 function lpPrint(){
-  var A=$("lpSheets");if(!A)return;
-  if(!A.children.length&&!(lpPaginate()&&A.children.length)){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
-  lpPrintMark();
-  window.print();   /* synchronous 100% ក្នុង click handler */
-  setTimeout(lpPrintUnmark,120000);
+  var S=$("lpSheets");
+  if(!S||!S.children.length){
+    if(!lpPaginate()||!S||!S.children.length){alert("សូមចុច «✨ បង្កើតកិច្ចតែងការ» ជាមុនសិន");return}
+  }
+  /* គ្មាន DOM mutation មុន print() ៖ ⌘P ដំណើរការលើ Safari តាម beforeprint (lpAutoMark) ដូច្នេះប៊ូតុងគ្រាន់តែហៅ print() ភ្លាមៗ */
+  window.print();
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 /* 🤖 កិច្ចតែងការស្វ័យប្រវត្តិ សម្រាប់ចំណុចរងដែលមិនទាន់មានគំរូ ៖ ខ្លឹមសារ/ឧទាហរណ៍/លំហាត់ពីម៉ាស៊ីនលំហាត់ (practice*.js) + មេរៀនសង្ខេប (hub) · សកម្មភាពតាមវិធីសាស្ត្រ (5Es · PBL …) និងយុទ្ធវិធី (TPS · KWL …) ដែលបានជ្រើស */
@@ -2365,7 +2366,7 @@ function renderLp(){
     $("lpS").onchange=$("lpS2").onchange=$("lpS3").onchange=function(){lpHeader()};
     $("lpMg").onchange=$("lpTh").onchange=function(){lpFooter()};
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});
-    $("lpG").onchange=function(){lpLoadDB($("lpG").value);lpLessons()};$("lpL").onchange=function(){lpSubs()};$("lpPr").onclick=lpPrint;
+    $("lpG").onchange=function(){lpLoadDB($("lpG").value);lpLessons()};$("lpL").onchange=function(){lpSubs()};
     $("lpGen").onclick=generateLessonPlan;
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
