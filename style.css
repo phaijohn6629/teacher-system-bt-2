@@ -1063,7 +1063,7 @@ div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 .lp-qt{font:10pt "Khmer OS Muol Light","Moul",serif;flex:1}.lp-qt span{letter-spacing:1px}
 .lp-qb{width:26mm;height:26mm;display:flex;align-items:center;justify-content:center}.lp-qb img,.lp-qb canvas{width:26mm!important;height:26mm!important}
 .lp-qr small{font-size:7.5pt;max-width:48mm;overflow-wrap:anywhere;color:#000}
-.lp-md{margin:2px 0 4px 2cm;font-size:10pt;line-height:1.7;color:#000}
+.lp-md{margin:2px 0 4px 0;font-size:10pt;line-height:1.7;color:#000}
 .lp-mt{font-weight:700;margin-top:3px}
 .lp-sl{list-style:none;margin:0;padding:0}.lp-sl li{display:flex;gap:2mm;align-items:flex-start;margin:1px 0;break-inside:avoid}
 .lp-sl i{flex:0 0 auto;width:4.8mm;height:4.8mm;margin-top:1.4mm;border-radius:50%;background:#1e3a8a;color:#fff;font:7.5pt/1 "Khmer OS Muol Light","Moul",serif;font-style:normal;display:inline-flex;align-items:center;justify-content:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -1096,4 +1096,5 @@ div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 @media print{#p21 .lp-sheets{display:none!important}}
 
 .lp-sg,.lp-sc{break-inside:avoid;page-break-inside:avoid}
-@media(max-width:560px){.lp-md{margin-left:8mm}}
+.lp-mt,.lp-sl{margin-left:2cm}
+@media(max-width:560px){.lp-mt,.lp-sl{margin-left:8mm}}

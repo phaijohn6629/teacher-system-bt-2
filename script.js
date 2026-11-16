@@ -1990,7 +1990,10 @@ function lpUnits(A){
       return}
     if(c.classList.contains("lp-md")){
       var k=[].filter.call(c.children,K);
-      for(var j=0;j<k.length;j++){var g=[k[j]];if(k[j].classList.contains("lp-mt")&&k[j+1]){g.push(k[++j])}U.push({pre:j?[]:pre.splice(0),els:g})}
+      var P0=pre.splice(0),first=true,ol1=function(li){var o=document.createElement("ol");o.className="lp-sl";o.appendChild(li.cloneNode(true));return o};
+      k.forEach(function(e){
+        if(e.classList.contains("lp-mt")){U.push({pre:first?P0:[],els:[e],keep:1});first=false}
+        else[].forEach.call(e.children,function(li){U.push({pre:first?P0:[],els:[ol1(li)]});first=false})});
       if(!k.length&&pre.length)pre.length=0;return}
     if(c.classList.contains("lp-ws")){
       var ol=c.querySelector("ol");U.push({pre:pre.splice(0),els:[].filter.call(c.children,function(x){return x.tagName!=="OL"}),nw:true});
@@ -2006,7 +2009,9 @@ function lpPaginate(){
   var mk=function(){cur=document.createElement("article");cur.className="lp-a4 lp-sheet";body=document.createElement("div");body.className="lp-shb";cur.appendChild(body);S.appendChild(cur);sheets.push(cur)};
   var over=function(){return body.scrollHeight>body.clientHeight+1};
   S.innerHTML="";mk();
-  lpUnits(A).forEach(function(u){
+  var UL=lpUnits(A),UM=[];
+  UL.forEach(function(u,i){if(u.keep&&UL[i+1]){UL[i+1].pre=(u.pre||[]).concat(u.els,UL[i+1].pre||[])}else UM.push(u)});
+  UM.forEach(function(u){
     var put=function(){var added=[],tw=null;
       u.pre.forEach(function(p){var c=lpCl(p);body.appendChild(c);added.push(c)});
       if(u.rows){
