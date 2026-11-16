@@ -1106,3 +1106,6 @@ div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif!important;font-weight:400!important}
 
 .lp-fg{margin:4px 0;text-align:center}.lp-fg .fig{max-width:100%}.lp-fg svg{max-width:100%;height:auto;width:100%}
+
+.lp-cn{margin-left:1cm}.lp-cn .lp-sl{margin-left:0}.lp-cn .lp-mu{display:block;margin-bottom:1px}
+@media(max-width:560px){.lp-cn{margin-left:8mm}}

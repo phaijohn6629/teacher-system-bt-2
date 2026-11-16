@@ -2077,7 +2077,7 @@ function lpHeader(){
   $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
   v("lpHD",lpDateTxt());lpDur();
   /* ២. ខ្លឹមសារមេរៀន ៖ ចំណងជើងមេរៀន + ចំណុចរង */
-  $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+st.map(function(x){return"<span class=lp-sub>"+esc(x)+"</span>"}).join(""):"<span class=lp-ph>…</span>";
+  $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+(st.length?"<ol class=lp-sl>"+lpSel().map(function(x){return"<li><i>"+kn(x.n)+"</i><span>"+esc(x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""))+"</span></li>"}).join("")+"</ol>":""):"<span class=lp-ph>…</span>";
 }
 var lpPSig="";
 /* 👥 គណៈគ្រប់គ្រង + ប្រធានក្រុមបច្ចេកទេស ជ្រើសបានពីបញ្ជីគ្រូ (data) · ប្រធានក្រុម លំនាំដើម = គ្រូដែលមានតួនាទី «ប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គ្រូបង្រៀន = អ្នកដែលកំពុង Login ស្វ័យប្រវត្តិ (គ្មាន Dropdown) */
@@ -2139,7 +2139,7 @@ function lpSubs(){
   $("lpS").innerHTML="<option value=''>— ទាំងមេរៀន —</option>"+o;$("lpS2").innerHTML=$("lpS3").innerHTML="<option value=''>— មិនជ្រើស —</option>"+o;
 }
 /* ចំណុចរងដែលបានជ្រើស ៖ ៤៥ នាទី = ១ · ៩០ នាទី = ២–៣ (lpS · lpS2 · lpS3) */
-function lpSel(){var o=[],seen={};["lpS","lpS2","lpS3"].slice(0,lpDu()===90?3:1).forEach(function(id){var e=$(id);if(!e||e.value===""||e.selectedIndex<0||seen[e.value])return;seen[e.value]=1;o.push({n:e.value,t:e.options[e.selectedIndex].text})});return o}
+function lpSel(){var o=[],seen={};["lpS","lpS2","lpS3"].forEach(function(id){var e=$(id);if(!e||e.value===""||e.selectedIndex<0||seen[e.value])return;seen[e.value]=1;o.push({n:e.value,t:e.options[e.selectedIndex].text})});return o}
 function lpSubTxt(){return lpSel().map(function(x){return x.t})}
 /* 🧩 បញ្ចូលកិច្ចតែងការច្រើនចំណុចរងជាមួយគ្នា (៩០ នាទី) ៖ វត្ថុបំណង/ខ្លឹមសារ/លំហាត់ត្រូវបានបន្ត · ម៉ោងគោល ៤៥ (ត្រូវគុណតាមរយៈពេលពេលបង្ហាញ) */
 function lpCombine(g,l,sel){
@@ -2178,7 +2178,7 @@ function renderLp(){
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);lpFooter();lpMeta();
     $("lpM").onchange=$("lpT").onchange=function(){lpMeta()};
-    $("lpDu").onchange=function(){lpDur();$("lpSX").hidden=lpDu()!==90;lpHeader();lpRender(lpLast)};
+    $("lpDu").onchange=function(){lpDur();lpHeader();lpRender(lpLast)};
     $("lpS").onchange=$("lpS2").onchange=$("lpS3").onchange=function(){lpHeader()};
     $("lpMg").onchange=$("lpTh").onchange=function(){lpFooter()};
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});

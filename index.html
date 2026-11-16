@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=119">
+<link rel="stylesheet" href="style.css?v=120">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -301,8 +301,8 @@
       <label for="lpG">កម្រិតថ្នាក់</label><select id="lpG"></select>
       <label for="lpL">មេរៀន</label><select id="lpL"></select>
       <label for="lpS">ចំណុចរងនៃមេរៀន</label><select id="lpS"></select>
-      <div id="lpSX" hidden><label for="lpS2">ចំណុចរងទី ២ (សម្រាប់ ៩០ នាទី)</label><select id="lpS2"></select><label for="lpS3">ចំណុចរងទី ៣ (ជម្រើស)</label><select id="lpS3"></select></div>
-      <p class="note" id="lpSN">៤៥ នាទី = ១ ចំណុចរង · ៩០ នាទី = ២–៣ ចំណុចរង តាមទំហំខ្លឹមសារ</p>
+      <div id="lpSX"><label for="lpS2">ចំណុចរងទី ២ (ជម្រើស)</label><select id="lpS2"></select><label for="lpS3">ចំណុចរងទី ៣ (ជម្រើស)</label><select id="lpS3"></select></div>
+      <p class="note" id="lpSN">ជ្រើសបាន ១–៣ ចំណុចរង តាមទំហំខ្លឹមសារ (៤៥ នាទីស្រាល · ៩០ នាទីធំ)</p>
       <label for="lpM">វិធីសាស្ត្របង្រៀន</label><select id="lpM"></select>
       <label for="lpT">យុទ្ធវិធីបង្រៀន</label><select id="lpT"></select>
       <label for="lpDu">រយៈពេលបង្រៀន</label><select id="lpDu"><option value="45">៤៥ នាទី (១ ម៉ោង)</option><option value="90">៩០ នាទី (២ ម៉ោង)</option></select>
@@ -652,7 +652,7 @@
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
 <script src="lessonplans.js?v=2"></script>
-<script src="script.js?v=122"></script>
+<script src="script.js?v=123"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>
