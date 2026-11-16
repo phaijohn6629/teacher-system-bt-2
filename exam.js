@@ -181,7 +181,7 @@ function lsOpts(g,sel){return lsList(g).map(function(c){return"<optgroup label='
 function editor(){
   var E=X.E,g=gOf(E),cl=myCls(),ro=!(E.o===who.id||isAdm()),on=E.on&&E.on.open;
   var h="<div class=bar><button type=button data-ex=back>‹ វិញ្ញាសាទាំងអស់</button><b>"+esc(EXP.head(E))+"</b><span id=exSt class=note style='margin:0'>"+esc(X.status)+"</span>"+
-    "<span style='flex:1'></span><button type=button data-ex='pr|a'>🖨️ វិញ្ញាសា"+(E.ab?" ក":"")+"</button>"+(E.ab?"<button type=button data-ex='pr|b'>🖨️ វិញ្ញាសា ខ</button>":"")+"<button type=button data-ex='pr|k'>🔑 ចម្លើយ</button>"+
+    "<span style='flex:1'></span><button type=button data-ex='pr|a'>🖨️ វិញ្ញាសា"+(E.ab?" ក":"")+"</button>"+(E.ab?"<button type=button data-ex='pr|b'>🖨️ វិញ្ញាសា ខ</button>":"")+""+(E.ab?"<button type=button data-ex='pr|ka'>🔑 អត្រាកំណែ ក</button><button type=button data-ex='pr|kb'>🔑 អត្រាកំណែ ខ</button>":"<button type=button data-ex='pr|k'>🔑 ចម្លើយ</button>")+""+
     "<button type=button class=primary data-ex=online>📱 "+(on?"កំពុងប្រឡងអនឡាញ":"បើកប្រឡងអនឡាញ")+"</button></div>";
   if(on)h+=onlineBox();
   h+="<div class=ex-grid><div class=card><h3 style='margin-top:0'>ក្បាល និងជើងវិញ្ញាសា</h3><div class=fg>"+
@@ -231,18 +231,20 @@ function prName(E,kind){
   var s=E.id+JSON.stringify(E.secs||[]),h=5381;for(var i=0;i<s.length;i++)h=(h*33+s.charCodeAt(i))|0;var fp=String(h>>>0),m={},n;
   try{m=JSON.parse(localStorage.getItem("exPrn")||"{}")||{}}catch(e){}
   var c=m[base]||(m[base]={n:0,f:{}});n=c.f[fp];if(!n){n=++c.n;c.f[fp]=n;try{localStorage.setItem("exPrn",JSON.stringify(m))}catch(e){}}
-  if(cam)return(kind==="k"?"Mark scheme - ":"Question paper - ")+base+" - "+n+(E.ab&&kind!=="k"?(kind==="b"?" B":" A"):"");
-  return(kind==="k"?"អត្រាកំណែ":"វិញ្ញាសា")+base+"-"+n+(E.ab&&kind!=="k"?(kind==="b"?"ខ":"ក"):"");
+  var key=/^k[ab]?$/.test(kind),isB=kind==="b"||kind==="kb";   /* k/ka = អត្រាកំណែ ក · kb = អត្រាកំណែ ខ */
+  if(cam)return(key?"Mark scheme - ":"Question paper - ")+base+" - "+n+(E.ab?(isB?" B":" A"):"");
+  return(key?"អត្រាកំណែ":"វិញ្ញាសា")+base+"-"+n+(E.ab?(isB?"ខ":"ក"):"");
 }
 function printIt(kind){
   var E=X.E,tmp=document.createElement("div");tmp.style.cssText="position:fixed;left:-9999px;top:0;width:800px";
-  tmp.innerHTML=EXP.html(P(E),{v:kind==="b"?"b":"a",key:kind==="k",lbl:kind==="k"?"":E.ab?(kind==="b"?"ខ":"ក"):""});document.body.appendChild(tmp);
+  var isK=/^k[ab]?$/.test(kind),isB=kind==="b"||kind==="kb";   /* អត្រាកំណែ ក/ខ ប្រើវិញ្ញាសាតាមកំណែរបស់វា (itB) */
+  tmp.innerHTML=EXP.html(P(E),{v:isB?"b":"a",key:isK,lbl:E.ab?(isB?"ខ":"ក"):""});document.body.appendChild(tmp);
   var w=window.open("","_blank");if(!w){tmp.remove();alert("សូមអនុញ្ញាត Pop-up ដើម្បីបោះពុម្ព");return}
   w.document.write("<!doctype html><html lang=km><head><meta charset=utf-8><title>"+esc(prName(E,kind))+"</title><link rel=stylesheet href='https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap'><link rel=stylesheet href='"+KX+"katex.min.css'><style>@page{size:A4;margin:14mm 14mm 12mm}body{margin:0}"+EXP.css+"</style></head><body><p style='text-align:center;font-family:sans-serif;color:#666'>កំពុងរៀបចំ…</p></body></html>");
   w.document.close();
   math(tmp).then(function(){
     w.document.body.innerHTML=tmp.innerHTML;tmp.remove();
-    var go=function(){try{EXP.fit&&EXP.fit(w.document);EXP.shrink&&EXP.shrink(w.document);if(kind==="k"&&EXP.paginate)EXP.paginate(w.document);EXP.shrink&&EXP.shrink(w.document);if(kind!=="k"&&EXP.onePage)EXP.onePage(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
+    var go=function(){try{EXP.fit&&EXP.fit(w.document);EXP.shrink&&EXP.shrink(w.document);if(isK&&EXP.paginate)EXP.paginate(w.document);EXP.shrink&&EXP.shrink(w.document);if(!isK&&EXP.onePage)EXP.onePage(w.document)}catch(e){}try{w.focus();w.print()}catch(e){}};
     if(w.document.fonts&&w.document.fonts.ready)w.document.fonts.ready.then(function(){setTimeout(go,300)});else setTimeout(go,900);
   });
 }

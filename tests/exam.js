@@ -56,4 +56,17 @@ var nA=(html.match(/class='ab-a'/g)||[]).length,nB=(html.match(/class='ab-b'/g)|
 ok(nA+nB===30,"roster lists every seated student ("+(nA+nB)+")");
 ok(/មិនទាន់មានកៅអី ៖ 10 នាក់/.test(html),"roster reports unseated students");
 ok(html.indexOf("Name35")>=0,"unseated names listed");
+/* ៦) អត្រាកំណែ ក/ខ ដាច់ពីគ្នា ៖ វិញ្ញាសា ខ មានសំណួរ/ចម្លើយផ្សេង → អត្រាកំណែ ខ ត្រូវបង្ហាញខ្លឹមសារ ខ មិនមែន ក */
+var window=this;try{load("expaper.js")}catch(e){print("load expaper: "+e)}
+ok(window.EXP&&EXP.html,"expaper loaded");
+if(window.EXP&&EXP.html){
+  var PP={school:"S",title:"T",sub:"M",cls:"12A",dur:45,date:"2026-01-01",place:"",au:"",ck:"",fmt:"",secs:[{pts:4,inst:"",it:[{q:"QA-one $x$",ans:"ANS-A",sol:"SOL-A"}],itB:[{q:"QB-one $y$",ans:"ANS-B",sol:"SOL-B"}]}]};
+  var kA=EXP.html(PP,{v:"a",key:true,lbl:"ក"}),kB=EXP.html(PP,{v:"b",key:true,lbl:"ខ"}),pB=EXP.html(PP,{v:"b",lbl:"ខ"});
+  ok(kA.indexOf("ANS-A")>=0&&kA.indexOf("ANS-B")<0,"answer key ក shows only paper ក answers");
+  ok(kB.indexOf("ANS-B")>=0&&kB.indexOf("ANS-A")<0,"answer key ខ shows only paper ខ answers");
+  ok(/អត្រាកំណែ\s*ក/.test(kA)&&/អត្រាកំណែ\s*ខ/.test(kB),"answer keys are labelled ក / ខ");
+  ok(pB.indexOf("QB-one")>=0&&pB.indexOf("QA-one")<0,"paper ខ shows ខ questions");
+}
+ok(/data-ex='pr\|ka'/.test(X)&&/data-ex='pr\|kb'/.test(X),"editor has separate answer-key buttons ក / ខ");
+ok(/isK=\/\^k\[ab\]\?\$\/\.test\(kind\)/.test(X)&&/isB=kind==="b"\|\|kind==="kb"/.test(X),"printIt handles ka/kb");
 print("exam: checks "+n+" bad "+bad);
