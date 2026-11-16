@@ -1083,7 +1083,7 @@ div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 .lp-sheets{display:flex;flex-direction:column;align-items:center;gap:8mm;padding:2mm 0}
 .lp-a4.lp-sheet{width:210mm;max-width:none;height:297mm;min-height:297mm;margin:0;padding:15mm 15mm 18mm;flex:0 0 auto}
 .lp-shb{height:264mm}
-.lp-pb{position:absolute;bottom:7mm;min-width:6mm;padding:0 2mm;border-radius:3mm;background:#e5e7eb;color:#000;text-align:center;font:8.5pt/1.7 "Khmer OS Muol Light","Moul",serif}
+.lp-pb{position:absolute;bottom:5mm;min-width:6mm;padding:0 2mm;border-radius:3mm;background:#e5e7eb;color:#000;text-align:center;font:8.5pt/1.7 "Khmer OS Muol Light","Moul",serif}
 .lp-pb.r{right:15mm}.lp-pb.l{left:15mm}
 .lp-ul{list-style:none;margin:0;padding-left:0}.lp-ul li{position:relative;padding-left:3.2mm}.lp-ul li::before{content:"-";position:absolute;left:0}
 .lp-tb{table-layout:fixed}.lp-tb .lp-sh{break-after:avoid;page-break-after:avoid}
