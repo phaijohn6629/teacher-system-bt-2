@@ -25,6 +25,13 @@ function maxes(c){
   var W=cfg().w,T=rs.mx[parseInt(c.n)]||100;
   return{T:T,a:T*W.a,t:T*W.t,h:T*W.h,b:T*W.b,c:T*W.c,o:T*W.o,act:T*(W.a+W.t+W.h+W.b)};
 }
+/* 📐 បំប្លែងសមាមាត្រ «ប្រឡងបិទ» ៖ ពិន្ទុចូលតារាង = (ពិន្ទុសិស្ស ÷ ពិន្ទុពេញនៃតេស្ត) × ពិន្ទុអតិបរមាជួរបិទតាមថ្នាក់ (maxes(c).c = rs.mx[ថ្នាក់] × W.c · ថ្នាក់ពី parseInt("12NGS-B") = 12)
+   ពិន្ទុពេញតេស្ត = ចំនួនលំហាត់ (១ លំហាត់ = ១ ពិន្ទុ · ៤០/៤៥/៥០…) · ពេញ ≤ 0 ឬមិនមែនលេខ → null (មិនបញ្ចូល · គ្មាន ÷0) · កំណត់ក្នុង 0…អតិបរមា · បង្គត់ ២ ខ្ទង់ */
+function scaleC(got,full,max){
+  var g=num(got),f=num(full),m=num(max);
+  if(g==null||f==null||m==null||!(f>0)||!(m>=0)||!isFinite(g)||!isFinite(f))return null;
+  return r2(Math.min(m,Math.max(0,g/f*m)));
+}
 function factor(M,full){var f=num(full);return f?M/f:1}
 function calc(c,R,F){
   var X=maxes(c),o={};
@@ -82,7 +89,7 @@ function testInfo(R,c){
   return"<div class=ms-tests>"+["t1","t2","c"].map(function(k){var x=S[k],L=k==="t1"?"តេស្តលើកទី១":k==="t2"?"តេស្តលើកទី២":"ប្រឡងទម្រង់បិទ";
     /* សិស្សដែលគ្មានពិន្ទុ (មិនបានផ្ញើ ឬរកមិនឃើញក្នុងតេស្ត) */
     var miss=x?c.st.filter(function(s){var r=(R.r||{})[key(s)];return!r||r[k]==null}).map(function(s){return esc(s.n)}):[];
-    return"<div class='ms-tc"+(x?" on":"")+"'><b>📝 "+L+"</b>"+(x?"<span>«"+esc(x.title)+"» · "+kn(x.n)+" លំហាត់ · មានពិន្ទុ "+kn(c.st.length-miss.length)+"/"+kn(c.st.length)+" នាក់</span>"+
+    return"<div class='ms-tc"+(x?" on":"")+"'><b>📝 "+L+"</b>"+(x?"<span>«"+esc(x.title)+"» · "+kn(x.n)+" លំហាត់"+(k==="c"?" (ពេញ "+kn(x.n)+" → /"+kn(fmt(maxes(c).c))+")":"")+" · មានពិន្ទុ "+kn(c.st.length-miss.length)+"/"+kn(c.st.length)+" នាក់</span>"+
       (miss.length?"<small style='display:block;color:#b45309'>⚠️ គ្មានពិន្ទុ ("+kn(miss.length)+")៖ "+miss.join(" · ")+"<br>(មិនទាន់ផ្ញើចម្លើយ · ពិនិត្យនៅ «📝 តេស្ត → 📊 លទ្ធផលតេស្ត»)</small>":""):"<span class=note style='margin:0'>មិនទាន់មានតេស្ត «"+L+"» សម្រាប់ខែនេះ — បង្កើតនៅ «📝 តេស្ត → 🧪 បង្កើតតេស្ត» ដោយជ្រើសប្រភេទ «"+L+"»</span>")+"</div>"}).join("")+
     "<button type=button data-msync>🔄 ធ្វើបច្ចុប្បន្នភាព</button></div>";
 }
@@ -119,7 +126,7 @@ function syncTests(c,manual){
     if(xc){
       var Sc=matchScores(c,xc),Mc=maxes(c).c;
       c.st.forEach(function(s,i){var v=Sc[i];if(v==null)return;
-        var kk=key(s),r=R.r[kk]=R.r[kk]||{},val=r2(v*Mc/(xc.n||1));
+        var kk=key(s),val=scaleC(v,xc.n,Mc);if(val==null)return;var r=R.r[kk]=R.r[kk]||{};
         if(r.c==null||(r.cs!=null&&+r.c===+r.cs)){r.c=val;r.cs=val}});
       R.src.c={id:xc.t.id,title:xc.t.title,n:xc.n,cnt:Object.keys(xc.by).length};
     }else delete R.src.c;
@@ -128,6 +135,7 @@ function syncTests(c,manual){
     syncing=false;if(syncAgain){syncAgain=false;var c2=cls();if(c2&&canE())syncTests(c2)}});
 }
 window.renderMs=renderMs;
+window.MSCALE={scaleC:scaleC,maxC:function(cn,mx,w){return(mx[parseInt(cn)]||100)*(w==null?DEF.w.c:w)}};
 function summary(c){
   var R=rec(c,false),F=R.f||{},cnt={A:0,B:0,C:0,D:0,E:0,F:0},n=0;
   c.st.forEach(function(s){var o=calc(c,(R.r||{})[key(s)]||{},F);if(o.g){cnt[o.g]++;n++}});
