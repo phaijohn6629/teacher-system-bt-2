@@ -2077,7 +2077,7 @@ function lpHeader(){
   $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
   v("lpHD",lpDateTxt());lpDur();
   /* ២. ខ្លឹមសារមេរៀន ៖ ចំណងជើងមេរៀន + ចំណុចរង */
-  $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+(st?"<span class=lp-sub>"+esc(st)+"</span>":""):"<span class=lp-ph>…</span>";
+  $("lpCN").innerHTML=L?"<b class=lp-mu>"+esc(L[0])+"</b>"+st.map(function(x){return"<span class=lp-sub>"+esc(x)+"</span>"}).join(""):"<span class=lp-ph>…</span>";
 }
 var lpPSig="";
 /* 👥 គណៈគ្រប់គ្រង + ប្រធានក្រុមបច្ចេកទេស ជ្រើសបានពីបញ្ជីគ្រូ (data) · ប្រធានក្រុម លំនាំដើម = គ្រូដែលមានតួនាទី «ប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គ្រូបង្រៀន = អ្នកដែលកំពុង Login ស្វ័យប្រវត្តិ (គ្មាន Dropdown) */
@@ -2118,12 +2118,12 @@ function lpPrint(){
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 function generateLessonPlan(){
-  var g=$("lpG").value,l=$("lpL").value,sb=$("lpS").value,P=lessonPlanDB[g+"_"+l+(sb?"#"+sb:"")];
+  var g=$("lpG").value,l=$("lpL").value,sel=lpSel(),sb=sel.map(function(x){return x.n}).join("+"),CB=lpCombine(g,l,sel),P=CB.P;
   lpPeople();lpMeta();lpHeader();lpFooter();
-  if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានសម្រាប់ ថ្នាក់ទី១២ មេរៀន ១១ · ២២ · ២៣ · ៣១ · ៣២ តាមចំណុចរងដែលមានក្នុងបញ្ជី)";return false}
+  if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sel.length?"ចំណុចរងដែលបានជ្រើស":"មេរៀននេះ")+"ទេ (មានសម្រាប់ ថ្នាក់ទី១២ មេរៀន ១១ · ២២ · ២៣ · ៣១ · ៣២ តាមចំណុចរងដែលមានក្នុងបញ្ជី)";return false}
   if(P.sug&&lpSugK!==g+"_"+l+"#"+sb){lpSugK=g+"_"+l+"#"+sb;[["lpM",P.sug[0]],["lpT",P.sug[1]]].forEach(function(x){var e=$(x[0]);for(var i=0;i<e.options.length;i++)if(e.options[i].text.indexOf(x[1])===0){e.value=e.options[i].value;break}});lpMeta()}
   lpRender(P);lpPages();
-  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
+  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"");
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
 }
 /* 📑 ចំណុចរងនៃមេរៀន ពីកម្មវិធីសិក្សាលម្អិត CUR[g].W («1. ឯកតានិមិត្ត» → [1,"ឯកតានិមិត្ត"]) · ក. ខ. (ចំណុចតូចជាងនេះ) មិនរាប់ */
@@ -2135,9 +2135,29 @@ function lpPts(g,l){
 }
 function lpSubs(){
   lpQR();
-  $("lpS").innerHTML="<option value=''>— ទាំងមេរៀន —</option>"+lpPts(+$("lpG").value,$("lpL").value).map(function(x){return"<option value='"+x[0]+"'>"+kn(x[0])+". "+esc(x[1])+"</option>"}).join("");
+  var o=lpPts(+$("lpG").value,$("lpL").value).map(function(x){return"<option value='"+x[0]+"'>"+kn(x[0])+". "+esc(x[1])+"</option>"}).join("");
+  $("lpS").innerHTML="<option value=''>— ទាំងមេរៀន —</option>"+o;$("lpS2").innerHTML=$("lpS3").innerHTML="<option value=''>— មិនជ្រើស —</option>"+o;
 }
-function lpSubTxt(){var e=$("lpS");return e.value!==""&&e.selectedIndex>0?e.options[e.selectedIndex].text:""}
+/* ចំណុចរងដែលបានជ្រើស ៖ ៤៥ នាទី = ១ · ៩០ នាទី = ២–៣ (lpS · lpS2 · lpS3) */
+function lpSel(){var o=[],seen={};["lpS","lpS2","lpS3"].slice(0,lpDu()===90?3:1).forEach(function(id){var e=$(id);if(!e||e.value===""||e.selectedIndex<0||seen[e.value])return;seen[e.value]=1;o.push({n:e.value,t:e.options[e.selectedIndex].text})});return o}
+function lpSubTxt(){return lpSel().map(function(x){return x.t})}
+/* 🧩 បញ្ចូលកិច្ចតែងការច្រើនចំណុចរងជាមួយគ្នា (៩០ នាទី) ៖ វត្ថុបំណង/ខ្លឹមសារ/លំហាត់ត្រូវបានបន្ត · ម៉ោងគោល ៤៥ (ត្រូវគុណតាមរយៈពេលពេលបង្ហាញ) */
+function lpCombine(g,l,sel){
+  var ps=[],miss=[];
+  (sel.length?sel:[{n:"",t:""}]).forEach(function(x){var P=lessonPlanDB[g+"_"+l+(x.n?"#"+x.n:"")];if(P)ps.push(P);else miss.push(x.t||"ទាំងមេរៀន")});
+  if(!ps.length)return{P:null,miss:miss};
+  if(ps.length===1)return{P:ps[0],miss:miss};
+  var cat=function(f){var o=[];ps.forEach(function(P){(f(P)||[]).forEach(function(x){if(o.indexOf(x)<0)o.push(x)})});return o};
+  var st=function(i,k){var o=[];ps.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){o.push(x)})});return o};
+  var T=[3,5,22,10,5],s0=ps[0].steps;
+  return{miss:miss,P:{title:ps.map(function(P){return P.title}).join(" + "),dur:45,sug:ps[0].sug,mat:ps[0].mat,
+    obj:{knowledge:cat(function(P){return P.obj&&P.obj.knowledge}),skills:cat(function(P){return P.obj&&P.obj.skills}),attitude:cat(function(P){return P.obj&&P.obj.attitude}).slice(0,1)},
+    steps:[0,1,2,3,4].map(function(i){var fg=[];ps.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S.fg)S.fg.forEach(function(x){fg.push(x)})});
+      var a=i===0||i===1?[ps[0]]:ps;   /* រដ្ឋបាល · រំលឹក ពីកិច្ចតែងការទី១ */
+      var f=function(k){var o=[];a.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){o.push(x)})});return o};
+      return{n:s0[i].n,t:T[i],tc:f("tc"),ct:f("ct"),st:f("st"),fg:(i===0||i===1)?s0[i].fg:fg}}),
+    worksheet:cat(function(P){return P.worksheet})}};
+}
 function lpFill(id,a){var e=$(id);e.innerHTML=a.map(function(x,i){return"<option value='"+i+"'>"+esc(x)+"</option>"}).join("")}
 function lpLessons(){
   var g=+$("lpG").value,C=window.CUR&&window.CUR[g],l=$("lpL");
@@ -2158,7 +2178,8 @@ function renderLp(){
     $("lpW").innerHTML="<option value=''>— មិនកំណត់ —</option>"+Array.apply(null,Array(20)).map(function(_,i){return"<option value='"+(i+1)+"'>សប្តាហ៍ទី "+kn(i+1)+"</option>"}).join("");
     lpRender(null);lpFooter();lpMeta();
     $("lpM").onchange=$("lpT").onchange=function(){lpMeta()};
-    $("lpDu").onchange=function(){lpDur();lpRender(lpLast)};
+    $("lpDu").onchange=function(){lpDur();$("lpSX").hidden=lpDu()!==90;lpHeader();lpRender(lpLast)};
+    $("lpS").onchange=$("lpS2").onchange=$("lpS3").onchange=function(){lpHeader()};
     $("lpMg").onchange=$("lpTh").onchange=function(){lpFooter()};
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});
     $("lpG").onchange=function(){lpLessons()};$("lpL").onchange=function(){lpSubs()};$("lpPr").onclick=lpPrint;
