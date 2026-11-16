@@ -1905,11 +1905,30 @@ var lessonPlanDB={
 lessonPlanDB["12_11#2"]=lessonPlanDB["12_11"];
 if(window.LPX)Object.keys(LPX).forEach(function(k){lessonPlanDB[k]=LPX[k]});   /* កិច្ចតែងការពី lessonplans.js */   /* ចំណុចរងទី២ «ចំនួនកុំផ្លិចទម្រង់ពីជគណិត» · key = ថ្នាក់_មេរៀន#ចំណុចរង · គ្មាន # = ទាំងមេរៀន */
 /* 🔣 KaTeX ៖ «$…$» ឬ «$$…$$» → រូបមន្ត · អត្ថបទក្រៅ $ ត្រូវ esc() ជានិច្ច (មិនទុកចិត្ត HTML) · KaTeX មិនទាន់ផ្ទុក → បង្ហាញអត្ថបទដើម ហើយគូរម្ដងទៀតពេលផ្ទុករួច */
+/* ✂️ កន្សោមគណិតវែង → បំណែក (បំបែកត្រង់ = ⇒ ⇔ ជាន់ក្រៅវង់ក្រចក · រួចត្រង់ + − បើវែង) ដើម្បីកុំឱ្យ KaTeX ដាច់កណ្ដាលរូបមន្តក្នុងជួរតូច */
+function lpSplit(s){
+  if(/\\begin|\\left|\\right|\\text/.test(s))return[s];
+  var P=[],cur="",d=0,i=0,c;
+  function brk(){if(cur.trim())P.push(cur);cur=""}
+  while(i<s.length){
+    c=s[i];
+    if(c==="\\"){var m=/^\\[a-zA-Z]+/.exec(s.slice(i));
+      if(m){var w=m[0];if(d===0&&/^\\(iff|Rightarrow|Longrightarrow|Leftrightarrow|approx)$/.test(w))brk();cur+=w;i+=w.length;continue}
+      cur+=c+(s[i+1]||"");i+=2;continue}
+    if(c==="{"||c==="("||c==="[")d++;else if(c==="}"||c===")"||c==="]")d=Math.max(0,d-1);
+    if(d===0&&c==="="&&!/[<>!]/.test(s[i-1]||""))brk();
+    else if(d===0&&(c==="+"||c==="-")&&cur.replace(/\s/g,"").length>22&&!/[\^_{(=]\s*$/.test(cur)&&cur.trim())brk();
+    cur+=c;i++;
+  }
+  brk();return P.length?P:[s];
+}
 function lpMath(t){
   t=String(t==null?"":t);var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
   while((m=re.exec(t))){
     out+=esc(t.slice(i,m.index));
-    if(K&&K.renderToString){try{out+=K.renderToString(m[1]!=null?m[1]:m[2],{displayMode:m[1]!=null,throwOnError:false,strict:"ignore"})}catch(e){out+=esc(m[0])}}
+    if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];
+      if(m[1]!=null)out+=K.renderToString(src,{displayMode:true,throwOnError:false,strict:"ignore"});
+      else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(p,{throwOnError:false,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
     else out+=esc(m[0]);
     i=m.index+m[0].length;
   }

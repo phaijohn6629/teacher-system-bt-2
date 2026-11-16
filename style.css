@@ -1038,7 +1038,7 @@ div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 @media(max-width:560px){.lp-mg{margin-left:0}.lp-sc{grid-template-columns:minmax(0,1fr)}.lp-sp{height:14mm}.lp-tt{min-height:0}}
 .lp-tw{overflow-x:auto}.lp-tb{border-collapse:collapse;width:100%;min-width:480px;font-size:10.5pt}
 .lp-tb th,.lp-tb td{border:1px solid #000;padding:6px 8px;vertical-align:top;color:#000;background:#fff;line-height:1.7}
-.lp-tb thead th{background:#eee;text-align:center;position:static}.lp-tb .lp-sh th{background:#f6f6f6;text-align:left}.lp-tb .lp-sb td{height:34mm;width:33.33%}.lp-tb .lp-fill td{height:auto}.lp-ul{margin:0;padding-left:16px}.lp-ul li{margin:0 0 3px}.lp-ob .lp-ul{display:block;margin:0}
+.lp-tb thead th{background:#eee;text-align:center;position:static}.lp-tb .lp-sh th{background:#f6f6f6;text-align:center;font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap",serif;font-weight:400;font-size:10pt}.lp-tb .lp-sb td{height:34mm;width:33.33%}.lp-tb .lp-fill td{height:auto}.lp-ul{margin:0;padding-left:16px}.lp-ul li{margin:0 0 3px}.lp-ob .lp-ul{display:block;margin:0}
 .lp-tb td.lp-ph{background:repeating-linear-gradient(135deg,#f3f4f6,#f3f4f6 6px,#fff 6px,#fff 12px)}
 @media(max-width:860px){.lp-wrap{grid-template-columns:minmax(0,1fr)}.lp-hero p{overflow-wrap:anywhere}.lp-ctl{position:static}.lp-a4{padding:10mm 6mm}}
 @media print{#p21 .lp-ctl,#p21 .lp-hero{display:none!important}}
@@ -1109,3 +1109,5 @@ body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer
 
 .lp-cn{margin-left:1cm}.lp-cn .lp-sl{margin-left:0}.lp-cn .lp-mu{display:block;margin-bottom:1px}
 @media(max-width:560px){.lp-cn{margin-left:8mm}}
+
+.lp-mp{display:inline-block;white-space:nowrap;vertical-align:baseline}.lp-tb .katex{font-size:.97em}.lp-a4 .katex{white-space:nowrap}
