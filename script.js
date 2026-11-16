@@ -1926,8 +1926,57 @@ function lpTx(t){
     if(i%2===0)return esc(p);
     var u=window.LP_IMG&&safeSrc(window.LP_IMG[p]);return u?"<img class=lp-im alt='' src='"+u+"'>":""}).join("");
 }
+/* 🔤 អក្សរគណិតក្នុងអត្ថបទធម្មតា (ឧ. «y = (ax² + bx + c)/(dx + e)» · «M∈xy» · «បើ a ជាចំនួន») → KaTeX ស្អាត ដូចរូបមន្តដទៃ
+   ចាប់តែ run ដែលមានតួអក្សរ ១ តួ ឬឈ្មោះខ្លី (≤៣) + ប្រមាណវិធី · មិនប៉ះពាក្យអង់គ្លេស (Think-Pair-Share · 5Es · Google Drive · URL) */
+var LPSUP={"²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","ⁿ":"n","⁰":"0","¹":"1"},
+    LPSYM={"×":"\\times ","÷":"\\div ","≤":"\\le ","≥":"\\ge ","≠":"\\ne ","±":"\\pm ","∈":"\\in ","∉":"\\notin ","⊂":"\\subset ","⊃":"\\supset ","∪":"\\cup ","∩":"\\cap ","∅":"\\varnothing ","π":"\\pi ","·":"\\cdot ","°":"^\\circ ","′":"'","−":"-","⟺":"\\iff ","⇒":"\\Rightarrow ","→":"\\to ","∞":"\\infty ","△":"\\triangle ","∠":"\\angle ","⊥":"\\perp ","∥":"\\parallel "},
+    LPFN={sin:1,cos:1,tan:1,cot:1,log:1,ln:1,lim:1,max:1,min:1,det:1,exp:1},
+    LPMS=/[A-Za-z0-9²³⁴⁵⁶⁷⁸⁹ⁿ⁰¹.,+\-−×÷=<>≤≥≠±()\/√π∈∉⊂⊃∪∩∅′°|^_·→⇒⟺∞△∠⊥∥ ]/,
+    LPACR={ICT:1,LMS:1,APP:1,NGS:1,PGCD:1,GCD:1,LCM:1,QR:1,AI:1,KWL:1,LCD:1,PDF:1,URL:1,USA:1,TV:1,ID:1,PPCM:1,CSS:1,PC:1,OK:1};
+function lpTexRun(r){
+  var core=r.replace(/^[\s.,]+|[\s.,]+$/g,"");if(!core||/^[0-9.,\s\-–/]+$/.test(core))return null;
+  if(/\)\s*$/.test(core)===false&&/\(\s*$/.test(core))return null;
+  if(/^[=+\-−×÷<>≤≥≠]+$/.test(core))return null;
+  var bal=0,bad=false;core.split("").forEach(function(c){if(c==="(")bal++;else if(c===")"){bal--;if(bal<0)bad=true}});
+  if(bad||bal!==0||/^[)\/]/.test(core))return null;   /* ក្រចកមិនគ្រប់គូ → កុំបម្លែង */
+  var toks=core.match(/[A-Za-z]+/g)||[],trig=/[=<>≤≥≠±×÷√π∈∉⊂⊃∪∩∅²³⁴⁵⁶⁷⁸⁹ⁿ°^⟺⇒→△∠⊥∥]/.test(core),op=/[+\-−\/]/.test(core.replace(/^[-−]/,"")),dig=/[0-9]/.test(core);
+  if(!toks.length&&!trig)return null;
+  for(var i=0;i<toks.length;i++){var w=toks[i];
+    if(w.length===1||LPFN[w])continue;
+    if(w.length>3)return null;
+    if(!(trig||op||(/^[A-Z]{2,3}$/.test(core)&&!LPACR[core])))return null;
+    if(!(/^[a-z]+$/.test(w)||/^[A-Z]+$/.test(w)))return null}
+  var single=toks.length&&toks.every(function(w){return w.length===1});
+  var pname=/^[A-Z]{2,3}$/.test(core)&&!LPACR[core];
+  if(!trig&&!op){ if(!((single&&!dig&&core.length<=12)||pname))return null }
+  else if(!trig&&op&&!toks.length)return null;
+  if(/^[A-Z]\d$/.test(core))return null;   /* A4 · B5 */
+  var t=core;
+  t=t.replace(/[²³⁴⁵⁶⁷⁸⁹ⁿ⁰¹]+/g,function(m){return"^{"+m.split("").map(function(c){return LPSUP[c]}).join("")+"}"});
+  t=t.replace(/\^([A-Za-z0-9])/g,"^{$1}");
+  t=t.replace(/√\(([^()]+)\)/g,"\\sqrt{$1}").replace(/√([A-Za-z0-9]+)/g,"\\sqrt{$1}");
+  t=t.replace(/\(([^()]+)\)\s*\/\s*\(([^()]+)\)/g,"\\frac{$1}{$2}");
+  t=t.replace(/[×÷≤≥≠±∈∉⊂⊃∪∩∅π·°′−⟺⇒→∞△∠⊥∥]/g,function(c){return LPSYM[c]||c});
+  t=t.replace(/\b(sin|cos|tan|cot|log|ln|lim|max|min|det|exp)\b/g,"\\$1 ");
+  t=t.replace(/m\/s/g,"\\text{m/s}").replace(/(\d)\s*(mm|cm|dm|km|kg|ml|ha|min)(?![A-Za-z])/g,"$1\\,\\text{$2}").replace(/(\d)\s*(m|g|s|h|l)(?![A-Za-z\\])/g,"$1\\,\\text{$2}");
+  return"$"+t+"$"+(r.match(/[\s.,]+$/)||[""])[0];
+}
+function lpTexify(s){
+  var out="",i=0,n=s.length;
+  while(i<n){
+    if(LPMS.test(s[i])&&s[i]!==" "&&!/[.,]/.test(s[i])){
+      var j=i;while(j<n&&LPMS.test(s[j]))j++;
+      var run=s.slice(i,j),pre=i>0?s[i-1]:"";
+      if(/[A-Za-z0-9]/.test(pre)){out+=run;i=j;continue}   /* ជាផ្នែកនៃពាក្យ/លេខ */
+      var tr=lpTexRun(run);out+=tr==null?run:tr;i=j;
+    }else{out+=s[i];i++}
+  }
+  return out;
+}
 function lpMath(t){
-  t=String(t==null?"":t);var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
+  t=String(t==null?"":t);
+  t=t.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/).map(function(p,i){return i%2?p:lpTexify(p)}).join("");
+  var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
   while((m=re.exec(t))){
     out+=lpTx(t.slice(i,m.index));
     if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];if(/^\s*\\square\s*$/.test(src))src="\\boxed{\\phantom{00000}}";   /* រូបមន្តដែលបម្លែងមិនបាន → ប្រអប់ទទេសម្រាប់សរសេរដោយដៃ */
@@ -2026,9 +2075,13 @@ LPFT={
 };
 function lpFlowKey(id,M){var e=$(id),t=e&&e.selectedIndex>=0?e.options[e.selectedIndex].text:"",k=String(t).split(" (")[0];
   return M[k]?k:Object.keys(M).filter(function(x){return String(t).indexOf(x)===0})[0]||""}
-function lpFlow(S,i){   /* S = ជំហាន · ត្រឡប់ {tc,st} បន្ថែមសកម្មភាពវិធីសាស្ត្រ + យុទ្ធវិធី (មិនកែ S) */
+var LPSTG=/\b(Engage|Explore|Explain|Elaborate|Evaluate|Think|Pair|Share|KWL|Jigsaw|Cooperative|Gallery|TPS)\b|ចូលរួម|ស្វែងរក|ពន្យល់ \(|ពង្រីក|វាយតម្លៃ \(/;
+function lpFlow(S,i){   /* S = ជំហាន · ត្រឡប់ {tc,st} (មិនកែ S) · បើទិន្នន័យមានស្លាកដំណាក់កាលរួចហើយ → មិនបន្ថែមអត្ថបទវិធីសាស្ត្រស្ទួន */
   var m=LPFM[lpFlowKey("lpM",LPFM)]||{},t=LPFT[lpFlowKey("lpT",LPFT)]||{},a=m[i]||{tc:[],st:[]},b=t[i]||{tc:[],st:[]};
-  return{tc:(a.tc||[]).concat(b.tc||[],S.tc||[]),st:(a.st||[]).concat(b.st||[],S.st||[])};
+  var has=function(L){return(L||[]).some(function(x){return LPSTG.test(String(x))})};
+  var hasTc=has(S.tc),hasSt=has(S.st);
+  var pick=function(L,own){return own?[]:(L||[]).slice(0,1)};   /* មិនទាន់មាន → បន្ថែមត្រឹមសកម្មភាពទី ១ របស់វិធីសាស្ត្រ/យុទ្ធវិធី */
+  return{tc:pick(a.tc,hasTc).concat(pick(b.tc,hasTc),S.tc||[]),st:pick(a.st,hasSt).concat(pick(b.st,hasSt),S.st||[])};
 }
 function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null → ត្រឡប់ទៅ Placeholder */
   var O=P&&P.obj||{};
@@ -2202,7 +2255,7 @@ function lpHeader(){
   $("lpKL").textContent="មេរៀនទី"+(L&&L[5]!=null?kn(L[5]):"");v("lpHL",L?L[0]:"");
   v("lpHD",lpDateTxt());lpDur();
   /* ២. ខ្លឹមសារមេរៀន ៖ ចំណងជើងមេរៀន + ចំណុចរង */
-  $("lpCN").innerHTML=L?"<div class=lp-mt>"+esc(L[0])+"</div>"+(st.length?"<ol class=lp-sl>"+lpSel().map(function(x){return"<li><i>"+kn(x.n)+"</i><span>"+esc(x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""))+"</span></li>"}).join("")+"</ol>":""):"<span class=lp-ph>…</span>";
+  $("lpCN").innerHTML=L?"<div class=lp-mt>"+lpMath(L[0])+"</div>"+(st.length?"<ol class=lp-sl>"+lpSel().map(function(x){return"<li><i>"+kn(x.n)+"</i><span>"+lpMath(x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""))+"</span></li>"}).join("")+"</ol>":""):"<span class=lp-ph>…</span>";
 }
 var lpPSig="";
 /* 👥 គណៈគ្រប់គ្រង + ប្រធានក្រុមបច្ចេកទេស ជ្រើសបានពីបញ្ជីគ្រូ (data) · ប្រធានក្រុម លំនាំដើម = គ្រូដែលមានតួនាទី «ប្រធាន» (បើគ្មាន → ឈ្មោះថេរ) · គ្រូបង្រៀន = អ្នកដែលកំពុង Login ស្វ័យប្រវត្តិ (គ្មាន Dropdown) */
@@ -2280,7 +2333,11 @@ function lpGenQ(g,l,v,seen){
   var G=window.PRACT&&PRACT.GR&&PRACT.GR[g]&&PRACT.GR[g].G&&PRACT.GR[g].G[l]&&PRACT.GR[g].G[l][v];if(!G)return null;
   for(var i=0;i<14;i++){try{var q=G();if(q&&q.q&&!seen[q.q]){seen[q.q]=1;return q}}catch(e){}}return null;
 }
-function lpAnsT(q){return(q.a||[]).map(function(a){return(a.l?a.l+" ":"")+"$"+a.t+"$"}).join(" · ")}
+function lpAnsT(q){   /* ស្លាក + តម្លៃ ក្នុង $…$ តែមួយ (ឧ. $x=-\frac13$) → ពុម្ពអក្សរគណិតដូចគ្នា */
+  return(q.a||[]).map(function(a){var l=String(a.l||"").trim().replace(/[:：]$/,"");
+    if(!l)return"$"+a.t+"$";
+    return/^[A-Za-z0-9_'′ ()]*=?$/.test(l)?"$"+l+(/=$/.test(l)?"":"=")+a.t+"$":l+" $"+a.t+"$"}).join(" · ");
+}
 function lpAuto(g,l,n,name,prev){
   var seen={},Q=function(v){return lpGenQ(g,+l,v,seen)},q1=Q(1),q2=Q(2),q2b=Q(5)||Q(2),q3=Q(3),q3b=Q(3),h1=Q(1),h2=Q(2),h3=Q(3);
   var mt=($("lpM").options[$("lpM").selectedIndex]||{}).text||"",tt=($("lpT").options[$("lpT").selectedIndex]||{}).text||"",md=lpDetail(mt),td=lpDetail(tt);
@@ -2354,7 +2411,12 @@ function lpCombine(g,l,sel){
     steps:[0,1,2,3,4].map(function(i){var fg=[];ps.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S.fg)S.fg.forEach(function(x){fg.push(x)})});
       var a=i===0||i===1?[ps[0]]:ps;   /* រដ្ឋបាល · រំលឹក ពីកិច្ចតែងការទី១ */
       var f=function(k){var o=[];a.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){if(o.indexOf(x)<0)o.push(x)})});return o};
-      return{n:s0[i].n,t:T[i],tc:f("tc"),ct:f("ct"),st:f("st"),fg:(i===0||i===1)?s0[i].fg:fg}}),
+      var R={n:s0[i].n,t:T[i],tc:f("tc"),ct:f("ct"),st:f("st"),fg:(i===0||i===1)?s0[i].fg:fg};
+      if(i===2){   /* មេរៀនប្រចាំថ្ងៃ ៖ ចប់ចំណុចរងទី ១ ទាំង ៣ ជួរ រួចទើបចំណុចរងទី ២ (ម៉ោងទី ១ → ម៉ោងទី ២) */
+        var hd=function(P,k,col){var h="ផ្នែកទី "+kn(k+1)+(ps.length===2?" (ម៉ោងទី "+kn(k+1)+")":"");return col==="ct"?"▸ "+h+" ៖ "+String(P.title||"").split(" · ").slice(-1)[0]:"▸ "+h};
+        ["tc","ct","st"].forEach(function(col){var o=[];ps.forEach(function(P,k){var S=P.steps&&P.steps[i];o.push(hd(P,k,col));if(S&&S[col])S[col].forEach(function(x){if(o.indexOf(x)<0)o.push(x)})});R[col]=o});
+      }
+      return R}),
     ex:{pre:(ps[0].ex&&ps[0].ex.pre)||[],drill:cat(function(P){return P.ex&&P.ex.drill}),hw:cat(function(P){return P.ex&&P.ex.hw}),ws:cat(function(P){return P.ex&&P.ex.ws}),key:cat(function(P){return P.ex&&P.ex.key}).slice(0,3)},
     worksheet:cat(function(P){return P.worksheet})}};
 }
