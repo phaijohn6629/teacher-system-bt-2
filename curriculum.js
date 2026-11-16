@@ -184,7 +184,7 @@ function printTidy(html){
     var isPlan=hr.children[0]&&hr.children[0].textContent.trim()==="ខែ";
     if(isPlan)hr.removeChild(hr.children[0]);
     var cols=0;[].forEach.call(hr.children,function(c){cols+=c.colSpan||1});
-    var groups=[],cur=null,band=null;
+    var groups=[],cur=null,band=null,curWk=null,wkRows=[],wkOpen=null;
     [].slice.call(tb.rows).forEach(function(r){
       if(isPlan&&!r.classList.contains("cus")&&!r.classList.contains("cuftr")){
         var c0=r.cells[0];
@@ -195,9 +195,15 @@ function printTidy(html){
       }
       if(isPlan&&r.classList.contains("cus")&&r.cells[0]&&r.cells[0].colSpan>1)r.cells[0].colSpan-=1;
       var wk=r.getAttribute("data-wk");
-      if(wk!==null){if(cur&&cur.wk===wk)cur.rows.push(r);else{cur={wk:wk,rows:band?[band,r]:[r],cls:"cuw"};band=null;groups.push(cur)}}
-      else{cur=null;if(band){groups.push({rows:[band,r],cls:"cuw"});band=null;return}groups.push({rows:[r],cls:r.classList.contains("cux")||r.classList.contains("cus")?"cuw":"cuo"})}
+      if(wk!==null){
+        var f=r.cells[0];
+        if(wk!==curWk){curWk=wk;wkRows=[];if(f&&f.rowSpan>1){f.rowSpan=1;f.classList.add("cuwf");wkOpen=f}else wkOpen=null}
+        else if(wkOpen){var e=document.createElement("td");e.className="c cuwc";r.insertBefore(e,r.firstChild)}
+        wkRows.push(r);
+        var g={rows:band?[band,r]:[r],cls:"cuw"};band=null;groups.push(g);
+      }else{curWk=null;wkOpen=null;if(band){groups.push({rows:[band,r],cls:"cuw"});band=null;return}groups.push({rows:[r],cls:r.classList.contains("cux")||r.classList.contains("cus")?"cuw":"cuo"})}
     });
+    var lw={};groups.forEach(function(g){g.rows.forEach(function(r){var w=r.getAttribute("data-wk");if(w!==null)lw[w]=r})});for(var w in lw)lw[w].classList.add("cuwlast");
     var parent=tb.parentNode;
     groups.forEach(function(g){var b=document.createElement("tbody");b.className=g.cls;g.rows.forEach(function(r){b.appendChild(r)});parent.appendChild(b)});
     parent.removeChild(tb);
@@ -206,9 +212,9 @@ function printTidy(html){
 }
 /* 📄 ចែកទំព័រ A4 ដោយខ្លួនឯង (ដូចកិច្ចតែងការ) ៖ វាស់កម្ពស់ក្នុងទំព័រលាក់ · សប្ដាហ៍នីមួយៗមិនដាច់ · ក្បាលតារាងត្រូវដដែលគ្រប់ទំព័រ · មិនពឹង Safari ឱ្យកាត់ទំព័រ */
 function paginate(top,bodyHtml){
-  var LIM=Math.round(258*3.7795),host=document.createElement("div"),S,sheets=[],pending=[];
+  var LIM=Math.round(262*3.7795),lastWk="",host=document.createElement("div"),S,sheets=[],pending=[];
   host.style.cssText="position:absolute;left:-99999px;top:0;width:180mm";document.body.appendChild(host);
-  function newSheet(){S=document.createElement("div");S.className="pg cup cusheet";host.appendChild(S);sheets.push(S)}
+  function newSheet(){S=document.createElement("div");S.className="pg cup cusheet";S.style.height="auto";host.appendChild(S);sheets.push(S)}
   function over(){return S.offsetHeight>LIM}
   function putBlock(el){S.appendChild(el);if(over()&&S.children.length>1){S.removeChild(el);newSheet();S.appendChild(el)}}
   function putTable(t){
@@ -217,12 +223,14 @@ function paginate(top,bodyHtml){
     var lead=pending,cur=null;pending=[];
     function open(){cur=t.cloneNode(false);cur.appendChild(th.cloneNode(true));lead.forEach(function(h){S.appendChild(h)});lead=[];S.appendChild(cur)}
     gs.forEach(function(g){
+      var c0=g.querySelector("td.cuwf");if(c0)lastWk=c0.innerHTML;
       if(!cur)open();
       cur.appendChild(g);
       if(over()){
         cur.removeChild(g);
         if(!cur.querySelector("tbody")){S.removeChild(cur);[].slice.call(S.children).forEach(function(c){if(c.tagName==="H3"||c.tagName==="H4"){lead.push(c)}});lead.forEach(function(h){if(h.parentNode===S)S.removeChild(h)})}
         newSheet();cur=null;open();cur.appendChild(g);
+        var wc=g.querySelector("td.cuwc");if(wc&&lastWk){wc.className="c cuwk";wc.innerHTML=lastWk+"<small>(ត)</small>"}
       }
     });
   }
@@ -239,7 +247,7 @@ function paginate(top,bodyHtml){
     if(t2&&t2.querySelectorAll("tbody").length===1&&t2.querySelector("tr.cuftr")&&t2.querySelector("thead")){
       var P=sheets[sheets.length-2].querySelectorAll("table.cut"),pt=P[P.length-1],pb=pt&&pt.querySelectorAll("tbody");
       if(pb&&pb.length>1)t2.insertBefore(pb[pb.length-1],t2.querySelector("tbody"))}}
-  var out=sheets.map(function(x){return x.outerHTML}).join("");document.body.removeChild(host);return out;
+  var out=sheets.map(function(x){x.style.height="";return x.outerHTML}).join("");document.body.removeChild(host);return out;
 }
 function printHtml(){
   var body="";

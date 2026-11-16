@@ -1197,5 +1197,10 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 .cup tbody.cumo{break-after:avoid;page-break-after:avoid}
 .cup tr.cumo td{background:#e8eefc!important;font-weight:700;text-align:left;padding:1mm 2mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cup tr.cuftr td{border:0!important}
-.cup.cusheet{break-after:page;page-break-after:always;padding:0}
+.cup.cusheet{break-after:page;page-break-after:always;padding:0;height:272mm;overflow:hidden;box-sizing:border-box}
+.pdfw .cup.cusheet{height:277mm}
+.cup td.cuwf{border-bottom:0!important}.cup td.cuwc{border-top:0!important;border-bottom:0!important}.cup td.cuwk{border-bottom:0!important}
+.cup tr.cuwlast td.cuwc,.cup tr.cuwlast td.cuwk{border-bottom:1px solid #000!important}
+.cup tbody:last-of-type tr:last-child td{border-bottom:1px solid #000!important}
+.cup tbody:last-of-type tr.cuftr td{border:0!important}
 .cup.cusheet:last-child{break-after:auto;page-break-after:auto}
