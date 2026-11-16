@@ -1204,3 +1204,11 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 .cup tbody:last-of-type tr:last-child td{border-bottom:1px solid #000!important}
 .cup tbody:last-of-type tr.cuftr td{border:0!important}
 .cup.cusheet:last-child{break-after:auto;page-break-after:auto}
+
+/* 🖨️ កម្មវិធីសិក្សា៖ ទំព័រ A4 ពិត (210×297) គ្មានរឹម @page · រឹមក្នុងសន្លឹកខ្លួនឯង · ១ សន្លឹក = ១ ទំព័រ ពិតប្រាកដ */
+.cuprint{page:cusp}
+@page cusp{size:A4;margin:0}
+body.pm #prt .cuprint .cup.cusheet{width:210mm;height:296mm;padding:12mm 15mm;margin:0;box-sizing:border-box;overflow:hidden;break-after:page;page-break-after:always;break-inside:avoid;background:#fff}
+body.pm #prt .cuprint .cup.cusheet:last-child{break-after:auto;page-break-after:auto}
+body.pm #prt .cuprint .cup .cut{break-inside:auto}
+body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-inside:avoid}

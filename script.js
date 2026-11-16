@@ -1179,7 +1179,7 @@ function pdfPaginate(w,pageH,contentW){
   });
 }
 /* សម្អាត #prt ក្រោយបោះពុម្ព ៖ Safari ខ្លះមិនបាញ់ afterprint → ប្រើទាំង afterprint · matchMedia("print") · setTimeout ជំនួយ (មិនប៉ះ DOM កម្មវិធីទេ · CSS @media print លាក់ត្រឹម body.pm ពេលកំពុងព្រីន) */
-function prtClean(){if(window.lpPrintUnmark)lpPrintUnmark();if(!document.body.classList.contains("pm"))return;document.body.classList.remove("pm");var p=$("prt");if(p)p.innerHTML=""}
+function prtClean(){if(window.lpPrintUnmark)lpPrintUnmark();var cps=$("cuPageStyle");if(cps)cps.remove();if(!document.body.classList.contains("pm"))return;document.body.classList.remove("pm");var p=$("prt");if(p)p.innerHTML=""}
 window.addEventListener("afterprint",prtClean);
 try{var _mq=window.matchMedia("print");var _mf=function(e){if(!e.matches)setTimeout(prtClean,300)};if(_mq.addEventListener)_mq.addEventListener("change",_mf);else if(_mq.addListener)_mq.addListener(_mf)}catch(e){}
 /* 💾 ប៊ូតុងរក្សាទុក (ការងាររដ្ឋបាល)៖ បង្ហាញស្ថានភាពពិត (មិនទាន់ · កំពុង · បាន ម៉ោង… · បរាជ័យ) · ចុច = រក្សាទុកភ្លាម
@@ -1818,7 +1818,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=10"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=4","hub.js?v=20","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=11"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=4","hub.js?v=20","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];

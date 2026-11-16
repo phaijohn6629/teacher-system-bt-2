@@ -212,7 +212,7 @@ function printTidy(html){
 }
 /* 📄 ចែកទំព័រ A4 ដោយខ្លួនឯង (ដូចកិច្ចតែងការ) ៖ វាស់កម្ពស់ក្នុងទំព័រលាក់ · សប្ដាហ៍នីមួយៗមិនដាច់ · ក្បាលតារាងត្រូវដដែលគ្រប់ទំព័រ · មិនពឹង Safari ឱ្យកាត់ទំព័រ */
 function paginate(top,bodyHtml){
-  var LIM=Math.round(262*3.7795),lastWk="",host=document.createElement("div"),S,sheets=[],pending=[];
+  var LIM=Math.round(267*3.7795),lastWk="",host=document.createElement("div"),S,sheets=[],pending=[];
   host.style.cssText="position:absolute;left:-99999px;top:0;width:180mm";document.body.appendChild(host);
   function newSheet(){S=document.createElement("div");S.className="pg cup cusheet";S.style.height="auto";host.appendChild(S);sheets.push(S)}
   function over(){return S.offsetHeight>LIM}
@@ -265,7 +265,15 @@ function printHtml(){
     "<div style='text-align:center;margin-bottom:4px'>មុខវិជ្ជា "+esc2(C[cuG].name)+" ឆ្នាំសិក្សា "+esc2(C[cuG].year)+"</div>";
   return paginate(top,body);
 }
-$("cuPr").onclick=function(){fontsOk().then(function(){doPrintNow(printHtml())})};
+/* 🖨️ បោះពុម្ពផ្ទាល់ (vector · ជ្រើស «Save as PDF» ក្នុងផ្ទាំង Print បើចង់បាន PDF) ៖ មិនឆ្លងកាត់ html2pdf (រូបភាព JPEG មិនស្អាត) · @page A4 គ្មានរឹម · ទំព័រកម្ពស់ថេរ ១ សន្លឹក = ១ ទំព័រ */
+function cuDirectPrint(){
+  var h=printHtml();
+  if(!$("cuPageStyle")){var st=document.createElement("style");st.id="cuPageStyle";st.textContent="@page{size:A4 portrait;margin:0!important}";document.head.appendChild(st)}
+  $("prt").innerHTML="<div class=cuprint>"+h+"</div>";document.body.classList.add("pm");
+  var go=function(){window.print();setTimeout(function(){if(window.prtClean)prtClean()},120000)};
+  requestAnimationFrame(function(){requestAnimationFrame(go)});
+}
+$("cuPr").onclick=function(){fontsOk().then(cuDirectPrint)};
 /* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */
 window.CURX={
   level:function(cls){var n=parseInt(String(cls||""));return n},
