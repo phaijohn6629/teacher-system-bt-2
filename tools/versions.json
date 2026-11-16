@@ -107,6 +107,10 @@
   "hash": "10ff59f19cbf6b707d715c18489cbd5b94dc685c",
   "v": 2
  },
+ "lp8.js": {
+  "hash": "0e7384fbc4c9f4dfd8e766c924203df41fa02253",
+  "v": 2
+ },
  "lp9.js": {
   "hash": "d266f865b5d1d7d243d35afbf014a0238a3bd864",
   "v": 2
@@ -196,8 +200,8 @@
   "v": 25
  },
  "script.js": {
-  "hash": "e2ff3be539118ce8ca20579e897a7f25bb9619b7",
-  "v": 135
+  "hash": "722cb774405ce74e136ada2b491a085d66c48d67",
+  "v": 136
  },
  "storeadm.js": {
   "hash": "7e7525271a314501027e8838ddbb8db9c11c9e7d",
