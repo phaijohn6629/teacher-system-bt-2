@@ -2141,6 +2141,7 @@ function lpFlowKey(id,M){var e=$(id),t=e&&e.selectedIndex>=0?e.options[e.selecte
   return M[k]?k:Object.keys(M).filter(function(x){return String(t).indexOf(x)===0})[0]||""}
 var LPSTG=/\b(Engage|Explore|Explain|Elaborate|Evaluate|Think|Pair|Share|KWL|Jigsaw|Cooperative|Gallery|TPS|Discovery|Inductive|Deductive|PrBL|PBL|IBL|Flipped|Direct|Reciprocal|Carousel|Caf[eé]|Problem Solving)\b|ចូលរួម|ស្វែងរក|ពន្យល់ \(|ពង្រីក|វាយតម្លៃ \(/;
 function lpFlow(S,i){   /* S = ជំហាន · ត្រឡប់ {tc,st} (មិនកែ S) · ទម្លាក់សកម្មភាពវិធីសាស្ត្រ + យុទ្ធវិធី ចូលជំហាន i តាម LPMAP.at · ទិន្នន័យមានស្លាកដំណាក់កាលរួចហើយ → មិនស្ទួន */
+  if(S&&S.edited)return{tc:S.tc||[],st:S.st||[]};   /* គ្រូបានកែដោយដៃ → បង្ហាញតាមដែលបានកែ (មិនបន្ថែមសកម្មភាពវិធីសាស្ត្រម្ដងទៀត) */
   var m=LPFM[lpFlowKey("lpM",LPFM)]||{},t=LPFT[lpFlowKey("lpT",LPFT)]||{},a=m[i]||{tc:[],st:[]},b=t[i]||{tc:[],st:[]};
   var tag=function(x){var r=/^\[([^\]]+)\]/.exec(String(x));return r?r[1]:""};
   var add=function(L,own){var seen={};(own||[]).forEach(function(x){var g=tag(x);if(g)seen[g]=1});
@@ -2435,6 +2436,47 @@ function lpAutoBuild(g,l,need){
     need.forEach(function(x){var i=-1;pts.forEach(function(p,j){if(String(p[0])===String(x.n))i=j});
       lessonPlanDB[g+"_"+l+"#"+x.n]=lpAuto(g,l,x.n,x.t.replace(/^\s*[0-9០-៩]+\s*[.)]\s*/,""),i>0?pts[i-1][1]:lname)})});
 }
+
+/* ✏️ កែសម្រួលកិច្ចតែងការដោយដៃ ៖ កែអ្វីដែលឃើញ (ចំណងជើង · វត្ថុបំណង · សម្ភារៈ · ៥ ជំហាន × ៣ ជួរ · សន្លឹកកិច្ចការ) · ១ បន្ទាត់ = ១ ចំណុច · LaTeX ក្នុង $…$
+   រក្សាទុកក្នុងឧបករណ៍ (localStorage «lpEdit») តាមគ្រាប់ចុច «ថ្នាក់_មេរៀន#ចំណុចរង» → គ្រប់ពេលបង្កើតម្ដងទៀតបានកំណែដែលកែ · «↺» ត្រឡប់ទៅដើម · មិនកែទិន្នន័យដើម (lp*.js) */
+var lpEKey="",LPE=null;
+function lpELoad(){if(LPE)return LPE;try{LPE=JSON.parse(localStorage.getItem("lpEdit")||"{}")||{}}catch(e){LPE={}}return LPE}
+function lpESave(){try{var j=JSON.stringify(LPE);if(j.length>3e6){alert("កំណែដែលបានកែច្រើនពេក · សូមត្រឡប់ខ្លះទៅដើម");return false}localStorage.setItem("lpEdit",j);return true}catch(e){alert("មិនអាចរក្សាទុកក្នុងឧបករណ៍បានទេ");return false}}
+function lpApplyEdit(key,P){
+  var o=lpELoad()[key];if(!o||!P||!P.steps)return P;
+  var Q=Object.assign({},P);
+  if(o.title)Q.title=o.title;
+  if(o.obj)Q.obj=o.obj;
+  if(o.mat)Q.mat=o.mat;
+  Q.steps=P.steps.map(function(S,i){var e=o.steps&&o.steps[i];return e?Object.assign({},S,{tc:e.tc,ct:e.ct,st:e.st,edited:true}):S});
+  if(o.ws){var ex=P.ex||{};Q.ex={pre:ex.pre||[],drill:[],ws:o.ws,hw:[],key:ex.key||[]};Q.worksheet=o.ws}
+  return Q;
+}
+function lpELines(t){return String(t||"").split("\n").map(function(x){return x.trim()}).filter(Boolean)}
+function lpEdOpen(){
+  var P=lpLast;if(!P||!P.steps){alert("សូមចុច «✨ បង្កើតកិច្ចតែងការ» ជាមុនសិន");return}
+  var d=$("lpEd");if(!d){d=document.createElement("dialog");d.id="lpEd";d.className="wide";document.body.appendChild(d)}
+  var ta=function(id,v,rows){return"<textarea id='"+id+"' rows='"+(rows||3)+"' spellcheck='false' style='width:100%;font:inherit'>"+esc((v||[]).join("\n"))+"</textarea>"},O=P.obj||{},M=P.mat&&!Array.isArray(P.mat)?P.mat:{st:[],tc:Array.isArray(P.mat)?P.mat:[]};
+  var ex=P.ex||{drill:[],ws:P.worksheet||[],hw:[]},wsl=[].concat(ex.drill||[],ex.ws||[],ex.hw||[]).filter(function(x,i,a){return x&&a.indexOf(x)===i});
+  var h="<div class=dlgb style='max-height:78vh;overflow:auto'><h3 style='margin-top:0'>✏️ កែសម្រួលកិច្ចតែងការ</h3><p class=note>១ បន្ទាត់ = ១ ចំណុច · រូបមន្តសរសេរក្នុង $…$ (LaTeX) · រូប ⟦img:…⟧ កុំលុប · កែរួចចុច «រក្សាទុក» ហើយសន្លឹកនឹងត្រូវបង្កើតឡើងវិញ</p>"+
+    "<label>ចំណងជើង</label><input id='lpEdT' value='"+esc(P.title||"")+"' style='width:100%'>"+
+    "<label>វិជ្ជាសម្បទា</label>"+ta("lpEd0",O.knowledge)+"<label>បំណិនសម្បទា</label>"+ta("lpEd1",O.skills)+"<label>ចរិយាសម្បទា</label>"+ta("lpEd2",O.attitude,2)+
+    "<label>សម្ភារៈ សម្រាប់សិស្ស</label>"+ta("lpEdMs",M.st,2)+"<label>សម្ភារៈ សម្រាប់គ្រូ</label>"+ta("lpEdMt",M.tc,2);
+  P.steps.forEach(function(S,i){var F=lpFlow(S,i);
+    h+="<fieldset style='margin:10px 0;border:1px solid #cbd5e1;border-radius:8px;padding:6px 8px'><legend><b>ជំហានទី "+kn(i+1)+" ៖ "+esc(S.n||LPS[i])+"</b></legend>"+
+      "<div style='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px'><div><small>សកម្មភាពគ្រូ</small>"+ta("lpEdC"+i+"_tc",F.tc,6)+"</div><div><small>ខ្លឹមសារមេរៀន</small>"+ta("lpEdC"+i+"_ct",S.ct,6)+"</div><div><small>សកម្មភាពសិស្ស</small>"+ta("lpEdC"+i+"_st",F.st,6)+"</div></div></fieldset>"});
+  h+="<label>សន្លឹកកិច្ចការ (លំហាត់ ១ បន្ទាត់ = ១ លំហាត់)</label>"+ta("lpEdW",wsl,5)+"</div>"+
+    "<div class=dlgf><button type=button id='lpEdR' class=danger>↺ ត្រឡប់ទៅដើម</button><span style='flex:1'></span><button type=button id='lpEdX'>បោះបង់</button><button type=button id='lpEdS' class=primary>💾 រក្សាទុក</button></div>";
+  d.innerHTML=h;
+  $("lpEdX").onclick=function(){d.close()};
+  $("lpEdR").onclick=function(){if(!confirm("លុបការកែទាំងអស់នៃកិច្ចតែងការនេះ ហើយត្រឡប់ទៅកំណែដើម?"))return;delete lpELoad()[lpEKey];lpESave();d.close();generateLessonPlan()};
+  $("lpEdS").onclick=function(){
+    var o={title:$("lpEdT").value.trim(),obj:{knowledge:lpELines($("lpEd0").value),skills:lpELines($("lpEd1").value),attitude:lpELines($("lpEd2").value)},
+      mat:{st:lpELines($("lpEdMs").value),tc:lpELines($("lpEdMt").value)},steps:P.steps.map(function(S,i){return{tc:lpELines($("lpEdC"+i+"_tc").value),ct:lpELines($("lpEdC"+i+"_ct").value),st:lpELines($("lpEdC"+i+"_st").value)}}),ws:lpELines($("lpEdW").value)};
+    lpELoad()[lpEKey]=o;if(!lpESave())return;d.close();generateLessonPlan();
+  };
+  if(d.showModal)d.showModal();else d.setAttribute("open","")
+}
 function generateLessonPlan(){var g=$("lpG").value;if(LPF[+g]&&!lessonPlanDB[g+"_"+$("lpL").value]){$("lpSt").textContent="⏳ កំពុងផ្ទុកទិន្នន័យកិច្ចតែងការ…"}return lpLoadDB(g).then(lpGen1)}
 function lpGen1(){
   var g=$("lpG").value,l=$("lpL").value,need=lpSel().filter(function(x){var P=lessonPlanDB[g+"_"+l+"#"+x.n];return!P||P.auto});
@@ -2445,12 +2487,12 @@ function lpGen1(){
 /* ⚠️ រូបមន្តដែលបម្លែងពីឯកសារមិនបាន (□) → ប្រាប់គ្រូឱ្យបំពេញដោយដៃមុនព្រីន */
 function lpSqNote(P){var n=(JSON.stringify(P).match(/\\\\square/g)||[]).length;return n?" · ✏️ មាន "+kn(n)+" ប្រអប់ □ ត្រូវបំពេញរូបមន្តដោយដៃ":""}
 function lpGenDo(){
-  var g=$("lpG").value,l=$("lpL").value,sel=lpSel(),sb=sel.map(function(x){return x.n}).join("+"),CB=lpCombine(g,l,sel),P=CB.P;
+  var g=$("lpG").value,l=$("lpL").value,sel=lpSel(),sb=sel.map(function(x){return x.n}).join("+"),CB=lpCombine(g,l,sel),P=CB.P;lpEKey=g+"_"+l+"#"+sb;if(P)P=lpApplyEdit(lpEKey,P);
   lpPeople();lpMeta();lpHeader();lpFooter();
   if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sel.length?"ចំណុចរងដែលបានជ្រើស":"មេរៀននេះ")+"ទេ (មានសម្រាប់ ថ្នាក់ទី១២ មេរៀន ១១ · ២២ · ២៣ · ៣១ · ៣២ តាមចំណុចរងដែលមានក្នុងបញ្ជី)";return false}
   if(P.sug&&lpSugK!==g+"_"+l+"#"+sb){lpSugK=g+"_"+l+"#"+sb;[["lpM",P.sug[0]],["lpT",P.sug[1]]].forEach(function(x){var e=$(x[0]);for(var i=0;i<e.options.length;i++)if(e.options[i].text.indexOf(x[1])===0){e.value=e.options[i].value;break}});lpMeta()}
   lpRender(P);lpPages();
-  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(P.auto||sel.some(function(x){var Q=lessonPlanDB[g+"_"+l+"#"+x.n];return Q&&Q.auto})?" · 🤖 មានចំណុចបង្កើតស្វ័យប្រវត្តិ (ពិនិត្យមុនប្រើ)":"")+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"")+lpSqNote(P);
+  $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» · "+kn(lpDu())+" នាទី"+(P.auto||sel.some(function(x){var Q=lessonPlanDB[g+"_"+l+"#"+x.n];return Q&&Q.auto})?" · 🤖 មានចំណុចបង្កើតស្វ័យប្រវត្តិ (ពិនិត្យមុនប្រើ)":"")+(CB.miss.length?" · ⚠️ មិនទាន់មានគំរូសម្រាប់៖ "+CB.miss.join(" · "):"")+lpSqNote(P)+(P&&P.steps&&P.steps[0]&&P.steps[0].edited?" · ✏️ ខ្លឹមសារដែលគ្រូបានកែ":"");
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
 }
 /* 📑 ចំណុចរងនៃមេរៀន ពីកម្មវិធីសិក្សាលម្អិត CUR[g].W («1. ឯកតានិមិត្ត» → [1,"ឯកតានិមិត្ត"]) · ក. ខ. (ចំណុចតូចជាងនេះ) មិនរាប់ */
@@ -2516,7 +2558,7 @@ function renderLp(){
     $("lpMg").onchange=$("lpTh").onchange=function(){lpFooter()};
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){lpPSrc="";lpPages()});
     $("lpG").onchange=function(){lpLoadDB($("lpG").value);lpLessons()};$("lpL").onchange=function(){lpSubs()};
-    $("lpGen").onclick=generateLessonPlan;
+    $("lpGen").onclick=generateLessonPlan;$("lpEdit")&&($("lpEdit").onclick=lpEdOpen);
   }
   if(!$("lpL").options.length||$("lpL").options[0].value==="")lpLessons();
   lpLoadDB($("lpG").value);

@@ -36,4 +36,18 @@ var r2=lpFlow({tc:["សួរសំណួរ"],st:["ឆ្លើយ"]},2);
 ok(r2.tc.some(function(x){return/Explore/.test(x)})&&r2.tc.some(function(x){return/Explain/.test(x)}),"5Es step 3 gets Explore + Explain when plan has none");
 var r3=lpFlow({tc:[],st:[]},3);
 ok(r3.tc.some(function(x){return/Elaborate/.test(x)})&&r3.tc.some(function(x){return/TPS|Think/.test(x)}),"step 4 gets Elaborate + the strategy (TPS)");
+/* ✏️ កែសម្រួលកិច្ចតែងការ ៖ lpApplyEdit + dialog + lpFlow bypass */
+var lpe=blk(/var lpEKey=/,/\nfunction lpEdOpen/);
+var store={};var localStorage={getItem:function(k){return store[k]||null},setItem:function(k,v){store[k]=v}};
+eval(lpe);
+var base={title:"T",obj:{knowledge:["k"],skills:[],attitude:[]},mat:{st:[],tc:[]},steps:[0,1,2,3,4].map(function(i){return{n:"s"+i,tc:["a"+i],ct:["c"+i],st:["z"+i],fg:["F"]}})};
+ok(lpApplyEdit("none",base)===base,"no edit → same plan");
+LPE=null;store.lpEdit=JSON.stringify({"k#1":{title:"NT",obj:{knowledge:["K2"],skills:[],attitude:[]},mat:{st:[],tc:[]},steps:[{tc:["A"],ct:["C"],st:["Z"]}],ws:["w1"]}});
+var q=lpApplyEdit("k#1",base);
+ok(q!==base&&q.title==="NT"&&q.obj.knowledge[0]==="K2"&&q.steps[0].ct[0]==="C"&&q.steps[0].edited===true&&q.steps[0].fg[0]==="F","edit overrides text, keeps figures");
+ok(q.steps[1].ct[0]==="c1"&&!q.steps[1].edited&&base.steps[0].ct[0]==="c0"&&base.title==="T","untouched steps and original plan are not mutated");
+ok(q.ex&&q.ex.ws[0]==="w1","edited worksheet items");
+window.__k={lpM:"5Es",lpT:"Think-Pair-Share"};var fe=lpFlow({edited:true,tc:["only"],st:["me"]},2);
+ok(fe.tc.length===1&&fe.tc[0]==="only"&&fe.st[0]==="me","lpFlow does not re-add method lines to edited steps");
+ok(/id="lpEdit"/.test(read("index.html")),"edit button in control panel");
 print("lpmap: checks "+n+" bad "+bad);
