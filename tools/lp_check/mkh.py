@@ -3,7 +3,7 @@ R='/Users/phaijohn/Desktop/MTS/Teacher_System/'
 idx=open(R+'index.html',encoding='utf-8').read(); js=open(R+'script.js',encoding='utf-8').read().split('\n')
 i0=idx.index('<section id="p21"'); import re as _r
 _n=_r.search(r'<section id="p\d+"',idx[i0+10:]); i1=i0+10+_n.start(); sec=idx[i0:i1]
-a=next(i for i,l in enumerate(js) if l.startswith('var LPM=')); b=next(i for i,l in enumerate(js) if l.startswith('var FN=['))
+a=next(i for i,l in enumerate(js) if (l.startswith('var LPMAP=') or l.startswith('var LPM='))); b=next(i for i,l in enumerate(js) if l.startswith('var FN=['))
 lp='\n'.join(js[a:b])
 mode=sys.argv[1] if len(sys.argv)>1 else 'batch'
 stub=r'''function $(i){return document.getElementById(i)}function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}function kn(n){return String(n).replace(/\d/g,function(d){return"០១២៣៤៥៦៧៨៩"[d]})}
