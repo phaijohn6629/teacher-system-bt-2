@@ -1173,8 +1173,8 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 @media print{
   body.lpp .lpx{display:none!important}
   body.lpp .lpa{display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:none!important;width:auto!important;max-width:none!important;min-width:0!important;height:auto!important;overflow:visible!important;position:static!important;transform:none!important;backdrop-filter:none!important;filter:none!important;animation:none!important;opacity:1!important}
-  body.lpp #lpSheets .lp-sheet{margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;box-sizing:border-box!important;width:210mm!important;max-width:none!important;height:296mm!important;max-height:296mm!important;min-height:0;overflow:hidden!important;break-after:page;page-break-after:always;filter:none!important;backdrop-filter:none!important}
-  body.lpp #lpSheets .lp-sheet:last-child{break-after:auto;page-break-after:auto}
+  body.lpp #lpSheets .lp-sheet{margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;box-sizing:border-box!important;width:210mm!important;max-width:none!important;height:295mm!important;max-height:295mm!important;min-height:0;overflow:hidden!important;break-after:auto;page-break-after:auto;break-inside:avoid;filter:none!important;backdrop-filter:none!important}
+  body.lpp #lpSheets .lp-sheet+.lp-sheet{break-before:page;page-break-before:always}   /* break-BEFORE (មិនមែន after) → Safari មិនបង្កើតទំព័រទទេ */
   body.lpp #lpSheets .lp-pb{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   body.lpp #lpSheets *{box-shadow:none!important;text-shadow:none!important}
   body.lpp #lpSheets :is(button,select,.no-print){display:none!important}

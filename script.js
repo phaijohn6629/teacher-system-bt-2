@@ -2252,9 +2252,10 @@ function lpPrint(){
   if(!S||!S.children.length){
     if(!lpPaginate()||!S||!S.children.length){alert("សូមចុច «✨ បង្កើតកិច្ចតែងការ» ជាមុនសិន");return}
   }
-  /* គ្មាន DOM mutation មុន print() ៖ ⌘P ដំណើរការលើ Safari តាម beforeprint (lpAutoMark) ដូច្នេះប៊ូតុងគ្រាន់តែហៅ print() ភ្លាមៗ */
-  window.print();
+  try{console.log("lpPrint: sheets="+S.children.length+" → window.print()")}catch(e){}
+  try{window.print()}catch(e){console.error("lpPrint:",e);alert("មិនអាចបើកផ្ទាំងបោះពុម្ពបាន៖ "+e.message+"\nសូមប្រើ ⌘P (Ctrl+P) ជំនួស")}
 }
+window.lpPrint=lpPrint;
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 /* 🤖 កិច្ចតែងការស្វ័យប្រវត្តិ សម្រាប់ចំណុចរងដែលមិនទាន់មានគំរូ ៖ ខ្លឹមសារ/ឧទាហរណ៍/លំហាត់ពីម៉ាស៊ីនលំហាត់ (practice*.js) + មេរៀនសង្ខេប (hub) · សកម្មភាពតាមវិធីសាស្ត្រ (5Es · PBL …) និងយុទ្ធវិធី (TPS · KWL …) ដែលបានជ្រើស */
 function lpGram(s){s=String(s).replace(/[\s\d០-៩.,:;()៖·\-]+/g,"");var o={};for(var i=0;i<s.length-2;i++)o[s.substr(i,3)]=1;return o}
