@@ -2011,19 +2011,44 @@ function lpPaginate(){
   S.innerHTML="";mk();
   var UL=lpUnits(A),UM=[];
   UL.forEach(function(u,i){if(u.keep&&UL[i+1]){UL[i+1].pre=(u.pre||[]).concat(u.els,UL[i+1].pre||[])}else UM.push(u)});
-  UM.forEach(function(u){
-    var put=function(){var added=[],tw=null;
-      u.pre.forEach(function(p){var c=lpCl(p);body.appendChild(c);added.push(c)});
-      if(u.rows){
-        tw=body.lastElementChild&&body.lastElementChild.classList.contains("lp-tw")&&!u.pre.length?body.lastElementChild:null;
-        var made=false;if(!tw){tw=document.createElement("div");tw.className="lp-tw";tw.innerHTML="<table class=lp-tb></table>";tw.firstChild.appendChild(lpCl(u.th));tw.firstChild.appendChild(document.createElement("tbody"));body.appendChild(tw);added.push(tw);made=true}
-        var tb=tw.querySelector("tbody");u.rows.forEach(function(r){var c=lpCl(r);tb.appendChild(c);if(!made)added.push(c)});
-      }else u.els.forEach(function(e){var c=lpCl(e);body.appendChild(c);added.push(c)});
-      return added};
+  var put=function(u){var added=[],tw=null;
+    u.pre.forEach(function(p){var c=lpCl(p);body.appendChild(c);added.push(c)});
+    if(u.rows){
+      tw=body.lastElementChild&&body.lastElementChild.classList.contains("lp-tw")&&!u.pre.length?body.lastElementChild:null;
+      var made=false;if(!tw){tw=document.createElement("div");tw.className="lp-tw";tw.innerHTML="<table class=lp-tb></table>";tw.firstChild.appendChild(lpCl(u.th));tw.firstChild.appendChild(document.createElement("tbody"));body.appendChild(tw);added.push(tw);made=true}
+      var tb=tw.querySelector("tbody");u.rows.forEach(function(r){var c=lpCl(r);tb.appendChild(c);if(!made)added.push(c)});
+    }else u.els.forEach(function(e){var c=lpCl(e);body.appendChild(c);added.push(c)});
+    return added},
+  undo=function(a){a.forEach(function(x){x.remove()})},
+  /* ✂️ Auto-fit ៖ ជួរខ្លឹមសារ (ul/li) ដែលមិនគ្រប់ទំព័រ → បំបែកតាមចំណុច li ទៅតាមសមាមាត្រ f (ជួរឈរនីមួយៗ) · ចំណុចដែលសល់បន្តទៅទំព័របន្ទាប់ */
+  split=function(sb,f){
+    var A=lpCl(sb),B=lpCl(sb),rest=0,kept=0;
+    [].forEach.call(A.children,function(td,ci){
+      var ua=td.querySelector("ul"),tb=B.children[ci],ub=tb&&tb.querySelector("ul");
+      if(!ua){if(tb)tb.innerHTML="";return}
+      var n=ua.children.length,k=Math.round(n*f),i;
+      for(i=n-1;i>=k;i--)ua.removeChild(ua.children[i]);
+      for(i=0;i<k;i++)ub.removeChild(ub.children[0]);
+      kept+=k;rest+=n-k;
+      if(!k)ua.remove();if(k===n)tb.innerHTML="";
+    });
+    return{a:A,b:B,rest:rest,kept:kept}};
+  var guard=0;
+  function place(u,idx){
     if(u.nw&&body.children.length)mk();
-    var a=put();
-    if(over()&&body.children.length>a.length){a.forEach(function(x){x.remove()});mk();put()}
-  });
+    var a=put(u);if(!over())return;
+    undo(a);
+    var sb=u.rows&&u.rows[u.rows.length-1];
+    if(sb&&sb.querySelector("ul li")){
+      var F=[.85,.7,.55,.4,.25];
+      for(var q=0;q<F.length;q++){
+        var sp=split(sb,F[q]);if(!sp.rest||sp.kept<2)continue;
+        var v={pre:u.pre,rows:u.rows.slice(0,-1).concat([sp.a]),th:u.th};a=put(v);
+        if(!over()){UM.splice(idx+1,0,{pre:[],rows:[sp.b],th:u.th});return}
+        undo(a)}}
+    if(body.children.length&&guard++<400){mk();place(u,idx);return}
+    put(u)}
+  for(var ui=0;ui<UM.length;ui++)place(UM[ui],ui);
   sheets.forEach(function(s,i){var n=document.createElement("span");n.className="lp-pb "+((i+1)%2?"r":"l");n.textContent=kn(i+1);s.appendChild(n)});
   lpPSrc=src;return true;
 }
