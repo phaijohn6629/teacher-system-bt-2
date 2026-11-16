@@ -95,6 +95,10 @@
   "hash": "b14081cbdf87169a40f7a9a862a7368b0df12b84",
   "v": 5
  },
+ "lp12.js": {
+  "hash": "10ff59f19cbf6b707d715c18489cbd5b94dc685c",
+  "v": 2
+ },
  "lsguard.js": {
   "hash": "35c285186489024c5ec07bcaaf90c9561b03cc51",
   "v": 2
@@ -180,8 +184,8 @@
   "v": 25
  },
  "script.js": {
-  "hash": "5da2eeb90982b5df96719faad33cedec3cb186b3",
-  "v": 130
+  "hash": "490741c32b5a250d956611ed064fadb27e967716",
+  "v": 132
  },
  "storeadm.js": {
   "hash": "7e7525271a314501027e8838ddbb8db9c11c9e7d",
