@@ -2231,11 +2231,13 @@ function lpFooter(){
    លាក់ UI ផ្សេងដោយ class ស្រាលៗលើ ancestors/siblings (lpx/lpa) ហើយ @media print លើ body.lpp កំណត់សន្លឹក A4 */
 function lpPrintMark(){
   lpPrintUnmark();var e=$("lpSheets");document.body.classList.add("lpp");document.documentElement.classList.add("lpp");
+  /* Safari មិនស្គាល់ named page (@page lpsh) → @page សកល A4 គ្មានរឹម តែពេល lpp (រក្សារឹម 12×15mm របស់ឯកសាររដ្ឋបាលផ្សេង) */
+  if(!$("lpPageStyle")){var st=document.createElement("style");st.id="lpPageStyle";st.textContent="@page{size:A4 portrait;margin:0!important}";document.head.appendChild(st)}
   while(e&&e!==document.body){e.classList.add("lpa");var p=e.parentNode;if(!p)break;[].forEach.call(p.children,function(c){if(c!==e&&c.nodeType===1)c.classList.add("lpx")});e=p}
 }
 function lpPrintUnmark(){
   if(!document.body.classList.contains("lpp")&&!document.querySelector(".lpa,.lpx"))return;
-  document.body.classList.remove("lpp");document.documentElement.classList.remove("lpp");[].forEach.call(document.querySelectorAll(".lpa,.lpx"),function(c){c.classList.remove("lpa","lpx")});
+  document.body.classList.remove("lpp");document.documentElement.classList.remove("lpp");var ps=$("lpPageStyle");if(ps)ps.remove();[].forEach.call(document.querySelectorAll(".lpa,.lpx"),function(c){c.classList.remove("lpa","lpx")});
 }
 /* ⌘P / Ctrl+P / ម៉ឺនុយ File → Print ក៏បោះពុម្ពកិច្ចតែងការដែរ ពេលផ្ទាំង p21 កំពុងបើក និងមានសន្លឹក (មិនត្រូវការ #prt) */
 function lpAutoMark(){
@@ -2247,9 +2249,9 @@ window.addEventListener("beforeprint",lpAutoMark);
 try{var _lq=window.matchMedia("print");var _lf=function(e){if(e.matches)lpAutoMark()};if(_lq.addEventListener)_lq.addEventListener("change",_lf);else if(_lq.addListener)_lq.addListener(_lf)}catch(e){}
 function lpPrint(){
   var A=$("lpSheets");if(!A)return;
-  if(!lpPaginate()||!A.children.length){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
+  if(!A.children.length&&!(lpPaginate()&&A.children.length)){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
   lpPrintMark();
-  try{window.print()}catch(e){lpPrintUnmark();throw e}   /* synchronous ក្នុង click handler */
+  window.print();   /* synchronous 100% ក្នុង click handler */
   setTimeout(lpPrintUnmark,120000);
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
