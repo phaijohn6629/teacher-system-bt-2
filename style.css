@@ -1158,3 +1158,12 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
 .lp-wrf{break-inside:avoid;page-break-inside:avoid}
 @media print{.lp-pnv,.lp-pk,.lp-pg{display:none!important}}
 .lp-wrb{line-height:1.7}.lp-wsc td{height:7mm}.lp-wrf .lp-wsh{margin-top:1mm}.lp-wq{margin:0 0 1.5mm}.lp-wsec .lp-wk{font-size:9pt}
+
+/* 🖨️ បោះពុម្ព៖ លាក់អ្វីៗទាំងអស់ក្រៅពី #prt (Sidebar · ម៉ឺនុយ · Backup/Drive · កិច្ចតែងការផ្សេង · #p21 មើលជាមុន) → browser មិនបាច់ Render */
+@media print{
+  body.pm>*:not(#prt):not(script):not(style){display:none!important}
+  body.pm #p21,body.pm .snav,body.pm #allMenu,body.pm header,body.pm .save-btn{display:none!important}
+  body.pm #prt .lp-print2 .lp-tb{table-layout:fixed;width:100%}
+  body.pm #prt .lp-print2 .lp-tb tr,body.pm #prt .lp-print2 .lp-sg,body.pm #prt .lp-print2 .lp-sc,body.pm #prt .lp-print2 .lp-wq,body.pm #prt .lp-print2 img,body.pm #prt .lp-print2 .lp-fg{break-inside:avoid;page-break-inside:avoid}
+  body.pm #prt .lp-print2 .katex{text-rendering:auto}
+}
