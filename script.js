@@ -1936,7 +1936,10 @@ function lpMath(t){
 }
 /* 📈 រូបភាពគូរស្វ័យប្រវត្តិ (SVG ពី fig.js · ពាក្យបញ្ជា FIG) ក្នុងជួរឈរខ្លឹមសារ */
 function lpFg(a){if(!a||!a.length||!window.FIG)return"";return a.map(function(f){try{return"<div class=lp-fg>"+FIG.svg(f)+"</div>"}catch(e){return""}}).join("")}
-function lpLi(a){return(a&&a.length)?"<ul class=lp-ul>"+a.map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("")+"</ul>":""}
+function lpLi(a,fg){
+  var f=(fg&&window.FIG)?fg.map(function(x){try{return"<li class=lp-fgli><div class=lp-fg>"+FIG.svg(x)+"</div></li>"}catch(e){return""}}).join(""):"";
+  return((a&&a.length)||f)?"<ul class=lp-ul>"+(a||[]).map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("")+f+"</ul>":"";
+}
 var lpLast=null,lpSugK="";
 /* ⏱️ រយៈពេលបង្រៀន ៤៥ ឬ ៩០ នាទី (ជំហាននីមួយៗកាត់/ពង្រីកតាមសមាមាត្រ · ៩០ = ២ ម៉ោង) */
 function lpDu(){var e=$("lpDu");return e&&e.value==="90"?90:45}
@@ -1947,14 +1950,16 @@ function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.to
 function lpWaN(x,t){
   x=String(x);var m=(x.match(/\$/g)||[]).length/2,sb=(x.match(/(^|\s)[កខគឃង]\/|(^|\s)[កខគឃង]\)|(^|\s)[0-9១-៩]\)/g)||[]).length,
     cx=(x.match(/\\(frac|dfrac|sqrt|lim|begin|sum|int|cos|sin|tan|ln|log)/g)||[]).length,ln=x.replace(/\$[^$]*\$/g,"").length;
-  var n=3+t+sb*3+Math.max(0,m-2)*.6+cx*.7+Math.max(0,ln-90)/70;
-  return Math.max(3,Math.min(13,Math.round(n)));
+  var n=2+t+sb*2.5+Math.max(0,m-2)*.4+cx*.5+Math.max(0,ln-100)/80;
+  return Math.max(3,Math.min(11,Math.round(n)));
 }
 function lpWsRender(P){
   var ws=$("lpWS");if(!ws)return;
   var ex=P&&P.ex?P.ex:{pre:[],drill:[],hw:[],ws:(P&&P.worksheet)||[],key:[]};
   var it=[].concat(ex.drill||[],ex.ws||[],ex.hw||[]).filter(function(x,i,a){return x&&a.indexOf(x)===i});
   if(!P||!it.length){ws.hidden=true;ws.innerHTML="";return}
+  var MX=(P.steps&&P.title&&P.title.indexOf(" + ")>0)?10:8;   /* កំណត់ចំនួនលំហាត់ ៖ សន្លឹកមិនលើស ~៣ ទំព័រ */
+  if(it.length>MX){var pick=[];for(var z=0;z<MX;z++)pick.push(it[Math.round(z*(it.length-1)/(MX-1))]);it=pick.filter(function(x,i,a){return a.indexOf(x)===i})}
   var n=it.length,n1=Math.max(1,Math.round(n*.4)),n3=n>=5?Math.max(1,Math.round(n*.2)):0,n2=n-n1-n3,W=[2,3,4],T=[];
   it.forEach(function(x,i){T.push(i<n1?0:i<n1+n2?1:2)});
   var sum=0;T.forEach(function(t){sum+=W[t]});var pt=T.map(function(t){return Math.max(1,Math.round(W[t]*20/sum))}),tot=pt.reduce(function(a,b){return a+b},0);
@@ -1973,7 +1978,7 @@ function lpWsRender(P){
     var idx=[];T.forEach(function(x,j){if(x===t)idx.push(j)});if(!idx.length)return;
     var kt=t===0&&ex.key&&ex.key.length?"<ul class=lp-ul>"+ex.key.map(function(x){return"<li>"+h(x)+"</li>"}).join("")+"</ul>":esc(TH[t]);
     out+="<div class=lp-wsec style='--c:"+CL[t]+"'><h4 class=lp-wsh><b>"+kn(t+2)+"</b>កម្រិត"+TN[t]+" <small>("+kn(tp[t])+" ពិន្ទុ)</small></h4><div class=lp-wk><b>💡 គន្លឹះសម្រាប់អ្នកត្រូវការជំនួយ ៖</b> "+kt+"</div></div>";
-    idx.forEach(function(j){i++;out+="<div class=lp-wq style='--c:"+CL[t]+"'><span class=lp-wno>"+kn(i)+"</span><div class=lp-wb><div class=lp-wtx>"+h(it[j])+"</div><div class=lp-wa style='height:"+(lpWaN(it[j],t)*6.4+1)+"mm'></div></div><span class=lp-wp>"+kn(pt[j])+" ពិន្ទុ</span></div>"});
+    idx.forEach(function(j){i++;out+="<div class=lp-wq style='--c:"+CL[t]+"'><span class=lp-wno>"+kn(i)+"</span><div class=lp-wb><div class=lp-wtx>"+h(it[j])+"</div><div class=lp-wa style='height:"+(lpWaN(it[j],t)*6+1)+"mm'></div></div><span class=lp-wp>"+kn(pt[j])+" ពិន្ទុ</span></div>"});
   });
   out+="<div class=lp-wrf><h4 class=lp-wsh style='--c:#0f766e'><b>"+kn(5)+"</b>ឆ្លុះបញ្ចាំង · របាយពិន្ទុ</h4><div class=lp-wrb><p>ខ្ញុំយល់មេរៀននេះ ៖ ☐ ច្បាស់ &nbsp; ☐ មួយចំណែក &nbsp; ☐ មិនទាន់យល់</p><p>ចំណុចដែលខ្ញុំត្រូវសួរគ្រូ ៖ <i></i></p>"+
     "<table class=lp-wsc><tr><th>កម្រិតមូលដ្ឋាន</th><th>កម្រិតពង្រឹង</th><th>កម្រិតប្រឈម</th><th>ពិន្ទុសរុប</th><th>មតិគ្រូ</th></tr><tr><td>…/"+kn(tp[0])+"</td><td>…/"+kn(tp[1])+"</td><td>…/"+kn(tp[2])+"</td><td>…/២០</td><td></td></tr></table></div></div>";
@@ -1989,7 +1994,7 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
   $("lpSteps").innerHTML=LPS.map(function(t,i){
     var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(Math.round(S.t*lpDu()/45))+" នាទី":""):esc(t);
     return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+h+"</th></tr><tr class='lp-sb"+(S?" lp-fill":"")+"'>"+
-      (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+lpFg(S.fg)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
+      (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct,S.fg)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
   lpPages();
 }
 /* 🔳 QR Code ១–៤ ផ្ទាល់ខ្លួន (តំណ → បង្កើត QR · ឬ Upload រូប) + ចំណងជើងរង · ទទេ = QR ស្វ័យប្រវត្តិទៅ practice.html · QRCode ពី cdnjs */
@@ -2090,7 +2095,6 @@ function lpPaginate(){
       kept+=k;rest+=n-k;
       if(!k)ua.remove();if(k===n)tb.innerHTML="";
     });
-    [].forEach.call(B.querySelectorAll(".lp-fg"),function(x){x.remove()});
     return{a:A,b:B,rest:rest,kept:kept}};
   var guard=0;
   function place(u,idx){
@@ -2244,12 +2248,12 @@ function lpCombine(g,l,sel){
   if(ps.length===1)return{P:ps[0],miss:miss};
   var cat=function(f){var o=[];ps.forEach(function(P){(f(P)||[]).forEach(function(x){if(o.indexOf(x)<0)o.push(x)})});return o};
   var st=function(i,k){var o=[];ps.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){o.push(x)})});return o};
-  var T=[3,5,22,10,5],s0=ps[0].steps;
+  var T=[3,5,23,9,5],s0=ps[0].steps;
   return{miss:miss,P:{title:ps.map(function(P){return P.title}).join(" + "),dur:45,sug:ps[0].sug,mat:ps[0].mat,
     obj:{knowledge:cat(function(P){return P.obj&&P.obj.knowledge}),skills:cat(function(P){return P.obj&&P.obj.skills}),attitude:cat(function(P){return P.obj&&P.obj.attitude}).slice(0,1)},
     steps:[0,1,2,3,4].map(function(i){var fg=[];ps.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S.fg)S.fg.forEach(function(x){fg.push(x)})});
       var a=i===0||i===1?[ps[0]]:ps;   /* រដ្ឋបាល · រំលឹក ពីកិច្ចតែងការទី១ */
-      var f=function(k){var o=[];a.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){o.push(x)})});return o};
+      var f=function(k){var o=[];a.forEach(function(P){var S=P.steps&&P.steps[i];if(S&&S[k])S[k].forEach(function(x){if(o.indexOf(x)<0)o.push(x)})});return o};
       return{n:s0[i].n,t:T[i],tc:f("tc"),ct:f("ct"),st:f("st"),fg:(i===0||i===1)?s0[i].fg:fg}}),
     ex:{pre:(ps[0].ex&&ps[0].ex.pre)||[],drill:cat(function(P){return P.ex&&P.ex.drill}),hw:cat(function(P){return P.ex&&P.ex.hw}),ws:cat(function(P){return P.ex&&P.ex.ws}),key:cat(function(P){return P.ex&&P.ex.key}).slice(0,3)},
     worksheet:cat(function(P){return P.worksheet})}};

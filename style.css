@@ -1144,3 +1144,7 @@ body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer
 body.pm #prt .lp-print2 .lp-sheet{margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;width:210mm;max-width:none;height:296mm;min-height:0;overflow:hidden;break-after:page;page-break-after:always}
 body.pm #prt .lp-print2 .lp-sheet:last-child{break-after:auto;page-break-after:auto}
 body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+
+.lp-ul li.lp-fgli{padding-left:0}.lp-ul li.lp-fgli::before{content:none}
+.lp-fg{margin:3px 0;text-align:center}.lp-fg .fig{max-width:100%}.lp-fg svg{width:auto!important;height:auto!important;max-width:100%;max-height:44mm}
+.lp-wa{background:repeating-linear-gradient(transparent,transparent 5.8mm,#e2e8f0 5.8mm,#e2e8f0 6mm)}
