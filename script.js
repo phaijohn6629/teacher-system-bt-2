@@ -1902,7 +1902,8 @@ var lessonPlanDB={
     ]
   }
 };
-lessonPlanDB["12_11#2"]=lessonPlanDB["12_11"];   /* ចំណុចរងទី២ «ចំនួនកុំផ្លិចទម្រង់ពីជគណិត» · key = ថ្នាក់_មេរៀន#ចំណុចរង · គ្មាន # = ទាំងមេរៀន */
+lessonPlanDB["12_11#2"]=lessonPlanDB["12_11"];
+if(window.LPX)Object.keys(LPX).forEach(function(k){lessonPlanDB[k]=LPX[k]});   /* កិច្ចតែងការពី lessonplans.js */   /* ចំណុចរងទី២ «ចំនួនកុំផ្លិចទម្រង់ពីជគណិត» · key = ថ្នាក់_មេរៀន#ចំណុចរង · គ្មាន # = ទាំងមេរៀន */
 /* 🔣 KaTeX ៖ «$…$» ឬ «$$…$$» → រូបមន្ត · អត្ថបទក្រៅ $ ត្រូវ esc() ជានិច្ច (មិនទុកចិត្ត HTML) · KaTeX មិនទាន់ផ្ទុក → បង្ហាញអត្ថបទដើម ហើយគូរម្ដងទៀតពេលផ្ទុករួច */
 function lpMath(t){
   t=String(t==null?"":t);var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
@@ -1914,8 +1915,10 @@ function lpMath(t){
   }
   return out+esc(t.slice(i));
 }
+/* 📈 រូបភាពគូរស្វ័យប្រវត្តិ (SVG ពី fig.js · ពាក្យបញ្ជា FIG) ក្នុងជួរឈរខ្លឹមសារ */
+function lpFg(a){if(!a||!a.length||!window.FIG)return"";return a.map(function(f){try{return"<div class=lp-fg>"+FIG.svg(f)+"</div>"}catch(e){return""}}).join("")}
 function lpLi(a){return(a&&a.length)?"<ul class=lp-ul>"+a.map(function(x){return"<li>"+lpMath(x)+"</li>"}).join("")+"</ul>":""}
-var lpLast=null;
+var lpLast=null,lpSugK="";
 function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.toggle("lp-ph",!html)}
 function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null → ត្រឡប់ទៅ Placeholder */
   var O=P&&P.obj||{};
@@ -1929,7 +1932,7 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
   $("lpSteps").innerHTML=LPS.map(function(t,i){
     var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(S.t)+" នាទី":""):esc(t);
     return"<tr class='lp-sh'><th colspan=3>ជំហានទី"+kn(i+1)+" ៖ "+h+"</th></tr><tr class='lp-sb"+(S?" lp-fill":"")+"'>"+
-      (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
+      (S?"<td>"+lpLi(S.tc)+"</td><td>"+lpLi(S.ct)+lpFg(S.fg)+"</td><td>"+lpLi(S.st)+"</td>":"<td class='lp-ph'>…</td><td class='lp-ph'>…</td><td class='lp-ph'>…</td>")+"</tr>"}).join("");
   lpPages();
 }
 /* 🔳 QR Code ១–៤ ផ្ទាល់ខ្លួន (តំណ → បង្កើត QR · ឬ Upload រូប) + ចំណងជើងរង · ទទេ = QR ស្វ័យប្រវត្តិទៅ practice.html · QRCode ពី cdnjs */
@@ -2032,6 +2035,7 @@ function lpPaginate(){
       kept+=k;rest+=n-k;
       if(!k)ua.remove();if(k===n)tb.innerHTML="";
     });
+    [].forEach.call(B.querySelectorAll(".lp-fg"),function(x){x.remove()});
     return{a:A,b:B,rest:rest,kept:kept}};
   var guard=0;
   function place(u,idx){
@@ -2113,7 +2117,8 @@ function lpPrint(){
 function generateLessonPlan(){
   var g=$("lpG").value,l=$("lpL").value,sb=$("lpS").value,P=lessonPlanDB[g+"_"+l+(sb?"#"+sb:"")];
   lpPeople();lpMeta();lpHeader();lpFooter();
-  if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានតែ ថ្នាក់ទី១២ មេរៀនទី១១ ចំនួនកុំផ្លិច · ចំណុចរងទី២ ទម្រង់ពីជគណិត)";return false}
+  if(!P){lpRender(null);lpPages();$("lpSt").textContent="ℹ️ មិនទាន់មានកិច្ចតែងការគំរូសម្រាប់"+(sb?"ចំណុចរងនេះ":"មេរៀននេះ")+"ទេ (មានសម្រាប់ ថ្នាក់ទី១២ មេរៀន ១១ · ២២ · ២៣ · ៣១ · ៣២ តាមចំណុចរងដែលមានក្នុងបញ្ជី)";return false}
+  if(P.sug&&lpSugK!==g+"_"+l+"#"+sb){lpSugK=g+"_"+l+"#"+sb;[["lpM",P.sug[0]],["lpT",P.sug[1]]].forEach(function(x){var e=$(x[0]);for(var i=0;i<e.options.length;i++)if(e.options[i].text.indexOf(x[1])===0){e.value=e.options[i].value;break}});lpMeta()}
   lpRender(P);lpPages();
   $("lpSt").textContent="✅ បានបង្កើតកិច្ចតែងការ «"+P.title+"» ("+kn(P.steps.length)+" ជំហាន)";
   $("lpA4").scrollIntoView({behavior:"smooth",block:"start"});return true;
