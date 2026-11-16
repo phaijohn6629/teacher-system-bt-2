@@ -1167,7 +1167,7 @@ function pdfPaginate(w,pageH,contentW){
   });
 }
 /* សម្អាត #prt ក្រោយបោះពុម្ព ៖ Safari ខ្លះមិនបាញ់ afterprint → ប្រើទាំង afterprint · matchMedia("print") · setTimeout ជំនួយ (មិនប៉ះ DOM កម្មវិធីទេ · CSS @media print លាក់ត្រឹម body.pm ពេលកំពុងព្រីន) */
-function prtClean(){if(!document.body.classList.contains("pm"))return;document.body.classList.remove("pm");var p=$("prt");if(p)p.innerHTML=""}
+function prtClean(){if(window.lpPrintUnmark)lpPrintUnmark();if(!document.body.classList.contains("pm"))return;document.body.classList.remove("pm");var p=$("prt");if(p)p.innerHTML=""}
 window.addEventListener("afterprint",prtClean);
 try{var _mq=window.matchMedia("print");var _mf=function(e){if(!e.matches)setTimeout(prtClean,300)};if(_mq.addEventListener)_mq.addEventListener("change",_mf);else if(_mq.addListener)_mq.addListener(_mf)}catch(e){}
 /* 💾 ប៊ូតុងរក្សាទុក (ការងាររដ្ឋបាល)៖ បង្ហាញស្ថានភាពពិត (មិនទាន់ · កំពុង · បាន ម៉ោង… · បរាជ័យ) · ចុច = រក្សាទុកភ្លាម
@@ -2209,12 +2209,22 @@ function lpFooter(){
   $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");$("lpSHT").textContent=lpHeadTitle();lpPages();
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */
+/* 🖨️ បោះពុម្ពភ្លាមៗពី #lpSheets ដែលមានស្រាប់លើអេក្រង់ (គ្មាន clone · គ្មាន setTimeout មុន print → Safari មិនទប់ស្កាត់ user gesture) ·
+   លាក់ UI ផ្សេងដោយ class ស្រាលៗលើ ancestors/siblings (lpx/lpa) ហើយ @media print លើ body.lpp កំណត់សន្លឹក A4 */
+function lpPrintMark(){
+  lpPrintUnmark();var e=$("lpSheets");document.body.classList.add("lpp");
+  while(e&&e!==document.body){e.classList.add("lpa");var p=e.parentNode;if(!p)break;[].forEach.call(p.children,function(c){if(c!==e&&c.nodeType===1)c.classList.add("lpx")});e=p}
+}
+function lpPrintUnmark(){
+  if(!document.body.classList.contains("lpp")&&!document.querySelector(".lpa,.lpx"))return;
+  document.body.classList.remove("lpp");[].forEach.call(document.querySelectorAll(".lpa,.lpx"),function(c){c.classList.remove("lpa","lpx")});
+}
 function lpPrint(){
   var A=$("lpSheets");if(!A)return;
-  lpPSrc="";if(!lpPaginate()||!A.children.length){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
-  /* បោះពុម្ពពីសន្លឹក A4 ដែលបានបែងចែករួច (WYSIWYG) ៖ មិនឱ្យ browser កាត់តារាងឬបាត់ស៊ុម */
-  var html="<div class='lp-print2'>"+A.innerHTML.replace(/ id="[^"]*"/g,"")+"</div>";
-  realPrint(html);
+  if(!lpPaginate()||!A.children.length){alert("សូមបង្កើតកិច្ចតែងការជាមុន ហើយបើកផ្ទាំងនេះឱ្យឃើញ");return}
+  lpPrintMark();
+  window.print();   /* synchronous ក្នុង click handler */
+  setTimeout(lpPrintUnmark,120000);
 }
 /* ✨ ចាប់តម្លៃពី Dropdown ទាំង ៤ → ទាញពី lessonPlanDB → ចាក់ចូលក្រដាស A4 */
 /* 🤖 កិច្ចតែងការស្វ័យប្រវត្តិ សម្រាប់ចំណុចរងដែលមិនទាន់មានគំរូ ៖ ខ្លឹមសារ/ឧទាហរណ៍/លំហាត់ពីម៉ាស៊ីនលំហាត់ (practice*.js) + មេរៀនសង្ខេប (hub) · សកម្មភាពតាមវិធីសាស្ត្រ (5Es · PBL …) និងយុទ្ធវិធី (TPS · KWL …) ដែលបានជ្រើស */

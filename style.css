@@ -1093,7 +1093,7 @@ div.lp-ph{text-align:center;padding:10px;border:1px dashed #9ca3af}
 .lp-qc{margin-top:6px}.lp-qc summary{cursor:pointer;font-weight:700;font-size:.88rem}
 .lp-qrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto auto;gap:4px;align-items:center;margin-top:4px}
 .lp-qrow .qc{grid-column:2/-1;grid-row:2}.lp-qrow input{min-width:0;margin:0}.lp-qrow .qf{cursor:pointer}.lp-qrow .qx{margin:0;min-height:0;padding:0 6px}
-@media print{#p21 .lp-sheets{display:none!important}}
+@media print{body:not(.lpp) #p21 .lp-sheets{display:none!important}}
 
 .lp-sg,.lp-sc{break-inside:avoid;page-break-inside:avoid}
 .lp-mt,.lp-sl{margin-left:2cm}
@@ -1168,4 +1168,15 @@ body.pm #prt .lp-print2 .lp-pb{-webkit-print-color-adjust:exact;print-color-adju
   body.pm #prt .lp-print2 .katex{text-rendering:auto}
 }
 
-@media print{body.pm #lpSheets,body.pm #lpA4{display:none!important}}
+
+/* 🖨️ lpPrint ៖ បោះពុម្ព #lpSheets នៅនឹងកន្លែង (body.lpp) · គ្មាន shadow/filter · ancestors ត្រូវ reset */
+@media print{
+  body.lpp .lpx{display:none!important}
+  body.lpp .lpa{display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;background:none!important;width:auto!important;max-width:none!important;min-width:0!important;height:auto!important;overflow:visible!important;position:static!important;transform:none!important;backdrop-filter:none!important;filter:none!important;animation:none!important;opacity:1!important}
+  body.lpp #lpSheets{page:lpsh}
+  body.lpp #lpSheets .lp-sheet{margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;width:210mm;max-width:none;height:296mm;min-height:0;overflow:hidden;break-after:page;page-break-after:always;filter:none!important;backdrop-filter:none!important}
+  body.lpp #lpSheets .lp-sheet:last-child{break-after:auto;page-break-after:auto}
+  body.lpp #lpSheets .lp-pb{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.lpp #lpSheets *{box-shadow:none!important;text-shadow:none!important}
+  body.lpp #lpSheets :is(button,select,.no-print){display:none!important}
+}
