@@ -274,6 +274,15 @@ function cuDirectPrint(){
   requestAnimationFrame(function(){requestAnimationFrame(go)});
 }
 $("cuPr").onclick=function(){fontsOk().then(cuDirectPrint)};
+/* ⌘P / Ctrl+P / File → Print ពេលផ្ទាំងកម្មវិធីសិក្សាកំពុងបើក → ប្រើទំព័រ A4 ដូចប៊ូតុង «បោះពុម្ព» (មិនបោះពុម្ពតារាងលើអេក្រង់ផ្ទាល់ · គ្មានបន្ទាត់ដាច់/ផ្កាឈូក) */
+window.addEventListener("beforeprint",function(){
+  if(document.body.classList.contains("pm")||document.body.classList.contains("lpp"))return;
+  var b=$("cuPr");if(!b||!b.getBoundingClientRect().width)return;
+  try{
+    if(!$("cuPageStyle")){var st=document.createElement("style");st.id="cuPageStyle";st.textContent="@page{size:A4 portrait;margin:0!important}";document.head.appendChild(st)}
+    $("prt").innerHTML="<div class=cuprint>"+printHtml()+"</div>";document.body.classList.add("pm");
+  }catch(e){console.error("cu beforeprint:",e)}
+});
 /* ---------- API សម្រាប់ទំព័រសម្រង់អត្ថបទ ---------- */
 window.CURX={
   level:function(cls){var n=parseInt(String(cls||""));return n},

@@ -1212,3 +1212,14 @@ body.pm #prt .cuprint .cup.cusheet{width:210mm;height:296mm;padding:12mm 15mm;ma
 body.pm #prt .cuprint .cup.cusheet:last-child{break-after:auto;page-break-after:auto}
 body.pm #prt .cuprint .cup .cut{break-inside:auto}
 body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-inside:avoid}
+
+/* 🖨️ ការពារបន្ថែម (ករណី browser បោះពុម្ពតារាងលើអេក្រង់ផ្ទាល់) ៖ គ្មានបន្ទាត់ផ្កាឈូកសប្ដាហ៍បច្ចុប្បន្ន · តារាងបិទជិតគ្រប់ទំព័រ (border-collapse:separate → ជួរចុងទំព័រមាន border-bottom · ក្បាលតារាងដដែលមាន border ពីលើ/ក្រោម) */
+@media print{
+  .cut tr.cur td,.cup .cut tr.cur td,body.pm .cut tr.cur td{outline:0!important}
+  .cut,.cup .cut{border-collapse:separate!important;border-spacing:0;border-top:1px solid #000;border-left:1px solid #000}
+  .cut td,.cut th,.cup .cut td,.cup .cut th{border:0!important;border-right:1px solid #000!important;border-bottom:1px solid #000!important}
+  .cup td.cuwf,.cup td.cuwk{border-bottom:0!important}.cup td.cuwc{border-top:0!important;border-bottom:0!important}
+  .cup tr.cuwlast td.cuwc,.cup tr.cuwlast td.cuwk{border-bottom:1px solid #000!important}
+  .cup .cut tr.cuftr td,.cut tr.cuftr td{border:0!important}
+  .cup .cut.cuft,.cut.cuft{border:0!important}
+}
