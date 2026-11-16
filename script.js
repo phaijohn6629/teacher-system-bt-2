@@ -1943,6 +1943,13 @@ function lpDu(){var e=$("lpDu");return e&&e.value==="90"?90:45}
 function lpDur(){var d=lpDu();$("lpHU").textContent=d===90?"៩០ នាទី (ម៉ោងទី១ ៤៥ នាទី · ម៉ោងទី២ ៤៥ នាទី)":"៤៥ នាទី"}
 function lpSet(id,html){var e=$(id);if(!e)return;e.innerHTML=html;e.classList.toggle("lp-ph",!html)}
 /* 📝 សន្លឹកកិច្ចការស្ដង់ដារ Flipped Classroom ៖ ប្រអប់ក្បាល (ឈ្មោះ · ពិន្ទុ) · ត្រៀមមុនរៀន (QR) · ៣ កម្រិតមានពិន្ទុ + គន្លឹះ + កន្លែងដំណោះស្រាយ · ឆ្លុះបញ្ចាំង · របាយពិន្ទុ */
+/* 📏 កន្លែងដំណោះស្រាយស្វ័យប្រវត្តិ ៖ ចំនួនបន្ទាត់ (៦.៤ ម.ម/បន្ទាត់) តាមកម្រិត + ចំនួនសំណួររង (ក/ ខ/ …) + កន្សោមគណិត + រូបមន្តស្មុគ្គស្មាញ (ប្រភាគ ឫស លីមីត ប្រព័ន្ធ …) + ប្រវែងអត្ថបទ */
+function lpWaN(x,t){
+  x=String(x);var m=(x.match(/\$/g)||[]).length/2,sb=(x.match(/(^|\s)[កខគឃង]\/|(^|\s)[កខគឃង]\)|(^|\s)[0-9១-៩]\)/g)||[]).length,
+    cx=(x.match(/\\(frac|dfrac|sqrt|lim|begin|sum|int|cos|sin|tan|ln|log)/g)||[]).length,ln=x.replace(/\$[^$]*\$/g,"").length;
+  var n=3+t+sb*3+Math.max(0,m-2)*.6+cx*.7+Math.max(0,ln-90)/70;
+  return Math.max(3,Math.min(13,Math.round(n)));
+}
 function lpWsRender(P){
   var ws=$("lpWS");if(!ws)return;
   var ex=P&&P.ex?P.ex:{pre:[],drill:[],hw:[],ws:(P&&P.worksheet)||[],key:[]};
@@ -1966,7 +1973,7 @@ function lpWsRender(P){
     var idx=[];T.forEach(function(x,j){if(x===t)idx.push(j)});if(!idx.length)return;
     var kt=t===0&&ex.key&&ex.key.length?"<ul class=lp-ul>"+ex.key.map(function(x){return"<li>"+h(x)+"</li>"}).join("")+"</ul>":esc(TH[t]);
     out+="<div class=lp-wsec style='--c:"+CL[t]+"'><h4 class=lp-wsh><b>"+kn(t+2)+"</b>កម្រិត"+TN[t]+" <small>("+kn(tp[t])+" ពិន្ទុ)</small></h4><div class=lp-wk><b>💡 គន្លឹះសម្រាប់អ្នកត្រូវការជំនួយ ៖</b> "+kt+"</div></div>";
-    idx.forEach(function(j){i++;out+="<div class=lp-wq style='--c:"+CL[t]+"'><span class=lp-wno>"+kn(i)+"</span><div class=lp-wb><div class=lp-wtx>"+h(it[j])+"</div><div class=lp-wa style='height:"+[16,22,28][t]+"mm'></div></div><span class=lp-wp>"+kn(pt[j])+" ពិន្ទុ</span></div>"});
+    idx.forEach(function(j){i++;out+="<div class=lp-wq style='--c:"+CL[t]+"'><span class=lp-wno>"+kn(i)+"</span><div class=lp-wb><div class=lp-wtx>"+h(it[j])+"</div><div class=lp-wa style='height:"+(lpWaN(it[j],t)*6.4+1)+"mm'></div></div><span class=lp-wp>"+kn(pt[j])+" ពិន្ទុ</span></div>"});
   });
   out+="<div class=lp-wrf><h4 class=lp-wsh style='--c:#0f766e'><b>"+kn(5)+"</b>ឆ្លុះបញ្ចាំង · របាយពិន្ទុ</h4><div class=lp-wrb><p>ខ្ញុំយល់មេរៀននេះ ៖ ☐ ច្បាស់ &nbsp; ☐ មួយចំណែក &nbsp; ☐ មិនទាន់យល់</p><p>ចំណុចដែលខ្ញុំត្រូវសួរគ្រូ ៖ <i></i></p>"+
     "<table class=lp-wsc><tr><th>កម្រិតមូលដ្ឋាន</th><th>កម្រិតពង្រឹង</th><th>កម្រិតប្រឈម</th><th>ពិន្ទុសរុប</th><th>មតិគ្រូ</th></tr><tr><td>…/"+kn(tp[0])+"</td><td>…/"+kn(tp[1])+"</td><td>…/"+kn(tp[2])+"</td><td>…/២០</td><td></td></tr></table></div></div>";

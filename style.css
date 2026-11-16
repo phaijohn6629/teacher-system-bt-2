@@ -1136,3 +1136,4 @@ body.pm #prt .lp-a4 .lp-mg .v,body.pm #prt .lp-a4 .lp-mg .v *{font-family:"Khmer
 .lp-ws{break-before:page}
 @media(max-width:560px){.lp-wh{grid-template-columns:1fr}}
 .lp-wsec{margin-bottom:2.5mm}.lp-wsc{table-layout:fixed}.lp-wsc th{font-size:8.5pt}
+.lp-wsc{min-width:0!important;width:100%}
