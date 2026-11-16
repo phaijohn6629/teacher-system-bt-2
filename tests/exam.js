@@ -73,4 +73,8 @@ ok(/isK=\/\^k\[ab\]\?\$\/\.test\(kind\)/.test(X)&&/isB=kind==="b"\|\|kind==="kb"
 ok(/data-ex='pv\|a'/.test(X)&&/data-ex='pv\|b'/.test(X),"preview has separate ក / ខ buttons");
 ok(/function pvOf\(E\)/.test(X)&&/EXP\.html\(P\(X\.E\),\{v:pvOf\(X\.E\)/.test(X),"preview renders the selected paper");
 ok(/function abSummary\(E\)/.test(X)&&/abSummary\(E\)\+"<div id=exV>"/.test(X),"online box lists who gets paper ក / ខ");
+/* ៨) កែវិញ្ញាសា ខ បាន ៖ textarea data-ei មាន |b · input instB · onInput សរសេរចូល itB/instB */
+ok(/function editB\(E,s\)/.test(X)&&/data-ei='"\+i\+"\|"\+j\+\(editB\(E,s\)\?"\|b":""\)/.test(X),"editor renders paper ខ items with |b");
+ok(/p\[2\]==="b"\?"itB":"it"/.test(X)&&/k==="instB"\)\{s\.instB=t\.value/.test(X),"edits of paper ខ are written to itB / instB");
+ok(/if\(a==="pv"\)\{X\.pv=/.test(X)&&/ក\/ខ|វិញ្ញាសា ខ/.test(X),"switching ក/ខ rebuilds the editor");
 print("exam: checks "+n+" bad "+bad);

@@ -201,7 +201,7 @@ function editor(){
     "<div><label>បានឃើញ និងពិនិត្យ</label><input data-ef=ck value='"+esc(E.ck)+"' placeholder='ឈ្មោះនាយក/នាយករង'></div>"+
     "<div><label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-ef=ab"+(E.ab?" checked":"")+" style='width:auto;margin:0'> វិញ្ញាសា ក/ខ (លេខខុសគ្នា)</label><small class=note>សិស្សអង្គុយជិតគ្នាទទួលវិញ្ញាសាខុសគ្នា</small></div>"+
     "</div></div>"+
-    "<div class=card><h3 style='margin-top:0'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small></h3>"+
+    "<div class=card><h3 style='margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small>"+(E.ab?"<span style='display:inline-flex;gap:4px;align-items:center;margin-left:auto'><small class=note style='margin:0'>✏️ កំពុងកែ ៖</small><button type=button data-ex='pv|a' class='"+(pvOf(E)==="a"?"primary":"")+"'>វិញ្ញាសា ក</button><button type=button data-ex='pv|b' class='"+(pvOf(E)==="b"?"primary":"")+"'>វិញ្ញាសា ខ</button></span>":"")+"</h3>"+
     (g===12&&window.EXGEN&&EXGEN.bac?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='bac|a' style='flex:1'>📋 វិញ្ញាសាត្រៀមបាក់ឌុប (៧ ផ្នែក · តាមសៀវភៅ)</button><button type=button data-ex='bac|b' style='flex:1'>📋 គំរូសាកល្បង NGS (៨ ផ្នែក)</button></div>":"")+
     (E.fmt==="cam"&&window.CAMPAPERS&&CAMPAPERS[g]?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'>"+Object.keys(CAMPAPERS[g]).map(function(k){return"<button type=button class=primary data-ex='cpp|"+k+"' style='flex:1'>📋 "+esc(CAMPAPERS[g][k].label)+"</button>"}).join("")+"</div>":"")+
     (g===9&&window.EXGEN&&EXGEN.dip?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex=dip style='flex:1'>🎓 វិញ្ញាសាត្រៀមប្រឡងឌីប្លូម (៧ ផ្នែក · ១០០ ពិន្ទុ · ១២០ នាទី)</button></div>":"")+
@@ -210,8 +210,8 @@ function editor(){
         "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+LVO.filter(function(v){var G0=PRACT.GR[g]&&PRACT.GR[g].G[s.ls];return v===4?hasLv4(g,s.ls):!!(G0&&G0[v])}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
         (isT(s)?"":"<label>លំហាត់រង <input type=number min=1 max=8 data-es='"+i+"|n' value="+s.n+"></label>")+"<label>ពិន្ទុ <input type=number min=0 max=100 step=0.5 data-es='"+i+"|pts' value="+(+s.pts||0)+"></label>"+
         "<button type=button data-ex='rg|"+i+"' title='បង្កើតលំហាត់ផ្នែកនេះឡើងវិញ'>🔄</button><button type=button data-ex='up|"+i+"'"+(i?"":" disabled")+">↑</button><button type=button data-ex='dn|"+i+"'"+(i<E.secs.length-1?"":" disabled")+">↓</button><button type=button class=danger data-ex='rm|"+i+"'>🗑️</button></div>"+
-        "<input class=ex-inst data-es='"+i+"|inst' value='"+esc(s.inst)+"' placeholder='សេចក្ដីណែនាំ (ឧ. គណនា · ដោះស្រាយសមីការ)'>"+
-        "<div class=ex-its>"+s.it.map(function(x,j){return"<div class=ex-it><b>"+EXP.SUB[j]+".</b><textarea rows=1 data-ei='"+i+"|"+j+"' spellcheck=false>"+esc(x.q)+"</textarea><button type=button data-ex='ri|"+i+"|"+j+"' title='បង្កើតលំហាត់នេះឡើងវិញ'>🔄</button></div>"}).join("")+"</div></div>"}).join("")+
+        "<input class=ex-inst data-es='"+i+"|"+(editB(E,s)?"instB":"inst")+"' value='"+esc(editB(E,s)?(s.instB!=null?s.instB:s.inst):s.inst)+"' placeholder='សេចក្ដីណែនាំ (ឧ. គណនា · ដោះស្រាយសមីការ)'>"+
+        "<div class=ex-its>"+(editB(E,s)?s.itB:s.it).map(function(x,j){return"<div class=ex-it><b>"+EXP.SUB[j]+".</b><textarea rows=1 data-ei='"+i+"|"+j+(editB(E,s)?"|b":"")+"' spellcheck=false>"+esc(x.q)+"</textarea><button type=button data-ex='ri|"+i+"|"+j+"' title='បង្កើតលំហាត់នេះឡើងវិញ'>🔄</button></div>"}).join("")+"</div></div>"}).join("")+
     "<button type=button data-ex=add style='width:100%'>＋ ផ្នែកថ្មី</button>"+
     "<p class=note>💡 ✏️ កែអត្ថបទលំហាត់ផ្ទាល់បាន (LaTeX ក្នុង $…$) · ពេលកែដោយដៃ ចម្លើយក្នុង «🔑 ចម្លើយ» មិនប្ដូរតាមទេ</p></div></div>"+
     "<div class=card><h3 style='margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap'>👁️ មើលជាមុន"+(E.ab?"<span style='display:inline-flex;gap:4px;margin-left:auto'><button type=button data-ex='pv|a' class='"+(pvOf(E)==="a"?"primary":"")+"'>វិញ្ញាសា ក</button><button type=button data-ex='pv|b' class='"+(pvOf(E)==="b"?"primary":"")+"'>វិញ្ញាសា ខ</button></span>":"")+"</h3><div id=exPrev class=ex-prev></div></div>";
@@ -220,6 +220,7 @@ function editor(){
 }
 var pvT=0;
 /* មើលជាមុន ៖ ខ្លឹមសារដដែល → មិនគូរឡើងវិញ (កុំឱ្យលោតចេញលោតចូល) */
+function editB(E,s){return pvOf(E)==="b"&&!!(s&&s.itB&&s.itB.length)}   /* កំពុងកែវិញ្ញាសា ខ (itB) */
 function pvOf(E){return E&&E.ab&&X.pv==="b"?"b":"a"}   /* មើលជាមុន ៖ ក ឬ ខ */
 /* 📋 សិស្សណាបានវិញ្ញាសាណា (តាមប្លង់តុ) ៖ បង្ហាញក្នុងប្រអប់ប្រឡងអនឡាញ */
 function abSummary(E){
@@ -345,7 +346,7 @@ function act(a,q){
       .then(function(){X.list=X.list.filter(function(z){return z.id!==y.id});lPut();try{var st=ST();if(st)st.removeItem("exC_"+y.id)}catch(e){}render();notify("បានលុបវិញ្ញាសា")},function(){alert("មិនអាចលុបបានទេ")});return}
   if(!E)return;
   if(a==="back"){if(X.dirty)save(true);unwatch();upList(E);X.E=null;X.fresh=false;render();return}   /* បញ្ជីបង្ហាញភ្លាម (រួមទាំងការកែចុងក្រោយ) · ធ្វើបច្ចុប្បន្នភាពនៅពីក្រោយ */
-  if(a==="pv"){X.pv=q[1]==="b"?"b":"a";[].forEach.call(document.querySelectorAll("[data-ex^='pv|']"),function(b){b.classList.toggle("primary",b.dataset.ex==="pv|"+X.pv)});var pe=$("exPrev");if(pe)pe.dataset.done="";prev();return}
+  if(a==="pv"){X.pv=q[1]==="b"?"b":"a";editor();return}   /* ប្ដូរវិញ្ញាសាដែលកំពុងកែ + មើលជាមុន */
   if(a==="pr"){printIt(q[1]);return}
   if(a==="online"){if(E.on&&E.on.open)showLink();else goOnline();return}
   if(a==="stop"){stopOnline();return}
@@ -387,11 +388,12 @@ function onInput(e){
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
   if(t.dataset.es){var q=t.dataset.es.split("|"),s=E.secs[+q[0]],k=q[1],g=gOf(E);if(!s)return;
     if(k==="inst"){s.inst=t.value;save();prev();return}
+    if(k==="instB"){s.instB=t.value;save();prev();return}
     if(k==="pts"){s.pts=Math.max(0,+t.value||0);save();prev();var h3=body().querySelectorAll(".card h3 small")[0];if(h3)h3.textContent="សរុប "+kn(EXP.total(E))+" ពិន្ទុ";return}
     if(e.type!=="change")return;
     if(k==="ls"){s.ls=+t.value;var T2=window.EXGEN&&EXGEN.list(g+"|"+s.ls);if(isT(s))s.lv=T2&&T2.length?"t:"+T2[0].id:2;else if(T2&&T2.length)s.lv="t:"+T2[0].id;if(s.lv===4&&!hasLv4(g,s.ls))s.lv=3}else if(k==="lv")s.lv=/^t:/.test(t.value)?t.value:+t.value;else if(k==="n")s.n=Math.min(8,Math.max(1,+t.value||1));
     fill(s,g);if(E.ab)fill(s,g,"itB");save();editor();return}
-  if(t.dataset.ei){var p=t.dataset.ei.split("|"),sc=E.secs[+p[0]],it=sc&&sc.it&&sc.it[+p[1]];if(!it)return;it.q=String(t.value).slice(0,6000);t.style.height="auto";t.style.height=Math.max(36,t.scrollHeight)+"px";save();prev()}
+  if(t.dataset.ei){var p=t.dataset.ei.split("|"),sc=E.secs[+p[0]],it=sc&&sc[p[2]==="b"?"itB":"it"]&&sc[p[2]==="b"?"itB":"it"][+p[1]];if(!it)return;it.q=String(t.value).slice(0,6000);t.style.height="auto";t.style.height=Math.max(36,t.scrollHeight)+"px";save();prev()}
 }
 var qb=$("qzBody");
 qb.addEventListener("click",function(e){if(QVx()!=="exam")return;var b=e.target.closest("[data-ex]");if(!b||b.disabled)return;var q=b.dataset.ex.split("|");act(q[0],q)});
