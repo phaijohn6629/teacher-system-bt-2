@@ -1,0 +1,60 @@
+
+#slide-presenter-overlay {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    background: var(--slide-bg, #FAFBFD) !important;
+    color: var(--slide-text, #1B2A41) !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    font-family: "Khmer OS Battambang", sans-serif !important;
+    overflow: hidden !important;
+}
+#slide-presenter-overlay.dark-mode {
+    --slide-bg: #0F1E3D; --slide-text: #F1F5F9; --slide-muted: #94A3B8; --slide-card: #1E293B; --slide-border: #334155;
+}
+#slide-presenter-overlay:not(.dark-mode) {
+    --slide-bg: #FAFBFD; --slide-text: #1B2A41; --slide-muted: #566784; --slide-card: #FFFFFF; --slide-border: #C9D3E3;
+}
+.sp-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 40px; border-bottom: 2px solid var(--slide-border);
+}
+.sp-kicker { font-size: 15px; font-weight: bold; color: #1F4FBF; }
+.sp-title { font-family: "Khmer OS Muol Light", serif; font-size: 28px; color: var(--slide-text); margin-top: 6px; }
+.sp-body {
+    flex: 1; padding: 40px 60px; overflow-y: auto;
+    display: flex; flex-direction: column; justify-content: center;
+    max-width: 1200px; margin: 0 auto; width: 100%;
+}
+.sp-step-item {
+    font-size: 26px; line-height: 1.8; margin-bottom: 22px;
+    opacity: 0; transform: translateY(20px); transition: all 0.4s ease;
+}
+.sp-step-item.revealed { opacity: 1; transform: translateY(0); }
+.sp-step-item.highlight {
+    font-family: "Khmer OS Muol Light", serif; color: #1F4FBF;
+    background: rgba(31, 79, 191, 0.08); padding: 16px 26px;
+    border-left: 6px solid #1F4FBF; border-radius: 10px;
+}
+.sp-body.layout-bansho { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.sp-body.layout-tiered { display: flex; flex-direction: column; gap: 16px; }
+.tier-card { padding: 18px 26px; border-radius: 12px; border: 1px solid var(--slide-border); background: var(--slide-card); font-size: 22px; }
+.tier-card.basic { border-left: 6px solid #10B981; }
+.tier-card.standard { border-left: 6px solid #3B82F6; }
+.tier-card.challenge { border-left: 6px solid #F59E0B; }
+.sp-controls {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: rgba(15, 30, 61, 0.92); backdrop-filter: blur(10px);
+    padding: 12px 24px; border-radius: 35px;
+    display: flex; gap: 14px; align-items: center;
+    transition: transform 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 1000000;
+}
+#slide-presenter-overlay:hover .sp-controls, .sp-controls.forced-show { transform: translateX(-50%) translateY(0); }
+.sp-btn { background: transparent; border: none; color: #FFF; font-size: 16px; cursor: pointer; padding: 6px 12px; border-radius: 8px; }
+.sp-btn:hover { background: rgba(255,255,255,0.2); }
+.sp-select { background: #1E293B; color: #FFF; border: 1px solid #475569; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+#sp-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999998; }
+#sp-canvas.active { pointer-events: auto; cursor: crosshair; }
