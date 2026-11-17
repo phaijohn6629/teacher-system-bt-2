@@ -316,7 +316,7 @@ function viewList(){
 }
 function onlineBox(){
   var E=X.E;
-  return"<div class=ex-on><div><b>📱 កំពុងប្រឡងអនឡាញ</b> · នៅសល់ <b id=exLeft class=ex-left>"+left(E.on.endMs)+"</b> · 🔑 លេខកូដចូល <b class=ex-code>"+esc(E.on.code)+"</b></div>"+
+  return"<div class=ex-on><div><b>📱 កំពុងប្រឡងអនឡាញ</b> · នៅសល់ <b id=exLeft class=ex-left>"+left(E.on.endMs)+"</b> · 🔑 លេខកូដចូល <b class=ex-code>"+esc(E.on.code||"")+"</b></div>"+
     "<div class=bar style='margin:6px 0'><button type=button data-ex=link>🔗 តំណ/QR</button><button type=button data-ex='ext|5'>＋៥ នាទី</button><button type=button data-ex='ext|10'>＋១០ នាទី</button><button type=button class=danger data-ex=stop>⏹ បិទប្រឡង</button></div>"+
     "<div class=ex-lk style='display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0'><div id=exQR2 class=qz-qr style='min-width:112px;min-height:112px'></div><div style='flex:1;min-width:220px'><small>🔗 តំណសម្រាប់សិស្ស (ចម្លង ឬឱ្យស្កេន QR)</small><input value='"+esc(examLink(E.id))+"' readonly onclick='this.select()' style='width:100%;margin:4px 0'><button type=button data-ex=cplink>📋 ចម្លងតំណ</button></div></div>"+
     abSummary(E)+"<div id=exV>"+viewList()+"</div></div>";
@@ -325,7 +325,7 @@ function showLink(){
   var E=X.E,u=examLink(E.id),d=$("exLink");if(!d){d=document.createElement("dialog");d.id="exLink";document.body.appendChild(d)}
   d.innerHTML="<div class=dlgb style='text-align:center;min-width:320px'><h2 style='margin:0 0 8px'>📱 តំណប្រឡងសម្រាប់សិស្ស</h2><div id=exQR class=qz-qr></div>"+
     "<input value='"+esc(u)+"' readonly style='text-align:center;margin:10px 0' onclick='this.select()'>"+
-    "<div class=qz-pc>🔑 លេខកូដចូល <b>"+esc(E.on.code)+"</b><small>សរសេរលើក្ដារខៀន · សិស្សបើកតំណ → ជ្រើសឈ្មោះ → វាយលេខកូដ</small></div>"+
+    "<div class=qz-pc>🔑 លេខកូដចូល <b>"+esc(E.on.code||"")+"</b><small>សរសេរលើក្ដារខៀន · សិស្សបើកតំណ → ជ្រើសឈ្មោះ → វាយលេខកូដ</small></div>"+
     "<div class=bar style='justify-content:center'><button type=button class=primary id=exCp>📋 ចម្លងតំណ</button><button type=button id=exX>បិទ</button></div></div>";
   $("exX").onclick=function(){d.close()};$("exCp").onclick=function(){try{navigator.clipboard.writeText(u)}catch(x){}notify("បានចម្លងតំណ")};
   if(d.open)d.close();d.showModal();

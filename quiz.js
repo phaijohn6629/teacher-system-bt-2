@@ -634,10 +634,11 @@ function showLinkUrl(u,title){
 }
 function showLink(id){
   var d=$("qzLink");if(!d){d=document.createElement("dialog");d.id="qzLink";document.body.appendChild(d)}
-  var u=testLink(id);
+  var u=testLink(id),tt=tests.filter(function(x){return x.id===id})[0];
   d.innerHTML="<div class=dlgb style='text-align:center;min-width:320px'><h2 style='margin:0 0 8px'>🔗 តំណតេស្តសម្រាប់សិស្ស</h2><div id=qzQR class=qz-qr></div>"+
     "<input id=qzU value='"+esc(u)+"' readonly style='text-align:center;margin:10px 0'><div class=bar style='justify-content:center'><button type=button class=primary id=qzCp>📋 ចម្លងតំណ</button><button type=button id=qzX>បិទ</button></div>"+
     (pcOf[id]?"<div class=qz-pc>🔑 លេខកូដចូល <b>"+esc(pcOf[id])+"</b><small>សរសេរលើក្ដារខៀន ពេលចាប់ផ្ដើមតេស្តក្នុងថ្នាក់ · កុំផ្ញើតាមក្រុម Telegram</small></div>":"")+
+    (tt&&tt.open===false?"<p class=note style='color:#b45309'>🔒 តេស្តនេះបិទហើយ · សិស្សបើកតំណបាន ប៉ុន្តែមិនអាចផ្ញើទៀតទេ (ចុច «បើក» នៅទំព័រលទ្ធផលដើម្បីអនុញ្ញាតឡើងវិញ)</p>":"")+
     "<p class=note>ឱ្យសិស្សស្កេន QR ឬបើកតំណ ហើយជ្រើសឈ្មោះខ្លួន។</p></div>";
   $("qzX").onclick=function(){d.close()};
   $("qzCp").onclick=function(){var i=$("qzU");i.select();try{navigator.clipboard.writeText(u)}catch(x){document.execCommand("copy")}notify("បានចម្លងតំណ")};
