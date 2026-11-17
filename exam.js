@@ -272,10 +272,13 @@ function abFor(E,c,s,i){
   if(j>=0)return(Math.floor(j/w)+j%w)%2?"ខ":"ក";
   return i%2?"ខ":"ក";
 }
+var goingOn=false;
 function goOnline(){
+  if(goingOn)return;
   var E=X.E,F=window.FB,c=myCls().filter(function(x){return x.n===E.cls})[0];
   if(!c||!c.st.length){alert("ថ្នាក់ «"+E.cls+"» មិនទាន់មានបញ្ជីឈ្មោះសិស្សទេ");return}
   if(!confirm("បើកប្រឡងអនឡាញ «"+EXP.head(E)+"» ឥឡូវនេះ?\n\n• រយៈពេល "+E.dur+" នាទី (ចាប់ពីពេលនេះ)\n• សិស្សមើលប្រធានលើទូរស័ព្ទ ហើយសរសេរចម្លើយលើក្រដាស\n• អស់ម៉ោង → ប្រធានលាក់ដោយស្វ័យប្រវត្តិ"))return;
+  goingOn=true;
   var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){
     return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:abFor(E,c,s,i)}});
   Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,names:names,sch:inf().school}),
@@ -284,8 +287,9 @@ function goOnline(){
     try{save(true)}catch(x){console.error("save:",x)}
     try{editor()}catch(x){console.error("editor:",x)}
     try{watch()}catch(x){console.error("watch:",x)}
+    goingOn=false;
     showLink();   /* ត្រូវបង្ហាញតំណ/QR ជានិច្ច ទោះជំហានមុនមានកំហុស */
-  },function(e){console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exm · exq · exv)":"មិនអាចបើកបានទេ · សូមពិនិត្យអ៊ីនធឺណិត")});
+  },function(e){goingOn=false;console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exm · exq · exv)":"មិនអាចបើកបានទេ · សូមពិនិត្យអ៊ីនធឺណិត")});
 }
 function stopOnline(){
   var E=X.E,F=window.FB;if(!E.on)return;if(!confirm("បិទប្រឡងអនឡាញឥឡូវនេះ? សិស្សនឹងមើលប្រធានលែងឃើញ"))return;
@@ -324,7 +328,7 @@ function showLink(){
     "<div class=qz-pc>🔑 លេខកូដចូល <b>"+esc(E.on.code)+"</b><small>សរសេរលើក្ដារខៀន · សិស្សបើកតំណ → ជ្រើសឈ្មោះ → វាយលេខកូដ</small></div>"+
     "<div class=bar style='justify-content:center'><button type=button class=primary id=exCp>📋 ចម្លងតំណ</button><button type=button id=exX>បិទ</button></div></div>";
   $("exX").onclick=function(){d.close()};$("exCp").onclick=function(){try{navigator.clipboard.writeText(u)}catch(x){}notify("បានចម្លងតំណ")};
-  d.showModal();
+  if(d.open)d.close();d.showModal();
   drawQR($("exQR"),u,200);
 }
 /* 🔳 គូរ QR (ទាញ qrcodejs ពី cdnjs) · បរាជ័យ → សារ + ប៊ូតុងព្យាយាមម្ដងទៀត (មិនទុកប្រអប់ទទេស្ងាត់ៗ) · ចម្លងតំណបានជានិច្ច */

@@ -585,7 +585,12 @@ function doShuffle(){
   if(short.length)notify("⚠️ "+short.join(" · "));
   mk.items=out;renderMake();
 }
-function openTest(){Promise.all([loadTests(true),rulesV2()]).then(function(r){openTest2.v2=r[1];openTest2()})}   /* ទាញថ្មី ដើម្បីពិនិត្យតេស្តលើកទី១/ទី២ ជាន់គ្នាឱ្យត្រឹមត្រូវ */
+var opening=false;
+function openTest(){
+  if(opening)return;opening=true;   /* ការពារចុចពីរដង → តេស្តស្ទួន */
+  var fin=function(){opening=false};
+  Promise.all([loadTests(true),rulesV2()]).then(function(r){openTest2.v2=r[1];return openTest2()}).then(fin,function(e){fin();console.error(e);alert("មិនអាចបើកតេស្តបានទេ · សូមពិនិត្យអ៊ីនធឺណិត")});
+}   /* ទាញថ្មី ដើម្បីពិនិត្យតេស្តលើកទី១/ទី២ ជាន់គ្នាឱ្យត្រឹមត្រូវ */
 /* ---------- 🔒 សុវត្ថិភាពតេស្ត (v2) ----------
    Rules ថ្មី (st/ · rcpt/) បាន Publish? → អាន st/_probe បាន (គ្រូ) → បង្កើតតេស្ត v2 · មិនទាន់ → v1 ដូចមុន (កុំឱ្យសិស្សជាប់)
    v2៖ សិស្សចាប់ផ្ដើម = st/{t}_{សិស្ស} (ឧបករណ៍មួយ · លេខកូដចូល · ម៉ោង Server) · ផ្ញើ = subs + rcpt */
@@ -593,29 +598,39 @@ var v2P=null,pcOf={},stl=[],stUn=null;
 function rulesV2(){if(!v2P)v2P=dGet("st","_probe").then(function(){return true},function(){v2P=null;return false});return v2P}
 function genPc(){var a=new Uint32Array(1);(window.crypto||window.msCrypto).getRandomValues(a);return String(1000+a[0]%9000)}
 function openTest2(){
-  var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return;
+  var cl=myClasses(mk.tid),c=cl[mk.ci];if(!c||!mk.items)return Promise.resolve();
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
   mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)};if(q.sl)keys[q.id].s=String(q.sl).slice(0,4000)});
   var names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
   var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
   var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
-  if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return;
+  if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return Promise.resolve();
   var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:Math.round(+$("qmD").value||0),lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
   var v2=openTest2.v2,pc=v2&&mk.pc?genPc():"";if(v2){T.v=2;T.pc=!!pc}else notify("⚠️ សូម Admin Publish firestore.rules កំណែថ្មី ដើម្បីបើកការការពារតេស្ត (លេខកូដ · មួយឈ្មោះមួយឧបករណ៍)");
   if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
-  Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),pc?{o:mk.tid,a:JSON.stringify(keys),pc:pc}:{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
+  return Promise.all([FB.setDoc(FB.doc(window.db,"tests",id),T),FB.setDoc(FB.doc(window.db,"tkeys",id),pc?{o:mk.tid,a:JSON.stringify(keys),pc:pc}:{o:mk.tid,a:JSON.stringify(keys)})]).then(function(){
     /* រូបភាពលំហាត់ → timg/{តេស្ត}_{លំហាត់} (សិស្សអានបានពេលតេស្តបើក) */
     return Promise.all(mk.items.filter(function(q){return q.im}).map(function(q){return qimg(qid(q.by,q.id)).then(function(u){if(u)return FB.setDoc(FB.doc(window.db,"timg",id+"_"+q.id),{t:id,o:mk.tid,d:u})})}));
   }).then(function(){
-    mk.items=null;QV="res";curTest=Object.assign({id:id},T);if(pc)pcOf[id]=pc;if(dup){dup.kind="g";dup.mo=""}tests.unshift(curTest);watchSubs(curTest);renderQuiz();showLink(id);notify("បានបើកតេស្ត");
+    /* តេស្តបានរក្សាទុករួច → ជំហានបន្ទាប់នីមួយៗមិនត្រូវបំបាក់ការបង្ហាញតំណ/QR ឡើយ */
+    mk.items=null;QV="res";curTest=Object.assign({id:id},T);if(pc)pcOf[id]=pc;if(dup){dup.kind="g";dup.mo=""}tests.unshift(curTest);
+    try{watchSubs(curTest)}catch(x){console.error("watchSubs:",x)}
+    try{renderQuiz()}catch(x){console.error("renderQuiz:",x)}
+    try{showLink(id)}catch(x){console.error("showLink:",x);alert("តេស្តបានបើករួច · តំណ៖ "+testLink(id))}
+    notify("បានបើកតេស្ត");
   }).catch(function(e){console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ។ សូមប្រាប់ Admin ឱ្យ Publish firestore.rules កំណែថ្មី។":"មិនអាចបើកតេស្តបានទេ")});
 }
+function drawQR(el,u,w){
+  if(!el)return;el.innerHTML="";
+  (window.QRCode?Promise.resolve():loadJs("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js")).then(function(){if(el.isConnected)new QRCode(el,{text:u,width:w,height:w})})
+    .catch(function(){if(el.isConnected){el.innerHTML="<small style='color:#b45309'>⚠️ មិនអាចបង្កើត QR បានទេ · ចម្លងតំណខាងក្រោមផ្ញើឱ្យសិស្សបាន · <button type=button class=qz-qrr>🔄 ព្យាយាមម្ដងទៀត</button></small>";var b=el.querySelector(".qz-qrr");if(b)b.onclick=function(){drawQR(el,u,w)}}});
+}
+function openDlg(d){if(d.open)d.close();d.showModal()}
 function showLinkUrl(u,title){
   var d=$("qzLink2");if(!d){d=document.createElement("dialog");d.id="qzLink2";document.body.appendChild(d)}
   d.innerHTML="<div class=dlgb style='text-align:center;min-width:320px'><h2 style='margin:0 0 8px'>"+esc(title)+"</h2><div id=qzQR2 class=qz-qr></div><input value='"+esc(u)+"' readonly style='text-align:center;margin:10px 0' onclick='this.select()'><div class=bar style='justify-content:center'><button type=button id=qzX2>បិទ</button></div><p class=note>ឱ្យសិស្សស្កេន QR ហើយជ្រើសឈ្មោះខ្លួន។</p></div>";
-  $("qzX2").onclick=function(){d.close()};d.showModal();
-  (window.QRCode?Promise.resolve():loadJs("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js")).then(function(){new QRCode($("qzQR2"),{text:u,width:220,height:220})}).catch(function(){});
+  $("qzX2").onclick=function(){d.close()};openDlg(d);drawQR($("qzQR2"),u,220);
 }
 function showLink(id){
   var d=$("qzLink");if(!d){d=document.createElement("dialog");d.id="qzLink";document.body.appendChild(d)}
@@ -626,8 +641,7 @@ function showLink(id){
     "<p class=note>ឱ្យសិស្សស្កេន QR ឬបើកតំណ ហើយជ្រើសឈ្មោះខ្លួន។</p></div>";
   $("qzX").onclick=function(){d.close()};
   $("qzCp").onclick=function(){var i=$("qzU");i.select();try{navigator.clipboard.writeText(u)}catch(x){document.execCommand("copy")}notify("បានចម្លងតំណ")};
-  d.showModal();
-  (window.QRCode?Promise.resolve():loadJs("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js")).then(function(){new QRCode($("qzQR"),{text:u,width:200,height:200})}).catch(function(){});
+  openDlg(d);drawQR($("qzQR"),u,200);
 }
 
 /* ===================== 📊 លទ្ធផលតេស្ត ===================== */
