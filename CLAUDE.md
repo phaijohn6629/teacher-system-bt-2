@@ -365,3 +365,18 @@
   - `r00` round-trip between teacher and class monitor (code reviewed only).
   - Online exam with ក/ខ enabled: two adjacent students should see different papers.
   - Refresh during a quiz/exam on a weak connection (verified only in a Node simulation with an unresponsive Firestore).
+
+## Autonomous Agent & Quality Assurance Rules (Teacher_System)
+1. **Cache & Versioning Discipline (CRITICAL):**
+   - Whenever modifying any `.js`, `.css`, or `.html` file (`hub.js`, `exam.js`, `quiz.js`, `practice.html`, etc.), ALWAYS increment the `?v=` query parameter in HTML imports AND bump the Service Worker cache version in `sw.js` (currently `ngs-app-v126` -> `ngs-app-v127`, etc.).
+2. **Monthly Exam & Quiz Scoring Rules (`exam.js`, `quiz.js`, `monthly.js`):**
+   - Scoring code in production (`ngs-app-v126`) is correct: **do not change** the scoring in `exam.js` or `monthly.js` unless the user asks. Verify only; never add hard caps of 25 (grade 12) or 20 (grades 7–9) on your own.
+   - `EXP.total(E)` (defined as `total(P)` in `expaper.js`, exported as `EXP.total`, used by `exam.js`) must stay the sum of each section's `pts` (`secs[].pts`, missing/non-numeric = 0), so the paper's total mark follows what the teacher sets.
+   - `maxes(c)` in `monthly.js` must stay `T = rs.mx[parseInt(c.n)] || 100` (the class's configured maximum; grade = `parseInt("12NGS-B")`), with `a/t/h/b/c/o = T × W.x` and `act = T × (W.a+W.t+W.h+W.b)`, where `W = cfg().w`. `scaleC()` must keep the divide-by-zero guard (full ≤ 0 or non-numeric → null).
+   - When auditing, report whether these two functions still match this description; report differences, do not fix them silently.
+   - Preserve dual-version (A/B) seat map synchronization (`abMap`) and print layout CSS rules (`expaper.js`, `exgen.js`) to prevent page-break splitting.
+3. **Shared Local Math RAG Integration:**
+   - Before generating new exercises (`exgen.js`), lesson plans (`lp7.js`–`lp12.js`), or PISA items (`pisa12.js`), query the local ChromaDB (`teacher_chroma_db`) from `Python_Project` to reuse verified Khmer math formulas and curriculum context:
+     `/Users/phaijohn/Documents/Python_Project/.venv/bin/python -c "from sys import path; path.append('/Users/phaijohn/Documents/Python_Project'); from rag_system import LocalMathRAG; rag = LocalMathRAG('/Users/phaijohn/Documents/Python_Project/teacher_chroma_db'); print(rag.query('TOPIC_HERE', n_results=3))"`
+4. **YouTube Video & Curriculum Hub Integration (`hub.js`, `practice.html`):**
+   - Follow the established sub-topic video mapping structure (e.g., `12_42_7` to `12_42_12`, `12_43_6` to `12_43_11`) when integrating new videos from `tools/upload_to_youtube.py` and `youtube_uploads.json`.
