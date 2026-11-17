@@ -173,6 +173,12 @@ function enterApp(user){
   try{c=JSON.parse(localStorage.getItem(ck))}catch(e){}
   var net=window.FB.getDoc(window.FB.doc(window.db,"users",user.uid)).then(function(sn){
     var p=sn.exists()?sn.data():null;
+    /* 🆕 Bootstrap បណ្ដោះអាសន្ន៖ Project ថ្មី math-exam-temp ទទេ → គណនី T001 ដែលមិនទាន់មាន profile ក្លាយជា Admin (តែ T001 · តែ Project នេះ) */
+    var pj="";try{pj=window.FB.auth.app.options.projectId}catch(e){}
+    if(!p&&pj==="math-exam-temp"&&String(user.email||"").toLowerCase()===idEmail("T001")){
+      p={id:"T001",name:"T001",role:"admin",enabled:true,mustChange:false};
+      return window.FB.setDoc(window.FB.doc(window.db,"users",user.uid),p).then(function(){return p});
+    }
     try{if(p&&p.enabled===true)localStorage.setItem(ck,JSON.stringify(p));else localStorage.removeItem(ck)}catch(e){}
     return p;
   });
