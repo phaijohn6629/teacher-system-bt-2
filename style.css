@@ -1224,3 +1224,10 @@ body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-
   .cup tr.cuwlast td.cuwc,.cup tr.cuwlast td.cuwk{border-bottom:1px solid #000!important}
   .cup .cut tr.cuftr td:first-child,.cup .cut tr.cuftr td,.cut tr.cuftr td,.cut.cuft td,.cup .cut.cuft td:first-child{border:0!important}
 }
+
+/* ⚠️ ប្លុក «មិនបានផ្ញើ» ក្នុងលទ្ធផលតេស្ត */
+.qr-stale{margin:12px 0;padding:10px 12px;border:1px solid #fca5a5;border-left:4px solid #dc2626;border-radius:12px;background:rgba(220,38,38,.05)}
+.qr-sth{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.qr-stl{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+.qr-stc{display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);min-width:0}
+.qr-stc b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.88rem}.qr-stc small{color:var(--mute);font-size:.72rem;white-space:nowrap}

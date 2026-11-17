@@ -667,7 +667,16 @@ function watchSubs(t){
 }
 function stTime(at,addMin){var d=at&&at.toDate?at.toDate():at&&at.seconds?new Date(at.seconds*1000):null;if(!d)return"…";if(addMin)d=new Date(d.getTime()+addMin*60000);return kn(("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2))}
 /* អនុញ្ញាតឱ្យធ្វើម្ដងទៀត៖ លុប subs + rcpt + st របស់សិស្សម្នាក់ (នីមួយៗ catch ដាច់ដោយឡែក) */
-function resetSt(t,sid){var FB=window.FB,k=t.id+"_"+sid;return Promise.all(["subs","rcpt","st"].map(function(c){return FB.deleteDoc(FB.doc(window.db,c,k)).catch(function(e){if(c==="subs")throw e})}))}
+function resetSt(t,sid){var FB=window.FB,k=t.id+"_"+sid,has=subs.some(function(x){return x.sid===sid});   /* គ្មាន subs → មិនលុប subs (ឯកសារមិនមាន → rules របស់គ្រូមិនម្ចាស់ Admin បដិសេធ) */
+  return Promise.all(["subs","rcpt","st"].filter(function(c){return c!=="subs"||has}).map(function(c){return FB.deleteDoc(FB.doc(window.db,c,k)).catch(function(e){if(c==="subs"||(c==="st"&&e&&e.code==="permission-denied"))throw e})}))}
+function elapsed(at){var d=at&&at.toDate?at.toDate():at&&at.seconds?new Date(at.seconds*1000):null;if(!d)return"";var m=Math.max(0,Math.round((Date.now()-d.getTime())/60000));return m<60?kn(m)+" នាទីមុន":m<1440?kn(Math.floor(m/60))+" ម៉ោងមុន":kn(Math.floor(m/1440))+" ថ្ងៃមុន"}
+/* ⚠️ ប្លុក «មិនបានផ្ញើ» ៖ ចាប់ផ្ដើមហើយ (st/) តែគ្មាន subs · តេស្តបិទ/ផុតម៉ោង */
+function staleBlock(t,L){
+  if(!L.length)return"";
+  return"<div class=qr-stale><div class=qr-sth><b>⚠️ មិនបានផ្ញើចម្លើយ ("+kn(L.length)+" នាក់)</b><button type=button class=danger data-qa=resetall title='លុបការចាប់ផ្ដើមរបស់សិស្សទាំងនេះ ដើម្បីឱ្យចាប់ផ្ដើមថ្មីបាន'>🔄 អនុញ្ញាតឱ្យទាំងអស់ធ្វើម្ដងទៀត</button></div>"+
+    "<p class=note style='margin:4px 0 8px'>ចាប់ផ្ដើមហើយ តែចម្លើយមិនបានដល់ Server។ មូលហេតុដែលអាចកើតមាន៖ ទូរស័ព្ទបិទ/អស់អ៊ីនធឺណិត · <b>តេស្តត្រូវបានបិទមុនសិស្សផ្ញើ</b> (Rules មិនទទួលពេលបិទ) · ផុតម៉ោង (+១០ នាទី)។ ចម្លើយអាចនៅរក្សាទុកក្នុងទូរស័ព្ទសិស្ស៖ ចុច «🔓 បើកតេស្តវិញ» ហើយឱ្យសិស្សបើកតំណម្ដងទៀត ទើបផ្ញើបាន។ បើចង់ឱ្យធ្វើថ្មី ចុច 🔄។</p>"+
+    "<div class=qr-stl>"+L.map(function(x){return"<span class=qr-stc><b>"+esc(x.sn||x.sid)+"</b><small>"+esc(stTime(x.at))+" · "+esc(elapsed(x.at))+"</small><button type=button class=qr-rs data-qrs='"+esc(x.sid)+"' title='អនុញ្ញាតឱ្យធ្វើម្ដងទៀត'>🔄</button></span>"}).join("")+"</div></div>";
+}
 function renderRes(){
   var h="";
   if(!curTest){
@@ -693,9 +702,9 @@ function renderRes(){
     (v2?"<div class=qr-sec>🔒 <b>តេស្តមានការការពារ</b> · មួយឈ្មោះ មួយឧបករណ៍ · ផ្ញើបានក្នុងរយៈពេលកំណត់"+(t.dur?" (+១០ នាទី)":"")+(t.pc?" · 🔑 លេខកូដចូល <b class=qz-pcb>"+esc(pcOf[t.id]||"…")+"</b>":"")+"</div>":"<div class=qr-sec off>ℹ️ តេស្តនេះបង្កើតមុនការការពារថ្មី (គ្មានលេខកូដ · គ្មានការកំណត់ឧបករណ៍)</div>")+
     "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div>"+(v2?"<div><b style='color:#d97706'>"+kn(progLive.length)+"</b>⏳ កំពុងធ្វើ</div>"+(progStale.length?"<div><b style='color:#b91c1c'>"+kn(progStale.length)+"</b>⚠️ មិនបានផ្ញើ</div>":""):"")+"<div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div><b style='color:#b91c1c'>"+kn(R.filter(function(r){return r.s.lv||r.s.cp}).length)+"</b>🚩 សង្ស័យ</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
     "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th><th title='ចាកចេញពីផ្ទាំងតេស្ត (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់'>🚩 សង្ស័យ</th><th></th></tr></thead><tbody>"+
-    (R.length||prog.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm><button type=button class=qr-stb data-qst='"+esc(r.s.sid)+"' title='មើលក្រដាសកិច្ចការលម្អិតរបស់សិស្សនេះ'>"+esc(r.s.sn)+" <small>📄</small></button></td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td><td><button type=button class=qr-rs data-qrs='"+esc(r.s.sid)+"' title='លុបចម្លើយនេះ ហើយអនុញ្ញាតឱ្យសិស្សធ្វើម្ដងទៀត'>🔄</button></td></tr>"}).join("")+
-      prog.map(function(x){var st=stale(x);return"<tr class=qr-ip><td>"+(st?"⚠️":"⏳")+"</td><td class=nm>"+esc(x.sn||x.sid)+"</td><td colspan=5>"+(st?"<b style='color:#b91c1c'>មិនបានផ្ញើចម្លើយ</b> (តេស្តបិទ/ផុតម៉ោង) · ចាប់ផ្ដើម ":"កំពុងធ្វើ · ចាប់ផ្ដើម ")+esc(stTime(x.at))+(t.dur?" · ផុតម៉ោង "+esc(stTime(x.at,t.dur)):"")+"</td><td><button type=button class=qr-rs data-qrs='"+esc(x.sid)+"' title='អនុញ្ញាតឱ្យចាប់ផ្ដើមម្ដងទៀត (ឧ. ប្ដូរឧបករណ៍ ឬមានអ្នកផ្សេងប្រើឈ្មោះនេះ)'>🔄</button></td></tr>"}).join(""):"<tr><td colspan=8 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
-    (miss.length?"<p class=note>មិនទាន់ធ្វើ ("+kn(miss.length)+")៖ "+miss.map(function(x){return esc(x.n)}).join(" · ")+"</p>":"")+
+    (R.length||progLive.length?R.map(function(r,i){return"<tr><td>"+kn(i+1)+"</td><td class=nm><button type=button class=qr-stb data-qst='"+esc(r.s.sid)+"' title='មើលក្រដាសកិច្ចការលម្អិតរបស់សិស្សនេះ'>"+esc(r.s.sn)+" <small>📄</small></button></td><td><b>"+kn(r.sc)+"/"+kn(r.n)+"</b></td><td><span class=pb><i style='width:"+r.p+"%'></i></span> "+r.p.toFixed(0)+"%</td><td>"+esc((r.s.at||"").replace("T"," ").slice(5,16))+"</td><td>"+(r.s.dur?kn(Math.round(r.s.dur/60))+" នាទី":"")+"</td><td>"+acCell(r.s)+"</td><td><button type=button class=qr-rs data-qrs='"+esc(r.s.sid)+"' title='លុបចម្លើយនេះ ហើយអនុញ្ញាតឱ្យសិស្សធ្វើម្ដងទៀត'>🔄</button></td></tr>"}).join("")+
+      progLive.map(function(x){return"<tr class=qr-ip><td>⏳</td><td class=nm>"+esc(x.sn||x.sid)+"</td><td colspan=5>កំពុងធ្វើ · ចាប់ផ្ដើម "+esc(stTime(x.at))+(t.dur?" · ផុតម៉ោង "+esc(stTime(x.at,t.dur)):"")+"</td><td><button type=button class=qr-rs data-qrs='"+esc(x.sid)+"' title='អនុញ្ញាតឱ្យចាប់ផ្ដើមម្ដងទៀត (ឧ. ប្ដូរឧបករណ៍ ឬមានអ្នកផ្សេងប្រើឈ្មោះនេះ)'>🔄</button></td></tr>"}).join(""):"<tr><td colspan=8 class=empty>មិនទាន់មានសិស្សផ្ញើចម្លើយទេ។</td></tr>")+"</tbody></table></div>"+
+    staleBlock(t,progStale)+(miss.length?"<p class=note>មិនទាន់ធ្វើ ("+kn(miss.length)+")៖ "+miss.map(function(x){return esc(x.n)}).join(" · ")+"</p>":"")+
     "<h3 style='margin:16px 0 8px'>📊 វិភាគតាមលំហាត់</h3><div class=qz-list>"+t.items.map(function(q,i){return qBreak(t,q,i,K[q.id],R)}).join("")+"</div>";
   if(setBody(h))math($("qzBody"));
 }
@@ -881,7 +890,7 @@ window.DRIVE={tok:driveTok,connect:driveConnect,api:gapi,
   }};
 function nmKey(s){return String(s||"").replace(/[\s​-‍]+/g,"")}
 window.QUIZ={
-  _res:function(t,k,sb){curTest=t;keyOf[t.id]=k;subs=sb;stl=[];QV="res";tOK=true;tests=[t];renderRes()},   /* ជំនួយតេស្ត (headless) */
+  _res:function(t,k,sb,st){curTest=t;keyOf[t.id]=k;subs=sb;stl=st||[];QV="res";tOK=true;tests=[t];renderRes()},   /* ជំនួយតេស្ត (headless) */
   KIND:KIND,nmKey:nmKey,
   forMonth:function(tid,cls,mo){   /* {t1:{t,n,by}, t2:{…}} · ប្រសិនបើមានច្រើន យកតេស្តថ្មីបំផុត */
     var self=this;return self.list(tid).then(function(L){
@@ -945,6 +954,9 @@ $("qzBody").addEventListener("click",function(e){
     if(!confirm("អនុញ្ញាតឱ្យ «"+nm+"» ធ្វើតេស្តម្ដងទៀត?\n\nចម្លើយដែលបានផ្ញើ (បើមាន) នឹងត្រូវលុប ហើយសិស្សអាចចាប់ផ្ដើមថ្មីលើឧបករណ៍ណាមួយ។"))return;
     b.disabled=true;resetSt(t0,sid).then(function(){notify("✅ «"+nm+"» អាចធ្វើតេស្តម្ដងទៀតបាន")},function(e){b.disabled=false;alert("មិនអាចលុបបានទេ · "+qErr(e))});return}
   var a=b.dataset.qa,t=curTest;
+  if(a==="resetall"&&t){var nowMs2=Date.now(),L=stl.filter(function(x){return!subs.some(function(y){return y.sid===x.sid})&&(!t.open||(t.dur&&(function(){var d=x.at&&x.at.toDate?x.at.toDate():null;return d&&nowMs2>d.getTime()+(+t.dur+10)*60000})()))});
+    if(!L.length)return;if(!confirm("អនុញ្ញាតឱ្យសិស្ស "+kn(L.length)+" នាក់ ដែលមិនបានផ្ញើ ធ្វើតេស្តម្ដងទៀត?\n\nការចាប់ផ្ដើមរបស់ពួកគេនឹងត្រូវលុប (ចម្លើយដែលបានផ្ញើរួច មិនប៉ះពាល់)។\nចំណាំ៖ តេស្តត្រូវតែ «បើក» ទើបសិស្សចាប់ផ្ដើមថ្មីបាន។"))return;
+    b.disabled=true;Promise.all(L.map(function(x){return resetSt(t,x.sid).then(function(){return 0},function(){return 1})})).then(function(r){var bad=r.reduce(function(p,q){return p+q},0);b.disabled=false;notify(bad?"✅ "+kn(L.length-bad)+" នាក់ · ⚠️ បរាជ័យ "+kn(bad):"✅ អនុញ្ញាតឱ្យ "+kn(L.length)+" នាក់ធ្វើម្ដងទៀតបាន")});return}
   if(/^pc/.test(a)){pcAct(a);return}
   if(a==="reload"){Object.keys(qkU).forEach(function(k){try{qkU[k]()}catch(x){}});qbErr="";qkP={};qkU={};CNT={};legP=null;renderQuiz();return}
   if(a==="sdel"){var L=selQ();if(!L.length)return;if(!confirm("លុបលំហាត់ "+kn(L.length)+" ដែលបានជ្រើស?\n\n⚠️ លុបហើយមិនអាចយកមកវិញបានទេ"))return;
