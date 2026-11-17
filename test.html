@@ -80,9 +80,8 @@ setTimeout(window.bootFail,12000);
    ======================================================================== */
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import{getFirestore,doc,getDoc,setDoc,writeBatch,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
-/* ⚠️ បណ្ដោះអាសន្ន (quota ពេញ) · config ចាស់ math-teacher-system-bt៖ apiKey:"AIzaSyBbciD9vfjMw3jO3d7CGVqEej9OCCPZxBA",authDomain:"math-exam-temp.firebaseapp.com",projectId:"math-exam-temp",storageBucket:"math-exam-temp.firebasestorage.app",messagingSenderId:"275392993593",appId:"1:275392993593:web:6afb06157d57191084b0e8" */
-const db=getFirestore(initializeApp({apiKey:"AIzaSyBbciD9vfjMw3jO3d7CGVqEej9OCCPZxBA",authDomain:"math-exam-temp.firebaseapp.com",projectId:"math-exam-temp",
-  storageBucket:"math-exam-temp.firebasestorage.app",messagingSenderId:"275392993593",appId:"1:275392993593:web:6afb06157d57191084b0e8"}));
+const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",
+  storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
 const $=id=>document.getElementById(id),app=$("app"),id=new URLSearchParams(location.search).get("t")||"";
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const tx=s=>esc(String(s??"").replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,m=>m.replace(/\s*\\\\\s*\n\s*/g,"\\\\ ").replace(/\s*\n\s*/g,"\\\\ "))).replace(/\n/g,"<br>"),kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);

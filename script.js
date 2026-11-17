@@ -13,20 +13,12 @@
    ======================================================================== */
 (function () {
   var firebaseConfig = {
-    /* ⚠️ បណ្ដោះអាសន្ន (quota ពេញ) · config ចាស់ math-teacher-system-bt៖
     apiKey: "AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",
     authDomain: "math-teacher-system-bt.firebaseapp.com",
     projectId: "math-teacher-system-bt",
     storageBucket: "math-teacher-system-bt.firebasestorage.app",
     messagingSenderId: "134725787928",
     appId: "1:134725787928:web:50343e4b7c7247833c3e6d"
-    */
-    apiKey: "AIzaSyBbciD9vfjMw3jO3d7CGVqEej9OCCPZxBA",
-    authDomain: "math-exam-temp.firebaseapp.com",
-    projectId: "math-exam-temp",
-    storageBucket: "math-exam-temp.firebasestorage.app",
-    messagingSenderId: "275392993593",
-    appId: "1:275392993593:web:6afb06157d57191084b0e8"
   };
   var B = "https://www.gstatic.com/firebasejs/10.8.0/";
   /* ផ្ទុក SDK ដោយ dynamic import ដើម្បីឱ្យកូដកម្មវិធីគោលនៅជា script ធម្មតា */
@@ -1832,7 +1824,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=12"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=4","hub.js?v=21","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=12"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=4","hub.js?v=22","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];

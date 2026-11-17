@@ -745,8 +745,7 @@ function HS(x){return(CL.code?"c="+CL.code+"&":"")+x}   /* hash (រក្សា
    pcls/{កូដ} = {o, cls, g, names:[{k,n}], open} (គ្រូបង្កើត) · prt/{កូដ}_{k} = {c,k,n,g,t:{"មេរៀន-កម្រិត":ms},u} (សិស្សសរសេរ · បន្ថែមបានតែប៉ុណ្ណោះ)
    ទាញ Firebase តែក្នុងរបៀបនេះ */
 var CL={code:"",cls:null,me:null,db:null,F:null,q:[]};
-/* ⚠️ បណ្ដោះអាសន្ន (quota ពេញ) · config ចាស់ math-teacher-system-bt៖ apiKey:"AIzaSyBbciD9vfjMw3jO3d7CGVqEej9OCCPZxBA",authDomain:"math-exam-temp.firebaseapp.com",projectId:"math-exam-temp",storageBucket:"math-exam-temp.firebasestorage.app",messagingSenderId:"275392993593",appId:"1:275392993593:web:6afb06157d57191084b0e8" */
-var FBC={apiKey:"AIzaSyBbciD9vfjMw3jO3d7CGVqEej9OCCPZxBA",authDomain:"math-exam-temp.firebaseapp.com",projectId:"math-exam-temp",storageBucket:"math-exam-temp.firebasestorage.app",messagingSenderId:"275392993593",appId:"1:275392993593:web:6afb06157d57191084b0e8"};
+var FBC={apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"};
 function clInit(code){
   CL.code=code;$("app").innerHTML="<p style='text-align:center;margin-top:40px'>កំពុងភ្ជាប់ថ្នាក់…</p>";
   var B="https://www.gstatic.com/firebasejs/10.8.0/";

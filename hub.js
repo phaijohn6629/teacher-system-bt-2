@@ -11,8 +11,7 @@
 (function(){
 "use strict";
 var R=String.raw;
-/* ចាស់៖ math-teacher-system-bt */
-var PROJ="math-exam-temp",TTL=60*1000;   /* ១ នាទី · បើក/Refresh ទំព័រ = ទាញថ្មីភ្លាម */
+var PROJ="math-teacher-system-bt",TTL=60*1000;   /* ១ នាទី · បើក/Refresh ទំព័រ = ទាញថ្មីភ្លាម */
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function U(t,lv,s,f,k,ex){return{t:t,lv:lv,s:s,f:f,k:k,ex:ex||[]}}
 var B=[1,5],M=[5,2,6],H=[6,3];   /* កម្រិត ១–២ · ២–៤ · ៤–៥ */
