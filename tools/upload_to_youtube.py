@@ -71,12 +71,43 @@ DAPP = [
     ("pisa", "DerivApp_PISA_RealWorld", "PISA និងបញ្ហាជីវិតពិត (Real-world)",
      "ការអនុវត្តដេរីវេក្នុងជីវិតពិត ជាទម្រង់ PISA។"),
 ]
+EXPD = [
+    ("1", "01_ExpLog_Lv1_Basic", "កម្រិត ១ (មូលដ្ឋានគ្រឹះ)",
+     "មូលដ្ឋានអនុគមន៍អិចស្ប៉ូណង់ស្យែល eˣ · aˣ និងលក្ខណៈស្វ័យគុណ។"),
+    ("2", "02_ExpLog_Lv2_LogLaws", "កម្រិត ២ (មូលដ្ឋានបន្ថែម)",
+     "លក្ខណៈលោការីត និងទំនាក់ទំនងរវាងអិចស្ប៉ូណង់ស្យែល និងលោការីត។"),
+    ("3", "03_ExpLog_Lv3_Equations", "កម្រិត ៣ (មធ្យម)",
+     "ដោះស្រាយសមីការអិចស្ប៉ូណង់ស្យែល។"),
+    ("4", "04_ExpLog_Lv4_Inequalities", "កម្រិត ៤ (កម្រិតខ្ពស់)",
+     "ដោះស្រាយវិសមីការអិចស្ប៉ូណង់ស្យែល។"),
+    ("5", "05_ExpLog_Lv5_Mastery", "កម្រិត ៥ (ពិបាក)",
+     "លំហាត់អិចស្ប៉ូណង់ស្យែលកម្រិតពិបាក ក្នុងទម្រង់ប្រឡងថ្នាក់ជាតិ។"),
+    ("pisa", "06_ExpLog_PISA_RealWorld", "PISA (បញ្ហាជីវិតពិត)",
+     "ការអនុវត្តអិចស្ប៉ូណង់ស្យែលក្នុងជីវិតពិត ជាទម្រង់ PISA។"),
+]
+LOGD = [
+    ("1", "01_Log_Lv1_Basic", "កម្រិត ១ (មូលដ្ឋានគ្រឹះ)",
+     "និយមន័យលោការីត ln x · log x និងតម្លៃមូលដ្ឋាន។"),
+    ("2", "02_Log_Lv2_Properties", "កម្រិត ២ (មូលដ្ឋានបន្ថែម)",
+     "លក្ខណៈនៃលោការីត ln(ab) = ln a + ln b ។ល។"),
+    ("3", "03_Log_Lv3_Equations", "កម្រិត ៣ (មធ្យម)",
+     "ដោះស្រាយសមីការលោការីត និងលក្ខខណ្ឌនិយមន័យ។"),
+    ("4", "04_Log_Lv4_Derivative", "កម្រិត ៤ (កម្រិតខ្ពស់)",
+     "ដេរីវេនៃអនុគមន៍លោការីត (ln u)′ = u′/u។"),
+    ("5", "05_Log_Lv5_Mastery", "កម្រិត ៥ (ពិបាក)",
+     "លំហាត់លោការីតកម្រិតពិបាក ក្នុងទម្រង់ប្រឡងថ្នាក់ជាតិ។"),
+    ("pisa", "06_Log_PISA_RealWorld", "PISA (បញ្ហាជីវិតពិត)",
+     "ការអនុវត្តលោការីតក្នុងជីវិតពិត ជាទម្រង់ PISA។"),
+]
 # set → (មេរៀនក្នុង hub.js, ឈ្មោះមេរៀន, ថតវីដេអូ, Playlist, ទិន្នន័យ)
 SETS = {
     "deriv": (31, "មេរៀនដេរីវេ", "G12_Deriv_FINAL", PLAYLIST, DERIV),
     "derivapp": (32, "មេរៀនអនុវត្តន៍នៃដេរីវេ", "G12_DerivApp_FINAL", "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុវត្តន៍នៃដេរីវេ", DAPP),
     "cont": (23, "មេរៀនភាពជាប់នៃអនុគមន៍", "G12_Cont_FINAL", "គណិតវិទ្យា ថ្នាក់ទី១២ - ភាពជាប់នៃអនុគមន៍", CONT),
+    "exp": (42, "អនុគមន៍អិចស្ប៉ូណង់ស្យែល", "G12_ExpLog_All_6_Levels", "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុគមន៍អិចស្ប៉ូណង់ស្យែល", EXPD),
+    "log": (43, "អនុគមន៍លោការីត", "G12_Log_All_6_Levels", "គណិតវិទ្យា ថ្នាក់ទី១២ - អនុគមន៍លោការីត", LOGD),
 }
+SITE = "https://phaijohn6629.github.io/teacher-system-bt-2/"
 
 
 def find(name, folder):
@@ -111,9 +142,12 @@ def main():
 
     py = sys.executable
     for lv, name, lvname, about, path in todo:
-        title = "គណិតវិទ្យា ថ្នាក់ទី១២ - %s [%s]" % (LNAME, lvname)
+        if a.set in ("exp", "log"):
+            title = "គណិតវិទ្យា ថ្នាក់ទី១២ | %s - %s | វិទ្យាល័យបឹងត្របែក (NGS)" % (LNAME, lvname)
+        else:
+            title = "គណិតវិទ្យា ថ្នាក់ទី១២ - %s [%s]" % (LNAME, lvname)
         desc = ("📚 គណិតវិទ្យា ថ្នាក់ទី១២ · %s · %s\n\n%s\n\n"
-                "ទំព័រហ្វឹកហាត់៖ %s (ថ្នាក់ទី១២) តាមកម្រិត ១–៥ និង PISA\n\n%s") % (LNAME, lvname, about, LNAME, FOOT)
+                "ទំព័រហ្វឹកហាត់៖ %s (ថ្នាក់ទី១២) តាមកម្រិត ១–៥ និង PISA\n%s\n\n%s") % (LNAME, lvname, about, LNAME, SITE, FOOT)
         cmd = [py, os.path.join(ROOT, "tools", "upload_youtube.py"), "--file", path, "--title", title, "--desc", desc,
                "--privacy", a.privacy, "--playlist", PLAYLIST_, "--playlist-privacy", a.privacy, "--tags", "គណិតវិទ្យា,ថ្នាក់ទី១២,%s,Rean-Maths,Manim,Khmer Math" % LNAME.replace("មេរៀន", "")]
         if not a.no_hub:
