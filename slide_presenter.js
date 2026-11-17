@@ -13,9 +13,17 @@ class SlidePresenter {
         });
     }
     ensureDeps(cb) {
-        const files = ["lp7.js", "lp8.js", "lp9.js", "lp10.js", "lp11.js", "lp12.js"];
+        const files = ["lessonplans.js", "lp7.js", "lp8.js", "lp9.js", "lp10.js", "lp11.js", "lp12.js"];
         let pending = 0;
-        const done = () => { if (--pending <= 0) cb(); };
+        let called = false;
+        const finish = () => {
+            if (called) return;
+            called = true;
+            window.LP_DB = Object.assign({}, window.LPX || {}, window.lessonPlanDB || {}, window.LP_DB || {});
+            cb();
+            this.populateLessonDropdown(this.getGradeFromKey(this.lessonKey));
+        };
+        const done = () => { if (--pending <= 0) finish(); };
 
         if (!window.katex) {
             if (!document.querySelector("link[href*=katex]")) {
@@ -32,15 +40,16 @@ class SlidePresenter {
         }
 
         files.forEach(f => {
-            if (!document.querySelector(`script[src^="${f}"]`)) {
+            const existing = document.querySelector(`script[src^="${f}"]`);
+            if (!existing) {
                 pending++;
                 const s = document.createElement("script");
-                s.src = f;
+                s.src = f + "?v=10";
                 s.onload = s.onerror = done;
                 document.head.appendChild(s);
             }
         });
-        if (pending === 0) cb();
+        if (pending === 0) finish();
     }
     renderKaTeXDirect(el) {
         if (!window.katex) return;
@@ -123,10 +132,12 @@ class SlidePresenter {
         }
     }
     populateLessonDropdown(grade) {
-        const db = window.LP_DB || window.lessonPlanDB || {};
+        const db = Object.assign({}, window.LPX || {}, window.lessonPlanDB || {}, window.LP_DB || {});
         const lessonSel = document.getElementById("sp-lesson-select");
-        if (!lessonSel) return;
-        const filteredKeys = Object.keys(db).filter(k => this.getGradeFromKey(k) === String(grade));
+        if (!lessonSel) return [];
+        const filteredKeys = Object.keys(db)
+            .filter(k => this.getGradeFromKey(k) === String(grade))
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
         lessonSel.innerHTML = filteredKeys.map(k => {
             const sel = k === this.lessonKey ? "selected" : "";
             const label = k.replace("_", ".") + " : " + (db[k].title || "");
