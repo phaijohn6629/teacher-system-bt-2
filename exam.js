@@ -215,7 +215,7 @@ function editor(){
     "<button type=button data-ex=add style='width:100%'>＋ ផ្នែកថ្មី</button>"+
     "<p class=note>💡 ✏️ កែអត្ថបទលំហាត់ផ្ទាល់បាន (LaTeX ក្នុង $…$) · ពេលកែដោយដៃ ចម្លើយក្នុង «🔑 ចម្លើយ» មិនប្ដូរតាមទេ</p></div></div>"+
     "<div class=card><h3 style='margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap'>👁️ មើលជាមុន"+(E.ab?"<span style='display:inline-flex;gap:4px;margin-left:auto'><button type=button data-ex='pv|a' class='"+(pvOf(E)==="a"?"primary":"")+"'>វិញ្ញាសា ក</button><button type=button data-ex='pv|b' class='"+(pvOf(E)==="b"?"primary":"")+"'>វិញ្ញាសា ខ</button></span>":"")+"</h3><div id=exPrev class=ex-prev></div></div>";
-  body().innerHTML=h;body().dataset.exid=E.id;prev();
+  body().innerHTML=h;body().dataset.exid=E.id;prev();if(on)drawQR($("exQR2"),examLink(E.id),110);
   [].forEach.call(body().querySelectorAll(".ex-it textarea"),function(t){t.style.height=Math.max(36,t.scrollHeight)+"px"});
 }
 var pvT=0;
@@ -280,7 +280,11 @@ function goOnline(){
     return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:abFor(E,c,s,i)}});
   Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,names:names,sch:inf().school}),
     F.setDoc(F.doc(window.db,"exq",E.id+"_"+code),{o:E.o,t:E.id,j:pub(E)})]).then(function(){
-    E.on={open:true,code:code,endMs:endMs};save(true);editor();watch();showLink();
+    E.on={open:true,code:code,endMs:endMs};
+    try{save(true)}catch(x){console.error("save:",x)}
+    try{editor()}catch(x){console.error("editor:",x)}
+    try{watch()}catch(x){console.error("watch:",x)}
+    showLink();   /* ត្រូវបង្ហាញតំណ/QR ជានិច្ច ទោះជំហានមុនមានកំហុស */
   },function(e){console.error(e);alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន exm · exq · exv)":"មិនអាចបើកបានទេ · សូមពិនិត្យអ៊ីនធឺណិត")});
 }
 function stopOnline(){
@@ -310,6 +314,7 @@ function onlineBox(){
   var E=X.E;
   return"<div class=ex-on><div><b>📱 កំពុងប្រឡងអនឡាញ</b> · នៅសល់ <b id=exLeft class=ex-left>"+left(E.on.endMs)+"</b> · 🔑 លេខកូដចូល <b class=ex-code>"+esc(E.on.code)+"</b></div>"+
     "<div class=bar style='margin:6px 0'><button type=button data-ex=link>🔗 តំណ/QR</button><button type=button data-ex='ext|5'>＋៥ នាទី</button><button type=button data-ex='ext|10'>＋១០ នាទី</button><button type=button class=danger data-ex=stop>⏹ បិទប្រឡង</button></div>"+
+    "<div class=ex-lk style='display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0'><div id=exQR2 class=qz-qr style='min-width:112px;min-height:112px'></div><div style='flex:1;min-width:220px'><small>🔗 តំណសម្រាប់សិស្ស (ចម្លង ឬឱ្យស្កេន QR)</small><input value='"+esc(examLink(E.id))+"' readonly onclick='this.select()' style='width:100%;margin:4px 0'><button type=button data-ex=cplink>📋 ចម្លងតំណ</button></div></div>"+
     abSummary(E)+"<div id=exV>"+viewList()+"</div></div>";
 }
 function showLink(){
@@ -320,7 +325,13 @@ function showLink(){
     "<div class=bar style='justify-content:center'><button type=button class=primary id=exCp>📋 ចម្លងតំណ</button><button type=button id=exX>បិទ</button></div></div>";
   $("exX").onclick=function(){d.close()};$("exCp").onclick=function(){try{navigator.clipboard.writeText(u)}catch(x){}notify("បានចម្លងតំណ")};
   d.showModal();
-  (window.QRCode?Promise.resolve():ld("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js")).then(function(){new QRCode($("exQR"),{text:u,width:200,height:200})}).catch(function(){});
+  drawQR($("exQR"),u,200);
+}
+/* 🔳 គូរ QR (ទាញ qrcodejs ពី cdnjs) · បរាជ័យ → សារ + ប៊ូតុងព្យាយាមម្ដងទៀត (មិនទុកប្រអប់ទទេស្ងាត់ៗ) · ចម្លងតំណបានជានិច្ច */
+function drawQR(el,u,w){
+  if(!el)return;el.innerHTML="";
+  (window.QRCode?Promise.resolve():ld("https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js")).then(function(){if(el.isConnected)new QRCode(el,{text:u,width:w,height:w})})
+    .catch(function(){if(el.isConnected)el.innerHTML="<small style='color:#b45309'>⚠️ មិនអាចបង្កើត QR បានទេ (គ្មានអ៊ីនធឺណិត?) · ចម្លងតំណខាងក្រោមផ្ញើឱ្យសិស្សបាន · <button type=button data-ex=qrretry>🔄 ព្យាយាមម្ដងទៀត</button></small>"});
 }
 /* ---------- ព្រឹត្តិការណ៍ ---------- */
 function act(a,q){
@@ -352,6 +363,8 @@ function act(a,q){
   if(a==="stop"){stopOnline();return}
   if(a==="ext"){extend(+q[1]);return}
   if(a==="link"){showLink();return}
+  if(a==="cplink"){var u0=examLink(E.id);try{navigator.clipboard.writeText(u0)}catch(x){}notify("បានចម្លងតំណ");return}
+  if(a==="qrretry"){var q1=$("exQR2"),d1=$("exLink");drawQR(d1&&d1.open?$("exQR"):q1,examLink(E.id),d1&&d1.open?200:110);return}
   if(a==="vr"){var sid=q[1];if(!confirm("អនុញ្ញាតឱ្យសិស្សនេះបើកវិញ្ញាសាលើឧបករណ៍ផ្សេង?"))return;F.deleteDoc(F.doc(window.db,"exv",E.id+"_"+sid)).then(function(){notify("បានអនុញ្ញាត")},function(){alert("មិនអាចលុបបានទេ")});return}
   var i=+q[1],s=E.secs[i];
   if(a==="add"){var last=E.secs[E.secs.length-1],L=lsList(g),ls=last?last.ls:(L[0]&&L[0][1][0][0]);if(!ls){alert("ថ្នាក់នេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់");return}E.secs.push(newSec(g,ls))}
