@@ -17,25 +17,17 @@ class SlidePresenter {
         let pending = 0;
         const done = () => { if (--pending <= 0) cb(); };
 
-        // Load KaTeX if missing
-        if (!window.katex || !window.renderMathInElement) {
+        if (!window.katex) {
             if (!document.querySelector("link[href*=katex]")) {
                 const l = document.createElement("link");
                 l.rel = "stylesheet";
                 l.href = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css";
                 document.head.appendChild(l);
             }
-            pending += 2;
+            pending++;
             const s1 = document.createElement("script");
             s1.src = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js";
-            s1.onload = () => {
-                done();
-                const s2 = document.createElement("script");
-                s2.src = "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js";
-                s2.onload = s2.onerror = () => { done(); if (this.slides.length) this.renderSlide(); };
-                document.head.appendChild(s2);
-            };
-            s1.onerror = () => { done(); done(); };
+            s1.onload = s1.onerror = () => { done(); if (this.slides.length) this.renderSlide(); };
             document.head.appendChild(s1);
         }
 
@@ -50,22 +42,38 @@ class SlidePresenter {
         });
         if (pending === 0) cb();
     }
+    renderKaTeXDirect(el) {
+        if (!window.katex) return;
+        let html = el.innerHTML;
+        // Convert $$...$$ display math first
+        html = html.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
+            try { return katex.renderToString(tex.trim(), { displayMode: true, throwOnError: false }); }
+            catch (e) { return tex; }
+        });
+        // Convert $...$ inline math (trimming internal spaces so KaTeX always renders cleanly)
+        html = html.replace(/\$([^\$\n]+?)\$/g, (_, tex) => {
+            try { return katex.renderToString(tex.trim(), { displayMode: false, throwOnError: false }); }
+            catch (e) { return tex; }
+        });
+        el.innerHTML = html;
+    }
     normalizeLines(arr) {
         if (!Array.isArray(arr)) return arr ? [String(arr)] : [];
         const out = [];
         for (let i = 0; i < arr.length; i++) {
             let cur = String(arr[i] || "").trim();
             if (!cur) continue;
-            // Merge trailing hanging Khmer connectors like "បើ", "ដែល", "ចំពោះ", "នៃ"
             while (i + 1 < arr.length && /(បើ|ដែល|ចំពោះ|នៃ|គឺ|ស្មើ|ដោយ|មាន|និង|ឬ|:|៖)\s*$/.test(cur)) {
                 i++;
                 cur += " " + String(arr[i] || "").trim();
             }
-            // Add clean spacing around $...$ for KaTeX
-            cur = cur.replace(/([^\s$])\$/g, "$1 $").replace(/\$([^\s$])/g, "$ $1");
             out.push(cur);
         }
         return out;
+    }
+    getGradeFromKey(k) {
+        const m = String(k).match(/^(\d+)_/);
+        return m ? m[1] : "12";
     }
     loadLessonData() {
         const db = window.LP_DB || window.lessonPlanDB || {};
@@ -80,7 +88,7 @@ class SlidePresenter {
             {
                 type: "title",
                 title: lesson.title,
-                kicker: `គណិតវិទ្យាវិទ្យាល័យ • រយៈពេល ${lesson.dur || 45} នាទី`,
+                kicker: `ថ្នាក់ទី ${this.getGradeFromKey(targetKey)} • រយៈពេល ${lesson.dur || 45} នាទី`,
                 lines: [
                     "# 🎯 វត្ថុបំណងមេរៀន (ចំណេះដឹង និងបំណិន)",
                     ...this.normalizeLines(lesson.obj && lesson.obj.knowledge),
@@ -114,14 +122,24 @@ class SlidePresenter {
             }
         }
     }
+    populateLessonDropdown(grade) {
+        const db = window.LP_DB || window.lessonPlanDB || {};
+        const lessonSel = document.getElementById("sp-lesson-select");
+        if (!lessonSel) return;
+        const filteredKeys = Object.keys(db).filter(k => this.getGradeFromKey(k) === String(grade));
+        lessonSel.innerHTML = filteredKeys.map(k => {
+            const sel = k === this.lessonKey ? "selected" : "";
+            const label = k.replace("_", ".") + " : " + (db[k].title || "");
+            return `<option value="${k}" ${sel}>${label}</option>`;
+        }).join("");
+        return filteredKeys;
+    }
     initUI() {
         const old = document.getElementById("slide-presenter-overlay");
         if (old) old.remove();
-        const db = window.LP_DB || window.lessonPlanDB || {};
-        const lessonOptions = Object.keys(db).map(k => {
-            const sel = k === this.lessonKey ? "selected" : "";
-            return `<option value="${k}" ${sel}>${k} : ${(db[k].title || "").slice(0, 34)}</option>`;
-        }).join("");
+        const curGrade = this.getGradeFromKey(this.lessonKey);
+        const grades = ["7", "8", "9", "10", "11", "12"];
+        const gradeOptions = grades.map(g => `<option value="${g}" ${g === curGrade ? "selected" : ""}>ថ្នាក់ទី ${g}</option>`).join("");
 
         const overlay = document.createElement("div");
         overlay.id = "slide-presenter-overlay";
@@ -132,8 +150,9 @@ class SlidePresenter {
             "</div>",
             "<div class=\"sp-body\" id=\"sp-slide-body\"></div>",
             "<canvas id=\"sp-canvas\"></canvas>",
-            "<div class=\"sp-controls forced-show\" id=\"sp-control-bar\">",
-            "  <select class=\"sp-select\" id=\"sp-lesson-select\" style=\"max-width:220px;\">" + lessonOptions + "</select>",
+            "<div class=\"sp-controls forced-show\" id=\"sp-control-bar\" style=\"flex-wrap:wrap;max-width:95vw;\">",
+            "  <select class=\"sp-select\" id=\"sp-grade-select\">" + gradeOptions + "</select>",
+            "  <select class=\"sp-select\" id=\"sp-lesson-select\" style=\"max-width:250px;\"></select>",
             "  <select class=\"sp-select\" id=\"sp-mode-select\">",
             "    <option value=\"5es\">🌐 លោកខាងលិច (5Es / IBL)</option>",
             "    <option value=\"bansho\">🇯🇵 ជប៉ុន (Bansho Split)</option>",
@@ -142,7 +161,7 @@ class SlidePresenter {
             "  </select>",
             "  <button class=\"sp-btn\" id=\"sp-prev\">◀ ថយ</button>",
             "  <button class=\"sp-btn\" id=\"sp-next\">បន្ត ▶</button>",
-            "  <button class=\"sp-btn\" id=\"sp-all\">👁️ បង្ហាញទាំងអស់</button>",
+            "  <button class=\"sp-btn\" id=\"sp-all\">👁️ ទាំងអស់</button>",
             "  <button class=\"sp-btn\" id=\"sp-pen\">✏️ គូស</button>",
             "  <button class=\"sp-btn\" id=\"sp-clear\">🧹 លុប</button>",
             "  <button class=\"sp-btn\" id=\"sp-dark\">🌓 ពន្លឺ</button>",
@@ -150,6 +169,8 @@ class SlidePresenter {
             "</div>"
         ].join("\n");
         document.body.appendChild(overlay);
+        this.populateLessonDropdown(curGrade);
+
         setTimeout(() => { const b = document.getElementById("sp-control-bar"); if (b) b.classList.remove("forced-show"); }, 3500);
         this.canvas = document.getElementById("sp-canvas");
         this.ctx = this.canvas.getContext("2d");
@@ -164,6 +185,16 @@ class SlidePresenter {
         };
         document.getElementById("sp-close").onclick = () => { window.removeEventListener("keydown", this.boundKeyHandler); overlay.remove(); };
         document.getElementById("sp-dark").onclick = () => { this.isDark = !this.isDark; overlay.classList.toggle("dark-mode", this.isDark); };
+        document.getElementById("sp-grade-select").onchange = (e) => {
+            const g = e.target.value;
+            const list = this.populateLessonDropdown(g);
+            if (list && list.length) {
+                this.lessonKey = list[0];
+                this.currentSlide = 0; this.currentStep = 0;
+                this.loadLessonData();
+                this.renderSlide();
+            }
+        };
         document.getElementById("sp-lesson-select").onchange = (e) => {
             this.lessonKey = e.target.value;
             this.currentSlide = 0; this.currentStep = 0;
@@ -244,17 +275,7 @@ class SlidePresenter {
                 body.appendChild(d);
             });
         }
-        if (window.renderMathInElement) {
-            renderMathInElement(body, {
-                delimiters: [
-                    {left: "$$", right: "$$", display: true},
-                    {left: "$", right: "$", display: false},
-                    {left: "\\(", right: "\\)", display: false},
-                    {left: "\\[", right: "\\]", display: true}
-                ],
-                throwOnError: false
-            });
-        }
+        this.renderKaTeXDirect(body);
     }
     nextStep() {
         const lines = this.slides[this.currentSlide].lines || [];

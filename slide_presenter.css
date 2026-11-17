@@ -34,7 +34,7 @@
 }
 .sp-step-item.revealed { opacity: 1; transform: translateY(0); }
 .sp-step-item.highlight {
-    font-family: "Khmer OS Muol Light", serif; color: #1F4FBF;
+    font-family: "Khmer OS Battambang", sans-serif; font-weight: bold; color: #1F4FBF;
     background: rgba(31, 79, 191, 0.08); padding: 16px 26px;
     border-left: 6px solid #1F4FBF; border-radius: 10px;
 }
