@@ -7,6 +7,8 @@ class SlidePresenter {
         this.mode = "5es";
         this.isDark = false;
         this.isDrawing = false;
+        this.penColor = "#EF4444";
+        this.isLaser = false;
         this.ensureDeps(() => {
             this.loadLessonData();
             this.initUI();
@@ -173,7 +175,10 @@ class SlidePresenter {
             "  <button class=\"sp-btn\" id=\"sp-prev\">◀ ថយ</button>",
             "  <button class=\"sp-btn\" id=\"sp-next\">បន្ត ▶</button>",
             "  <button class=\"sp-btn\" id=\"sp-all\">👁️ ទាំងអស់</button>",
-            "  <button class=\"sp-btn\" id=\"sp-video\">🎬 វីដេអូ Manim</button>\n  <button class=\"sp-btn\" id=\"sp-pen\">✏️ គូស</button>",
+            "  <button class=\"sp-btn\" id=\"sp-video\">🎬 វីដេអូ Manim</button>\n  <button class=\"sp-btn\" id=\"sp-timer\">⏱️ ម៉ោង</button>
+  <button class=\"sp-btn\" id=\"sp-laser\">🔴 ចង្អុល</button>
+  <button class=\"sp-btn\" id=\"sp-pen\">✏️ គូស</button>
+  <button class=\"sp-btn\" id=\"sp-color\" title=\"ប្តូរពណ៌ប៊ិច\">🎨 ក្រហម</button>",
             "  <button class=\"sp-btn\" id=\"sp-clear\">🧹 លុប</button>",
             "  <button class=\"sp-btn\" id=\"sp-dark\">🌓 ពន្លឺ</button>",
             "  <button class=\"sp-btn\" id=\"sp-close\" style=\"color:#FCA5A5;font-weight:bold;\">✕ បិទ</button>",
@@ -214,6 +219,35 @@ class SlidePresenter {
         };
         document.getElementById("sp-mode-select").onchange = (e) => { this.mode = e.target.value; document.getElementById("sp-kicker").innerText = e.target.options[e.target.selectedIndex].text; this.renderSlide(); };
         
+        
+        const laserDot = document.createElement("div");
+        laserDot.id = "sp-laser-dot";
+        laserDot.style.cssText = "position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#FFF 15%,#EF4444 55%,rgba(239,68,68,0) 75%);box-shadow:0 0 16px 6px rgba(239,68,68,0.85);pointer-events:none;z-index:1000002;display:none;transform:translate(-50%,-50%);";
+        overlay.appendChild(laserDot);
+        overlay.addEventListener("mousemove", (e) => {
+            if (this.isLaser) {
+                laserDot.style.left = e.clientX + "px";
+                laserDot.style.top = e.clientY + "px";
+            }
+        });
+        document.getElementById("sp-laser").onclick = (e) => {
+            this.isLaser = !this.isLaser;
+            laserDot.style.display = this.isLaser ? "block" : "none";
+            e.target.style.background = this.isLaser ? "#DC2626" : "";
+        };
+        const colors = [
+            { name: "🎨 ក្រហម", hex: "#EF4444" },
+            { name: "🎨 ខៀវ", hex: "#3B82F6" },
+            { name: "🎨 បៃតង", hex: "#10B981" }
+        ];
+        let cIdx = 0;
+        document.getElementById("sp-color").onclick = (e) => {
+            cIdx = (cIdx + 1) % colors.length;
+            this.penColor = colors[cIdx].hex;
+            e.target.innerText = colors[cIdx].name;
+        };
+        document.getElementById("sp-timer").onclick = () => this.toggleTimerWidget();
+
         document.getElementById("sp-video").onclick = () => this.toggleVideoModal();
         document.getElementById("sp-pen").onclick = (e) => { this.isDrawing = !this.isDrawing; this.canvas.classList.toggle("active", this.isDrawing); e.target.style.background = this.isDrawing ? "#1F4FBF" : ""; };
         document.getElementById("sp-clear").onclick = () => { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); };
@@ -225,7 +259,7 @@ class SlidePresenter {
         window.addEventListener("keydown", this.boundKeyHandler);
         let drawing = false;
         this.canvas.onmousedown = (e) => { if (this.isDrawing) { drawing = true; this.ctx.beginPath(); this.ctx.moveTo(e.clientX, e.clientY); } };
-        this.canvas.onmousemove = (e) => { if (drawing && this.isDrawing) { this.ctx.lineTo(e.clientX, e.clientY); this.ctx.strokeStyle = this.isDark ? "#38BDF8" : "#EF4444"; this.ctx.lineWidth = 4; this.ctx.stroke(); } };
+        this.canvas.onmousemove = (e) => { if (drawing && this.isDrawing) { this.ctx.lineTo(e.clientX, e.clientY); this.ctx.strokeStyle = this.penColor; this.ctx.lineWidth = 4; this.ctx.stroke(); } };
         this.canvas.onmouseup = () => { drawing = false; };
         this.renderSlide();
     }
@@ -370,6 +404,64 @@ class SlidePresenter {
         renderStage(autoUrl);
         document.getElementById("sp-video-load").onclick = () => renderStage(document.getElementById("sp-video-input").value);
         document.getElementById("sp-video-close").onclick = () => modal.remove();
+    }
+
+    
+    toggleTimerWidget() {
+        let box = document.getElementById("sp-timer-box");
+        if (box) {
+            if (this._timerInt) clearInterval(this._timerInt);
+            box.remove();
+            return;
+        }
+        box = document.createElement("div");
+        box.id = "sp-timer-box";
+        box.style.cssText = "position:fixed;top:85px;right:32px;background:#0F172A;color:#F8FAFC;border:2px solid #3B82F6;border-radius:16px;padding:12px 18px;z-index:1000001;box-shadow:0 12px 30px rgba(0,0,0,0.45);font-family:\"Khmer OS Battambang\",sans-serif;text-align:center;";
+        box.innerHTML = [
+            "<div id=\"sp-timer-disp\" style=\"font-size:32px;font-weight:bold;font-variant-numeric:tabular-nums;color:#38BDF8;margin-bottom:8px;\">03:00</div>",
+            "<div style=\"display:flex;gap:6px;justify-content:center;\">",
+            "  <button data-sec=\"60\" class=\"sp-tbtn\" style=\"background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;\">1នាទី</button>",
+            "  <button data-sec=\"180\" class=\"sp-tbtn\" style=\"background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;\">3នាទី</button>",
+            "  <button data-sec=\"300\" class=\"sp-tbtn\" style=\"background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;\">5នាទី</button>",
+            "  <button id=\"sp-timer-toggle\" style=\"background:#2563EB;color:#FFF;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:bold;\">ចាប់ផ្តើម</button>",
+            "</div>"
+        ].join("\n");
+        document.getElementById("slide-presenter-overlay").appendChild(box);
+        let rem = 180, running = false;
+        const disp = document.getElementById("sp-timer-disp");
+        const tgl = document.getElementById("sp-timer-toggle");
+        const fmt = (s) => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+        box.querySelectorAll(".sp-tbtn").forEach(b => {
+            b.onclick = () => {
+                if (this._timerInt) clearInterval(this._timerInt);
+                running = false; tgl.innerText = "ចាប់ផ្តើម";
+                rem = parseInt(b.dataset.sec, 10);
+                disp.style.color = "#38BDF8";
+                disp.innerText = fmt(rem);
+            };
+        });
+        tgl.onclick = () => {
+            if (running) {
+                clearInterval(this._timerInt); running = false; tgl.innerText = "បន្ត";
+            } else {
+                running = true; tgl.innerText = "ផ្អាក";
+                this._timerInt = setInterval(() => {
+                    if (rem > 0) {
+                        rem--;
+                        disp.innerText = fmt(rem);
+                        if (rem <= 10) disp.style.color = "#F87171";
+                    } else {
+                        clearInterval(this._timerInt); running = false; tgl.innerText = "ចប់!";
+                        try {
+                            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                            const osc = ctx.createOscillator();
+                            osc.frequency.value = 880; osc.connect(ctx.destination);
+                            osc.start(); setTimeout(() => osc.stop(), 400);
+                        } catch (e) {}
+                    }
+                }, 1000);
+            }
+        };
     }
 
     nextStep() {
