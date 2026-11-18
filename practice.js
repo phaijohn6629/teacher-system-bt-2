@@ -754,6 +754,47 @@ mix(G[11],3,[
  function(){var a1=ri(-3,3),b1=ri(-3,3),a2,b2;do{a2=ri(-3,3);b2=ri(-3,3)}while(b2===b1);
    var m=fr(-(a2-a1),b2-b1),p=fr(a2*a2+b2*b2-a1*a1-b1*b1,2*(b2-b1)),pre=Math.random()<.4?"📡 ស្ថានីយ៍ពីរនៅ $A$ និង $B$ ក្នុងប្លង់កុំផ្លិច ។ ":"";
    return KQ("cpx_bs",pre+"សំណុំចំណុច $M(z)$ ដែល $|z-("+cx(a1,b1)+")|=|z-("+cx(a2,b2)+")|$ ជាបន្ទាត់មួយ (មេដ្យាទ័រនៃអង្កត់ $AB$) ។ សរសេរជា $y=mx+p$ ។ រក $m$ និង $p$",[A(m.s,m.t,"num","m ="),A(p.s,p.t,"num","p =")],"$(x"+sg(-a1,0)+")^2+(y"+sg(-b1,0)+")^2=(x"+sg(-a2,0)+")^2+(y"+sg(-b2,0)+")^2$ ⇒ $"+2*(a2-a1)+"x"+sg(2*(b2-b1),0)+"y="+(a2*a2+b2*b2-a1*a1-b1*b1)+"$ ⇒ $m="+m.t+"$ , $p="+p.t+"$")}],.55);
+/* ---- កោនិក (cnk_)៖ ប៉ារ៉ាបូល · អេលីប · អ៊ីពែបូល — បង្កើតធាតុស្អាតមុន រួចពន្លាតជាសមីការទូទៅ ---- */
+function cnkSq(v,h){return h?"("+v+sg(-h,0)+")^{2}":v+"^{2}"}
+function cnkGen(A0,C0,D0,E0,F0){var t="";[[A0,"x^{2}"],[C0,"y^{2}"],[D0,"x"],[E0,"y"]].forEach(function(p){if(p[0])t+=co(p[0],p[1],!t)});return t+sc(F0)}
+mix(G[81],1,[
+ function(){var p=nz(-4,4),o=Math.random()<.5;
+   return KQ("cnk_p1","ប៉ារ៉ាបូល $"+(o?"y":"x")+"^2="+kx(4*p,o?"x":"y")+"$ មានកំពូល $O$ ។ រកកំណុំ $F"+(o?"(x_F;0)":"(0;y_F)")+"$ និងបន្ទាត់ប្រាប់ទិស $"+(o?"x":"y")+"=d$",[A(p,null,"num",(o?"x_F":"y_F")+" ="),A(-p,null,"num","d =")],"$"+(o?"y":"x")+"^2=4p"+(o?"x":"y")+"$ ⇒ $4p="+4*p+"$ ⇒ $p="+p+"$ · $F"+(o?"("+p+";0)":"(0;"+p+")")+"$ · $"+(o?"x":"y")+"="+(-p)+"$",(o?"y^2=":"x^2=")+(4*p)+(o?"x":"y"))},
+ function(){var p=nz(-5,5),o=Math.random()<.5;
+   return KQ("cnk_p2","ប៉ារ៉ាបូលមានកំពូល $O$ និងកំណុំ $F"+(o?"("+p+";0)":"(0;"+p+")")+"$ ។ សមីការគឺ $"+(o?"y":"x")+"^2=K"+(o?"x":"y")+"$ ។ រក $K$",[A(4*p,null,"num","K =")],"$K=4p=4\\cdot"+sgp(p)+"="+4*p+"$")}],.55);
+mix(G[82],1,[
+ function(){var T=pick(ELT),o=Math.random()<.5,a2=T[0]*T[0],b2=T[1]*T[1];
+   return KQ("cnk_e1","អេលីប $\\dfrac{x^2}{"+(o?a2:b2)+"}+\\dfrac{y^2}{"+(o?b2:a2)+"}=1$ ($a>b>0$) ។ រក $a$ , $b$ និង $c$",[A(T[0],null,"num","a ="),A(T[1],null,"num","b ="),A(T[2],null,"num","c =")],"$a^2="+a2+"$ , $b^2="+b2+"$ ⇒ $c^2=a^2-b^2="+T[2]*T[2]+"$ ⇒ $c="+T[2]+"$")},
+ function(){var T=pick(ELT),e=fr(T[2],T[0]);
+   return KQ("cnk_e2","អេលីបមានផ្ចិត $O$ កំពូលធំ $A(\\pm"+T[0]+";0)$ និងចំណាកផ្ចិត $e="+e.t+"$ ។ រក $c$ និង $b^2$",[A(T[2],null,"num","c ="),A(T[1]*T[1],null,"num","b² =")],"$c=ea="+T[2]+"$ · $b^2=a^2-c^2="+T[0]*T[0]+"-"+T[2]*T[2]+"="+T[1]*T[1]+"$")}],.55);
+mix(G[83],1,[
+ function(){var T=pick(HYT),o=Math.random()<.5,a2=T[0]*T[0],b2=T[1]*T[1];
+   return KQ("cnk_h1","អ៊ីពែបូល $"+(o?"\\dfrac{x^2}{"+a2+"}-\\dfrac{y^2}{"+b2+"}":"\\dfrac{y^2}{"+a2+"}-\\dfrac{x^2}{"+b2+"}")+"=1$ ។ រក $a$ , $b$ និង $c$ ($c^2=a^2+b^2$)",[A(T[0],null,"num","a ="),A(T[1],null,"num","b ="),A(T[2],null,"num","c =")],"$a^2="+a2+"$ , $b^2="+b2+"$ ⇒ $c^2="+(a2+b2)+"$ ⇒ $c="+T[2]+"$")},
+ function(){var T=pick(HYT),m=fr(T[1],T[0]),e=fr(T[2],T[0]);
+   return KQ("cnk_h2","អ៊ីពែបូល $\\dfrac{x^2}{"+T[0]*T[0]+"}-\\dfrac{y^2}{"+T[1]*T[1]+"}=1$ ។ អាស៊ីមតូតមានសមីការ $y=\\pm mx$ ។ រក $m>0$ និងចំណាកផ្ចិត $e$",[A(m.s,m.t,"num","m ="),A(e.s,e.t,"num","e =")],"$m=\\dfrac{b}{a}=\\dfrac{"+T[1]+"}{"+T[0]+"}="+m.t+"$ · $e=\\dfrac{c}{a}=\\dfrac{"+T[2]+"}{"+T[0]+"}="+e.t+"$")}],.55);
+mix(G[81],2,[
+ function(){var h=nz(-4,4),k=nz(-4,4),p=nz(-3,3);
+   return KQ("cnk_ps","ប៉ារ៉ាបូល $"+cnkGen(0,1,-4*p,-2*k,k*k+4*p*h)+"=0$ ។ សរសេរជា $(y-y_S)^2=4p(x-x_S)$ ។ រកកំពូល $S(x_S;y_S)$ និង $p$",[A(h,null,"num","x_S ="),A(k,null,"num","y_S ="),A(p,null,"num","p =")],"$"+cnkSq("y",k)+"="+kx(4*p,"x")+sg(-4*p*h,0)+"="+(4*p)+"("+(h?"x"+sg(-h,0):"x")+")$ ⇒ $S("+h+";"+k+")$ , $p="+p+"$")}],.55);
+mix(G[82],2,[
+ function(){var T=pick(ELT),a=T[0],b=T[1],c=T[2],h=nz(-3,3),kk=nz(-3,3),o=Math.random()<.5,A0=o?b*b:a*a,C0=o?a*a:b*b;
+   var F0=A0*h*h+C0*kk*kk-a*a*b*b;
+   return KQ("cnk_es","អេលីប $"+cnkGen(A0,C0,-2*A0*h,-2*C0*kk,F0)+"=0$ ។ រកផ្ចិត $I(h;k)$ និងចម្ងាយកំណុំ $c$ (កំណុំម្ខាងពីផ្ចិត)",[A(h,null,"num","h ="),A(kk,null,"num","k ="),A(c,null,"num","c =")],"បំពេញការ៉េ ៖ $"+A0+cnkSq("x",h)+"+"+C0+cnkSq("y",kk)+"="+a*a*b*b+"$ ⇒ $\\dfrac{"+cnkSq("x",h)+"}{"+(o?a*a:b*b)+"}+\\dfrac{"+cnkSq("y",kk)+"}{"+(o?b*b:a*a)+"}=1$ ⇒ $I("+h+";"+kk+")$ · $c^2="+a*a+"-"+b*b+"="+c*c+"$ ⇒ $c="+c+"$")}],.55);
+mix(G[83],2,[
+ function(){var T=pick(HYT),a=T[0],b=T[1],c=T[2],h=nz(-3,3),kk=nz(-3,3),F0=b*b*h*h-a*a*kk*kk-a*a*b*b;
+   return KQ("cnk_hs","អ៊ីពែបូល $"+cnkGen(b*b,-a*a,-2*b*b*h,2*a*a*kk,F0)+"=0$ ។ រកផ្ចិត $I(h;k)$ និងចម្ងាយកំណុំ $c$",[A(h,null,"num","h ="),A(kk,null,"num","k ="),A(c,null,"num","c =")],"បំពេញការ៉េ ៖ $"+b*b+cnkSq("x",h)+"-"+a*a+cnkSq("y",kk)+"="+a*a*b*b+"$ ⇒ $\\dfrac{"+cnkSq("x",h)+"}{"+a*a+"}-\\dfrac{"+cnkSq("y",kk)+"}{"+b*b+"}=1$ ⇒ $I("+h+";"+kk+")$ · $c^2="+a*a+"+"+b*b+"="+c*c+"$ ⇒ $c="+c+"$")}],.55);
+mix(G[83],3,[
+ function(){var a=ri(1,5),b=ri(1,5),h=nz(-3,3),kk=nz(-3,3),m=fr(b,a),p=fr(a*kk-b*h,a);
+   return KQ("cnk_ha","អ៊ីពែបូល $\\dfrac{"+cnkSq("x",h)+"}{"+a*a+"}-\\dfrac{"+cnkSq("y",kk)+"}{"+b*b+"}=1$ មានអាស៊ីមតូតពីរ ។ សរសេរអាស៊ីមតូតដែលមានមេគុណប្រាប់ទិសវិជ្ជមានជា $y=mx+p$ ។ រក $m$ និង $p$",[A(m.s,m.t,"num","m ="),A(p.s,p.t,"num","p =")],"$y"+sg(-kk,0)+"=\\pm\\dfrac{"+b+"}{"+a+"}(x"+sg(-h,0)+")$ ⇒ $m="+m.t+"$ · $p="+kk+"-"+m.t+"\\cdot"+sgp(h)+"="+p.t+"$")}],.55);
+mix(G[81],3,[
+ function(){var p=nz(-3,3),t=nz(-3,3),x0=p*t*t,y0=2*p*t,m=fr(1,t);
+   return KQ("cnk_pt","ប៉ារ៉ាបូល $y^2="+kx(4*p,"x")+"$ ។ សរសេរសមីការបន្ទាត់ប៉ះត្រង់ចំណុច $M("+x0+";"+y0+")$ ជាទម្រង់ $y=mx+b$ ។ រក $m$ និង $b$",[A(m.s,m.t,"num","m ="),A(p*t,null,"num","b =")],"បន្ទាត់ប៉ះ ៖ $y_My="+2*p+"(x+"+sgp(x0)+")$ ⇒ $"+kx(y0,"y")+"="+kx(2*p,"x")+sg(2*p*x0,0)+"$ ⇒ $m="+m.t+"$ , $b="+p*t+"$")},
+ function(){var pp=ri(1,5),j=ri(1,3),r=2*pp*j,d=pp*j*j;
+   return KQ("cnk_dish","📡 ចានទទួលសញ្ញាផ្កាយរណបមានផ្នែកកាត់ជាប៉ារ៉ាបូល $x^2=4py$ (កំពូលនៅ $O$) ។ ចានមានអង្កត់ផ្ចិត $"+2*r+"$ cm និងជម្រៅ $"+d+"$ cm ។ ត្រូវដាក់ឧបករណ៍ទទួលនៅកំណុំ ។ រកចម្ងាយពីកំពូលដល់កំណុំ $p$ (cm)",[A(pp,null,"num","p =")],"ចំណុចគែមចាន $("+r+";"+d+")$ ⇒ $"+r*r+"=4p\\cdot"+d+"$ ⇒ $p=\\dfrac{"+r*r+"}{"+4*d+"}="+pp+"$ cm")}],.55);
+mix(G[82],3,[
+ function(){var a=5*ri(1,3),b=5*ri(1,3),sx=pick([1,-1]),sy=pick([1,-1]),x0=sx*3*a/5,y0=sy*4*b/5,m=fr(-3*b*sx*sy,4*a),bb=fr(5*b*sy,4);
+   return KQ("cnk_et","អេលីប $\\dfrac{x^2}{"+a*a+"}+\\dfrac{y^2}{"+b*b+"}=1$ ។ សរសេរសមីការបន្ទាត់ប៉ះត្រង់ចំណុច $M("+x0+";"+y0+")$ ជាទម្រង់ $y=mx+b$ ។ រក $m$ និង $b$",[A(m.s,m.t,"num","m ="),A(bb.s,bb.t,"num","b =")],"បន្ទាត់ប៉ះ ៖ $\\dfrac{"+x0+"x}{"+a*a+"}+\\dfrac{"+y0+"y}{"+b*b+"}=1$ ⇒ $m="+m.t+"$ , $b="+bb.t+"$")},
+ function(){var T=pick(ELT),K=ri(1,3);
+   return KQ("cnk_gal","🏛️ សាលមួយមានជញ្ជាំងរាងអេលីប (Whispering Gallery) ប្រវែង $"+2*T[0]*K+"$ m ទទឹង $"+2*T[1]*K+"$ m ។ មនុស្សពីរនាក់ឈរត្រង់កំណុំទាំងពីរ ទើបឮសំឡេងខ្សឹបគ្នា ។ តើពួកគេឈរឆ្ងាយពីគ្នាប៉ុន្មានម៉ែត្រ?",[A(2*T[2]*K,null,"num","d =")],"$a="+T[0]*K+"$ , $b="+T[1]*K+"$ ⇒ $c=\\sqrt{a^2-b^2}="+T[2]*K+"$ ⇒ $FF'=2c="+2*T[2]*K+"$ m")}],.55);
 /* ---- កោនិក ---- */
 mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
    if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
