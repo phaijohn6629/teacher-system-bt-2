@@ -587,6 +587,40 @@ mix(G[62],3,[
  function(){var al=ri(1,4),w=ri(1,4),A0=ri(2,9),b=2*al,k=al*al+w*w;   /* damped spring x''+2αx'+(α²+ω²)x=0 */
    return KQ("rs_spr","🪀 ស្ព្រីងមួយមានទម្ងន់ចងជាប់ ញ័រស្រុតតាមសមីការ $x''"+co(b,"x'")+co(k,"x")+"=0$ ($x$ គិតជា cm, $t$ គិតជាវិនាទី) ។ ចម្លើយមានរាង $x(t)=e^{-\\alpha t}(A\\cos "+(w===1?"":w)+"t+B\\sin "+(w===1?"":w)+"t)$ ។ ដឹងថា $x(0)="+A0+"$ cm ។ រក មេគុណបន្ថយ $\\alpha$ និងអំព្លីទុតដើម $A$",[A(al,null,"num","α ="),A(A0,null,"num","A =")],
      "$r^2"+co(b,"r")+"+"+k+"=0$ ⇒ $r=-"+al+"\\pm "+(w===1?"":w)+"i$ ⇒ $\\alpha="+al+"$ · $x(0)=A="+A0+"$")}],.6);
+/* ---- ដេរីវេ · ភាពជាប់ · បន្ទាត់ប៉ះ · ភាពមានដេរីវេ (បង្កើតចម្លើយមុន) ---- */
+function cc(c){return c===1?"":c===-1?"-":String(c)}
+mix(G[31],1,[
+ function(){var n=ri(2,4),a=nz(-3,3),b=ri(-4,4),x0=ri(-2,2),v=n*a*Math.pow(a*x0+b,n-1);
+   return KQ("dv_comp","គណនា $f'("+x0+")$ ដែល $f(x)=("+polyT([a,b])+")^{"+n+"}$",[A(v,null,"num","f'("+x0+") =")],"$f'(x)="+(n*a)+"("+polyT([a,b])+")^{"+(n-1)+"}$ ⇒ $f'("+x0+")="+v+"$")},
+ function(){var a=nz(-4,4),b=ri(-4,4),c=nz(-3,3),x0=ri(-2,2),d=ri(-4,4);if(c*x0+d===0)d++;if(a*d-b*c===0)b++;
+   var D=a*d-b*c,den=c*x0+d,f=fr(D,den*den);
+   return KQ("dv_rat","គណនា $f'("+x0+")$ ដែល $f(x)=\\dfrac{"+polyT([a,b])+"}{"+polyT([c,d])+"}$",[A(f.s,f.t,"num","f'("+x0+") =")],"$f'(x)=\\dfrac{"+a+"\\cdot"+sgp(d)+"-"+sgp(b)+"\\cdot"+sgp(c)+"}{("+polyT([c,d])+")^2}=\\dfrac{"+D+"}{("+polyT([c,d])+")^2}$ ⇒ $f'("+x0+")="+f.t+"$")},
+ function(){var m=ri(1,4),a=nz(-4,4),x0=ri(-2,2),b=m*m-a*x0,f=fr(a,2*m);
+   return KQ("dv_rad","គណនា $f'("+x0+")$ ដែល $f(x)=\\sqrt{"+polyT([a,b])+"}$",[A(f.s,f.t,"num","f'("+x0+") =")],"$f'(x)=\\dfrac{"+a+"}{2\\sqrt{"+polyT([a,b])+"}}$ · $"+polyT([a,b])+"="+m*m+"$ ត្រង់ $x="+x0+"$ ⇒ $f'("+x0+")="+f.t+"$")},
+ function(){var a=nz(-3,3),p=nz(-3,3),q=ri(-4,4),al=a*p,be=a*q+p;
+   return KQ("dv_exp","គេឱ្យ $f(x)=("+polyT([p,q])+")e^{"+kx(a)+"}$ ។ ដេរីវេមានរាង $f'(x)=(\\alpha x+\\beta)e^{"+kx(a)+"}$ ។ រក $\\alpha$ និង $\\beta$",[A(al,null,"num","α ="),A(be,null,"num","β =")],"$(uv)'=u'v+uv'$ ⇒ $f'(x)=\\big("+p+"+"+sgp(a)+"("+polyT([p,q])+")\\big)e^{"+kx(a)+"}$ ⇒ $\\alpha="+al+"$ , $\\beta="+be+"$")},
+ function(){var a=nz(-4,4),x0=ri(-2,2),c=ri(1,5),b=c-a*x0,f=fr(a,c);
+   return KQ("dv_ln","គណនា $f'("+x0+")$ ដែល $f(x)=\\ln("+polyT([a,b])+")$",[A(f.s,f.t,"num","f'("+x0+") =")],"$f'(x)=\\dfrac{"+a+"}{"+polyT([a,b])+"}$ · $"+polyT([a,b])+"="+c+"$ ត្រង់ $x="+x0+"$ ⇒ $f'("+x0+")="+f.t+"$")}],.7);
+mix(G[23],2,[
+ function(){var x0=nz(-3,3),a=nz(-3,3),p=nz(-2,2),q=a*x0+1-p*x0*x0;
+   return KQ("cn_a","រក $a$ ដើម្បីឱ្យ $f(x)=\\begin{cases}ax+1 & x<"+x0+"\\\\ "+polyT([p,0,q])+" & x\\ge "+x0+"\\end{cases}$ ជាប់ត្រង់ $x="+x0+"$",[A(a,null,"num","a =")],"$f("+x0+")="+(p*x0*x0+q)+"$ · $\\lim\\limits_{x\\to "+x0+"^-}f=a\\cdot"+sgp(x0)+"+1$ ⇒ $a="+a+"$")},
+ function(){var x0=nz(-3,3),s=nz(-4,4),a=x0+s;
+   return KQ("cn_f","រក $a$ ដើម្បីឱ្យ $f(x)=\\begin{cases}\\dfrac{"+polyT([1,s-x0,-s*x0])+"}{"+polyT([1,-x0])+"} & x\\ne "+x0+"\\\\ a & x="+x0+"\\end{cases}$ ជាប់ត្រង់ $x="+x0+"$",[A(a,null,"num","a =")],"$"+polyT([1,s-x0,-s*x0])+"=("+polyT([1,-x0])+")("+polyT([1,s])+")$ ⇒ $\\lim=x"+sg(s,0)+"|_{x="+x0+"}="+a+"$")}],.6);
+mix(G[32],2,[
+ function(){var p=nz(-2,2),q=ri(-4,4),x0=nz(-2,2),m=3*p*x0*x0+q,b=-2*p*x0*x0*x0;
+   return KQ("tg_c","សរសេរសមីការបន្ទាត់ប៉ះនឹងក្រាប $f(x)="+polyT([p,0,q,0])+"$ ត្រង់ $x="+x0+"$ ជាទម្រង់ $y=mx+b$",[A(m,null,"num","m ="),A(b,null,"num","b =")],"$f'(x)="+polyT([3*p,0,q])+"$ ⇒ $m="+m+"$ · $f("+x0+")="+(p*x0*x0*x0+q*x0)+"$ ⇒ $b=f("+x0+")-m\\cdot"+sgp(x0)+"="+b+"$")},
+ function(){var k=nz(-4,4),m=ri(1,3),sl=fr(k,2*m),bb=fr(k*m,2);
+   return KQ("tg_r","សរសេរសមីការបន្ទាត់ប៉ះនឹងក្រាប $f(x)="+cc(k)+"\\sqrt{x}$ ត្រង់ $x="+m*m+"$ ជាទម្រង់ $y=mx+b$",[A(sl.s,sl.t,"num","m ="),A(bb.s,bb.t,"num","b =")],"$f'(x)=\\dfrac{"+k+"}{2\\sqrt x}$ ⇒ $m=\\dfrac{"+k+"}{"+2*m+"}$ · $f("+m*m+")="+k*m+"$ ⇒ $b="+k*m+"-"+sl.t+"\\cdot"+m*m+"="+bb.t+"$")},
+ function(){var k=nz(-3,3),c=nz(-3,3);
+   return KQ("tg_l","សរសេរសមីការបន្ទាត់ប៉ះនឹងក្រាប $f(x)="+cc(k)+"\\ln x"+co(c,"x")+"$ ត្រង់ $x=1$ ជាទម្រង់ $y=mx+b$",[A(k+c,null,"num","m ="),A(-k,null,"num","b =")],"$f'(x)=\\dfrac{"+k+"}{x}"+(c?sg(c,0):"")+"$ ⇒ $m="+(k+c)+"$ · $f(1)="+c+"$ ⇒ $b="+c+"-"+sgp(k+c)+"\\cdot1="+(-k)+"$")}],.6);
+mix(G[31],3,[
+ function(){var k=ri(1,5),c=nz(-3,3);
+   return KQ("dv_abs","គេឱ្យ $f(x)="+cc(c)+"|x^2-"+k*k+"|$ ។ គណនាដេរីវេឆ្វេង $f'_g("+k+")$ និងដេរីវេស្ដាំ $f'_d("+k+")$ ។ តើ $f$ មានដេរីវេត្រង់ $x="+k+"$ ឬទេ?",[A(-2*c*k,null,"num","f'_g ="),A(2*c*k,null,"num","f'_d =")],"ត្រង់ $x<"+k+"$ ជិត ៖ $|x^2-"+k*k+"|="+k*k+"-x^2$ ⇒ $f'_g="+(-2*c*k)+"$ · ត្រង់ $x>"+k+"$ ៖ $x^2-"+k*k+"$ ⇒ $f'_d="+(2*c*k)+"$ · ខុសគ្នា ⇒ មិនមានដេរីវេ (ចំណុចជ្រុង)")}],.5);
+mix(G[32],3,[
+ function(){var m=ri(1,4),Am=ri(1,5)*10;
+   return KQ("op_drug","💊 កំហាប់ថ្នាំក្នុងឈាម (mg/L) បន្ទាប់ពី $t$ ម៉ោង គឺ $C(t)="+Am+"t\\,e^{-t/"+m+"}$ ($t\\ge0$) ។ (ក) ក្រោយប៉ុន្មានម៉ោង កំហាប់ខ្ពស់បំផុត? (ខ) កំហាប់ខ្ពស់បំផុតគឺប៉ុន្មាន mg/L? (ទុក $e$)",[A(m,null,"num","(ក) t ="),A(Am*m+"*e^(-1)",Am*m+"e^{-1}","num","(ខ) C =")],"$C'(t)="+Am+"e^{-t/"+m+"}\\left(1-\\dfrac{t}{"+m+"}\\right)=0$ ⇒ $t="+m+"$ · $C("+m+")="+Am*m+"e^{-1}$")},
+ function(){var T=ri(2,5),s=ri(1,3),h0=5*s*T,v0=5*(T-s);
+   return KQ("op_proj","⚽ បាល់ត្រូវបានគប់ពីកម្ពស់ $"+h0+"$ m ដោយល្បឿនដើម $"+v0+"$ m/s ($h(t)=-5t^2"+co(v0,"t")+"+"+h0+"$) ។ (ក) ក្រោយប៉ុន្មានវិនាទី បាល់ធ្លាក់ដល់ដី? (ខ) គណនាល្បឿនបាល់ $h'(t)$ ពេលធ្លាក់ដល់ដី (m/s)",[A(T,null,"num","(ក) t ="),A(-5*(T+s),null,"num","(ខ) h' =")],"$h(t)=-5(t"+sg(s,0)+")(t-"+T+")$ ⇒ $t="+T+"$ · $h'(t)=-10t"+sg(v0,0)+"$ ⇒ $h'("+T+")="+(-5*(T+s))+"$ m/s")}],.6);
 /* ---- កោនិក ---- */
 mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
    if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
@@ -642,7 +676,7 @@ vx12(31,3,[
 /* ៣.២ អនុវត្តដេរីវេ */
 vx12(32,1,[
  function(){var c=[nz(-3,3),ri(-4,4),ri(-5,5),ri(-5,5)],k=ri(-2,2),m=3*c[0]*k*k+2*c[1]*k+c[2];return K12("t32_slope","រកមេគុណប្រាប់ទិសនៃបន្ទាត់ប៉ះក្រាប $y="+polyT(c)+"$ ត្រង់ $x="+k+"$",[A(m,null,"num","m =")],"$y'("+k+")="+m+"$")},
- function(){var a=ri(1,12),k=ri(1,5);return K12("t32_vel","ចលនាមួយ $s(t)=t^3-"+a+"t$ (m) ។ គណនាល្បឿនត្រង់ $t="+k+"$",[A(3*k*k-a,null,"num","v =")],"$v=3t^2-"+a+"$ ⇒ $"+(3*k*k-a)+"$")},
+ function(){var a=ri(1,12),k=ri(1,5);return K12("t32_vel","ចលនាមួយ $s(t)=t^3-"+(a===1?"":a)+"t$ (m) ។ គណនាល្បឿនត្រង់ $t="+k+"$",[A(3*k*k-a,null,"num","v =")],"$v=3t^2-"+a+"$ ⇒ $"+(3*k*k-a)+"$")},
  function(){var a=nz(-3,3);return K12("t32_tanp","សរសេរបន្ទាត់ប៉ះក្រាប $y=x^3$ ត្រង់ $x="+a+"$ ជា $y=mx+p$",[A(3*a*a,null,"num","m ="),A(-2*a*a*a,null,"num","p =")],"$m=3\\cdot"+(a*a)+"="+(3*a*a)+"$ · $p="+(a*a*a)+"-"+(3*a*a)+"\\cdot"+sgp(a)+"="+(-2*a*a*a)+"$")}]);
 vx12(32,2,[
  function(){var a=ri(1,5);return K12("t32_dec","$f(x)=x^3-"+(3*a*a)+"x$ ចុះលើចន្លោះ $(\\alpha;\\beta)$ ។ រក $\\alpha$ និង $\\beta$",[A(-a,null,"num","α ="),A(a,null,"num","β =")],"$f'(x)=3(x^2-"+(a*a)+")<0$ ⇔ $-"+a+"<x<"+a+"$")},
