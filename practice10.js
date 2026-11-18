@@ -444,6 +444,41 @@ vx(23,3,[
  function(){var b=ri(1,3),k=pick(NS.filter(function(v){return v!==b*b})),d=k-b*b,m=nz(1,4),a=d*m;return K("s10_conj","សម្រួលភាគបែង $\\dfrac{"+a+"}{\\sqrt{"+k+"}-"+b+"}$",[A(m+"*(sqrt("+k+")+"+b+")",(m===1?"":m===-1?"-":m)+"(\\sqrt{"+k+"}+"+b+")","num","=")],"គុណនឹងកន្សោមឆ្លាស់ ៖ $\\dfrac{"+a+"(\\sqrt{"+k+"}+"+b+")}{"+k+"-"+(b*b)+"}$")},
  function(){var P=pick([[3,2],[5,2],[5,3],[6,2],[7,2],[7,3],[6,5],[7,5]]),p=P[0],q=P[1];return K("s10_nest","សម្រួល $\\sqrt{"+(p+q)+"+2\\sqrt{"+(p*q)+"}}$",[A("sqrt("+p+")+sqrt("+q+")","\\sqrt{"+p+"}+\\sqrt{"+q+"}","num","=")],"$"+(p+q)+"+2\\sqrt{"+(p*q)+"}=(\\sqrt{"+p+"}+\\sqrt{"+q+"})^2$")},
  function(){var a=nz(1,4),b=ri(-9,9),c=ri(1,9),s=fr(-2*b,a);return K("s10_abse","រកផលបូកឫសនៃ $|"+co(a,"x",true)+sg(b,0)+"|="+c+"$",[A(s.s,s.t,"num","=")],"$"+a+"x"+sg(b,0)+"=\\pm"+c+"$ ⇒ ផលបូក $="+s.t+"$")}]);
+/* ២.៣ ចំនួនពិត · តម្លៃដាច់ខាត (abs10_)៖ ជ្រើសឫស/ចន្លោះមុន រួចបង្កើតមេគុណ */
+function abs10X(k){return k?"x"+sg(-k,0):"x"}
+function kx(m,v){return(m===1?"":m===-1?"-":m)+v}
+function abs10Sol(a,b,c,d){var out=[],x1=fr(d-b,a-c),x2=fr(-(b+d),a+c);   /* |ax+b|=cx+d */
+  var ok=function(f){var v=c*f.n/f.d+d;return v>=0};
+  if(a!==c&&ok(x1))out.push(x1);if(a+c!==0&&ok(x2)&&!(out.length&&out[0].n*x2.d===x2.n*out[0].d))out.push(x2);return out}
+vx(23,1,[
+ function(){var a=nz(-9,9),b=nz(-9,9),c=nz(-9,9),t=ri(0,1),v;
+   if(t===0){v=Math.abs(a-b)+Math.abs(c);return K("abs10_val","គណនា $|"+a+"-"+sgp(b)+"|+|"+c+"|$",[A(v,null,"num","=")],"$|"+(a-b)+"|+|"+c+"|="+Math.abs(a-b)+"+"+Math.abs(c)+"="+v+"$")}
+   var d=nz(-9,9);v=Math.abs(a)*Math.abs(b)-Math.abs(c-d);return K("abs10_val","គណនា $|"+a+"|\\cdot|"+b+"|-|"+c+"-"+sgp(d)+"|$",[A(v,null,"num","=")],"$"+Math.abs(a)+"\\cdot"+Math.abs(b)+"-|"+(c-d)+"|="+v+"$")},
+ function(){var k1=ri(-5,3),k2=k1+ri(2,6),t=ri(0,3),a,b,cond;
+   if(t===0){a=2;b=-(k1+k2);cond="x>"+k2}else if(t===1){a=-2;b=k1+k2;cond="x<"+k1}else if(t===2){a=0;b=k2-k1;cond=k1+"<x<"+k2}else{var e=pick([1,-1]),kk=nz(-6,6);a=e;b=-e*kk;
+     return K("abs10_cond","ដោយដឹងថា $"+(e===1?"x>"+kk:"x<"+kk)+"$ ។ សរសេរ $|x"+sg(-kk,0)+"|$ ជាទម្រង់ $ax+b$ ។ រក $a$ និង $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"$x"+sg(-kk,0)+(e===1?">0":"<0")+"$ ⇒ $|x"+sg(-kk,0)+"|="+(e===1?"":"-")+"(x"+sg(-kk,0)+")="+kx(a,"x")+sg(b,0)+"$")}
+   return K("abs10_cond","ដោយដឹងថា $"+cond+"$ ។ សរសេរ $|"+abs10X(k1)+"|+|"+abs10X(k2)+"|$ ជាទម្រង់ $ax+b$ ។ រក $a$ និង $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"ដោះសញ្ញាតម្លៃដាច់ខាតតាមលក្ខខណ្ឌ ⇒ $"+(a?kx(a,"x"):"")+(a?sg(b,0):b)+"$")},
+ function(){var rat=Math.random()<.5,t=ri(0,1),tx,v;
+   if(t===0){var m=ri(2,9),n=rat?m*m:m*m+ri(1,2*m);tx="\\sqrt{"+n+"}";v=rat?1:0}
+   else{var P=[2,3,5,7],p=pick(P),q=pick(P.filter(function(z){return z!==p})),mm=ri(1,3);if(rat){tx="\\sqrt{"+p+"}\\times\\sqrt{"+(p*mm*mm)+"}";v=1}else{tx="\\sqrt{"+p+"}\\times\\sqrt{"+q+"}";v=0}}
+   return K("abs10_cls","តើ $"+tx+"$ ជាចំនួនសនិទានឬទេ? (ឆ្លើយ $1$ = ជា · $0$ = មិនមែន)",[A(v,null,"num","តម្លៃ =")],v?"តម្លៃគឺចំនួនគត់ ⇒ សនិទាន":"មិនអាចសរសេរជាប្រភាគ ⇒ អសនិទាន")}]);
+vx(23,2,[
+ function(){var a=ri(1,4),m=ri(-5,5),r=ri(1,5),b=-a*m,c=a*r,x1=m-r,x2=m+r,t=ri(0,1);
+   return K("abs10_eq","ដោះស្រាយ $|"+polyT([a,b])+"|="+c+"$ ។ "+(t?"រក $x_1<x_2$":"រកផលបូក $S=x_1+x_2$ និងផលគុណ $P=x_1x_2$ នៃឫស"),t?[A(x1,null,"num","x₁ ="),A(x2,null,"num","x₂ =")]:[A(x1+x2,null,"num","S ="),A(x1*x2,null,"num","P =")],"$"+polyT([a,b])+"=\\pm"+c+"$ ⇒ $x="+x1+"$ ឬ $x="+x2+"$"+(t?"":" ⇒ $S="+(x1+x2)+"$ , $P="+x1*x2+"$"))},
+ function(){var a=ri(-6,6),r=ri(1,7),t=ri(0,1),lt=Math.random()<.5;
+   if(t===0)return K("abs10_ineq","ដោះស្រាយ $|x"+sg(-a,0)+"|"+(lt?"<":">")+r+"$ ។ ចម្លើយ "+(lt?"$\\alpha<x<\\beta$":"$x<\\alpha$ ឬ $x>\\beta$")+" ។ រក $\\alpha$ និង $\\beta$",[A(a-r,null,"num","α ="),A(a+r,null,"num","β =")],"$|x-a|"+(lt?"<":">")+"r$ ⇒ $"+(lt?(a-r)+"<x<"+(a+r):"x<"+(a-r)+"\\ \\text{ឬ}\\ x>"+(a+r))+"$")
+   var q=ri(1,4),m=ri(-4,4),r2=ri(1,4),b=-q*m,c=q*r2;return K("abs10_ineq","ដោះស្រាយ $|"+polyT([q,b])+"|"+(lt?"<":">")+c+"$ ។ ចម្លើយ "+(lt?"$\\alpha<x<\\beta$":"$x<\\alpha$ ឬ $x>\\beta$")+" ។ រក $\\alpha$ និង $\\beta$",[A(m-r2,null,"num","α ="),A(m+r2,null,"num","β =")],"$"+polyT([q,b])+(lt?"\\in(-"+c+";"+c+")":"<-"+c+"\\ \\text{ឬ}\\ >"+c)+"$ ⇒ $\\alpha="+(m-r2)+"$ , $\\beta="+(m+r2)+"$")}]);
+vx(23,3,[
+ function(){var p=ri(1,3),q=ri(1,3);if(q===p)q=p+1;var a=p+q,c=p-q,x1=ri(-5,5),x2=ri(-5,5);while(x2===x1)x2++;var d=q*x1-p*x2,b=-p*x2-q*x1,lo=Math.min(x1,x2),hi=Math.max(x1,x2);
+   return K("abs10_2a","ដោះស្រាយ $|"+polyT([a,b])+"|=|"+polyT([c,d])+"|$ ។ រក $x_1<x_2$",[A(lo,null,"num","x₁ ="),A(hi,null,"num","x₂ =")],"$"+polyT([a,b])+"=\\pm("+polyT([c,d])+")$ ⇒ $x="+x1+"$ ឬ $x="+x2+"$")},
+ function(){var a=nz(-4,4),c=pick([-3,-2,-1,1,2,3].filter(function(v){return Math.abs(v)!==Math.abs(a)})),b=ri(-6,6),x0=ri(-4,4),d=Math.abs(a*x0+b)-c*x0,S=abs10Sol(a,b,c,d),sum=S.reduce(function(u,v){return fr(u.n*v.d+v.n*u.d,u.d*v.d)},fr(0,1));
+   return K("abs10_lin","ដោះស្រាយ $|"+polyT([a,b])+"|="+polyT([c,d])+"$ ។ រកចំនួនឫស និងផលបូកនៃឫសទាំងអស់ (ត្រួតពិនិត្យលក្ខខណ្ឌ $"+polyT([c,d])+"\\ge0$)",[A(S.length,null,"num","ចំនួនឫស ="),A(sum.s,sum.t,"num","ផលបូក =")],"ករណី ១ ៖ $"+polyT([a,b])+"="+polyT([c,d])+"$ · ករណី ២ ៖ $"+polyT([a,b])+"=-("+polyT([c,d])+")$ · ទុកតែឫសដែល $"+polyT([c,d])+"\\ge0$ ⇒ "+S.length+" ឫស ផលបូក $="+sum.t+"$")},
+ function(){var L=ri(10,80),e=ri(1,6);
+   return K("abs10_tol","📏 ផ្នែកម៉ាស៊ីនមួយមានប្រវែងកំណត់ $L="+L+"$ mm ដោយអាចមានកំហុស $\\varepsilon="+e+"$ mm ពោលគឺ $|x-"+L+"|\\le"+e+"$ ។ រកចន្លោះប្រវែងដែលទទួលយក $\\alpha\\le x\\le\\beta$ និងចំនួនប្រវែងជាចំនួនគត់ (mm) ដែលទទួលយក",[A(L-e,null,"num","α ="),A(L+e,null,"num","β ="),A(2*e+1,null,"num","ចំនួន =")],"$-"+e+"\\le x-"+L+"\\le"+e+"$ ⇒ $"+(L-e)+"\\le x\\le"+(L+e)+"$ · ចំនួនគត់ $="+(2*e)+"+1="+(2*e+1)+"$")},
+ function(){var p=ri(1,5),L=ri(1,5)*100,e=p*L/100;
+   return K("abs10_tol","⚖️ កញ្ចប់ស្ករមួយមានទម្ងន់កំណត់ $"+L+"$ g ដោយអនុញ្ញាតកំហុស $"+p+"\\%$ ពោលគឺ $|x-"+L+"|\\le"+p+"\\%\\times"+L+"$ ។ រកទម្ងន់ទាបបំផុត $\\alpha$ និងខ្ពស់បំផុត $\\beta$ ដែលទទួលយក",[A(L-e,null,"num","α ="),A(L+e,null,"num","β =")],"$\\varepsilon="+p+"\\%\\times"+L+"="+e+"$ ⇒ $"+(L-e)+"\\le x\\le"+(L+e)+"$")}]);
+P4[23].push(function(){var L=ri(10,80),e=ri(1,6);return Q("📏 ផ្នែកម៉ាស៊ីនមួយមានប្រវែងកំណត់ $L="+L+"$ mm ដោយអាចមានកំហុស $\\varepsilon="+e+"$ mm ពោលគឺ $|x-"+L+"|\\le"+e+"$ ។ រកចន្លោះប្រវែងដែលទទួលយក $\\alpha\\le x\\le\\beta$",[A(L-e,null,"num","α ="),A(L+e,null,"num","β =")],"$"+(L-e)+"\\le x\\le"+(L+e)+"$")},
+ function(){var a=ri(1,4),m=ri(10,30),r=ri(1,5),b=-a*m,c=a*r;return Q("🌡️ ឧបករណ៍ត្រួតសីតុណ្ហភាពរក្សា $T$ ឱ្យមាន $|"+polyT([a,b])+"|\\le"+c+"$ ។ រកសីតុណ្ហភាពទាបបំផុត $\\alpha$ និងខ្ពស់បំផុត $\\beta$ (°C)",[A(m-r,null,"num","α ="),A(m+r,null,"num","β =")],"$-"+c+"\\le"+polyT([a,b])+"\\le"+c+"$ ⇒ $"+(m-r)+"\\le T\\le"+(m+r)+"$")});
 /* ៣.១ សមីការដឺក្រេទី២ */
 vx(31,1,[
  function(){var a=nz(-4,4),r=nz(-6,6),b=-a*r;return K("s10_fac","ដោះស្រាយ $"+co(a,"x^2",true)+co(b,"x")+"=0$ ។ រកឫសមិនសូន្យ",[A(r,null,"num","x =")],"$x("+co(a,"x",true)+sg(b,0)+")=0$ ⇒ $x=0$ ឬ $x="+r+"$")},
