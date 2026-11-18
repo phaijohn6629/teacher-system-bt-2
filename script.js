@@ -2999,7 +2999,7 @@ function loadO() {
 function saveO() { try { sessionStorage.setItem(KEY_OBS, JSON.stringify(ob)); push("obs"); } catch (e) { } }
 function omn(i){return XM[Math.floor(i/4)]}
 function odt(i){var r=ob.r[i];if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
-function gs(i,g){var r=ob.r[i],s=0,n=0,k0=0;for(var a=0;a<g;a++)k0+=OC[a].items.length;OC[g].items.forEach(function(_,j){var v=r.sc[k0+j];if(v!=null&&v!==""){s+=+v;n++}});return n?s:""}
+function gs(i,g){var r=ob.r[i]; if(!r.sc)r.sc=[]; var s=0,n=0,k0=0;for(var a=0;a<g;a++)k0+=OC[a].items.length;OC[g].items.forEach(function(_,j){var v=r.sc[k0+j];if(v!=null&&v!==""){s+=+v;n++}});return n?s:""}
 function gt(i){var s=0,n=0;OC.forEach(function(_,g){var v=gs(i,g);if(v!==""){s+=v;n++}});return n?s:""}
 function lvl(p){return p>=ob.th[0]/100?OL[0]:p>=ob.th[1]/100?OL[1]:p>=ob.th[2]/100?OL[2]:OL[3]}
 function tots(i){var T=gt(i);return T===""?"សរុប៖ —":"សរុប៖ <b>"+T+" / 165</b> ("+(T/165*100).toFixed(1)+"%) · <b>"+lvl(T/165)+"</b>"}
@@ -3016,7 +3016,7 @@ var isAdmin = (isAdm());
 var canEditObs = (isAdmin || (who && who.id === r.o));
 b+=(i%4===0?"<tr class=tr><td colspan=9>"+M[omn(i)-1]+" "+(ob.y+(omn(i)>=11?0:1))+"</td></tr>":"")+"<tr><td>"+(i+1)+"</td><td>សប្ដាហ៍ទី"+"១២៣៤"[i%4]+"</td><td><input type=date data-o='"+i+"|dt' value='"+iso(odt(i))+"' "+(isAdmin?"":"readonly")+"></td><td><select data-o='"+i+"|t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select></td><td><select data-o='"+i+"|o' "+(canEditObs?"":"disabled")+">"+oopt(r.o)+"</select></td><td><select data-o='"+i+"|cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select></td><td><select data-o='"+i+"|tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select></td><td>"+(t===""?"—":t+"/165 · <b>អ្វីជា…</b>")+"</td><td><button data-of='"+i+"'>បើកទម្រង់</button></td></tr>"});
 $("ov1t").innerHTML="<thead><tr><th>ល.រ</th><th>សប្ដាហ៍</th><th>កាលបរិច្ឆេទ</th><th>គ្រូត្រូវសង្កេត</th><th>អ្នកសង្កេត</th><th>ថ្នាក់</th><th>ម៉ោង</th><th>លទ្ធផល</th><th></th></tr></thead><tbody>"+b+"</tbody>"}
-function renderO2(){var i=oc,r=ob.r[i],h="";
+function renderO2(){var i=oc,r=ob.r[i]; if(!r.sc)r.sc=[]; if(!r.cm)r.cm=[]; var h="";
 $("oi").innerHTML=ob.r.map(function(x,k){return"<option value="+k+(k===i?" selected":"")+">"+(k+1)+". "+M[omn(k)-1]+" ស."+"១២៣៤"[k%4]+" — "+esc(tn(x.t))+"</option>"}).join("");
 var isAdmin = (isAdm());
 var canEditObs = (isAdmin || (who && who.id === r.o));
