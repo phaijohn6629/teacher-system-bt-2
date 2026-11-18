@@ -66,6 +66,7 @@
    ======================================================================== */
 
 var KEY="teachers-v4",M=["មករា","កុម្ភៈ","មីនា","មេសា","ឧសភា","មិថុនា","កក្កដា","សីហា","កញ្ញា","តុលា","វិច្ឆិកា","ធ្នូ"];
+var KEY_EX=KEY+"-ex",KEY_OBS=KEY+"-obs";
 var RL=["ប្រធាន","អនុប្រធាន","សមាជិក"], DG=["គ្រូបង្រៀនកម្រិតឧត្តម","គ្រូបង្រៀនកម្រិតមូលដ្ឋាន","គ្រូកិច្ចសន្យា"];
 var SEED=[];
 var D2=["កម្រិត ១","កម្រិត ២"],SK={T001:{lv:["10","11","12"],w:{}},T002:{lv:D2.slice(),w:{}},T003:{lv:["9","10"],w:{}},T004:{lv:["9","10"],w:{}},T005:{lv:["10","11"],w:{}},T006:{lv:D2.slice(),w:{}},T007:{lv:D2.slice(),w:{}},T008:{lv:D2.slice(),w:{}}};
@@ -617,10 +618,25 @@ $("kexp").onclick=function(){
 
 /* ផ្ទាំងទី ៣៖ ថ្នាក់និទស្សន៍ */
 var DY=["ច័ន្ទ","អង្គារ","ពុធ","ព្រហស្បតិ៍","សុក្រ"],XM=[11,12,1,2,3,4,5,6,7,8,9,10],ex=loadX();
-function loadX(){
-  try{var s=sessionStorage.getItem(KEY+"-x");if(s){var o=JSON.parse(s);while(o.r.length<12)o.r.push({t:["T001","T002","T003","T004"][o.r.length-8]||"T001",tm:"",sc:"",nt:""});return o}}catch(e){}
-  return{d:2,w:0,y:2026,r:["T001","T002","T003","T004","T005","T006","T007","T008","T001","T002","T003","T004"].map(function(i){return{t:i,tm:"",sc:"",nt:""}})}}
-function savX(){try{sessionStorage.setItem(KEY+"-x",JSON.stringify(ex));push("ex");}catch(e){}}
+function loadX() {
+  try {
+    var s = sessionStorage.getItem(KEY_EX);
+    if (!s) { // Migration
+      s = sessionStorage.getItem(KEY + "-x");
+      if (s) {
+        sessionStorage.setItem(KEY_EX, s);
+        sessionStorage.removeItem(KEY + "-x");
+      }
+    }
+    if (s) {
+      var o = JSON.parse(s);
+      while (o.r.length < 12) o.r.push({ t: ["T001", "T002", "T003", "T004"][o.r.length - 8] || "T001", tm: "", sc: "", nt: "" });
+      return o
+    }
+  } catch (e) { }
+  return { d: 2, w: 0, y: 2026, r: ["T001", "T002", "T003", "T004", "T005", "T006", "T007", "T008", "T001", "T002", "T003", "T004"].map(function (i) { return { t: i, tm: "", sc: "", nt: "" } }) }
+}
+function savX() { try { sessionStorage.setItem(KEY_EX, JSON.stringify(ex)); push("ex"); } catch (e) { } }
 function xm(i){var r=ex.r[i];if(r.dt){var p=r.dt.split("-");return +p[1]}return r.m||XM[i]}
 function xyr(m){return ex.y+(m>=11?0:1)}
 function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
@@ -2966,8 +2982,21 @@ var OK="teachers-v4-o",OC=[{"t": "ការរៀបចំ", "q": "តើគ្�
 function defO(){var ids=data.map(function(t){return t.id}),r=[];
   for(var i=0;i<36;i++){r.push({t:ids.length?ids[i%ids.length]:"",o:ids.length?ids[(i+1)%ids.length]:"",sub:"គណិតវិទ្យា",cl:"",tm:"",rm:"",n:"",ab:"",ch:"",ls:"",ct:"",dt:"",sc:[],cm:[],g:["","","","","",""]})}
   return{d:2,y:2026,th:[90,75,50],r:r}}
-function loadO(){try{var s=sessionStorage.getItem(OK);if(s)return JSON.parse(s)}catch(e){}return defO()}
-function saveO(){try{sessionStorage.setItem(OK,JSON.stringify(ob));push("obs");}catch(e){}}
+function loadO() {
+  try {
+    var s = sessionStorage.getItem(KEY_OBS);
+    if (!s) { // Migration
+      s = sessionStorage.getItem(OK);
+      if (s) {
+        sessionStorage.setItem(KEY_OBS, s);
+        sessionStorage.removeItem(OK);
+      }
+    }
+    if (s) return JSON.parse(s)
+  } catch (e) { }
+  return defO()
+}
+function saveO() { try { sessionStorage.setItem(KEY_OBS, JSON.stringify(ob)); push("obs"); } catch (e) { } }
 function omn(i){return XM[Math.floor(i/4)]}
 function odt(i){var r=ob.r[i];if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
 function gs(i,g){var r=ob.r[i],s=0,n=0,k0=0;for(var a=0;a<g;a++)k0+=OC[a].items.length;OC[g].items.forEach(function(_,j){var v=r.sc[k0+j];if(v!=null&&v!==""){s+=+v;n++}});return n?s:""}
