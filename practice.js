@@ -705,6 +705,55 @@ mix(G[51],3,[
    return IQ("ig_vp","គណនាមាឌនៃសូលីតដែលកើតពីការបង្វិលក្រាប $y="+cc(c)+"x^2$ ($0\\le x\\le "+b+"$) ជុំវិញអ័ក្ស $x$ (ទុក $\\pi$)",[A(igPiA(f),igPiT(f),"num","V =")],"$V=\\pi\\int_0^{"+b+"}"+(c===1?"":c*c)+"x^4dx=\\pi\\left["+(c===1?"":c*c)+"\\dfrac{x^5}{5}\\right]_0^{"+b+"}="+igPiT(f)+"$")},
  function(){var a=ri(1,3),c=ri(0,3),b=ri(1,3),f=fr(Math.pow(a*b+c,3)-Math.pow(c,3),3*a);
    return IQ("ig_vl","គណនាមាឌនៃសូលីតដែលកើតពីការបង្វិលបន្ទាត់ $y="+polyT([a,c])+"$ ($0\\le x\\le "+b+"$) ជុំវិញអ័ក្ស $x$ (ទុក $\\pi$)",[A(igPiA(f),igPiT(f),"num","V =")],"$V=\\pi\\left[\\dfrac{("+polyT([a,c])+")^3}{"+3*a+"}\\right]_0^{"+b+"}=\\pi\\cdot\\dfrac{"+Math.pow(a*b+c,3)+(c?"-"+Math.pow(c,3):"")+"}{"+3*a+"}="+igPiT(f)+"$")}],.55);
+/* ---- ចំនួនកុំផ្លិច៖ ដំណើរការ · ឫសការេ · ទម្រង់ត្រីកោណមាត្រ · ដឺម័រ · ឫសទី n · ទីតាំងធរណីមាត្រ (បង្កើតចម្លើយមុន) ---- */
+function cpxP(n,d,r){return{n:n,d:d,r:r||1}}
+var cpxCS=[[cpxP(1,1),cpxP(0,1)],[cpxP(1,2,3),cpxP(1,2)],[cpxP(1,2),cpxP(1,2,3)],[cpxP(0,1),cpxP(1,1)],[cpxP(-1,2),cpxP(1,2,3)],[cpxP(-1,2,3),cpxP(1,2)],
+ [cpxP(-1,1),cpxP(0,1)],[cpxP(-1,2,3),cpxP(-1,2)],[cpxP(-1,2),cpxP(-1,2,3)],[cpxP(0,1),cpxP(-1,1)],[cpxP(1,2),cpxP(-1,2,3)],[cpxP(1,2,3),cpxP(-1,2)]];   /* cos , sin នៃ m·π/6 */
+function cpxSc(p,R){return cpxP(p.n*R,p.d,p.r)}
+function cpxPT(p){if(!p.n)return"0";var f=fr(p.n,p.d);if(p.r===1)return f.t;
+  if(f.d===1)return(f.n===1?"":f.n===-1?"-":f.n)+"\\sqrt{3}";return(f.n<0?"-":"")+"\\dfrac{"+(Math.abs(f.n)===1?"":Math.abs(f.n))+"\\sqrt{3}}{"+f.d+"}"}
+function cpxPE(p){return"("+p.n+"/"+p.d+(p.r===3?"*sqrt(3)":"")+")"}
+function cpxZT(re,im){var r=cpxPT(re);if(!im.n)return r;var f=fr(im.n,im.d),b=(im.r===1&&Math.abs(f.n)===1&&f.d===1)?(f.n<0?"-":"")+"i":cpxPT(im)+"\\,i";
+  return re.n?r+(b[0]==="-"?"":"+")+b:b}
+function cpxZE(re,im){return cpxPE(re)+"+"+cpxPE(im)+"*i"}
+function cpxAg(m,q){var f=fr(m,q),a=Math.abs(f.n);return f.n===0?"0":(f.n<0?"-":"")+(f.d===1?(a===1?"":a)+"\\pi":"\\dfrac{"+(a===1?"":a)+"\\pi}{"+f.d+"}")}
+function cpxAe(m,q){var f=fr(m,q);return f.n===0?"0":"("+f.s+")*pi"}
+mix(G[11],1,[
+ function(){var p=nz(-5,5),q=nz(-5,5),c=nz(-4,4),d=nz(-4,4);
+   return KQ("cpx_div","គណនា $\\dfrac{"+cx(p*c-q*d,p*d+q*c)+"}{"+cx(c,d)+"}$ ជាទម្រង់ $a+bi$",[A(cx(p,q),null,"num","z =")],"គុណភាគយក និងភាគបែងនឹង $"+cx(c,-d)+"$ ⇒ ភាគបែង $="+(c*c+d*d)+"$ ⇒ $z="+cx(p,q)+"$")},
+ function(){var a=nz(-5,5),b=nz(-5,5);
+   return KQ("cpx_sq","គណនា $("+cx(a,b)+")^2$",[A(cx(a*a-b*b,2*a*b),null,"num","z² =")],"$("+a+")^2+2("+a+")("+b+")i+("+b+")^2i^2="+cx(a*a-b*b,2*a*b)+"$")},
+ function(){var a=nz(-9,9),b=nz(-9,9);
+   return KQ("cpx_cj","គេឱ្យ $z="+cx(a,b)+"$ ។ រកចំនួនកុំផ្លិចឆ្លាស់ $\\bar z$ និងគណនា $z\\bar z$",[A(cx(a,-b),null,"num","z̄ ="),A(a*a+b*b,null,"num","z·z̄ =")],"$\\bar z="+cx(a,-b)+"$ · $z\\bar z=|z|^2="+(a*a)+"+"+(b*b)+"="+(a*a+b*b)+"$")},
+ function(){var a=nz(-3,3),c,x=nz(-4,4),y=nz(-4,4),b1=ri(-4,4),b2=ri(-4,4);do{c=nz(-3,3)}while(Math.abs(c)===Math.abs(a));
+   var d1=(a-c)*x+b1,d2=(a+c)*y+b2;
+   return KQ("cpx_lin","ដោះស្រាយក្នុង $\\mathbb C$ ៖ $"+kx(a,"z")+"+("+cx(b1,b2)+")="+kx(c,"\\bar z")+"+("+cx(d1,d2)+")$",[A(cx(x,y),null,"num","z =")],"តាង $z=x+yi$ ⇒ $\\bar z=x-yi$ · ផ្នែកពិត ៖ $"+kx(a-c,"x")+"="+(d1-b1)+"$ ⇒ $x="+x+"$ · ផ្នែកនិម្មិត ៖ $"+kx(a+c,"y")+"="+(d2-b2)+"$ ⇒ $y="+y+"$")}],.55);
+mix(G[11],2,[
+ function(){var al=nz(-4,4),be=ri(1,4),A0=ri(1,3);
+   return KQ("cpx_q","ដោះស្រាយក្នុង $\\mathbb C$ ៖ $"+co(A0,"z^2",true)+co(-2*A0*al,"z")+sg(A0*(al*al+be*be),0)+"=0$ (ឫសដែលមានផ្នែកនិម្មិតអវិជ្ជមានជាមុន)",[A(cx(al,-be),null,"num","z₁ ="),A(cx(al,be),null,"num","z₂ =")],"$\\Delta="+(4*A0*A0*al*al-4*A0*A0*(al*al+be*be))+"<0=("+(2*A0*be)+"i)^2$ ⇒ $z=\\dfrac{"+(2*A0*al)+"\\pm "+(2*A0*be)+"i}{"+(2*A0)+"}="+cx(al,be)+"$ ឬ $"+cx(al,-be)+"$")},
+ function(){var a=ri(1,5),b=nz(-5,5);
+   return KQ("cpx_rt","រកឫសការេនៃ $z="+cx(a*a-b*b,2*a*b)+"$ ដែលមានផ្នែកពិតវិជ្ជមាន (ឧបមា $w=x+yi$ ដែល $w^2=z$)",[A(cx(a,b),null,"num","w =")],"$x^2-y^2="+(a*a-b*b)+"$ , $2xy="+(2*a*b)+"$ , $x^2+y^2=|z|="+(a*a+b*b)+"$ ⇒ $w="+cx(a,b)+"$ (ឬ $"+cx(-a,-b)+"$)")},
+ function(){var m=pick([1,2,4,5,7,8,10,11]),r=pick([2,4,6]),re=cpxSc(cpxCS[m][0],r),im=cpxSc(cpxCS[m][1],r),th=cpxAg(m,6);
+   return KQ("cpx_ta","សរសេរ $z="+r+"\\left(\\cos"+th+"+i\\sin"+th+"\\right)$ ជាទម្រង់ពិជគណិត $a+bi$ ។ រក $a$ និង $b$",[A(cpxPE(re),cpxPT(re),"num","a ="),A(cpxPE(im),cpxPT(im),"num","b =")],"$\\cos"+th+"="+cpxPT(cpxCS[m][0])+"$ , $\\sin"+th+"="+cpxPT(cpxCS[m][1])+"$ ⇒ $z="+cpxZT(re,im)+"$")},
+ function(){var kk=ri(1,3);
+   if(Math.random()<.5){var m=pick([1,2,4,5,7,8,10,11]),mm=m>6?m-12:m,re=cpxSc(cpxCS[m][0],2*kk),im=cpxSc(cpxCS[m][1],2*kk);
+     return KQ("cpx_at","សរសេរ $z="+cpxZT(re,im)+"$ ជាទម្រង់ត្រីកោណមាត្រ $r(\\cos\\theta+i\\sin\\theta)$ ដែល $-\\pi<\\theta\\le\\pi$ ។ រក $r$ និង $\\theta$",[A(2*kk,null,"num","r ="),A(cpxAe(mm,6),cpxAg(mm,6),"num","θ =")],"$r=\\sqrt{a^2+b^2}="+2*kk+"$ · $\\cos\\theta="+cpxPT(cpxCS[m][0])+"$ , $\\sin\\theta="+cpxPT(cpxCS[m][1])+"$ ⇒ $\\theta="+cpxAg(mm,6)+"$")}
+   var sa=pick([1,-1]),sb=pick([1,-1]),q4=sa>0?(sb>0?1:-1):(sb>0?3:-3);
+   return KQ("cpx_at","សរសេរ $z="+cx(sa*kk,sb*kk)+"$ ជាទម្រង់ត្រីកោណមាត្រ $r(\\cos\\theta+i\\sin\\theta)$ ដែល $-\\pi<\\theta\\le\\pi$ ។ រក $r$ និង $\\theta$",[A((kk===1?"":kk+"*")+"sqrt(2)",(kk===1?"":kk)+"\\sqrt{2}","num","r ="),A(cpxAe(q4,4),cpxAg(q4,4),"num","θ =")],"$r=\\sqrt{"+kk*kk+"+"+kk*kk+"}="+(kk===1?"":kk)+"\\sqrt2$ · $\\tan\\theta="+(sa*sb)+"$ ⇒ $\\theta="+cpxAg(q4,4)+"$")}],.55);
+mix(G[11],3,[
+ function(){var m=pick([1,2,4,5,10,11]),n=ri(2,8),R=Math.pow(2,n),i2=(m*n)%12,re=cpxSc(cpxCS[i2][0],R),im=cpxSc(cpxCS[i2][1],R),z0=cpxZT(cpxSc(cpxCS[m][0],2),cpxSc(cpxCS[m][1],2));
+   return KQ("cpx_dm","ប្រើរូបមន្តដឺម័រ គណនា $\\left("+z0+"\\right)^{"+n+"}$ ជាទម្រង់ $a+bi$",[A(cpxPE(re),cpxPT(re),"num","a ="),A(cpxPE(im),cpxPT(im),"num","b =")],"$z=2\\left(\\cos"+cpxAg(m,6)+"+i\\sin"+cpxAg(m,6)+"\\right)$ ⇒ $z^{"+n+"}="+R+"\\left(\\cos"+cpxAg(m*n,6)+"+i\\sin"+cpxAg(m*n,6)+"\\right)="+cpxZT(re,im)+"$")},
+ function(){var n=ri(2,5)*2,sb=pick([1,-1]),z=[1,0];for(var i=0;i<n;i++)z=[z[0]-sb*z[1],z[0]*sb+z[1]];
+   return KQ("cpx_dm1","ប្រើទម្រង់ត្រីកោណមាត្រ និងរូបមន្តដឺម័រ គណនា $("+cx(1,sb)+")^{"+n+"}$",[A(z[0],null,"num","a ="),A(z[1],null,"num","b =")],"$"+cx(1,sb)+"=\\sqrt2\\left(\\cos\\left("+(sb<0?"-":"")+"\\frac{\\pi}{4}\\right)+i\\sin\\left("+(sb<0?"-":"")+"\\frac{\\pi}{4}\\right)\\right)$ ⇒ $z^{"+n+"}=2^{"+n/2+"}(\\cos "+cpxAg(sb*n,4)+"+i\\sin "+cpxAg(sb*n,4)+")="+cx(z[0],z[1])+"$")},
+ function(){var n=pick([3,6]),j=n===3?4:2,re=cpxCS[j][0],im=cpxCS[j][1];
+   return KQ("cpx_ru","ឫសទី $"+n+"$ នៃ $1$ គឺ $z^{"+n+"}=1$ ។ រកឫសដែលមានអាគុយម៉ង់ $\\dfrac{2\\pi}{"+n+"}$ ជាទម្រង់ $a+bi$",[A(cpxZE(n===3?re:cpxCS[2][0],n===3?im:cpxCS[2][1]),cpxZT(n===3?re:cpxCS[2][0],n===3?im:cpxCS[2][1]),"num","z =")],"$z_k=\\cos\\dfrac{2k\\pi}{"+n+"}+i\\sin\\dfrac{2k\\pi}{"+n+"}$ ⇒ $k=1$ ៖ $z="+cpxZT(n===3?re:cpxCS[2][0],n===3?im:cpxCS[2][1])+"$")},
+ function(){var kk=pick([2,4,6]),re=cpxP(-kk,2),im=cpxP(kk,2,3);
+   return KQ("cpx_rc","ដោះស្រាយ $z^3="+kk*kk*kk+"$ ក្នុង $\\mathbb C$ ។ សរសេរឫសដែលមានផ្នែកនិម្មិតវិជ្ជមាន",[A(cpxZE(re,im),cpxZT(re,im),"num","z =")],"$z=\\sqrt[3]{"+kk*kk*kk+"}\\left(\\cos\\dfrac{2\\pi}{3}+i\\sin\\dfrac{2\\pi}{3}\\right)="+kk+"\\left(-\\dfrac12+\\dfrac{\\sqrt3}{2}i\\right)="+cpxZT(re,im)+"$")},
+ function(){var a1=ri(-4,4),b1=ri(-4,4),r=ri(1,6);
+   return KQ("cpx_ci","ក្នុងប្លង់កុំផ្លិច សំណុំចំណុច $M(z)$ ដែល $|z-("+cx(a1,b1)+")|="+r+"$ ជារង្វង់មួយ ។ រកកូអរដោនេផ្ចិត $(x_0;y_0)$ និងកាំ $R$",[A(a1,null,"num","x₀ ="),A(b1,null,"num","y₀ ="),A(r,null,"num","R =")],"$|z-z_A|=R$ ⇒ $M$ ស្ថិតនៅចម្ងាយ $R$ ពី $A("+a1+";"+b1+")$ ⇒ $R="+r+"$")},
+ function(){var a1=ri(-3,3),b1=ri(-3,3),a2,b2;do{a2=ri(-3,3);b2=ri(-3,3)}while(b2===b1);
+   var m=fr(-(a2-a1),b2-b1),p=fr(a2*a2+b2*b2-a1*a1-b1*b1,2*(b2-b1)),pre=Math.random()<.4?"📡 ស្ថានីយ៍ពីរនៅ $A$ និង $B$ ក្នុងប្លង់កុំផ្លិច ។ ":"";
+   return KQ("cpx_bs",pre+"សំណុំចំណុច $M(z)$ ដែល $|z-("+cx(a1,b1)+")|=|z-("+cx(a2,b2)+")|$ ជាបន្ទាត់មួយ (មេដ្យាទ័រនៃអង្កត់ $AB$) ។ សរសេរជា $y=mx+p$ ។ រក $m$ និង $p$",[A(m.s,m.t,"num","m ="),A(p.s,p.t,"num","p =")],"$(x"+sg(-a1,0)+")^2+(y"+sg(-b1,0)+")^2=(x"+sg(-a2,0)+")^2+(y"+sg(-b2,0)+")^2$ ⇒ $"+2*(a2-a1)+"x"+sg(2*(b2-b1),0)+"y="+(a2*a2+b2*b2-a1*a1-b1*b1)+"$ ⇒ $m="+m.t+"$ , $p="+p.t+"$")}],.55);
 /* ---- កោនិក ---- */
 mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
    if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
