@@ -173,7 +173,7 @@ class SlidePresenter {
             "  <button class=\"sp-btn\" id=\"sp-prev\">◀ ថយ</button>",
             "  <button class=\"sp-btn\" id=\"sp-next\">បន្ត ▶</button>",
             "  <button class=\"sp-btn\" id=\"sp-all\">👁️ ទាំងអស់</button>",
-            "  <button class=\"sp-btn\" id=\"sp-pen\">✏️ គូស</button>",
+            "  <button class=\"sp-btn\" id=\"sp-video\">🎬 វីដេអូ Manim</button>\n  <button class=\"sp-btn\" id=\"sp-pen\">✏️ គូស</button>",
             "  <button class=\"sp-btn\" id=\"sp-clear\">🧹 លុប</button>",
             "  <button class=\"sp-btn\" id=\"sp-dark\">🌓 ពន្លឺ</button>",
             "  <button class=\"sp-btn\" id=\"sp-close\" style=\"color:#FCA5A5;font-weight:bold;\">✕ បិទ</button>",
@@ -213,6 +213,8 @@ class SlidePresenter {
             this.renderSlide();
         };
         document.getElementById("sp-mode-select").onchange = (e) => { this.mode = e.target.value; document.getElementById("sp-kicker").innerText = e.target.options[e.target.selectedIndex].text; this.renderSlide(); };
+        
+        document.getElementById("sp-video").onclick = () => this.toggleVideoModal();
         document.getElementById("sp-pen").onclick = (e) => { this.isDrawing = !this.isDrawing; this.canvas.classList.toggle("active", this.isDrawing); e.target.style.background = this.isDrawing ? "#1F4FBF" : ""; };
         document.getElementById("sp-clear").onclick = () => { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); };
         this.boundKeyHandler = (e) => {
@@ -288,6 +290,59 @@ class SlidePresenter {
         }
         this.renderKaTeXDirect(body);
     }
+    
+    extractVideoUrl(lesson) {
+        if (!lesson) return "";
+        if (lesson.video || lesson.youtube || lesson.url) return lesson.video || lesson.youtube || lesson.url;
+        const raw = JSON.stringify(lesson);
+        const m = raw.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+        return m ? "https://www.youtube.com/embed/" + m[1] + "?autoplay=1" : "";
+    }
+    toEmbedUrl(url) {
+        if (!url) return "";
+        const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+        if (m) return "https://www.youtube.com/embed/" + m[1] + "?autoplay=1";
+        return url;
+    }
+    toggleVideoModal() {
+        let modal = document.getElementById("sp-video-modal");
+        if (modal) { modal.remove(); return; }
+        const db = window.LP_DB || {};
+        const lesson = db[this.lessonKey] || {};
+        const autoUrl = this.extractVideoUrl(lesson);
+        modal = document.createElement("div");
+        modal.id = "sp-video-modal";
+        modal.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(900px,92vw);background:#0F172A;color:#F8FAFC;border:2px solid #3B82F6;border-radius:18px;padding:18px;z-index:1000001;box-shadow:0 25px 60px rgba(0,0,0,0.75);font-family:\"Khmer OS Battambang\",sans-serif;";
+        modal.innerHTML = [
+            "<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;\">",
+            "  <strong style=\"font-size:17px;color:#60A5FA;\">🎬 វីដេអូគំនូរជីវចល Manim / YouTube</strong>",
+            "  <div style=\"display:flex;gap:8px;flex:1;max-width:520px;\">",
+            "    <input id=\"sp-video-input\" type=\"text\" placeholder=\"បិទភ្ជាប់តំណ YouTube ឬ MP4 នៅទីនេះ...\" value=\"" + autoUrl + "\" style=\"flex:1;padding:6px 12px;border-radius:8px;border:1px solid #334155;background:#1E293B;color:#FFF;font-size:14px;\">",
+            "    <button id=\"sp-video-load\" style=\"background:#2563EB;color:#FFF;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;\">ចាក់</button>",
+            "  </div>",
+            "  <button id=\"sp-video-close\" style=\"background:#EF4444;color:#FFF;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;\">✕</button>",
+            "</div>",
+            "<div id=\"sp-video-stage\" style=\"width:100%;aspect-ratio:16/9;background:#020617;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;\"></div>"
+        ].join("\n");
+        document.getElementById("slide-presenter-overlay").appendChild(modal);
+        const renderStage = (rawUrl) => {
+            const stage = document.getElementById("sp-video-stage");
+            const embed = this.toEmbedUrl(rawUrl.trim());
+            if (!embed) {
+                stage.innerHTML = "<div style=\"text-align:center;color:#94A3B8;padding:20px;\">សូមបិទភ្ជាប់តំណ YouTube ឬឯកសារវីដេអូ Manim (.mp4) ខាងលើ រួចចុចប៊ូតុង <b>«ចាក់»</b></div>";
+                return;
+            }
+            if (/\.mp4($|\?)/i.test(embed)) {
+                stage.innerHTML = `<video src="${embed}" controls autoplay style="width:100%;height:100%;object-fit:contain;"></video>`;
+            } else {
+                stage.innerHTML = `<iframe src="${embed}" style="width:100%;height:100%;border:none;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+            }
+        };
+        renderStage(autoUrl);
+        document.getElementById("sp-video-load").onclick = () => renderStage(document.getElementById("sp-video-input").value);
+        document.getElementById("sp-video-close").onclick = () => modal.remove();
+    }
+
     nextStep() {
         const lines = this.slides[this.currentSlide].lines || [];
         if (this.currentStep < lines.length - 1) { this.currentStep++; this.renderSlide(); }
