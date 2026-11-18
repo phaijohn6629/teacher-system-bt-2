@@ -422,10 +422,10 @@ G[61]={1:function(){var k=nz(-3,3),c=nz(-4,4);
     return Q("ចំនួនបាក់តេរីកើនតាម $y'=ky$ ។ ពេល $t=0$ មាន $"+y0+"$ ហើយពេល $t="+T+"$ មាន $"+(y0*k)+"$ ។ រក $k$",[A("ln("+k+")/"+T,"\\frac{\\ln "+k+"}{"+T+"}","num","k =")],"$y="+y0+"e^{kt}$ · $"+(y0*k)+"="+y0+"e^{"+T+"k}\\iff e^{"+T+"k}="+k+"\\iff k=\\frac{\\ln "+k+"}{"+T+"}$")}};
 G[62]={1:function(){var r1=nz(-4,4),r2=nz(-4,4);while(r1===r2)r2=nz(-4,4);var lo=Math.min(r1,r2),hi=Math.max(r1,r2),p=-(r1+r2),q=r1*r2;
     return Q("សមីការសម្គាល់នៃ $y''"+co(p,"y'")+co(q,"y")+"=0$ មានឫស $r_1<r_2$ ។ រក $r_1$ និង $r_2$",[A(lo,null,"num","r₁ ="),A(hi,null,"num","r₂ =")],"$r^2"+co(p,"r")+sg(q,0)+"=0\\iff r="+lo+"$ ឬ $r="+hi+"$ ⇒ $y=C_1e^{"+lo+"x}+C_2e^{"+hi+"x}$")},
-  2:function(){var w=ri(1,4),A0=nz(-3,3),B=nz(-3,3)*w;
-    return Q("ដោះស្រាយ $y''+"+(w*w)+"y=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+B+"$",[A(A0+"cos("+w+"x)+("+(B/w)+")sin("+w+"x)",co(A0,"\\cos "+w+"x",true)+co(B/w,"\\sin "+w+"x",!A0)||"0","expr","y =")],"$y=C_1\\cos "+w+"x+C_2\\sin "+w+"x$ · $C_1="+A0+"$ · $"+w+"C_2="+B+"$ ⇒ $C_2="+(B/w)+"$")},
+  2:function(){var w=ri(1,4),A0=ri(-5,5),B=nz(-9,9),f=fr(B,w),wt=w===1?"x":w+"x";
+    return Q("ដោះស្រាយ $y''"+co(w*w,"y")+"=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+B+"$ ។ ចម្លើយទូទៅមានរាង $y=A\\cos("+wt+")+B\\sin("+wt+")$ ។ រកតម្លៃ $A$ និង $B$",[A(A0,null,"num","A ="),A(f.s,f.t,"num","B =")],"$y(0)=A="+A0+"$ · $y'(x)=-"+(w===1?"":w)+"A\\sin("+wt+")+"+(w===1?"":w)+"B\\cos("+wt+")$ ⇒ $y'(0)="+w+"B="+B+"$ ⇒ $B="+f.t+"$")},
   3:function(){var r=nz(-3,3),A0=ri(1,3),B=ri(-3,3);   /* ឫសឌុប y''-2ry'+r²y=0 → (C1 + C2 x)e^{rx} */
-    return Q("ដោះស្រាយ $y''"+co(-2*r,"y'")+"+"+(r*r)+"y=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+B+"$",[A("("+A0+"+("+(B-r*A0)+")x)e^("+r+"x)",null,"expr","y =")],"ឫសឌុប $r="+r+"$ ⇒ $y=(C_1+C_2x)e^{"+r+"x}$ · $C_1="+A0+"$ · $C_2+"+sgp(r)+"C_1="+B+"$ ⇒ $C_2="+(B-r*A0)+"$")}};
+    return Q("ដោះស្រាយ $y''"+co(-2*r,"y'")+co(r*r,"y")+"=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+B+"$",[A("("+A0+"+("+(B-r*A0)+")x)e^("+r+"x)",null,"expr","y =")],"ឫសឌុប $r="+r+"$ ⇒ $y=(C_1+C_2x)e^{"+r+"x}$ · $C_1="+A0+"$ · $C_2+"+sgp(r)+"C_1="+B+"$ ⇒ $C_2="+(B-r*A0)+"$")}};
 /* ---- ៧. ប្រូបាប ---- */
 function cnk(n,k){var r=1;for(var i=1;i<=k;i++)r=r*(n-k+i)/i;return Math.round(r)}
 G[71]={1:function(){var s=ri(2,12),n=0;for(var a=1;a<=6;a++)for(var b=1;b<=6;b++)if(a+b===s)n++;var f=fr(n,36);
@@ -480,8 +480,8 @@ mix(G[11],3,[
 mix(G[61],1,[function(){var a=nz(-3,3),b=ri(-4,4),c=ri(-3,3),F=fr(a,2);return KQ("d1","រកចម្លើយនៃ $y'="+polyT([a,b])+"$ ដែល $y(0)="+c+"$",[A("("+F.s+")x^2"+(b?sg(b,0)+"x":"")+sg(c,0),cfT(F)+"x^2"+(b?co(b,"x"):"")+(c?sg(c,0):""),"expr","y =")],"$y=\\int("+polyT([a,b])+")dx+C$ · $C=y(0)="+c+"$")}]);
 mix(G[61],2,[function(){var a=-ri(1,4),b=nz(-8,8),f=fr(-b,a);return KQ("d2","អនុគមន៍ $y$ ផ្ទៀងផ្ទាត់ $y'="+a+"y"+sg(b,0)+"$ ។ គណនា $\\displaystyle\\lim_{x\\to+\\infty}y(x)$",[A(f.s,f.t,"num","lim =")],"$y=Ce^{"+a+"x}"+(f.n<0?"":"+")+f.t+"$ · $e^{"+a+"x}\\to0$ ⇒ $"+f.t+"$")}]);
 mix(G[61],3,[function(){var T=ri(2,10),k=pick([2,3,4]);return KQ("d3","ចំនួនមួយកើនតាម $y'=ky$ ហើយកើនដល់ $"+k+"$ ដងក្នុងរយៈពេល $"+T+"$ ម៉ោង ។ រក $k$",[A("ln("+k+")/"+T,"\\frac{\\ln "+k+"}{"+T+"}","num","k =")],"$y=y_0e^{kt}$ · $e^{"+T+"k}="+k+"$ ⇒ $k=\\frac{\\ln "+k+"}{"+T+"}$")}]);
-mix(G[62],1,[function(){var r=nz(-4,4);return KQ("e1","សមីការ $y''"+co(-2*r,"y'")+"+"+r*r+"y=0$ មានសមីការសម្គាល់ដែលមានឫសឌុប ។ រកឫសនោះ",[A(r,null,"num","r =")],"$r^2"+co(-2*r,"r")+"+"+r*r+"=(r"+sg(-r,0)+")^2$")}]);
-mix(G[62],2,[function(){var al=ri(-3,3),be=ri(1,4);return KQ("e2","ចម្លើយទូទៅនៃ $y''"+co(-2*al,"y'")+"+"+(al*al+be*be)+"y=0$ មានរាង $y=e^{\\alpha x}(A\\cos\\beta x+B\\sin\\beta x)$ ($\\beta>0$) ។ រក $\\alpha$ និង $\\beta$",[A(al,null,"num","α ="),A(be,null,"num","β =")],"$\\Delta="+(4*al*al-4*(al*al+be*be))+"<0$ ⇒ $r="+al+"\\pm "+(be===1?"":be)+"i$")}]);
+mix(G[62],1,[function(){var r=nz(-4,4);return KQ("e1","សមីការ $y''"+co(-2*r,"y'")+co(r*r,"y")+"=0$ មានសមីការសម្គាល់ដែលមានឫសឌុប ។ រកឫសនោះ",[A(r,null,"num","r =")],"$r^2"+co(-2*r,"r")+"+"+r*r+"=(r"+sg(-r,0)+")^2$")}]);
+mix(G[62],2,[function(){var al=ri(-3,3),be=ri(1,4);return KQ("e2","ចម្លើយទូទៅនៃ $y''"+co(-2*al,"y'")+co(al*al+be*be,"y")+"=0$ មានរាង $y=e^{\\alpha x}(A\\cos\\beta x+B\\sin\\beta x)$ ($\\beta>0$) ។ រក $\\alpha$ និង $\\beta$",[A(al,null,"num","α ="),A(be,null,"num","β =")],"$\\Delta="+(4*al*al-4*(al*al+be*be))+"<0$ ⇒ $r="+al+"\\pm "+(be===1?"":be)+"i$")}]);
 mix(G[62],3,[function(){var r1,r2;do{r1=nz(-4,3);r2=nz(-4,3)}while(r1===r2);var C1=nz(-3,3),C2=nz(-3,3),y0=C1+C2,y1=r1*C1+r2*C2,p=-(r1+r2),q=r1*r2,s=Math.max(r1,r2),t=Math.min(r1,r2),Cs=s===r1?C1:C2,Ct=s===r1?C2:C1;
    return KQ("e3","រកចម្លើយនៃ $y''"+co(p,"y'")+co(q,"y")+"=0$ ដែល $y(0)="+y0+"$ , $y'(0)="+y1+"$ ។ សរសេរ $y=C_1e^{"+kx(s)+"}+C_2e^{"+kx(t)+"}$ រក $C_1, C_2$",[A(Cs,null,"num","C₁ ="),A(Ct,null,"num","C₂ =")],"$C_1+C_2="+y0+"$ , $"+s+"C_1"+(t<0?"":"+")+t+"C_2="+y1+"$")}]);
 mix(G[71],1,[
@@ -577,6 +577,16 @@ mix(G[62],3,[
  function(){var p,q;do{p=ri(-3,3);q=ri(-3,5)}while(q===1&&!p);var a=nz(-3,3),b=ri(-3,3),M=(q-1)*a+p*b,N=(q-1)*b-p*a;
    return KQ("ys","រកចម្លើយពិសេសរាង $y_p=a\\cos x+b\\sin x$ នៃ $y''"+co(p,"y'")+co(q,"y")+"="+co(M,"\\cos x",true)+co(N,"\\sin x",!M)+"$",[A(a,null,"num","a ="),A(b,null,"num","b =")],
      "$y_p''=-a\\cos x-b\\sin x$ ⇒ ផ្ទឹមមេគុណ $\\cos x$ ៖ $"+(q-1)+"a"+(p?sg(p,0)+"b":"")+"="+M+"$ · $\\sin x$ ៖ $"+(q-1)+"b"+(p?sg(-p,0)+"a":"")+"="+N+"$")}],.35);
+mix(G[62],3,[
+ function(){var r1=nz(-3,3),r2,C=nz(-4,4);do{r2=nz(-3,3)}while(r2===r1);var K=C*(r1-r2),E="e^{"+kx(r1)+"}";   /* resonance: yp = C x e^{r1 x} */
+   return KQ("rs_res","ដោះស្រាយ $y''"+co(-(r1+r2),"y'")+co(r1*r2,"y")+"="+(K===1?"":K===-1?"-":K)+E+"$ ។ ព្រោះ $"+r1+"$ ជាឫសនៃសមីការសម្គាល់ (ភាពរ៉េហ្សូណង់) គេរកចម្លើយពិសេសរាង $y_p=Cx"+E+"$ ។ រក $C$",[A(C,null,"num","C =")],
+     "$y_p'=C"+E+"(1+"+sgp(r1)+"x)$ , $y_p''=C"+E+"("+(2*r1)+"+"+sgp(r1*r1)+"x)$ ⇒ ជំនួស៖ $C("+(r1-r2)+")"+E+"="+K+E+"$ ⇒ $C="+C+"$")},
+ function(){var w=ri(1,3),al=nz(-3,3),be=nz(-4,4),A0=nz(-4,4),B0=nz(-3,3),m=w*w*al,n=w*w*be,y0=A0+be,y1=B0*w+al;   /* y''+w²y=mx+n */
+   return KQ("rs_ivp","ដោះស្រាយ $y''"+co(w*w,"y")+"="+polyT([m,n])+"$ ដែល $y(0)="+y0+"$ និង $y'(0)="+y1+"$ ។ ចម្លើយទូទៅ $y=A\\cos("+(w===1?"":w)+"x)+B\\sin("+(w===1?"":w)+"x)+y_p$ ដែល $y_p=\\alpha x+\\beta$ ។ រក $A$ និង $B$",[A(A0,null,"num","A ="),A(B0,null,"num","B =")],
+     "$y_p=\\alpha x+\\beta$ ⇒ $"+(w*w)+"\\alpha="+m+"$ , $"+(w*w)+"\\beta="+n+"$ ⇒ $y_p="+polyT([al,be])+"$ · $y(0)=A+\\beta="+y0+"$ ⇒ $A="+A0+"$ · $y'(0)="+w+"B+\\alpha="+y1+"$ ⇒ $B="+B0+"$")},
+ function(){var al=ri(1,4),w=ri(1,4),A0=ri(2,9),b=2*al,k=al*al+w*w;   /* damped spring x''+2αx'+(α²+ω²)x=0 */
+   return KQ("rs_spr","🪀 ស្ព្រីងមួយមានទម្ងន់ចងជាប់ ញ័រស្រុតតាមសមីការ $x''"+co(b,"x'")+co(k,"x")+"=0$ ($x$ គិតជា cm, $t$ គិតជាវិនាទី) ។ ចម្លើយមានរាង $x(t)=e^{-\\alpha t}(A\\cos "+(w===1?"":w)+"t+B\\sin "+(w===1?"":w)+"t)$ ។ ដឹងថា $x(0)="+A0+"$ cm ។ រក មេគុណបន្ថយ $\\alpha$ និងអំព្លីទុតដើម $A$",[A(al,null,"num","α ="),A(A0,null,"num","A =")],
+     "$r^2"+co(b,"r")+"+"+k+"=0$ ⇒ $r=-"+al+"\\pm "+(w===1?"":w)+"i$ ⇒ $\\alpha="+al+"$ · $x(0)=A="+A0+"$")}],.6);
 /* ---- កោនិក ---- */
 mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
    if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
@@ -664,9 +674,9 @@ vx12(61,1,[
  function(){var y0=nz(-5,5),k=nz(-3,3);return K12("t61_exp","$y'="+co(k,"y",true)+"$ និង $y(0)="+y0+"$ ។ គណនា $y(1)$",[A(y0+"*e^("+k+")",(y0===1?"":y0===-1?"-":y0)+"e^{"+k+"}","num","y(1) =")],"$y="+y0+"e^{"+k+"x}$ ⇒ $y(1)="+(y0===1?"":y0===-1?"-":y0)+"e^{"+k+"}$")}]);
 vx12(61,3,[function(){var h=pick([2,3,5,8,10]);return K12("t61_half","សារធាតុវិទ្យុសកម្មថយតាម $y'=-ky$ ហើយមានពាក់កណ្ដាលអាយុ $"+h+"$ ឆ្នាំ ។ រក $k$",[A("ln(2)/"+h,"\\dfrac{\\ln2}{"+h+"}","num","k =")],"$e^{-"+h+"k}=\\dfrac12$ ⇒ $k=\\dfrac{\\ln2}{"+h+"}$")}]);
 vx12(62,1,[
- function(){var w=ri(1,6);return K12("t62_cx","ចម្លើយទូទៅនៃ $y''+"+(w*w)+"y=0$ គឺ $y=C_1\\cos\\omega x+C_2\\sin\\omega x$ ។ រក $\\omega>0$",[A(w,null,"num","ω =")],"$r^2+"+(w*w)+"=0$ ⇒ $r=\\pm"+w+"i$ ⇒ $\\omega="+w+"$")},
+ function(){var w=ri(1,6);return K12("t62_cx","ចម្លើយទូទៅនៃ $y''"+co(w*w,"y")+"=0$ គឺ $y=C_1\\cos\\omega x+C_2\\sin\\omega x$ ។ រក $\\omega>0$",[A(w,null,"num","ω =")],"$r^2+"+(w*w)+"=0$ ⇒ $r=\\pm"+w+"i$ ⇒ $\\omega="+w+"$")},
  function(){var r1=nz(-5,5),r2=nz(-5,5),b=-(r1+r2),c=r1*r2;return K12("t62_sum","សមីការសម្គាល់នៃ $y''"+co(b,"y'")+(c?co(c,"y"):"")+"=0$ មានឫស $r_1,r_2$ ។ គណនា $r_1+r_2$ និង $r_1r_2$",[A(r1+r2,null,"num","S ="),A(c,null,"num","P =")],"$r^2"+co(b,"r")+(c?sg(c,0):"")+"=0$ ⇒ $S="+(r1+r2)+"$ , $P="+c+"$")}]);
-vx12(62,3,[function(){var w=ri(1,4),A0=nz(-5,5),B0=nz(-5,5);return K12("t62_ivp","ដោះស្រាយ $y''+"+(w*w)+"y=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+(B0*w)+"$ ។ សរសេរ $y=C_1\\cos"+(w===1?"":w)+"x+C_2\\sin"+(w===1?"":w)+"x$ រក $C_1,C_2$",[A(A0,null,"num","C₁ ="),A(B0,null,"num","C₂ =")],"$y(0)=C_1="+A0+"$ · $y'(0)="+w+"C_2="+(B0*w)+"$ ⇒ $C_2="+B0+"$")}]);
+vx12(62,3,[function(){var w=ri(1,4),A0=nz(-5,5),B0=nz(-5,5);return K12("t62_ivp","ដោះស្រាយ $y''"+co(w*w,"y")+"=0$ ដែល $y(0)="+A0+"$ និង $y'(0)="+(B0*w)+"$ ។ សរសេរ $y=C_1\\cos"+(w===1?"":w)+"x+C_2\\sin"+(w===1?"":w)+"x$ រក $C_1,C_2$",[A(A0,null,"num","C₁ ="),A(B0,null,"num","C₂ =")],"$y(0)=C_1="+A0+"$ · $y'(0)="+w+"C_2="+(B0*w)+"$ ⇒ $C_2="+B0+"$")}]);
 /* ៧.២ ប្រូបាប */
 vx12(71,2,[function(){var n=ri(3,6),k=ri(0,n),p=fr(cnk(n,k),Math.pow(2,n));return K12("t71_bin","បោះកាក់ $"+n+"$ ដង ។ $X$ = ចំនួនដងចេញ «ក្បាល» ។ គណនា $P(X="+k+")$",[A(p.s,p.t,"num","P =")],"ច្បាប់ទ្វេធា ៖ $C_{"+n+"}^{"+k+"}\\left(\\tfrac12\\right)^{"+n+"}="+p.t+"$")}]);
 /* ៨.១ ប៉ារ៉ាបូល */
