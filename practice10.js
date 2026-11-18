@@ -339,7 +339,7 @@ Object.keys(P4).forEach(function(l){var L=P4[l];if(G[l])G[l][4]=function(){retur
 /* ===== ពិពិធកម្មទម្រង់លំហាត់ (២០២៦-១១) — មេរៀន×កម្រិតនីមួយៗ ≥ ៤ ទម្រង់ · គណនាផ្ទាល់ · រកអញ្ញាត · បញ្ហាជីវិតពិត · ត្រិះរិះ =====
    ជ្រើសចម្លើយមុន រួចបង្កើតទិន្នន័យ · kd = s10_… · vx(l,lv,[…]) → ទម្រង់ថ្មីនីមួយៗមានឱកាសស្មើទម្រង់ដើម · តក្កវិទ្យា ៖ 1 = ពិត · 0 = មិនពិត */
 function K(kd,q,a,s,f){var o=Q(q,a,s,f);o.kd=kd;return o}
-function vx(l,lv,L){var o=G[l][lv];G[l][lv]=function(){var i=Math.floor(Math.random()*(L.length+1));return i<L.length?L[i]():o()}}
+function vx(l,lv,L){if(!G[l])G[l]={};if(!G[l][lv])G[l][lv]=function(){};var o=G[l][lv];G[l][lv]=function(){var i=Math.floor(Math.random()*(L.length+1));return i<L.length?L[i]():o()}}
 function ang(v){return v+"^\\circ"}
 function mo(v){return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
 function fx(f){return f.d===1?String(f.n):(f.n<0?"-":"")+"\\dfrac{"+Math.abs(f.n)+"}{"+f.d+"}"}
