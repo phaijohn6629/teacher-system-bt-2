@@ -664,6 +664,47 @@ mix(G[42],3,[
 mix(G[43],3,[
  function(){var a=nz(-3,3),x0=ri(2,5),sl=fr(a,x0);
    return KQ("xt_l","សរសេរសមីការបន្ទាត់ប៉ះក្រាប $y="+cc(a)+"\\ln x$ ត្រង់ $x="+x0+"$ ជាទម្រង់ $y=mx+b$",[A(sl.s,sl.t,"num","m ="),A(a+"*ln("+x0+")-("+a+")",cc(a)+"\\ln "+x0+sg(-a,0),"num","b =")],"$f'(x)=\\dfrac{"+a+"}{x}$ ⇒ $m=\\dfrac{"+a+"}{"+x0+"}$ · $f("+x0+")="+cc(a)+"\\ln "+x0+"$ ⇒ $b=f("+x0+")-m\\cdot"+x0+"="+cc(a)+"\\ln "+x0+sg(-a,0)+"$")}],.5);
+/* ---- អាំងតេក្រាល៖ កម្រិត ១ (កំណត់) · ២ (ដោយផ្នែក · ប្ដូរអថេរ) · ៣ (ផ្ទៃរវាងក្រាប · មាឌបដិវត្តន៍) — បង្កើតចម្លើយមុន ---- */
+function igPbd(d){return d===1?"\\pi":"\\dfrac{\\pi}{"+d+"}"}
+function igPiT(f){return f.n===0?"0":cfT(f)+"\\pi"}
+function igPiA(f){return "("+f.s+")*pi"}
+mix(G[51],1,[
+ function(){var p=ri(-2,1),q=p+ri(1,3),al=3*nz(-2,2),be=2*ri(-3,3),ga=ri(-4,4),v=al/3*(q*q*q-p*p*p)+be/2*(q*q-p*p)+ga*(q-p);
+   return IQ("ig_poly","គណនា $\\displaystyle\\int_{"+p+"}^{"+q+"}("+polyT([al,be,ga])+")\\,dx$",[A(v,null,"num","I =")],"$F(x)="+polyT([al/3,be/2,ga,0])+"$ ⇒ $F("+q+")-F("+p+")="+v+"$")},
+ function(){var kk=nz(-3,3),c=nz(-4,4),f=fr(c,kk),E=kk===1?"e":"e^{"+kk+"}";
+   return IQ("ig_exp","គណនា $\\displaystyle\\int_0^1 "+cc(c)+"e^{"+kx(kk)+"}\\,dx$",[A("("+c+")/("+kk+")*(e^("+kk+")-1)",cfT(f)+"("+E+"-1)","num","I =")],"$\\left[\\dfrac{"+c+"}{"+kk+"}e^{"+kx(kk)+"}\\right]_0^1="+cfT(f)+"("+E+"-1)$")},
+ function(){var a=ri(1,3),b=ri(1,3),q=ri(1,3),f=fr(a*q+b,b);
+   return IQ("ig_inv","គណនា $\\displaystyle\\int_0^{"+q+"}\\dfrac{dx}{"+polyT([a,b])+"}$",[A("ln("+f.s+")/"+a,(a===1?"":"\\dfrac{1}{"+a+"}")+lnT(f),"num","I =")],"$\\left[\\dfrac{1}{"+a+"}\\ln("+polyT([a,b])+")\\right]_0^{"+q+"}="+(a===1?"":"\\dfrac{1}{"+a+"}")+lnT(f)+"$")},
+ function(){var kk=ri(1,3),c=nz(-4,4),t=ri(0,2);
+   if(t===0){var sn=Math.random()<.5,f=fr(c,kk);return IQ("ig_trk","គណនា $\\displaystyle\\int_0^{"+igPbd(2*kk)+"}"+cc(c)+"\\"+(sn?"sin":"cos")+" "+kx(kk)+"\\,dx$",[A(f.s,f.t,"num","I =")],"$\\left["+(sn?"-":"")+"\\dfrac{"+c+"}{"+kk+"}\\"+(sn?"cos":"sin")+" "+kx(kk)+"\\right]_0^{"+igPbd(2*kk)+"}="+f.t+"$")}
+   if(t===1){var f2=fr(2*c,kk);return IQ("ig_trk","គណនា $\\displaystyle\\int_0^{"+igPbd(kk)+"}"+cc(c)+"\\sin "+kx(kk)+"\\,dx$",[A(f2.s,f2.t,"num","I =")],"$\\left[-\\dfrac{"+c+"}{"+kk+"}\\cos "+kx(kk)+"\\right]_0^{"+igPbd(kk)+"}="+f2.t+"$")}
+   var a=nz(-3,3),b=nz(-3,3);return IQ("ig_trk","គណនា $\\displaystyle\\int_0^{\\pi}("+a+co(b,"\\sin x")+")\\,dx$",[A(a+"*pi+"+(2*b),cc(a)+"\\pi"+sg(2*b,0),"num","I =")],"$["+cc(a)+"x"+co(-b,"\\cos x")+"]_0^{\\pi}="+cc(a)+"\\pi"+sg(2*b,0)+"$")}],.55);
+mix(G[51],2,[
+ function(){var kk=pick([-2,-1,1,2,3]),f1=fr(kk-1,kk*kk),f2=fr(1,kk*kk),E="e^{"+kk+"}";
+   return IQ("ig_bpe","គណនាដោយប្រើអាំងតេក្រាលដោយផ្នែក $\\displaystyle\\int_0^1 x\\,e^{"+kx(kk)+"}\\,dx$",[A("("+(kk-1)+")/("+kk*kk+")*e^("+kk+")+1/"+kk*kk,(kk===1?"":cfT(f1)+E+"+")+f2.t,"num","I =")],"$u=x$ , $dv=e^{"+kx(kk)+"}dx$ ⇒ $\\left[\\dfrac{x}{"+kk+"}e^{"+kx(kk)+"}-\\dfrac{1}{"+kk*kk+"}e^{"+kx(kk)+"}\\right]_0^1="+(kk===1?"":cfT(f1)+E+"+")+f2.t+"$")},
+ function(){var n=ri(1,3),t=(n===1?"":n)+"e^{"+(n+1)+"}+1",N=(n+1)*(n+1);
+   return IQ("ig_bpl","គណនាដោយប្រើអាំងតេក្រាលដោយផ្នែក $\\displaystyle\\int_1^e x"+(n>1?"^{"+n+"}":"")+"\\ln x\\,dx$",[A("("+n+"*e^("+(n+1)+")+1)/"+N,"\\dfrac{"+t+"}{"+N+"}","num","I =")],"$u=\\ln x$ , $dv=x^{"+n+"}dx$ ⇒ $\\left[\\dfrac{x^{"+(n+1)+"}}{"+(n+1)+"}\\ln x-\\dfrac{x^{"+(n+1)+"}}{"+N+"}\\right]_1^e=\\dfrac{"+t+"}{"+N+"}$")},
+ function(){var kk=ri(1,3),d=kk*kk;
+   return IQ("ig_bps","គណនាដោយប្រើអាំងតេក្រាលដោយផ្នែក $\\displaystyle\\int_0^{"+igPbd(kk)+"}x\\sin "+kx(kk)+"\\,dx$",[A("pi/"+d,igPbd(d),"num","I =")],"$\\left[-\\dfrac{x}{"+kk+"}\\cos "+kx(kk)+"+\\dfrac{1}{"+d+"}\\sin "+kx(kk)+"\\right]_0^{"+igPbd(kk)+"}="+igPbd(d)+"$")},
+ function(){var kk=ri(1,3),d=kk*kk;
+   return IQ("ig_bpc","គណនាដោយប្រើអាំងតេក្រាលដោយផ្នែក $\\displaystyle\\int_0^{"+igPbd(2*kk)+"}x\\cos "+kx(kk)+"\\,dx$",[A("pi/"+2*d+"-1/"+d,igPbd(2*d)+"-"+(d===1?"1":"\\dfrac{1}{"+d+"}"),"num","I =")],"$\\left[\\dfrac{x}{"+kk+"}\\sin "+kx(kk)+"+\\dfrac{1}{"+d+"}\\cos "+kx(kk)+"\\right]_0^{"+igPbd(2*kk)+"}$")},
+ function(){var c=nz(-4,4),f=fr(c,2);
+   return IQ("ig_subx","គណនាដោយប្ដូរអថេរ $u=x^2$ ៖ $\\displaystyle\\int_0^1 "+cc(c)+"x\\,e^{x^2}\\,dx$",[A("("+c+"/2)*(e-1)",cfT(f)+"(e-1)","num","I =")],"$du=2x\\,dx$ ⇒ $"+cfT(f)+"\\int_0^1e^u du=" +cfT(f)+"(e-1)$")},
+ function(){var n=ri(1,4),f=fr(1,n+1);
+   return IQ("ig_subl","គណនាដោយប្ដូរអថេរ $u=\\ln x$ ៖ $\\displaystyle\\int_1^e\\dfrac{"+(n===1?"\\ln x":"(\\ln x)^{"+n+"}")+"}{x}\\,dx$",[A(f.s,f.t,"num","I =")],"$du=\\frac{dx}{x}$ ⇒ $\\int_0^1u^{"+n+"}du=\\dfrac{1}{"+(n+1)+"}$")},
+ function(){var T=pick([[4,3,5],[3,4,5],[5,12,13],[12,5,13]]),a=T[0],kk=T[1],h=T[2],f=fr(h*h*h-kk*kk*kk,3);
+   return IQ("ig_subs","គណនាដោយប្ដូរអថេរ $u=x^2+"+kk*kk+"$ ៖ $\\displaystyle\\int_0^{"+a+"}x\\sqrt{x^2+"+kk*kk+"}\\,dx$",[A(f.s,f.t,"num","I =")],"$du=2x\\,dx$ ⇒ $\\left[\\dfrac{(x^2+"+kk*kk+")^{3/2}}{3}\\right]_0^{"+a+"}=\\dfrac{"+(h*h*h)+"-"+(kk*kk*kk)+"}{3}="+f.t+"$")}],.55);
+mix(G[51],3,[
+ function(){var p=ri(-3,1),q=p+ri(1,4),a=nz(-3,3),m=ri(-2,2),n=ri(-3,3),S=fr(Math.abs(a)*Math.pow(q-p,3),6);
+   return IQ("ig_ab","គណនាផ្ទៃក្រឡាដែនខណ្ឌដោយក្រាប $f(x)="+polyT([a,m-a*(p+q),n+a*p*q])+"$ និង $g(x)="+polyT([m,n])+"$ ។ រកអាប់ស៊ីសប្រសព្វ $p<q$ និងផ្ទៃ $S$",[A(p,null,"num","p ="),A(q,null,"num","q ="),A(S.s,S.t,"num","S =")],"$f-g="+cc(a)+"(x"+sg(-p,0)+")(x"+sg(-q,0)+")$ ⇒ $x="+p+"$ , $x="+q+"$ · $S=\\dfrac{|"+a+"|("+(q-p)+")^3}{6}="+S.t+"$")},
+ function(){var c=nz(-4,4),S=fr(Math.abs(c),2);
+   return IQ("ig_ac","គណនាផ្ទៃក្រឡាសរុបនៃដែនខណ្ឌដោយក្រាប $y="+cc(c)+"x^3$ និង $y="+cc(c)+"x$ (ពីអាប់ស៊ីសប្រសព្វតូចបំផុតដល់ធំបំផុត)",[A(S.s,S.t,"num","S =")],"$"+cc(c)+"x^3="+cc(c)+"x$ ⇒ $x=-1,0,1$ · សមមាត្រ ⇒ $S=2\\left|\\int_0^1("+cc(c)+"x-"+cc(c)+"x^3)dx\\right|="+S.t+"$")},
+ function(){var kk=ri(1,4),b=ri(1,4),f=fr(kk*b*b,2),bowl=Math.random()<.4;
+   return IQ("ig_vs",(bowl?"🥣 ចានមួយមានរាងកើតពីការបង្វិលក្រាប ":"គណនាមាឌនៃសូលីតដែលកើតពីការបង្វិលក្រាប ")+"$y=\\sqrt{"+kx(kk)+"}$ ($0\\le x\\le "+b+"$) ជុំវិញអ័ក្ស $x$ ដោយប្រើ $V=\\pi\\int_0^{"+b+"}[f(x)]^2dx$"+(bowl?" ។ រកមាឌចាន (ទុក $\\pi$)":""),[A(igPiA(f),igPiT(f),"num","V =")],"$V=\\pi\\int_0^{"+b+"}"+kx(kk)+"\\,dx=\\pi\\left["+(kk===1?"":kk)+"\\dfrac{x^2}{2}\\right]_0^{"+b+"}="+igPiT(f)+"$")},
+ function(){var c=ri(1,3),b=ri(1,3),f=fr(c*c*Math.pow(b,5),5);
+   return IQ("ig_vp","គណនាមាឌនៃសូលីតដែលកើតពីការបង្វិលក្រាប $y="+cc(c)+"x^2$ ($0\\le x\\le "+b+"$) ជុំវិញអ័ក្ស $x$ (ទុក $\\pi$)",[A(igPiA(f),igPiT(f),"num","V =")],"$V=\\pi\\int_0^{"+b+"}"+(c===1?"":c*c)+"x^4dx=\\pi\\left["+(c===1?"":c*c)+"\\dfrac{x^5}{5}\\right]_0^{"+b+"}="+igPiT(f)+"$")},
+ function(){var a=ri(1,3),c=ri(0,3),b=ri(1,3),f=fr(Math.pow(a*b+c,3)-Math.pow(c,3),3*a);
+   return IQ("ig_vl","គណនាមាឌនៃសូលីតដែលកើតពីការបង្វិលបន្ទាត់ $y="+polyT([a,c])+"$ ($0\\le x\\le "+b+"$) ជុំវិញអ័ក្ស $x$ (ទុក $\\pi$)",[A(igPiA(f),igPiT(f),"num","V =")],"$V=\\pi\\left[\\dfrac{("+polyT([a,c])+")^3}{"+3*a+"}\\right]_0^{"+b+"}=\\pi\\cdot\\dfrac{"+Math.pow(a*b+c,3)+(c?"-"+Math.pow(c,3):"")+"}{"+3*a+"}="+igPiT(f)+"$")}],.55);
 /* ---- កោនិក ---- */
 mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
    if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
