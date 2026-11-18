@@ -621,6 +621,49 @@ mix(G[32],3,[
    return KQ("op_drug","💊 កំហាប់ថ្នាំក្នុងឈាម (mg/L) បន្ទាប់ពី $t$ ម៉ោង គឺ $C(t)="+Am+"t\\,e^{-t/"+m+"}$ ($t\\ge0$) ។ (ក) ក្រោយប៉ុន្មានម៉ោង កំហាប់ខ្ពស់បំផុត? (ខ) កំហាប់ខ្ពស់បំផុតគឺប៉ុន្មាន mg/L? (ទុក $e$)",[A(m,null,"num","(ក) t ="),A(Am*m+"*e^(-1)",Am*m+"e^{-1}","num","(ខ) C =")],"$C'(t)="+Am+"e^{-t/"+m+"}\\left(1-\\dfrac{t}{"+m+"}\\right)=0$ ⇒ $t="+m+"$ · $C("+m+")="+Am*m+"e^{-1}$")},
  function(){var T=ri(2,5),s=ri(1,3),h0=5*s*T,v0=5*(T-s);
    return KQ("op_proj","⚽ បាល់ត្រូវបានគប់ពីកម្ពស់ $"+h0+"$ m ដោយល្បឿនដើម $"+v0+"$ m/s ($h(t)=-5t^2"+co(v0,"t")+"+"+h0+"$) ។ (ក) ក្រោយប៉ុន្មានវិនាទី បាល់ធ្លាក់ដល់ដី? (ខ) គណនាល្បឿនបាល់ $h'(t)$ ពេលធ្លាក់ដល់ដី (m/s)",[A(T,null,"num","(ក) t ="),A(-5*(T+s),null,"num","(ខ) h' =")],"$h(t)=-5(t"+sg(s,0)+")(t-"+T+")$ ⇒ $t="+T+"$ · $h'(t)=-10t"+sg(v0,0)+"$ ⇒ $h'("+T+")="+(-5*(T+s))+"$ m/s")}],.6);
+/* ---- អិចស្ប៉ូណង់ស្យែល · លោការីត៖ ដែនកំណត់ · សមីការ · ទម្រង់ត្រីធា · ប្រយោគជីវិតពិត · បន្ទាត់ប៉ះ (បង្កើតចម្លើយមុន) ---- */
+function lnOv(m,k){var a=Math.abs(k),t=(a===1?"\\ln "+m:"\\dfrac{\\ln "+m+"}{"+a+"}");return(k<0?"-":"")+t}
+function ecT(c,e){if(!c)return"0";return(c===1?"":c===-1?"-":c)+(e===1?"e":"e^{"+e+"}")}
+mix(G[42],1,[
+ function(){var kk=nz(-3,3),m=ri(2,9);
+   return KQ("xe_k","ដោះស្រាយសមីការ $e^{"+kx(kk)+"}="+m+"$",[A("ln("+m+")/("+kk+")",lnOv(m,kk),"num","x =")],"$"+kx(kk)+"=\\ln "+m+"$ ⇒ $x="+lnOv(m,kk)+"$")},
+ function(){var kk=nz(-3,3),b=ri(-5,5),m=ri(2,9),f=fr(b,1);
+   return KQ("xe_b","ដោះស្រាយសមីការ $e^{"+polyT([kk,b])+"}="+m+"$",[A("(ln("+m+")-("+b+"))/("+kk+")","\\dfrac{\\ln "+m+(b?sg(-b,0):"")+"}{"+kk+"}","num","x =")],"$"+polyT([kk,b])+"=\\ln "+m+"$ ⇒ $x=\\dfrac{\\ln "+m+(b?sg(-b,0):"")+"}{"+kk+"}$")}],.6);
+mix(G[43],1,[
+ function(){var a=nz(-4,4),b=ri(-6,6),f=fr(-b,a);
+   return KQ("xl_d1","ដែនកំណត់នៃ $f(x)=\\ln("+polyT([a,b])+")$ គឺ $x"+(a>0?">":"<")+"\\alpha$ ។ រក $\\alpha$",[A(f.s,f.t,"num","α =")],"$"+polyT([a,b])+">0$ ⇒ $x"+(a>0?">":"<")+f.t+"$")},
+ function(){var p=ri(-4,2),q=p+ri(1,4);
+   return KQ("xl_d2","ដែនកំណត់នៃ $f(x)=\\ln("+polyT([1,-(p+q),p*q])+")$ គឺ $x<p$ ឬ $x>q$ ($p<q$) ។ រក $p$ និង $q$",[A(p,null,"num","p ="),A(q,null,"num","q =")],"$"+polyT([1,-(p+q),p*q])+"=(x"+sg(-p,0)+")(x"+sg(-q,0)+")>0$ ⇒ $x<"+p+"$ ឬ $x>"+q+"$")},
+ function(){var kk=ri(1,7);
+   return KQ("xl_d3","ដែនកំណត់នៃ $f(x)=\\ln("+polyT([1,0,-kk*kk])+")$ គឺ $|x|>k$ ។ រក $k>0$",[A(kk,null,"num","k =")],"$x^2>"+kk*kk+"$ ⇒ $|x|>"+kk+"$")},
+ function(){var a=nz(-3,3),c=ri(1,3),b=ri(-5,5),num="e^{"+c+"}"+(b?sg(-b,0):""),t=Math.abs(a)===1?(a===1?num:(b?"-("+num+")":"-"+num)):"\\dfrac{"+num+"}{"+a+"}";
+   return KQ("xl_e","ដោះស្រាយសមីការ $\\ln("+polyT([a,b])+")="+c+"$",[A("(e^("+c+")-("+b+"))/("+a+")",t,"num","x =")],"$"+polyT([a,b])+"=e^{"+c+"}$ ⇒ $x="+t+"$")},
+ function(){var a=nz(-3,3),x=nz(-5,5),bs=pick([2,3,5,10]),n=ri(1,3),b=Math.pow(bs,n)-a*x;
+   return KQ("xl_b","ដោះស្រាយសមីការ $\\log_{"+bs+"}("+polyT([a,b])+")="+n+"$",[A(x,null,"num","x =")],"$"+polyT([a,b])+"="+bs+"^{"+n+"}="+Math.pow(bs,n)+"$ ⇒ $x="+x+"$")}],.6);
+mix(G[42],2,[
+ function(){var p=ri(1,4),q=p+ri(1,4),A0=ri(1,3),B=-A0*(p+q),C=A0*p*q,e2=co(A0,"e^{2x}",true);
+   return KQ("xq_e","ដោះស្រាយ $"+e2+co(B,"e^{x}")+sc(C)+"=0$ (សរសេរឫសតូចជាមុន)",[A(p===1?"0":"ln("+p+")",p===1?"0":"\\ln "+p,"num","x₁ ="),A("ln("+q+")","\\ln "+q,"num","x₂ =")],"តាង $t=e^x>0$ ៖ "+(A0>1?"$t^2"+co(-(p+q),"t")+sc(p*q)+"=0$ · ":"")+"$t="+p+"$ ឬ $t="+q+"$ ⇒ $x="+(p===1?"0":"\\ln "+p)+"$ ឬ $x=\\ln "+q+"$")},
+ function(){var p=ri(1,5),q=ri(1,4),A0=ri(1,3),B=-A0*(p-q),C=-A0*p*q;   /* ឫស t=p>0 និង t=-q<0 (មិនយក) */
+   return KQ("xq_n","ដោះស្រាយ $"+co(A0,"e^{2x}",true)+co(B,"e^{x}")+sc(C)+"=0$",[A(p===1?"0":"ln("+p+")",p===1?"0":"\\ln "+p,"num","x =")],"តាង $t=e^x>0$ ៖ $t="+p+"$ ឬ $t="+(-q)+"$ (មិនយក ព្រោះ $t>0$) ⇒ $x="+(p===1?"0":"\\ln "+p)+"$")},
+ function(){var p=ri(2,4),q=p+ri(1,4),A0=ri(1,3),B=-A0*(p+q),C=A0*p*q,neg=Math.random()<.5;
+   return KQ("xq_i","វិសមីការ $"+co(A0,"e^{2x}",true)+co(B,"e^{x}")+sc(C)+(neg?"<":">")+"0$ មានចម្លើយ "+(neg?"$\\alpha<x<\\beta$":"$x<\\alpha$ ឬ $x>\\beta$")+" ។ រក $\\alpha$ និង $\\beta$",[A("ln("+p+")","\\ln "+p,"num","α ="),A("ln("+q+")","\\ln "+q,"num","β =")],"តាង $t=e^x>0$ ៖ ឫស $t="+p+"$ , $t="+q+"$ ⇒ $\\alpha=\\ln "+p+"$ , $\\beta=\\ln "+q+"$")}],.6);
+mix(G[43],2,[
+ function(){var p=nz(-2,2),q,A0=ri(1,3);do{q=nz(-2,3)}while(q<=p);
+   return KQ("xq_l","ដោះស្រាយ $"+co(A0,"(\\ln x)^2",true)+co(-A0*(p+q),"\\ln x")+sc(A0*p*q)+"=0$ (ឫសតូចជាមុន)",[A("e^("+p+")",p===1?"e":"e^{"+p+"}","num","x₁ ="),A("e^("+q+")",q===1?"e":"e^{"+q+"}","num","x₂ =")],"តាង $t=\\ln x$ ⇒ $t="+p+"$ ឬ $t="+q+"$ ⇒ $x=e^{"+p+"}$ ឬ $x=e^{"+q+"}$")},
+ function(){var a=ri(1,3),b=ri(-4,4),c=ri(1,3),f=fr(1-b,a);   /* ln(ax+b) ≥ 0  ⇔ ax+b ≥ 1 */
+   return KQ("xl_i","ដោះស្រាយវិសមីការ $\\ln("+polyT([a,b])+")\\ge 0$ ។ ចម្លើយ $x\\ge\\alpha$ រក $\\alpha$",[A(f.s,f.t,"num","α =")],"$"+polyT([a,b])+">0$ និង $"+polyT([a,b])+"\\ge 1$ ⇒ $x\\ge "+f.t+"$")}],.6);
+mix(G[42],3,[
+ function(){var m=pick([2,3,4,5]),p=pick([2,4,5,10]),t=fr(100,p);
+   return KQ("xw_int","💰 ដាក់ប្រាក់ $P_0$ ក្នុងគណនីការប្រាក់ក្រៅបន្ត $"+p+"\\%$ ក្នុងមួយឆ្នាំ ⇒ $P(t)=P_0e^{"+(p/100)+"t}$ ។ តើក្រោយប៉ុន្មានឆ្នាំ ទើបប្រាក់កើនដល់ $"+m+"P_0$? (ចម្លើយពិតប្រាកដ)",[A(t.s+"*ln("+m+")",(t.d===1?(t.n===1?"":t.n):t.t)+"\\ln "+m,"num","t =")],"$e^{"+(p/100)+"t}="+m+"$ ⇒ $t=\\dfrac{\\ln "+m+"}{"+(p/100)+"}="+(t.d===1?t.n:t.t)+"\\ln "+m+"$")},
+ function(){var h=ri(2,9)*5,n=ri(2,4);
+   return KQ("xw_dec","☢️ សារធាតុវិទ្យុសកម្មមានពាក់កណ្ដាលអាយុ $"+h+"$ ឆ្នាំ ⇒ $N(t)=N_0e^{-kt}$ ។ (ក) រក $k$ (ខ) ក្រោយប៉ុន្មានឆ្នាំ ទើបសល់ $\\dfrac{1}{"+Math.pow(2,n)+"}N_0$?",[A("ln(2)/"+h,"\\dfrac{\\ln 2}{"+h+"}","num","(ក) k ="),A(n*h,null,"num","(ខ) t =")],"$e^{-"+h+"k}=\\tfrac12$ ⇒ $k=\\dfrac{\\ln 2}{"+h+"}$ · $\\dfrac{1}{"+Math.pow(2,n)+"}=\\left(\\tfrac12\\right)^{"+n+"}$ ⇒ $t="+n+"\\times"+h+"="+n*h+"$")},
+ function(){var m=pick([2,3,4]),T=ri(2,6),P0=ri(1,9)*100;
+   return KQ("xw_pop","👥 ចំនួនបាក់តេរីមាន $"+P0+"$ ពេល $t=0$ ហើយកើនតាម $P(t)=P_0e^{kt}$ ។ ក្រោយ $"+T+"$ ម៉ោង វាកើនដល់ $"+m*P0+"$ ។ (ក) រក $k$ (ខ) គណនា $P("+2*T+")$",[A("ln("+m+")/"+T,"\\dfrac{\\ln "+m+"}{"+T+"}","num","(ក) k ="),A(P0*m*m,null,"num","(ខ) P =")],"$e^{"+T+"k}="+m+"$ ⇒ $k=\\dfrac{\\ln "+m+"}{"+T+"}$ · $P("+2*T+")=P_0e^{2\\cdot"+T+"k}="+P0+"\\cdot"+m+"^2="+P0*m*m+"$")},
+ function(){var a=nz(-3,3),kk=nz(-2,3),m=a*kk*1,c=a,mE=a*kk,bE=a*(1-kk);
+   return KQ("xt_e","សរសេរសមីការបន្ទាត់ប៉ះក្រាប $y="+cc(a)+"e^{"+kx(kk)+"}$ ត្រង់ $x=1$ ជាទម្រង់ $y=mx+b$ (ទុកជា $e$)",[A(mE+"*e^("+kk+")",ecT(mE,kk),"num","m ="),A(bE?bE+"*e^("+kk+")":"0",ecT(bE,kk),"num","b =")],"$f'(x)="+cc(mE)+"e^{"+kx(kk)+"}$ ⇒ $m="+ecT(mE,kk)+"$ · $f(1)="+ecT(a,kk)+"$ ⇒ $b=f(1)-m="+ecT(bE,kk)+"$")}],.6);
+mix(G[43],3,[
+ function(){var a=nz(-3,3),x0=ri(2,5),sl=fr(a,x0);
+   return KQ("xt_l","សរសេរសមីការបន្ទាត់ប៉ះក្រាប $y="+cc(a)+"\\ln x$ ត្រង់ $x="+x0+"$ ជាទម្រង់ $y=mx+b$",[A(sl.s,sl.t,"num","m ="),A(a+"*ln("+x0+")-("+a+")",cc(a)+"\\ln "+x0+sg(-a,0),"num","b =")],"$f'(x)=\\dfrac{"+a+"}{x}$ ⇒ $m=\\dfrac{"+a+"}{"+x0+"}$ · $f("+x0+")="+cc(a)+"\\ln "+x0+"$ ⇒ $b=f("+x0+")-m\\cdot"+x0+"="+cc(a)+"\\ln "+x0+sg(-a,0)+"$")}],.5);
 /* ---- កោនិក ---- */
 mix(G[81],2,[function(){var h=ri(-3,3),k=ri(-3,3),p=nz(-3,3);
    if(Math.random()<.5)return KQ("pd","ប៉ារ៉ាបូលមានកំពូល $S("+h+";"+k+")$ និងបន្ទាត់ប្រាប់ទិស $y="+(k-p)+"$ ។ សរសេរជា $"+sqx("x",h)+"=K"+lfx("y",k)+"$ រក $K$ និងកំណុំ $F$",[A(4*p,null,"num","K ="),A(h,null,"num","F: x ="),A(k+p,null,"num","F: y =")],
