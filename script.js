@@ -118,11 +118,13 @@ var EMAIL_DOMAIN="bt-teachers.example.com",usersById={},prof=null,unsubs=[],forc
 function isAdm(){return !!(who&&who.role==="admin")}
 /* កិច្ចតែងការ៖ តែ Admin · ប្រធាន · អនុប្រធាន (ក្រុមបច្ចេកទេស) វាយបញ្ចូល/កែបាន · សមាជិក = មើលតែប៉ុណ្ណោះ */
 var KLEAD=["ប្រធាន","អនុប្រធាន"];
-function canK(){return isAdm()||!!(who&&who.role!=="monitor"&&KLEAD.indexOf(who.rl)>=0)}
+/* មិនប្រកាន់ដកឃ្លា/តួអក្សរទទេ (zero-width) ក្នុងតួនាទី ដើម្បីឱ្យ «អនុប្រធាន» ស្មើ «ប្រធាន» ជានិច្ច */
+function isLead(rl){return KLEAD.indexOf(String(rl||"").replace(/[\u200b\u200c\u200d\s]/g,""))>=0}
+function canK(){return isAdm()||!!(who&&who.role!=="monitor"&&isLead(who.rl))}
 /* Rules មិនអាចអានតួនាទីក្នុង app/teachers → Admin សរសេរបញ្ជី ID ប្រធាន/អនុប្រធាន ទៅ cfg/klead (ពេលតួនាទីប្ដូរ) */
 function syncKLead(){
   if(!isAdm()||!sy.teachersReady||!window.FB||!window.db)return;
-  var ids=data.filter(function(t){return t&&KLEAD.indexOf(t.rl)>=0}).map(function(t){return String(t.id)}).sort(),j=JSON.stringify(ids);
+  var ids=data.filter(function(t){return t&&isLead(t.rl)}).map(function(t){return String(t.id)}).sort(),j=JSON.stringify(ids);
   if(syncKLead.j===j)return;syncKLead.j=j;
   window.FB.setDoc(window.FB.doc(window.db,"cfg","klead"),{ids:ids,u:new Date().toISOString()}).catch(function(e){syncKLead.j="";console.warn("klead:",e)});
 }
