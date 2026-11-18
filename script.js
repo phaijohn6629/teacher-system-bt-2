@@ -3035,7 +3035,16 @@ $("od").innerHTML=DY.map(function(d,i){return"<option value="+i+(i===ob.d?" sele
 $("oy").value=ob.y;
 $("om").innerHTML="<option value=-1"+(om===-1?" selected":"")+">ទាំងអស់</option>"+XM.slice(0,9).map(function(m,i){return"<option value="+i+(i===om?" selected":"")+">"+M[m-1]+"</option>"}).join("");
 if(ov===1)renderO1();if(ov===2)renderO2();if(ov===3)renderO3()}
-function renderO1(){var b="";
+/* ស្ដារកំណត់ត្រាសង្កេតរបស់ ស្រ៊ុន ពន្លឺ (11-11-2026, ១៣៦/១៦៥) ពី PDF → ជួរទី២ (វិច្ឆិកា សប្ដាហ៍ទី២) · អត្តសញ្ញាណគ្រូរកតាមឈ្មោះក្នុងបញ្ជីគ្រូ */
+var OBS_RESTORE_IDX=1,OBS_RESTORE_NAME="ពន្លឺ",OBS_RESTORE_ROW={"o":"T001","sub":"គណិតវិទ្យា","cl":"M-11NGS-C","tm":"ម៉ោង 5 (12:30 - 13:15)","rm":"F-M2","n":"28","ab":"0","ch":"១","ls":"២","ct":"ផលគុណស្មើចម្រាយពីតួចុង","dt":"2026-11-11","sc":[5,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,4,4,4,4,5,4,4,4,5,4],"cm":["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""],"g":["ដំណើរការបង្រៀន\n- បានរៀបចំសណ្ដាប់ធ្នាប់ថ្នាក់រៀនបានល្អ\n-រំឭកមេរៀនចាស់ដោយប្រើប្រព័ន្ធតេស្ត\n-មានសម្មភាពច្រើនសិស្សសប្បាយរីករាយ\n-មានលំហាត់អនុវត្តន៍ និងពង្រឹងពុទ្ធិ\n-មានដាក់កិច្ចការផ្ទះឱ្យសិស្សព្រមទាំងសារអេប់ល្អៗ ។","","-បានត្រៀមមុនបង្រៀនបានល្អ\n-បានលែងល្បែងរំឭកមេរៀនចាស់\n-សិស្សយកចិត្តទុកដាក់លើការងារ\n-មានសន្លឹកកិច្ចការផ្ដល់ជូនសិស្ស\n-បង្កើតសកម្មភាពថ្នាក់រៀន\n-មានកំណត់ពេលវេលាច្បាស់លាស់ តាមសកម្មភាពនីមួយៗ\n-បានផ្តល់ការគាំទ្រសិស្សគ្រប់សកម្មភាព","","-គួរឱ្យសិស្សក្រោកឈរមុនគោរពកុំឱ្យមានភាពញ៉ែញ៉ែ\n-គួរណែនាំសិស្សឱ្យប្រើកម្មវិធីណាមួយដែលមានគុណភាព សម្រាប់ Scan រូបឱ្យបានច្បាស់",""]};
+function obsRestoreTeacher(){var z=function(x){return String(x||"").replace(/[\u200b\u200c\u200d]/g,"")};var m=data.filter(function(t){return z(t.name).indexOf(OBS_RESTORE_NAME)>=0});return m.length===1?m[0]:null}
+function obsRestoreCan(){var r=ob.r[OBS_RESTORE_IDX];return isAdm()&&!!obsRestoreTeacher()&&!!r&&gt(OBS_RESTORE_IDX)===""}
+function obsRestoreApply(){var t=obsRestoreTeacher();if(!t||!obsRestoreCan())return false;
+  var r=normObsRow(jcl(OBS_RESTORE_ROW),t.id);r.t=t.id;
+  var me=data.filter(function(x){return x.name&&x.name.indexOf("ផៃ ចន")>=0})[0];r.o=me?me.id:(ob.r[OBS_RESTORE_IDX].o||"");
+  ob.r[OBS_RESTORE_IDX]=r;saveO();return true}
+function renderO1(){var rb=$("orst");if(rb){var ok=obsRestoreCan();rb.hidden=!ok;if(ok)rb.innerHTML="<button type=button id=orsb>♻️ ស្ដារកំណត់ត្រាសង្កេត "+esc(obsRestoreTeacher().name)+" (១១-១១-២០២៦ · ១៣៦/១៦៥)</button>"}
+var b="";
 ob.r.forEach(function(r,i){var mi=Math.floor(i/4);if(om!==-1&&mi!==om)return;var t=gt(i);
 var isAdmin = (isAdm());
 var canEditObs = (isAdmin || (who && who.id === r.o));
@@ -3131,6 +3140,7 @@ $("ov1t").oninput=function(e){var p=e.target.dataset.o;if(!p)return;var a=p.spli
 var isAdmin = (isAdm());
 if(!isAdmin) { alert("លោកគ្រូមិនមានសិទ្ធិកែប្រែកាលវិភាគសង្កេតនេះទេ!"); renderO1(); return; }
 r[a[1]]=e.target.value;saveO();renderO1();};
+if($("orst"))$("orst").onclick=function(e){if(!e.target.closest("button"))return;if(obsRestoreApply()){oc=OBS_RESTORE_IDX;ov=2;renderO()}};
 $("ov1t").onclick=function(e){var b=e.target.closest("button");if(b&&b.dataset.of!=null){oc=+b.dataset.of;ov=2;renderO()}};
 $("of").oninput=function(e){var t=e.target,r=ob.r[oc],d=t.dataset;
 var isAdmin = (isAdm());
