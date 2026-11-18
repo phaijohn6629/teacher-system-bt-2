@@ -13,7 +13,7 @@ class SlidePresenter {
         });
     }
     ensureDeps(cb) {
-        const files = ["lessonplans.js", "lp7.js", "lp8.js", "lp9.js", "lp10.js", "lp11.js", "lp12.js"];
+        const files = ["lessonplans.js", "lp7.js", "lp8.js", "lp9.js", "lp10.js", "lp11.js", "lp12.js", "practice7.js", "practice8.js", "practice9.js", "practice10.js", "practice11.js", "pisa12.js"];
         let pending = 0;
         let called = false;
         const finish = () => {
@@ -229,6 +229,34 @@ class SlidePresenter {
         this.canvas.onmouseup = () => { drawing = false; };
         this.renderSlide();
     }
+    
+    getTieredExercises(grade, lessonKey, fallbackLines, tc, st) {
+        const g = String(grade);
+        const pools = [
+            window["PRACTICE_" + g], window["practice" + g], window["PRAC_" + g],
+            window.PRACTICE_DB, window.PISA_12, window.PISA12, window.pisa12
+        ].filter(Boolean);
+        let items = [];
+        pools.forEach(p => {
+            if (Array.isArray(p)) items.push(...p);
+            else if (typeof p === "object") {
+                if (p[lessonKey] && Array.isArray(p[lessonKey])) items.push(...p[lessonKey]);
+                else Object.values(p).forEach(v => { if (Array.isArray(v)) items.push(...v); else if (v && typeof v === "object") items.push(v); });
+            }
+        });
+        const cleanTexts = items
+            .filter(it => !it.grade || String(it.grade) === g || g === "12")
+            .map(it => typeof it === "string" ? it : (it.q || it.question || it.text || it.prompt || it.title || ""))
+            .filter(t => t && t.length > 4);
+
+        const basic = cleanTexts[0] || fallbackLines[0] || "ខ្លឹមសារគ្រឹះ និងនិយមន័យសំខាន់ៗ";
+        const standard = cleanTexts[1] || fallbackLines[1] || (tc && tc[0]) || "ការអនុវត្តរូបមន្ត និងឧទាហរណ៍គំរូ";
+        const challenge = (g === "12" && window.PISA12 && Array.isArray(window.PISA12) && window.PISA12[0])
+            ? (window.PISA12[0].q || window.PISA12[0].question || window.PISA12[0].text || cleanTexts[2])
+            : (cleanTexts[2] || fallbackLines[2] || (st && st[0]) || "លំហាត់ត្រៀមបាក់ឌុប និងសិស្សពូកែ");
+        return [basic, standard, challenge];
+    }
+
     renderSlide() {
         const slide = this.slides[this.currentSlide];
         document.getElementById("sp-slide-title").innerText = slide.title || "";
@@ -258,10 +286,11 @@ class SlidePresenter {
             body.appendChild(c1); body.appendChild(c2);
         } else if (this.mode === "tiered") {
             const src = (slide.ct && slide.ct.length) ? slide.ct : lines;
+            const [bTxt, sTxt, cTxt] = this.getTieredExercises(this.getGradeFromKey(this.lessonKey), this.lessonKey, src, slide.tc, slide.st);
             [
-                { name: "🟢 កម្រិតមូលដ្ឋាន (Basic)", cls: "basic", text: src[0] || "ខ្លឹមសារគ្រឹះ និងនិយមន័យសំខាន់ៗ" },
-                { name: "🔵 កម្រិតស្តង់ដារ (Standard)", cls: "standard", text: src[1] || (slide.tc && slide.tc[0]) || "ការអនុវត្តរូបមន្ត និងឧទាហរណ៍គំរូ" },
-                { name: "🟡 កម្រិតប្រកួតប្រជែង (Challenge)", cls: "challenge", text: src[2] || (slide.st && slide.st[0]) || "លំហាត់ត្រៀមបាក់ឌុប និងសិស្សពូកែ" }
+                { name: "🟢 កម្រិតមូលដ្ឋាន (Basic)", cls: "basic", text: bTxt },
+                { name: "🔵 កម្រិតស្តង់ដារ (Standard)", cls: "standard", text: sTxt },
+                { name: "🟡 កម្រិតប្រកួតប្រជែង / PISA (Challenge)", cls: "challenge", text: cTxt }
             ].forEach(tr => {
                 const card = document.createElement("div");
                 card.className = "tier-card " + tr.cls;
