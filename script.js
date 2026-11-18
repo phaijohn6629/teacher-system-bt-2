@@ -1840,7 +1840,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=12"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=4","hub.js?v=23","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=1", "curriculum12.js?v=1", "curriculum.js?v=12"],mt:["meetings.js?v=14"],ls:["lessons.js?v=5","hubdata.js?v=5","hub.js?v=23","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
@@ -2948,7 +2948,7 @@ $("fileRestore").onchange=function(e){
         if(obj.tasks)tasks=obj.tasks;
         if(obj.demo)ex=obj.demo;
         if(obj.results)rs=obj.results;
-        if(obj.obs)ob=obj.obs;
+        if(obj.obs)ob=normalizeObsData(obj.obs);
         if(obj.reports)wr=obj.reports;
         if(obj.achievements)ah=obj.achievements;
         if(obj.library)lib=obj.library;
@@ -2982,6 +2982,31 @@ var OK="teachers-v4-o",OC=[{"t": "ការរៀបចំ", "q": "តើគ្�
 function defO(){var ids=data.map(function(t){return t.id}),r=[];
   for(var i=0;i<36;i++){r.push({t:ids.length?ids[i%ids.length]:"",o:ids.length?ids[(i+1)%ids.length]:"",sub:"គណិតវិទ្យា",cl:"",tm:"",rm:"",n:"",ab:"",ch:"",ls:"",ct:"",dt:"",sc:[],cm:[],g:["","","","","",""]})}
   return{d:2,y:2026,th:[90,75,50],r:r}}
+/* ធ្វើឱ្យទិន្នន័យសង្កេតមានរចនាសម្ព័ន្ធតែមួយ៖ ទទួល r ជា array ឬ object {"T005":[…]} (Backup ចាស់) ហើយធានា sc/cm/g ជា array ជានិច្ច */
+function normObsRow(x,tid){
+  x=(x&&typeof x==="object"&&!Array.isArray(x))?x:{};
+  var r={};Object.keys(x).forEach(function(k){r[k]=x[k]});
+  if(!Array.isArray(r.sc)){var s=[];if(r.sc&&typeof r.sc==="object")Object.keys(r.sc).forEach(function(k){if(+k>=0&&+k<33)s[+k]=r.sc[k]});r.sc=s}
+  if(!Array.isArray(r.cm)){var c=[];if(r.cm&&typeof r.cm==="object")Object.keys(r.cm).forEach(function(k){if(+k>=0&&+k<33)c[+k]=r.cm[k]});r.cm=c}
+  var g=Array.isArray(r.g)?r.g.slice():(r.g&&typeof r.g==="object"?Object.keys(r.g).reduce(function(a,k){a[+k]=r.g[k];return a},[]):[]);
+  for(var i=0;i<6;i++)if(typeof g[i]!=="string")g[i]=g[i]==null?"":String(g[i]);
+  r.g=g.slice(0,6);
+  r.sc=r.sc.slice(0,33);r.cm=r.cm.slice(0,33);
+  ["t","o","sub","cl","tm","rm","n","ab","ch","ls","ct","dt"].forEach(function(k){if(r[k]==null)r[k]=(k==="sub"?"គណិតវិទ្យា":"")});
+  if(!r.t&&tid)r.t=tid;
+  return r}
+function normalizeObsData(v){
+  if(!v||typeof v!=="object")return defO();
+  var rows=[];
+  if(Array.isArray(v.r))rows=v.r.map(function(x){return normObsRow(x)});
+  else if(v.r&&typeof v.r==="object"){
+    Object.keys(v.r).forEach(function(k){var a=v.r[k];
+      if(Array.isArray(a))a.forEach(function(x){rows.push(normObsRow(x,k))});
+      else if(a&&typeof a==="object")rows.push(normObsRow(a,k))})}
+  var d=defO();
+  for(var i=rows.length;i<36;i++)rows.push(d.r[i]);
+  var th=Array.isArray(v.th)&&v.th.length>=3?v.th.slice(0,3):d.th;
+  return{d:v.d!=null?+v.d:d.d,y:v.y!=null?+v.y:d.y,th:th,r:rows}}
 function loadO() {
   try {
     var s = sessionStorage.getItem(KEY_OBS);
@@ -2992,14 +3017,14 @@ function loadO() {
         sessionStorage.removeItem(OK);
       }
     }
-    if (s) return JSON.parse(s)
+    if (s) return normalizeObsData(JSON.parse(s))
   } catch (e) { }
   return defO()
 }
 function saveO() { try { sessionStorage.setItem(KEY_OBS, JSON.stringify(ob)); push("obs"); } catch (e) { } }
 function omn(i){return XM[Math.floor(i/4)]}
 function odt(i){var r=ob.r[i];if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
-function gs(i,g){var r=ob.r[i]; if(!r.sc)r.sc=[]; var s=0,n=0,k0=0;for(var a=0;a<g;a++)k0+=OC[a].items.length;OC[g].items.forEach(function(_,j){var v=r.sc[k0+j];if(v!=null&&v!==""){s+=+v;n++}});return n?s:""}
+function gs(i,g){var r=ob.r[i]; if(!r||!Array.isArray(r.sc)){r=ob.r[i]=normObsRow(r)} var s=0,n=0,k0=0;for(var a=0;a<g;a++)k0+=OC[a].items.length;OC[g].items.forEach(function(_,j){var v=r.sc[k0+j];if(v!=null&&v!==""){s+=+v;n++}});return n?s:""}
 function gt(i){var s=0,n=0;OC.forEach(function(_,g){var v=gs(i,g);if(v!==""){s+=v;n++}});return n?s:""}
 function lvl(p){return p>=ob.th[0]/100?OL[0]:p>=ob.th[1]/100?OL[1]:p>=ob.th[2]/100?OL[2]:OL[3]}
 function tots(i){var T=gt(i);return T===""?"សរុប៖ —":"សរុប៖ <b>"+T+" / 165</b> ("+(T/165*100).toFixed(1)+"%) · <b>"+lvl(T/165)+"</b>"}
@@ -3016,7 +3041,7 @@ var isAdmin = (isAdm());
 var canEditObs = (isAdmin || (who && who.id === r.o));
 b+=(i%4===0?"<tr class=tr><td colspan=9>"+M[omn(i)-1]+" "+(ob.y+(omn(i)>=11?0:1))+"</td></tr>":"")+"<tr><td>"+(i+1)+"</td><td>សប្ដាហ៍ទី"+"១២៣៤"[i%4]+"</td><td><input type=date data-o='"+i+"|dt' value='"+iso(odt(i))+"' "+(isAdmin?"":"readonly")+"></td><td><select data-o='"+i+"|t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select></td><td><select data-o='"+i+"|o' "+(canEditObs?"":"disabled")+">"+oopt(r.o)+"</select></td><td><select data-o='"+i+"|cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select></td><td><select data-o='"+i+"|tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select></td><td>"+(t===""?"—":t+"/165 · <b>អ្វីជា…</b>")+"</td><td><button data-of='"+i+"'>បើកទម្រង់</button></td></tr>"});
 $("ov1t").innerHTML="<thead><tr><th>ល.រ</th><th>សប្ដាហ៍</th><th>កាលបរិច្ឆេទ</th><th>គ្រូត្រូវសង្កេត</th><th>អ្នកសង្កេត</th><th>ថ្នាក់</th><th>ម៉ោង</th><th>លទ្ធផល</th><th></th></tr></thead><tbody>"+b+"</tbody>"}
-function renderO2(){var i=oc,r=ob.r[i]; if(!r.sc)r.sc=[]; if(!r.cm)r.cm=[]; var h="";
+function renderO2(){if(oc<0||oc>=ob.r.length)oc=0;var i=oc,r=ob.r[i]=normObsRow(ob.r[i]);var h="";
 $("oi").innerHTML=ob.r.map(function(x,k){return"<option value="+k+(k===i?" selected":"")+">"+(k+1)+". "+M[omn(k)-1]+" ស."+"១២៣៤"[k%4]+" — "+esc(tn(x.t))+"</option>"}).join("");
 var isAdmin = (isAdm());
 var canEditObs = (isAdmin || (who && who.id === r.o));
@@ -3044,11 +3069,15 @@ var by=ob.r.filter(function(r){return r.o===t.id}).length,sc=ix.filter(function(
 var av=OC.map(function(g,gi){var v=ix.map(function(i){return gs(i,gi)}).filter(function(x){return x!==""});return v.length?ss(v)/v.length:""});
 var tv=ix.map(function(i){return gt(i)}).filter(function(x){return x!==""}),ta=tv.length?ss(tv)/tv.length:"";
 av.push(ta);av.forEach(function(v,k){if(v!=="")cols[k].push(v)});
-b+="<tr><td class=nm>"+esc(t.name)+"</td><td>"+ix.length+"</td><td>"+by+"</td><td>"+sc+"</td>"+av.map(function(v){return"<td>"+(v===""?"":v.toFixed(1))+"</td>"}).join("")+"<td>"+(ta===""?"":(ta/165*100).toFixed(1)+"% · <b>"+lvl(ta/165)+"</b>")+"</td></tr>"});
+b+="<tr><td class=nm data-ot='"+esc(t.id)+"' style='cursor:pointer;text-decoration:underline' title='បើកទម្រង់សង្កេត'>"+esc(t.name)+"</td><td>"+ix.length+"</td><td>"+by+"</td><td>"+sc+"</td>"+av.map(function(v){return"<td>"+(v===""?"":v.toFixed(1))+"</td>"}).join("")+"<td>"+(ta===""?"":(ta/165*100).toFixed(1)+"% · <b>"+lvl(ta/165)+"</b>")+"</td></tr>"});
 var tr=cols.map(function(a){return a.length?ss(a)/a.length:""});
 b+="<tr class=tr><td>សរុប / មធ្យម</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td>"+tr.map(function(v){return"<td>"+(v===""?"":v.toFixed(1))+"</td>"}).join("")+"<td>"+(tr[6]===""?"":(tr[6]/165*100).toFixed(1)+"%")+"</td></tr>";
 $("o3t").innerHTML="<thead><tr><th>គ្រូបង្រៀន</th><th>ត្រូវសង្កេត (ដង)</th><th>បានសង្កេតគេ (ដង)</th><th>ដាក់ពិន្ទុរួច (ដង)</th>"+OC.map(function(g){return"<th>"+esc(g.t)+" (/"+g.max+")</th>"}).join("")+"<th>មធ្យមសរុប (/165)</th><th>ភាគរយ · និទ្ទេស</th></tr></thead><tbody>"+b+"</tbody>";
 $("oth").innerHTML="<div class=bar>"+[0,1,2].map(function(k){return"<label>"+OL[k]+" ≥ (%)</label><input type=number data-th='"+k+"' value='"+ob.th[k]+"' style='flex:0 0 80px;width:80px' "+(isAdm()?"":"disabled")+">"}).join("")+"</div>"}
+$("o3t").onclick=function(e){var td=e.target.closest("td[data-ot]");if(!td)return;var id=td.getAttribute("data-ot"),f=-1,a=-1;
+  ob.r.forEach(function(r,i){if(r&&r.t===id){if(a<0)a=i;if(f<0&&gt(i)!=="")f=i}});
+  if(f<0)f=a;if(f<0){alert("មិនមានកាលវិភាគសង្កេតសម្រាប់គ្រូនេះទេ");return}
+  oc=f;ov=2;renderO()};
 $("oseg").onclick=function(e){var b=e.target.closest("button");if(b){ov=+b.dataset.ov;renderO()}};
 $("od").onchange=function(){
   if(!isAdm()) { alert("មានតែអ្នកគ្រប់គ្រង (Admin) ទេដែលអាចប្ដូរថ្ងៃសង្កេត!"); renderO(); return; }
@@ -3061,7 +3090,7 @@ $("oy").onchange=function(){
 $("om").onchange=function(){om=+this.value;renderO1()};
 /* បោះពុម្ពទម្រង់សង្កេតថ្នាក់មួយ (A4 បញ្ឈរ) */
 function obsPrintHTML(i){
-  var r=ob.r[i],I=inf(),d=odt(i),T=gt(i),k0=0,rows="";
+  var r=ob.r[i]=normObsRow(ob.r[i]),I=inf(),d=odt(i),T=gt(i),k0=0,rows="";
   function cell(l,v){return"<td><span class=opl>"+l+"៖</span> <b>"+esc(v==null||v===""?"—":v)+"</b></td>"}
   OC.forEach(function(g,gi){
     var s=gs(i,gi);rows+="<tr class=og><td colspan=2>"+(gi+1)+". "+esc(g.t)+"</td><td>"+(s===""?"—":s)+" / "+g.max+"</td><td></td></tr>";
@@ -3179,7 +3208,7 @@ var MAP={
   obs:{
     docs:function(){var o={"cfg/obs":{d:ob.d,y:ob.y,th:jcl(ob.th)}};ob.r.forEach(function(r,i){o["obsrows/"+rid(i)]=jcl(r)});return o},
     load:function(c){var cf=c["cfg/obs"]||{},r=ob.r.map(function(x,i){var d=c["obsrows/"+rid(i)];return d?jcl(d):x});
-      ob={d:cf.d!=null?cf.d:ob.d,y:cf.y!=null?cf.y:ob.y,th:cf.th?jcl(cf.th):ob.th,r:r}}
+      ob=normalizeObsData({d:cf.d!=null?cf.d:ob.d,y:cf.y!=null?cf.y:ob.y,th:cf.th?jcl(cf.th):ob.th,r:r})}
   },
   wr:{
     docs:function(){var o={};Object.keys(wr.r||{}).forEach(function(id){o["wr/"+id]=encO(id,wr.r[id])});return o},
@@ -3200,7 +3229,7 @@ var LEG={
   tasks:function(v){if(v&&typeof v==="object"&&!Array.isArray(v)){tasks=v;return true}},
   ex:function(v){if(v&&Array.isArray(v.r)){ex=v;return true}},
   rs:function(v){if(v&&v.c&&typeof v.c==="object"){rs=v;return true}},
-  obs:function(v){if(v&&Array.isArray(v.r)){ob=v;return true}},
+  obs:function(v){if(v&&v.r&&typeof v.r==="object"){ob=normalizeObsData(v);return true}},
   wr:function(v){if(v&&v.r&&typeof v.r==="object"){wr=v;return true}},
   ah:function(v){if(v&&v.r&&typeof v.r==="object"){ah=v;return true}},
   lib:function(v){if(v&&Array.isArray(v.i)){lib=v;return true}}
