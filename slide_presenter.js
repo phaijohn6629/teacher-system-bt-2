@@ -15,7 +15,10 @@ class SlidePresenter {
         });
     }
     ensureDeps(cb) {
-        const files = ["lessonplans.js", "lp7.js", "lp8.js", "lp9.js", "lp10.js", "lp11.js", "lp12.js", "practice7.js", "practice8.js", "practice9.js", "practice10.js", "practice11.js", "pisa12.js"];
+        const files = [
+            "lessonplans.js", "lp7.js", "lp8.js", "lp9.js", "lp10.js", "lp11.js", "lp12.js",
+            "practice7.js", "practice8.js", "practice9.js", "practice10.js", "practice11.js", "pisa12.js"
+        ];
         let pending = 0;
         let called = false;
         const finish = () => {
@@ -42,11 +45,10 @@ class SlidePresenter {
         }
 
         files.forEach(f => {
-            const existing = document.querySelector(`script[src^="${f}"]`);
-            if (!existing) {
+            if (!document.querySelector(`script[src^="${f}"]`)) {
                 pending++;
                 const s = document.createElement("script");
-                s.src = f + "?v=10";
+                s.src = f + "?v=14";
                 s.onload = s.onerror = done;
                 document.head.appendChild(s);
             }
@@ -56,12 +58,10 @@ class SlidePresenter {
     renderKaTeXDirect(el) {
         if (!window.katex) return;
         let html = el.innerHTML;
-        // Convert $$...$$ display math first
         html = html.replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => {
             try { return katex.renderToString(tex.trim(), { displayMode: true, throwOnError: false }); }
             catch (e) { return tex; }
         });
-        // Convert $...$ inline math (trimming internal spaces so KaTeX always renders cleanly)
         html = html.replace(/\$([^\$\n]+?)\$/g, (_, tex) => {
             try { return katex.renderToString(tex.trim(), { displayMode: false, throwOnError: false }); }
             catch (e) { return tex; }
@@ -156,42 +156,55 @@ class SlidePresenter {
 
         const overlay = document.createElement("div");
         overlay.id = "slide-presenter-overlay";
-        overlay.innerHTML = [
-            "<div class=\"sp-header\">",
-            "  <div><div class=\"sp-kicker\" id=\"sp-kicker\">🌐 លោកខាងលិច (5Es / IBL)</div><div class=\"sp-title\" id=\"sp-slide-title\"></div></div>",
-            "  <div><span id=\"sp-counter\" style=\"font-size:18px;font-weight:bold;color:var(--slide-muted);\">1 / " + this.slides.length + "</span></div>",
-            "</div>",
-            "<div class=\"sp-body\" id=\"sp-slide-body\"></div>",
-            "<canvas id=\"sp-canvas\"></canvas>",
-            "<div class=\"sp-controls forced-show\" id=\"sp-control-bar\" style=\"flex-wrap:wrap;max-width:95vw;\">",
-            "  <select class=\"sp-select\" id=\"sp-grade-select\">" + gradeOptions + "</select>",
-            "  <select class=\"sp-select\" id=\"sp-lesson-select\" style=\"max-width:250px;\"></select>",
-            "  <select class=\"sp-select\" id=\"sp-mode-select\">",
-            "    <option value=\"5es\">🌐 លោកខាងលិច (5Es / IBL)</option>",
-            "    <option value=\"bansho\">🇯🇵 ជប៉ុន (Bansho Split)</option>",
-            "    <option value=\"cpa\">🇸🇬 សិង្ហបុរី (CPA / Misconception)</option>",
-            "    <option value=\"tiered\">🇫🇮 ហ្វាំងឡង់ (Tiered Cards)</option>",
-            "  </select>",
-            "  <button class=\"sp-btn\" id=\"sp-prev\">◀ ថយ</button>",
-            "  <button class=\"sp-btn\" id=\"sp-next\">បន្ត ▶</button>",
-            "  <button class=\"sp-btn\" id=\"sp-all\">👁️ ទាំងអស់</button>",
-            "  <button class=\"sp-btn\" id=\"sp-video\">🎬 វីដេអូ Manim</button>\n  <button class=\"sp-btn\" id=\"sp-timer\">⏱️ ម៉ោង</button>
-  <button class=\"sp-btn\" id=\"sp-laser\">🔴 ចង្អុល</button>
-  <button class=\"sp-btn\" id=\"sp-pen\">✏️ គូស</button>
-  <button class=\"sp-btn\" id=\"sp-color\" title=\"ប្តូរពណ៌ប៊ិច\">🎨 ក្រហម</button>",
-            "  <button class=\"sp-btn\" id=\"sp-clear\">🧹 លុប</button>",
-            "  <button class=\"sp-btn\" id=\"sp-dark\">🌓 ពន្លឺ</button>",
-            "  <button class=\"sp-btn\" id=\"sp-close\" style=\"color:#FCA5A5;font-weight:bold;\">✕ បិទ</button>",
-            "</div>"
-        ].join("\n");
+        overlay.innerHTML = `
+            <div class="sp-header">
+                <div><div class="sp-kicker" id="sp-kicker">🌐 លោកខាងលិច (5Es / IBL)</div><div class="sp-title" id="sp-slide-title"></div></div>
+                <div><span id="sp-counter" style="font-size:18px;font-weight:bold;color:var(--slide-muted);">1 / ${this.slides.length}</span></div>
+            </div>
+            <div class="sp-body" id="sp-slide-body"></div>
+            <canvas id="sp-canvas"></canvas>
+            <div class="sp-controls forced-show" id="sp-control-bar" style="flex-wrap:wrap;max-width:96vw;">
+                <select class="sp-select" id="sp-grade-select">${gradeOptions}</select>
+                <select class="sp-select" id="sp-lesson-select" style="max-width:230px;"></select>
+                <select class="sp-select" id="sp-mode-select">
+                    <option value="5es">🌐 លោកខាងលិច (5Es / IBL)</option>
+                    <option value="bansho">🇯🇵 ជប៉ុន (Bansho Split)</option>
+                    <option value="cpa">🇸🇬 សិង្ហបុរី (CPA / Misconception)</option>
+                    <option value="tiered">🇫🇮 ហ្វាំងឡង់ (Tiered Cards)</option>
+                </select>
+                <button class="sp-btn" id="sp-prev">◀ ថយ</button>
+                <button class="sp-btn" id="sp-next">បន្ត ▶</button>
+                <button class="sp-btn" id="sp-all">👁️ ទាំងអស់</button>
+                <button class="sp-btn" id="sp-video">🎬 វីដេអូ Manim</button>
+                <button class="sp-btn" id="sp-timer">⏱️ ម៉ោង</button>
+                <button class="sp-btn" id="sp-laser">🔴 ចង្អុល</button>
+                <button class="sp-btn" id="sp-pen">✏️ គូស</button>
+                <button class="sp-btn" id="sp-color" title="ប្តូរពណ៌ប៊ិច">🎨 ក្រហម</button>
+                <button class="sp-btn" id="sp-clear">🧹 លុប</button>
+                <button class="sp-btn" id="sp-dark">🌓 ពន្លឺ</button>
+                <button class="sp-btn" id="sp-close" style="color:#FCA5A5;font-weight:bold;">✕ បិទ</button>
+            </div>
+        `;
         document.body.appendChild(overlay);
         this.populateLessonDropdown(curGrade);
+
+        const laserDot = document.createElement("div");
+        laserDot.id = "sp-laser-dot";
+        laserDot.style.cssText = "position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#FFF 15%,#EF4444 55%,rgba(239,68,68,0) 75%);box-shadow:0 0 16px 6px rgba(239,68,68,0.85);pointer-events:none;z-index:1000002;display:none;transform:translate(-50%,-50%);";
+        overlay.appendChild(laserDot);
+        overlay.addEventListener("mousemove", (e) => {
+            if (this.isLaser) {
+                laserDot.style.left = e.clientX + "px";
+                laserDot.style.top = e.clientY + "px";
+            }
+        });
 
         setTimeout(() => { const b = document.getElementById("sp-control-bar"); if (b) b.classList.remove("forced-show"); }, 3500);
         this.canvas = document.getElementById("sp-canvas");
         this.ctx = this.canvas.getContext("2d");
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+
         document.getElementById("sp-next").onclick = () => this.nextStep();
         document.getElementById("sp-prev").onclick = () => this.prevStep();
         document.getElementById("sp-all").onclick = () => {
@@ -199,11 +212,14 @@ class SlidePresenter {
             this.currentStep = Math.max(0, lines.length - 1);
             this.renderSlide();
         };
-        document.getElementById("sp-close").onclick = () => { window.removeEventListener("keydown", this.boundKeyHandler); overlay.remove(); };
+        document.getElementById("sp-close").onclick = () => {
+            if (this._timerInt) clearInterval(this._timerInt);
+            window.removeEventListener("keydown", this.boundKeyHandler);
+            overlay.remove();
+        };
         document.getElementById("sp-dark").onclick = () => { this.isDark = !this.isDark; overlay.classList.toggle("dark-mode", this.isDark); };
         document.getElementById("sp-grade-select").onchange = (e) => {
-            const g = e.target.value;
-            const list = this.populateLessonDropdown(g);
+            const list = this.populateLessonDropdown(e.target.value);
             if (list && list.length) {
                 this.lessonKey = list[0];
                 this.currentSlide = 0; this.currentStep = 0;
@@ -217,19 +233,13 @@ class SlidePresenter {
             this.loadLessonData();
             this.renderSlide();
         };
-        document.getElementById("sp-mode-select").onchange = (e) => { this.mode = e.target.value; document.getElementById("sp-kicker").innerText = e.target.options[e.target.selectedIndex].text; this.renderSlide(); };
-        
-        
-        const laserDot = document.createElement("div");
-        laserDot.id = "sp-laser-dot";
-        laserDot.style.cssText = "position:fixed;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#FFF 15%,#EF4444 55%,rgba(239,68,68,0) 75%);box-shadow:0 0 16px 6px rgba(239,68,68,0.85);pointer-events:none;z-index:1000002;display:none;transform:translate(-50%,-50%);";
-        overlay.appendChild(laserDot);
-        overlay.addEventListener("mousemove", (e) => {
-            if (this.isLaser) {
-                laserDot.style.left = e.clientX + "px";
-                laserDot.style.top = e.clientY + "px";
-            }
-        });
+        document.getElementById("sp-mode-select").onchange = (e) => {
+            this.mode = e.target.value;
+            document.getElementById("sp-kicker").innerText = e.target.options[e.target.selectedIndex].text;
+            this.renderSlide();
+        };
+        document.getElementById("sp-video").onclick = () => this.toggleVideoModal();
+        document.getElementById("sp-timer").onclick = () => this.toggleTimerWidget();
         document.getElementById("sp-laser").onclick = (e) => {
             this.isLaser = !this.isLaser;
             laserDot.style.display = this.isLaser ? "block" : "none";
@@ -246,24 +256,30 @@ class SlidePresenter {
             this.penColor = colors[cIdx].hex;
             e.target.innerText = colors[cIdx].name;
         };
-        document.getElementById("sp-timer").onclick = () => this.toggleTimerWidget();
-
-        document.getElementById("sp-video").onclick = () => this.toggleVideoModal();
-        document.getElementById("sp-pen").onclick = (e) => { this.isDrawing = !this.isDrawing; this.canvas.classList.toggle("active", this.isDrawing); e.target.style.background = this.isDrawing ? "#1F4FBF" : ""; };
+        document.getElementById("sp-pen").onclick = (e) => {
+            this.isDrawing = !this.isDrawing;
+            this.canvas.classList.toggle("active", this.isDrawing);
+            e.target.style.background = this.isDrawing ? "#1F4FBF" : "";
+        };
         document.getElementById("sp-clear").onclick = () => { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); };
+
         this.boundKeyHandler = (e) => {
             if (["ArrowRight", " ", "PageDown"].includes(e.key)) { e.preventDefault(); this.nextStep(); }
             else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); this.prevStep(); }
-            else if (e.key === "Escape") { window.removeEventListener("keydown", this.boundKeyHandler); overlay.remove(); }
+            else if (e.key === "Escape") {
+                if (this._timerInt) clearInterval(this._timerInt);
+                window.removeEventListener("keydown", this.boundKeyHandler);
+                overlay.remove();
+            }
         };
         window.addEventListener("keydown", this.boundKeyHandler);
+
         let drawing = false;
         this.canvas.onmousedown = (e) => { if (this.isDrawing) { drawing = true; this.ctx.beginPath(); this.ctx.moveTo(e.clientX, e.clientY); } };
         this.canvas.onmousemove = (e) => { if (drawing && this.isDrawing) { this.ctx.lineTo(e.clientX, e.clientY); this.ctx.strokeStyle = this.penColor; this.ctx.lineWidth = 4; this.ctx.stroke(); } };
         this.canvas.onmouseup = () => { drawing = false; };
         this.renderSlide();
     }
-    
     getTieredExercises(grade, lessonKey, fallbackLines, tc, st) {
         const g = String(grade);
         const pools = [
@@ -290,7 +306,6 @@ class SlidePresenter {
             : (cleanTexts[2] || fallbackLines[2] || (st && st[0]) || "លំហាត់ត្រៀមបាក់ឌុប និងសិស្សពូកែ");
         return [basic, standard, challenge];
     }
-
     renderSlide() {
         const slide = this.slides[this.currentSlide];
         document.getElementById("sp-slide-title").innerText = slide.title || "";
@@ -301,8 +316,8 @@ class SlidePresenter {
         const lines = slide.lines || [];
         if (this.mode === "bansho") {
             const c1 = document.createElement("div"), c2 = document.createElement("div");
-            c1.innerHTML = "<h3 style=\"color:#1F4FBF;margin-bottom:15px;\">📋 ខ្លឹមសារក្តារខៀន (ខ្លឹមសារមេរៀន)</h3>";
-            c2.innerHTML = "<h3 style=\"color:#10B981;margin-bottom:15px;\">💡 ការវិភាគ និងសកម្មភាព (គ្រូ & សិស្ស)</h3>";
+            c1.innerHTML = '<h3 style="color:#1F4FBF;margin-bottom:15px;">📋 ខ្លឹមសារក្តារខៀន (ខ្លឹមសារមេរៀន)</h3>';
+            c2.innerHTML = '<h3 style="color:#10B981;margin-bottom:15px;">💡 ការវិភាគ និងសកម្មភាព (គ្រូ & សិស្ស)</h3>';
             const leftLines = (slide.ct && slide.ct.length) ? slide.ct : lines;
             const rightLines = [...(slide.tc || []), ...(slide.st || [])];
             leftLines.forEach((l, i) => {
@@ -328,7 +343,7 @@ class SlidePresenter {
             ].forEach(tr => {
                 const card = document.createElement("div");
                 card.className = "tier-card " + tr.cls;
-                card.innerHTML = "<strong style=\"display:block;margin-bottom:8px;\">" + tr.name + "</strong><span>" + tr.text + "</span>";
+                card.innerHTML = '<strong style="display:block;margin-bottom:8px;">' + tr.name + '</strong><span>' + tr.text + '</span>';
                 body.appendChild(card);
             });
         } else if (this.mode === "cpa") {
@@ -353,7 +368,6 @@ class SlidePresenter {
         }
         this.renderKaTeXDirect(body);
     }
-    
     extractVideoUrl(lesson) {
         if (!lesson) return "";
         if (lesson.video || lesson.youtube || lesson.url) return lesson.video || lesson.youtube || lesson.url;
@@ -375,24 +389,24 @@ class SlidePresenter {
         const autoUrl = this.extractVideoUrl(lesson);
         modal = document.createElement("div");
         modal.id = "sp-video-modal";
-        modal.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(900px,92vw);background:#0F172A;color:#F8FAFC;border:2px solid #3B82F6;border-radius:18px;padding:18px;z-index:1000001;box-shadow:0 25px 60px rgba(0,0,0,0.75);font-family:\"Khmer OS Battambang\",sans-serif;";
-        modal.innerHTML = [
-            "<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;\">",
-            "  <strong style=\"font-size:17px;color:#60A5FA;\">🎬 វីដេអូគំនូរជីវចល Manim / YouTube</strong>",
-            "  <div style=\"display:flex;gap:8px;flex:1;max-width:520px;\">",
-            "    <input id=\"sp-video-input\" type=\"text\" placeholder=\"បិទភ្ជាប់តំណ YouTube ឬ MP4 នៅទីនេះ...\" value=\"" + autoUrl + "\" style=\"flex:1;padding:6px 12px;border-radius:8px;border:1px solid #334155;background:#1E293B;color:#FFF;font-size:14px;\">",
-            "    <button id=\"sp-video-load\" style=\"background:#2563EB;color:#FFF;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;\">ចាក់</button>",
-            "  </div>",
-            "  <button id=\"sp-video-close\" style=\"background:#EF4444;color:#FFF;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;\">✕</button>",
-            "</div>",
-            "<div id=\"sp-video-stage\" style=\"width:100%;aspect-ratio:16/9;background:#020617;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;\"></div>"
-        ].join("\n");
+        modal.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(900px,92vw);background:#0F172A;color:#F8FAFC;border:2px solid #3B82F6;border-radius:18px;padding:18px;z-index:1000001;box-shadow:0 25px 60px rgba(0,0,0,0.75);font-family:"Khmer OS Battambang",sans-serif;';
+        modal.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;">
+                <strong style="font-size:17px;color:#60A5FA;">🎬 វីដេអូគំនូរជីវចល Manim / YouTube</strong>
+                <div style="display:flex;gap:8px;flex:1;max-width:520px;">
+                    <input id="sp-video-input" type="text" placeholder="បិទភ្ជាប់តំណ YouTube ឬ MP4 នៅទីនេះ..." value="${autoUrl}" style="flex:1;padding:6px 12px;border-radius:8px;border:1px solid #334155;background:#1E293B;color:#FFF;font-size:14px;">
+                    <button id="sp-video-load" style="background:#2563EB;color:#FFF;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:bold;">ចាក់</button>
+                </div>
+                <button id="sp-video-close" style="background:#EF4444;color:#FFF;border:none;padding:6px 12px;border-radius:8px;cursor:pointer;font-weight:bold;">✕</button>
+            </div>
+            <div id="sp-video-stage" style="width:100%;aspect-ratio:16/9;background:#020617;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;"></div>
+        `;
         document.getElementById("slide-presenter-overlay").appendChild(modal);
         const renderStage = (rawUrl) => {
             const stage = document.getElementById("sp-video-stage");
             const embed = this.toEmbedUrl(rawUrl.trim());
             if (!embed) {
-                stage.innerHTML = "<div style=\"text-align:center;color:#94A3B8;padding:20px;\">សូមបិទភ្ជាប់តំណ YouTube ឬឯកសារវីដេអូ Manim (.mp4) ខាងលើ រួចចុចប៊ូតុង <b>«ចាក់»</b></div>";
+                stage.innerHTML = '<div style="text-align:center;color:#94A3B8;padding:20px;">សូមបិទភ្ជាប់តំណ YouTube ឬឯកសារវីដេអូ Manim (.mp4) ខាងលើ រួចចុចប៊ូតុង <b>«ចាក់»</b></div>';
                 return;
             }
             if (/\.mp4($|\?)/i.test(embed)) {
@@ -405,8 +419,6 @@ class SlidePresenter {
         document.getElementById("sp-video-load").onclick = () => renderStage(document.getElementById("sp-video-input").value);
         document.getElementById("sp-video-close").onclick = () => modal.remove();
     }
-
-    
     toggleTimerWidget() {
         let box = document.getElementById("sp-timer-box");
         if (box) {
@@ -416,16 +428,16 @@ class SlidePresenter {
         }
         box = document.createElement("div");
         box.id = "sp-timer-box";
-        box.style.cssText = "position:fixed;top:85px;right:32px;background:#0F172A;color:#F8FAFC;border:2px solid #3B82F6;border-radius:16px;padding:12px 18px;z-index:1000001;box-shadow:0 12px 30px rgba(0,0,0,0.45);font-family:\"Khmer OS Battambang\",sans-serif;text-align:center;";
-        box.innerHTML = [
-            "<div id=\"sp-timer-disp\" style=\"font-size:32px;font-weight:bold;font-variant-numeric:tabular-nums;color:#38BDF8;margin-bottom:8px;\">03:00</div>",
-            "<div style=\"display:flex;gap:6px;justify-content:center;\">",
-            "  <button data-sec=\"60\" class=\"sp-tbtn\" style=\"background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;\">1នាទី</button>",
-            "  <button data-sec=\"180\" class=\"sp-tbtn\" style=\"background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;\">3នាទី</button>",
-            "  <button data-sec=\"300\" class=\"sp-tbtn\" style=\"background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;\">5នាទី</button>",
-            "  <button id=\"sp-timer-toggle\" style=\"background:#2563EB;color:#FFF;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:bold;\">ចាប់ផ្តើម</button>",
-            "</div>"
-        ].join("\n");
+        box.style.cssText = 'position:fixed;top:85px;right:32px;background:#0F172A;color:#F8FAFC;border:2px solid #3B82F6;border-radius:16px;padding:12px 18px;z-index:1000001;box-shadow:0 12px 30px rgba(0,0,0,0.45);font-family:"Khmer OS Battambang",sans-serif;text-align:center;';
+        box.innerHTML = `
+            <div id="sp-timer-disp" style="font-size:32px;font-weight:bold;font-variant-numeric:tabular-nums;color:#38BDF8;margin-bottom:8px;">03:00</div>
+            <div style="display:flex;gap:6px;justify-content:center;">
+                <button data-sec="60" class="sp-tbtn" style="background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;">1នាទី</button>
+                <button data-sec="180" class="sp-tbtn" style="background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;">3នាទី</button>
+                <button data-sec="300" class="sp-tbtn" style="background:#1E293B;color:#FFF;border:1px solid #475569;padding:4px 8px;border-radius:6px;cursor:pointer;">5នាទី</button>
+                <button id="sp-timer-toggle" style="background:#2563EB;color:#FFF;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:bold;">ចាប់ផ្តើម</button>
+            </div>
+        `;
         document.getElementById("slide-presenter-overlay").appendChild(box);
         let rem = 180, running = false;
         const disp = document.getElementById("sp-timer-disp");
@@ -463,7 +475,6 @@ class SlidePresenter {
             }
         };
     }
-
     nextStep() {
         const lines = this.slides[this.currentSlide].lines || [];
         if (this.currentStep < lines.length - 1) { this.currentStep++; this.renderSlide(); }
@@ -478,7 +489,7 @@ function startSlidePresenter(lessonKey) { window.activeSlidePresenter = new Slid
 window.addEventListener("DOMContentLoaded", () => {
     const btn = document.createElement("button");
     btn.innerHTML = "🖥️ បញ្ចាំងស្លាយ 4-in-1";
-    btn.style.cssText = "position:fixed;bottom:90px;right:24px;z-index:9999;background:#1F4FBF;color:#fff;border:none;padding:12px 20px;border-radius:30px;font-family:\"Khmer OS Battambang\",sans-serif;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(31,79,191,0.4);";
+    btn.style.cssText = 'position:fixed;bottom:90px;right:24px;z-index:9999;background:#1F4FBF;color:#fff;border:none;padding:12px 20px;border-radius:30px;font-family:"Khmer OS Battambang",sans-serif;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(31,79,191,0.4);';
     btn.onclick = () => {
         const activeSel = document.querySelector("select[id*=lp], select[id*=lesson]");
         startSlidePresenter((activeSel && activeSel.value) ? activeSel.value : "12_11");
