@@ -35,18 +35,18 @@ G[21]={1:function(){var a=ri(1,9),b=ri(1,9),op=pick(["\\land","\\lor"]),p=a>b,q=
     return Q("$p$៖ «$"+a+"$ ចែកដាច់នឹង $3$» · $q$៖ «$"+b+">5$»។ តើ $p\\Rightarrow q$ ពិតឬមិនពិត? ($1$/$0$)",[A(v?1:0,null,"num","តម្លៃ =")],"$p\\Rightarrow q$ មិនពិតតែពេល $p$ ពិត និង $q$ មិនពិត ⇒ "+(v?"ពិត":"មិនពិត"))},
   3:function(){var a=ri(1,9),b=ri(1,9),p=a<b,q=a+b>10,v=!(p&&q);
     return Q("$p$៖ «$"+a+"<"+b+"$» · $q$៖ «$"+a+"+"+b+">10$»។ តើ $\\overline{p\\land q}$ ពិតឬមិនពិត? ($1$/$0$)",[A(v?1:0,null,"num","តម្លៃ =")],"$p\\land q$ "+(p&&q?"ពិត":"មិនពិត")+" ⇒ អវិជ្ជមានរបស់វា "+(v?"ពិត":"មិនពិត"))}};
-G[22]={1:function(){var n=ri(8,20),a=ri(2,n-2),f=[];for(var i=1;i<=n;i++)if(i%a===0)f.push(i);
-    return Q("$A=\\{x\\in\\mathbb N^*\\mid x\\le "+n+",\\ x$ ជាពហុគុណនៃ $"+a+"\\}$ ។ រកចំនួនធាតុ $n(A)$",[A(f.length,null,"num","n(A) =")],"$A=\\{"+f.join(",")+"\\}$ ⇒ $n(A)="+f.length+"$")},
-  2:function(){var nA=ri(10,30),nB=ri(10,30),nI=ri(1,Math.min(nA,nB)-1);
-    return Q("$n(A)="+nA+"$ , $n(B)="+nB+"$ , $n(A\\cap B)="+nI+"$ ។ គណនា $n(A\\cup B)$",[A(nA+nB-nI,null,"num","n(A∪B) =")],"$n(A\\cup B)=n(A)+n(B)-n(A\\cap B)="+(nA+nB-nI)+"$")},
-  3:function(){var T=ri(30,45),m=ri(15,25),p=ri(12,22),b=ri(4,Math.min(m,p)-2),none=T-(m+p-b);if(none<0){T=m+p-b+ri(0,5);none=T-(m+p-b)}
-    return Q("ថ្នាក់មានសិស្ស $"+T+"$ នាក់ ៖ $"+m+"$ នាក់ចូលចិត្តគណិត · $"+p+"$ នាក់ចូលចិត្តរូបវិទ្យា · $"+b+"$ នាក់ចូលចិត្តទាំងពីរ។ តើប៉ុន្មាននាក់មិនចូលចិត្តទាំងពីរ?",[A(none,null,"num","ចំនួន =")],"$"+T+"-("+m+"+"+p+"-"+b+")="+none+"$")}};
-G[23]={1:function(){var a=ri(2,9)*ri(1,6),b=ri(2,9)*ri(1,6);
-    return Q("រក $\\gcd("+a+","+b+")$ និង $\\operatorname{lcm}("+a+","+b+")$",[A(gcd(a,b),null,"num","gcd ="),A(lcm(a,b),null,"num","lcm =")],"$\\gcd\\cdot\\operatorname{lcm}=a\\cdot b$ ⇒ $\\gcd="+gcd(a,b)+"$ , $\\operatorname{lcm}="+lcm(a,b)+"$")},
-  2:function(){var k=pick([2,3,5,6,7]),a=ri(2,6);
-    return Q("សរសេរ $\\sqrt{"+(a*a*k)+"}$ ជាទម្រង់ $a\\sqrt{b}$ ($b$ តូចបំផុត)",[A(a,null,"num","a ="),A(k,null,"num","b =")],"$\\sqrt{"+(a*a*k)+"}=\\sqrt{"+(a*a)+"\\cdot"+k+"}="+a+"\\sqrt{"+k+"}$")},
-  3:function(){var k=pick([2,3,5,7]),a=ri(1,6);
-    return Q("សម្រួលភាគបែង៖ $\\dfrac{"+(a*k)+"}{\\sqrt{"+k+"}}$",[A(a+"sqrt("+k+")",a+"\\sqrt{"+k+"}","num","=")],"$\\dfrac{"+(a*k)+"}{\\sqrt{"+k+"}}\\cdot\\dfrac{\\sqrt{"+k+"}}{\\sqrt{"+k+"}}="+a+"\\sqrt{"+k+"}$")}};
+G[22]={1:function(){var A=[ri(1,10),ri(1,10),ri(1,10)],B=[ri(1,10),ri(1,10),ri(1,10)];
+    return Q("កំណត់សំណុំ $A=\\{"+A.join(",")+"\\}$ និង $B=\\{"+B.join(",")+"\\}$ ។ រក $A\\cup B$", [A(0,null,"text","A∪B =")], "$A\\cup B=\\{"+[...new Set([...A,...B])].sort((a,b)=>a-b).join(",")+"\\}$")},
+  2:function(){var U=[1,2,3,4,5,6,7,8,9,10],A=[ri(1,5),ri(2,6),ri(3,7)],Ac=U.filter(x=>!A.includes(x));
+    return Q("ក្នុងសំណុំសកល $U=\\{1,2,...,10\\}$ , $A=\\{"+A.join(",")+"\\}$ ។ រកសំណុំបំពេញ $A^c$", [A(0,null,"text","A^c =")], "$A^c=\\{"+Ac.join(",")+"\\}$")},
+  3:function(){var A=[ri(1,5),ri(2,6)],B=[ri(3,7),ri(4,8)],I=A.filter(x=>B.includes(x));
+    return Q("រកប្រសព្វនៃសំណុំ $A=\\{"+A.join(",")+"\\}$ និង $B=\\{"+B.join(",")+"\\}$", [A(0,null,"text","A∩B =")], "$A\\cap B=\\{"+I.join(",")+"\\}$")}};
+G[23]={1:function(){var a=ri(-10,10);
+    return Q("គណនាតម្លៃដាច់ខាត $|"+a+"|$", [A(Math.abs(a),null,"num","|"+a+"| =")], "$|"+a+"|="+Math.abs(a)+"$")},
+  2:function(){var a=ri(2,20);
+    return Q("ដោះស្រាយសមីការ $|x|="+a+"$", [A(a,null,"num","x₁ ="),A(-a,null,"num","x₂ =")], "$x="+a+"$ ឬ $x="+(-a)+"$")},
+  3:function(){var a=ri(2,10),b=ri(1,5);
+    return Q("ដោះស្រាយវិសមីការ $|x|\\le "+a+"$", [A(-a,null,"num","a ="),A(a,null,"num","b =")], "$-"+a+"\\le x\\le "+a+"$")}};
 /* ===== ជំពូកទី៣ សមីការ និងវិសមីការ ===== */
 G[31]={1:function(){var r1=nz(-6,6),r2=nz(-6,6);while(r1===r2)r2=nz(-6,6);var lo=Math.min(r1,r2),hi=Math.max(r1,r2);
     return Q("ដោះស្រាយ $x^2"+co(-(r1+r2),"x")+sg(r1*r2,0)+"=0$ (ឫសតូចជាមុន)",[A(lo,null,"num","x₁ ="),A(hi,null,"num","x₂ =")],"$(x"+sg(-lo,0)+")(x"+sg(-hi,0)+")=0$","y=x^2"+co(-(r1+r2),"x")+sg(r1*r2,0))},
@@ -742,6 +742,21 @@ vx(93,3,[
  function(){var m=pick([1,-1,2,-2,3,-3,fr(1,2),fr(-1,3)]),mt=typeof m==="number"?String(m):m.t,r=typeof m==="number"?fr(-1,m):fr(-m.d,m.n);return K("s10_rl","បន្ទាត់ $y="+(mt==="1"?"":mt==="-1"?"-":mt)+"x$ វិលផ្ចិត $O$ មុំ $90^\\circ$ ។ រកមេគុណប្រាប់ទិសនៃរូបភាព",[A(r.s,r.t,"num","m' =")],"ការវិល $90^\\circ$ ⇒ បន្ទាត់កែង ⇒ $m'=-\\dfrac1m="+r.t+"$")},
  function(){var a=ri(1,8),b=ri(1,8),S=fr(a*b,2);return K("s10_rar","ត្រីកោណ $O(0;0)$ , $A("+a+";0)$ , $B(0;"+b+")$ វិលផ្ចិត $O$ មុំ $90^\\circ$ ។ គណនាផ្ទៃក្រឡារូបភាព",[A(S.s,S.t,"num","S =")],"ការវិលរក្សាផ្ទៃក្រឡា ⇒ $\\dfrac{"+a+"\\times"+b+"}{2}="+S.t+"$")}]);
 /* គំរូដើម (គ្មាន kd) → kd = b{មេរៀន}_{កម្រិត} */
+/* ៩.៤ ការបំប្លែងចាំង */
+vx(94,1,[
+ function(){var P=[ri(-4,4),ri(-4,4)],r=ri(1,3);return K("s10_inv1","រករូបភាពនៃ $A"+pt(P)+"$ តាមការបំប្លែងចាំងផ្ចិត $O$ កាំ $r="+r+"$ ($OA'=r^2/OA$)",[A(r*r*P[0]/(P[0]*P[0]+P[1]*P[1]),null,"num","x ="),A(r*r*P[1]/(P[0]*P[0]+P[1]*P[1]),null,"num","y =")],"$OA \\cdot OA' = r^2$")},
+ function(){var P=[nz(-4,4),nz(-4,4)];return K("s10_inv2","ការបំប្លែងចាំងផ្ចិត $O$ បំប្លែង $A"+pt(P)+"$ ទៅ $A'$ ។ រករូបភាពនៃ $A$ បើ $r=1$",[A(P[0]/(P[0]*P[0]+P[1]*P[1]),null,"num","x ="),A(P[1]/(P[0]*P[0]+P[1]*P[1]),null,"num","y =")],"$OA' = 1/OA$")},
+ function(){var r=ri(1,3);return K("s10_inv3","ចំណុច $A$ នៅចម្ងាយ $r="+r+"$ ពីផ្ចិត $O$ ។ រករូបភាពឆ្លុះតាមការបំប្លែងចាំងផ្ចិត $O$ កាំ $r$",[A(1,null,"num","OA' =")],"$OA'=r^2/OA=r^2/r=r$")}]);
+vx(94,2,[
+ function(){var P=[ri(-4,4),ri(-4,4)];return K("s10_inv4","ចំណុច $A(x;y)$ ឆ្លុះតាមការបំប្លែងចាំងផ្ចិត $O$ ($r=1$) ទៅ $A'(x';y')$ ។ រក $x'$",[A(P[0]/(P[0]*P[0]+P[1]*P[1]),null,"num","x' =")],"$x'=x/(x^2+y^2)$")},
+ function(){var P=[ri(-4,4),ri(-4,4)];return K("s10_inv5","ចំណុច $A(x;y)$ ឆ្លុះតាមការបំប្លែងចាំងផ្ចិត $O$ ($r=1$) ទៅ $A'(x';y')$ ។ រក $y'$",[A(P[1]/(P[0]*P[0]+P[1]*P[1]),null,"num","y' =")],"$y'=y/(x^2+y^2)$")},
+ function(){var r=ri(2,4);return K("s10_inv6","ផ្ចិតនៃការបំប្លែងចាំងគឺ $O$ កាំ $r="+r+"$ ។ បើ $OA=r$ តើ $OA'$ ស្មើប៉ុន្មាន?",[A(r,null,"num","OA' =")],"$OA'=r^2/OA=r^2/r=r$")}]);
+vx(94,3,[
+ function(){var r=ri(1,3);return K("s10_inv7","ផ្ចិតនៃការបំប្លែងចាំងគឺ $O$ កាំ $r="+r+"$ ។ បើ $OA=r/2$ តើ $OA'$ ស្មើប៉ុន្មាន?",[A(2*r,null,"num","OA' =")],"$OA'=r^2/(r/2)=2r$")},
+ function(){var r=ri(1,3);return K("s10_inv8","ផ្ចិតនៃការបំប្លែងចាំងគឺ $O$ កាំ $r="+r+"$ ។ បើ $OA=2r$ តើ $OA'$ ស្មើប៉ុន្មាន?",[A(r/2,null,"num","OA' =")],"$OA'=r^2/(2r)=r/2$")},
+ function(){var P=[ri(-4,4),ri(-4,4)];return K("s10_inv9","ការបំប្លែងចាំងផ្ចិត $O$ កាំ $r=2$ បំប្លែង $A"+pt(P)+"$ ទៅ $A'(x';y')$ ។ រក $x'^2+y'^2$",
+    [A(16/(P[0]*P[0]+P[1]*P[1]),null,"num","x'^2+y'^2 =")],"$OA'=4/OA \\Rightarrow OA'^2=16/OA^2$")}]);
+
 Object.keys(G).forEach(function(l){[1,2,3].forEach(function(v){var o=G[l][v];if(o)G[l][v]=function(){var x=o();if(x&&!x.kd)x.kd="b"+l+"_"+v;return x}})});
 
 var LES=[
@@ -753,7 +768,7 @@ var LES=[
   ["ជំពូកទី៦ អនុគមន៍",[[61,"អនុគមន៍ និងក្រាបអនុគមន៍"],[62,"អនុគមន៍ដឺក្រេទី២"],[63,"អនុគមន៍សនិទាន និងអសនិទាន"]]],
   ["ជំពូកទី៧ ស្ថិតិ",[[71,"បំណែងចែកប្រេកង់ និងការតាងក្រាប"],[72,"រង្វាស់ទីតាំង"]]],
   ["ជំពូកទី៨ វ៉ិចទ័រក្នុងប្លង់",[[81,"វ៉ិចទ័រ និងប្រមាណវិធីលើវ៉ិចទ័រ"],[82,"ការអនុវត្តវ៉ិចទ័រ"]]],
-  ["ជំពូកទី៩ ការបំប្លែងរូបក្នុងប្លង់",[[91,"ការបំប្លែងកិល"],[92,"ការបំប្លែងឆ្លុះ"],[93,"ការបំប្លែងវិល"]]]
+  ["ជំពូកទី៩ ការបំប្លែងរូបក្នុងប្លង់",[[91,"ការបំប្លែងកិល"],[92,"ការបំប្លែងឆ្លុះ"],[93,"ការបំប្លែងវិល"],[94,"ការបំប្លែងចាំង"]]]
 ];
 X.reg(10,{les:LES,G:G});
 })();
