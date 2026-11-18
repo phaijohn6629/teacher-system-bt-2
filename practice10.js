@@ -9,18 +9,23 @@ var X=window.PX,Q=X.Q,A=X.A,ri=X.ri,nz=X.nz,pick=X.pick,fr=X.fr,sg=X.sg,co=X.co,
 function pt(p){return"("+p[0]+";"+p[1]+")"}
 function lcm(a,b){return a/gcd(a,b)*b}
 var G={};
+/* ទម្រង់ចម្លើយពហុធា៖ ប្រអប់មេគុណ a, b, c … (មិនប្រៀបធៀបអក្សរ ដូច់ដកឃ្លា/ស្វ័យគុណ) */
+var CFN=["a","b","c","d","e"];
+function cfTpl(n){var t=[];for(var i=0;i<=n;i++){var d=n-i;t.push(CFN[i]+(d>1?"x^{"+d+"}":d===1?"x":""))}return t.join("+")}
+function cfAsk(e,nm){var n=e.length-1,l=[];for(var i=0;i<=n;i++)l.push("$"+CFN[i]+"$");return " ។ សរសេរជាទម្រង់ $"+(nm?nm+"=":"")+cfTpl(n)+"$ ហើយរក "+l.join(" , ")}
+function cfAns(e,pre){return e.map(function(v,i){return A(v,null,"num",(pre||"")+CFN[i]+" =")})}
 /* ===== ជំពូកទី១ ពហុធា ===== */
 G[11]={1:function(){var c=[nz(-3,3),ri(-5,5),ri(-6,6)],a=ri(-3,3),v=c[0]*a*a+c[1]*a+c[2];
     return Q("គេឱ្យ $P(x)="+polyT(c)+"$ ។ គណនា $P("+a+")$",[A(v,null,"num","P("+a+") =")],"ជំនួស $x="+a+"$ ⇒ $"+v+"$")},
   2:function(){var a=nz(-5,5),b=nz(-5,5),e=[1,a+b,a*b];
-    return Q("ពន្លាត $(x"+sg(a,0)+")(x"+sg(b,0)+")$",[A(poly(e),polyT(e),"expr","=")],"$=x^2"+co(b,"x")+co(a,"x")+sg(a*b,0)+"="+polyT(e)+"$")},
+    return Q("ពន្លាត $(x"+sg(a,0)+")(x"+sg(b,0)+")$"+cfAsk(e),cfAns(e),"$=x^2"+co(b,"x")+co(a,"x")+sg(a*b,0)+"="+polyT(e)+"$")},
   3:function(){var a=nz(-3,3),b=ri(-4,4),c=nz(-3,3),d=ri(-4,4),e=[a*c,a*d+b*c,b*d];
-    return Q("ពន្លាត និងសម្រួល $("+poly([a,b])+")("+poly([c,d])+")$",[A(poly(e),polyT(e),"expr","=")],"$="+polyT(e)+"$")}};
+    return Q("ពន្លាត និងសម្រួល $("+poly([a,b])+")("+poly([c,d])+")$"+cfAsk(e),cfAns(e),"$="+polyT(e)+"$")}};
 G[12]={1:function(){var c=[nz(-3,3),ri(-4,4),ri(-5,5),ri(-6,6)],a=ri(-2,3),r=((c[0]*a+c[1])*a+c[2])*a+c[3];
     return Q("រកសំណល់នៃការចែក $P(x)="+polyT(c)+"$ នឹង $x"+sg(-a,0)+"$",[A(r,null,"num","សំណល់ =")],"ទ្រឹស្ដីបទសំណល់ ⇒ $R=P("+a+")="+r+"$")},
   2:function(){var a=nz(-3,3),b=nz(-4,4),c=ri(-5,5);   /* (x-a)(x²+bx+c) ÷ (x-a) */
     var P=[1,b-a,c-a*b,-a*c];
-    return Q("ចែក $P(x)="+polyT(P)+"$ នឹង $x"+sg(-a,0)+"$ ។ រកផលចែក $Q(x)$",[A(poly([1,b,c]),polyT([1,b,c]),"expr","Q(x) =")],"ប្រើវិធីហ៊័រណឺ (Horner) ⇒ $Q(x)="+polyT([1,b,c])+"$ សំណល់ $0$")},
+    return Q("ចែក $P(x)="+polyT(P)+"$ នឹង $x"+sg(-a,0)+"$ ។ រកផលចែក $Q(x)$"+cfAsk([1,b,c],"Q(x)"),cfAns([1,b,c],"Q: "),"ប្រើវិធីហ៊័រណឺ (Horner) ⇒ $Q(x)="+polyT([1,b,c])+"$ សំណល់ $0$")},
   3:function(){var a=nz(-3,3),k=nz(-4,4),c=[1,k,0],m=-(a*a*a+k*a*a);   /* x³+kx²+m ចែកដាច់នឹង x-a */
     return Q("រក $m$ ដើម្បីឱ្យ $P(x)=x^3"+co(k,"x^2")+"+m$ ចែកដាច់នឹង $x"+sg(-a,0)+"$",[A(m,null,"num","m =")],"$P("+a+")=0\\iff "+(a*a*a)+sg(k*a*a,0)+"+m=0\\iff m="+m+"$")}};
 /* ===== ជំពូកទី២ តក្កវិទ្យា សំណុំ ចំនួន ===== */
@@ -347,21 +352,21 @@ var NS=[2,3,5,6,7,10,11,13];   /* មិនមែនការេប្រាក�
 /* ១.១ ពហុធា */
 vx(11,1,[
  function(){var n=ri(2,4),c=[nz(-5,5)];for(var i=0;i<n;i++)c.push(ri(-6,6));return K("s10_deg","គេឱ្យ $P(x)="+polyT(c)+"$ ។ រកដឺក្រេ និងមេគុណនាំមុខនៃ $P(x)$",[A(n,null,"num","ដឺក្រេ ="),A(c[0],null,"num","មេគុណនាំមុខ =")],"តួដឺក្រេខ្ពស់បំផុត $"+co(c[0],n>1?"x^{"+n+"}":"x",true)+"$")},
- function(){var p=[nz(-4,4),ri(-6,6),ri(-6,6)],q=[ri(-4,4),ri(-6,6),ri(-6,6)];while(p[0]+q[0]===0)q[0]++;var e=[p[0]+q[0],p[1]+q[1],p[2]+q[2]];return K("s10_add","$P(x)="+polyT(p)+"$ , $Q(x)="+polyT(q)+"$ ។ គណនា $P(x)+Q(x)$",[A(poly(e),polyT(e),"expr","=")],"បូកតួដូចគ្នា ⇒ $"+polyT(e)+"$")},
- function(){var p=[nz(-4,4),ri(-6,6),ri(-6,6)],q=[ri(-4,4),ri(-6,6),ri(-6,6)];while(p[0]-q[0]===0)q[0]++;var e=[p[0]-q[0],p[1]-q[1],p[2]-q[2]];return K("s10_sub_11","$P(x)="+polyT(p)+"$ , $Q(x)="+polyT(q)+"$ ។ គណនា $P(x)-Q(x)$",[A(poly(e),polyT(e),"expr","=")],"ដក ⇒ ប្ដូរសញ្ញាតួនៃ $Q$ ⇒ $"+polyT(e)+"$")}]);
+ function(){var p=[nz(-4,4),ri(-6,6),ri(-6,6)],q=[ri(-4,4),ri(-6,6),ri(-6,6)];while(p[0]+q[0]===0)q[0]++;var e=[p[0]+q[0],p[1]+q[1],p[2]+q[2]];return K("s10_add","$P(x)="+polyT(p)+"$ , $Q(x)="+polyT(q)+"$ ។ គណនា $P(x)+Q(x)$"+cfAsk(e),cfAns(e),"បូកតួដូចគ្នា ⇒ $"+polyT(e)+"$")},
+ function(){var p=[nz(-4,4),ri(-6,6),ri(-6,6)],q=[ri(-4,4),ri(-6,6),ri(-6,6)];while(p[0]-q[0]===0)q[0]++;var e=[p[0]-q[0],p[1]-q[1],p[2]-q[2]];return K("s10_sub_11","$P(x)="+polyT(p)+"$ , $Q(x)="+polyT(q)+"$ ។ គណនា $P(x)-Q(x)$"+cfAsk(e),cfAns(e),"ដក ⇒ ប្ដូរសញ្ញាតួនៃ $Q$ ⇒ $"+polyT(e)+"$")}]);
 vx(11,2,[
- function(){var a=nz(1,4),b=nz(-6,6),e=[a*a,2*a*b,b*b];return K("s10_sq","ពន្លាត $("+poly([a,b])+")^2$",[A(poly(e),polyT(e),"expr","=")],"$(A+B)^2=A^2+2AB+B^2$ ⇒ $"+polyT(e)+"$")},
- function(){var a=nz(1,4),b=nz(1,9),e=[a*a,0,-b*b];return K("s10_diff_11","ពន្លាត $("+poly([a,b])+")("+poly([a,-b])+")$",[A(poly(e),polyT(e),"expr","=")],"$(A+B)(A-B)=A^2-B^2$ ⇒ $"+polyT(e)+"$")},
+ function(){var a=nz(1,4),b=nz(-6,6),e=[a*a,2*a*b,b*b];return K("s10_sq","ពន្លាត $("+poly([a,b])+")^2$"+cfAsk(e),cfAns(e),"$(A+B)^2=A^2+2AB+B^2$ ⇒ $"+polyT(e)+"$")},
+ function(){var a=nz(1,4),b=nz(1,9),e=[a*a,0,-b*b];return K("s10_diff_11","ពន្លាត $("+poly([a,b])+")("+poly([a,-b])+")$"+cfAsk(e),cfAns(e),"$(A+B)(A-B)=A^2-B^2$ ⇒ $"+polyT(e)+"$")},
  function(){var a=nz(-6,6),b=nz(-6,6);if(a>b){var t=a;a=b;b=t}return K("s10_id","រក $a\\le b$ ដែល $(x+a)(x+b)=x^2"+co(a+b,"x")+sg(a*b,0)+"$ គ្រប់ $x$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"$a+b="+(a+b)+"$ , $ab="+(a*b)+"$ ⇒ $a="+a+"$ , $b="+b+"$")}]);
 vx(11,3,[
- function(){var a=nz(-3,3),e=[1,3*a,3*a*a,a*a*a];return K("s10_cube_11","ពន្លាត $(x"+sg(a,0)+")^3$",[A(poly(e),polyT(e),"expr","=")],"$(x+a)^3=x^3+3ax^2+3a^2x+a^3$ ⇒ $"+polyT(e)+"$")},
+ function(){var a=nz(-3,3),e=[1,3*a,3*a*a,a*a*a];return K("s10_cube_11","ពន្លាត $(x"+sg(a,0)+")^3$"+cfAsk(e),cfAns(e),"$(x+a)^3=x^3+3ax^2+3a^2x+a^3$ ⇒ $"+polyT(e)+"$")},
  function(){var a=nz(-6,6),b=nz(-9,9);return K("s10_ident","រក $m$ និង $n$ ដែល $x^2+mx+n=(x"+sg(a,0)+")^2"+sg(-b,0)+"$ គ្រប់ $x$",[A(2*a,null,"num","m ="),A(a*a-b,null,"num","n =")],"ពន្លាត ⇒ $x^2"+co(2*a,"x")+sg(a*a-b,0)+"$")},
- function(){var a=nz(-6,6),b=nz(-6,6),c=nz(-6,6),e=[a+b-2*c,a*b-c*c];if(!e[0]&&!e[1])e=[a+b-2*c,a*b-c*c];return K("s10_val3","សម្រួល $(x"+sg(a,0)+")(x"+sg(b,0)+")-(x"+sg(c,0)+")^2$",[A(poly(e),polyT(e),"expr","=")],"$x^2"+co(a+b,"x")+sg(a*b,0)+"-(x^2"+co(2*c,"x")+"+"+(c*c)+")="+polyT(e)+"$")}]);
+ function(){var a=nz(-6,6),b=nz(-6,6),c=nz(-6,6),e=[a+b-2*c,a*b-c*c];if(!e[0]&&!e[1])e=[a+b-2*c,a*b-c*c];return K("s10_val3","សម្រួល $(x"+sg(a,0)+")(x"+sg(b,0)+")-(x"+sg(c,0)+")^2$"+cfAsk(e),cfAns(e),"$x^2"+co(a+b,"x")+sg(a*b,0)+"-(x^2"+co(2*c,"x")+"+"+(c*c)+")="+polyT(e)+"$")}]);
 /* ១.២ ចែកពហុធា */
 vx(12,1,[
- function(){var a=nz(-4,4),b=ri(-6,6),c=ri(-9,9),q=[1,b+a],r=a*a+a*b+c;return K("s10_lin_12","ចែក $x^2"+co(b,"x")+sg(c,0)+"$ នឹង $x"+sg(-a,0)+"$ ។ រកផលចែក $Q(x)$ និងសំណល់ $R$",[A(poly(q),polyT(q),"expr","Q(x) ="),A(r,null,"num","R =")],"ហ៊័រណឺ ⇒ $Q(x)="+polyT(q)+"$ · $R=P("+a+")="+r+"$")},
+ function(){var a=nz(-4,4),b=ri(-6,6),c=ri(-9,9),q=[1,b+a],r=a*a+a*b+c;return K("s10_lin_12","ចែក $x^2"+co(b,"x")+sg(c,0)+"$ នឹង $x"+sg(-a,0)+"$ ។ រកផលចែក $Q(x)$ និងសំណល់ $R$"+cfAsk(q,"Q(x)"),cfAns(q,"Q: ").concat([A(r,null,"num","R =")]),"ហ៊័រណឺ ⇒ $Q(x)="+polyT(q)+"$ · $R=P("+a+")="+r+"$")},
  function(){var a=nz(-3,3),c=[nz(-3,3),ri(-4,4),ri(-5,5)],r=c[0]*a*a-c[1]*a+c[2];return K("s10_rem2","រកសំណល់នៃការចែក $P(x)="+polyT(c)+"$ នឹង $x"+sg(a,0)+"$",[A(r,null,"num","R =")],"$R=P("+(-a)+")="+r+"$")},
- function(){var a=nz(-5,5),b=ri(-6,6);return K("s10_mono","ចែក $"+co(a,"x^3",true)+co(b,"x^2")+"$ នឹង $x^2$ ($x\\ne0$)",[A(poly([a,b]),polyT([a,b]),"expr","=")],"ចែកតួនីមួយៗ ⇒ $"+polyT([a,b])+"$")}]);
+ function(){var a=nz(-5,5),b=ri(-6,6);return K("s10_mono","ចែក $"+co(a,"x^3",true)+co(b,"x^2")+"$ នឹង $x^2$ ($x\\ne0$)"+cfAsk([a,b]),cfAns([a,b]),"ចែកតួនីមួយៗ ⇒ $"+polyT([a,b])+"$")}]);
 vx(12,2,[
  function(){var a=nz(-4,4),b=ri(-6,6),m=-(a*a+a*b);return K("s10_find","រក $m$ ដើម្បីឱ្យ $x"+sg(-a,0)+"$ ជាកត្តានៃ $x^2"+co(b,"x")+"+m$",[A(m,null,"num","m =")],"$P("+a+")=0$ ⇒ $"+(a*a)+sg(a*b,0)+"+m=0$ ⇒ $m="+m+"$")},
  function(){var r=[nz(-4,4),nz(-4,4),nz(-4,4)];while(r[1]===r[0])r[1]++;while(r[2]===r[0]||r[2]===r[1])r[2]++;var c=[1,-(r[0]+r[1]+r[2]),r[0]*r[1]+r[1]*r[2]+r[0]*r[2],-r[0]*r[1]*r[2]],o=[r[1],r[2]].sort(function(x,y){return x-y});
@@ -399,6 +404,33 @@ vx(22,3,[
  function(){var a=ri(10,25),b=ri(10,25),i=ri(2,Math.min(a,b)-2);return K("s10_only","ក្នុងក្រុមមួយ $"+a+"$ នាក់ចេះអង់គ្លេស $"+b+"$ នាក់ចេះបារាំង និង $"+i+"$ នាក់ចេះទាំងពីរ ។ តើប៉ុន្មាននាក់ចេះតែអង់គ្លេស?",[A(a-i,null,"num","=")],"$"+a+"-"+i+"="+(a-i)+"$")},
  function(){var ab=ri(2,5),bc=ri(2,5),ca=ri(2,5),abc=ri(1,Math.min(ab,bc,ca)-0),a=ab+ca+ri(2,8),b=ab+bc+ri(2,8),c=bc+ca+ri(2,8),U=a+b+c-ab-bc-ca+abc;return K("s10_three","$n(A)="+a+"$ , $n(B)="+b+"$ , $n(C)="+c+"$ , $n(A\\cap B)="+ab+"$ , $n(B\\cap C)="+bc+"$ , $n(C\\cap A)="+ca+"$ , $n(A\\cap B\\cap C)="+abc+"$ ។ គណនា $n(A\\cup B\\cup C)$",[A(U,null,"num","=")],"$"+(a+b+c)+"-"+(ab+bc+ca)+"+"+abc+"="+U+"$")},
  function(){var N=pick([30,50,60,100]),p=pick([2,3,4,5]),q=pick([3,5,6,7]);while(q===p)q++;var n=Math.floor(N/p)+Math.floor(N/q)-Math.floor(N/lcm(p,q));return K("s10_atl","តើមានចំនួនគត់ពី $1$ ដល់ $"+N+"$ ប៉ុន្មាន ដែលចែកដាច់នឹង $"+p+"$ ឬ $"+q+"$ ?",[A(n,null,"num","=")],"$"+Math.floor(N/p)+"+"+Math.floor(N/q)+"-"+Math.floor(N/lcm(p,q))+"="+n+"$ (ដក ពហុគុណនៃ $"+lcm(p,q)+"$)")}]);
+/* ២.២ សំណុំ (set10_)៖ បង្កើតចំនួនតំបន់មុន រួចសរសេរសំណុំ/រឿងពិត */
+function set10Pool(n){var s=[];while(s.length<n){var v=ri(1,30);if(s.indexOf(v)<0)s.push(v)}return s}
+function set10Srt(a){return a.slice().sort(function(x,y){return x-y})}
+function set10Three(){var o=ri(2,9),p=ri(2,9),c=ri(2,9),x=ri(1,6),y=ri(1,6),z=ri(1,6),w=ri(1,5),d=ri(2,10),
+   nA=o+x+y+w,nB=p+x+z+w,nC=c+y+z+w,N=o+p+c+x+y+z+w+d,pick3=pick([0,1,2]);
+  var T=["គណិតវិទ្យា","រូបវិទ្យា","គីមីវិទ្យា"],L=["M","P","C"];
+  return {txt:"📊 ស្ទង់មតិសិស្សសរុប $"+N+"$ នាក់ អំពីមុខវិជ្ជាដែលពួកគេរៀនបន្ថែម (គណិតវិទ្យា $M$ · រូបវិទ្យា $P$ · គីមីវិទ្យា $C$) ៖ $n(M)="+nA+"$ , $n(P)="+nB+"$ , $n(C)="+nC+"$ , $n(M\\cap P)="+(x+w)+"$ , $n(M\\cap C)="+(y+w)+"$ , $n(P\\cap C)="+(z+w)+"$ , $n(M\\cap P\\cap C)="+w+"$ ។ ",
+    a:[A(o,null,"num","តែ M ="),A(x,null,"num","M∩P មិនC ="),A(d,null,"num","គ្មានមុខវិជ្ជាណា ="),A(o+p+c,null,"num","តែមួយមុខ =")],
+    s:"តែ $M$ $="+nA+"-"+(x+w)+"-"+(y+w)+"+"+w+"="+o+"$ · $M\\cap P$ មិន $C$ $="+(x+w)+"-"+w+"="+x+"$ · $n(M\\cup P\\cup C)="+(N-d)+"$ ⇒ គ្មាន $="+N+"-"+(N-d)+"="+d+"$ · តែមួយមុខ $="+o+"+"+p+"+"+c+"="+(o+p+c)+"$"}}
+vx(22,1,[
+ function(){var c=ri(1,4),a=ri(1,4),b=ri(1,4),pl=set10Pool(c+a+b),A1=set10Srt(pl.slice(0,c+a)),B1=set10Srt(pl.slice(0,c).concat(pl.slice(c+a)));
+   return K("set10_ops","$A=\\{"+A1.join(",")+"\\}$ , $B=\\{"+B1.join(",")+"\\}$ ។ រក $n(A\\cup B)$ , $n(A\\cap B)$ និង $n(A\\setminus B)$",[A(c+a+b,null,"num","n(A∪B) ="),A(c,null,"num","n(A∩B) ="),A(a,null,"num","n(A∖B) =")],"ធាតុរួម $"+c+"$ · $n(A\\setminus B)=n(A)-n(A\\cap B)="+(c+a)+"-"+c+"="+a+"$ · $n(A\\cup B)="+(c+a)+"+"+(c+b)+"-"+c+"="+(c+a+b)+"$")},
+ function(){var n=ri(2,8);
+   return K("set10_pw","សំណុំ $A$ មាន $"+n+"$ ធាតុ ។ រកចំនួនសំណុំរងទាំងអស់ និងចំនួនសំណុំរងពិតប្រាកដ (សំណុំរងដែលមិនស្មើ $A$)",[A(Math.pow(2,n),null,"num","សំណុំរង ="),A(Math.pow(2,n)-1,null,"num","សំណុំរងពិត =")],"$2^{"+n+"}="+Math.pow(2,n)+"$ · ដកខ្លួនវា ⇒ $"+(Math.pow(2,n)-1)+"$")},
+ function(){var n=ri(3,7);
+   return K("set10_pwr","សំណុំ $A$ មានសំណុំរងទាំងអស់ $"+Math.pow(2,n)+"$ ។ រក $n(A)$ និងចំនួនសំណុំរងដែលមិនទទេ",[A(n,null,"num","n(A) ="),A(Math.pow(2,n)-1,null,"num","មិនទទេ =")],"$2^n="+Math.pow(2,n)+"$ ⇒ $n="+n+"$ · ដក $\\varnothing$ ⇒ $"+(Math.pow(2,n)-1)+"$")}]);
+vx(22,2,[
+ function(){var o1=ri(3,12),o2=ri(3,12),b=ri(2,10),nn=ri(1,8),T=o1+o2+b+nn,m=o1+b,p=o2+b;
+   return K("set10_ie","ក្នុងថ្នាក់មួយមានសិស្ស $"+T+"$ នាក់ ។ $"+m+"$ នាក់លេងបាល់ទាត់ · $"+p+"$ នាក់លេងបាល់ទះ · $"+nn+"$ នាក់មិនលេងទាំងពីរ ។ រកចំនួនសិស្សលេងទាំងពីរ និងចំនួនសិស្សលេងតែបាល់ទាត់",[A(b,null,"num","ទាំងពីរ ="),A(o1,null,"num","តែបាល់ទាត់ =")],"លេងយ៉ាងតិចមួយ $="+T+"-"+nn+"="+(T-nn)+"$ · $n(F\\cap V)="+m+"+"+p+"-"+(T-nn)+"="+b+"$ · តែបាល់ទាត់ $="+m+"-"+b+"="+o1+"$")},
+ function(){var N=ri(30,60),pq=pick([[2,3],[2,5],[3,5],[3,4]]),a=Math.floor(N/pq[0]),b2=Math.floor(N/pq[1]),i=Math.floor(N/lcm(pq[0],pq[1])),u=a+b2-i;
+   return K("set10_cm","សំណុំសកល $U=\\{1,2,\\dots,"+N+"\\}$ ។ $A$ ជាសំណុំពហុគុណនៃ $"+pq[0]+"$ និង $B$ ជាសំណុំពហុគុណនៃ $"+pq[1]+"$ ក្នុង $U$ ។ រក $n(A\\cup B)$ និង $n(\\overline{A\\cup B})$",[A(u,null,"num","n(A∪B) ="),A(N-u,null,"num","n(complement) =")],"$n(A)="+a+"$ , $n(B)="+b2+"$ , $n(A\\cap B)="+i+"$ ⇒ $n(A\\cup B)="+u+"$ · $n(\\overline{A\\cup B})="+N+"-"+u+"="+(N-u)+"$")},
+ function(){var U=ri(30,80),a=ri(10,25),b=ri(10,25),i=ri(2,Math.min(a,b)-2);
+   if(a+b-i>U)U=a+b-i+ri(1,10);
+   return K("set10_dm","$n(U)="+U+"$ , $n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cap B)="+i+"$ ។ រក $n(\\overline A\\cap\\overline B)$ និង $n(\\overline A\\cup\\overline B)$ (ដឺម៉ូហ្គែន)",[A(U-(a+b-i),null,"num","n(Ā∩B̄) ="),A(U-i,null,"num","n(Ā∪B̄) =")],"$\\overline A\\cap\\overline B=\\overline{A\\cup B}$ ⇒ $"+U+"-"+(a+b-i)+"="+(U-(a+b-i))+"$ · $\\overline A\\cup\\overline B=\\overline{A\\cap B}$ ⇒ $"+U+"-"+i+"="+(U-i)+"$")}]);
+vx(22,3,[
+ function(){var t=set10Three();return K("set10_3v",t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s)}]);
+P4[22].push(function(){var t=set10Three();return Q(t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s)});
 /* ២.៣ ចំនួន */
 vx(23,1,[
  function(){var k=pick(NS.slice(0,5)),a=ri(1,5),b=ri(1,5);return K("s10_rad1","សរសេរ $\\sqrt{"+(a*a*k)+"}+\\sqrt{"+(b*b*k)+"}$ ជា $c\\sqrt{"+k+"}$ ។ រក $c$",[A(a+b,null,"num","c =")],"$"+(a===1?"":a)+"\\sqrt{"+k+"}+"+(b===1?"":b)+"\\sqrt{"+k+"}="+(a+b)+"\\sqrt{"+k+"}$")},
@@ -555,7 +587,7 @@ vx(61,2,[
 vx(61,3,[
  function(){var a=nz(-4,4),b=ri(-6,6),k=ri(-9,9),v=fr(k-b,a);return K("s10_inv2","$f(x)="+co(a,"x",true)+sg(b,0)+"$ ។ គណនា $f^{-1}("+k+")$",[A(v.s,v.t,"num","=")],"$f^{-1}(x)=\\dfrac{x"+sg(-b,0)+"}{"+a+"}$ ⇒ $"+v.t+"$")},
  function(){var a=ri(-6,8);return K("s10_domf","ដែនកំណត់នៃ $f(x)=\\sqrt{"+a+"-x}$ គឺ $x\\le k$ ។ រក $k$",[A(a,null,"num","k =")],"$"+a+"-x\\ge0$ ⇒ $x\\le"+a+"$")},
- function(){var a=nz(-3,3),b=ri(-4,4),c=nz(-3,3),d=ri(-4,4),e=[a*c,a*d+b];return K("s10_comp_61","$f(x)="+co(a,"x",true)+sg(b,0)+"$ , $g(x)="+co(c,"x",true)+sg(d,0)+"$ ។ សរសេរ $f(g(x))$",[A(poly(e),polyT(e),"expr","=")],"$"+a+"("+poly([c,d])+")"+sg(b,0)+"="+polyT(e)+"$")}]);
+ function(){var a=nz(-3,3),b=ri(-4,4),c=nz(-3,3),d=ri(-4,4),e=[a*c,a*d+b];return K("s10_comp_61","$f(x)="+co(a,"x",true)+sg(b,0)+"$ , $g(x)="+co(c,"x",true)+sg(d,0)+"$ ។ សរសេរ $f(g(x))$"+cfAsk(e),cfAns(e),"$"+a+"("+poly([c,d])+")"+sg(b,0)+"="+polyT(e)+"$")}]);
 /* ៦.២ អនុគមន៍ដឺក្រេទី២ */
 vx(62,1,[
  function(){var c=[nz(-3,3),ri(-6,6),ri(-9,9)];return K("s10_y0","ប៉ារ៉ាបូល $y="+polyT(c)+"$ កាត់អ័ក្ស $Oy$ ត្រង់ $y=\\dots$ ?",[A(c[2],null,"num","y =")],"$x=0$ ⇒ $y="+c[2]+"$")},
