@@ -207,6 +207,14 @@
   "hash": "a18a066cefd08670f4089902a74cb5d128936e9a",
   "v": 167
  },
+ "slide_presenter.css": {
+  "hash": "9ec18c6952f75ee3a0ff7637269c988118633329",
+  "v": 2
+ },
+ "slide_presenter.js": {
+  "hash": "fe1f7175202e10f602de1743d82d311d4f676c06",
+  "v": 2
+ },
  "storeadm.js": {
   "hash": "7e7525271a314501027e8838ddbb8db9c11c9e7d",
   "v": 2

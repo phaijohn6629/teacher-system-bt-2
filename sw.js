@@ -3,12 +3,12 @@
    ❗ មិនប៉ះទិន្នន័យ៖ មិនរក្សាទុក Firestore / Firebase Auth / Google Drive (ឆ្លងកាត់ផ្ទាល់ទៅអ៊ីនធឺណិត)
    - HTML៖ ទាញពីអ៊ីនធឺណិតជានិច្ច (មានកំណែថ្មីភ្លាម) · ដាច់អ៊ីនធឺណិត ឬយឺតជាង ៣.៥ វិនាទី → ប្រើកំណែចុងក្រោយក្នុងឧបករណ៍
      (មិនគិត ?e= / ?t= ដើម្បីកុំឱ្យ Refresh ទំព័រប្រឡង/តេស្តជាប់គាំងពេលអ៊ីនធឺណិតខ្សោយ)
-   - JS/CSS មាន ?v=៖ ប្រើពីឧបករណ៍ (កំណែប្ដូរ = URL ថ្មី) · លុបកំណែចាស់ដោយស្វ័យប្រវត្តិ
+   - JS/CSS ក្នុងគម្រោង៖ Network-first ដូច HTML (កំណែថ្មីជានិច្ច → កុំឱ្យមានកំណែលាយគ្នា/អេក្រង់ខ្មៅ) · ដាច់អ៊ីនធឺណិត ឬយឺត → ប្រើពីឧបករណ៍
    - CDN (KaTeX · Firebase SDK · ពុម្ពអក្សរ)៖ URL មានលេខកំណែ → ប្រើពីឧបករណ៍
    - រូប/ពុម្ពអក្សរក្នុងគម្រោង៖ ប្រើពីឧបករណ៍ ហើយធ្វើបច្ចុប្បន្នភាពនៅពីក្រោយ
    បិទ PWA បន្ទាន់៖ បើក index.html?nosw (លុប service worker + cache)
    ======================================================================== */
-var C = "ngs-app-v16";
+var C = "ngs-app-v17";
 var HTML_WAIT = 3500;
 var CDN = /^(cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net|fonts\.gstatic\.com)$/;
 self.addEventListener("install", function () { self.skipWaiting(); });
@@ -45,6 +45,19 @@ function htmlFirst(r) {
     });
   });
 }
+/* JS/CSS ក្នុងគម្រោង៖ Network-first (ម៉ោងកំណត់) → ច្បាប់ក្នុងឧបករណ៍ពេលដាច់/យឺត · ទាញបណ្ដាញនៅតែបន្តដើម្បីទុកលើកក្រោយ */
+function assetFirst(r) {
+  var cached = function () { return caches.match(r).then(function (m) { return m || caches.match(r, { ignoreSearch: true }); }); };
+  return new Promise(function (resolve) {
+    var done = false, finish = function (x) { if (!done && x) { done = true; resolve(x); } };
+    var net = fetch(r).then(function (res) { put(r, res); return res; });
+    var t = setTimeout(function () { cached().then(finish); }, HTML_WAIT);
+    net.then(function (res) { clearTimeout(t); finish(res); }, function () {
+      clearTimeout(t);
+      cached().then(function (m) { finish(m || Response.error()); });
+    });
+  });
+}
 self.addEventListener("fetch", function (e) {
   var r = e.request;
   if (r.method !== "GET") return;
@@ -54,7 +67,8 @@ self.addEventListener("fetch", function (e) {
   if (same && /\/sw\.js$/.test(u.pathname)) return;
   var html = r.mode === "navigate" || /\.html?$/.test(u.pathname) || /\/$/.test(u.pathname);
   if (html) { e.respondWith(htmlFirst(r)); return; }
-  if (!same || /[?&]v=/.test(u.search)) {                          /* មានលេខកំណែ → មិនប្ដូរ */
+  if (same && /\.(js|css)$/.test(u.pathname)) { e.respondWith(assetFirst(r)); return; }
+  if (!same || /[?&]v=/.test(u.search)) {                          /* CDN មានលេខកំណែ → មិនប្ដូរ */
     e.respondWith(caches.match(r).then(function (m) { return m || fetch(r).then(function (res) { put(r, res); return res; }); }));
     return;
   }

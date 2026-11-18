@@ -487,12 +487,20 @@ class SlidePresenter {
 }
 function startSlidePresenter(lessonKey) { window.activeSlidePresenter = new SlidePresenter(lessonKey || "12_11"); }
 window.addEventListener("DOMContentLoaded", () => {
+    try { if (sessionStorage.getItem("spHide") === "1") return; } catch (e) {}   /* បិទរហូតដល់បិទផ្ទាំង (tab) */
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "position:fixed;bottom:90px;right:24px;z-index:9999;display:flex;align-items:center;";
     const btn = document.createElement("button");
     btn.innerHTML = "🖥️ បញ្ចាំងស្លាយ 4-in-1";
-    btn.style.cssText = 'position:fixed;bottom:90px;right:24px;z-index:9999;background:#1F4FBF;color:#fff;border:none;padding:12px 20px;border-radius:30px;font-family:"Khmer OS Battambang",sans-serif;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(31,79,191,0.4);';
+    btn.style.cssText = 'background:#1F4FBF;color:#fff;border:none;padding:12px 20px;border-radius:30px;font-family:"Khmer OS Battambang",sans-serif;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 4px 15px rgba(31,79,191,0.4);';
     btn.onclick = () => {
         const activeSel = document.querySelector("select[id*=lp], select[id*=lesson]");
         startSlidePresenter((activeSel && activeSel.value) ? activeSel.value : "12_11");
     };
-    document.body.appendChild(btn);
+    const x = document.createElement("button");
+    x.textContent = "×"; x.title = "លាក់ប៊ូតុងនេះ"; x.setAttribute("aria-label", "លាក់ប៊ូតុងបញ្ចាំងស្លាយ");
+    x.style.cssText = "position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;border:none;background:#475569;color:#fff;font-size:15px;line-height:20px;padding:0;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.35);";
+    x.onclick = (ev) => { ev.stopPropagation(); wrap.remove(); try { sessionStorage.setItem("spHide", "1"); } catch (e) {} };
+    wrap.appendChild(btn); wrap.appendChild(x);
+    document.body.appendChild(wrap);
 });
