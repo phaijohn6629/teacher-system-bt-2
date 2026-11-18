@@ -2994,6 +2994,9 @@ function normObsRow(x,tid){
   for(var i=0;i<6;i++)if(typeof g[i]!=="string")g[i]=g[i]==null?"":String(g[i]);
   r.g=g.slice(0,6);
   r.sc=r.sc.slice(0,33);r.cm=r.cm.slice(0,33);
+  for(var q=0;q<33;q++){var v=r.sc[q];r.sc[q]=(v===null||v===undefined||v==="")?null:(isFinite(+v)&&+v>=0&&+v<=5?Math.round(+v):null);if(typeof r.cm[q]!=="string")r.cm[q]=r.cm[q]==null?"":String(r.cm[q])}
+  if(typeof r.dt!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(r.dt))r.dt="";
+  if(r.x){r.x=1;if(!r.k)r.k="x"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
   ["t","o","sub","cl","tm","rm","n","ab","ch","ls","ct","dt"].forEach(function(k){if(r[k]==null)r[k]=(k==="sub"?"គណិតវិទ្យា":"")});
   if(!r.t&&tid)r.t=tid;
   return r}
@@ -3006,7 +3009,10 @@ function normalizeObsData(v){
       if(Array.isArray(a))a.forEach(function(x){rows.push(normObsRow(x,k))});
       else if(a&&typeof a==="object")rows.push(normObsRow(a,k))})}
   var d=defO();
-  for(var i=rows.length;i<36;i++)rows.push(d.r[i]);
+  var base=rows.filter(function(r){return !r.x}),ext=rows.filter(function(r){return r.x});
+  for(var i=base.length;i<36;i++)base.push(d.r[i]);
+  ext.sort(function(a,b){return (a.dt||"").localeCompare(b.dt||"")||String(a.k).localeCompare(String(b.k))});
+  rows=base.concat(ext);
   var th=Array.isArray(v.th)&&v.th.length>=3?v.th.slice(0,3):d.th;
   return{d:v.d!=null?+v.d:d.d,y:v.y!=null?+v.y:d.y,th:th,r:rows}}
 function loadO() {
@@ -3024,8 +3030,13 @@ function loadO() {
   return defO()
 }
 function saveO() { try { sessionStorage.setItem(KEY_OBS, JSON.stringify(ob)); push("obs"); } catch (e) { } }
-function omn(i){return XM[Math.floor(i/4)]}
-function odt(i){var r=ob.r[i];if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
+function omn(i){var r=ob.r[i];if(r&&r.x){var d=odt(i);return d.getMonth()+1}return XM[Math.floor(i/4)]}
+/* សិទ្ធិសង្កេតថ្នាក់៖ Admin · ប្រធាន · អនុប្រធាន មានសិទ្ធិស្មើគ្នា (បន្ថែម · កែ · កំណត់ពេល) */
+function obsLead(){return canK()}
+function obsEdit(r){return obsLead()||!!(who&&r&&who.id===r.o)}
+function wkday(iso){var p=String(iso||"").split("-");if(p.length!==3)return false;var w=new Date(+p[0],+p[1]-1,+p[2]).getDay();return w>=1&&w<=5}
+function obsLbl(k){var r=ob.r[k];return r&&r.x?(function(){var d=odt(k);return kn(d.getDate())+" "+M[d.getMonth()]+" (បន្ថែម)"})():M[omn(k)-1]+" ស."+"១២៣៤"[k%4]}
+function odt(i){var r=ob.r[i];if(r&&r.x&&!r.dt)return new Date();if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
 function gs(i,g){var r=ob.r[i]; if(!r||!Array.isArray(r.sc)){r=ob.r[i]=normObsRow(r)} var s=0,n=0,k0=0;for(var a=0;a<g;a++)k0+=OC[a].items.length;OC[g].items.forEach(function(_,j){var v=r.sc[k0+j];if(v!=null&&v!==""){s+=+v;n++}});return n?s:""}
 function gt(i){var s=0,n=0;OC.forEach(function(_,g){var v=gs(i,g);if(v!==""){s+=v;n++}});return n?s:""}
 function lvl(p){return p>=ob.th[0]/100?OL[0]:p>=ob.th[1]/100?OL[1]:p>=ob.th[2]/100?OL[2]:OL[3]}
@@ -3054,15 +3065,19 @@ function obsRSrv(){var n=sy.need&&sy.need.obs;return !!n&&!!sy.srv&&!!sy.srv.obs
 function obsRAuto(){if(!obsRSrv())return false;var ch=false;obsRList().forEach(function(x){if(x.auto&&obsRApply(x))ch=true});return ch}
 function renderO1(){obsRAuto();var rb=$("orst");if(rb){var L=obsRList();rb.hidden=!L.length;rb.innerHTML=L.map(function(x,k){return"<button type=button data-or='"+k+"'>♻️ ស្ដារកំណត់ត្រាសង្កេត "+esc(obsRTeacher(x).name)+"</button> "}).join("")}
 var b="";
-ob.r.forEach(function(r,i){var mi=Math.floor(i/4);if(om!==-1&&mi!==om)return;var t=gt(i);
-var isAdmin = (isAdm());
-var canEditObs = (isAdmin || (who && who.id === r.o));
-b+=(i%4===0?"<tr class=tr><td colspan=9>"+M[omn(i)-1]+" "+(ob.y+(omn(i)>=11?0:1))+"</td></tr>":"")+"<tr><td>"+(i+1)+"</td><td>សប្ដាហ៍ទី"+"១២៣៤"[i%4]+"</td><td><input type=date data-o='"+i+"|dt' value='"+iso(odt(i))+"' "+(isAdmin?"":"readonly")+"></td><td><select data-o='"+i+"|t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select></td><td><select data-o='"+i+"|o' "+(canEditObs?"":"disabled")+">"+oopt(r.o)+"</select></td><td><select data-o='"+i+"|cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select></td><td><select data-o='"+i+"|tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select></td><td>"+(t===""?"—":t+"/165 · <b>អ្វីជា…</b>")+"</td><td><button data-of='"+i+"'>បើកទម្រង់</button></td></tr>"});
+var xh=0;
+ob.r.forEach(function(r,i){var mi=r.x?XM.indexOf(omn(i)):Math.floor(i/4);if(om!==-1&&mi!==om)return;var t=gt(i);
+var isAdmin = obsLead();
+var canEditObs = obsEdit(r);
+if(r.x&&!xh){xh=1;b+="<tr class=tr><td colspan=9>ការសង្កេតបន្ថែម (ច័ន្ទ–សុក្រ)</td></tr>"}
+b+=(!r.x&&i%4===0?"<tr class=tr><td colspan=9>"+M[omn(i)-1]+" "+(ob.y+(omn(i)>=11?0:1))+"</td></tr>":"")+"<tr><td>"+(i+1)+"</td><td>"+(r.x?"ថ្ងៃ"+DY[(odt(i).getDay()+6)%7]:"សប្ដាហ៍ទី"+"១២៣៤"[i%4])+"</td><td><input type=date data-o='"+i+"|dt' value='"+iso(odt(i))+"' "+(isAdmin?"":"readonly")+"></td><td><select data-o='"+i+"|t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select></td><td><select data-o='"+i+"|o' "+(canEditObs?"":"disabled")+">"+oopt(r.o)+"</select></td><td><select data-o='"+i+"|cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select></td><td><select data-o='"+i+"|tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select></td><td>"+(t===""?"—":t+"/165 · <b>អ្វីជា…</b>")+"</td><td><button data-of='"+i+"'>បើកទម្រង់</button>"+(r.x&&obsLead()?" <button data-odel='"+i+"' title='លុបការសង្កេតបន្ថែមនេះ'>🗑</button>":"")+"</td></tr>"});
+var ad=$("oadd");if(!ad){ad=document.createElement("div");ad.id="oadd";ad.style.margin="6px 0";$("ov1t").parentNode.insertBefore(ad,$("ov1t"))}
+var adH=obsLead()?"<button type=button data-oadd=1>➕ បន្ថែមការសង្កេតថ្មី (ច័ន្ទ–សុក្រ)</button>":"";if(ad.innerHTML!==adH)ad.innerHTML=adH;
 $("ov1t").innerHTML="<thead><tr><th>ល.រ</th><th>សប្ដាហ៍</th><th>កាលបរិច្ឆេទ</th><th>គ្រូត្រូវសង្កេត</th><th>អ្នកសង្កេត</th><th>ថ្នាក់</th><th>ម៉ោង</th><th>លទ្ធផល</th><th></th></tr></thead><tbody>"+b+"</tbody>"}
 function renderO2(){if(oc<0||oc>=ob.r.length)oc=0;var i=oc,r=ob.r[i]=normObsRow(ob.r[i]);var h="";
-$("oi").innerHTML=ob.r.map(function(x,k){return"<option value="+k+(k===i?" selected":"")+">"+(k+1)+". "+M[omn(k)-1]+" ស."+"១២៣៤"[k%4]+" — "+esc(tn(x.t))+"</option>"}).join("");
-var isAdmin = (isAdm());
-var canEditObs = (isAdmin || (who && who.id === r.o));
+$("oi").innerHTML=ob.r.map(function(x,k){return"<option value="+k+(k===i?" selected":"")+">"+(k+1)+". "+obsLbl(k)+" — "+esc(tn(x.t))+"</option>"}).join("");
+var isAdmin = obsLead();
+var canEditObs = obsEdit(r);
 
 function F(l,x){return"<div><label>"+l+"</label>"+x+"</div>"}
 function I(f,ty){return"<input "+(ty?"type="+ty+" ":"")+"data-f='"+f+"' value='"+esc(r[f])+"' "+(canEditObs?"":"readonly")+">"}
@@ -3143,19 +3158,28 @@ function obsSumHTML(){
 $("o3pr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsSumHTML())})};
 $("opr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsPrintHTML(oc))})};
 $("oi").onchange=function(){oc=+this.value;renderO2()};
-$("opv").onclick=function(){oc=(oc+35)%36;renderO2()};
-$("onx").onclick=function(){oc=(oc+1)%36;renderO2()};
+$("opv").onclick=function(){var n=ob.r.length;oc=(oc+n-1)%n;renderO2()};
+$("onx").onclick=function(){oc=(oc+1)%ob.r.length;renderO2()};
 $("ov1t").oninput=function(e){var p=e.target.dataset.o;if(!p)return;var a=p.split("|"),r=ob.r[+a[0]];
-var isAdmin = (isAdm());
+var isAdmin = obsLead()||(a[1]!=="dt"&&a[1]!=="t"&&obsEdit(r));
 if(!isAdmin) { alert("លោកគ្រូមិនមានសិទ្ធិកែប្រែកាលវិភាគសង្កេតនេះទេ!"); renderO1(); return; }
+if(a[1]==="dt"&&e.target.value&&!wkday(e.target.value)){alert("សូមជ្រើសថ្ងៃច័ន្ទ ដល់ថ្ងៃសុក្រ ប៉ុណ្ណោះ!");renderO1();return}
 r[a[1]]=e.target.value;saveO();renderO1();};
 if($("orst"))$("orst").onclick=function(e){var b=e.target.closest("button[data-or]");if(!b)return;var x=obsRList()[+b.dataset.or];if(x&&obsRApply(x)){oc=x.i;ov=2;renderO()}};
-$("ov1t").onclick=function(e){var b=e.target.closest("button");if(b&&b.dataset.of!=null){oc=+b.dataset.of;ov=2;renderO()}};
+$("ov1t").onclick=function(e){var b=e.target.closest("button");if(b&&b.dataset.of!=null){oc=+b.dataset.of;ov=2;renderO()}
+  if(b&&b.dataset.odel!=null&&obsLead()){var i=+b.dataset.odel,r=ob.r[i];if(!r||!r.x)return;if(gt(i)!==""&&!confirm("ការសង្កេតនេះមានពិន្ទុរួចហើយ។ លុបមែនទេ?"))return;
+    ob.r.splice(i,1);if(oc>=ob.r.length)oc=0;saveO();renderO()}};
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("button[data-oadd]");if(!b||!obsLead())return;
+  var d=new Date();while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);
+  var r=normObsRow({x:1,t:"",o:who.id,dt:iso(d)});
+  ob.r.push(r);ob.r.sort(function(a,b){if(!a.x||!b.x)return 0;return (a.dt||"").localeCompare(b.dt||"")});
+  oc=ob.r.indexOf(r);saveO();ov=2;renderO()});
 $("of").oninput=function(e){var t=e.target,r=ob.r[oc],d=t.dataset;
-var isAdmin = (isAdm());
-var canEditObs = (isAdmin || (who && who.id === r.o));
+var isAdmin = obsLead();
+var canEditObs = obsEdit(r);
 if(d.f){
-  if((d.f==="t"||d.f==="o")&&!isAdmin){alert("មានតែអ្នកគ្រប់គ្រង (Admin) ទេដែលអាចប្ដូរគ្រូ ឬអ្នកសង្កេត!");renderO2();return}
+  if((d.f==="t"||d.f==="o")&&!isAdmin){alert("មានតែ Admin · ប្រធាន · អនុប្រធាន ទេដែលអាចប្ដូរគ្រូ ឬអ្នកសង្កេត!");renderO2();return}
+  if(d.f==="dt"&&t.value&&!wkday(t.value)){alert("សូមជ្រើសថ្ងៃច័ន្ទ ដល់ថ្ងៃសុក្រ ប៉ុណ្ណោះ!");renderO2();return}
   var isTeacherNote = (d.f==="sub"||d.f==="rm"||d.f==="n"||d.f==="ab"||d.f==="ch"||d.f==="ls"||d.f==="ct");
   if(!canEditObs && !(isTeacherNote && who.id === r.t)) { alert("អ្នកមិនមានសិទ្ធិកែប្រែទិន្នន័យនេះទេ!"); renderO2(); return; }
   r[d.f]=t.value;saveO();if(t.tagName==="SELECT"||t.type==="date")renderO2();return;
@@ -3173,9 +3197,9 @@ saveO();};
 $("of").onclick=function(e){
   var b=e.target.closest("button");if(!b||!b.dataset.sc)return;
   var r=ob.r[oc];
-  var isAdmin = (isAdm());
-  var canEditObs = (isAdmin || (who && who.id === r.o));
-  if(!canEditObs) { alert("មានតែអ្នកសង្កេតការណ៍ ឬ Admin ទេដែលអាចដាក់ពិន្ទុសង្កេតថ្នាក់បាន!"); return; }
+  var isAdmin = obsLead();
+  var canEditObs = obsEdit(r);
+  if(!canEditObs) { alert("មានតែអ្នកសង្កេតការណ៍ ឬ Admin · ប្រធាន · អនុប្រធាន ទេដែលអាចដាក់ពិន្ទុសង្កេតថ្នាក់បាន!"); return; }
   var a=b.dataset.sc.split("|"),k=+a[0],n=+a[1];
   r.sc[k]=r.sc[k]===n?null:n;[].forEach.call(b.parentNode.children,function(x){x.className=""});if(r.sc[k]===n)b.className="on";saveO();upd()
 };
@@ -3200,6 +3224,7 @@ function sj(x){   /* stringify មានលំដាប់ key ថេរ សម�
   return "{"+Object.keys(x).sort().filter(function(k){return x[k]!==undefined}).map(function(k){return JSON.stringify(k)+":"+sj(x[k])}).join(",")+"}";
 }
 function rid(i){return "r"+("0"+i).slice(-2)}
+function orid(r,i){return r&&r.x&&r.k?r.k:rid(i)}
 function encO(id,v){return{o:id,j:JSON.stringify(v)}}   /* JSON ជា string ដើម្បីជៀស nested array ដែល Firestore មិនអនុញ្ញាត */
 function decO(d){try{return JSON.parse(d.j)}catch(e){return null}}
 function safeId(u){return String(u).replace(/[\/\s]/g,"_").slice(0,120)}
@@ -3225,8 +3250,11 @@ var MAP={
       ex={d:cf.d!=null?cf.d:ex.d,w:cf.w!=null?cf.w:ex.w,y:cf.y!=null?cf.y:ex.y,r:r}}
   },
   obs:{
-    docs:function(){var o={"cfg/obs":{d:ob.d,y:ob.y,th:jcl(ob.th)}};ob.r.forEach(function(r,i){o["obsrows/"+rid(i)]=jcl(r)});return o},
-    load:function(c){var cf=c["cfg/obs"]||{},r=ob.r.map(function(x,i){var d=c["obsrows/"+rid(i)];return d?jcl(d):x});
+    docs:function(){var o={"cfg/obs":{d:ob.d,y:ob.y,th:jcl(ob.th)}};ob.r.forEach(function(r,i){o["obsrows/"+orid(r,i)]=jcl(r)});return o},
+    load:function(c){var cf=c["cfg/obs"]||{},bs=ob.r.filter(function(x){return !x.x}),r=bs.map(function(x,i){var d=c["obsrows/"+rid(i)];return d?jcl(d):x});
+      var ob0=ob.r.filter(function(x){return x.x}),pk=pick(c,"obsrows/");
+      Object.keys(pk).forEach(function(k){if(!/^r\d\d$/.test(k)&&pk[k]&&pk[k].x)r.push(jcl(pk[k]))});
+      ob0.forEach(function(x){if(!pk[x.k]&&sy.dirty&&sy.dirty.obs)r.push(x)});
       ob=normalizeObsData({d:cf.d!=null?cf.d:ob.d,y:cf.y!=null?cf.y:ob.y,th:cf.th?jcl(cf.th):ob.th,r:r})}
   },
   wr:{
@@ -3270,11 +3298,12 @@ function canWrite(p,d,isNew){
   if(c==="ts"||c==="cx")return String(id).split("_")[0]===me;
   if(c==="lib")return !!d&&d.o===me;
   if(c==="exrows")return !isNew&&!!d&&d.t===me;
-  if(c==="obsrows")return !isNew&&!!d&&(d.o===me||d.t===me);
+  if(c==="obsrows")return canK()||(!isNew&&!!d&&(d.o===me||d.t===me));
   return false;
 }
 function canDel(p,old){
   if(isAdm())return true;
+  if(p.indexOf("obsrows/")===0)return canK();
   return p.indexOf("lib/")===0&&!!old&&old.o===who.id;
 }
 

@@ -26,6 +26,10 @@ service cloud.firestore {
     function myId() { return get(profilePath()).data.id; }          // ឧ. "T002"
     function isAdmin() { return active() && get(profilePath()).data.role == 'admin'; }
     function isOwner(ownerId) { return active() && ownerId == myId(); }
+    function isObsLead() {
+      return active() && exists(/databases/$(database)/documents/cfg/klead)
+        && myId() in get(/databases/$(database)/documents/cfg/klead).data.ids;
+    }
     function changedOnly(fields) {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
     }
@@ -252,8 +256,9 @@ service cloud.firestore {
     }
     match /obsrows/{id} {
       allow read: if active();
-      allow create, delete: if isAdmin();
-      allow update: if isAdmin()
+      // Admin · ប្រធាន · អនុប្រធាន (cfg/klead.ids) បន្ថែម/កែ/លុបបានគ្រប់ជួរ
+      allow create, delete: if isAdmin() || isObsLead();
+      allow update: if isAdmin() || isObsLead()
         || (isOwner(resource.data.o)
             && changedOnly(['sub','cl','tm','rm','n','ab','ch','ls','ct','sc','cm','g']))
         || (isOwner(resource.data.t)
