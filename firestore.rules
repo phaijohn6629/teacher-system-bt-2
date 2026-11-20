@@ -244,18 +244,24 @@ service cloud.firestore {
     }
 
     // ===================== សង្កេតថ្នាក់រៀន =====================
+    // ឯកជនភាព (read)៖ Admin · ប្រធាន · អនុប្រធាន (cfg/klead.ids) អានបានទាំងអស់ · គ្រូធម្មតាអានបានតែជួរដែលខ្លួនជា
+    //   គ្រូត្រូវសង្កេត (t) ឬ អ្នកសង្កេត (o) ប៉ុណ្ណោះ → client ត្រូវ query where t==ខ្លួន និង where o==ខ្លួន (script.js subsFor)
     // Admin ៖ គ្រប់យ៉ាង (t = គ្រូត្រូវសង្កេត, o = អ្នកសង្កេត, dt = ថ្ងៃ)
     // អ្នកសង្កេត (o) ៖ កែពិន្ទុ កំណត់ត្រា និងព័ត៌មានផ្សេងៗ លើកលែង t, o, dt
-    // គ្រូត្រូវសង្កេត (t) ៖ កែបានតែប្រអប់ចំណាំរបស់ខ្លួន (g[2], g[4]) និងវាលព័ត៌មានទូទៅ
+    // គ្រូត្រូវសង្កេត (t) ៖ កែបានតែផ្នែកទី១ (sub rm n ab ch ls ct) និងប្រអប់ចំណាំរបស់ខ្លួន (g[2], g[4]) ·
+    //   មិនអាចកែ sc (ពិន្ទុ ៣៣ ចំណុច) cm t o dt cl tm ទេ
     function teacherNotesOnly() {
       return request.resource.data.g.size() == resource.data.g.size()
         && request.resource.data.g[0] == resource.data.g[0]
         && request.resource.data.g[1] == resource.data.g[1]
         && request.resource.data.g[3] == resource.data.g[3]
-        && request.resource.data.g[5] == resource.data.g[5];
+        && request.resource.data.g[5] == resource.data.g[5]
+        && request.resource.data.g[2] is string && request.resource.data.g[2].size() < 8000
+        && request.resource.data.g[4] is string && request.resource.data.g[4].size() < 8000;
     }
     match /obsrows/{id} {
-      allow read: if active();
+      allow read: if isAdmin() || isObsLead()
+        || isOwner(resource.data.t) || isOwner(resource.data.o);
       // Admin · ប្រធាន · អនុប្រធាន (cfg/klead.ids) បន្ថែម/កែ/លុបបានគ្រប់ជួរ
       allow create, delete: if isAdmin() || isObsLead();
       allow update: if isAdmin() || isObsLead()

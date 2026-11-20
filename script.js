@@ -3035,6 +3035,13 @@ function omn(i){var r=ob.r[i];if(r&&r.x){var d=odt(i);return d.getMonth()+1}retu
 /* សិទ្ធិសង្កេតថ្នាក់៖ Admin · ប្រធាន · អនុប្រធាន មានសិទ្ធិស្មើគ្នា (បន្ថែម · កែ · កំណត់ពេល) */
 function obsLead(){return canK()}
 function obsEdit(r){return obsLead()||!!(who&&r&&who.id===r.o)}
+/* 🔒 ឯកជនភាព៖ គ្រូធម្មតាឃើញតែទម្រង់ដែលខ្លួនជា «គ្រូត្រូវសង្កេត» (t) ឬ «អ្នកសង្កេត» (o) · Admin/ប្រធាន/អនុប្រធាន ឃើញទាំងអស់
+   r.hid = ជួរទទេក្នុង memory ជំនួសជួរដែលមិនមានសិទ្ធិអាន (មិនដែលសរសេរទៅ Cloud) */
+function obsVis(r){return !!r&&(obsLead()||(!r.hid&&!!who&&(r.t===who.id||r.o===who.id)))}
+function obsVisIdx(){var a=[];ob.r.forEach(function(r,i){if(obsVis(r))a.push(i)});return a}
+/* ផ្នែកទី១ ដែលគ្រូត្រូវសង្កេតកែបានដោយខ្លួនឯង (ត្រូវនឹង firestore.rules ៖ sub rm n ab ch ls ct) · ថ្នាក់/ម៉ោង/ថ្ងៃ/ពិន្ទុ/គ្រូ/អ្នកសង្កេត = បិទ */
+var OBT=["sub","rm","n","ab","ch","ls","ct"];
+function obsTF(r,f){return !!who&&!!r&&r.t===who.id&&OBT.indexOf(f)>=0}
 function wkday(iso){var p=String(iso||"").split("-");if(p.length!==3)return false;var w=new Date(+p[0],+p[1]-1,+p[2]).getDay();return w>=1&&w<=5}
 function obsLbl(k){var r=ob.r[k];return r&&r.x?(function(){var d=odt(k);return kn(d.getDate())+" "+M[d.getMonth()]+" (បន្ថែម)"})():M[omn(k)-1]+" ស."+"១២៣៤"[k%4]}
 function odt(i){var r=ob.r[i];if(r&&r.x&&!r.dt)return new Date();if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
@@ -3042,7 +3049,7 @@ function gs(i,g){var r=ob.r[i]; if(!r||!Array.isArray(r.sc)){r=ob.r[i]=normObsRo
 function gt(i){var s=0,n=0;OC.forEach(function(_,g){var v=gs(i,g);if(v!==""){s+=v;n++}});return n?s:""}
 function lvl(p){return p>=ob.th[0]/100?OL[0]:p>=ob.th[1]/100?OL[1]:p>=ob.th[2]/100?OL[2]:OL[3]}
 function tots(i){var T=gt(i);return T===""?"សរុប៖ —":"សរុប៖ <b>"+T+" / 165</b> ("+(T/165*100).toFixed(1)+"%) · <b>"+lvl(T/165)+"</b>"}
-function oopt(sel){return data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===sel?" selected":"")+">"+esc(t.name)+"</option>"}).join("")}
+function oopt(sel){return(obsLead()?data:data.filter(function(t){return t.id===sel})).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===sel?" selected":"")+">"+esc(t.name)+"</option>"}).join("")}
 function renderO(){obsRAuto();[1,2,3].forEach(function(n){$("ov"+n).hidden=n!==ov});
 [].forEach.call(document.querySelectorAll("#oseg button"),function(b){b.setAttribute("aria-selected",+b.dataset.ov===ov)});
 $("od").innerHTML=DY.map(function(d,i){return"<option value="+i+(i===ob.d?" selected":"")+">"+d+"</option>"}).join("");
@@ -3066,22 +3073,23 @@ function obsRSrv(){var n=sy.need&&sy.need.obs;return !!n&&!!sy.srv&&!!sy.srv.obs
 function obsRAuto(){if(!obsRSrv())return false;var ch=false;obsRList().forEach(function(x){if(x.auto&&obsRApply(x))ch=true});return ch}
 function renderO1(){obsRAuto();var rb=$("orst");if(rb){var L=obsRList();rb.hidden=!L.length;rb.innerHTML=L.map(function(x,k){return"<button type=button data-or='"+k+"'>♻️ ស្ដារកំណត់ត្រាសង្កេត "+esc(obsRTeacher(x).name)+"</button> "}).join("")}
 var b="";
-var xh=0;
-ob.r.forEach(function(r,i){var mi=r.x?XM.indexOf(omn(i)):Math.floor(i/4);if(om!==-1&&mi!==om)return;var t=gt(i);
+var xh=0,hm=-1;
+ob.r.forEach(function(r,i){var mi=r.x?XM.indexOf(omn(i)):Math.floor(i/4);if(om!==-1&&mi!==om)return;if(!obsVis(r))return;var t=gt(i);
 var isAdmin = obsLead();
 var canEditObs = obsEdit(r);
 if(r.x&&!xh){xh=1;b+="<tr class=tr><td colspan=9>ការសង្កេតបន្ថែម (ច័ន្ទ–សុក្រ)</td></tr>"}
-b+=(!r.x&&i%4===0?"<tr class=tr><td colspan=9>"+M[omn(i)-1]+" "+(ob.y+(omn(i)>=11?0:1))+"</td></tr>":"")+"<tr><td>"+(i+1)+"</td><td>"+(r.x?"ថ្ងៃ"+DY[(odt(i).getDay()+6)%7]:"សប្ដាហ៍ទី"+"១២៣៤"[i%4])+"</td><td><input type=date data-o='"+i+"|dt' value='"+iso(odt(i))+"' "+(isAdmin?"":"readonly")+"></td><td><select data-o='"+i+"|t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select></td><td><select data-o='"+i+"|o' "+(canEditObs?"":"disabled")+">"+oopt(r.o)+"</select></td><td><select data-o='"+i+"|cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select></td><td><select data-o='"+i+"|tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select></td><td>"+(t===""?"—":t+"/165 · <b>អ្វីជា…</b>")+"</td><td><button data-of='"+i+"'>បើកទម្រង់</button>"+(r.x&&obsLead()?" <button data-odel='"+i+"' title='លុបការសង្កេតបន្ថែមនេះ'>🗑</button>":"")+"</td></tr>"});
+b+=(!r.x&&mi!==hm?(hm=mi,"<tr class=tr><td colspan=9>"+M[omn(i)-1]+" "+(ob.y+(omn(i)>=11?0:1))+"</td></tr>"):"")+"<tr><td>"+(i+1)+"</td><td>"+(r.x?"ថ្ងៃ"+DY[(odt(i).getDay()+6)%7]:"សប្ដាហ៍ទី"+"១២៣៤"[i%4])+"</td><td><input type=date data-o='"+i+"|dt' value='"+iso(odt(i))+"' "+(isAdmin?"":"readonly")+"></td><td><select data-o='"+i+"|t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select></td><td><select data-o='"+i+"|o' "+(canEditObs?"":"disabled")+">"+oopt(r.o)+"</select></td><td><select data-o='"+i+"|cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select></td><td><select data-o='"+i+"|tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select></td><td>"+(t===""?"—":t+"/165 · <b>អ្វីជា…</b>")+"</td><td><button data-of='"+i+"'>បើកទម្រង់</button>"+(r.x&&obsLead()?" <button data-odel='"+i+"' title='លុបការសង្កេតបន្ថែមនេះ'>🗑</button>":"")+"</td></tr>"});
 var ad=$("oadd");if(!ad){ad=document.createElement("div");ad.id="oadd";ad.style.margin="6px 0";$("ov1t").parentNode.insertBefore(ad,$("ov1t"))}
 var adH=obsLead()?"<button type=button data-oadd=1>➕ បន្ថែមការសង្កេតថ្មី (ច័ន្ទ–សុក្រ)</button>":"";if(ad.innerHTML!==adH)ad.innerHTML=adH;
 $("ov1t").innerHTML="<thead><tr><th>ល.រ</th><th>សប្ដាហ៍</th><th>កាលបរិច្ឆេទ</th><th>គ្រូត្រូវសង្កេត</th><th>អ្នកសង្កេត</th><th>ថ្នាក់</th><th>ម៉ោង</th><th>លទ្ធផល</th><th></th></tr></thead><tbody>"+b+"</tbody>"}
-function renderO2(){if(oc<0||oc>=ob.r.length)oc=0;var i=oc,r=ob.r[i]=normObsRow(ob.r[i]);var h="";
-$("oi").innerHTML=ob.r.map(function(x,k){return"<option value="+k+(k===i?" selected":"")+">"+(k+1)+". "+obsLbl(k)+" — "+esc(tn(x.t))+"</option>"}).join("");
+function renderO2(){var VI=obsVisIdx();if(!VI.length){$("oi").innerHTML="";$("of").innerHTML="<div class=card><p class=note>មិនមានទម្រង់សង្កេតដែលពាក់ព័ន្ធនឹងអ្នកទេ។</p></div>";return}
+if(oc<0||oc>=ob.r.length||VI.indexOf(oc)<0)oc=VI[0];var i=oc,r=ob.r[i]=normObsRow(ob.r[i]);var h="";
+$("oi").innerHTML=VI.map(function(k){var x=ob.r[k];return"<option value="+k+(k===i?" selected":"")+">"+(k+1)+". "+obsLbl(k)+" — "+esc(tn(x.t))+"</option>"}).join("");
 var isAdmin = obsLead();
 var canEditObs = obsEdit(r);
 
 function F(l,x){return"<div><label>"+l+"</label>"+x+"</div>"}
-function I(f,ty){return"<input "+(ty?"type="+ty+" ":"")+"data-f='"+f+"' value='"+esc(r[f])+"' "+(canEditObs?"":"readonly")+">"}
+function I(f,ty){return"<input "+(ty?"type="+ty+" ":"")+"data-f='"+f+"' value='"+esc(r[f])+"' "+((canEditObs||obsTF(r,f))?"":"readonly")+">"}
 h+="<div class=card><h3>ផ្នែកទី១ ៖ សាវតាទូទៅ</h3><div class=fg>"+F("គ្រូត្រូវសង្កេត","<select data-f='t' "+(isAdmin?"":"disabled")+">"+oopt(r.t)+"</select>")+F("អ្នកសង្កេត","<select data-f='o' "+(isAdmin?"":"disabled")+">"+oopt(r.o)+"</select>")+F("មុខវិជ្ជា",I("sub"))+F("ថ្នាក់","<select data-f='cl' "+(canEditObs?"":"disabled")+">"+sop(r.cl)+"</select>")+F("កាលបរិច្ឆេទ","<input type=date data-f='dt' value='"+iso(odt(i))+"' "+(canEditObs?"":"readonly")+">")+F("ម៉ោង","<select data-f='tm' "+(canEditObs?"":"disabled")+">"+tmop(r.tm)+"</select>")+F("បន្ទប់",I("rm"))+F("សិស្សសរុប (នាក់)",I("n","number"))+F("អវត្តមាន (នាក់)",I("ab","number"))+F("ជំពូកទី",I("ch"))+F("មេរៀនទី",I("ls"))+F("ខ្លឹមសារ",I("ct"))+"</div></div>";
 h+="<div class=card><h3>ផ្នែកទី២ ៖ លក្ខណៈវិនិច្ឆ័យការសង្កេត</h3><p class=note style='margin:0 0 8px'>០ = គ្មាន · ១ = មិនទាន់បានល្អ · ២–៤ = មធ្យម · ៥ = បានល្អប្រសើរ</p>";
 var k0=0;
@@ -3098,14 +3106,14 @@ h+="<div class=card><h3>ផ្នែកទី៣ ៖ កំណត់ហេតុ
 $("of").innerHTML=h}
 function upd(){OC.forEach(function(g,gi){var s=gs(oc,gi);$("gs"+gi).textContent=(s===""?"—":s)+" / "+g.max});$("otot").innerHTML=tots(oc)}
 function renderO3(){var cols=[[],[],[],[],[],[],[]],c1=0,c2=0,c3=0,b="";
-data.forEach(function(t){var ix=[];ob.r.forEach(function(r,i){if(r.t===t.id)ix.push(i)});
+(obsLead()?data:data.filter(function(t){return !!who&&t.id===who.id})).forEach(function(t){var ix=[];ob.r.forEach(function(r,i){if(r.t===t.id)ix.push(i)});
 var by=ob.r.filter(function(r){return r.o===t.id}).length,sc=ix.filter(function(i){return gt(i)>0}).length;c1+=ix.length;c2+=by;c3+=sc;
 var av=OC.map(function(g,gi){var v=ix.map(function(i){return gs(i,gi)}).filter(function(x){return x!==""});return v.length?ss(v)/v.length:""});
 var tv=ix.map(function(i){return gt(i)}).filter(function(x){return x!==""}),ta=tv.length?ss(tv)/tv.length:"";
 av.push(ta);av.forEach(function(v,k){if(v!=="")cols[k].push(v)});
 b+="<tr><td class=nm data-ot='"+esc(t.id)+"' style='cursor:pointer;text-decoration:underline' title='បើកទម្រង់សង្កេត'>"+esc(t.name)+"</td><td>"+ix.length+"</td><td>"+by+"</td><td>"+sc+"</td>"+av.map(function(v){return"<td>"+(v===""?"":v.toFixed(1))+"</td>"}).join("")+"<td>"+(ta===""?"":(ta/165*100).toFixed(1)+"% · <b>"+lvl(ta/165)+"</b>")+"</td></tr>"});
 var tr=cols.map(function(a){return a.length?ss(a)/a.length:""});
-b+="<tr class=tr><td>សរុប / មធ្យម</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td>"+tr.map(function(v){return"<td>"+(v===""?"":v.toFixed(1))+"</td>"}).join("")+"<td>"+(tr[6]===""?"":(tr[6]/165*100).toFixed(1)+"%")+"</td></tr>";
+if(obsLead())b+="<tr class=tr><td>សរុប / មធ្យម</td><td>"+c1+"</td><td>"+c2+"</td><td>"+c3+"</td>"+tr.map(function(v){return"<td>"+(v===""?"":v.toFixed(1))+"</td>"}).join("")+"<td>"+(tr[6]===""?"":(tr[6]/165*100).toFixed(1)+"%")+"</td></tr>";
 $("o3t").innerHTML="<thead><tr><th>គ្រូបង្រៀន</th><th>ត្រូវសង្កេត (ដង)</th><th>បានសង្កេតគេ (ដង)</th><th>ដាក់ពិន្ទុរួច (ដង)</th>"+OC.map(function(g){return"<th>"+esc(g.t)+" (/"+g.max+")</th>"}).join("")+"<th>មធ្យមសរុប (/165)</th><th>ភាគរយ · និទ្ទេស</th></tr></thead><tbody>"+b+"</tbody>";
 $("oth").innerHTML="<div class=bar>"+[0,1,2].map(function(k){return"<label>"+OL[k]+" ≥ (%)</label><input type=number data-th='"+k+"' value='"+ob.th[k]+"' style='flex:0 0 80px;width:80px' "+(isAdm()?"":"disabled")+">"}).join("")+"</div>"}
 $("o3t").onclick=function(e){var td=e.target.closest("td[data-ot]");if(!td)return;var id=td.getAttribute("data-ot"),f=-1,a=-1;
@@ -3157,10 +3165,10 @@ function obsSumHTML(){
    wpFoot(who.id,who.name,"អ្នករៀបចំ")+"</div>";
 }
 $("o3pr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsSumHTML())})};
-$("opr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsPrintHTML(oc))})};
-$("oi").onchange=function(){oc=+this.value;renderO2()};
-$("opv").onclick=function(){var n=ob.r.length;oc=(oc+n-1)%n;renderO2()};
-$("onx").onclick=function(){oc=(oc+1)%ob.r.length;renderO2()};
+$("opr").onclick=function(){if(!obsVis(ob.r[oc]))return;var X=window.SCHX;X.fontsOk().then(function(){doPrint(obsPrintHTML(oc))})};
+$("oi").onchange=function(){var k=+this.value;if(obsVis(ob.r[k]))oc=k;renderO2()};
+$("opv").onclick=function(){var V=obsVisIdx();if(!V.length)return;var q=V.indexOf(oc);oc=V[(q<0?0:q-1+V.length)%V.length];renderO2()};
+$("onx").onclick=function(){var V=obsVisIdx();if(!V.length)return;var q=V.indexOf(oc);oc=V[(q+1)%V.length];renderO2()};
 $("ov1t").oninput=function(e){var p=e.target.dataset.o;if(!p)return;var a=p.split("|"),r=ob.r[+a[0]];
 var isAdmin = obsLead()||(a[1]!=="dt"&&a[1]!=="t"&&obsEdit(r));
 if(!isAdmin) { alert("លោកគ្រូមិនមានសិទ្ធិកែប្រែកាលវិភាគសង្កេតនេះទេ!"); renderO1(); return; }
@@ -3251,8 +3259,8 @@ var MAP={
       ex={d:cf.d!=null?cf.d:ex.d,w:cf.w!=null?cf.w:ex.w,y:cf.y!=null?cf.y:ex.y,r:r}}
   },
   obs:{
-    docs:function(){var o={"cfg/obs":{d:ob.d,y:ob.y,th:jcl(ob.th)}};ob.r.forEach(function(r,i){o["obsrows/"+orid(r,i)]=jcl(r)});return o},
-    load:function(c){var cf=c["cfg/obs"]||{},bs=ob.r.filter(function(x){return !x.x}),r=bs.map(function(x,i){var d=c["obsrows/"+rid(i)];return d?jcl(d):x});
+    docs:function(){var o={"cfg/obs":{d:ob.d,y:ob.y,th:jcl(ob.th)}};ob.r.forEach(function(r,i){if(r.hid)return;o["obsrows/"+orid(r,i)]=jcl(r)});return o},
+    load:function(c){var cf=c["cfg/obs"]||{},bs=ob.r.filter(function(x){return !x.x}),r=bs.map(function(x,i){var d=c["obsrows/"+rid(i)];return d?jcl(d):(obsLead()?x:{hid:1})});
       var ob0=ob.r.filter(function(x){return x.x}),pk=pick(c,"obsrows/");
       Object.keys(pk).forEach(function(k){if(!/^r\d\d$/.test(k)&&pk[k]&&pk[k].x)r.push(jcl(pk[k]))});
       ob0.forEach(function(x){if(!pk[x.k]&&sy.dirty&&sy.dirty.obs)r.push(x)});
@@ -3285,7 +3293,7 @@ var LEG={
 
 function subsFor(k){
   return({teachers:[{doc:"app/teachers"}],tasks:[{col:"tasks"}],rs:[{col:"rs"},{doc:"cfg/rs"}],ex:[{col:"exrows"},{doc:"cfg/ex"}],
-    obs:[{col:"obsrows"},{doc:"cfg/obs"}],wr:[{col:"wr",own:1}],ah:[{col:"ah",own:1}],lib:[{col:"lib"}],sched:[{col:"sched"}],ts:[{col:"ts",own:1}],sig:[{col:"sig",own:1}],cx:[{col:"cx",own:1}],
+    obs:(obsLead()?[{col:"obsrows"},{doc:"cfg/obs"}]:[{col:"obsrows",w:"t"},{col:"obsrows",w:"o"},{doc:"cfg/obs"}]),wr:[{col:"wr",own:1}],ah:[{col:"ah",own:1}],lib:[{col:"lib"}],sched:[{col:"sched"}],ts:[{col:"ts",own:1}],sig:[{col:"sig",own:1}],cx:[{col:"cx",own:1}],
     mc:who&&who.role==="monitor"?[{doc:"mc/"+who.mk}]:[{col:"mc",own:1}]})[k];
 }
 function canWrite(p,d,isNew){
@@ -3416,6 +3424,8 @@ function afterTeachers(){
   sy.teachersReady=true;syncKLead();
   updateUserInfo();render();
   if(sy.first.obs)trySeed("obs");
+  if(sy.subd&&sy.subd.obs&&sy.obsMode&&sy.obsMode!==(obsLead()?"all":"own")){   /* តួនាទីទើបដឹង (ប្រធាន/អនុប្រធាន) → subscribe ឡើងវិញ ដើម្បីអានគ្រប់ជួរ */
+    ((sy.unK&&sy.unK.obs)||[]).forEach(function(f){try{f()}catch(e){}});subscribe("obs")}
 }
 function migrateRs(){   /* លំនាំដើមថ្នាក់ទី ១១ ត្រូវជា ១២៥ (ម្ដងគត់) */
   if(rs&&!rs.mig1){if(rs.mx&&rs.mx[11]===100)rs.mx[11]=125;rs.mig1=1;savR()}
@@ -3463,10 +3473,13 @@ function onData(k){
 }
 function subscribe(k){
   sy.subd[k]=1;var subs=subsFor(k);
+  (sy.unK||(sy.unK={}))[k]=[];sy.qd=sy.qd||{};Object.keys(sy.qd).forEach(function(e){if(e.indexOf(k+"|")===0)delete sy.qd[e]});
+  if(k==="obs")sy.obsMode=obsLead()?"all":"own";   /* គ្រូធម្មតា៖ query តាម t និង o របស់ខ្លួនតែប៉ុណ្ណោះ (ត្រូវនឹង rules) */
   sy.need[k]=subs.length;sy.got[k]={};sy.cache[k]={};
   subs.forEach(function(s,si){
     var ref;
     if(s.doc)ref=window.FB.doc.apply(null,[window.db].concat(s.doc.split("/")));
+    else if(s.w)ref=window.FB.query(window.FB.collection(window.db,s.col),window.FB.where(s.w,"==",who.id));
     else if(s.own&&!isAdm())ref=window.FB.query(window.FB.collection(window.db,s.col),window.FB.where("o","==",who.id));
     else ref=window.FB.collection(window.db,s.col);
     var un=window.FB.onSnapshot(ref,{includeMetadataChanges:true},function(sn){
@@ -3477,7 +3490,11 @@ function subscribe(k){
       (sy.ok||(sy.ok={}))[k]=1;
       var cache=sy.cache[k];
       if(s.doc){if(sn.exists())cache[s.doc]=sn.data();else delete cache[s.doc]}
-      else{
+      else if(s.w){   /* query ច្រើនលើ collection តែមួយ៖ ផ្ទុកក្នុង sy.qd ដាច់ដោយឡែក រួចបូករួមចូល cache (ជួរដែល t=o=ខ្លួន មកពីទាំងពីរ) */
+        var qd=sy.qd[eid]={};sn.forEach(function(d){qd[s.col+"/"+d.id]=d.data()});
+        Object.keys(cache).forEach(function(p){if(p.indexOf(s.col+"/")===0)delete cache[p]});
+        Object.keys(sy.qd).forEach(function(e){if(e.indexOf(k+"|")===0)Object.keys(sy.qd[e]).forEach(function(p){cache[p]=sy.qd[e][p]})});
+      }else{
         Object.keys(cache).forEach(function(p){if(p.indexOf(s.col+"/")===0)delete cache[p]});
         sn.forEach(function(d){cache[s.col+"/"+d.id]=d.data()});
       }
@@ -3487,7 +3504,7 @@ function subscribe(k){
       console.error("Sync error:",k,err);(sy.err||(sy.err={}))[k]=(err&&(err.code||err.message))||"error";if(sy.diagOn)syncDiag();
       if(err&&err.code==="permission-denied")notify("គ្មានសិទ្ធិអានទិន្នន័យពី Cloud ("+k+") — សូមទាក់ទងអ្នកគ្រប់គ្រង");
     });
-    unsubs.push(un);
+    unsubs.push(un);sy.unK[k].push(un);
   });
 }
 function srvOk(k){return Object.keys((sy.srv||{})[k]||{}).length>=(sy.need[k]||1)}
