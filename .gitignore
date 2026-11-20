@@ -13,3 +13,6 @@ __pycache__/
 firebase-admin-key.json
 *firebase-adminsdk*.json
 tools/localize_backup_*.json
+
+# Observation restore data (private, local only)
+obs_restore_*.json
