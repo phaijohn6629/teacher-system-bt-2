@@ -2038,15 +2038,17 @@ function lpTexify(s){
 function lpDF(x){   /* \frac → \dfrac · រូបមន្តមាន lim/sum/prod/int → \displaystyle (ដែនកំណត់ដាក់ក្រោម lim ស្អាត) */
   x=String(x).replace(/\\frac(?![A-Za-z])/g,"\\dfrac");
   return/\\(lim|sum|prod|int|limsup|liminf)(?![A-Za-z])/.test(x)&&!/^\s*\\displaystyle/.test(x)?"\\displaystyle "+x:x}
-function lpMath(t){
+/* 🛡️ lpMath មិនដែលបោះកំហុស/មិនបាត់ខ្លឹមសារ៖ រូបមន្តដែល KaTeX មិនអាចបកប្រែ (ឧ. $ ឬ { } មិនគូ) → បង្ហាញអត្ថបទដើម (esc) ជំនួស · < > & ត្រូវ esc ជានិច្ច */
+function lpMath(t){try{return lpMath1(t)}catch(e){console.warn("lpMath:",e);return esc(String(t==null?"":t))}}
+function lpMath1(t){
   t=String(t==null?"":t);
   t=t.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/).map(function(p,i){return i%2?p:lpTexify(p)}).join("");
   var K=window.katex,re=/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g,out="",i=0,m;
   while((m=re.exec(t))){
     out+=lpTx(t.slice(i,m.index));
     if(K&&K.renderToString){try{var src=m[1]!=null?m[1]:m[2];if(/^\s*\\square\s*$/.test(src))src="\\boxed{\\phantom{00000}}";src=lpDF(src);   /* រូបមន្តដែលបម្លែងមិនបាន → ប្រអប់ទទេសម្រាប់សរសេរដោយដៃ */
-      if(m[1]!=null)out+=K.renderToString(src,{displayMode:true,throwOnError:false,strict:"ignore"});
-      else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(lpDF(p),{throwOnError:false,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
+      if(m[1]!=null)out+=K.renderToString(src,{displayMode:true,throwOnError:true,strict:"ignore"});
+      else out+=lpSplit(src).map(function(p){return"<span class=lp-mp>"+K.renderToString(lpDF(p),{throwOnError:true,strict:"ignore"})+"</span>"}).join("")}catch(e){out+=esc(m[0])}}
     else out+=esc(m[0]);
     i=m.index+m[0].length;
   }
@@ -2063,7 +2065,8 @@ function lpChunk(x){
   if(cur.trim())out.push(cur.trim());
   return out;
 }
-function lpLi(a,fg){
+function lpLi(a,fg){try{return lpLi1(a,fg)}catch(e){console.warn("lpLi:",e);return(a&&a.length)?"<ul class=lp-ul>"+[].concat(a).map(function(x){return"<li>"+esc(x)+"</li>"}).join("")+"</ul>":""}}
+function lpLi1(a,fg){
   a=a&&[].concat.apply([],a.map(lpChunk));
   var f=(fg&&window.FIG)?fg.map(function(x){try{return"<li class=lp-fgli><div class=lp-fg>"+FIG.svg(x)+"</div></li>"}catch(e){return""}}).join(""):"";
   return((a&&a.length)||f)?"<ul class=lp-ul>"+(a||[]).map(function(x){return/^\s*(⟦img:[0-9a-f]{10}⟧\s*)+$/.test(x)?"<li class=lp-fgli>"+lpMath(x)+"</li>":"<li>"+lpMath(x)+"</li>"}).join("")+f+"</ul>":"";
@@ -2177,7 +2180,7 @@ function lpRender(P){   /* P = ធាតុក្នុង lessonPlanDB · null 
   ["knowledge","skills","attitude"].forEach(function(k,i){var a=O[k];lpSet("lpOb"+i,a?(a.length>1?lpLi(a):lpMath(a[0])):"")});
   var Mt=P&&P.mat,ms="",mt="";if(Mt){if(Array.isArray(Mt))mt=Mt.join(" · ");else{ms=(Mt.st||[]).join(" · ");mt=(Mt.tc||[]).join(" · ")}}
   lpSet("lpMs",ms?lpMath(ms):"");lpSet("lpMt",mt?lpMath(mt):"");
-  lpWsRender(P);
+  try{lpWsRender(P)}catch(e){console.warn("lpWsRender:",e);var w0=$("lpWS");if(w0){w0.hidden=true;w0.innerHTML=""}}
   lpLast=P;if(P&&!window.katex&&!lpRender.w){lpRender.w=1;setTimeout(function(){lpRender.w=0;if(window.katex&&lpLast===P)lpRender(P)},1500)}
   $("lpSteps").innerHTML=LPS.map(function(t,i){
     var S=P&&P.steps&&P.steps[i],h=S?esc(S.n)+(S.t?" · "+kn(Math.round(S.t*lpDu()/45))+" នាទី":""):esc(t);
@@ -2464,8 +2467,23 @@ function lpAutoBuild(g,l,need){
 /* ✏️ កែសម្រួលកិច្ចតែងការដោយដៃ ៖ កែអ្វីដែលឃើញ (ចំណងជើង · វត្ថុបំណង · សម្ភារៈ · ៥ ជំហាន × ៣ ជួរ · សន្លឹកកិច្ចការ) · ១ បន្ទាត់ = ១ ចំណុច · LaTeX ក្នុង $…$
    រក្សាទុកក្នុងឧបករណ៍ (localStorage «lpEdit») តាមគ្រាប់ចុច «ថ្នាក់_មេរៀន#ចំណុចរង» → គ្រប់ពេលបង្កើតម្ដងទៀតបានកំណែដែលកែ · «↺» ត្រឡប់ទៅដើម · មិនកែទិន្នន័យដើម (lp*.js) */
 var lpEKey="",LPE=null;
-function lpELoad(){if(LPE)return LPE;try{LPE=JSON.parse(localStorage.getItem("lpEdit")||"{}")||{}}catch(e){LPE={}}return LPE}
-function lpESave(){try{var j=JSON.stringify(LPE);if(j.length>3e6){alert("កំណែដែលបានកែច្រើនពេក · សូមត្រឡប់ខ្លះទៅដើម");return false}localStorage.setItem("lpEdit",j);return true}catch(e){alert("មិនអាចរក្សាទុកក្នុងឧបករណ៍បានទេ");return false}}
+/* 💾 lpEdit = JSON (quotes " ' · Khmer Unicode · \n ត្រូវ JSON.stringify/parse ចាត់ចែងត្រឹមត្រូវ) · ពេលផ្ទុក ផ្ទៀងផ្ទាត់រចនាសម្ព័ន្ធ (ជួរអត្ថបទ) ដើម្បីកុំឱ្យទិន្នន័យខូចធ្វើឱ្យ render គាំង
+   · JSON ខូច → រក្សាច្បាប់ចម្លងក្នុង «lpEdit_bad» (មិនជាន់ទិន្នន័យដើមដោយស្ងាត់ៗ) · រក្សាទុករួច អានមកផ្ទៀងផ្ទាត់ម្ដងទៀត */
+function lpSArr(a){return Array.isArray(a)?a.map(function(x){return typeof x==="string"?x:(x==null?"":String(x))}):[]}
+function lpSanE(o){
+  if(!o||typeof o!=="object"||Array.isArray(o))return null;var r={};
+  if(typeof o.title==="string")r.title=o.title;
+  if(o.obj&&typeof o.obj==="object")r.obj={knowledge:lpSArr(o.obj.knowledge),skills:lpSArr(o.obj.skills),attitude:lpSArr(o.obj.attitude)};
+  if(Array.isArray(o.mat))r.mat=lpSArr(o.mat);else if(o.mat&&typeof o.mat==="object")r.mat={st:lpSArr(o.mat.st),tc:lpSArr(o.mat.tc)};
+  if(Array.isArray(o.steps))r.steps=o.steps.map(function(e){return e&&typeof e==="object"?{tc:lpSArr(e.tc),ct:lpSArr(e.ct),st:lpSArr(e.st)}:null});
+  if(Array.isArray(o.ws))r.ws=lpSArr(o.ws);
+  return r}
+function lpELoad(){if(LPE)return LPE;var raw=null;LPE={};
+  try{raw=localStorage.getItem("lpEdit");var v=raw?JSON.parse(raw):{};
+    if(v&&typeof v==="object"&&!Array.isArray(v))Object.keys(v).forEach(function(k){var q=lpSanE(v[k]);if(q)LPE[k]=q})}
+  catch(e){LPE={};console.warn("lpEdit corrupt:",e);try{if(raw)localStorage.setItem("lpEdit_bad",raw)}catch(x){}}
+  return LPE}
+function lpESave(){try{var j=JSON.stringify(LPE);if(j.length>3e6){alert("កំណែដែលបានកែច្រើនពេក · សូមត្រឡប់ខ្លះទៅដើម");return false}localStorage.setItem("lpEdit",j);if(localStorage.getItem("lpEdit")!==j)throw new Error("verify");return true}catch(e){alert("មិនអាចរក្សាទុកក្នុងឧបករណ៍បានទេ");return false}}
 function lpApplyEdit(key,P){
   var o=lpELoad()[key];if(!o||!P||!P.steps)return P;
   var Q=Object.assign({},P);
