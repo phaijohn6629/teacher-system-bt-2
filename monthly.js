@@ -61,6 +61,22 @@ function renderMs(){
   $("msM").value=mM;
   $("msImp").style.display=ed?"":"none";
   if(!c){$("msBody").innerHTML="<p class=note>គ្រូនេះមិនទាន់មានថ្នាក់ទេ។ សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សនៅផ្ទាំង «លទ្ធផលសិក្សា» ជាមុន។</p>";return}
+  var h=msHtml(c,ed),B=$("msBody");
+  /* ⚡ មិនបង្កើតតារាងឡើងវិញ បើមិនប្ដូរ (ការ Sync ពី Cloud ក្រោយវាយពិន្ទុ) · បើត្រូវបង្កើត៖ រក្សា scroll · cursor · ប្រអប់ដែលកំពុងវាយ */
+  if(B._h!==h){
+    var w0=B.querySelector(".ms-wrap"),sl=w0?w0.scrollLeft:0,st=w0?w0.scrollTop:0,so=B.querySelector(".ms-set"),sopen=!!(so&&so.open),
+        a=document.activeElement,fo=null;
+    if(a&&B.contains(a)&&a.tagName==="INPUT"){var tr0=a.closest("tr[data-mi]");fo={r:tr0?tr0.dataset.mi:null,k:a.dataset.mk,f:a.dataset.mf,v:a.value,ss:a.selectionStart,se:a.selectionEnd}}
+    B.innerHTML=h;B._h=h;
+    var w1=B.querySelector(".ms-wrap");if(w1){w1.scrollLeft=sl;w1.scrollTop=st}
+    if(sopen){var s1=B.querySelector(".ms-set");if(s1)s1.open=true}
+    if(fo){var q=fo.k?"tr[data-mi='"+fo.r+"'] input[data-mk='"+fo.k+"']":"input[data-mf='"+fo.f+"']",n=B.querySelector(q);
+      if(n){if(n.value!==fo.v&&!n.readOnly)n.value=fo.v;n.focus({preventScroll:true});try{n.setSelectionRange(fo.ss,fo.se)}catch(e){}if(w1){w1.scrollLeft=sl;w1.scrollTop=st}}}
+  }
+  if(ed)syncTests(c);
+}
+/* HTML តារាងពិន្ទុប្រចាំខែ (ប្រៀបធៀបជាមួយ #msBody._h ដើម្បីដឹងថាប្ដូរឬអត់) */
+function msHtml(c,ed){
   var X=maxes(c),R=rec(c,false),F=R.f||{},W=cfg().w,pc=function(x){return Math.round(x*100)+"%"};
   var h="<div class='wrap ms-wrap'><table class=ms-tb><thead>"+
     "<tr><th rowspan=2>ល.រ</th><th rowspan=2>ឈ្មោះសិស្ស</th><th rowspan=2>ភេទ</th><th colspan=5 class=ms-in>ពិន្ទុដើមដែលបញ្ចូល</th><th colspan=5 class=ms-auto>ពិន្ទុសកម្មភាព "+pc(W.a+W.t+W.h+W.b)+" (ស្វ័យប្រវត្តិ)</th><th colspan=2 class=ms-in>ប្រឡង "+pc(W.c+W.o)+"</th><th rowspan=2>សរុប<br><small>/"+fmt(X.T)+"</small></th><th rowspan=2>និទ្ទេស</th></tr>"+
@@ -72,15 +88,14 @@ function renderMs(){
     "</thead><tbody>"+c.st.map(function(s,i){
       var r=(R.r||{})[key(s)]||{},o=calc(c,r,F);
       return"<tr data-mi="+i+"><td>"+kn(i+1)+"</td><td class=nm>"+esc(s.n)+"</td><td>"+esc((s.g||"").slice(0,1))+"</td>"+
-        COL.map(function(x){if(x[0]==="t1"||x[0]==="t2")return"<td class=ms-tq><input data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"'"+(r[x[0]]==null&&R.src&&R.src[x[0]]?" placeholder='—'":"")+" inputmode=decimal "+(ed?"":"readonly")+tqAttr(r[x[0]+"m"],r[x[0]]!=null&&R.src&&R.src[x[0]])+"></td>";
-          return"<td class=ms-in><input data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+
+        COL.map(function(x){if(x[0]==="t1"||x[0]==="t2")return"<td class=ms-tq><input data-r="+i+" data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"'"+(r[x[0]]==null&&R.src&&R.src[x[0]]?" placeholder='—'":"")+" inputmode=decimal "+(ed?"":"readonly")+tqAttr(r[x[0]+"m"],r[x[0]]!=null&&R.src&&R.src[x[0]])+"></td>";
+          return"<td class=ms-in><input data-r="+i+" data-mk="+x[0]+" value='"+esc(r[x[0]]==null?"":r[x[0]])+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"}).join("")+
         "<td class=ms-auto data-o=a>"+fmt(o.a)+"</td><td class=ms-auto data-o=t>"+fmt(o.t)+"</td><td class=ms-auto data-o=h>"+fmt(o.h)+"</td><td class=ms-auto data-o=b>"+fmt(o.b)+"</td><td class='ms-auto ms-b' data-o=act>"+fmt(o.act)+"</td>"+
-        "<td class=ms-in><input data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+(r.cs!=null&&r.c!=null&&+r.c===+r.cs?" class=ms-auto-in title='📝 ពីប្រឡងទម្រង់បិទ (កែបាន)'":"")+"></td><td class=ms-in><input data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
+        "<td class=ms-in><input data-r="+i+" data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+(r.cs!=null&&r.c!=null&&+r.c===+r.cs?" class=ms-auto-in title='📝 ពីប្រឡងទម្រង់បិទ (កែបាន)'":"")+"></td><td class=ms-in><input data-r="+i+" data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
         "<td class=ms-b data-o=tot>"+fmt(o.tot)+"</td><td data-o=g>"+gbadge(o.g)+"</td></tr>"}).join("")+"</tbody></table></div>";
-  h=testInfo(R,c)+h+summary(c)+settingsHtml();
-  $("msBody").innerHTML=h;
-  if(ed)syncTests(c);
+  return testInfo(R,c)+h+summary(c)+settingsHtml();
 }
+function msMark(c){$("msBody")._h=msHtml(c,canE())}   /* បន្ទាប់ពីកែក្នុងកន្លែង (in-place) → កត់ត្រា HTML ថ្មី ដូច្នេះ Sync ពី Cloud មិនបង្កើតតារាងឡើងវិញ */
 /* ប្រអប់តេស្ត៖ ✏️ ដោយដៃ (ស្វ័យប្រវត្តិមិនជាន់) · 📝 ពីតេស្ត (ស្វ័យប្រវត្តិ · កែបាន) */
 function tqAttr(man,auto){return man?" class=ms-man title='✏️ បញ្ចូលដោយដៃ — ស្វ័យប្រវត្តិមិនជាន់ · លុបទទេ ដើម្បីត្រឡប់ទៅពិន្ទុពីតេស្ត'":auto?" class=ms-tauto title='📝 ពីតេស្ត (ស្វ័យប្រវត្តិ) — វាយកែបាន'":" title='វាយពិន្ទុបាន (តេស្តលើក្រដាស)'"}
 /* តេស្តលើកទី១/ទី២ ពីផ្នែកតេស្ត */
@@ -160,13 +175,15 @@ $("msBody").addEventListener("input",function(e){
     var tq=el.dataset.mk==="t1"||el.dataset.mk==="t2"||el.dataset.mf==="t1"||el.dataset.mf==="t2";
     if(el.dataset.mf){var fk=el.dataset.mf;
       if(tq){R.fm=R.fm||{};if(v==="")delete R.fm[fk];else R.fm[fk]=1;if(!Object.keys(R.fm).length)delete R.fm;el.className=v===""?"":"ms-man"}
-      if(v==="")delete R.f[fk];else R.f[fk]=+v;savR();refreshAll(c);return}
+      if(v==="")delete R.f[fk];else R.f[fk]=+v;savR();refreshAll(c);msMark(c);return}
     var tr=el.closest("tr"),s=c.st[+tr.dataset.mi],k=key(s),r=R.r[k]=R.r[k]||{},mk=el.dataset.mk;
     if(v==="")delete r[mk];else r[mk]=+v;
     if(tq){if(v==="")delete r[mk+"m"];else r[mk+"m"]=1;el.className=v===""?"":"ms-man"}
     if(!Object.keys(r).length)delete R.r[k];
     savR();refreshRow(c,tr,r,R.f);
     var sm=$("msBody").querySelector(".ms-sum");if(sm)sm.outerHTML=summary(c);
+    if(mk==="t1"||mk==="t2"||mk==="c"){var ti=$("msBody").querySelector(".ms-tests");if(ti)ti.outerHTML=testInfo(R,c)}
+    msMark(c);
   }
 });
 function refreshRow(c,tr,r,F){var o=calc(c,r,F);["a","t","h","b","act","tot"].forEach(function(k){var td=tr.querySelector("[data-o="+k+"]");if(td)td.textContent=fmt(o[k])});tr.querySelector("[data-o=g]").innerHTML=gbadge(o.g)}
