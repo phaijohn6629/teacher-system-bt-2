@@ -3099,8 +3099,7 @@ k0+=g.items.length;h+="</details>"});
 h+="<div class=tot id=otot>"+tots(i)+"</div></div>";
 var GL=["ដំណើរការទូទៅនៃការបង្រៀន","១. ចំណុចល្អ — អ្នកសង្កេត","១. ចំណុចល្អ — គ្រូបង្រៀន","២. ចំណុចគួរអភិវឌ្ឍ — អ្នកសង្កេត","២. ចំណុចគួរអភិវឌ្ឍ — គ្រូបង្រៀន","៣. ផែនការកែលម្អសម្រាប់បង្រៀនពេលក្រោយ"];
 h+="<div class=card><h3>ផ្នែកទី៣ ៖ កំណត់ហេតុនៃការសង្កេត</h3><div class=fg>"+GL.map(function(l,j){
-  var isTeacherNote = (j===2 || j===4);
-  var fieldCanEdit = (canEditObs || (isTeacherNote && who && who.id === r.t));
+  var fieldCanEdit = (canEditObs || (!!who && who.id === r.t));   /* គ្រូត្រូវសង្កេតកែបានទាំង ៦ ប្រអប់នៃផ្នែកទី៣ */
   return"<div"+(j===0||j===5?" class=full":"")+"><label>"+l+"</label><textarea rows=3 data-g='"+j+"' "+(fieldCanEdit?"":"readonly")+">"+esc(r.g[j])+"</textarea></div>"
 }).join("")+"</div></div>";
 $("of").innerHTML=h}
@@ -3197,8 +3196,7 @@ if(d.cm!=null){
   if(!canEditObs) { alert("មានតែអ្នកសង្កេតការណ៍ ឬ Admin ទេដែលអាចកែប្រែកំណត់ត្រាយោបល់!"); renderO2(); return; }
   r.cm[+d.cm]=t.value;
 }else if(d.g!=null){
-  var isTNote = (d.g==="2"||d.g==="4");
-  if(!canEditObs && !(isTNote && who.id === r.t)) { alert("អ្នកមិនមានសិទ្ធិកែប្រែចំណាំនេះទេ!"); renderO2(); return; }
+  if(!canEditObs && !(who && who.id === r.t)) { alert("អ្នកមិនមានសិទ្ធិកែប្រែចំណាំនេះទេ!"); renderO2(); return; }
   r.g[+d.g]=t.value;
 }
 saveO();};

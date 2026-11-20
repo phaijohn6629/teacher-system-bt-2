@@ -248,16 +248,18 @@ service cloud.firestore {
     //   គ្រូត្រូវសង្កេត (t) ឬ អ្នកសង្កេត (o) ប៉ុណ្ណោះ → client ត្រូវ query where t==ខ្លួន និង where o==ខ្លួន (script.js subsFor)
     // Admin ៖ គ្រប់យ៉ាង (t = គ្រូត្រូវសង្កេត, o = អ្នកសង្កេត, dt = ថ្ងៃ)
     // អ្នកសង្កេត (o) ៖ កែពិន្ទុ កំណត់ត្រា និងព័ត៌មានផ្សេងៗ លើកលែង t, o, dt
-    // គ្រូត្រូវសង្កេត (t) ៖ កែបានតែផ្នែកទី១ (sub rm n ab ch ls ct) និងប្រអប់ចំណាំរបស់ខ្លួន (g[2], g[4]) ·
+    // គ្រូត្រូវសង្កេត (t) ៖ កែបានតែផ្នែកទី១ (sub rm n ab ch ls ct) និងផ្នែកទី៣ ទាំង ៦ ប្រអប់ (g[0..5]) ·
     //   មិនអាចកែ sc (ពិន្ទុ ៣៣ ចំណុច) cm t o dt cl tm ទេ
     function teacherNotesOnly() {
-      return request.resource.data.g.size() == resource.data.g.size()
-        && request.resource.data.g[0] == resource.data.g[0]
-        && request.resource.data.g[1] == resource.data.g[1]
-        && request.resource.data.g[3] == resource.data.g[3]
-        && request.resource.data.g[5] == resource.data.g[5]
+      return request.resource.data.g is list
+        && request.resource.data.g.size() == 6
+        && resource.data.g.size() == 6
+        && request.resource.data.g[0] is string && request.resource.data.g[0].size() < 8000
+        && request.resource.data.g[1] is string && request.resource.data.g[1].size() < 8000
         && request.resource.data.g[2] is string && request.resource.data.g[2].size() < 8000
-        && request.resource.data.g[4] is string && request.resource.data.g[4].size() < 8000;
+        && request.resource.data.g[3] is string && request.resource.data.g[3].size() < 8000
+        && request.resource.data.g[4] is string && request.resource.data.g[4].size() < 8000
+        && request.resource.data.g[5] is string && request.resource.data.g[5].size() < 8000;
     }
     match /obsrows/{id} {
       allow read: if isAdmin() || isObsLead()
