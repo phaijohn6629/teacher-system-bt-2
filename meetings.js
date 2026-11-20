@@ -128,6 +128,9 @@ function prHtml(s){
 function docHtml(m){
   if(isDL(tyOf(m)))return docDL(m);
   var X=window.SCHX,h=head(),rid=m.rc||idByName(m.rn),sg=function(id){return X&&id?X.getSig(id):""};
+  /* 🖨️ ឈ្មោះអ្នកកត់ត្រា (តែពេលមើល/បោះពុម្ព/ទាញយក)៖ អ្នកកំពុង Login · គ្មាន → ឈ្មោះដើមដែលបានរក្សាទុក
+     មិនដែលសរសេរទៅ m.rn / m.rc / m.o ទេ (ម្ចាស់ដើមរក្សាសិទ្ធិកែ/លុប) · ហត្ថលេខាតាមអ្នកដែលបង្ហាញឈ្មោះ */
+  var rcN=(window.who&&who.name)?who.name:(m.rn||""),rcId=(window.who&&who.name&&who.id)?who.id:rid;
   var ty=tyOf(m),at=(m.at||[]).filter(function(a){return a.n}),R=ty==="r",P=ty==="p",AU=ty==="a",sh=P?shr(at):[],pz=AU?(at.filter(function(a){return String(a.r||"").trim()==="ប្រធាន"})[0]||null):null;
   if(R||P||AU)at=at.map(function(a,i){return{t:a.t,n:a.n,r:String(a.r||"").trim()||RD[ty],i:i}}).sort(function(a,b){return rk(a.r,ty)-rk(b.r,ty)||a.i-b.i});
   var half=Math.ceil(at.length/2);
@@ -151,7 +154,7 @@ function docHtml(m){
       :R?"<div></div>"   /* ប្រជុំរួម៖ គ្មានហត្ថលេខាកណ្ដាល (ទុកកន្លែងទំនេរ ឱ្យអ្នកកត់ត្រានៅខាងស្ដាំដដែល) */
        :"<div><div>បានឃើញ និងពិនិត្យ</div><div class=moul>ប្រធានក្រុមបច្ចេកទេស</div>"+sig(h.id)+"<div class=moul>"+esc(h.n)+"</div></div>")+
      /* អ្នកកត់ត្រា៖ គ្រប់ប្រភេទប្រជុំ (PLC = គ្រូចែករំលែក + អ្នកកត់ត្រា) */
-     "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rid)+"<div class=moul>"+esc(m.rn||"")+"</div></div></div></div>"+
+     "<div><div>&nbsp;</div><div class=moul>អ្នកកត់ត្រា</div>"+sig(rcId)+"<div class=moul>"+esc(rcN)+"</div></div></div></div>"+
   "</div>";
 }
 
