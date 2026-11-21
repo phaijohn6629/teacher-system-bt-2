@@ -704,7 +704,8 @@ function loadR(){
   try{var s=sessionStorage.getItem(RK);if(s)return JSON.parse(s)}catch(e){}
   return{c:{},mx:{7:100,8:100,9:100,10:150,11:125,12:125},pc:[90,80,70,60,50]};
 }
-function savR(){try{sessionStorage.setItem(RK,JSON.stringify(rs));push("rs");}catch(e){}}
+/* push() ត្រូវតែរត់ជានិច្ច — បើ sessionStorage ពេញ (QuotaExceeded) មុននេះ exception រំលង push("rs") ហើយការកែបញ្ជីសិស្សមិនទៅ Cloud សោះ */
+function savR(){try{var j=JSON.stringify(rs);if(window.LSG&&LSG.set)LSG.set(sessionStorage,RK,j);else sessionStorage.setItem(RK,j)}catch(e){}push("rs")}
 function ss(a){return a.reduce(function(x,y){return x+(+y||0)},0)}
 /* ===== ជំនួយ៖ ជួរដែលប្រើក្នុងថ្នាក់នីមួយៗ, ការគណនានិទ្ទេស, ចំណាត់ថ្នាក់, អវត្តមាន ===== */
 function inf(){var i=rs.info||{};return{school:i.school||"វិទ្យាល័យបឹងត្របែក",year:i.year||syLabel(parseInt(syStart()))}}
@@ -1208,7 +1209,7 @@ window.addEventListener("afterprint",prtClean);
 try{var _mq=window.matchMedia("print");var _mf=function(e){if(!e.matches)setTimeout(prtClean,300)};if(_mq.addEventListener)_mq.addEventListener("change",_mf);else if(_mq.addListener)_mq.addListener(_mf)}catch(e){}
 /* 💾 ប៊ូតុងរក្សាទុក (ការងាររដ្ឋបាល)៖ បង្ហាញស្ថានភាពពិត (មិនទាន់ · កំពុង · បាន ម៉ោង… · បរាជ័យ) · ចុច = រក្សាទុកភ្លាម
    p2 កិច្ចតែងការ (tasks) · p9 របាយការណ៍ (wr) · p13 Timesheet (ts) · p19 កំណត់ហេតុប្រជុំ (meetings.js · MTSAVE) */
-var SVK={p2:"tasks",p9:"wr",p13:"ts",p19:"mt"},svAt={},svWas={};
+var SVK={p2:"tasks",p8:"rs",p9:"wr",p13:"ts",p19:"mt"},svAt={},svWas={};
 function svState(k){
   if(k==="mt"){var M=window.MTSAVE;return M&&M.dirty()?"dirty":M&&M.busy()?"busy":"ok"}
   if(sy.busy[k])return"busy";if(sy.dirty[k])return"dirty";if(sy.fail&&sy.fail[k])return"err";return"ok";
@@ -3390,6 +3391,7 @@ async function flush(k){
       }catch(e){
         ok=false;console.error("Sync error:",op.p,e);
         if(e&&e.code==="permission-denied")notify("គ្មានសិទ្ធិរក្សាទុកទៅ Cloud ("+op.p+")");
+        else if(!sy.wN||Date.now()-sy.wN>8000){sy.wN=Date.now();notify("⚠️ រក្សាទុកទៅ Cloud មិនបាន ("+((e&&(e.code||e.message))||"error")+") — ចុច «រក្សាទុក» ម្ដងទៀត")}
       }
     }
   }catch(e){ok=false;console.error("Sync error:",e)}
@@ -3604,7 +3606,7 @@ function kick(why){
   window.FB.disableNetwork(window.db).catch(function(){}).then(function(){return window.FB.enableNetwork(window.db)}).catch(function(e){console.error("reconnect:",e); notify("មិនអាចតភ្ជាប់ឡើងវិញបានទេ!")}).then(function(){sy.kicking=0});
   if(Object.keys(MAP).some(function(k){return!sy.first[k]}))diagArm();
 }
-document.addEventListener("visibilitychange",function(){if(document.hidden){hidAt=Date.now();return}if(hidAt&&Date.now()-hidAt>HIDE_MIN)kick("visible")});
+document.addEventListener("visibilitychange",function(){if(document.hidden){hidAt=Date.now();Object.keys(sy.dirty||{}).forEach(function(k){if(sy.dirty[k]&&!sy.busy[k]&&MAP[k]){clearTimeout(sy.t[k]);flush(k)}});return}if(hidAt&&Date.now()-hidAt>HIDE_MIN)kick("visible")});
 window.addEventListener("online",function(){kick("online")});
 /* 🩺 ទិន្នន័យមិនមកពី Cloud ក្រោយ ១២ វិនាទី → របារព្រមាន (ទិន្នន័យណា · មូលហេតុ) + ប៊ូតុងទាញម្ដងទៀត */
 var SYN={teachers:"បញ្ជីគ្រូ",tasks:"កិច្ចតែងការ",rs:"ថ្នាក់/សិស្ស",ex:"ថ្នាក់និទស្សន៍",obs:"សង្កេតថ្នាក់",wr:"របាយការណ៍",ah:"ស្នាដៃ",lib:"ឯកសារ",sched:"កាលវិភាគ",ts:"Timesheet",sig:"ហត្ថលេខា",cx:"សម្រង់អត្ថបទ",mc:"ប្រធានថ្នាក់"};
