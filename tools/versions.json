@@ -28,8 +28,8 @@
   "v": 1
  },
  "curriculum11.js": {
-  "hash": "eb16a8bd40b4220604c888b23ec6b1fd619941fe",
-  "v": 1
+  "hash": "b662f40f5759166a010989b3b9d045977a0ff784",
+  "v": 2
  },
  "curriculum12.js": {
   "hash": "6f7dac6e44f3d4bea774034e855aeaa1da07ffb1",
@@ -52,8 +52,8 @@
   "v": 1
  },
  "exam.js": {
-  "hash": "d71d6b95eb66cb637349685f44770da9d73457eb",
-  "v": 72
+  "hash": "bb6e85e80d29cf3101fe3b041879cbe4e522e278",
+  "v": 74
  },
  "excerpt.js": {
   "hash": "2de873b619255df302df114a28c5948c2f49e8e7",
@@ -76,8 +76,8 @@
   "v": 24
  },
  "hubdata.js": {
-  "hash": "9206d0edc3cfb211362a07040038de23ba252f94",
-  "v": 5
+  "hash": "4a0e5828a7582f74ee69b54ed9459ba09210ac71",
+  "v": 6
  },
  "khcal.js": {
   "hash": "652046b95b4b8a94b974a0cc061aea9f9ffe20ea",
@@ -100,8 +100,8 @@
   "v": 4
  },
  "lp11.js": {
-  "hash": "b9feb8c34378f74f2cc3025d0a3369715abbd843",
-  "v": 3
+  "hash": "34a11eac462fb6c27027fac3a87dfbd0e6980a61",
+  "v": 4
  },
  "lp12.js": {
   "hash": "10ff59f19cbf6b707d715c18489cbd5b94dc685c",
@@ -152,8 +152,8 @@
   "v": 8
  },
  "practice11.js": {
-  "hash": "b58a53564eaa76b1ff75a637b1cd777387113d13",
-  "v": 7
+  "hash": "723dafc42da3854991277a34687e9fe9dcd5d53d",
+  "v": 9
  },
  "practice7.js": {
   "hash": "f91a299d1dd7c6e0742955d7f9253be157ac94ec",
@@ -204,8 +204,8 @@
   "v": 25
  },
  "script.js": {
-  "hash": "dd74671262306e5935f106f78827647c14739e2d",
-  "v": 178
+  "hash": "7f375f4fecc5bd5eaf8cc1440b1f25cebab08839",
+  "v": 179
  },
  "slide_presenter.css": {
   "hash": "9ec18c6952f75ee3a0ff7637269c988118633329",

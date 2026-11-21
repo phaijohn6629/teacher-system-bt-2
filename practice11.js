@@ -458,6 +458,201 @@ vx(33,3,[
  function(){var C=pick([["\\sin x(2\\cos x-1)=0","(0;\\pi)","pi/3","\\dfrac{\\pi}{3}","$\\sin x\\ne0$ ⇒ $\\cos x=\\dfrac12$"],["\\sin x(2\\cos x+1)=0","(0;\\pi)","2pi/3","\\dfrac{2\\pi}{3}","$\\sin x\\ne0$ ⇒ $\\cos x=-\\dfrac12$"],["\\sin x(\\sqrt2\\cos x-1)=0","(0;\\pi)","pi/4","\\dfrac{\\pi}{4}","$\\sin x\\ne0$ ⇒ $\\cos x=\\dfrac{\\sqrt2}{2}$"],["\\cos x(2\\sin x-1)=0","\\left(0;\\dfrac{\\pi}{2}\\right)","pi/6","\\dfrac{\\pi}{6}","$\\cos x\\ne0$ ⇒ $\\sin x=\\dfrac12$"],["\\cos x(2\\sin x-\\sqrt3)=0","\\left(0;\\dfrac{\\pi}{2}\\right)","pi/3","\\dfrac{\\pi}{3}","$\\cos x\\ne0$ ⇒ $\\sin x=\\dfrac{\\sqrt3}{2}$"],["\\sin x(2\\cos x+\\sqrt3)=0","(0;\\pi)","5pi/6","\\dfrac{5\\pi}{6}","$\\sin x\\ne0$ ⇒ $\\cos x=-\\dfrac{\\sqrt3}{2}$"]]);return K("s33_fac","ដោះស្រាយ $"+C[0]+"$ ក្នុង $"+C[1]+"$",[A(C[2],C[3],"num","x =")],C[4]+" ⇒ $"+C[3]+"$")},
  function(){var C=pick([["2\\cos^2x-\\cos x-1=0","2pi/3","\\dfrac{2\\pi}{3}","$\\cos x=1$ (មិនក្នុង $(0;\\pi)$) ឬ $\\cos x=-\\dfrac12$"],["2\\cos^2x+\\cos x-1=0","pi/3","\\dfrac{\\pi}{3}","$\\cos x=\\dfrac12$ ឬ $\\cos x=-1$ (មិនក្នុង $(0;\\pi)$)"]]);return K("s33_quad","ដោះស្រាយ $"+C[0]+"$ ក្នុង $(0;\\pi)$",[A(C[1],C[2],"num","x =")],C[3]+" ⇒ $x="+C[2]+"$")},
  function(){var C=pick([["\\sin x+\\cos x=0","3pi/4","\\dfrac{3\\pi}{4}","\\tan x=-1"],["\\sin x-\\cos x=0","pi/4","\\dfrac{\\pi}{4}","\\tan x=1"],["\\sin x-\\sqrt3\\cos x=0","pi/3","\\dfrac{\\pi}{3}","\\tan x=\\sqrt3"]]);return K("s33_lin","ដោះស្រាយ $"+C[0]+"$ ក្នុង $(0;\\pi)$",[A(C[1],C[2],"num","x =")],"ចែកនឹង $\\cos x$ ⇒ $"+C[3]+"$ ⇒ $"+C[2]+"$")}]);
+/* ===== ជំពូកទី៣ ត្រីកោណមាត្រ (តាមសៀវភៅក្រសួង) ៖ មេរៀនទី៣ = ៣៤ អនុគមន៍ច្រាស · មេរៀនទី៤ = ៣៣ សមីការ និងវិសមីការ · មេរៀនទី៥ = ៣៥ សមីការ និងវិសមីការផ្សេងទៀត =====
+   ID ៣៣ រក្សាដដែល (វិញ្ញាសា/ពាន/ដំណើរការសិស្សចាស់នៅត្រឹមត្រូវ) · ៣៤ និង ៣៥ ថ្មី · លំដាប់បង្ហាញតាម LES
+   KC(...) = K(...) + ការផ្ទៀងផ្ទាត់ chk(ចម្លើយជាលេខ) ដែលមិនរាប់ចូល JSON (defineProperty មិនរាប់) — ប្រើតែក្នុង tests/trig11.js */
+var PI=Math.PI;
+function KC(kd,q,a,s,chk){var o=K(kd,q,a,s);Object.defineProperty(o,"chk",{value:chk});return o}
+function piF(x){var D=24,n=Math.round(x*D),f=fr(n,D),m=Math.abs(f.n),p=m===1?"":String(m);
+  return{s:f.n===0?"0":(f.n<0?"-":"")+p+"pi"+(f.d>1?"/"+f.d:""),t:f.n===0?"0":(f.n<0?"-":"")+(f.d===1?p+"\\pi":"\\dfrac{"+p+"\\pi}{"+f.d+"}"),v:f.n/f.d}}
+function nr(x,y){return Math.abs(x-y)<1e-9}
+function okOp(v,op){return op===">"?v>1e-12:op===">="?v>=-1e-9:op==="<"?v<-1e-12:v<=1e-9}
+function qt(a,b,c,fn){return co(a,"\\"+fn+"^2x",true)+co(b,"\\"+fn+" x")+(c?sg(c,0):"")}
+var S3=Math.sqrt(3),SIN_A=[-1/2,-1/3,-1/4,-1/6,0,1/6,1/4,1/3,1/2],COS_A=[0,1/6,1/4,1/3,1/2,2/3,3/4,5/6,1],TAN_A=[-1/3,-1/4,-1/6,0,1/6,1/4,1/3],
+  ANG7=[1/6,1/4,1/3,1/2,2/3,3/4,5/6],ANG3=[1/6,1/4,1/3],
+  TRP=[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]];
+function sn(x){return Math.sin(x*PI)}function cs(x){return Math.cos(x*PI)}function tn(x){return Math.tan(x*PI)}
+
+/* ---------- ៣៤ · អនុគមន៍ច្រាសនៃអនុគមន៍ត្រីកោណមាត្រ ---------- */
+var F34a=[
+ function(){var t=pick(SIN_A),v=exv(sn(t)),p=piF(t);
+  return KC("s34_asin","គណនា $\\sin^{-1}\\left("+v[1]+"\\right)$ (ចម្លើយជារ៉ាដ្យង់)",[A(p.s,p.t,"num","=")],"រកមុំ $\\theta\\in\\left[-\\dfrac\\pi2;\\dfrac\\pi2\\right]$ ដែល $\\sin\\theta="+v[1]+"$ ⇒ $\\theta="+p.t+"$",
+   function(a){return nr(Math.sin(a[0]),sn(t))&&Math.abs(a[0])<=PI/2+1e-9})},
+ function(){var t=pick(COS_A),v=exv(cs(t)),p=piF(t);
+  return KC("s34_acos","គណនា $\\cos^{-1}\\left("+v[1]+"\\right)$ (ចម្លើយជារ៉ាដ្យង់)",[A(p.s,p.t,"num","=")],"រកមុំ $\\theta\\in[0;\\pi]$ ដែល $\\cos\\theta="+v[1]+"$ ⇒ $\\theta="+p.t+"$",
+   function(a){return nr(Math.cos(a[0]),cs(t))&&a[0]>=-1e-9&&a[0]<=PI+1e-9})},
+ function(){var t=pick(TAN_A),v=exv(tn(t)),p=piF(t);
+  return KC("s34_atan","គណនា $\\tan^{-1}\\left("+v[1]+"\\right)$ (ចម្លើយជារ៉ាដ្យង់)",[A(p.s,p.t,"num","=")],"រកមុំ $\\theta\\in\\left(-\\dfrac\\pi2;\\dfrac\\pi2\\right)$ ដែល $\\tan\\theta="+v[1]+"$ ⇒ $\\theta="+p.t+"$",
+   function(a){return nr(Math.tan(a[0]),tn(t))&&Math.abs(a[0])<PI/2})},
+ function(){var f=pick(["sin","cos","tan"]),d=f==="tan"?pick([1,1,2,3]):ri(2,9),n=f==="tan"?nz(-9,9):nz(-d,d),r=fr(n,d);
+  return KC("s34_comp","គណនា $\\"+f+"\\left(\\"+f+"^{-1}\\left("+r.t+"\\right)\\right)$",[A(r.s,r.t,"num","=")],"$\\"+f+"\\left(\\"+f+"^{-1}x\\right)=x$ ចំពោះ $x$ ក្នុងដែនកំណត់នៃ $\\"+f+"^{-1}$ ⇒ $"+r.t+"$",
+   function(a){return nr(a[0],n/d)})}];
+var F34b=[
+ function(){var k=pick(["sin","cos","tan"]),L={sin:[2/3,3/4,5/6,7/6,5/4,4/3],cos:[4/3,5/4,7/6,5/3,7/4,11/6,-1/3,-1/4,-1/6],tan:[2/3,3/4,5/6,7/6,5/4,4/3,9/8]},t=pick(L[k]),
+   p=k==="sin"?Math.asin(sn(t)):k==="cos"?Math.acos(cs(t)):Math.atan(tn(t)),P=piF(p/PI),T=piF(t),
+   rg={sin:"\\left[-\\dfrac\\pi2;\\dfrac\\pi2\\right]",cos:"[0;\\pi]",tan:"\\left(-\\dfrac\\pi2;\\dfrac\\pi2\\right)"}[k];
+  return KC("s34_out","គណនា $\\"+k+"^{-1}\\left(\\"+k+"\\left("+T.t+"\\right)\\right)$ (ចម្លើយជារ៉ាដ្យង់) ។ សម្គាល់៖ $"+T.t+"$ នៅក្រៅ $"+rg+"$",[A(P.s,P.t,"num","=")],
+   "$\\"+k+"^{-1}(\\"+k+"\\theta)$ ជាមុនៅក្នុង $"+rg+"$ ដែលមាន $\\"+k+"$ ស្មើ $\\"+k+"\\left("+T.t+"\\right)$ ⇒ $"+P.t+"$",
+   function(a){var f=Math[k];return nr(f(a[0]),f(t*PI))&&(k==="cos"?a[0]>=-1e-9&&a[0]<=PI+1e-9:Math.abs(a[0])<=PI/2+1e-9)})},
+ function(){var T=pick(TRP),s=pick([1,-1]),kd=pick(["sinC","cosS","tanC","tanS"]),p=T[0],q=T[1],r=T[2],arg,ans,tx,sol,val;
+  if(kd==="sinC"){arg=fr(s*q,r);ans=fr(p,r);tx="\\sin\\left(\\cos^{-1}\\left("+arg.t+"\\right)\\right)";val=Math.sin(Math.acos(s*q/r));sol="តាង $\\theta=\\cos^{-1}\\left("+arg.t+"\\right)\\in[0;\\pi]$ ⇒ $\\sin\\theta=\\sqrt{1-\\cos^2\\theta}\\ge0$ ⇒ $"+ans.t+"$"}
+  else if(kd==="cosS"){arg=fr(s*p,r);ans=fr(q,r);tx="\\cos\\left(\\sin^{-1}\\left("+arg.t+"\\right)\\right)";val=Math.cos(Math.asin(s*p/r));sol="តាង $\\theta=\\sin^{-1}\\left("+arg.t+"\\right)\\in\\left[-\\dfrac\\pi2;\\dfrac\\pi2\\right]$ ⇒ $\\cos\\theta=\\sqrt{1-\\sin^2\\theta}\\ge0$ ⇒ $"+ans.t+"$"}
+  else if(kd==="tanC"){arg=fr(s*q,r);ans=fr(s*p,q);tx="\\tan\\left(\\cos^{-1}\\left("+arg.t+"\\right)\\right)";val=Math.tan(Math.acos(s*q/r));sol="$\\sin\\theta="+fr(p,r).t+"$ (ព្រោះ $\\theta\\in[0;\\pi]$) ⇒ $\\tan\\theta=\\dfrac{\\sin\\theta}{\\cos\\theta}="+ans.t+"$"}
+  else{arg=fr(s*p,r);ans=fr(s*p,q);tx="\\tan\\left(\\sin^{-1}\\left("+arg.t+"\\right)\\right)";val=Math.tan(Math.asin(s*p/r));sol="$\\cos\\theta="+fr(q,r).t+"$ (ព្រោះ $\\theta\\in\\left[-\\frac\\pi2;\\frac\\pi2\\right]$) ⇒ $\\tan\\theta="+ans.t+"$"}
+  return KC("s34_"+kd,"គណនា $"+tx+"$",[A(ans.s,ans.t,"num","=")],sol,function(a){return nr(a[0],val)})},
+ function(){var lo,hi,q,chk;
+  if(Math.random()<.5){var a=ri(2,5),b=ri(-6,6);lo=fr(-1-b,a);hi=fr(1-b,a);q="រកដែនកំណត់នៃអនុគមន៍ $y=\\sin^{-1}\\left("+co(a,"x",true)+(b?sg(b,0):"")+"\\right)$ ជា $[x_1;x_2]$";
+   chk=function(v){return nr(a*v[0]+b,-1)&&nr(a*v[1]+b,1)}}
+  else{var p=ri(-5,5),m=ri(2,5);lo=fr(-m-p,1);hi=fr(m-p,1);q="រកដែនកំណត់នៃអនុគមន៍ $y=\\cos^{-1}\\left(\\dfrac{x"+(p?sg(p,0):"")+"}{"+m+"}\\right)$ ជា $[x_1;x_2]$";
+   chk=function(v){return nr((v[0]+p)/m,-1)&&nr((v[1]+p)/m,1)}}
+  return KC("s34_dom",q,[A(lo.s,lo.t,"num","x₁ ="),A(hi.s,hi.t,"num","x₂ =")],"$\\sin^{-1}u$ និង $\\cos^{-1}u$ មានតែពេល $-1\\le u\\le1$ ⇒ $x_1="+lo.t+"$ · $x_2="+hi.t+"$",chk)},
+ function(){var k=pick(["sin","cos","tan"]),t=pick(ANG3),a=exv(Math[k](t*PI)),T=piF(t),A2=k==="cos"?piF(1-t):piF(-t);
+  return KC("s34_neg","គេដឹងថា $\\"+k+"^{-1}\\left("+a[1]+"\\right)="+T.t+"$ ។ ដោយប្រើលក្ខណៈនៃអនុគមន៍ច្រាស គណនា $\\"+k+"^{-1}\\left(-"+a[1]+"\\right)$",[A(A2.s,A2.t,"num","=")],
+   k==="cos"?"$\\cos^{-1}(-x)=\\pi-\\cos^{-1}x$ ⇒ $\\pi-"+T.t+"="+A2.t+"$":"$\\"+k+"^{-1}(-x)=-\\"+k+"^{-1}x$ ⇒ $"+A2.t+"$",
+   function(v){var f=Math[k],ok=nr(f(v[0]),-f(t*PI));return k==="cos"?ok&&v[0]>=0&&v[0]<=PI:ok&&Math.abs(v[0])<PI/2})}];
+var F34c=[
+ function(){var P=pick([[1,2],[1,3],[2,3],[3,4],[1,4],[3,2],[2,1],[4,3]]),s2=Math.random()<.5,p=P[0],q=P[1],a=fr(p,q),r=s2?fr(2*p*q,p*p+q*q):fr(q*q-p*p,p*p+q*q);
+  return KC("s34_dbl","គណនា $\\"+(s2?"sin":"cos")+"\\left(2\\tan^{-1}"+a.t+"\\right)$",[A(r.s,r.t,"num","=")],"តាង $\\theta=\\tan^{-1}"+a.t+"$ ⇒ $\\tan\\theta="+a.t+"$ ⇒ "+(s2?"$\\sin2\\theta=\\dfrac{2\\tan\\theta}{1+\\tan^2\\theta}":"$\\cos2\\theta=\\dfrac{1-\\tan^2\\theta}{1+\\tan^2\\theta}")+"="+r.t+"$",
+   function(v){return nr(v[0],s2?Math.sin(2*Math.atan(p/q)):Math.cos(2*Math.atan(p/q)))})},
+ function(){var m=ri(2,7),n=ri(2,7);while(n===m)n=ri(2,7);var pl=Math.random()<.5,r=pl?fr(m+n,m*n-1):fr(n-m,m*n+1);
+  return KC("s34_tsum","គណនា $\\tan\\left(\\tan^{-1}\\dfrac1{"+m+"}"+(pl?"+":"-")+"\\tan^{-1}\\dfrac1{"+n+"}\\right)$",[A(r.s,r.t,"num","=")],"$\\tan(a"+(pl?"+":"-")+"b)=\\dfrac{\\tan a"+(pl?"+":"-")+"\\tan b}{1"+(pl?"-":"+")+"\\tan a\\tan b}="+r.t+"$",
+   function(v){return nr(v[0],Math.tan(Math.atan(1/m)+(pl?1:-1)*Math.atan(1/n)))})},
+ function(){var T1=pick(TRP),T2=pick(TRP),isC=Math.random()<.5,p1=T1[0],q1=T1[1],r1=T1[2],v2=T2[0],u2=T2[1],w2=T2[2],
+   r=isC?fr(q1*u2-p1*v2,r1*w2):fr(p1*u2+q1*v2,r1*w2),A1=fr(p1,r1),B1=fr(u2,w2);
+  return KC("s34_cs","គណនា $\\"+(isC?"cos":"sin")+"\\left(\\sin^{-1}"+A1.t+"+\\cos^{-1}"+B1.t+"\\right)$",[A(r.s,r.t,"num","=")],
+   "តាង $a=\\sin^{-1}"+A1.t+"$ ($\\cos a="+fr(q1,r1).t+"$) និង $b=\\cos^{-1}"+B1.t+"$ ($\\sin b="+fr(v2,w2).t+"$) ⇒ "+(isC?"$\\cos(a+b)=\\cos a\\cos b-\\sin a\\sin b":"$\\sin(a+b)=\\sin a\\cos b+\\cos a\\sin b")+"="+r.t+"$",
+   function(v){var a=Math.asin(p1/r1),b=Math.acos(u2/w2);return nr(v[0],isC?Math.cos(a+b):Math.sin(a+b))})},
+ function(){var k=pick(["sin","cos","tan"]),a=nz(-4,4),b=ri(-5,5),L={sin:[[1/6,.5],[0,0],[-1/6,-.5],[1/2,1],[-1/2,-1]],cos:[[1/3,.5],[1/2,0],[2/3,-.5],[0,1],[1,-1]],tan:[[1/4,1],[-1/4,-1],[0,0]]}[k],C=pick(L),
+   x=fr(Math.round(2*C[1]-2*b),2*a),T=piF(C[0]);
+  return KC("s34_eq","ដោះស្រាយសមីការ $\\"+k+"^{-1}\\left("+co(a,"x",true)+(b?sg(b,0):"")+"\\right)="+T.t+"$",[A(x.s,x.t,"num","x =")],
+   "អនុវត្ត $\\"+k+"$ សងខាង ⇒ $"+co(a,"x",true)+(b?sg(b,0):"")+"=\\"+k+"\\left("+T.t+"\\right)="+(C[1]===.5?"\\dfrac12":C[1]===-.5?"-\\dfrac12":C[1])+"$ ⇒ $x="+x.t+"$",
+   function(v){return nr(a*v[0]+b,C[1])})}];
+var P34=[
+ function(){var m=ri(2,6),C=pick([[m,30,"m"],[m,45,"m\\sqrt2"],[m,60,"m\\sqrt3"]]),h=C[2].replace("m",String(m)),hv=C[1]===30?m:C[1]===45?m*Math.SQRT2:m*S3;
+  return KC("s34_p1","🪜 ជណ្ដើរវែង $"+2*m+"$ m ផ្អៀងនឹងជញ្ជាំង ហើយចុងខាងលើនៅកម្ពស់ $"+h+"$ m ពីដី ។ រកមុំ $\\theta$ រវាងជណ្ដើរ និងដី (ដឺក្រេ) ដោយប្រើ $\\sin\\theta=\\dfrac{h}{L}$ និង $\\sin^{-1}$",[A(C[1],null,"num","θ =")],
+   "$\\sin\\theta=\\dfrac{"+h+"}{"+2*m+"}$ ⇒ $\\theta=\\sin^{-1}(\\dots)="+C[1]+"^\\circ$",function(v){return nr(Math.sin(v[0]*PI/180),hv/(2*m))&&v[0]>0&&v[0]<90})},
+ function(){var k=ri(2,6),C=pick([[k,k,45,String(k),String(k)],[k,k,60,k+"\\sqrt3",String(k)],[k,k,30,String(k),k+"\\sqrt3"]]),r=C[2]===60?k*S3:k,d=C[2]===30?k*S3:k;
+  return KC("s34_p2","🛣️ ផ្លូវឡើងភ្នំមួយឡើងកម្ពស់ $"+C[3]+"$ m ក្នុងចម្ងាយផ្ដេក $"+C[4]+"$ m ។ រកមុំជម្រាល $\\theta$ (ដឺក្រេ) ដោយប្រើ $\\tan\\theta=\\dfrac{r}{d}$ និង $\\tan^{-1}$",[A(C[2],null,"num","θ =")],
+   "$\\tan\\theta=\\dfrac{"+C[3]+"}{"+C[4]+"}$ ⇒ $\\theta=\\tan^{-1}(\\dots)="+C[2]+"^\\circ$",function(v){return nr(Math.tan(v[0]*PI/180),r/d)&&v[0]>0&&v[0]<90})},
+ function(){var m=ri(2,6),C=pick([[60,String(m),m],[45,m+"\\sqrt2",m*Math.SQRT2],[30,m+"\\sqrt3",m*S3]]);
+  return KC("s34_p3","🏍️ ទ្រនាប់ឡើងឡានប្រវែង $"+2*m+"$ m ហើយចម្ងាយផ្ដេកពីចុងទ្រនាប់ដល់ដីគឺ $"+C[1]+"$ m ។ រកមុំរវាងទ្រនាប់ និងដី (ដឺក្រេ) ដោយប្រើ $\\cos\\theta=\\dfrac{d}{L}$ និង $\\cos^{-1}$",[A(C[0],null,"num","θ =")],
+   "$\\cos\\theta=\\dfrac{"+C[1]+"}{"+2*m+"}$ ⇒ $\\theta=\\cos^{-1}(\\dots)="+C[0]+"^\\circ$",function(v){return nr(Math.cos(v[0]*PI/180),C[2]/(2*m))&&v[0]>0&&v[0]<90})},
+ function(){var m=ri(10,40),C=pick([[30,String(m)],[45,m+"\\sqrt2"],[60,m+"\\sqrt3"]]),hv=C[0]===30?m:C[0]===45?m*Math.SQRT2:m*S3;
+  return KC("s34_p4","🚡 ខ្សែកាបឡើងភ្នំប្រវែង $"+2*m+"$ m ហើយចុងខាងលើខ្ពស់ជាងចុងខាងក្រោម $"+C[1]+"$ m ។ រកមុំរវាងខ្សែកាប និងផ្ដេក (ដឺក្រេ) ដោយប្រើ $\\sin^{-1}$",[A(C[0],null,"num","θ =")],
+   "$\\sin\\theta=\\dfrac{"+C[1]+"}{"+2*m+"}$ ⇒ $\\theta=\\sin^{-1}(\\dots)="+C[0]+"^\\circ$",function(v){return nr(Math.sin(v[0]*PI/180),hv/(2*m))&&v[0]>0&&v[0]<90})}];
+function mixT34(a,b){return function(){return pick(a.concat(b))()}}
+G[34]={1:function(){return pick(F34a)()},2:function(){return pick(F34b)()},3:function(){return pick(F34c)()},
+  5:mixT34(F34a.slice(2),F34b.slice(0,2)),6:mixT34(F34b.slice(2),F34c.slice(0,2)),4:function(){return pick(P34)()}};
+
+/* ---------- ៣៣ · បន្ថែមវិសមីការត្រីកោណមាត្រ (ទម្រង់ចាស់រក្សាដដែល) ---------- */
+vx(33,1,[
+ function(){var t=pick(ANG7),c=exv(cs(t)),ge=Math.random()<.5,T=piF(t);
+  return KC("s33_iq1a","ដោះស្រាយវិសមីការ $\\cos x"+(ge?"\\ge ":"\\le ")+c[1]+"$ ក្នុង $[0;\\pi]$ ៖ ចម្លើយ $x\\in"+(ge?"[0;b]$ ។ រក $b$":"[a;\\pi]$ ។ រក $a$"),[A(T.s,T.t,"num",ge?"b =":"a =")],
+   "$\\cos$ ចុះក្នុង $[0;\\pi]$ ហើយ $\\cos"+T.t+"="+c[1]+"$ ⇒ "+(ge?"$x\\le":"$x\\ge")+T.t+"$",function(v){return nr(Math.cos(v[0]),cs(t))&&v[0]>=-1e-9&&v[0]<=PI+1e-9})},
+ function(){var t=pick(ANG3),c=exv(sn(t)),ge=Math.random()<.5,T=piF(t);
+  return KC("s33_iq1b","ដោះស្រាយវិសមីការ $\\sin x"+(ge?"\\ge ":"\\le ")+c[1]+"$ ក្នុង $\\left[0;\\dfrac\\pi2\\right]$ ៖ ចម្លើយ $x\\in"+(ge?"\\left[a;\\dfrac\\pi2\\right]$ ។ រក $a$":"[0;b]$ ។ រក $b$"),[A(T.s,T.t,"num",ge?"a =":"b =")],
+   "$\\sin$ កើនក្នុង $\\left[0;\\frac\\pi2\\right]$ ហើយ $\\sin"+T.t+"="+c[1]+"$ ⇒ "+(ge?"$x\\ge":"$x\\le")+T.t+"$",function(v){return nr(Math.sin(v[0]),sn(t))&&v[0]>=0&&v[0]<=PI/2+1e-9})}]);
+vx(33,2,[
+ function(){var t=pick(TAN_A),c=exv(tn(t)),op=pick([">","\\ge","<","\\le"]),up=op===">"||op==="\\ge",T=piF(t),L=op===">"?"(a;":"[a;",R=op==="<"?"b\\right)":"b\\right]";
+  return KC("s33_iq2t","ដោះស្រាយវិសមីការ $\\tan x"+(op[0]==="\\"?op+" ":op)+c[1]+"$ ក្នុង $\\left(-\\dfrac\\pi2;\\dfrac\\pi2\\right)$ ៖ ចម្លើយ $x\\in"+(up?L+"\\dfrac\\pi2)$ ។ រក $a$":"\\left(-\\dfrac\\pi2;"+R+"$ ។ រក $b$"),[A(T.s,T.t,"num",up?"a =":"b =")],
+   "$\\tan$ កើនក្នុង $\\left(-\\frac\\pi2;\\frac\\pi2\\right)$ ហើយ $\\tan\\left("+T.t+"\\right)="+c[1]+"$ ⇒ $x"+(up?"\\ge":"\\le")+"\\dots="+T.t+"$",function(v){return nr(Math.tan(v[0]),tn(t))&&Math.abs(v[0])<PI/2})},
+ function(){var t=pick(ANG7),c=exv(1/tn(t)),op=pick([">","\\ge","<","\\le"]),lo=op==="<"||op==="\\le",T=piF(t);
+  return KC("s33_iq2c","ដោះស្រាយវិសមីការ $\\cot x"+(op[0]==="\\"?op+" ":op)+c[1]+"$ ក្នុង $(0;\\pi)$ ៖ ចម្លើយ $x\\in"+(lo?(op==="<"?"(a;\\pi)$ ។ រក $a$":"[a;\\pi)$ ។ រក $a$"):(op===">"?"(0;b)$ ។ រក $b$":"(0;b]$ ។ រក $b$")),[A(T.s,T.t,"num",lo?"a =":"b =")],
+   "$\\cot$ ចុះក្នុង $(0;\\pi)$ ហើយ $\\cot\\left("+T.t+"\\right)="+c[1]+"$ ⇒ ព្រំដែន $"+T.t+"$",function(v){return nr(Math.cos(v[0])/Math.sin(v[0]),1/tn(t))&&v[0]>0&&v[0]<PI})},
+ function(){var t=pick(ANG3),c=exv(sn(t)),st=Math.random()<.5,T1=piF(t),T2=piF(1-t);
+  return KC("s33_iq2s","ដោះស្រាយវិសមីការ $\\sin x"+(st?">":"\\ge")+" "+c[1]+"$ ក្នុង $[0;\\pi]$ ៖ ចម្លើយ $x\\in"+(st?"(a;b)$":"[a;b]$")+" ។ រក $a$ និង $b$",[A(T1.s,T1.t,"num","a ="),A(T2.s,T2.t,"num","b =")],
+   "$\\sin x="+c[1]+"$ ⇒ $x="+T1.t+"$ ឬ $x="+T2.t+"$ ហើយ $\\sin$ ធំជាងចន្លោះកណ្ដាល",function(v){return nr(Math.sin(v[0]),sn(t))&&nr(Math.sin(v[1]),sn(t))&&v[0]<v[1]&&v[0]>0&&v[1]<PI})},
+ function(){var t=pick(ANG7),c=exv(cs(t)),st=Math.random()<.5,T=piF(t);
+  return KC("s33_iq2b","ដោះស្រាយវិសមីការ $\\cos x"+(st?">":"\\ge")+" "+c[1]+"$ ក្នុង $[-\\pi;\\pi]$ ៖ ចម្លើយ $x\\in"+(st?"(-b;b)$":"[-b;b]$")+" ។ រក $b$",[A(T.s,T.t,"num","b =")],
+   "$\\cos x="+c[1]+"$ ⇒ $x=\\pm"+T.t+"$ ហើយ $\\cos$ ធំនៅជុំវិញ $0$",function(v){return nr(Math.cos(v[0]),cs(t))&&v[0]>0&&v[0]<=PI})}]);
+var IQ=[
+ ["2\\cos^2x-1>0","out",1/4,3/4,function(x){return 2*Math.cos(x)*Math.cos(x)-1},">"],
+ ["4\\sin^2x-3\\le0","out",1/3,2/3,function(x){return 4*Math.sin(x)*Math.sin(x)-3},"<="],
+ ["4\\cos^2x-1<0","in",1/3,2/3,function(x){return 4*Math.cos(x)*Math.cos(x)-1},"<"],
+ ["2\\sin^2x-1\\ge0","in",1/4,3/4,function(x){return 2*Math.sin(x)*Math.sin(x)-1},">="],
+ ["4\\sin^2x-1<0","out",1/6,5/6,function(x){return 4*Math.sin(x)*Math.sin(x)-1},"<"]];
+vx(33,3,[
+ function(){var t=pick(ANG3),c=exv(sn(t)),a=piF(t/2),b=piF((1-t)/2);
+  return KC("s33_iq3a","ដោះស្រាយវិសមីការ $\\sin2x\\ge "+c[1]+"$ ក្នុង $\\left[0;\\dfrac\\pi2\\right]$ ៖ ចម្លើយ $x\\in[a;b]$ ។ រក $a$ និង $b$",[A(a.s,a.t,"num","a ="),A(b.s,b.t,"num","b =")],
+   "តាង $u=2x\\in[0;\\pi]$ ៖ $\\sin u\\ge "+c[1]+"$ ⇒ $u\\in["+piF(t).t+";"+piF(1-t).t+"]$ ⇒ $x\\in["+a.t+";"+b.t+"]$",
+   function(v){var g=function(x){return Math.sin(2*x)-sn(t)};return nr(g(v[0]),0)&&nr(g(v[1]),0)&&v[0]<v[1]&&g((v[0]+v[1])/2)>0&&g(v[0]/2)<0&&g((v[1]+PI/2)/2)<0})},
+ function(){var e=pick(IQ),a=piF(e[2]),b=piF(e[3]);
+  return KC("s33_iq3b","ដោះស្រាយវិសមីការ $"+e[0]+"$ ក្នុង $[0;\\pi]$ ។ សំណុំចម្លើយមានព្រំដែនពីរ $a<b$ ដែល $0<a<b<\\pi$ ។ រក $a$ និង $b$",[A(a.s,a.t,"num","a ="),A(b.s,b.t,"num","b =")],
+   "ប្រើ $\\sin^2x=\\dfrac{1-\\cos2x}{2}$ ឬ $\\cos^2x=\\dfrac{1+\\cos2x}{2}$ ឬផ្ទាល់ ⇒ ព្រំដែន $"+a.t+"$ និង $"+b.t+"$",
+   function(v){var g=e[4],a0=v[0],b0=v[1],o1=okOp(g(a0/2),e[5]),o2=okOp(g((b0+PI)/2),e[5]),om=okOp(g((a0+b0)/2),e[5]);return nr(g(a0),0)&&nr(g(b0),0)&&a0>0&&a0<b0&&b0<PI&&(e[1]==="out"?o1&&o2&&!om:om&&!o1&&!o2)})}]);
+
+/* ---------- ៣៥ · សមីការ និងវិសមីការត្រីកោណមាត្រផ្សេងទៀត ---------- */
+var H1=[["\\sin x-\\cos x=0",1,-1,"1"],["\\sin x+\\cos x=0",1,1,"-1"],["\\sin x-\\sqrt3\\cos x=0",1,-S3,"\\sqrt3"],["\\sin x+\\sqrt3\\cos x=0",1,S3,"-\\sqrt3"],["\\sqrt3\\sin x-\\cos x=0",S3,-1,"\\dfrac{\\sqrt3}{3}"],["\\sqrt3\\sin x+\\cos x=0",S3,1,"-\\dfrac{\\sqrt3}{3}"]],
+ SQ=[["4\\cos^2x-3=0",1/6,function(x){return 4*Math.cos(x)*Math.cos(x)-3}],["2\\sin^2x-1=0",1/4,function(x){return 2*Math.sin(x)*Math.sin(x)-1}],["4\\sin^2x-1=0",1/6,function(x){return 4*Math.sin(x)*Math.sin(x)-1}],
+  ["4\\cos^2x-1=0",1/3,function(x){return 4*Math.cos(x)*Math.cos(x)-1}],["4\\sin^2x-3=0",1/3,function(x){return 4*Math.sin(x)*Math.sin(x)-3}],["2\\cos^2x-1=0",1/4,function(x){return 2*Math.cos(x)*Math.cos(x)-1}],
+  ["3\\tan^2x-1=0",1/6,function(x){return 3*Math.tan(x)*Math.tan(x)-1}],["\\tan^2x=3",1/3,function(x){return Math.tan(x)*Math.tan(x)-3}]],
+ HM=[["\\sin^2x-\\cos^2x=0",1/4,function(s,c){return s*s-c*c}],["3\\sin^2x-\\cos^2x=0",1/6,function(s,c){return 3*s*s-c*c}],["\\sin^2x-3\\cos^2x=0",1/3,function(s,c){return s*s-3*c*c}],
+  ["\\sin^2x-\\sin x\\cos x=0",1/4,function(s,c){return s*s-s*c}],["\\sin x\\cos x-\\cos^2x=0",1/4,function(s,c){return s*c-c*c}],["\\sin^2x+\\sin x\\cos x-2\\cos^2x=0",1/4,function(s,c){return s*s+s*c-2*c*c}],
+  ["2\\sin^2x-\\sin x\\cos x-\\cos^2x=0",1/4,function(s,c){return 2*s*s-s*c-c*c}],["\\sqrt3\\sin^2x-\\sin x\\cos x=0",1/6,function(s,c){return S3*s*s-s*c}],["\\sin x\\cos x-\\sqrt3\\cos^2x=0",1/3,function(s,c){return s*c-S3*c*c}]],
+ AB=[["\\sin x+\\cos x=\\sqrt2","\\left[0;\\dfrac\\pi2\\right]",1/4,function(s,c){return s+c-Math.SQRT2}],["\\sqrt3\\sin x+\\cos x=2","\\left[0;\\dfrac\\pi2\\right]",1/3,function(s,c){return S3*s+c-2}],
+  ["\\sin x+\\sqrt3\\cos x=2","\\left[0;\\dfrac\\pi2\\right]",1/6,function(s,c){return s+S3*c-2}],["\\sin x-\\cos x=1","(0;\\pi)",1/2,function(s,c){return s-c-1}],["\\sqrt3\\sin x-\\cos x=1","(0;\\pi)",1/3,function(s,c){return S3*s-c-1}]],
+ IA=[["\\sin x+\\cos x>0","hi",3/4,function(s,c){return s+c}],["\\sqrt3\\sin x+\\cos x>0","hi",5/6,function(s,c){return S3*s+c}],["\\sin x-\\cos x>0","lo",1/4,function(s,c){return s-c}],
+  ["\\sin x-\\sqrt3\\cos x>0","lo",1/3,function(s,c){return s-S3*c}],["\\cos x-\\sin x>0","hi",1/4,function(s,c){return c-s}],["\\sqrt3\\cos x-\\sin x>0","hi",1/3,function(s,c){return S3*c-s}]];
+function sc2(g){return function(x){return g(Math.sin(x),Math.cos(x))}}
+var F35a=[
+ function(){var e=pick(H1),x=Math.atan(-e[2]/e[1]);if(x<0)x+=PI;var P=piF(x/PI);
+  return KC("s35_h1","ដោះស្រាយសមីការ $"+e[0]+"$ ក្នុង $(0;\\pi)$",[A(P.s,P.t,"num","x =")],"ចែកសងខាងនឹង $\\cos x\\ne0$ ⇒ $\\tan x="+e[3]+"$ ⇒ $x="+P.t+"$",function(v){return nr(e[1]*Math.sin(v[0])+e[2]*Math.cos(v[0]),0)&&v[0]>0&&v[0]<PI})},
+ function(){var e=pick(SQ),P=piF(e[1]);
+  return KC("s35_sq","ដោះស្រាយសមីការ $"+e[0]+"$ ក្នុង $\\left(0;\\dfrac\\pi2\\right)$",[A(P.s,P.t,"num","x =")],"រក $\\sin x$, $\\cos x$ ឬ $\\tan x$ វិជ្ជមាន (ព្រោះ $x$ ជាមុំស្រួច) ⇒ $x="+P.t+"$",function(v){return nr(e[2](v[0]),0)&&v[0]>0&&v[0]<PI/2})},
+ function(){var a=ri(2,6),b=ri(1,6),pl=Math.random()<.5,r=fr(pl?-b:b,a);
+  return KC("s35_tan","ពីសមីការ $"+a+"\\sin x"+(pl?"+":"-")+(b===1?"":b)+"\\cos x=0$ ($\\cos x\\ne0$) រកតម្លៃ $\\tan x$",[A(r.s,r.t,"num","tan x =")],"ចែកនឹង $\\cos x$ ⇒ $"+a+"\\tan x"+(pl?"+":"-")+b+"=0$ ⇒ $\\tan x="+r.t+"$",
+   function(v){var x=Math.atan(v[0]);return nr(a*Math.sin(x)+(pl?b:-b)*Math.cos(x),0)})},
+ function(){var p=ri(-3,3),q=ri(-3,3);while(q===p)q=ri(-3,3);var f=pick(["sin","cos"]),t1=Math.min(p,q),t2=Math.max(p,q);
+  return KC("s35_quad","តាង $t=\\"+f+" x$ ដើម្បីបំប្លែងសមីការ $"+qt(1,-(p+q),p*q,f)+"=0$ ទៅជាសមីការដឺក្រេទី២ ធៀប $t$ ។ រកឫស $t_1<t_2$",[A(t1,null,"num","t₁ ="),A(t2,null,"num","t₂ =")],
+   "$t^2"+co(-(p+q),"t")+(p*q?sg(p*q,0):"")+"=0$ ⇒ $(t-"+sgp(t1)+")(t-"+sgp(t2)+")=0$ ⇒ $t_1="+t1+"$ · $t_2="+t2+"$",function(v){var f2=function(t){return t*t-(p+q)*t+p*q};return nr(f2(v[0]),0)&&nr(f2(v[1]),0)&&v[0]<v[1]})}];
+var F35b=[
+ function(){var f=pick(["sin","cos"]),r2=pick([-1,-2,2,3]),b=-(1+2*r2),x=piF(f==="sin"?1/6:1/3);
+  return KC("s35_q1","ដោះស្រាយសមីការ $"+qt(2,b,r2,f)+"=0$ ក្នុង $\\left[0;\\dfrac\\pi2\\right]$",[A(x.s,x.t,"num","x =")],"តាង $t=\\"+f+" x$ ⇒ $(2t-1)(t-"+sgp(r2)+")=0$ ⇒ $t=\\dfrac12$ (ឬ $t="+r2+"$ មិនបាន ព្រោះ $|t|\\le1$) ⇒ $x="+x.t+"$",
+   function(v){var s=Math[f](v[0]);return nr(2*s*s+b*s+r2,0)&&v[0]>=0&&v[0]<=PI/2+1e-9})},
+ function(){var e=pick(HM),P=piF(e[1]);
+  return KC("s35_hom","ដោះស្រាយសមីការ $"+e[0]+"$ ក្នុង $\\left(0;\\dfrac\\pi2\\right)$",[A(P.s,P.t,"num","x =")],"ចែកសងខាងនឹង $\\cos^2x\\ne0$ ឬដាក់ជាផលគុណ ⇒ $\\tan x="+(e[1]===1/4?"1":e[1]===1/6?"\\dfrac{\\sqrt3}{3}":"\\sqrt3")+"$ ⇒ $x="+P.t+"$",function(v){return nr(e[2](Math.sin(v[0]),Math.cos(v[0])),0)&&v[0]>0&&v[0]<PI/2})},
+ function(){var e=pick(AB),P=piF(e[2]);
+  return KC("s35_ab","ដោះស្រាយសមីការ $"+e[0]+"$ ក្នុង $"+e[1]+"$",[A(P.s,P.t,"num","x =")],"សរសេរ $a\\sin x+b\\cos x=R\\sin(x+\\varphi)$ ដែល $R=\\sqrt{a^2+b^2}$ ⇒ $x="+P.t+"$",function(v){return nr(sc2(e[3])(v[0]),0)&&(e[1].charAt(0)==="("?v[0]>0&&v[0]<PI:v[0]>=0&&v[0]<=PI/2+1e-9)})},
+ function(){var f=pick(["sin","cos"]),t=pick(ANG3),sg2=f==="sin"?pick([1,-1]):1,c=exv(f==="sin"?sn(t):cs(t)),ans=f==="cos"?2:sg2>0?1:3,cv=(f==="sin"?sn(t):cs(t))*sg2;
+  return KC("s35_sum","រកផលបូកឫសទាំងអស់នៃសមីការ $\\"+f+" x="+(sg2<0?"-":"")+c[1]+"$ ក្នុង $[0;2\\pi]$ (ជាពហុគុណនៃ $\\pi$)",[A(ans===1?"pi":ans+"pi",ans===1?"\\pi":ans+"\\pi","num","S =")],
+   f==="cos"?"ឫសពីរស៊ីមេទ្រីជុំវិញ $\\pi$ ($x$ និង $2\\pi-x$) ⇒ $S=2\\pi$":sg2>0?"ឫស $x$ និង $\\pi-x$ ⇒ $S=\\pi$":"ឫស $\\pi+\\alpha$ និង $2\\pi-\\alpha$ ⇒ $S=3\\pi$",
+   function(v){var s=0,N=62832,h=2*PI/N,g=function(x){return Math[f](x)-cv},prev=g(.37*h);for(var i=1;i<N;i++){var x=(i+.37)*h,cur=g(x);if(prev*cur<0)s+=x-h/2;prev=cur}return Math.abs(v[0]-s)<2e-3*PI+1e-3})}];
+var F35c=[
+ function(){var tx=pick(ANG3),ty=pick(ANG3),u=exv(sn(tx)),w=exv(cs(ty)),X1=piF(tx),Y1=piF(ty);
+  return KC("s35_sys1","ដោះស្រាយប្រព័ន្ធ $\\begin{cases}\\sin x="+u[1]+"\\\\\\cos y="+w[1]+"\\end{cases}$ ដែល $x,y\\in\\left[0;\\dfrac\\pi2\\right]$",[A(X1.s,X1.t,"num","x ="),A(Y1.s,Y1.t,"num","y =")],"ដោះស្រាយតាមសមីការនីមួយៗ ⇒ $x="+X1.t+"$ · $y="+Y1.t+"$",function(v){return nr(Math.sin(v[0]),sn(tx))&&nr(Math.cos(v[1]),cs(ty))&&v[0]>=0&&v[0]<=PI/2&&v[1]>=0&&v[1]<=PI/2})},
+ function(){var tx=pick(ANG3),S=pick([1/2,2/3,3/4,1]),c=exv(tn(tx)),X1=piF(tx),Y1=piF(S-tx),SS=piF(S);
+  return KC("s35_sys2","ដោះស្រាយប្រព័ន្ធ $\\begin{cases}x+y="+SS.t+"\\\\\\tan x="+c[1]+"\\end{cases}$ ដែល $0<x<\\dfrac\\pi2$",[A(X1.s,X1.t,"num","x ="),A(Y1.s,Y1.t,"num","y =")],"$\\tan x="+c[1]+"$ ⇒ $x="+X1.t+"$ ⇒ $y="+SS.t+"-"+X1.t+"="+Y1.t+"$",function(v){return nr(Math.tan(v[0]),tn(tx))&&nr(v[0]+v[1],S*PI)&&v[0]>0&&v[0]<PI/2})},
+ function(){var R=[[1,-1],[2,-1],[1,0],[2,1],[1,1]],i=ri(0,4),j=ri(0,4);while(j===i)j=ri(0,4);var f=pick(["sin","cos"]),m1=R[i][0],n1=R[i][1],m2=R[j][0],n2=R[j][1],
+   a=m1*m2,b=-(m1*n2+m2*n1),c=n1*n2,roots=[n1/m1,n2/m2],cnt=0;roots.forEach(function(t){cnt+=Math.abs(t)===1?1:2});
+  return KC("s35_cnt","គេឱ្យសមីការ $"+qt(a,b,c,f)+"=0$ ។ រកចំនួនឫសរបស់វាក្នុង $[0;2\\pi)$",[A(cnt,null,"num","=")],
+   "តាង $t=\\"+f+" x$ ⇒ $t="+fr(n1,m1).t+"$ ឬ $t="+fr(n2,m2).t+"$ ⇒ ឫស $|t|=1$ មាន ១ ឫស·ផ្សេងមាន ២ ឫស ⇒ $"+cnt+"$",
+   function(v){var k=0;for(var s=0;s<12;s++){var x=s*PI/6,t=Math[f](x);if(Math.abs(a*t*t+b*t+c)<1e-9)k++}return v[0]===k})},
+ function(){var m=pick([1,2]),p=pick([1,2]),n=ri(1,3),q=ri(1,3),A2=m*p,B2=m*q-n*p,C2=-n*q,r1=fr(n,m),r2=fr(-q,p),lo=r2.n/r2.d<r1.n/r1.d?r2:r1,hi=lo===r1?r2:r1;
+  return KC("s35_hom3","គេឱ្យសមីការ $"+co(A2,"\\sin^2x",true)+co(B2,"\\sin x\\cos x")+co(C2,"\\cos^2x")+"=0$ ។ ចែកសងខាងនឹង $\\cos^2x$ រួចរកតម្លៃ $\\tan x$ ទាំងពីរ $t_1<t_2$",[A(lo.s,lo.t,"num","t₁ ="),A(hi.s,hi.t,"num","t₂ =")],
+   "តាង $t=\\tan x$ ⇒ $"+co(A2,"t^2",true)+co(B2,"t")+sg(C2,0)+"=0$ ⇒ $t_1="+lo.t+"$ · $t_2="+hi.t+"$",function(v){var f2=function(t){return A2*t*t+B2*t+C2};return nr(f2(v[0]),0)&&nr(f2(v[1]),0)&&v[0]<v[1]})},
+ function(){var e=pick(IA),P=piF(e[2]),lo=e[1]==="lo";
+  return KC("s35_ineq","ដោះស្រាយវិសមីការ $"+e[0]+"$ ក្នុង $[0;\\pi]$ ៖ ចម្លើយ $x\\in"+(lo?"(a;\\pi]$ ។ រក $a$":"[0;b)$ ។ រក $b$"),[A(P.s,P.t,"num",lo?"a =":"b =")],
+   "សរសេរជា $R\\sin(x+\\varphi)>0$ ឬ $R\\cos(x+\\varphi)>0$ រួចដោះស្រាយលើ $[0;\\pi]$ ⇒ ព្រំដែន $"+P.t+"$",
+   function(v){var g=sc2(e[3]),x=v[0];return nr(g(x),0)&&x>0&&x<PI&&(lo?g(x/2)<0&&g((x+PI)/2)>0:g(x/2)>0&&g((x+PI)/2)<0)})}];
+var P35=[
+ function(){var T=pick([12,18,24,30,36]),r=ri(10,25),c=r+ri(2,6),lo=Math.random()<.5,tt=lo?T/6:T/3,hv=lo?c-r/2:c+r/2;
+  return KC("s35_p1","🎡 កង់យក្សមួយ កម្ពស់អ្នកជិះ $h(t)="+c+"-"+r+"\\cos\\dfrac{2\\pi t}{"+T+"}$ (m · $t$ នាទី) ។ ពេលដំបូងបំផុត ($t>0$) ណាដែលអ្នកជិះនៅកម្ពស់ $h="+(hv%1?"\\dfrac{"+2*hv+"}{2}":hv)+"$ m?",[A(tt,null,"num","t =")],
+   "$"+c+"-"+r+"\\cos u="+(hv%1?"\\dfrac{"+2*hv+"}{2}":hv)+"$ ⇒ $\\cos u="+(lo?"\\dfrac12":"-\\dfrac12")+"$ ⇒ $u="+(lo?"\\dfrac\\pi3":"\\dfrac{2\\pi}{3}")+"$ ⇒ $t="+tt+"$ នាទី",
+   function(v){return nr(c-r*Math.cos(2*PI*v[0]/T),hv)&&v[0]>0&&v[0]<T/2+1e-9})},
+ function(){var a=ri(3,6),b=pick([2,4]);if(b>=a)b=2;var up=Math.random()<.5,t1=up?1:7,t2=up?5:11,hv=a+(up?b/2:-b/2);
+  return KC("s35_p2","🌊 កម្ពស់ទឹកជំនោរ (m) $h(t)="+a+"+"+b+"\\sin\\dfrac{\\pi t}{6}$ ($t$ ម៉ោង ក្នុង $(0;12)$) ។ ទូកអាចចូលកំពង់ផែបាន ពេល $h="+hv+"$ m ពីរដង ។ រក $t_1<t_2$",[A(t1,null,"num","t₁ ="),A(t2,null,"num","t₂ =")],
+   "$\\sin\\dfrac{\\pi t}{6}="+(up?"\\dfrac12":"-\\dfrac12")+"$ ⇒ $\\dfrac{\\pi t}{6}="+(up?"\\dfrac\\pi6":"\\dfrac{7\\pi}{6}")+"$ ឬ $"+(up?"\\dfrac{5\\pi}{6}":"\\dfrac{11\\pi}{6}")+"$ ⇒ $t_1="+t1+"$ · $t_2="+t2+"$",
+   function(v){var g=function(t){return a+b*Math.sin(PI*t/6)};return nr(g(v[0]),hv)&&nr(g(v[1]),hv)&&v[0]<v[1]&&v[0]>0&&v[1]<12})},
+ function(){var T=pick(TRP),a=T[0],b=T[1],R=T[2],tn2=fr(b,a);
+  return KC("s35_p3","⚡ ចរន្តសរុបនៃម៉ាស៊ីនពីរ $i(\\theta)="+a+"\\cos\\theta+"+b+"\\sin\\theta$ (A) ។ រកតម្លៃអតិបរមា $I_{max}$ និងតម្លៃ $\\tan\\theta$ ពេលចរន្តអតិបរមា",[A(R,null,"num","Imax ="),A(tn2.s,tn2.t,"num","tan θ =")],
+   "$"+a+"\\cos\\theta+"+b+"\\sin\\theta=R\\cos(\\theta-\\varphi)$ ដែល $R=\\sqrt{"+a+"^2+"+b+"^2}="+R+"$ · អតិបរមាពេល $\\tan\\theta=\\dfrac{"+b+"}{"+a+"}="+tn2.t+"$",
+   function(v){var mx=-1e9,arg=0;for(var i=0;i<62832;i++){var th=i*1e-4,y=a*Math.cos(th)+b*Math.sin(th);if(y>mx){mx=y;arg=th}}return Math.abs(v[0]-mx)<1e-3&&Math.abs(v[1]-Math.tan(arg))<2e-3*(1+Math.abs(v[1]))})},
+ function(){var m=ri(10,28),a=ri(4,10)*2,lo=Math.random()<.5,tt=lo?4:8,hv=m+(lo?a/2:-a/2);
+  return KC("s35_p4","🌡️ សីតុណ្ហភាព (°C) នៅម៉ោង $t$ ($0<t<12$) គឺ $T(t)="+m+"+"+a+"\\cos\\dfrac{\\pi t}{12}$ ។ ពេលដំបូងបំផុតដែល $T="+hv+"$ °C គឺម៉ោងប៉ុន្មាន?",[A(tt,null,"num","t =")],
+   "$\\cos\\dfrac{\\pi t}{12}="+(lo?"\\dfrac12":"-\\dfrac12")+"$ ⇒ $\\dfrac{\\pi t}{12}="+(lo?"\\dfrac\\pi3":"\\dfrac{2\\pi}{3}")+"$ ⇒ $t="+tt+"$",function(v){return nr(m+a*Math.cos(PI*v[0]/12),hv)&&v[0]>0&&v[0]<12})}];
+G[35]={1:function(){return pick(F35a)()},2:function(){return pick(F35b)()},3:function(){return pick(F35c)()},
+  5:mixT34(F35a.slice(2),F35b.slice(0,2)),6:mixT34(F35b.slice(2),F35c.slice(0,2)),4:function(){return pick(P35)()}};
+
 /* ៥.១ ដេរីវេ (កម្រិត៣) */
 vx(51,3,[
  function(){var n=ri(2,5),a=nz(-3,3),c=nz(-4,4),v=c*n*Math.pow(a,n-1);return K("s51_dp","$f(x)="+co(c,"x^{"+n+"}",true)+"$ ។ គណនា $f'("+a+")$",[A(v,null,"num","=")],"$f'(x)="+(c*n)+"x^{"+(n-1)+"}$ ⇒ $"+v+"$")},
@@ -585,7 +780,7 @@ Object.keys(G).forEach(function(l){[1,2,3].forEach(function(v){var o=G[l][v];if(
 var LES=[
   ["ជំពូកទី១ ស្វ៊ីត",[[11,"ស្វ៊ីតចំនួនពិត"],[12,"ស្វ៊ីតនព្វន្ត"],[13,"ស្វ៊ីតធរណីមាត្រ"],[14,"ផលបូកតួនៃស្វ៊ីតផ្សេងៗ"],[15,"ទំនាក់ទំនងកំណើននៃស្វ៊ីត"],[16,"វិចារអនុមានរួម"]]],
   ["ជំពូកទី២ អិចស្ប៉ូណង់ស្យែល និងលោការីត",[[21,"អនុគមន៍អិចស្ប៉ូណង់ស្យែល"],[22,"អនុគមន៍លោការីត"]]],
-  ["ជំពូកទី៣ ត្រីកោណមាត្រ",[[31,"អនុគមន៍ត្រីកោណមាត្រ"],[32,"រូបមន្តត្រីកោណមាត្រ"],[33,"សមីការត្រីកោណមាត្រ"]]],
+  ["ជំពូកទី៣ អនុគមន៍ត្រីកោណមាត្រ",[[31,"អនុគមន៍ត្រីកោណមាត្រ"],[32,"រូបមន្តត្រីកោណមាត្រ"],[34,"អនុគមន៍ច្រាសនៃអនុគមន៍ត្រីកោណមាត្រ"],[33,"សមីការ និងវិសមីការត្រីកោណមាត្រ"],[35,"សមីការ និងវិសមីការត្រីកោណមាត្រផ្សេងទៀត"]]],
   ["ជំពូកទី៥ លីមីត និងដេរីវេ",[[51,"លីមីត និងដេរីវេ"],[52,"អនុវត្តន៍ដេរីវេ"],[53,"អថេរភាព និងក្រាបនៃអនុគមន៍"]]],
   ["ជំពូកទី៦ វិភាគបន្សំ និងប្រូបាប",[[61,"ចម្លាស់"],[62,"បន្សំ"],[63,"ប្រូបាប"]]],
   ["ជំពូកទី៧ ចំនួនកុំផ្លិច",[[71,"ចំនួនកុំផ្លិច"]]],
