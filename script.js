@@ -3060,6 +3060,16 @@ function obsVisIdx(){var a=[];ob.r.forEach(function(r,i){if(obsVis(r))a.push(i)}
 /* ផ្នែកទី១ ដែលគ្រូត្រូវសង្កេតកែបានដោយខ្លួនឯង (ត្រូវនឹង firestore.rules ៖ sub rm n ab ch ls ct) · ថ្នាក់/ម៉ោង/ថ្ងៃ/ពិន្ទុ/គ្រូ/អ្នកសង្កេត = បិទ */
 var OBT=["sub","rm","n","ab","ch","ls","ct"];
 function obsTF(r,f){return !!who&&!!r&&r.t===who.id&&OBT.indexOf(f)>=0}
+/* 🔐 ការសរសេរទៅ Cloud របស់គ្រូធម្មតា (មិនមែន Admin/ប្រធាន/អនុប្រធាន)៖ ផ្ញើតែវាលដែលប្ដូរ និងមានសិទ្ធិ (ត្រូវនឹង firestore.rules) ដោយ updateDoc
+   — មុននេះ setDoc ផ្ញើទាំងជួរ (មានវាលលំនាំដើមដែល normObsRow បន្ថែមលើជួរចាស់) → Rules បដិសេធ «គ្មានសិទ្ធិ» ទោះគ្រូមានសិទ្ធិកែ g ក៏ដោយ
+   អ្នកសង្កេត (o)៖ sub cl tm rm n ab ch ls ct sc cm g · គ្រូត្រូវសង្កេត (t)៖ sub rm n ab ch ls ct g · គ្រូផ្សេង៖ គ្មាន (បញ្ជីទទេ) */
+var OBO=["sub","cl","tm","rm","n","ab","ch","ls","ct","sc","cm","g"];
+function obsAllowed(old,me){var a=[];if(old&&me){if(old.o===me)a=a.concat(OBO);if(old.t===me)a=a.concat(OBT.concat(["g"]))}return a}
+function obsEmptyV(v){return v==null||v===""||(Array.isArray(v)&&v.every(function(x){return x==null||x===""}))}
+function obsPatch(nw,old,me){var p={};obsAllowed(old,me).forEach(function(k){
+  if(sj(nw[k])===sj(old[k]))return;
+  if(old[k]===undefined&&obsEmptyV(nw[k]))return;   /* ជួរចាស់គ្មានវាលនេះ ហើយតម្លៃថ្មីជាលំនាំដើមទទេ → មិនផ្ញើ */
+  p[k]=nw[k]});return p}
 function wkday(iso){var p=String(iso||"").split("-");if(p.length!==3)return false;var w=new Date(+p[0],+p[1]-1,+p[2]).getDay();return w>=1&&w<=5}
 function obsLbl(k){var r=ob.r[k];return r&&r.x?(function(){var d=odt(k);return kn(d.getDate())+" "+M[d.getMonth()]+" (បន្ថែម)"})():M[omn(k)-1]+" ស."+"១២៣៤"[k%4]}
 function odt(i){var r=ob.r[i];if(r&&r.x&&!r.dt)return new Date();if(r.dt){var p=r.dt.split("-");return new Date(+p[0],+p[1]-1,+p[2])}var m=omn(i),y=ob.y+(m>=11?0:1),w=new Date(y,m-1,1).getDay()||7;return new Date(y,m-1,1+((ob.d+1-w)%7+7)%7+7*(i%4))}
@@ -3372,6 +3382,10 @@ async function flush(k){
       try{
         var ref=window.FB.doc.apply(null,[window.db].concat(op.p.split("/")));
         if(op.del){await window.FB.deleteDoc(ref);delete syn[op.p]}
+        else if(op.p.indexOf("obsrows/")===0&&!canK()&&cache[op.p]&&who){
+          var pt=obsPatch(op.d,cache[op.p],who.id);
+          if(Object.keys(pt).length)await window.FB.updateDoc(ref,pt);
+          syn[op.p]=op.j}
         else{await window.FB.setDoc(ref,op.d);syn[op.p]=op.j}
       }catch(e){
         ok=false;console.error("Sync error:",op.p,e);

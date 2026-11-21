@@ -14,4 +14,17 @@ ok(v.r[0].t==="T1"&&v.r[0].sc[0]===4&&v.r[0].sc[2]===null&&v.r[0].sc.length===33
 v=normalizeObsData({d:"zz",y:1,th:["a",1]});ok(v.d===2&&v.y===2026&&v.th.length===3&&v.th[0]===90,"bad d/y/th default");
 v=normalizeObsData({r:[].concat(new Array(36).fill({}),[{x:1,dt:"2026-11-20"},{x:1,dt:"2026-11-18",dt2:1},{x:1,dt:"bad"}])});
 ok(v.r.length===39&&v.r[36].dt===""&&v.r[37].dt==="2026-11-18"&&v.r[38].dt==="2026-11-20"&&v.r[36].k,"extras sorted+keyed");
+/* 🔐 obsPatch / obsAllowed ៖ អ្នកសង្កេត (o) · គ្រូត្រូវសង្កេត (t) · គ្រូផ្សេង */
+var OBT=["sub","rm","n","ab","ch","ls","ct"];
+function sj(x){if(x===null||typeof x!=="object")return JSON.stringify(x);if(Array.isArray(x))return "["+x.map(sj).join(",")+"]";return "{"+Object.keys(x).sort().filter(function(k){return x[k]!==undefined}).map(function(k){return JSON.stringify(k)+":"+sj(x[k])}).join(",")+"}"}
+var a2=S.indexOf("var OBO="),b2=S.indexOf("function wkday");eval(S.slice(a2,b2));
+var old={t:"T2",o:"T1",sub:"គណិត",g:["","","","","",""],sc:[],cm:[]};
+var nw=JSON.parse(JSON.stringify(old));nw.g[2]="ល្អ";nw.sc=[5];nw.cl="";nw.dt="";
+var pt=obsPatch(nw,old,"T2");ok(Object.keys(pt).join()==="g","teacher t sends only g (not sc/cl/dt): "+Object.keys(pt));
+pt=obsPatch(nw,old,"T1");ok(Object.keys(pt).sort().join()==="g,sc","observer o sends g+sc only: "+Object.keys(pt));
+pt=obsPatch(nw,old,"T9");ok(Object.keys(pt).length===0,"unpaired teacher sends nothing");
+ok(obsAllowed(old,"T9").length===0&&obsAllowed(old,"").length===0&&obsAllowed(null,"T1").length===0,"no rights for others / empty");
+var leg={t:"T2",o:"T1"};nw={t:"T2",o:"T1",sub:"គណិតវិទ្យា",cl:"",tm:"",rm:"",n:"",ab:"",ch:"",ls:"",ct:"",sc:new Array(33).fill(null),cm:new Array(33).fill(""),g:["x","","","","",""]};
+pt=obsPatch(nw,leg,"T2");ok(Object.keys(pt).join()==="sub,g"||Object.keys(pt).join()==="g"||Object.keys(pt).sort().join()==="g,sub","legacy row: defaults not sent, sub default allowed: "+Object.keys(pt));
+ok(!("sc" in pt)&&!("cm" in pt)&&!("cl" in pt),"legacy row: no sc/cm/cl for teacher t");
 print("obs: checks "+n+" bad "+bad);
