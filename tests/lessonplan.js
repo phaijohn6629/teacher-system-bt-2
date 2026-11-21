@@ -28,4 +28,17 @@ store.lpEdit="{bad json \"";LPE=null;ok(Object.keys(lpELoad()).length===0&&store
 store.lpEdit=JSON.stringify({a:{steps:"x",obj:5,mat:{st:"s",tc:7},ws:{}},b:null,c:[1],d:{steps:[null,{tc:"t"}]},e:{title:7,steps:[{tc:[1,null,"z"]}]}});LPE=null;
 var w=lpELoad();ok(!w.b&&!w.c,"null / array entries dropped");ok(Array.isArray(w.a.mat.st)&&Array.isArray(w.d.steps[1].tc),"fields coerced to arrays");
 ok(w.e.title===undefined&&w.e.steps[0].tc.join("|")==="1||z","non-string values coerced");
+/* 📋 ទិន្នន័យកិច្ចតែងការ (lp7–lp12 · lessonplans.js)៖ ជំហានទី៤ «ពង្រឹងពុទ្ធិ» ជួរ «ខ្លឹមសារមេរៀន» (ct) មិនត្រូវទទេ ឬមានតែស្លាកដំណាក់កាល (Evaluate…)
+   — ចន្លោះដែលស្គាល់ពីការបំប្លែង .docx ស្ថិតក្នុង LP4_KNOWN (ត្រូវបំពេញបន្ថែម · ពេលបំពេញរួច ត្រូវដកចេញពីបញ្ជី) · ផែនការថ្មី/ផ្សេងត្រូវតែគ្រប់ */
+var LP4_KNOWN=["7_13#3","7_13#4","7_14#1","7_14#3","7_15#2","7_16#1","7_17#1","7_17#2","7_19#3","7_1#5","7_4#4","7_5#3","7_6#1","7_8#1","7_8#5","7_9#3","9_15#2","10_81#3","10_81#4","11_22#4","11_61#1","11_61#2"];
+var LP4_LAB=/^\s*(Engage|Explore|Explain|Elaborate|Evaluate)\s*$/i;
+function lp4Bad(P){var st=P&&P.steps&&P.steps[3],ct=((st&&st.ct)||[]).filter(function(x){return String(x).trim()});return!ct.length||ct.every(function(x){return LP4_LAB.test(x)})}
+window={};["lp7.js","lp8.js","lp9.js","lp10.js","lp11.js","lp12.js"].forEach(function(f){eval(read(f))});
+var LPD4=window.LP_DB,lp4new=[],lp4fixed=[];
+Object.keys(LPD4).forEach(function(k){var b=lp4Bad(LPD4[k]),kn=LP4_KNOWN.indexOf(k)>=0;if(b&&!kn)lp4new.push(k);if(!b&&kn)lp4fixed.push(k)});
+ok(lp4new.length===0,"step 4 content empty/label-only in plans not in LP4_KNOWN: "+lp4new.join(", "));
+ok(lp4fixed.length===0,"plans in LP4_KNOWN now fine → remove from list: "+lp4fixed.join(", "));
+ok(LPD4["10_21#1"]===LPD4["10_21#2"]&&!lp4Bad(LPD4["10_21#1"])&&LPD4["10_21#1"].steps[3].ct.length>=5,"10_21 (logic) step 4 has a real exercise + answer");
+var c4=LPD4["10_21#1"].steps[3].ct.join("|");ok(/ចម្លើយ/.test(c4)&&/wedge/.test(c4)&&/vee/.test(c4),"10_21 step 4 exercise covers ∧ ∨ and gives answers");
+ok(LP4_KNOWN.every(function(k){return!!LPD4[k]}),"LP4_KNOWN keys exist");
 print("lessonplan: checks "+n+" bad "+bad);
