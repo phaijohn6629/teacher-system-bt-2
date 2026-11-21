@@ -153,7 +153,7 @@ function footHtml(){
   var D=ftDates();
   return"<div class=cuf><div class=cuf1>"+esc2(D.lun)+"</div><div class=cuf1>"+esc2(D.gre)+"</div>"+
    "<div class=cuk>"+
-   "<div class=cuk3><div class=cuh3>បានឃើញ និងឯកភាព<br><b>ព.នាយកវិទ្យាល័យ</b><br><b>នាយករងទទួលបន្ទុកសាលារៀនជំនាន់ថ្មី</b></div><div class=cugp style='height:22mm'></div><b class=cunm>"+esc2(FT.dr)+"</b></div>"+
+   "<div class=cuk3><div class=cuh3>បានឃើញ និងឯកភាព<br><b>ជ.នាយកវិទ្យាល័យ</b><br><b>នាយករងទទួលបន្ទុកសាលារៀនជំនាន់ថ្មី</b></div><div class=cugp style='height:22mm'></div><b class=cunm>"+esc2(FT.dr)+"</b></div>"+
    "<div class=cuk2><div class=cuh3>បានឃើញ និងពិនិត្យ<br><b>ប្រធានក្រុមបច្ចេកទេស</b></div><div class=cugp style='height:20mm'></div><b class=cunm>"+esc2(FT.hd)+"</b></div>"+
    "<div class=cuk1><div class=cuh3><b>អ្នករៀបចំកម្មវិធី</b></div><div class=cugp style='height:17mm'></div><b class=cunm>"+esc2(preName())+"</b></div>"+
    "</div></div>";

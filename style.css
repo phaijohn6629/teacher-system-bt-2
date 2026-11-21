@@ -275,9 +275,11 @@ body.pm .pg.land{page-break-inside:avoid}
 
 .cuf{margin-top:7mm;break-inside:avoid;page-break-inside:avoid;color:#000}
 .cuf1{text-align:right;font-size:10.5pt;line-height:1.55;margin-right:2mm}
-.cuk{display:flex;justify-content:space-between;align-items:flex-start;margin-top:2mm}
-.cuk>div{text-align:center;font-size:10.5pt;line-height:1.5}
-.cuk3{width:37%;margin-top:11mm}.cuk2{width:30%;margin-top:2mm}.cuk1{width:30%}
+/* ប្លុកចុះហត្ថលេខា៖ grid ៣ ជួរបត់បែន (minmax(0,…)) → ជួរទី៣ មិនហៀរ/ដាច់គែមទំព័រ ពេលអក្សរវែង · មិនបំបែកទំព័រ */
+.cuk{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);column-gap:3mm;align-items:start;margin-top:2mm;break-inside:avoid;page-break-inside:avoid}
+.cuk>div{text-align:center;font-size:10.5pt;line-height:1.5;min-width:0;overflow-wrap:break-word;break-inside:avoid;page-break-inside:avoid}
+.cuk3{margin-top:11mm}.cuk2{margin-top:2mm}.cuk1{margin-top:0}
+.cuk .cuh3 b{font-size:10pt;line-height:1.7}
 .cuk b{font-weight:700}
 .cuk .cunm{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap","Kantumruy Pro",serif;font-weight:400;font-size:11pt;display:block}
 .cuh3{display:block}

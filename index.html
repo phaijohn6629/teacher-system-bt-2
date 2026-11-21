@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){var t=0,u=function(){if(Date.now()-t>6e4){t=Date.now();try{r.update()}catch(e){}}};document.addEventListener("visibilitychange",function(){if(!document.hidden)u()});window.addEventListener("focus",u)}).catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=143">
+<link rel="stylesheet" href="style.css?v=144">
 <link rel="stylesheet" href="modern.css?v=21">
 
 </head>
@@ -498,7 +498,7 @@
       <div><label for="cuFp">អ្នករៀបចំកម្មវិធី (សមាជិក)</label><select id="cuFp"></select></div>
       <div id="cuFpxw" hidden><label for="cuFpx">ឈ្មោះអ្នករៀបចំ (វាយដោយដៃ)</label><input id="cuFpx"></div>
       <div><label for="cuFh">ប្រធានក្រុមបច្ចេកទេស</label><input id="cuFh"></div>
-      <div><label for="cuFd">ព.នាយកវិទ្យាល័យ / នាយករងទទួលបន្ទុកសាលា</label><input id="cuFd"></div>
+      <div><label for="cuFd">ជ.នាយកវិទ្យាល័យ / នាយករងទទួលបន្ទុកសាលា</label><input id="cuFd"></div>
       <div><label for="cuFpl">ធ្វើនៅ</label><input id="cuFpl"></div>
       <div><label for="cuFdt">កាលបរិច្ឆេទ (ទុកទទេ = ចំណុចចំហ)</label><input type="date" id="cuFdt"></div>
       <div><label for="cuFkt">អត្ថបទចន្ទគតិដោយដៃ (ទុកទទេ = ស្វ័យប្រវត្តិ)</label><input id="cuFkt" placeholder="ឧ. ថ្ងៃ ១០កើត ខែភទ្របទ ឆ្នាំមមី អដ្ឋស័ក ព.ស.២៥៦៩"></div>
@@ -653,7 +653,7 @@
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
 <script src="lessonplans.js?v=4"></script>
-<script src="script.js?v=183"></script>
+<script src="script.js?v=184"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=5"></script>
 <script src="sched.js?v=25"></script>
