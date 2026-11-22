@@ -244,12 +244,12 @@ G9[13]={1:L(
  function(){var r=ri(2,9),b=ri(2,9),g=ri(1,6),T=r+b+g,c=pick([["red",r],["blue",b],["green",g]]),p=fr(c[1],T);
    return K("p1","A bag contains $"+r+"$ red, $"+b+"$ blue and $"+g+"$ green counters. One counter is taken at random. Find the probability that it is "+c[0]+".",[A(p.s,p.t,"num","P =")],"$P=\\dfrac{"+c[1]+"}{"+T+"}="+p.t+"$",GF.prob({k:"bag",items:[["red",r],["blue",b],["green",g]]}))},
  function(){var d=pick([10,20,25,50,100]),n=ri(1,d-1),q=fr(d-n,d),p=fr(n,d);
-   return K("pnot","The probability that it rains tomorrow is $"+nf(n/d)+"$. Find the probability that it does not rain tomorrow.",[A(q.s,nf((d-n)/d),"num","P =")],"$1-"+nf(n/d)+"="+nf((d-n)/d)+"$",GF.prob({k:"scale",p:n/d,l1:nf(n/d),l2:"?"}))}),
+   return K("pnot","The probability that it rains tomorrow is $"+nf(n/d)+"$. Find the probability that it does not rain tomorrow.",[A(q.s,nf((d-n)/d),"num","P =")],"$1-"+nf(n/d)+"="+nf((d-n)/d)+"$",GF.prob({k:"scale",p:n/d,l1:nf(n/d),l2:"?",ico:["rain","sun"]}))}),
  2:L(
  function(){var s=pick([4,5,8]),k=ri(1,s-1),p=fr(k,2*s);
    return K("ind","A fair spinner has $"+s+"$ equal sections numbered $1$ to $"+s+"$. A fair coin is also thrown. Find the probability of getting a number less than or equal to $"+k+"$ and a head.",[A(p.s,p.t,"num","P =")],"Independent events: $\\dfrac{"+k+"}{"+s+"}\\times\\dfrac12="+p.t+"$",GF.prob({k:"spinner",n:s,nums:true,coin:true}))},
  function(){var p=pick([[1,4],[1,5],[2,5],[3,10],[1,6],[3,8]]),n=p[1]*ri(5,30);
-   return K("exp","The probability that a biased dice lands on six is $\\dfrac{"+p[0]+"}{"+p[1]+"}$. The dice is rolled $"+n+"$ times. How many sixes would you expect?",[A(n*p[0]/p[1],null,"num","expected =")],"$"+n+"\\times\\dfrac{"+p[0]+"}{"+p[1]+"}="+n*p[0]/p[1]+"$")}),
+   return K("exp","The probability that a biased dice lands on six is $\\dfrac{"+p[0]+"}{"+p[1]+"}$. The dice is rolled $"+n+"$ times. How many sixes would you expect?",[A(n*p[0]/p[1],null,"num","expected =")],"$"+n+"\\times\\dfrac{"+p[0]+"}{"+p[1]+"}="+n*p[0]/p[1]+"$",GF.prob({k:"dice",faces:[6]}))}),
  3:L(
  function(){var r=ri(3,8),b=ri(2,7),T=r+b,p=fr(r*(r-1),T*(T-1));
    return K("wr","A box contains $"+r+"$ red and $"+b+"$ blue pens. Two pens are taken at random without replacement. Find the probability that both pens are red.",[A(p.s,p.t,"num","P =")],"$\\dfrac{"+r+"}{"+T+"}\\times\\dfrac{"+(r-1)+"}{"+(T-1)+"}="+p.t+"$",GF.prob({k:"tree",a:[["R","?"],["B","?"]],b:[["R","?"],["B","?"]]}))},
@@ -491,7 +491,7 @@ function FB(pts,cmds,o){o=o||{};var xs=[],ys=[],k,L=[],r=function(v){return Math
   L=L.concat(cmds);
   /* o.tx=[[x,y,"ស្លាក",nx,ny]]៖ ស្លាកកណ្ដាលចំណុច (x,y) រុញទៅទិស (nx,ny) ក្រៅរូប — fig.js text ចាប់ពីខាងឆ្វេង ដូច្នេះគណនាទំហំអក្សរ (~6.6px/តួ) តាមមាត្រដ្ឋានរូប (W=380) */
   var xu=352/(x1-x0),yu=(Math.max(200,Math.min(460,380*(y1-y0)/(x1-x0)))-28)/(y1-y0);
-  (o.tx||[]).forEach(function(t){var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+9+(t[5]||0):0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
+  (o.tx||[]).forEach(function(t){if(t[2]===""||t[2]==null)return;var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+9+(t[5]||0):0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
     L.push("text ("+r(t[0]+nx*d/xu-hw/xu)+","+r(t[1]+ny*d/yu-4/yu)+") "+t[2])});if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
   return L.join("\n")}
 function mid(P,Q,dx,dy){return"("+(Math.round(((P[0]+Q[0])/2+(dx||0))*1000)/1000)+","+(Math.round(((P[1]+Q[1])/2+(dy||0))*1000)/1000)+")"}
@@ -700,33 +700,63 @@ var GF=(function(){
   cap.forEach(function(t,j){tx.push([0,rect[1]-.4-j*.34,t,0,0])});
   ext=[[rect[0],rect[1]-.4-Math.max(0,cap.length-1)*.34-.3],[rect[2],rect[3]]];
   return FB({},cm,{tx:tx,ext:ext})}
- /* GF.prob({k:"bag"|"scale"|"spinner"|"tree", …}) — រូបជំនួយប្រូបាប (មិនបង្ហាញចម្លើយ៖ ផ្នែកដែលសំណួរសុំរកប្រើ «?»)
-   bag    : items:[["red",5],["blue",9],…] — ≤ 24 គ្រាប់ គូរគ្រាប់ពណ៌ផ្ទាល់ · ច្រើនជាងនេះ គូរក្រុមគ្រាប់ + លេខចំនួន
-   scale  : p (0–1), l1 (ស្លាកផ្នែក 0→p), l2 (ស្លាកផ្នែក p→1, ឧ. "?") — ព្រឹត្តិការណ៍ផ្ទុយ
-   spinner: n (ផ្នែកស្មើ), nums:true (លេខ 1…n) ឬ cols:[ពណ៌ក្នុងផ្នែកនីមួយៗ] · coin:true (បន្ថែមកាក់ H/T)
-   tree   : a:[[ស្លាក,ប្រូបា],[…]] (ដំណាក់ទី១) · b ឬ b2:[[…],[…]] (ដំណាក់ទី២ ដូចគ្នា ឬផ្សេងគ្នាតាមមែក) */
- function prob(o){var k=o.k,cm=[],tx=[],ext=[],CM={red:"red",blue:"blue",green:"green",yellow:"orange",orange:"orange",white:"gray",black:"black",purple:"purple",pink:"purple"};
-  function fillP(q,col){var z="poly "+q.map(xy).join(" ")+" "+col;for(var j=0;j<7;j++)cm.push(z)}
-  function disc(c,r,col){var q=[];for(var j=0;j<16;j++)q.push([c[0]+r*Math.cos(j*Math.PI/8),c[1]+r*Math.sin(j*Math.PI/8)]);fillP(q,col);cm.push("circle "+xy(c)+" "+r+" "+col)}
-  function box(x0,y0,x1,y1){cm.push("poly "+xy([x0,y0])+" "+xy([x1,y0])+" "+xy([x1,y1])+" "+xy([x0,y1])+" black");ext.push([x0,y0],[x1,y1])}
-  if(k==="bag"){var it=o.items,T=0;it.forEach(function(z){T+=+z[1]||0});
-   if(T<=24){var per=T<=12?6:8,rows=Math.ceil(T/per),sp=.55,idx=0;it.forEach(function(z){var col=CM[z[0]]||"gray";for(var j=0;j<z[1];j++){var r0=Math.floor(idx/per),c0=idx%per,inRow=Math.min(per,T-r0*per);disc([(c0-(inRow-1)/2)*sp,((rows-1)/2-r0)*sp],.2,col);idx++}});
-    box(-(Math.min(per,T)-1)*sp/2-.5,-(rows-1)*sp/2-.5,(Math.min(per,T)-1)*sp/2+.5,(rows-1)*sp/2+.5)}
-   else{var m=it.length;it.forEach(function(z,j){var x=(j-(m-1)/2)*1.4;disc([x,.2],.38,CM[z[0]]||"gray");tx.push([x,-.45,String(z[1]),0,0])});box(-(m*1.4)/2,-.85,(m*1.4)/2,.85)}}
-  else if(k==="scale"){var p=o.p,Lx=4,mk=function(x,y,y2,c){cm.push("seg "+xy([x,y])+" "+xy([x,y2])+" "+c)};
+ /* GF.prob({k:"bag"|"scale"|"spinner"|"tree"|"dice"|"grid", …}) — រូបជំនួយប្រូបាប (មិនបង្ហាញចម្លើយ៖ ផ្នែកដែលសំណួរសុំរកប្រើ «?»)
+   bag    : items:[["red",5],…] · obj:"ball"|"pen"|"sweet" · ថង់ចងមាត់ (ឬប្រអប់ចំពោះប៊ិច) · ≤ 24 គ្រាប់ គូរផ្ទាល់ មានចំណាំងពន្លឺ · ច្រើនជាងនេះ គូរក្រុមគ្រាប់ + លេខ
+   scale  : p, l1, l2, ico:["rain","sun"] ឬ ["disc:red","disc:gray"] — បន្ទាត់ 0→1 មានរូបតំណាង (ពពកភ្លៀង/ព្រះអាទិត្យ)
+   spinner: n, nums:true | cols:[…] ពណ៌ស្រទន់ + ព្រួញកណ្ដាល · coin:true (កាក់ H/T ពីរ)
+   dice   : faces:[1,…] — គ្រាប់ឡុកឡាក់ជ្រុងមូលមានចំណុច · coin:true — កាក់ H/T
+   grid   : mode:"sum"|"pair"|"coin" — តារាងលទ្ធផល (សំណុំសំណាក) · tree : a:[[ស្លាក,ប្រូបា],…], b ឬ b2 */
+ function prob(o){var k=o.k,cm=[],tx=[],ext=[],
+   CM={red:"#e8584f",blue:"#4d8be8",green:"#3fae6a",yellow:"#f6c343",orange:"#f08a2b",white:"#f4f4f4",gray:"#aab2bd",black:"#333333",purple:"#8a63d2",pink:"#d96ba0"},
+   PAS={red:"#f4a6a0",blue:"#a9c6f5",green:"#9fd8b4",yellow:"#fbe08e",orange:"#f7c08a",white:"#ffffff",gray:"#d5dae0",purple:"#c9b6ec",pink:"#efb6d3"};
+  function C1(n){return CM[n]||n}
+  function fillP(q,col,rep){var z="poly "+q.map(xy).join(" ")+" "+col;for(var j=0;j<(rep||10);j++)cm.push(z)}
+  function circ(c,r,N){var q=[];N=N||18;for(var j=0;j<N;j++)q.push([c[0]+r*Math.cos(j*2*Math.PI/N),c[1]+r*Math.sin(j*2*Math.PI/N)]);return q}
+  function disc(c,r,col,hl){fillP(circ(c,r),col,10);cm.push("circle "+xy(c)+" "+r+" "+col);if(hl!==false)fillP(circ([c[0]-r*.32,c[1]+r*.35],r*.26,10),"#ffffff",6)}
+  function pen(c,col){var a=.7,dx=.2*Math.cos(a),dy=.2*Math.sin(a);for(var t=-1;t<=1;t++)cm.push("seg "+xy([c[0]-dx+t*.03,c[1]-dy-t*.03])+" "+xy([c[0]+dx+t*.03,c[1]+dy-t*.03])+" "+col);cm.push("seg "+xy([c[0]+dx,c[1]+dy])+" "+xy([c[0]+dx*1.35,c[1]+dy*1.35])+" #333333")}
+  function sweet(c,col){disc(c,.15,col);fillP([[c[0]-.15,c[1]],[c[0]-.32,c[1]+.1],[c[0]-.32,c[1]-.1]],col,8);fillP([[c[0]+.15,c[1]],[c[0]+.32,c[1]+.1],[c[0]+.32,c[1]-.1]],col,8)}
+  function item(c,col,obj){if(obj==="pen")pen(c,C1(col));else if(obj==="sweet")sweet(c,C1(col));else disc(c,.19,C1(col))}
+  function sun(c,r){var N=8;for(var j=0;j<N;j++){var a=j*2*Math.PI/N;cm.push("seg "+xy([c[0]+r*1.3*Math.cos(a),c[1]+r*1.3*Math.sin(a)])+" "+xy([c[0]+r*1.8*Math.cos(a),c[1]+r*1.8*Math.sin(a)])+" #f0a500")}fillP(circ(c,r),"#f6c343",10);cm.push("circle "+xy(c)+" "+r+" #f0a500")}
+  function cloud(c,r){[[-.55,-.1,.6],[-.05,.15,.75],[.5,-.05,.6]].forEach(function(z){fillP(circ([c[0]+z[0]*r,c[1]+z[1]*r],z[2]*r),"#9aa7b8",8)});fillP([[c[0]-1.05*r,c[1]-.35*r],[c[0]+1.1*r,c[1]-.35*r],[c[0]+1.1*r,c[1]-.05*r],[c[0]-1.05*r,c[1]-.05*r]],"#9aa7b8",8);
+   for(var j=-1;j<=1;j++)cm.push("seg "+xy([c[0]+j*.32*r,c[1]-.45*r])+" "+xy([c[0]+j*.32*r-.12*r,c[1]-.85*r])+" #4d8be8","seg "+xy([c[0]+j*.32*r+.01,c[1]-.45*r])+" "+xy([c[0]+j*.32*r-.11*r,c[1]-.85*r])+" #4d8be8")}
+  function icon(t,c){if(t==="rain")cloud(c,.5);else if(t==="sun")sun(c,.36);else if(t&&t.indexOf("disc:")===0)disc(c,.34,C1(t.slice(5)))}
+  function box(x0,y0,x1,y1,col){fillP([[x0,y0],[x1,y0],[x1,y1],[x0,y1]],col||"#f3e3c3",4);cm.push("poly "+xy([x0,y0])+" "+xy([x1,y0])+" "+xy([x1,y1])+" "+xy([x0,y1])+" #8a6d3b");ext.push([x0,y0],[x1,y1])}
+  function bagShape(rx,ry){fillP(circ([0,0],1,28).map(function(q){return[q[0]*rx,q[1]*ry]}),"#d8b77c",5);cm.push("poly "+circ([0,0],1,28).map(function(q){return xy([q[0]*rx,q[1]*ry])}).join(" ")+" #8a6d3b");
+   var ny=ry-.05;fillP([[-.34,ny],[.34,ny],[.22,ny+.34],[-.22,ny+.34]],"#d8b77c",5);cm.push("poly "+xy([-.34,ny])+" "+xy([.34,ny])+" "+xy([.22,ny+.34])+" "+xy([-.22,ny+.34])+" #8a6d3b");
+   for(var t=0;t<3;t++)cm.push("seg "+xy([-.3,ny+.12+t*.015])+" "+xy([.3,ny+.12+t*.015])+" #b0413e");
+   fillP([[0,ny+.12],[.34,ny+.3],[.34,ny-.06]],"#b0413e",6);fillP([[0,ny+.12],[-.34,ny+.3],[-.34,ny-.06]],"#b0413e",6);ext.push([-rx,-ry],[rx,ry+.55])}
+  function die(c,s,n){var h=s/2,rr=s*.16,q=[];[[1,1,0],[-1,1,90],[-1,-1,180],[1,-1,270]].forEach(function(z){for(var j=0;j<=4;j++){var a=(z[2]+j*22.5)*R;q.push([c[0]+z[0]*(h-rr)+rr*Math.cos(a),c[1]+z[1]*(h-rr)+rr*Math.sin(a)])}});
+   fillP(q,"#ffffff",16);cm.push("poly "+q.map(xy).join(" ")+" #333333");var d=s*.24,P={1:[[0,0]],2:[[-d,d],[d,-d]],3:[[-d,d],[0,0],[d,-d]],4:[[-d,d],[d,d],[-d,-d],[d,-d]],5:[[-d,d],[d,d],[0,0],[-d,-d],[d,-d]],6:[[-d,d],[d,d],[-d,0],[d,0],[-d,-d],[d,-d]]};
+   (P[n]||[]).forEach(function(z){fillP(circ([c[0]+z[0],c[1]+z[1]],s*.075,10),"#222222",18)});ext.push([c[0]-h,c[1]-h],[c[0]+h,c[1]+h])}
+  function coin(c,r,t){fillP(circ(c,r,22),"#f1c453",10);cm.push("circle "+xy(c)+" "+r+" #b8860b","circle "+xy(c)+" "+r*.78+" #b8860b");tx.push([c[0],c[1],t,0,0]);ext.push([c[0]-r,c[1]-r],[c[0]+r,c[1]+r])}
+  if(k==="bag"){var it=o.items,T=0,obj=o.obj||"ball";it.forEach(function(z){T+=+z[1]||0});
+   if(T<=24){var per=T<=12?6:8,rows=Math.ceil(T/per),sp=.52,idx=0,wid=(Math.min(per,T)-1)*sp,hgt=(rows-1)*sp;
+    if(obj==="pen")box(-wid/2-.5,-hgt/2-.45,wid/2+.5,hgt/2+.45);else bagShape(wid/2+.55,Math.max(hgt/2+.5,(wid/2+.55)*.7));
+    it.forEach(function(z){for(var j=0;j<z[1];j++){var r0=Math.floor(idx/per),c0=idx%per,inRow=Math.min(per,T-r0*per);item([(c0-(inRow-1)/2)*sp,(hgt/2-r0*sp)],z[0],obj);idx++}})}
+   else{var m=it.length;if(obj==="pen")box(-m*.75,-.8,m*.75,.8);else bagShape(m*.75+.3,Math.max(.8,(m*.75+.3)*.7));it.forEach(function(z,j){var x=(j-(m-1)/2)*1.4;item([x,.18],z[0],obj);tx.push([x,-.45,String(z[1]),0,0])})}}
+  else if(k==="scale"){var p=o.p,Lx=4,mk=function(x,y,y2,c){cm.push("seg "+xy([x,y])+" "+xy([x,y2])+" "+c)},ic=o.ico;
    cm.push("seg "+xy([0,0])+" "+xy([Lx,0])+" black");[0,p,1].forEach(function(v){mk(v*Lx,-.08,.08,"black")});tx.push([0,-.3,"0",0,0],[Lx,-.3,"1",0,0]);
    cm.push("seg "+xy([0,.22])+" "+xy([p*Lx,.22])+" blue","seg "+xy([p*Lx,.22])+" "+xy([Lx,.22])+" red");[0,p*Lx].forEach(function(x){mk(x,.15,.29,"blue")});[p*Lx,Lx].forEach(function(x){mk(x,.15,.29,"red")});
-   if(o.l1)tx.push([p*Lx/2,.22,o.l1,0,1]);if(o.l2)tx.push([(p+1)*Lx/2,.22,o.l2,0,1]);ext.push([-.3,-.5],[Lx+.3,.7])}
-  else if(k==="spinner"){var n=o.n,cx=o.coin?-1.6:0,Rr=1.2,j2;cm.push("circle "+xy([cx,0])+" "+Rr+" black");
-   for(j2=0;j2<n;j2++){var a0=90-360*j2/n,a1=90-360*(j2+1)/n,am=(a0+a1)/2,c0=[cx+Rr*Math.cos(a0*R),Rr*Math.sin(a0*R)];cm.push("seg "+xy([cx,0])+" "+xy(c0)+" black");
-    if(o.cols&&o.cols[j2]&&o.cols[j2]!=="white"){var q=[[cx,0]];for(var t=0;t<=6;t++){var a=(a0+(a1-a0)*t/6)*R;q.push([cx+Rr*Math.cos(a),Rr*Math.sin(a)])}fillP(q,CM[o.cols[j2]]||"gray")}
-    if(o.nums)tx.push([cx+.74*Rr*Math.cos(am*R),.74*Rr*Math.sin(am*R),String(j2+1),0,0])}
-   var ar=[[cx-.13,Rr+.42],[cx+.13,Rr+.42],[cx,Rr+.1]];fillP(ar,"black");ext.push([cx-Rr,-Rr],[cx+Rr,Rr+.45]);
-   if(o.coin){var cc=[1.6,0];cm.push("circle "+xy(cc)+" .6 black");tx.push([cc[0],0,"H / T",0,0]);ext.push([2.3,-.6],[2.3,.6])}}
-  else{var A1=o.a||[["",""],["",""]],B1=o.b2||[o.b||A1,o.b||A1],yy=[.95,-.95],oy=[.45,-.45];
-   [0,1].forEach(function(i){var nx=[2.1,yy[i]];cm.push("seg "+xy([0,0])+" "+xy(nx)+" black");tx.push([nx[0]/2,nx[1]/2,String(A1[i][1]),-.6,i?-.8:.8]);tx.push([nx[0],nx[1],String(A1[i][0]),-.3,i?-1:1]);
-    [0,1].forEach(function(j){var e=[4.3,yy[i]+oy[j]],bb=B1[i][j];cm.push("seg "+xy(nx)+" "+xy(e)+" black");var l2=Math.hypot(e[0]-nx[0],e[1]-nx[1]);tx.push([(nx[0]+e[0])/2,(nx[1]+e[1])/2,String(bb[1]),0,j?-1:1]);tx.push([e[0],e[1],String(bb[0]),1,0])})});
-   [[0,0],[2.1,.95],[2.1,-.95]].forEach(function(p0){ext.push(p0)});ext.push([5,1.5],[5,-1.5],[-.2,0])}
+   if(o.l1)tx.push([p*Lx/2,.22,o.l1,0,1]);if(o.l2)tx.push([(p+1)*Lx/2,.22,o.l2,0,1]);
+   if(ic){icon(ic[0],[Math.max(.55,Math.min(Lx-.55,p*Lx/2)),1.35]);icon(ic[1],[Math.max(.55,Math.min(Lx-.55,(p+1)*Lx/2)),1.35])}
+   ext.push([-.3,-.5],[Lx+.3,ic?2.1:.7])}
+  else if(k==="spinner"){var n=o.n,cx=o.coin?-1.7:0,Rr=1.25,j2,fl=[];
+   for(j2=0;j2<n;j2++){var a0=90-360*j2/n,a1=90-360*(j2+1)/n;if(o.cols&&o.cols[j2]&&o.cols[j2]!=="white"){var q=[[cx,0]];for(var t=0;t<=8;t++){var a=(a0+(a1-a0)*t/8)*R;q.push([cx+Rr*Math.cos(a),Rr*Math.sin(a)])}fillP(q,PAS[o.cols[j2]]||"#d5dae0",12)}}
+   cm.push("circle "+xy([cx,0])+" "+Rr+" black");
+   for(j2=0;j2<n;j2++){var b0=90-360*j2/n,am=b0-180/n;cm.push("seg "+xy([cx,0])+" "+xy([cx+Rr*Math.cos(b0*R),Rr*Math.sin(b0*R)])+" black");if(o.nums)tx.push([cx+.8*Rr*Math.cos(am*R),.8*Rr*Math.sin(am*R),String(j2+1),0,0])}
+   var al=62*R,L=.62*Rr,tip=[cx+L*Math.cos(al),L*Math.sin(al)],pp=[-Math.sin(al)*.1,Math.cos(al)*.1];fillP([tip,[cx+pp[0],pp[1]],[cx-pp[0],-pp[1]]],"#333333",10);disc([cx,0],.1,"#333333",false);
+   ext.push([cx-Rr,-Rr],[cx+Rr,Rr]);
+   if(o.coin){coin([1.75,.6],.42,"H");coin([1.75,-.6],.42,"T")}}
+  else if(k==="dice"){var fc=o.faces||[1,2,3,4,5,6],sz=.95,sp2=1.15;fc.forEach(function(f,j){die([(j-(fc.length-1)/2)*sp2,0],sz,f)});if(o.coin){coin([fc.length*sp2/2+.9,0],.42,"H")}}
+  else if(k==="grid"){var md=o.mode||"sum",rows=md==="coin"?["H","T"]:[1,2,3,4,5,6],cols=[1,2,3,4,5,6],cw=.62,rh=.5,x0=-cols.length*cw/2-.5*cw,y0=rows.length*rh/2+.5*rh;
+   tx.push([x0+cw/2,y0-rh/2,md==="sum"?"+":"",0,0]);
+   cols.forEach(function(c2,j){tx.push([x0+cw*(j+1.5),y0-rh/2,String(c2),0,0])});rows.forEach(function(r2,i){tx.push([x0+cw/2,y0-rh*(i+1.5),String(r2),0,0]);cols.forEach(function(c2,j){var v=md==="sum"?r2+c2:md==="pair"?String(r2)+c2:String(r2)+c2;tx.push([x0+cw*(j+1.5),y0-rh*(i+1.5),String(v),0,0])})});
+   var X1=x0+cw*(cols.length+1),Y1=y0-rh*(rows.length+1);for(var gi=0;gi<=rows.length+1;gi++)cm.push("seg "+xy([x0,y0-rh*gi])+" "+xy([X1,y0-rh*gi])+" #8a8f98");for(var gj=0;gj<=cols.length+1;gj++)cm.push("seg "+xy([x0+cw*gj,y0])+" "+xy([x0+cw*gj,Y1])+" #8a8f98");
+   cm.push("seg "+xy([x0,y0-rh])+" "+xy([X1,y0-rh])+" black","seg "+xy([x0+cw,y0])+" "+xy([x0+cw,Y1])+" black");ext.push([x0,Y1],[X1,y0])}
+  else{var A1=o.a||[["",""],["",""]],B1=o.b2||[o.b||A1,o.b||A1],yy=[1.3,-1.3],oy=[.62,-.62],X1=2.8,X2=5.6;
+   [0,1].forEach(function(i){var nx=[X1,yy[i]];cm.push("seg "+xy([0,0])+" "+xy(nx)+" black");tx.push([nx[0]/2,nx[1]/2,String(A1[i][1]),-.6,i?-.8:.8,6]);tx.push([nx[0],nx[1],String(A1[i][0]),-.3,i?-1:1,3]);
+    [0,1].forEach(function(j){var e=[X2,yy[i]+oy[j]],bb=B1[i][j];cm.push("seg "+xy(nx)+" "+xy(e)+" black");tx.push([(nx[0]+e[0])/2,(nx[1]+e[1])/2,String(bb[1]),0,j?-1:1,6]);tx.push([e[0],e[1],String(bb[0]),1,0,3])})});
+   ext.push([0,0],[X1,1.3],[X1,-1.3],[X2+1.1,1.9],[X2+1.1,-1.9],[-.2,0])}
   return FB({},cm,{tx:tx,ext:ext})}
  /* GF.thales({t (សមាមាត្រ AD/AB, រូបមិនត្រូវមាត្រដ្ឋាន), ad,db,ae,ec,de,bc,ab,ac (ស្លាក — "" = មិនបង្ហាញ · "?" = មិនស្គាល់)}) — ត្រីកោណ ABC មាន (DE)∥(BC) (ទ្រឹស្ដីបទតាលែស) */
  function thales(o){var t=o.t||.5,A=[0,2.2],B=[-1.9,0],C=[1.9,0],D=[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t],E=[A[0]+(C[0]-A[0])*t,A[1]+(C[1]-A[1])*t],g=[0,.9],cm=[],tx=[],pts={A:[A[0],A[1],"n"],B:[B[0],B[1],"sw"],C:[C[0],C[1],"se"],D:[D[0],D[1],"w"],E:[E[0],E[1],"e"]};
@@ -755,8 +785,10 @@ function nums(t){return(clean(t).match(/-?\d+(?:\.\d+)?/g)||[]).map(Number)}
 var KC={"ក្រហម":"red","ខៀវ":"blue","បៃតង":"green","លឿង":"yellow","ស":"white"};
 function bag(t){var it=[],m,re=/(ក្រហម|ខៀវ|បៃតង|លឿង|ស)\s*(\d+)/g;while((m=re.exec(t)))it.push([KC[m[1]],+m[2]]);return it}
 function spin(t){var m=/ចែកជា\s*(\d+)\s*ផ្នែក[^\d]*?(?:ក្នុងនោះ\s*)?(\d+)\s*ផ្នែក\s*ពណ៌\s*(ក្រហម|ខៀវ|បៃតង|លឿង)/.exec(t);if(!m)return"";var n=+m[1],k=+m[2],c=KC[m[3]],cols=[];for(var i=0;i<n;i++)cols.push(i<k?c:"white");return GF.prob({k:"spinner",n:n,cols:cols})}
-function comp(t){var m=/\\d?frac\{(\d+)\}\{(\d+)\}/.exec(t);if(!m)return"";return GF.prob({k:"scale",p:+m[1]/+m[2],l1:m[1]+"/"+m[2],l2:"?"})}
-function bagF(q){var it=bag(clean(q.q));return it.length>=2?GF.prob({k:"bag",items:it}):""}
+function comp(t){var m=/\\d?frac\{(\d+)\}\{(\d+)\}/.exec(t);if(!m)return"";return GF.prob({k:"scale",p:+m[1]/+m[2],l1:m[1]+"/"+m[2],l2:"?",ico:/ភ្លៀង/.test(t)?["rain","sun"]:["disc:red","disc:gray"]})}
+function bagF(q){var it=bag(clean(q.q));return it.length>=2?GF.prob({k:"bag",items:it,obj:/ប៊ិច/.test(q.q)?"pen":/ស្ករ/.test(q.q)?"sweet":"ball"}):""}
+function dice6(){return GF.prob({k:"dice",faces:[1,2,3,4,5,6]})}
+function gridF(m){return function(){return GF.prob({k:"grid",mode:m})}}
 function coin2(){return GF.prob({k:"tree",a:[["ក្បាល","1/2"],["កន្ទុយ","1/2"]],b:[["ក្បាល","1/2"],["កន្ទុយ","1/2"]]})}
 /* មុំលើបន្ទាត់ស្រប / បន្ទាត់កាត់គ្នា ដែលមានសមីការ (ax+b)° */
 function angs(raw){var o=[],re=/\((\d*)x([+-]\d+)?\)\^\\circ|(\d+)\^\\circ/g,m;while((m=re.exec(raw))){if(m[3]!==undefined)o.push({v:+m[3],l:m[3]+"°"});else{var a=m[1]===""?1:+m[1],b=m[2]?+m[2]:0;o.push({x:[a,b],l:"("+(a===1?"":a)+"x"+(b<0?" − "+(-b):b>0?" + "+b:"")+")°"})}}return o}
@@ -777,6 +809,9 @@ var KM={
  "7:s7_comp":function(q){return comp(q.q)},"8:b11_3":function(q){return comp(q.q)},"9:g9_8_comp":function(q){return comp(q.q)},"9:pcm":function(q){return comp(q.q)},
  "7:s7_not":bagF,"7:b20_2":bagF,"7:s7_add":bagF,"8:s8_bag":bagF,"8:s8_addb":bagF,"9:b8_2":bagF,"9:p2":bagF,"9:pdp":bagF,"9:g9_8_nr":bagF,"9:g9_8_diff":bagF,"9:n_atl":bagF,"9:g9_8_rep":bagF,
  "8:b11_1":coin2,"7:s7_2c":coin2,"9:g9_8_2c":coin2,
+ /* គ្រាប់ឡុកឡាក់ · កាក់ · តារាងលទ្ធផល */
+ "7:s7_imp":dice6,"7:b20_1":dice6,"8:s8_die":dice6,"8:s8_imp":dice6,"9:n_imp":dice6,"9:b8_1":dice6,"9:pad":dice6,"9:g9_8_ev5":dice6,"9:g9_8_ev3":dice6,"9:g9_8_ev2":dice6,
+ "8:s8_twod":gridF("sum"),"9:g9_8_sum":gridF("sum"),"9:b8_3":gridF("sum"),"9:g9_8_2d":gridF("pair"),"9:g9_8_cd":gridF("coin"),"9:pid":gridF("coin"),
  /* មុំ · បន្ទាត់ស្រប */
  "7:s7_alt":paraOne("alt"),"7:s7_cx":paraAng("cor"),"7:b14_3":paraAng("alt"),"7:s7_cix":paraAng("co"),
  "7:s7_vx":function(q){var A=angs(q.q);if(A.length<2)return"";var x=xv(q),v=val(A[0],x);if(!(v>0&&v<180))v=60;return GF.cross({t:v,lab:{NE:A[0].l,SW:A[1].l}})},
