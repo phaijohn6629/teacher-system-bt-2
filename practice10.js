@@ -375,7 +375,25 @@ vx(11,3,[
  function(){var a=nz(-3,3),e=[1,3*a,3*a*a,a*a*a];return K("s10_cube_11","ពន្លាត $(x"+sg(a,0)+")^3$"+cfAsk(e),cfAns(e),"$(x+a)^3=x^3+3ax^2+3a^2x+a^3$ ⇒ $"+polyT(e)+"$")},
  function(){var a=nz(-6,6),b=nz(-9,9);return K("s10_ident","រក $m$ និង $n$ ដែល $x^2+mx+n=(x"+sg(a,0)+")^2"+sg(-b,0)+"$ គ្រប់ $x$",[A(2*a,null,"num","m ="),A(a*a-b,null,"num","n =")],"ពន្លាត ⇒ $x^2"+co(2*a,"x")+sg(a*a-b,0)+"$")},
  function(){var a=nz(-6,6),b=nz(-6,6),c=nz(-6,6),e=[a+b-2*c,a*b-c*c];if(!e[0]&&!e[1])e=[a+b-2*c,a*b-c*c];return K("s10_val3","សម្រួល $(x"+sg(a,0)+")(x"+sg(b,0)+")-(x"+sg(c,0)+")^2$"+cfAsk(e),cfAns(e),"$x^2"+co(a+b,"x")+sg(a*b,0)+"-(x^2"+co(2*c,"x")+"+"+(c*c)+")="+polyT(e)+"$")}]);
+/* ១.១ ចំណុច ៣ ការដាក់ជាផលគុណកត្តា (ចម្លើយជាលេខ · រើសចម្លើយមុន) */
+vx(11,1,[
+ function(){var g=ri(2,6),a=ri(1,4),b=nz(-6,6);while(gcd(a,b)!==1)b=nz(-6,6);var e=[g*a,g*b,0];return K("s10_fgcd","ដាក់កត្តារួមធំបំផុតនៃ $"+polyT(e)+"$ ជាទម្រង់ $gx(ax+b)$ ដែល $g>1$ , $a>0$ ។ រក $g$ , $a$ , $b$",[A(g,null,"num","g ="),A(a,null,"num","a ="),A(b,null,"num","b =")],"កត្តារួមធំបំផុត $"+g+"x$ ⇒ $"+g+"x("+poly([a,b])+")$")}]);
+vx(11,2,[
+ function(){var p=nz(-9,9),q=nz(-9,9);if(p>q){var t=p;p=q;q=t}return K("s10_fq1","ដាក់ $x^2"+co(p+q,"x")+sg(p*q,0)+"$ ជាផលគុណកត្តា $(x+p)(x+q)$ ដែល $p\\le q$ ។ រក $p$ , $q$",[A(p,null,"num","p ="),A(q,null,"num","q =")],"រក $p+q="+(p+q)+"$ , $pq="+(p*q)+"$ ⇒ $p="+p+"$ , $q="+q+"$")},
+ function(){var a=ri(1,5),b=ri(1,9);return K("s10_fsq","ដាក់ $"+(a*a)+"x^2-"+(b*b)+"$ ជាផលគុណកត្តា $(ax+b)(ax-b)$ ដែល $a>0$ , $b>0$ ។ រក $a$ , $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"$A^2-B^2=(A+B)(A-B)$ ⇒ $a="+a+"$ , $b="+b+"$")}]);
+vx(11,3,[
+ function(){var m=ri(2,3),p=nz(-6,6),q=nz(-6,6),e=[m,m*q+p,p*q];return K("s10_fq2","ដាក់ $"+polyT(e)+"$ ជាផលគុណកត្តា $("+m+"x+p)(x+q)$ ។ រក $p$ , $q$",[A(p,null,"num","p ="),A(q,null,"num","q =")],"គុណខ្វែង ⇒ $pq="+(p*q)+"$ , $"+m+"q+p="+(m*q+p)+"$ ⇒ $p="+p+"$ , $q="+q+"$")},
+ function(){var a=nz(-4,4),c=a*a*a;return K("s10_fcube","ដាក់ $x^3"+sg(c,0)+"$ ជាផលគុណកត្តា $(x+a)(x^2+mx+n)$ ។ រក $a$ , $m$ , $n$",[A(a,null,"num","a ="),A(-a,null,"num","m ="),A(a*a,null,"num","n =")],"$x^3+a^3=(x+a)(x^2-ax+a^2)$ ដែល $a^3="+c+"$ ⇒ $a="+a+"$")}]);
 /* ១.២ ចែកពហុធា */
+/* ១.២ ចំណុច ២ ប្រមាណវិធីលើប្រភាគសនិទាន (ចម្លើយជាលេខ · រើសចម្លើយមុន) */
+vx(12,1,[
+ function(){var a=nz(-9,9);return K("s10_rdom","រកតម្លៃ $x$ ដែលកន្សោម $\\dfrac{"+pick([1,2,3,5])+"}{x"+sg(-a,0)+"}$ គ្មានន័យ",[A(a,null,"num","x =")],"ភាគបែង $=0$ ⇒ $x"+sg(-a,0)+"=0$ ⇒ $x="+a+"$")}]);
+vx(12,2,[
+ function(){var p=nz(-8,8),q=nz(-8,8),e=[1,p+q,p*q];return K("s10_rsimp","សម្រួល $\\dfrac{"+polyT(e)+"}{x"+sg(p,0)+"}$ ($x\\ne"+(-p)+"$) ជាទម្រង់ $x+m$ ។ រក $m$",[A(q,null,"num","m =")],"ភាគយក $=(x"+sg(p,0)+")(x"+sg(q,0)+")$ ⇒ $x"+sg(q,0)+"$")},
+ function(){var a=nz(-7,7);return K("s10_rdiv","គណនា $\\dfrac{x^2-"+(a*a)+"}{x}:\\dfrac{x"+sg(-a,0)+"}{x}$ ($x\\ne0$ , $x\\ne"+a+"$) ជាទម្រង់ $x+m$ ។ រក $m$",[A(a,null,"num","m =")],"$\\dfrac{(x-"+a+")(x+"+a+")}{x}\\cdot\\dfrac{x}{x"+sg(-a,0)+"}=x+"+a+"$")}]);
+vx(12,3,[
+ function(){var m=ri(2,3),p=nz(-6,6),q=nz(-6,6),e=[m,m*q+p,p*q];return K("s10_rsimp2","សម្រួល $\\dfrac{"+polyT(e)+"}{x"+sg(q,0)+"}$ ($x\\ne"+(-q)+"$) ជាទម្រង់ $"+m+"x+p$ ។ រក $p$",[A(p,null,"num","p =")],"ភាគយក $=("+m+"x+"+p+")(x"+sg(q,0)+")$ ⇒ $"+m+"x"+sg(p,0)+"$")},
+ function(){var p=nz(-6,6),q=nz(-6,6);while(q===p)q=nz(-6,6);var a=nz(-4,4),b=nz(-4,4),n=[a+b,a*q+b*p];return K("s10_radd","គណនា $\\dfrac{"+a+"}{x"+sg(p,0)+"}+\\dfrac{"+b+"}{x"+sg(q,0)+"}=\\dfrac{mx+n}{(x"+sg(p,0)+")(x"+sg(q,0)+")}$ ។ រក $m$ , $n$",[A(n[0],null,"num","m ="),A(n[1],null,"num","n =")],"រួមភាគបែង ⇒ $"+a+"(x"+sg(q,0)+")+"+sgp(b)+"(x"+sg(p,0)+")="+co(n[0],"x",true)+sg(n[1],0)+"$")}]);
 vx(12,1,[
  function(){var a=nz(-4,4),b=ri(-6,6),c=ri(-9,9),q=[1,b+a],r=a*a+a*b+c;return K("s10_lin_12","ចែក $x^2"+co(b,"x")+sg(c,0)+"$ នឹង $x"+sg(-a,0)+"$ ។ រកផលចែក $Q(x)$ និងសំណល់ $R$"+cfAsk(q,"Q(x)"),cfAns(q,"Q: ").concat([A(r,null,"num","R =")]),"ហ៊័រណឺ ⇒ $Q(x)="+polyT(q)+"$ · $R=P("+a+")="+r+"$")},
  function(){var a=nz(-3,3),c=[nz(-3,3),ri(-4,4),ri(-5,5)],r=c[0]*a*a-c[1]*a+c[2];return K("s10_rem2","រកសំណល់នៃការចែក $P(x)="+polyT(c)+"$ នឹង $x"+sg(a,0)+"$",[A(r,null,"num","R =")],"$R=P("+(-a)+")="+r+"$")},

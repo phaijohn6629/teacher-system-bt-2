@@ -50,4 +50,11 @@ if(window.FIG){var KM3="10:s10_even,10:s10_hv,10:s10_pli,10:s10_proj_62,10:s10_s
   [10,11,12].forEach(function(g){Object.keys(GR[g].G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){if(!GR[g].G[l][v])return;for(var i=0;i<200;i++){var q;try{q=GR[g].G[l][v]()}catch(e){continue}var k=g+":"+q.kd;if(!(k in km3)||!q.fig)continue;km3[k]++;m3++;
     var h;try{h=window.FIG.svg(q.fig)}catch(e){h=""}if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("KM3BAD "+k+" "+String(q.fig).slice(0,100))}})})});
   KM3.forEach(function(k){if(!km3[k])B("KM3NOFIG "+k)});print("km3 figs "+m3+" forms "+KM3.length)}
+/* 🎯 exam.js PTK (ចំណុចមេរៀន)៖ គ្រប់ kd ក្នុងម៉ាស៊ីន (កម្រិត 1,5,2,6,3) ត្រូវមានក្នុងចំណុចមួយ · kd ក្នុងផែនទីត្រូវមានពិតក្នុងម៉ាស៊ីន · ចំណុច k:[] = មិនទាន់មាន (រាយការណ៍) */
+(function(){var m=/var PTK=(\{[\s\S]*?\});\nfunction ptSet/.exec(read("exam.js"));if(!m){B("PTK missing");return}var K;try{K=eval("("+m[1]+")")}catch(e){B("PTK parse "+e);return}
+  var n=0,gap=[];Object.keys(K).forEach(function(key){var a=key.split("|"),g=+a[0],l=+a[1],G=GR[g]&&GR[g].G[l];if(!G){B("PTK no lesson "+key);return}
+    var seen={},map={};Object.keys(K[key]).forEach(function(pt){var o=K[key][pt];if(!o.n)B("PTK noname "+key+"#"+pt);if(!o.k.length)gap.push(key+"#"+pt);o.k.forEach(function(z){if(map[z])B("PTK dup "+key+" "+z);map[z]=pt})});
+    [1,5,2,6,3].forEach(function(v){if(!G[v])return;for(var i=0;i<400;i++){var q=G[v]();if(q.kd)seen[q.kd]=1}});
+    Object.keys(seen).forEach(function(z){n++;if(!map[z])B("PTK unmapped "+key+" "+z)});Object.keys(map).forEach(function(z){if(!seen[z])B("PTK stale "+key+" "+z)})});
+  print("ptk forms "+n+" gaps "+gap.join(",")+" bad "+bad)})();
 print("practice: grades "+Object.keys(GR).length+" made "+tot+" figs "+figN+" bad "+bad);
