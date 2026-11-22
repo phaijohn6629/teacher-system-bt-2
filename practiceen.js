@@ -487,19 +487,19 @@ G10[13]={1:L(
 /* 14 Vectors */
 G10[14]={1:L(
  function(){var a=[nz(-6,6),nz(-6,6)],b=[nz(-6,6),nz(-6,6)];
-   return K("va","$\\mathbf a="+cv(a)+"$ and $\\mathbf b="+cv(b)+"$. Find $\\mathbf a+\\mathbf b$.",[A(a[0]+b[0],null,"num","x ="),A(a[1]+b[1],null,"num","y =")],"$"+cv([a[0]+b[0],a[1]+b[1]])+"$")},
+   return K("va","$\\mathbf a="+cv(a)+"$ and $\\mathbf b="+cv(b)+"$. Find $\\mathbf a+\\mathbf b$.",[A(a[0]+b[0],null,"num","x ="),A(a[1]+b[1],null,"num","y =")],"$"+cv([a[0]+b[0],a[1]+b[1]])+"$",GF.vec({v:[{n:"a",v:a},{n:"b",v:b}]}))},
  function(){var a=[nz(-5,5),nz(-5,5)],b=[nz(-5,5),nz(-5,5)],p=ri(2,4),q=ri(1,3);
-   return K("vc","$\\mathbf a="+cv(a)+"$ and $\\mathbf b="+cv(b)+"$. Find $"+p+"\\mathbf a-"+(q===1?"":q)+"\\mathbf b$.",[A(p*a[0]-q*b[0],null,"num","x ="),A(p*a[1]-q*b[1],null,"num","y =")],"$"+cv([p*a[0]-q*b[0],p*a[1]-q*b[1]])+"$")}),
+   return K("vc","$\\mathbf a="+cv(a)+"$ and $\\mathbf b="+cv(b)+"$. Find $"+p+"\\mathbf a-"+(q===1?"":q)+"\\mathbf b$.",[A(p*a[0]-q*b[0],null,"num","x ="),A(p*a[1]-q*b[1],null,"num","y =")],"$"+cv([p*a[0]-q*b[0],p*a[1]-q*b[1]])+"$",GF.vec({v:[{n:"a",v:a},{n:"b",v:b}]}))}),
  2:L(
  function(){var v=[nz(-9,9),nz(-9,9)],m=v[0]*v[0]+v[1]*v[1];
    return K("vm","Find the exact magnitude of $"+cv(v)+"$.",[A("sqrt("+m+")",sqT(m),"num","|v| =")],"$\\sqrt{"+sgp(v[0])+"^2+"+sgp(v[1])+"^2}=\\sqrt{"+m+"}="+sqT(m)+"$")},
  function(){var P=[ri(-6,6),ri(-6,6)],B=[ri(-6,6),ri(-6,6)];
-   return K("vab","$A$ is the point $"+pt(P)+"$ and $B$ is the point $"+pt(B)+"$. Find $\\overrightarrow{AB}$ as a column vector.",[A(B[0]-P[0],null,"num","x ="),A(B[1]-P[1],null,"num","y =")],"$\\overrightarrow{AB}=\\mathbf b-\\mathbf a="+cv([B[0]-P[0],B[1]-P[1]])+"$")}),
+   return K("vab","$A$ is the point $"+pt(P)+"$ and $B$ is the point $"+pt(B)+"$. Find $\\overrightarrow{AB}$ as a column vector.",[A(B[0]-P[0],null,"num","x ="),A(B[1]-P[1],null,"num","y =")],"$\\overrightarrow{AB}=\\mathbf b-\\mathbf a="+cv([B[0]-P[0],B[1]-P[1]])+"$",GF.vec({v:[{n:"A",v:P},{n:"B",v:B}],q:{n:"?",v:[B[0]-P[0],B[1]-P[1]],from:P}}))}),
  3:L(
  function(){var u=[nz(-4,4),nz(-4,4)],k=pick([2,3,-2,-1]),y=u[1]*k;
    return K("vpar","$\\begin{pmatrix}"+k*u[0]+"\\\\ t\\end{pmatrix}$ is parallel to $"+cv(u)+"$. Find $t$.",[A(y,null,"num","t =")],"Parallel vectors are multiples: $"+k*u[0]+"="+k+"\\times"+sgp(u[0])+"$, so $t="+k+"\\times"+sgp(u[1])+"="+y+"$.")},
  function(){var a=[nz(-5,5),nz(-5,5)],b=[nz(-5,5),nz(-5,5)],v=[2*a[0]+b[0],2*a[1]+b[1]],m=Math.sqrt(v[0]*v[0]+v[1]*v[1]);if(!m){v=[3,4];m=5}
-   return K("vm2","$\\mathbf a="+cv(a)+"$ and $\\mathbf b="+cv(b)+"$. Calculate $|2\\mathbf a+\\mathbf b|$. "+DP,[A(nf(m),null,"num","=")],"$2\\mathbf a+\\mathbf b="+cv(v)+"$, magnitude $=\\sqrt{"+(v[0]*v[0]+v[1]*v[1])+"}="+r2(m)+"$")})};
+   return K("vm2","$\\mathbf a="+cv(a)+"$ and $\\mathbf b="+cv(b)+"$. Calculate $|2\\mathbf a+\\mathbf b|$. "+DP,[A(nf(m),null,"num","=")],"$2\\mathbf a+\\mathbf b="+cv(v)+"$, magnitude $=\\sqrt{"+(v[0]*v[0]+v[1]*v[1])+"}="+r2(m)+"$",GF.vec({v:[{n:"a",v:a},{n:"b",v:b}]}))})};
 /* 15 Statistics */
 G10[15]={1:L(G9[12][1],G9[12][2]),2:L(G9[12][3],G9[12][2]),
  3:L(G9[12][3],
@@ -939,6 +939,14 @@ var GF=(function(){
   for(i=0;i<6;i++)cm.push("right "+xy(V[(i+5)%6])+" "+xy(V[i])+" "+xy(V[(i+1)%6]));
   side(tx,V[0],V[1],g,W+" cm");side(tx,V[5],V[0],g,H+" cm");tx.push([(V[3][0]+V[4][0])/2,(V[3][1]+V[4][1])/2,h+" cm",-1,0]);tx.push([(V[2][0]+V[3][0])/2,(V[2][1]+V[3][1])/2,w+" cm",0,-1]);
   return FB(pts,cm,{tx:tx})}
+ /* GF.vec({v:[{n:"a",v:[x,y]},…] វ៉ិចទ័រដែលសំណួរឱ្យ (គូរពី O) · q:{n:"?",v:[x,y],from:[x,y]} វ៉ិចទ័រចម្លើយ៖ គូរតែទិសគំនូស ដាក់ «?» មិនបង្ហាញតម្លៃ}) */
+ function vec(o){try{var cm=[],tx=[],pts={_o:[0,0,""]},cl=["blue","red","green"],nm=0;
+  function one(z,col,f){var F=f||[0,0],T=[F[0]+z.v[0],F[1]+z.v[1]],L=Math.hypot(z.v[0],z.v[1])||1,mx=(F[0]+T[0])/2,my=(F[1]+T[1])/2;
+   pts["_"+(nm++)]=[T[0],T[1],""];cm.push("vec "+xy(F)+" "+xy(T)+" "+col);tx.push([mx,my,z.n,-z.v[1]/L,z.v[0]/L,0])}
+  (o.v||[]).forEach(function(z,i){one(z,cl[i%3])});
+  if(o.q)one(o.q,"gray",o.q.from);
+  pts.O=[0,0,"sw"];
+  return FB(pts,cm,{tx:tx,axes:true})}catch(e){return""}}
  function pe(c){var n=c.length-1,s="";c.forEach(function(v,i){var e=n-i;if(!v)return;var a=Math.abs(v),t=e===0?String(a):(a===1?"":a+"*")+(e===1?"x":"x^"+e);s+=(v<0?"-":(s?"+":""))+t});return s||"0"}
  function curve(o){var FG=window.FIG;if(!FG||!FG.parse)throw"FIG";
   var W=380,PAD=14,sc=!!o.sc,cm=[],obs=[],labs=[],fs=[],pts=[],sg=[],j,k;
@@ -1014,7 +1022,7 @@ var GF=(function(){
   (o.hl||[]).forEach(function(z){if(!z.t)return;var Y=py(z.y),cw=z.t.length*6.6,cs=[];for(var q=0;q<8;q++){var X=W-PAD-6-cw-q*38;cs.push({b:[X,Y-15,X+cw,Y-2],bl:[X,Y-5]},{b:[X,Y+4,X+cw,Y+17],bl:[X,Y+15]})}place(cs,function(c){txt(c.bl[0],c.bl[1],z.t,"gray")})});
   (o.tx||[]).forEach(function(z){place(tbox(px(z[0]),py(z[1]),"",z[2]),function(c){txt(c.bl[0],c.bl[1],z[2],z[3]||"black")})});
   return cm.join("\n")}
- return{curve:curve,pe:pe,stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rays:rays,lshape:lshape,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
+ return{curve:curve,pe:pe,stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rays:rays,lshape:lshape,vec:vec,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
