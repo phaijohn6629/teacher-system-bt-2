@@ -36,11 +36,11 @@ G[21]={1:function(){var a=ri(1,9),b=ri(1,9),op=pick(["\\land","\\lor"]),p=a>b,q=
   3:function(){var a=ri(1,9),b=ri(1,9),p=a<b,q=a+b>10,v=!(p&&q);
     return Q("គេឱ្យសំណើ $p$៖ «$"+a+"<"+b+"$» និងសំណើ $q$៖ «$"+a+"+"+b+">10$»។ ចូរកំណត់តម្លៃនៃសំណើបដិសេធ $\\overline{p\\land q}$ ។ ($1$ = ពិត · $0$ = មិនពិត)",[A(v?1:0,null,"num","តម្លៃ =")],"$p\\land q$ "+(p&&q?"ពិត":"មិនពិត")+" ⇒ សំណើបដិសេធរបស់វា "+(v?"ពិត":"មិនពិត"))}};
 G[22]={1:function(){var c=ri(1,4),a=ri(1,4),b=ri(1,4);
-    return Q("គេឱ្យសំណុំ $A$ និង $B$ ដែល $n(A)="+(c+a)+"$ , $n(B)="+(c+b)+"$ និង $n(A\\cap B)="+c+"$ ។ គណនា $n(A\\cup B)$",[A(c+a+b,null,"num","n(A∪B) =")],"$n(A\\cup B)=n(A)+n(B)-n(A\\cap B)="+(c+a)+"+"+(c+b)+"-"+c+"="+(c+a+b)+"$")},
+    return Q("គេឱ្យសំណុំ $A$ និង $B$ ដែល $n(A)="+(c+a)+"$ , $n(B)="+(c+b)+"$ និង $n(A\\cap B)="+c+"$ ។ គណនា $n(A\\cup B)$",[A(c+a+b,null,"num","n(A∪B) =")],"$n(A\\cup B)=n(A)+n(B)-n(A\\cap B)="+(c+a)+"+"+(c+b)+"-"+c+"="+(c+a+b)+"$",GFV({k:2,lab:{ab:String(c),a:"?",b:"?"},cap:["n(A) = "+(c+a)+" · n(B) = "+(c+b)],shade:["a","ab","b"]}))},
   2:function(){var N=ri(8,20),a=ri(2,N-2);
-    return Q("គេឱ្យសំណុំសកល $U$ មាន $n(U)="+N+"$ ធាតុ ហើយ $n(A)="+a+"$ ។ គណនា $n(A^c)$ (សំណុំបំពេញនៃ $A$)",[A(N-a,null,"num","n(A^c) =")],"$n(A^c)=n(U)-n(A)="+N+"-"+a+"="+(N-a)+"$")},
+    return Q("គេឱ្យសំណុំសកល $U$ មាន $n(U)="+N+"$ ធាតុ ហើយ $n(A)="+a+"$ ។ គណនា $n(A^c)$ (សំណុំបំពេញនៃ $A$)",[A(N-a,null,"num","n(A^c) =")],"$n(A^c)=n(U)-n(A)="+N+"-"+a+"="+(N-a)+"$",GFV({k:1,lab:{a:String(a),out:"?"},cap:["n(U) = "+N]}))},
   3:function(){var c=ri(1,5),a=ri(1,5),b=ri(1,5);
-    return Q("គេឱ្យ $n(A)="+(c+a)+"$ , $n(B)="+(c+b)+"$ និង $n(A\\cup B)="+(c+a+b)+"$ ។ គណនា $n(A\\cap B)$",[A(c,null,"num","n(A∩B) =")],"$n(A\\cap B)=n(A)+n(B)-n(A\\cup B)="+(c+a)+"+"+(c+b)+"-"+(c+a+b)+"="+c+"$")}};
+    return Q("គេឱ្យ $n(A)="+(c+a)+"$ , $n(B)="+(c+b)+"$ និង $n(A\\cup B)="+(c+a+b)+"$ ។ គណនា $n(A\\cap B)$",[A(c,null,"num","n(A∩B) =")],"$n(A\\cap B)=n(A)+n(B)-n(A\\cup B)="+(c+a)+"+"+(c+b)+"-"+(c+a+b)+"="+c+"$",GFV({k:2,lab:{a:"?",ab:"?",b:"?"},cap:["n(A) = "+(c+a)+" · n(B) = "+(c+b),"n(A ∪ B) = "+(c+a+b)],shade:["ab"]}))}};
 G[23]={1:function(){var a=ri(-10,10);
     return Q("គណនាតម្លៃដាច់ខាត $|"+a+"|$", [A(Math.abs(a),null,"num","|"+a+"| =")], "$|"+a+"|="+Math.abs(a)+"$")},
   2:function(){var a=ri(2,20);
@@ -78,6 +78,8 @@ var TR=[[3,4,5],[6,8,10],[5,12,13],[8,6,10],[4,3,5]];
 /* 🖼 រូបត្រីកោណពី practiceen.js (PXEN.GF.rightTri / tri) — ហៅពេលបង្កើតសំណួរ · បើគ្មាន → គ្មានរូប (មិនបាក់) */
 function GFR(o){try{return window.PXEN.GF.rightTri(o)}catch(e){return ""}}
 function GFT(o){try{return window.PXEN.GF.tri(o)}catch(e){return ""}}
+/* 🖼 ដ្យាក្រាមវ៉ែន (PXEN.GF.venn) — "?" = តំបន់ដែលសំណួរសុំឱ្យរក (មិនបង្ហាញចម្លើយ) */
+function GFV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}
 var DG=Math.PI/180;
 function cosAng(a,b,c){return Math.acos((b*b+c*c-a*a)/(2*b*c))/DG}   /* មុំឈមជ្រុង a ពីជ្រុងទាំងបី */
 G[41]={1:function(){var P=[ri(-5,5),ri(-5,5)],Q2=[ri(-5,5),ri(-5,5)];
@@ -214,10 +216,10 @@ P4[21]=[function(){var a=ri(12,25),g=Math.random()<.5,v=a>=18||g;
       [A(v?1:0,null,"num","=")],"$p\\land q$ ៖ $p$ "+(s>=80?"ពិត":"មិនពិត")+" · $q$ "+(b<=3?"ពិត":"មិនពិត")+" ⇒ "+(v?"ពិត":"មិនពិត"))}];
 P4[22]=[function(){var E=ri(15,30),F=ri(8,20),U=E+F-ri(2,Math.min(E,F)-1);
     return Q("🗣️ ក្នុងថ្នាក់មួយ សិស្សរៀនអង់គ្លេស $"+E+"$ នាក់ រៀនបារាំង $"+F+"$ នាក់ ហើយសិស្សដែលរៀនយ៉ាងហោចណាស់មួយភាសា មាន $"+U+"$ នាក់។ តើមានសិស្សប៉ុន្មាននាក់ រៀនទាំងពីរភាសា?",
-      [A(E+F-U,null,"num","n(E∩F) =")],"$n(E\\cap F)=n(E)+n(F)-n(E\\cup F)="+E+"+"+F+"-"+U+"="+(E+F-U)+"$")},
+      [A(E+F-U,null,"num","n(E∩F) =")],"$n(E\\cap F)=n(E)+n(F)-n(E\\cup F)="+E+"+"+F+"-"+U+"="+(E+F-U)+"$",GFV({k:2,names:["E","F"],lab:{a:"?",ab:"?",b:"?"},cap:["n(E) = "+E+" · n(F) = "+F,"n(E ∪ F) = "+U],shade:["ab"]}))},
   function(){var T=ri(35,50),A0=ri(15,30),B0=ri(10,25),I=ri(2,Math.min(A0,B0)-2),N=T-(A0+B0-I);while(N<0){T++;N=T-(A0+B0-I)}
     return Q("📱 ស្ទង់មតិសិស្ស $"+T+"$ នាក់៖ $"+A0+"$ នាក់ប្រើ Facebook · $"+B0+"$ នាក់ប្រើ Telegram · $"+I+"$ នាក់ប្រើទាំងពីរ។ (ក) ប្រើយ៉ាងហោចណាស់មួយ? (ខ) មិនប្រើទាំងពីរ?",
-      [A(A0+B0-I,null,"num","(ក) ="),A(N,null,"num","(ខ) =")],"$n(A\\cup B)="+A0+"+"+B0+"-"+I+"="+(A0+B0-I)+"$ · $"+T+"-"+(A0+B0-I)+"="+N+"$")}];
+      [A(A0+B0-I,null,"num","(ក) ="),A(N,null,"num","(ខ) =")],"$n(A\\cup B)="+A0+"+"+B0+"-"+I+"="+(A0+B0-I)+"$ · $"+T+"-"+(A0+B0-I)+"="+N+"$",GFV({k:2,names:["F","T"],lab:{a:"?",ab:String(I),b:"?",out:"?"},cap:["n(U) = "+T,"n(F) = "+A0+" · n(T) = "+B0]}))}];
 P4[23]=[function(){var a=ri(20,60);
     return Q("🧱 ការ៉ូរាងការ៉េជ្រុង $"+a+"$ cm ។ គេចង់កាត់តាមអង្កត់ទ្រូង។ តើអង្កត់ទ្រូងវែងប៉ុន្មាន cm? (សរសេរជា $a\\sqrt b$ ឬទសភាគ)",
       [A(a+"*sqrt(2)",a+"\\sqrt2","num","d =")],"$d=\\sqrt{"+a+"^2+"+a+"^2}="+a+"\\sqrt2\\approx"+r2(a*Math.SQRT2)+"$ cm")},
@@ -408,12 +410,12 @@ vx(22,1,[
  function(){var A1=rset(ri(3,5),1,10),B=rset(ri(3,5),1,10),U=A1.concat(B.filter(function(x){return A1.indexOf(x)<0}));return K("s10_union","$A=\\{"+A1.join(",")+"\\}$ , $B=\\{"+B.join(",")+"\\}$ ។ រក $n(A\\cup B)$",[A(U.length,null,"num","=")],"$A\\cup B$ មាន $"+U.length+"$ ធាតុ")},
  function(){var n=ri(1,6);return K("s10_subs","សំណុំមួយមាន $"+n+"$ ធាតុ ។ តើវាមានសំណុំរងប៉ុន្មាន (រួមទាំង $\\varnothing$ និងខ្លួនវា)?",[A(Math.pow(2,n),null,"num","=")],"$2^{"+n+"}="+Math.pow(2,n)+"$")}]);
 vx(22,2,[
- function(){var a=ri(10,30),i=ri(1,a-1);return K("s10_diff_22","$n(A)="+a+"$ និង $n(A\\cap B)="+i+"$ ។ គណនា $n(A\\setminus B)$",[A(a-i,null,"num","=")],"$n(A\\setminus B)=n(A)-n(A\\cap B)="+(a-i)+"$")},
- function(){var u=ri(20,50),a=ri(5,u-1);return K("s10_comp_22","$n(U)="+u+"$ និង $n(A)="+a+"$ ($A\\subset U$) ។ គណនា $n(\\overline A)$",[A(u-a,null,"num","=")],"$"+u+"-"+a+"="+(u-a)+"$")},
- function(){var a=ri(10,30),b=ri(10,30),i=ri(1,Math.min(a,b)-1);return K("s10_inters","$n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cup B)="+(a+b-i)+"$ ។ គណនា $n(A\\cap B)$",[A(i,null,"num","=")],"$n(A\\cap B)=n(A)+n(B)-n(A\\cup B)="+i+"$")}]);
+ function(){var a=ri(10,30),i=ri(1,a-1);return K("s10_diff_22","$n(A)="+a+"$ និង $n(A\\cap B)="+i+"$ ។ គណនា $n(A\\setminus B)$",[A(a-i,null,"num","=")],"$n(A\\setminus B)=n(A)-n(A\\cap B)="+(a-i)+"$",GFV({k:2,lab:{ab:String(i),a:"?"},cap:["n(A) = "+a],shade:["a"]}))},
+ function(){var u=ri(20,50),a=ri(5,u-1);return K("s10_comp_22","$n(U)="+u+"$ និង $n(A)="+a+"$ ($A\\subset U$) ។ គណនា $n(\\overline A)$",[A(u-a,null,"num","=")],"$"+u+"-"+a+"="+(u-a)+"$",GFV({k:1,lab:{a:String(a),out:"?"},cap:["n(U) = "+u]}))},
+ function(){var a=ri(10,30),b=ri(10,30),i=ri(1,Math.min(a,b)-1);return K("s10_inters","$n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cup B)="+(a+b-i)+"$ ។ គណនា $n(A\\cap B)$",[A(i,null,"num","=")],"$n(A\\cap B)=n(A)+n(B)-n(A\\cup B)="+i+"$",GFV({k:2,lab:{a:"?",ab:"?",b:"?"},cap:["n(A) = "+a+" · n(B) = "+b,"n(A ∪ B) = "+(a+b-i)],shade:["ab"]}))}]);
 vx(22,3,[
- function(){var a=ri(10,25),b=ri(10,25),i=ri(2,Math.min(a,b)-2);return K("s10_only","ក្នុងក្រុមមួយ $"+a+"$ នាក់ចេះអង់គ្លេស $"+b+"$ នាក់ចេះបារាំង និង $"+i+"$ នាក់ចេះទាំងពីរ ។ តើប៉ុន្មាននាក់ចេះតែអង់គ្លេស?",[A(a-i,null,"num","=")],"$"+a+"-"+i+"="+(a-i)+"$")},
- function(){var ab=ri(2,5),bc=ri(2,5),ca=ri(2,5),abc=ri(1,Math.min(ab,bc,ca)-0),a=ab+ca+ri(2,8),b=ab+bc+ri(2,8),c=bc+ca+ri(2,8),U=a+b+c-ab-bc-ca+abc;return K("s10_three","$n(A)="+a+"$ , $n(B)="+b+"$ , $n(C)="+c+"$ , $n(A\\cap B)="+ab+"$ , $n(B\\cap C)="+bc+"$ , $n(C\\cap A)="+ca+"$ , $n(A\\cap B\\cap C)="+abc+"$ ។ គណនា $n(A\\cup B\\cup C)$",[A(U,null,"num","=")],"$"+(a+b+c)+"-"+(ab+bc+ca)+"+"+abc+"="+U+"$")},
+ function(){var a=ri(10,25),b=ri(10,25),i=ri(2,Math.min(a,b)-2);return K("s10_only","ក្នុងក្រុមមួយ $"+a+"$ នាក់ចេះអង់គ្លេស $"+b+"$ នាក់ចេះបារាំង និង $"+i+"$ នាក់ចេះទាំងពីរ ។ តើប៉ុន្មាននាក់ចេះតែអង់គ្លេស?",[A(a-i,null,"num","=")],"$"+a+"-"+i+"="+(a-i)+"$",GFV({k:2,names:["E","F"],lab:{ab:String(i),a:"?"},cap:["n(E) = "+a+" · n(F) = "+b],shade:["a"]}))},
+ function(){var ab=ri(2,5),bc=ri(2,5),ca=ri(2,5),abc=ri(1,Math.min(ab,bc,ca)-0),a=ab+ca+ri(2,8),b=ab+bc+ri(2,8),c=bc+ca+ri(2,8),U=a+b+c-ab-bc-ca+abc;return K("s10_three","$n(A)="+a+"$ , $n(B)="+b+"$ , $n(C)="+c+"$ , $n(A\\cap B)="+ab+"$ , $n(B\\cap C)="+bc+"$ , $n(C\\cap A)="+ca+"$ , $n(A\\cap B\\cap C)="+abc+"$ ។ គណនា $n(A\\cup B\\cup C)$",[A(U,null,"num","=")],"$"+(a+b+c)+"-"+(ab+bc+ca)+"+"+abc+"="+U+"$",GFV({k:3,lab:{abc:String(abc),a:"?",b:"?",c:"?",ab:"?",bc:"?",ca:"?",out:"?"},cap:["n(A) = "+a+" · n(B) = "+b+" · n(C) = "+c,"n(A∩B) = "+ab+" · n(B∩C) = "+bc+" · n(C∩A) = "+ca]}))},
  function(){var N=pick([30,50,60,100]),p=pick([2,3,4,5]),q=pick([3,5,6,7]);while(q===p)q++;var n=Math.floor(N/p)+Math.floor(N/q)-Math.floor(N/lcm(p,q));return K("s10_atl","តើមានចំនួនគត់ពី $1$ ដល់ $"+N+"$ ប៉ុន្មាន ដែលចែកដាច់នឹង $"+p+"$ ឬ $"+q+"$ ?",[A(n,null,"num","=")],"$"+Math.floor(N/p)+"+"+Math.floor(N/q)+"-"+Math.floor(N/lcm(p,q))+"="+n+"$ (ដក ពហុគុណនៃ $"+lcm(p,q)+"$)")}]);
 /* ២.២ សំណុំ (set10_)៖ បង្កើតចំនួនតំបន់មុន រួចសរសេរសំណុំ/រឿងពិត */
 function set10Pool(n){var s=[];while(s.length<n){var v=ri(1,30);if(s.indexOf(v)<0)s.push(v)}return s}
@@ -423,6 +425,7 @@ function set10Three(){var o=ri(2,9),p=ri(2,9),c=ri(2,9),x=ri(1,6),y=ri(1,6),z=ri
   var T=["គណិតវិទ្យា","រូបវិទ្យា","គីមីវិទ្យា"],L=["M","P","C"];
   return {txt:"📊 ស្ទង់មតិសិស្សសរុប $"+N+"$ នាក់ អំពីមុខវិជ្ជាដែលពួកគេរៀនបន្ថែម (គណិតវិទ្យា $M$ · រូបវិទ្យា $P$ · គីមីវិទ្យា $C$) ៖ $n(M)="+nA+"$ , $n(P)="+nB+"$ , $n(C)="+nC+"$ , $n(M\\cap P)="+(x+w)+"$ , $n(M\\cap C)="+(y+w)+"$ , $n(P\\cap C)="+(z+w)+"$ , $n(M\\cap P\\cap C)="+w+"$ ។ ",
     a:[A(o,null,"num","តែ M ="),A(x,null,"num","M∩P មិនC ="),A(d,null,"num","គ្មានមុខវិជ្ជាណា ="),A(o+p+c,null,"num","តែមួយមុខ =")],
+    f:GFV({k:3,names:["M","P","C"],lab:{abc:String(w),a:"?",b:"?",c:"?",ab:"?",bc:"?",ca:"?",out:"?"},cap:["n(U) = "+N+" · n(M) = "+nA+" · n(P) = "+nB,"n(C) = "+nC+" · n(M∩P) = "+(x+w),"n(M∩C) = "+(y+w)+" · n(P∩C) = "+(z+w)]}),
     s:"តែ $M$ $="+nA+"-"+(x+w)+"-"+(y+w)+"+"+w+"="+o+"$ · $M\\cap P$ មិន $C$ $="+(x+w)+"-"+w+"="+x+"$ · $n(M\\cup P\\cup C)="+(N-d)+"$ ⇒ គ្មាន $="+N+"-"+(N-d)+"="+d+"$ · តែមួយមុខ $="+o+"+"+p+"+"+c+"="+(o+p+c)+"$"}}
 vx(22,1,[
  function(){var c=ri(1,4),a=ri(1,4),b=ri(1,4),pl=set10Pool(c+a+b),A1=set10Srt(pl.slice(0,c+a)),B1=set10Srt(pl.slice(0,c).concat(pl.slice(c+a)));
@@ -433,15 +436,15 @@ vx(22,1,[
    return K("set10_pwr","សំណុំ $A$ មានសំណុំរងទាំងអស់ $"+Math.pow(2,n)+"$ ។ រក $n(A)$ និងចំនួនសំណុំរងដែលមិនទទេ",[A(n,null,"num","n(A) ="),A(Math.pow(2,n)-1,null,"num","មិនទទេ =")],"$2^n="+Math.pow(2,n)+"$ ⇒ $n="+n+"$ · ដក $\\varnothing$ ⇒ $"+(Math.pow(2,n)-1)+"$")}]);
 vx(22,2,[
  function(){var o1=ri(3,12),o2=ri(3,12),b=ri(2,10),nn=ri(1,8),T=o1+o2+b+nn,m=o1+b,p=o2+b;
-   return K("set10_ie","ក្នុងថ្នាក់មួយមានសិស្ស $"+T+"$ នាក់ ។ $"+m+"$ នាក់លេងបាល់ទាត់ · $"+p+"$ នាក់លេងបាល់ទះ · $"+nn+"$ នាក់មិនលេងទាំងពីរ ។ រកចំនួនសិស្សលេងទាំងពីរ និងចំនួនសិស្សលេងតែបាល់ទាត់",[A(b,null,"num","ទាំងពីរ ="),A(o1,null,"num","តែបាល់ទាត់ =")],"លេងយ៉ាងតិចមួយ $="+T+"-"+nn+"="+(T-nn)+"$ · $n(F\\cap V)="+m+"+"+p+"-"+(T-nn)+"="+b+"$ · តែបាល់ទាត់ $="+m+"-"+b+"="+o1+"$")},
+   return K("set10_ie","ក្នុងថ្នាក់មួយមានសិស្ស $"+T+"$ នាក់ ។ $"+m+"$ នាក់លេងបាល់ទាត់ · $"+p+"$ នាក់លេងបាល់ទះ · $"+nn+"$ នាក់មិនលេងទាំងពីរ ។ រកចំនួនសិស្សលេងទាំងពីរ និងចំនួនសិស្សលេងតែបាល់ទាត់",[A(b,null,"num","ទាំងពីរ ="),A(o1,null,"num","តែបាល់ទាត់ =")],"លេងយ៉ាងតិចមួយ $="+T+"-"+nn+"="+(T-nn)+"$ · $n(F\\cap V)="+m+"+"+p+"-"+(T-nn)+"="+b+"$ · តែបាល់ទាត់ $="+m+"-"+b+"="+o1+"$",GFV({k:2,names:["F","V"],lab:{a:"?",ab:"?",b:"?",out:String(nn)},cap:["n(U) = "+T+" · n(F) = "+m+" · n(V) = "+p],shade:["ab"]}))},
  function(){var N=ri(30,60),pq=pick([[2,3],[2,5],[3,5],[3,4]]),a=Math.floor(N/pq[0]),b2=Math.floor(N/pq[1]),i=Math.floor(N/lcm(pq[0],pq[1])),u=a+b2-i;
    return K("set10_cm","សំណុំសកល $U=\\{1,2,\\dots,"+N+"\\}$ ។ $A$ ជាសំណុំពហុគុណនៃ $"+pq[0]+"$ និង $B$ ជាសំណុំពហុគុណនៃ $"+pq[1]+"$ ក្នុង $U$ ។ រក $n(A\\cup B)$ និង $n(\\overline{A\\cup B})$",[A(u,null,"num","n(A∪B) ="),A(N-u,null,"num","n(complement) =")],"$n(A)="+a+"$ , $n(B)="+b2+"$ , $n(A\\cap B)="+i+"$ ⇒ $n(A\\cup B)="+u+"$ · $n(\\overline{A\\cup B})="+N+"-"+u+"="+(N-u)+"$")},
  function(){var U=ri(30,80),a=ri(10,25),b=ri(10,25),i=ri(2,Math.min(a,b)-2);
    if(a+b-i>U)U=a+b-i+ri(1,10);
-   return K("set10_dm","$n(U)="+U+"$ , $n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cap B)="+i+"$ ។ រក $n(\\overline A\\cap\\overline B)$ និង $n(\\overline A\\cup\\overline B)$ (ច្បាប់ដឺម៉័រហ្គង់)",[A(U-(a+b-i),null,"num","n(Ā∩B̄) ="),A(U-i,null,"num","n(Ā∪B̄) =")],"$\\overline A\\cap\\overline B=\\overline{A\\cup B}$ ⇒ $"+U+"-"+(a+b-i)+"="+(U-(a+b-i))+"$ · $\\overline A\\cup\\overline B=\\overline{A\\cap B}$ ⇒ $"+U+"-"+i+"="+(U-i)+"$")}]);
+   return K("set10_dm","$n(U)="+U+"$ , $n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cap B)="+i+"$ ។ រក $n(\\overline A\\cap\\overline B)$ និង $n(\\overline A\\cup\\overline B)$ (ច្បាប់ដឺម៉័រហ្គង់)",[A(U-(a+b-i),null,"num","n(Ā∩B̄) ="),A(U-i,null,"num","n(Ā∪B̄) =")],"$\\overline A\\cap\\overline B=\\overline{A\\cup B}$ ⇒ $"+U+"-"+(a+b-i)+"="+(U-(a+b-i))+"$ · $\\overline A\\cup\\overline B=\\overline{A\\cap B}$ ⇒ $"+U+"-"+i+"="+(U-i)+"$",GFV({k:2,lab:{a:"?",ab:String(i),b:"?",out:"?"},cap:["n(U) = "+U,"n(A) = "+a+" · n(B) = "+b]}))}]);
 vx(22,3,[
- function(){var t=set10Three();return K("set10_3v",t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s)}]);
-P4[22].push(function(){var t=set10Three();return Q(t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s)});
+ function(){var t=set10Three();return K("set10_3v",t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)}]);
+P4[22].push(function(){var t=set10Three();return Q(t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)});
 /* ២.៣ ចំនួន */
 vx(23,1,[
  function(){var k=pick(NS.slice(0,5)),a=ri(1,5),b=ri(1,5);return K("s10_rad1","សរសេរ $\\sqrt{"+(a*a*k)+"}+\\sqrt{"+(b*b*k)+"}$ ជា $c\\sqrt{"+k+"}$ ។ រក $c$",[A(a+b,null,"num","c =")],"$"+(a===1?"":a)+"\\sqrt{"+k+"}+"+(b===1?"":b)+"\\sqrt{"+k+"}="+(a+b)+"\\sqrt{"+k+"}$")},

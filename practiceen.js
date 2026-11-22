@@ -681,7 +681,26 @@ var GF=(function(){
   else{cm.push("circle O "+Rr+" black");el(0,0,Rr,Rr*.3,Math.PI,2*Math.PI,false,"gray");el(0,0,Rr,Rr*.3,0,Math.PI,true,"gray");
    var ea=R*35,E=[Rr*Math.cos(ea),Rr*Math.sin(ea)];sg([0,0],E,"blue");if(o.lr)tx.push([E[0]/2,E[1]/2,o.lr,-Math.sin(ea),Math.cos(ea)]);ext=[[-Rr,-Rr],[Rr,Rr]]}
   return FB({_c:[0,k==="sph"?0:0,""]},cm,{tx:tx,ext:ext})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid}})();
+ /* GF.venn({k:1|2|3, names:["A","B","C"], U:"U", lab:{a,b,c,ab,bc,ca,abc,out} (ស្លាកតំបន់ — "?" = មិនស្គាល់), cap:["បន្ទាត់ពិពណ៌នា",…] (ក្រោមប្រអប់), shade:["a","ab","b"] (k=1,2: ពណ៌ស្រាលបញ្ជាក់តំបន់)})
+   តំបន់៖ a=A តែមួយ · b=B តែមួយ · c=C តែមួយ · ab=A∩B តែ (k=2៖ A∩B ទាំងមូល) · bc · ca · abc=ទាំង ៣ · out=ខាងក្រៅរង្វង់ក្នុងសំណុំសកល */
+ function venn(o){var k=o.k||2,nm=o.names||["A","B","C"],lab=o.lab||{},cm=[],tx=[],ext=[],sh=o.shade||[],cap=o.cap||[],Cs,Rr,rect,pos,nmp,i;
+  function arc(c,r,a0,a1,N){var q=[];for(var j=0;j<=N;j++){var a=(a0+(a1-a0)*j/N)*R;q.push([c[0]+r*Math.cos(a),c[1]+r*Math.sin(a)])}return q}
+  function fill(q,col){var z="poly "+q.map(xy).join(" ")+" "+col;cm.push(z,z,z)}
+  if(k===1){Cs=[[0,0]];Rr=1.1;rect=[-2,-1.5,2,1.5];pos={a:[0,0],out:[1.4,-1.0]};nmp=[[-.78,.78]]}
+  else if(k===2){var d=.65,r=1.25,ph=Math.acos(d/r)/R;Cs=[[-d,0],[d,0]];Rr=r;rect=[-2.6,-1.7,2.6,1.7];pos={a:[-1.25,0],ab:[0,0],b:[1.25,0],out:[0,-1.45]};nmp=[[-1.53,.88],[1.53,.88]];
+   if(sh.indexOf("ab")>=0)fill(arc(Cs[0],r,-ph,ph,16).concat(arc(Cs[1],r,180-ph,180+ph,16)),"blue");
+   if(sh.indexOf("a")>=0)fill(arc(Cs[0],r,ph,360-ph,30).concat(arc(Cs[1],r,180+ph,180-ph,16)),"blue");
+   if(sh.indexOf("b")>=0)fill(arc(Cs[1],r,-(180-ph),180-ph,30).concat(arc(Cs[0],r,ph,-ph,16)),"blue")}
+  else{Cs=[[-.62,.45],[.62,.45],[0,-.62]];Rr=1.1;rect=[-2.4,-2.2,2.4,1.9];pos={a:[-1.15,.75],b:[1.15,.75],c:[0,-1.2],ab:[0,.85],ca:[-.7,-.25],bc:[.7,-.25],abc:[0,.05],out:[1.85,-1.85]};nmp=[[-1.4,1.23],[1.4,1.23],[.78,-1.4]]}
+  cm.push("poly "+xy([rect[0],rect[1]])+" "+xy([rect[2],rect[1]])+" "+xy([rect[2],rect[3]])+" "+xy([rect[0],rect[3]])+" gray");
+  var COL=["blue","red","green"];Cs.forEach(function(c,j){cm.push("circle "+xy(c)+" "+Rr+" "+COL[j])});
+  tx.push([rect[0]+.22,rect[3]-.25,o.U||"U",0,0]);
+  Cs.forEach(function(c,j){var q=nmp[j],dx=q[0]-c[0],dy=q[1]-c[1],l=Math.hypot(dx,dy)||1;tx.push([q[0],q[1],nm[j],dx/l,dy/l])});
+  Object.keys(pos).forEach(function(z){if(lab[z]!=null&&lab[z]!=="")tx.push([pos[z][0],pos[z][1],String(lab[z]),0,0])});
+  cap.forEach(function(t,j){tx.push([0,rect[1]-.4-j*.34,t,0,0])});
+  ext=[[rect[0],rect[1]-.4-Math.max(0,cap.length-1)*.34-.3],[rect[2],rect[3]]];
+  return FB({},cm,{tx:tx,ext:ext})}
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
