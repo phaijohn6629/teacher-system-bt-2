@@ -30,5 +30,5 @@ if(X.check("11∛5","11*5^(1/2)","num").ok)B("ROOT false positive");
 try{eval(read("fig.js"))}catch(e){B("FIGLOAD "+e)}
 var figN=0;if(window.FIG)Object.keys(GR).forEach(function(g){var G=GR[g].G;Object.keys(G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){if(!G[l][v])return;for(var i=0;i<40;i++){var q=G[l][v]();if(!q.fig)continue;figN++;var h;try{h=window.FIG.svg(q.fig)}catch(e){B("FIGTHROW g"+g+" l"+l+" v"+v+" "+(q.kd||"")+" "+e);continue}
   if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("FIGBAD g"+g+" l"+l+" v"+v+" "+(q.kd||"")+" "+q.fig.slice(0,120))}})})});
-[[109,8],[109,9],[106,9],[107,9],[108,9],[106,10],[109,10],[110,11],[106,11]].forEach(function(c){var n=0;[1,2,3].forEach(function(v){for(var i=0;i<60;i++){if(GR[c[0]].G[c[1]][v]().fig)n++}});if(n<20)B("FIGCOV g"+c[0]+" l"+c[1]+" only "+n+" figs")});
+[[109,8],[109,9],[106,9],[107,9],[108,9],[106,10],[109,10],[110,11],[106,11],[110,12],[110,13]].forEach(function(c){var n=0;[1,2,3].forEach(function(v){for(var i=0;i<60;i++){if(GR[c[0]].G[c[1]][v]().fig)n++}});if(n<20)B("FIGCOV g"+c[0]+" l"+c[1]+" only "+n+" figs")});
 print("practice: grades "+Object.keys(GR).length+" made "+tot+" figs "+figN+" bad "+bad);

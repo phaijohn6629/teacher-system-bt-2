@@ -410,35 +410,35 @@ G10[11]={1:L(
 G10[12]={1:L(
  function(){var t=ri(20,70),h=ri(5,20),f=pick(["sin","cos","tan"]),v=f==="sin"?h*Math.sin(t*D):f==="cos"?h*Math.cos(t*D):h*Math.tan(t*D);
    var q=f==="tan"?"In triangle $ABC$, angle $B=90^\\circ$, angle $A="+t+"^\\circ$ and $AB="+h+"$ cm. Calculate $BC$.":"In triangle $ABC$, angle $B=90^\\circ$, angle $A="+t+"^\\circ$ and the hypotenuse $AC="+h+"$ cm. Calculate "+(f==="sin"?"$BC$":"$AB$")+".";
-   return K("tr1",q+" "+DP,[A(nf(v),null,"num","cm")],(f==="sin"?"$BC=AC\\sin A":f==="cos"?"$AB=AC\\cos A":"$BC=AB\\tan A")+"="+h+"\\"+f+t+"^\\circ="+r2(v)+"$ cm")},
+   return K("tr1",q+" "+DP,[A(nf(v),null,"num","cm")],(f==="sin"?"$BC=AC\\sin A":f==="cos"?"$AB=AC\\cos A":"$BC=AB\\tan A")+"="+h+"\\"+f+t+"^\\circ="+r2(v)+"$ cm",GF.rightTri({w:Math.tan(t*D),h:1,base:f==="cos"?"":"x cm",height:f==="tan"?h+" cm":f==="cos"?"x cm":"",hyp:f==="tan"?"":h+" cm",ang:{at:"A",lab:t+"°"}}))},
  function(){var a=ri(3,15),b=ri(3,15),t=Math.atan(a/b)/D;
-   return K("tr2","In a right-angled triangle, the side opposite angle $x$ is $"+a+"$ cm and the side adjacent to angle $x$ is $"+b+"$ cm. Calculate $x$. "+DP,[A(nf(t),null,"num","x =")],"$\\tan x=\\dfrac{"+a+"}{"+b+"}\\Rightarrow x=\\tan^{-1}\\left(\\dfrac{"+a+"}{"+b+"}\\right)="+r2(t)+"^\\circ$")}),
+   return K("tr2","In a right-angled triangle, the side opposite angle $x$ is $"+a+"$ cm and the side adjacent to angle $x$ is $"+b+"$ cm. Calculate $x$. "+DP,[A(nf(t),null,"num","x =")],"$\\tan x=\\dfrac{"+a+"}{"+b+"}\\Rightarrow x=\\tan^{-1}\\left(\\dfrac{"+a+"}{"+b+"}\\right)="+r2(t)+"^\\circ$",GF.rightTri({names:"",w:b,h:a,base:b+" cm",height:a+" cm",ang:{at:"C",lab:"x°"}}))}),
  2:L(
  function(){var A1=ri(30,80),B1=ri(30,80),a=ri(5,20),b=a*Math.sin(B1*D)/Math.sin(A1*D);
-   return K("sr","In triangle $ABC$, $a="+a+"$ cm, angle $A="+A1+"^\\circ$ and angle $B="+B1+"^\\circ$. Use the sine rule to calculate $b$. "+DP,[A(nf(b),null,"num","b =")],"$\\dfrac{b}{\\sin B}=\\dfrac{a}{\\sin A}\\Rightarrow b=\\dfrac{"+a+"\\sin"+B1+"^\\circ}{\\sin"+A1+"^\\circ}="+r2(b)+"$ cm")},
+   return K("sr","In triangle $ABC$, $a="+a+"$ cm, angle $A="+A1+"^\\circ$ and angle $B="+B1+"^\\circ$. Use the sine rule to calculate $b$. "+DP,[A(nf(b),null,"num","b =")],"$\\dfrac{b}{\\sin B}=\\dfrac{a}{\\sin A}\\Rightarrow b=\\dfrac{"+a+"\\sin"+B1+"^\\circ}{\\sin"+A1+"^\\circ}="+r2(b)+"$ cm",GF.tri({ang:[A1,B1,180-A1-B1],lab:{A:A1+"°",B:B1+"°",a:a+" cm",b:"b"}}))},
  function(){var b=ri(4,15),c=ri(4,15),A1=ri(30,120),a=Math.sqrt(b*b+c*c-2*b*c*Math.cos(A1*D));
-   return K("cr","In triangle $ABC$, $b="+b+"$ cm, $c="+c+"$ cm and angle $A="+A1+"^\\circ$. Calculate $a$. "+DP,[A(nf(a),null,"num","a =")],"$a^2=b^2+c^2-2bc\\cos A="+b*b+"+"+c*c+"-2\\times"+b+"\\times"+c+"\\cos"+A1+"^\\circ\\Rightarrow a="+r2(a)+"$ cm")}),
+   return K("cr","In triangle $ABC$, $b="+b+"$ cm, $c="+c+"$ cm and angle $A="+A1+"^\\circ$. Calculate $a$. "+DP,[A(nf(a),null,"num","a =")],"$a^2=b^2+c^2-2bc\\cos A="+b*b+"+"+c*c+"-2\\times"+b+"\\times"+c+"\\cos"+A1+"^\\circ\\Rightarrow a="+r2(a)+"$ cm",(function(){var Bn=Math.acos((a*a+c*c-b*b)/(2*a*c))/D;return GF.tri({ang:[A1,Bn,180-A1-Bn],lab:{A:A1+"°",a:"a",b:b+" cm",c:c+" cm"}})})())}),
  3:L(
  function(){var a,b,c;do{a=ri(4,15);b=ri(4,15);c=ri(4,15)}while(a+b<=c||a+c<=b||b+c<=a);var A1=Math.acos((b*b+c*c-a*a)/(2*b*c))/D;
-   return K("ca2","A triangle has sides $a="+a+"$ cm, $b="+b+"$ cm and $c="+c+"$ cm. Calculate angle $A$. "+DP,[A(nf(A1),null,"num","A =")],"$\\cos A=\\dfrac{b^2+c^2-a^2}{2bc}=\\dfrac{"+(b*b+c*c-a*a)+"}{"+2*b*c+"}\\Rightarrow A="+r2(A1)+"^\\circ$")},
+   return K("ca2","A triangle has sides $a="+a+"$ cm, $b="+b+"$ cm and $c="+c+"$ cm. Calculate angle $A$. "+DP,[A(nf(A1),null,"num","A =")],"$\\cos A=\\dfrac{b^2+c^2-a^2}{2bc}=\\dfrac{"+(b*b+c*c-a*a)+"}{"+2*b*c+"}\\Rightarrow A="+r2(A1)+"^\\circ$",(function(){var Bn=Math.acos((a*a+c*c-b*b)/(2*a*c))/D;return GF.tri({ang:[A1,Bn,180-A1-Bn],lab:{A:"x°",a:a+" cm",b:b+" cm",c:c+" cm"}})})())},
  function(){var a=ri(4,15),b=ri(4,15),C=ri(25,150),S=0.5*a*b*Math.sin(C*D);
-   return K("tar","Two sides of a triangle are $"+a+"$ cm and $"+b+"$ cm and the angle between them is $"+C+"^\\circ$. Calculate the area of the triangle. "+DP,[A(nf(S),null,"num","cm²")],"$\\text{Area}=\\tfrac12ab\\sin C=\\tfrac12\\times"+a+"\\times"+b+"\\times\\sin"+C+"^\\circ="+r2(S)+"$ cm²")})};
+   return K("tar","Two sides of a triangle are $"+a+"$ cm and $"+b+"$ cm and the angle between them is $"+C+"^\\circ$. Calculate the area of the triangle. "+DP,[A(nf(S),null,"num","cm²")],"$\\text{Area}=\\tfrac12ab\\sin C=\\tfrac12\\times"+a+"\\times"+b+"\\times\\sin"+C+"^\\circ="+r2(S)+"$ cm²",(function(){var c2=Math.sqrt(a*a+b*b-2*a*b*Math.cos(C*D)),An=Math.acos((b*b+c2*c2-a*a)/(2*b*c2))/D;return GF.tri({ang:[An,180-An-C,C],lab:{C:C+"°",a:a+" cm",b:b+" cm"}})})())})};
 /* 13 Circle theorems */
 G10[13]={1:L(
  function(){var x=ri(20,85);
-   return K("cen","$O$ is the centre of a circle. $A$, $B$ and $C$ are points on the circle. Angle $ACB="+x+"^\\circ$. Find angle $AOB$.",[A(2*x,null,"num","AOB =")],"The angle at the centre is twice the angle at the circumference: $2\\times"+x+"="+2*x+"^\\circ$.")},
+   return K("cen","$O$ is the centre of a circle. $A$, $B$ and $C$ are points on the circle. Angle $ACB="+x+"^\\circ$. Find angle $AOB$.",[A(2*x,null,"num","AOB =")],"The angle at the centre is twice the angle at the circumference: $2\\times"+x+"="+2*x+"^\\circ$.",GF.circle({th:"cen",x:x,lab:{C:x+"°",O:"?"}}))},
  function(){var x=ri(15,75);
-   return K("semi","$AB$ is a diameter of a circle and $C$ is a point on the circle. Angle $CAB="+x+"^\\circ$. Find angle $ABC$.",[A(90-x,null,"num","ABC =")],"The angle in a semicircle is $90^\\circ$, so $ABC=180-90-"+x+"="+(90-x)+"^\\circ$.")}),
+   return K("semi","$AB$ is a diameter of a circle and $C$ is a point on the circle. Angle $CAB="+x+"^\\circ$. Find angle $ABC$.",[A(90-x,null,"num","ABC =")],"The angle in a semicircle is $90^\\circ$, so $ABC=180-90-"+x+"="+(90-x)+"^\\circ$.",GF.circle({th:"semi",x:x,lab:{A:x+"°",B:"?"}}))}),
  2:L(
  function(){var x=ri(50,130);
-   return K("cyc","$ABCD$ is a cyclic quadrilateral. Angle $DAB="+x+"^\\circ$. Find angle $BCD$.",[A(180-x,null,"num","BCD =")],"Opposite angles of a cyclic quadrilateral add up to $180^\\circ$: $180-"+x+"="+(180-x)+"^\\circ$.")},
+   return K("cyc","$ABCD$ is a cyclic quadrilateral. Angle $DAB="+x+"^\\circ$. Find angle $BCD$.",[A(180-x,null,"num","BCD =")],"Opposite angles of a cyclic quadrilateral add up to $180^\\circ$: $180-"+x+"="+(180-x)+"^\\circ$.",GF.circle({th:"cyc",x:x,lab:{A:x+"°",C:"?"}}))},
  function(){var x=ri(20,80);
-   return K("tan","$PA$ and $PB$ are tangents to a circle with centre $O$. Angle $APB="+x+"^\\circ$. Find angle $AOB$.",[A(180-x,null,"num","AOB =")],"A tangent is perpendicular to the radius, so $OAP=OBP=90^\\circ$. In quadrilateral $OAPB$: $AOB=360-90-90-"+x+"="+(180-x)+"^\\circ$.")}),
+   return K("tan","$PA$ and $PB$ are tangents to a circle with centre $O$. Angle $APB="+x+"^\\circ$. Find angle $AOB$.",[A(180-x,null,"num","AOB =")],"A tangent is perpendicular to the radius, so $OAP=OBP=90^\\circ$. In quadrilateral $OAPB$: $AOB=360-90-90-"+x+"="+(180-x)+"^\\circ$.",GF.circle({th:"tan",x:x,lab:{P:x+"°",O:"?"}}))}),
  3:L(
  function(){var x=ri(30,80);
-   return K("alt","$TA$ is a tangent to a circle at $A$. $AB$ is a chord and $C$ is a point on the major arc. Angle $TAB="+x+"^\\circ$. Find angle $ACB$.",[A(x,null,"num","ACB =")],"Alternate segment theorem: the angle between the tangent and the chord equals the angle in the alternate segment, so $ACB="+x+"^\\circ$.")},
+   return K("alt","$TA$ is a tangent to a circle at $A$. $AB$ is a chord and $C$ is a point on the major arc. Angle $TAB="+x+"^\\circ$. Find angle $ACB$.",[A(x,null,"num","ACB =")],"Alternate segment theorem: the angle between the tangent and the chord equals the angle in the alternate segment, so $ACB="+x+"^\\circ$.",GF.circle({th:"alt",x:x,lab:{A:x+"°",C:"?"}}))},
  function(){var x=ri(25,70),y=ri(25,70);
-   return K("seg","$A$, $B$, $C$ and $D$ lie on a circle. Angle $ADB="+x+"^\\circ$ and angle $DBC="+y+"^\\circ$. Find angle $ACB$ and angle $DAC$.",[A(x,null,"num","ACB ="),A(y,null,"num","DAC =")],"Angles in the same segment are equal: $ACB=ADB="+x+"^\\circ$ and $DAC=DBC="+y+"^\\circ$.")})};
+   return K("seg","$A$, $B$, $C$ and $D$ lie on a circle. Angle $ADB="+x+"^\\circ$ and angle $DBC="+y+"^\\circ$. Find angle $ACB$ and angle $DAC$.",[A(x,null,"num","ACB ="),A(y,null,"num","DAC =")],"Angles in the same segment are equal: $ACB=ADB="+x+"^\\circ$ and $DAC=DBC="+y+"^\\circ$.",GF.circle({th:"seg",x:x,y:y,lab:{D:x+"°",B:y+"°",C:"?",A:"?"}}))})};
 /* 14 Vectors */
 G10[14]={1:L(
  function(){var a=[nz(-6,6),nz(-6,6)],b=[nz(-6,6),nz(-6,6)];
@@ -491,7 +491,7 @@ function FB(pts,cmds,o){o=o||{};var xs=[],ys=[],k,L=[],r=function(v){return Math
   L=L.concat(cmds);
   /* o.tx=[[x,y,"ស្លាក",nx,ny]]៖ ស្លាកកណ្ដាលចំណុច (x,y) រុញទៅទិស (nx,ny) ក្រៅរូប — fig.js text ចាប់ពីខាងឆ្វេង ដូច្នេះគណនាទំហំអក្សរ (~6.6px/តួ) តាមមាត្រដ្ឋានរូប (W=380) */
   var xu=352/(x1-x0),yu=(Math.max(200,Math.min(460,380*(y1-y0)/(x1-x0)))-28)/(y1-y0);
-  (o.tx||[]).forEach(function(t){var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+7+(t[5]||0):0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
+  (o.tx||[]).forEach(function(t){var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+9+(t[5]||0):0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
     L.push("text ("+r(t[0]+nx*d/xu-hw/xu)+","+r(t[1]+ny*d/yu-4/yu)+") "+t[2])});if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
   return L.join("\n")}
 function mid(P,Q,dx,dy){return"("+(Math.round(((P[0]+Q[0])/2+(dx||0))*1000)/1000)+","+(Math.round(((P[1]+Q[1])/2+(dy||0))*1000)/1000)+")"}
@@ -532,12 +532,12 @@ var GF=(function(){
   if(o.base)tx.push([(B[0]+C[0])/2,B[1],o.base,0,-1]);
   if(o.height)tx.push([A[0],(A[1]+B[1])/2,o.height,-1,0]);
   side(tx,A,C,g,o.hyp);
-  if(o.ang){var atA=(o.ang.at==="A"||o.ang.at===N[0]),ia=atA?0:2,io=atA?2:0;cm.push("angle "+RN[1]+" "+RN[ia]+" "+RN[io]+" "+(o.ang.lab||""))}
+  if(o.ang){var atA=(o.ang.at==="A"||o.ang.at===N[0]),ia=atA?0:2,io=atA?2:0;wedge(cm,tx,P[N[ia]],B,P[N[io]],RN[ia],RN[1],RN[io],o.ang.lab,"in")}
   return FB(pts,cm,{tx:tx})}
  /* មុំមួយ៖ ធ្នូ (fig.js) + ស្លាកដាក់ដោយ tx — mode "in" = ក្នុងមុំ (ចម្ងាយតាមទំហំមុំ) · "out" = ក្រៅកំពូល */
  function wedge(cm,tx,V,p,q,Rv,Rp,Rq,t,mode){var u=out(V,p),w=out(V,q),b=out([0,0],[u[0]+w[0],u[1]+w[1]]),deg=Math.acos(Math.max(-1,Math.min(1,u[0]*w[0]+u[1]*w[1])))/R;
   cm.push("angle "+Rp+" "+Rv+" "+Rq);if(!t)return;
-  if(mode==="out")tx.push([V[0],V[1],t,-b[0],-b[1]]);else{var d=deg<30?1.2:deg<45?1.05:deg<65?.9:.75;tx.push([V[0]+b[0]*d,V[1]+b[1]*d,t,0,0])}}
+  if(mode==="out")tx.push([V[0],V[1],t,-b[0],-b[1]]);else{var d=mode==="in2"?(deg<30?.85:deg<45?.72:.6):(deg<30?1.2:deg<45?1.05:deg<65?.9:.75);tx.push([V[0]+b[0]*d,V[1]+b[1]*d,t,0,0])}}
  function xy(P){return"("+rf(P[0])+","+rf(P[1])+")"}
  /* GF.poly({n (3–12), reg:true (ពហុកោណធម្មតា), lab:[ស្លាកមុំក្នុង ក្រៅកំពូល…], int:{at,lab} (មុំក្នុងមួយ ស្លាកក្នុងមុំ), ext:{at,lab} (មុំក្រៅមួយ)}) — កំពូលគ្មានអក្សរ */
  function poly(o){var n=o.n,JA=[0,9,-7,6,-5,8],JR=[0,.13,-.08,.1,-.06,.07],P=[],reg=!!o.reg||o.int||o.ext,i,cm,tx=[],pts={},lab=o.lab||[];
@@ -581,7 +581,25 @@ var GF=(function(){
   if(o.mid)tx.push([g[0],g[1]*(k==="tri"?1:1),o.mid,0,0]);
   return FB(pts,cm,{tx:tx})}
  /* GF.circle({kind:"circle"|"sector", r (ស្លាកកាំ), d (ស្លាកអង្កត់ផ្ចិត — បើមាន គូរអង្កត់ផ្ចិតជំនួសកាំ), ang (ដឺក្រេ ចម្រៀក 20–160), arc (ស្លាកធ្នូ), angLab}) */
- function circle(o){var R0=1.6,cm=[],tx=[],pts={},t=R*30;
+ /* GF.circle({th:"cen|semi|cyc|tan|alt|seg", x,y (មុំដែលឱ្យ — រូបត្រូវមាត្រដ្ឋានពិត ព្រោះធ្នូគណនាពីមុំ), lab:{កំពូល:ស្លាកមុំ}}) — ទ្រឹស្ដីបទរង្វង់
+   cen = មុំផ្ចិត/មុំចារឹក (lab C,O) · semi = កន្លះរង្វង់ (lab A,B) · cyc = ចតុកោណចារឹក (lab A,C) · tan = ប៉ះពីរពីចំណុចខាងក្រៅ (lab P,O) · alt = ឆ្លាស់អង្កត់ធ្នូ (lab A,C) · seg = ផ្នែកដូចគ្នា (lab A,B,C,D) */
+ function thm(o){var x=o.x||40,y=o.y||40,lab=o.lab||{},R0=1.5,P={},pts={},cm=[],tx=[],sp,k,th=o.th,O=false,od="s";
+  function pol(a){return[R0*Math.cos(a*R),R0*Math.sin(a*R)]}
+  function at(m){for(var q in m)P[q]=pol(m[q])}
+  function G(n){return n==="O"?[0,0]:P[n]}
+  if(th==="cen"){at({A:-x,B:x,C:180});sp={s:["O A","O B","C A","C B"],a:[["C","A","B"],["O","A","B"]]};O=true}
+  else if(th==="semi"){at({A:180,B:0,C:2*x});sp={s:["A B","A C","C B"],a:[["A","B","C"],["B","A","C"]],r:[["A","C","B"]]};O=true}
+  else if(th==="cyc"){at({A:270,B:90-x,C:90,D:90+x});sp={s:["A B","B C","C D","D A"],a:[["A","D","B"],["C","B","D"]]}}
+  else if(th==="tan"){var f=Math.min(65,(180-x)/2);at({A:f,B:-f});P.P=[R0/Math.cos(f*R),0];sp={s:["O A","O B","P A","P B"],a:[["P","A","B"],["O","A","B"]],r:[["O","A","P"],["O","B","P"]]};O=true;od="w"}
+  else if(th==="alt"){at({A:270,B:270+2*x,C:90+x});var Ta=[P.A[0]+1.6,P.A[1]];P.T=Ta;sp={s:["A T","A B","C A","C B"],a:[["A","T","B"],["C","A","B"]]}}
+  else{var bc=(360-2*x-2*y)/2,t0=200;at({A:t0,B:t0+2*x,C:t0+2*x+bc,D:t0+2*x+bc+2*y});sp={s:["A B","B C","C D","D A","A C","B D"],a:[["D","A","B"],["B","D","C"],["C","A","B"],["A","D","C"]]}}
+  for(k in P)pts[k]=[P[k][0],P[k][1],dir8(out([0,0],P[k]))];if(O)pts.O=[0,0,od];
+  cm.push("circle O "+R0+" black");sp.s.forEach(function(z){cm.push("seg "+z+" black")});
+  (sp.r||[]).forEach(function(z){cm.push("right "+z.join(" "))});
+  sp.a.forEach(function(z){var V=z[0],t=lab[V];if(t)wedge(cm,tx,G(V),G(z[1]),G(z[2]),V,z[1],z[2],t,th==="seg"?"in2":"in")});
+  var ex=[[-R0,-R0],[R0,R0]];if(P.P)ex.push(P.P);if(P.T)ex.push(P.T);
+  return FB(pts,cm,{tx:tx,ext:ex})}
+ function circle(o){if(o.th)return thm(o);var R0=1.6,cm=[],tx=[],pts={},t=R*30;
   if(o.kind!=="sector"){pts.O=[0,0,"s"];cm.push("circle O "+R0+" black");
    if(o.d){var a=R*20,A=[-R0*Math.cos(a),-R0*Math.sin(a)],B=[R0*Math.cos(a),R0*Math.sin(a)];cm.push("seg "+xy(A)+" "+xy(B)+" blue");tx.push([0,0,o.d,-Math.sin(a),Math.cos(a)])}
    else{var E=[R0*Math.cos(t),R0*Math.sin(t)];cm.push("seg O "+xy(E)+" blue");if(o.r)tx.push([E[0]/2,E[1]/2,o.r,-Math.sin(t),Math.cos(t)])}
