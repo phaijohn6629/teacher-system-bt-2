@@ -22,6 +22,8 @@ function pt(p){return"("+p[0]+", "+p[1]+")"}
 /* 📈 GC — រូបប្លង់កូអរដោនេ (GF.coord) · try/catch + ការពារ NaN → គ្មានរូប ប៉ុន្តែសំណួរនៅដំណើរការ */
 function GC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
 function trg(){var a=[ri(1,4),ri(1,4)],b=[a[0]+ri(2,4),a[1]+ri(0,1)],c=[a[0]+ri(0,3),a[1]+ri(2,4)],sx=pick([1,-1]),sy=pick([1,-1]);return[a,b,c].map(function(p){return[sx*p[0],sy*p[1]]})}
+/* 📊 GS — រូបស្ថិតិ (GF.stat) · try/catch + ការពារ NaN */
+function GS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
 function cR(a,m){var R=2;a.forEach(function(p){R=Math.max(R,Math.abs(p[0])+(m||1),Math.abs(p[1])+(m||1))});return Math.min(R,14)}
 function cv(v){return"\\begin{pmatrix}"+v[0]+"\\\\"+v[1]+"\\end{pmatrix}"}
 var D=Math.PI/180,TR=[[3,4,5],[5,12,13],[6,8,10],[8,15,17],[7,24,25],[9,12,15]];
@@ -243,17 +245,27 @@ G9[11]={1:L(
 G9[12]={1:L(
  function(){var a=[];for(var i=0;i<ri(5,8);i++)a.push(ri(1,20));var m=fr(sum(a),a.length);
    return K("mean","Find the mean of $"+a.join(", ")+"$.",[A(m.s,m.t,"num","mean =")],"$\\dfrac{"+sum(a)+"}{"+a.length+"}="+m.t+"$")},
+ function(){var P=pick([["Soccer","Tennis","Swim","Cricket","Hockey","Rugby"],["Maths","Art","Music","Science","History","Drama"],["Bus","Walk","Car","Cycle","Train","Taxi"]]),n=pick([4,5]),cats=P.slice(0,n),vals=cats.map(function(){return ri(3,18)}),j=ri(0,n-1),T=sum(vals);
+   return K("barr","The bar chart shows the number of students who chose each option in a survey.\n(a) How many students chose "+cats[j]+"? (b) How many students were surveyed altogether?",[A(vals[j],null,"num","(a)"),A(T,null,"num","(b)")],"(a) read the bar for "+cats[j]+": $"+vals[j]+"$ (b) add all the bars: $"+vals.join("+")+"="+T+"$",GS({k:"bar",cats:cats,vals:vals,yt:"Number of students"}))},
+ function(){var cats=pick([["Cat","Dog","Fish","Bird"],["Red","Blue","Green","Gray"],["Pizza","Rice","Pasta","Salad"]]),vals=cats.map(function(){return ri(4,16)}),j=ri(0,3),T=sum(vals),sh=vals.slice();sh[j]=null;
+   return K("barq","The bar chart shows the favourite choices of "+T+" students. The bar for "+cats[j]+" is missing. Work out the number of students who chose "+cats[j]+".",[A(vals[j],null,"num","number =")],"$"+T+"-("+vals.filter(function(_,i){return i!==j}).join("+")+")="+T+"-"+(T-vals[j])+"="+vals[j]+"$",GS({k:"bar",cats:cats,vals:sh,yt:"Number of students"}))},
  function(){var a=[];var n=pick([7,9]);for(var i=0;i<n;i++)a.push(ri(1,30));var s=a.slice().sort(function(x,y){return x-y});
    return K("med","For the data $"+a.join(", ")+"$ find the median and the range.",[A(s[(n-1)/2],null,"num","median ="),A(s[n-1]-s[0],null,"num","range =")],"In order: $"+s.join(", ")+"$. Median $="+s[(n-1)/2]+"$, range $="+s[n-1]+"-"+s[0]+"="+(s[n-1]-s[0])+"$.")}),
  2:L(
  function(){var x=[0,1,2,3,4],f=x.map(function(){return ri(1,9)}),S=0;x.forEach(function(v,i){S+=v*f[i]});var m=fr(S,sum(f));
-   return K("mft","The table shows the number of goals scored in some matches. Calculate the mean. $"+tbl(["\\text{Goals}","\\text{Frequency}"],[x,f])+"$",[A(m.s,m.t,"num","mean =")],"$\\bar x=\\dfrac{\\sum fx}{\\sum f}=\\dfrac{"+S+"}{"+sum(f)+"}="+m.t+"$")},
+   return K("mft","The table shows the number of goals scored in some matches. Calculate the mean. $"+tbl(["\\text{Goals}","\\text{Frequency}"],[x,f])+"$",[A(m.s,m.t,"num","mean =")],"$\\bar x=\\dfrac{\\sum fx}{\\sum f}=\\dfrac{"+S+"}{"+sum(f)+"}="+m.t+"$",GS({k:"bar",cats:x.map(String),vals:f,yt:"Frequency",xt:"Goals"}))},
+ function(){var cats=pick([["Bus","Walk","Car","Cycle"],["Pop","Rock","Jazz","Folk"],["Tea","Juice","Milk","Water"]]),a=[ri(5,11)*10,ri(5,11)*10,ri(4,9)*10],a4=360-sum(a),n=pick([72,108,144,180,216]),j=ri(0,2);
+   return K("pieA","The pie chart shows how "+n+" people chose between "+cats.join(", ").replace(/, ([^,]*)$/," and $1")+". The angles of three of the sectors are shown.\n(a) Work out the angle of the "+cats[3]+" sector. (b) How many people chose "+cats[j]+"?",[A(a4,null,"num","(a)"),A(a[j]*n/360,null,"num","(b)")],"(a) angles add up to $360^\\circ$: $360-"+a.join("-")+"="+a4+"^\\circ$ (b) $\\dfrac{"+a[j]+"}{360}\\times"+n+"="+a[j]*n/360+"$",GS({k:"pie",lab:cats,vals:[a[0],a[1],a[2],null],tot:360,ang:[a[0]+"°",a[1]+"°",a[2]+"°",""]}))},
  function(){var n=ri(4,7),m=ri(8,20),a=[];for(var i=0;i<n-1;i++)a.push(ri(m-6,m+6));var last=m*n-sum(a);if(last<0){a[0]+=last;last=0}
    return K("miss","The mean of $"+n+"$ numbers is $"+m+"$. $"+(n-1)+"$ of them are $"+a.join(", ")+"$. Find the missing number.",[A(last,null,"num","=")],"Total $="+n+"\\times"+m+"="+m*n+"$, so missing number $="+m*n+"-"+sum(a)+"="+last+"$.")}),
  3:L(
+ function(){var m=pick([2,3,4]),c=ri(10,40),px=[1,2,3,4,5,6,7,8,9],py=px.map(function(x){return m*x+c+ri(-4,4)}),X=pick([2,4,6,8]),top=Math.ceil((m*10+c+6)/10)*10;
+   return K("scat","The scatter graph shows the number of hours, $x$, that nine students revised and their test scores, $y$. The line of best fit is drawn.\n(a) Use the line of best fit to estimate the score of a student who revised for $"+X+"$ hours. (b) Find the gradient of the line of best fit.",[A(m*X+c,null,"num","(a)"),A(m,null,"num","(b)")],"(a) at $x="+X+"$ the line gives $y="+(m*X+c)+"$ (b) the line passes through $(0,"+c+")$ and $(10,"+(10*m+c)+")$, so gradient $=\\dfrac{"+10*m+"}{10}="+m+"$",GS({k:"scatter",px:px,py:py,xr:[0,10,2],yr:[0,top,10],xl:"Hours revised (x)",yl:"Score (y)",line:[[0,c],[10,10*m+c]],vx:X}))},
+ function(){var mn=ri(1,3)*5,q1=mn+5*ri(1,3),md=q1+5*ri(1,3),q3=md+5*ri(1,3),mx=q3+5*ri(1,3),hi=Math.ceil(mx/10)*10;
+   return K("boxr","The box plot summarises the times, in minutes, that some students took to travel to school.\nUse the box plot to find (a) the median (b) the interquartile range (c) the range.",[A(md,null,"num","(a)"),A(q3-q1,null,"num","(b)"),A(mx-mn,null,"num","(c)")],"(a) the line inside the box: $"+md+"$ (b) $Q_3-Q_1="+q3+"-"+q1+"="+(q3-q1)+"$ (c) $"+mx+"-"+mn+"="+(mx-mn)+"$",GS({k:"box",lo:0,hi:hi,step:10,v:[mn,q1,md,q3,mx],t:"Travel time (minutes)"}))},
  function(){var w=pick([5,10]),s0=pick([0,10,20]),cl=[0,1,2,3].map(function(i){return[s0+w*i,s0+w*i+w]}),f=cl.map(function(){return ri(2,12)}),mid=cl.map(function(c){return(c[0]+c[1])/2}),S=0;mid.forEach(function(v,i){S+=v*f[i]});var m=fr(S,sum(f));
    return K("gme","The table shows the times, $t$ minutes, taken by some students. Calculate an estimate of the mean. $"+tbl(["t","\\text{Freq}"],[cl.map(function(c){return c[0]+"\\lt t\\le"+c[1]}),f])+"$",[A(m.s,m.t,"num","mean ≈")],
-     "Use the midpoints $"+mid.join(", ")+"$: $\\dfrac{"+mid.map(function(v,i){return v+"\\times"+f[i]}).join("+")+"}{"+sum(f)+"}="+m.t+"$")},
+     "Use the midpoints $"+mid.join(", ")+"$: $\\dfrac{"+mid.map(function(v,i){return v+"\\times"+f[i]}).join("+")+"}{"+sum(f)+"}="+m.t+"$",GS({k:"hist",e:[cl[0][0]].concat(cl.map(function(c){return c[1]})),h:f,yt:"Frequency",xt:"t (minutes)"}))},
  function(){var a=[];for(var i=0;i<11;i++)a.push(ri(1,40));a.sort(function(x,y){return x-y});var sh=a.slice().sort(function(){return Math.random()-.5});
    return K("iqr","Find the lower quartile, the upper quartile and the interquartile range of $"+sh.join(", ")+"$.",[A(a[2],null,"num","LQ ="),A(a[8],null,"num","UQ ="),A(a[8]-a[2],null,"num","IQR =")],"In order: $"+a.join(", ")+"$. LQ is the 3rd value $="+a[2]+"$, UQ is the 9th value $="+a[8]+"$, IQR $="+(a[8]-a[2])+"$.")})};
 /* 13 Probability */
@@ -509,7 +521,7 @@ function FB(pts,cmds,o){o=o||{};var xs=[],ys=[],k,L=[],r=function(v){return Math
   /* o.tx=[[x,y,"ស្លាក",nx,ny]]៖ ស្លាកកណ្ដាលចំណុច (x,y) រុញទៅទិស (nx,ny) ក្រៅរូប — fig.js text ចាប់ពីខាងឆ្វេង ដូច្នេះគណនាទំហំអក្សរ (~6.6px/តួ) តាមមាត្រដ្ឋានរូប (W=380) */
   var xu=352/(x1-x0),yu=(Math.max(200,Math.min(460,380*(y1-y0)/(x1-x0)))-28)/(y1-y0);
   (o.tx||[]).forEach(function(t){if(t[2]===""||t[2]==null)return;var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+9+(t[5]||0):0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
-    L.push("text ("+r(t[0]+nx*d/xu-hw/xu)+","+r(t[1]+ny*d/yu-4/yu)+") "+t[2])});if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
+    L.push("text ("+r(t[0]+nx*d/xu-hw/xu)+","+r(t[1]+ny*d/yu-4/yu)+") "+String(t[2]).replace(/(red|blue|green|orange|purple|black|gray)$/i,"$1\u200b"))});if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
   return L.join("\n")}
 function mid(P,Q,dx,dy){return"("+(Math.round(((P[0]+Q[0])/2+(dx||0))*1000)/1000)+","+(Math.round(((P[1]+Q[1])/2+(dy||0))*1000)/1000)+")"}
 
@@ -808,7 +820,55 @@ var GF=(function(){
   (o.ring||[]).forEach(function(z){cm.push("hole "+P(z.p)+" red");if(z.t){var nx=z.nx==null?0:z.nx,ny=z.ny==null?1:z.ny;cm.push("text "+P([z.p[0]+nx*(12+z.t.length*3.3*Math.abs(nx))/pxu-z.t.length*3.3/pxu,z.p[1]+ny*14/pyu-(ny<0?5:0)/pyu])+" "+z.t+" red")}});
   (o.tx||[]).forEach(function(z){var t=String(z[2]);cm.push("text "+P([z[0]-t.length*3.3/pxu,z[1]-4/pyu])+" "+t+C(z[3]||"black"))});
   return cm.join("\n")}
- return{coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob,thales:thales}})();
+ /* GF.stat({k:"bar"|"pie"|"scatter"|"box"|"hist"|"cf", …}) — រូបស្ថិតិ (ទិន្នន័យមុន · «?» = ផ្នែកដែលសំណួរសុំរក មិនគូរ មិនបង្ហាញចម្លើយ)
+   bar    : cats:["A",…] (ស្លាកខ្លី ≤7 តួ), vals:[n | null (= «?»)], yt:"Frequency", max (កំពស់អ័ក្សស្រេចចិត្ត)
+   pie    : lab:["Bus",…], vals:[ទម្ងន់ | null (= «?» ដកពី tot)], tot, ang:[ស្លាកមុំ|""…]
+   scatter: px:[…], py:[…], xr:[min,max,step], yr:[min,max,step], xl, yl, line:[[x1,y1],[x2,y2]] (បន្ទាត់សមសម្រាប់), vx:x (បន្ទាត់ឈរដាច់ៗ)
+   box    : lo, hi, step, v:[min,q1,med,q3,max], t (ចំណងជើង)
+   hist   : e:[ព្រំថ្នាក់…], h:[កម្ពស់ | null], yt:"Frequency" | "Frequency density"
+   cf     : e:[ព្រំថ្នាក់…], c:[ប្រេកង់កើនសរុប…], N, xt */
+ function stat(o){var k=o.k,cm=[],tx=[],ext=[],PAS=["#a9c6f5","#f4a6a0","#9fd8b4","#fbe08e","#c9b6ec","#f7c08a","#efb6d3","#d5dae0"],i,v;
+  function fillR(q,col,rep){var z="poly "+q.map(xy).join(" ")+" "+col;for(var j=0;j<(rep||12);j++)cm.push(z)}
+  function circR(c,r,N){var q=[];N=N||14;for(var j=0;j<N;j++)q.push([c[0]+r*Math.cos(j*2*Math.PI/N),c[1]+r*Math.sin(j*2*Math.PI/N)]);return q}
+  function nice(mx){var st=[1,2,5,10,20,25,50,100,200,250,500,1000,2000,5000],j=0;while(mx/st[j]>6&&j<st.length-1)j++;return st[j]}
+  function seg(a,b,c){cm.push("seg "+xy(a)+" "+xy(b)+" "+(c||"black"))}
+  function rr(v){return Math.round(v*100)/100}
+  /* អ័ក្សបញ្ឈរ + បន្ទាត់ក្រឡាស្រាល + ព្រួញ */
+  function yax(Wc,Hc,y0,y1,st,tit){for(var j=0;y0+j*st<=y1+1e-9;j++){var vv=y0+j*st,y=(vv-y0)/(y1-y0)*Hc;if(j>0)seg([0,y],[Wc,y],"#dddddd");seg([-.1,y],[0,y]);tx.push([0,y,String(rr(vv)),-1,0,0])}
+   cm.push("vec "+xy([0,0])+" "+xy([0,Hc+.45])+" black");cm.push("vec "+xy([0,0])+" "+xy([Wc+.35,0])+" black");if(tit)tx.push([0,Hc+.8,tit,0,0]);ext.push([-1.3,-1.2],[Wc+.5,Hc+1.2])}
+  if(k==="bar"){var n=o.cats.length,mx=Math.max.apply(null,o.vals.map(function(z){return z==null?0:z}).concat([1])),st=nice(o.max||mx),ym=Math.ceil(mx/st-1e-9)*st,ml=Math.max.apply(null,o.cats.map(function(c){return String(c).length})),sl=Math.max(1.3,ml*.21),Wc=n*sl+.4,Hc=5;
+   if(ym<mx)ym+=st;yax(Wc,Hc,0,ym,st,o.yt||"Frequency");
+   o.cats.forEach(function(c,j){var x0=.2+sl*j+(sl-1)*.5,xc=x0+.5,vv=o.vals[j];
+    if(vv==null){tx.push([xc,.35,"?",0,0])}else{var h=vv/ym*Hc;fillR([[x0,0],[x0+1,0],[x0+1,h],[x0,h]],PAS[j%PAS.length],12);cm.push("poly "+[[x0,0],[x0+1,0],[x0+1,h],[x0,h]].map(xy).join(" ")+" #555555");if(o.lab)tx.push([xc,h,String(vv),0,1,0])}
+    tx.push([xc,0,String(c),0,-1,0])});if(o.xt)tx.push([Wc/2,-1.5,o.xt,0,0]);ext.push([0,-2])}
+  else if(k==="pie"){var vs=o.vals,tot=o.tot||vs.reduce(function(a,b){return a+(b||0)},0),known=vs.reduce(function(a,b){return a+(b||0)},0),a0=90,R0=2.2,N=vs.length;
+   vs.forEach(function(w,j){var w2=w==null?tot-known:w,a1=a0-360*w2/tot,steps=Math.max(6,Math.ceil(Math.abs(a0-a1)/6)),q=[[0,0]],t;for(t=0;t<=steps;t++){var a=(a0+(a1-a0)*t/steps)*R;q.push([R0*Math.cos(a),R0*Math.sin(a)])}
+    fillR(q,w==null?"#f4f4f4":PAS[j%PAS.length],12);cm.push("poly "+q.map(xy).join(" ")+" #444444");
+    var am=(a0+a1)/2*R,L0=o.lab&&o.lab[j]||"",big=Math.abs(a0-a1)>=40;
+    if(L0||w==null)tx.push([R0*Math.cos(am),R0*Math.sin(am),w==null&&!L0?"?":L0,Math.cos(am),Math.sin(am),0]);
+    var al=o.ang&&o.ang[j];if(al)tx.push([.62*R0*Math.cos(am),.62*R0*Math.sin(am),al,0,0]);else if(w==null)tx.push([.62*R0*Math.cos(am),.62*R0*Math.sin(am),"?",0,0]);
+    a0=a1});ext.push([-R0-.4,-R0-.3],[R0+.4,R0+.3])}
+  else if(k==="scatter"){var Wc=7,Hc=5,xr=o.xr,yr=o.yr,mxp=function(x){return(x-xr[0])/(xr[1]-xr[0])*Wc},myp=function(y){return(y-yr[0])/(yr[1]-yr[0])*Hc};
+   yax(Wc,Hc,yr[0],yr[1],yr[2],o.yl);
+   for(i=0;xr[0]+i*xr[2]<=xr[1]+1e-9;i++){var xv=xr[0]+i*xr[2],X=mxp(xv);if(i>0)seg([X,0],[X,Hc],"#dddddd");seg([X,-.1],[X,0]);tx.push([X,0,String(rr(xv)),0,-1,0])}
+   if(o.xl)tx.push([Wc/2,-1.5,o.xl,0,0]);ext.push([0,-2]);
+   if(o.vx!=null){seg([mxp(o.vx),0],[mxp(o.vx),Hc],"#888888")}
+   if(o.line)seg([mxp(o.line[0][0]),myp(o.line[0][1])],[mxp(o.line[1][0]),myp(o.line[1][1])],"red");
+   o.px.forEach(function(x,j){var c=[mxp(x),myp(o.py[j])];fillR(circR(c,.1),"#2f6fd0",18)})}
+  else if(k==="box"){var Wc2=8,mp=function(x){return(x-o.lo)/(o.hi-o.lo)*Wc2},b=o.v,Hb=2.6;
+   for(i=0;o.lo+i*o.step<=o.hi+1e-9;i++){var xv2=o.lo+i*o.step,X2=mp(xv2);seg([X2,0],[X2,Hb],"#dddddd");seg([X2,-.1],[X2,0]);tx.push([X2,0,String(rr(xv2)),0,-1,0])}
+   cm.push("vec "+xy([0,0])+" "+xy([Wc2+.4,0])+" black");
+   var bx=[[mp(b[1]),.8],[mp(b[3]),.8],[mp(b[3]),1.8],[mp(b[1]),1.8]];fillR(bx,"#a9c6f5",12);cm.push("poly "+bx.map(xy).join(" ")+" #333333");
+   seg([mp(b[2]),.8],[mp(b[2]),1.8],"#333333");seg([mp(b[2])+.01,.8],[mp(b[2])+.01,1.8],"#333333");seg([mp(b[0]),1.3],[mp(b[1]),1.3],"#333333");seg([mp(b[3]),1.3],[mp(b[4]),1.3],"#333333");seg([mp(b[0]),1.0],[mp(b[0]),1.6],"#333333");seg([mp(b[4]),1.0],[mp(b[4]),1.6],"#333333");
+   if(o.t)tx.push([Wc2/2,Hb+.5,o.t,0,0]);ext.push([-.6,-1.2],[Wc2+.6,Hb+1])}
+  else if(k==="hist"||k==="cf"){var e=o.e,Wc3=7,Hc3=5,x0=e[0],xw=e[e.length-1]-x0,mx3=k==="hist"?Math.max.apply(null,o.h.map(function(z){return z==null?0:z}).concat([.1])):o.N,st3=nice(mx3),ym3=Math.ceil(mx3/st3-1e-9)*st3,mxq=function(x){return(x-x0)/xw*Wc3};
+   if(ym3<mx3)ym3+=st3;yax(Wc3,Hc3,0,ym3,st3,o.yt||(k==="hist"?"Frequency":"Cumulative frequency"));
+   e.forEach(function(x){var X=mxq(x);seg([X,-.1],[X,0]);tx.push([X,0,String(rr(x)),0,-1,0])});
+   if(k==="hist"){o.h.forEach(function(hv,j){var xa=mxq(e[j]),xb=mxq(e[j+1]);if(hv==null){tx.push([(xa+xb)/2,.35,"?",0,0]);return}var hh=hv/ym3*Hc3,q=[[xa,0],[xb,0],[xb,hh],[xa,hh]];fillR(q,PAS[0],12);cm.push("poly "+q.map(xy).join(" ")+" #555555")})}
+   else{var pp=o.c.map(function(c,j){return[mxq(e[j]),c/ym3*Hc3]});for(i=0;i+1<pp.length;i++)seg(pp[i],pp[i+1],"blue");pp.forEach(function(c){fillR(circR(c,.09),"#2f6fd0",16)})}
+   if(o.xt)tx.push([Wc3/2,-1.5,o.xt,0,0]);ext.push([0,-2]);}
+  return FB({},cm,{tx:tx,ext:ext,nts:false})}
+ return{stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

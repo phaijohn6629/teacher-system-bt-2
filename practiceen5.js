@@ -18,6 +18,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
+function GCS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📊 រូបស្ថិតិ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function lcm(a,b){return a/gcd(a,b)*b}
@@ -142,7 +143,7 @@ add([7,8],34,1,function(){var n=pick([6,7,8]),a=[];for(var i=0;i<n;i++)a.push(ri
   return EX("cs1",1,"Here are the scores of "+n+" students in a quiz: $"+a.join(",\\ ")+"$",[{q:"Work out the range.",a:[A(s[n-1]-s[0],null,"num","=")],m:1},{q:"Work out the median.",a:[A(nf(med),null,"num","=")],m:1},{q:"Work out the mean.",a:[A(mean.s,mean.d===1?mean.t:nf(r2(sum(a)/n)),"num","=")],m:2}],
    "In order: $"+s.join(",")+"$; range $"+(s[n-1]-s[0])+"$; median $"+nf(med)+"$; mean $\\frac{"+sum(a)+"}{"+n+"}$")});
 add([8,9],34,2,function(){var x=[0,1,2,3,4],f=x.map(function(){return ri(1,9)}),F=sum(f),S=0;x.forEach(function(v,i){S+=v*f[i]});var m=fr(S,F);
-  return EX("cs2",1,"The table shows the number of pets owned by students in a class.\n"+tb([["\\text{Pets}"].concat(x),["\\text{Frequency}"].concat(f)]),[{q:"How many students are in the class?",a:[A(F,null,"num","=")],m:1},
+  return EXF(GCS({k:"bar",cats:x.map(String),vals:f,yt:"Frequency",xt:"Pets"}),"cs2",1,"The table shows the number of pets owned by students in a class.\n"+tb([["\\text{Pets}"].concat(x),["\\text{Frequency}"].concat(f)]),[{q:"How many students are in the class?",a:[A(F,null,"num","=")],m:1},
    {q:"Work out the total number of pets.",a:[A(S,null,"num","=")],m:1},{q:"Work out the mean number of pets per student. Give your answer as a fraction or decimal.",a:[A(m.s,m.t,"num","=")],m:1}],
    "(a) $"+F+"$ (b) $\\sum fx="+S+"$ (c) $\\frac{"+S+"}{"+F+"}$")});
 add([7,8],34,1,function(){var n=pick([8,10,12]),k=ri(1,n-1),p=fr(k,n),q=fr(n-k,n),c=pick(["red","blue","green"]);
@@ -156,7 +157,7 @@ add([8,9],34,2,function(){var a=ri(5,20),b=ri(5,20),c=ri(5,20),d=ri(5,20);
    {q:"How many boys travel by bus?",a:[A(b,null,"num","=")],m:1},{q:"How many students are there altogether?",a:[A(a+b+c+d,null,"num","=")],m:1},{q:"A student is chosen at random. Find the probability that the student is a girl who walks.",a:[A(fr(c,a+b+c+d).s,fr(c,a+b+c+d).t,"num","P =")],m:1}],
    "(a) $"+(a+b)+"-"+a+"="+b+"$ (b) $"+(a+b)+"+"+(c+d)+"="+(a+b+c+d)+"$ (c) girls who walk $="+(c+d)+"-"+d+"="+c+"$")});
 add([9],34,3,function(){var cl=[[0,10],[10,20],[20,30],[30,40]],f=cl.map(function(){return ri(2,14)}),F=sum(f),S=0;cl.forEach(function(c,i){S+=(c[0]+5)*f[i]});var mi=f.indexOf(Math.max.apply(null,f));if(f.filter(function(v){return v===f[mi]}).length>1){f[mi]++;F++;S+=cl[mi][0]+5}
-  return EX("cs6",2,"The table shows the time, $t$ minutes, that "+F+" students spent on homework.\n"+tb([["t"].concat(cl.map(function(c){return c[0]+"\\lt t\\le"+c[1]})),["\\text{Frequency}"].concat(f)]),[
+  return EXF(GCS({k:"hist",e:[0].concat(cl.map(function(c){return c[1]})).slice(0,5),h:f,yt:"Frequency",xt:"t (minutes)"}),"cs6",2,"The table shows the time, $t$ minutes, that "+F+" students spent on homework.\n"+tb([["t"].concat(cl.map(function(c){return c[0]+"\\lt t\\le"+c[1]})),["\\text{Frequency}"].concat(f)]),[
    {q:"Write down the modal class. Give the lower boundary of the class.",a:[A(cl[mi][0],null,"num","lower boundary =")],m:1},{q:"Calculate an estimate of the mean time. "+DP,a:[A(nf(S/F),null,"num","minutes")],m:3}],
    "(a) highest frequency: $"+cl[mi][0]+"\\lt t\\le"+cl[mi][1]+"$ (b) midpoints $5,15,25,35$: $\\frac{"+S+"}{"+F+"}="+r2(S/F)+"$")});
 

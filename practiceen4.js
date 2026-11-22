@@ -19,6 +19,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
+function GCS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📊 រូបស្ថិតិ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
@@ -187,7 +188,7 @@ var S2=function(){var v=[];while(v.length<13){var x=ri(31,58);if(x!==50&&v.index
    {q:"Two of these packets are chosen at random. Find the probability that one packet has a mass of more than 50 g and the other has a mass of less than 50 g.",a:[A(p.s,p.t,"num","P =")],m:3}],
    "(a) $LQ="+lq+"$, $UQ="+uq+"$, $IQR="+(uq-lq)+"$ (b) $2\\times\\dfrac{"+lo+"}{13}\\times\\dfrac{"+hi+"}{12}="+p.t+"$")};
 var S3=function(){var b=[1.2,1.5,1.6,1.7,1.9],f=[ri(8,16),ri(15,25),ri(25,40),ri(10,18)],N=sum(f),mid=[1.35,1.55,1.65,1.8],S=0;mid.forEach(function(m,i){S+=m*f[i]});var mean=S/N,fd=f[2]/0.1;
-  return EX("xs3",4,"Virat records the height, $h$ metres, of each of "+N+" sunflowers.\n$\\begin{array}{|c|c|c|c|c|}\\hline h&1.2\\lt h\\le1.5&1.5\\lt h\\le1.6&1.6\\lt h\\le1.7&1.7\\lt h\\le1.9\\\\\\hline \\text{Frequency}&"+f.join("&")+"\\\\\\hline\\end{array}$",[
+  return EXF(GCS({k:"hist",e:b,h:[f[0]/.3,f[1]/.1,null,f[3]/.2],yt:"Frequency density",xt:"h (metres)"}),"xs3",4,"Virat records the height, $h$ metres, of each of "+N+" sunflowers.\n$\\begin{array}{|c|c|c|c|c|}\\hline h&1.2\\lt h\\le1.5&1.5\\lt h\\le1.6&1.6\\lt h\\le1.7&1.7\\lt h\\le1.9\\\\\\hline \\text{Frequency}&"+f.join("&")+"\\\\\\hline\\end{array}$",[
    {q:"Calculate an estimate of the mean height. "+DP,a:[A(nf(mean),null,"num","m")],m:4},
    {q:"In a histogram of this data, find the frequency density for the class $1.6\\lt h\\le1.7$.",a:[A(nf(fd),null,"num","f.d. =")],m:2}],
    "(a) midpoints $1.35, 1.55, 1.65, 1.8$: $\\dfrac{"+nf(r2(S))+"}{"+N+"}="+r2(mean)+"$ (b) $\\dfrac{"+f[2]+"}{0.1}="+nf(fd)+"$")};
@@ -221,7 +222,7 @@ var G7=function(){var k=pick([2,3,1.5]),A1=ri(20,90),V1=ri(40,300),m1=ri(100,900
    {q:"The larger bottle has mass "+nf(m1*k*k*k)+" g when full. Find the mass of the smaller bottle when full.",a:[A(m1,null,"num","g")],m:1}],
    "(a) $\\sqrt{\\dfrac{"+nf(A1*k*k)+"}{"+A1+"}}="+k+"$ (b) $"+V1+"\\times"+k+"^3="+nf(V1*k*k*k)+"$ (c) $"+nf(m1*k*k*k)+"\\div"+nf(k*k*k)+"="+m1+"$")};
 var S6=function(){var b=[0,20,40,60,80,100],f=[ri(3,10),ri(8,18),ri(12,25),ri(6,15),ri(2,8)],N=sum(f),c=[];f.reduce(function(s,v,i){c[i]=s+v;return c[i]},0);var j=ri(1,3);
-  return EX("xs6",4,"The table shows the time, $t$ minutes, that "+N+" people spent in a shop.\n$\\begin{array}{|c|c|c|c|c|c|}\\hline t&0\\lt t\\le20&20\\lt t\\le40&40\\lt t\\le60&60\\lt t\\le80&80\\lt t\\le100\\\\\\hline \\text{Frequency}&"+f.join("&")+"\\\\\\hline\\end{array}$",[
+  return EXF(GCS({k:"hist",e:b,h:f,yt:"Frequency",xt:"t (minutes)"}),"xs6",4,"The table shows the time, $t$ minutes, that "+N+" people spent in a shop.\n$\\begin{array}{|c|c|c|c|c|c|}\\hline t&0\\lt t\\le20&20\\lt t\\le40&40\\lt t\\le60&60\\lt t\\le80&80\\lt t\\le100\\\\\\hline \\text{Frequency}&"+f.join("&")+"\\\\\\hline\\end{array}$",[
    {q:"Find the cumulative frequency for $t\\le"+b[j+1]+"$.",a:[A(c[j],null,"num","=")],m:1},
    {q:"How many people spent more than "+b[j+1]+" minutes in the shop?",a:[A(N-c[j],null,"num","=")],m:1},
    {q:"Which class contains the median? Give its lower boundary.",a:[A(b[c.findIndex(function(v){return v>=N/2})],null,"num","lower boundary =")],m:2}],

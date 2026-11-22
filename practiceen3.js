@@ -137,7 +137,7 @@ G11[10]={1:L(G10[15][2]),2:L(G10[15][3]),
  function(){var w=pick([5,10,20]),fd=ri(1,12)/2;
    return K("hf","In a histogram, the bar for the class $"+20+"\\lt t\\le"+(20+w)+"$ has frequency density $"+fd+"$. Find the frequency.",[A(nf(fd*w),null,"num","frequency =")],"$\\text{frequency}=\\text{f.d.}\\times\\text{width}="+fd+"\\times"+w+"="+nf(fd*w)+"$")},
  function(){var n=pick([40,60,80,100,120,200]);
-   return K("cfm","A cumulative frequency diagram shows the data for $"+n+"$ students. Which cumulative frequency would you read across from to estimate (a) the median (b) the upper quartile?",[A(n/2,null,"num","(a)"),A(3*n/4,null,"num","(b)")],"Median at $\\tfrac12\\times"+n+"="+n/2+"$, upper quartile at $\\tfrac34\\times"+n+"="+3*n/4+"$")})};
+   return K("cfm","A cumulative frequency diagram shows the data for $"+n+"$ students. Which cumulative frequency would you read across from to estimate (a) the median (b) the upper quartile?",[A(n/2,null,"num","(a)"),A(3*n/4,null,"num","(b)")],"Median at $\\tfrac12\\times"+n+"="+n/2+"$, upper quartile at $\\tfrac34\\times"+n+"="+3*n/4+"$",(function(){var e=[0,20,40,60,80,100],sg=function(x){return 1/(1+Math.exp(-(x-50)/14))},c=e.map(function(x){return Math.round(n*(sg(x)-sg(0))/(sg(100)-sg(0)))});try{return window.PXEN.GF.stat({k:"cf",e:e,c:c,N:n,xt:"Time (minutes)"})}catch(er){return""}})())})};
 /* 11 Probability */
 G11[11]={1:L(G10[16][2]),2:L(G10[16][3]),
  3:L(function(){var a=ri(5,20),b=ri(5,20),c=ri(5,20),d=ri(5,20),p=fr(a,a+c);
