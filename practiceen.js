@@ -551,15 +551,29 @@ var GF=(function(){
   if(o.ext){var k2=o.ext.at||0,b2=nb(k2),u=out(b2[0],P[k2]),D=[P[k2][0]+u[0],P[k2][1]+u[1]];pts._D=[D[0],D[1],""];cm.push("seg "+xy(P[k2])+" "+xy(D)+" black");wedge(cm,tx,P[k2],D,b2[1],xy(P[k2]),xy(D),xy(b2[1]),o.ext.lab,"in")}
   return FB(pts,cm,{tx:tx})}
  /* GF.para({t (មុំបន្ទាត់ខ្វែង 35–145°), lab:{uNE,uNW,uSW,uSE,lNE,lNW,lSW,lSE}}) — u = ប្រសព្វលើបន្ទាត់ស្របខាងលើ · l = ខាងក្រោម · NE/NW/SW/SE = មុំរវាងកាំ */
- function para(o){var t=Math.max(35,Math.min(145,o.t||60)),H=1.5,dr=[Math.cos(t*R),Math.sin(t*R)],lab=o.lab||{},Pl=[0,0],Pu=[H*dr[0]/dr[1],H],sh=-Pu[0]/2,cm=[],tx=[],pts={},k;
+ function para(o){var lab=o.lab||{},tt=o.t;
+  /* type="cor|alt|co", v (0..3), ang (មុំទី១ ជាដឺក្រេ), l1,l2 (ស្លាក) → បំលែងជា lab + t ស្វ័យប្រវត្តិ
+     cor = មុំត្រូវគ្នា (ជ្រុងតែមួយ) · alt = មុំឆ្លាស់ក្នុង · co = មុំរួមខាងក្នុង (បូក 180°) */
+  if(o.type){var TB={cor:[["uNE","lNE"],["uSE","lSE"],["uNW","lNW"],["uSW","lSW"]],alt:[["uSW","lNE"],["uSE","lNW"]],co:[["uSW","lNW"],["uSE","lNE"]]},V=TB[o.type][(o.v||0)%TB[o.type].length];
+   lab={};lab[V[0]]=o.l1;lab[V[1]]=o.l2;tt=(V[0]==="uNE"||V[0]==="uSW")?o.ang:180-o.ang}
+  var t=Math.max(35,Math.min(145,tt||60)),H=1.5,dr=[Math.cos(t*R),Math.sin(t*R)],Pl=[0,0],Pu=[H*dr[0]/dr[1],H],sh=-Pu[0]/2,cm=[],tx=[],pts={};
   Pl[0]+=sh;Pu[0]+=sh;var x0=Math.min(Pl[0],Pu[0])-2.2,x1=Math.max(Pl[0],Pu[0])+2.2,E0=[Pl[0]-dr[0]*.8,Pl[1]-dr[1]*.8],E1=[Pu[0]+dr[0]*.8,Pu[1]+dr[1]*.8];
   cm.push("seg "+xy([x0,0])+" "+xy([x1,0])+" black","seg "+xy([x0,H])+" "+xy([x1,H])+" black","seg "+xy(E0)+" "+xy(E1)+" blue");
+  /* ព្រួញបន្ទាត់ស្រប (>) ស្តង់ដារ Cambridge */
+  if(o.arrows!==false){tx.push([x1-.5,0,">",0,0]);tx.push([x1-.5,H,">",0,0])}
   pts._l=[Pl[0],Pl[1],""];pts._u=[Pu[0],Pu[1],""];
   [["u",Pu],["l",Pl]].forEach(function(c){var V=c[1],r=[V[0]+1,V[1]],l=[V[0]-1,V[1]],up=[V[0]+dr[0],V[1]+dr[1]],dn=[V[0]-dr[0],V[1]-dr[1]],S={NE:[r,up],NW:[up,l],SW:[l,dn],SE:[dn,r]};
-   Object.keys(S).forEach(function(z){var tt=lab[c[0]+z];if(!tt)return;cm.push("angle "+xy(S[z][0])+" "+xy(V)+" "+xy(S[z][1]));
+   Object.keys(S).forEach(function(z){var q=lab[c[0]+z];if(!q)return;cm.push("angle "+xy(S[z][0])+" "+xy(V)+" "+xy(S[z][1]));
     /* ស្លាកដាក់ក្បែរបន្ទាត់ស្រប (ទៅខាងមុំ) ឆ្ងាយពីបន្ទាត់ខ្វែងគ្រប់គ្រាន់ — ស្លាកវែងមិនជាន់ */
-    tx.push([V[0],V[1],tt,z[1]==="E"?1:-1,z[0]==="N"?.4:-.4,16+Math.abs(10/Math.tan(t*R))])})});
+    tx.push([V[0],V[1],q,z[1]==="E"?1:-1,z[0]==="N"?.4:-.4,16+Math.abs(10/Math.tan(t*R))])})});
   return FB(pts,cm,{tx:tx,ext:[E0,E1,[x0,0],[x1,H]]})}
+ /* GF.cross({t (មុំ NE/SW), lab:{NE,NW,SW,SE}}) — បន្ទាត់ពីរកាត់គ្នាជារាង X (មុំឈមកំពូល) */
+ function cross(o){var t=Math.max(35,Math.min(145,o.t||60)),dr=[Math.cos(t*R),Math.sin(t*R)],lab=o.lab||{},cm=[],tx=[],L=2.2,V=[0,0],
+   r=[1,0],l=[-1,0],up=dr,dn=[-dr[0],-dr[1]],S={NE:[r,up],NW:[up,l],SW:[l,dn],SE:[dn,r]};
+  cm.push("seg "+xy([-L,0])+" "+xy([L,0])+" black","seg "+xy([-dr[0]*L,-dr[1]*L])+" "+xy([dr[0]*L,dr[1]*L])+" blue");
+  Object.keys(S).forEach(function(z){if(!lab[z])return;cm.push("angle "+xy(S[z][0])+" "+xy(V)+" "+xy(S[z][1]));
+   tx.push([0,0,lab[z],z[1]==="E"?1:-1,z[0]==="N"?.4:-.4,18+Math.abs(10/Math.tan(t*R))])});
+  return FB({_o:[0,0,""]},cm,{tx:tx,ext:[[-L,-dr[1]*L],[L,dr[1]*L]]})}
  /* GF.rect({k:"rect"|"para"|"trap"|"tri", w,h (សមាមាត្ររាង), base,top,left,right,height,diag,mid (ស្លាក), sq:true})
    rect = ចតុកោណកែង/ការ៉េ (ស្លាក base/top/left/right/diag/mid + ស៊ុមមុំកែង) · para/trap/tri = មានបន្ទាត់កម្ពស់ (ប្រផេះ) + ស្លាក height ក្បែរវា + មុំកែង */
  function shape(o){var k=o.k||"rect",w=o.w||3,h=o.h||2,V,foot=null,top=null,P={},i;
@@ -667,7 +681,7 @@ var GF=(function(){
   else{cm.push("circle O "+Rr+" black");el(0,0,Rr,Rr*.3,Math.PI,2*Math.PI,false,"gray");el(0,0,Rr,Rr*.3,0,Math.PI,true,"gray");
    var ea=R*35,E=[Rr*Math.cos(ea),Rr*Math.sin(ea)];sg([0,0],E,"blue");if(o.lr)tx.push([E[0]/2,E[1]/2,o.lr,-Math.sin(ea),Math.cos(ea)]);ext=[[-Rr,-Rr],[Rr,Rr]]}
   return FB({_c:[0,k==="sph"?0:0,""]},cm,{tx:tx,ext:ext})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para,rect:shape,circle:circle,solid:solid}})();
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

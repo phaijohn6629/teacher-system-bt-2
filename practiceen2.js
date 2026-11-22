@@ -234,7 +234,26 @@ G7[5]={1:L(simp),2:L(subs,simp),3:L(G9[4][1],subs)};
 G7[6]={1:L(one),2:L(G9[5][1],one),3:L(G9[5][1],G9[5][2])};
 G7[7]={1:L(G6[8][1],G6[8][2]),2:L(G9[6][1],G6[8][3]),3:L(G9[6][1])};
 G7[8]={1:L(G6[7][1]),2:L(G6[7][2]),3:L(G6[7][3],G10[2][1])};
-G7[9]={1:L(G6[9][1],G6[9][2]),2:L(G6[9][3]),3:L(G9[8][3],G6[9][3])};
+/* 📐 មុំលើបន្ទាត់ស្រប (Cambridge Stage 7)៖ ត្រូវគ្នា · ឆ្លាស់ក្នុង · រួមខាងក្នុង · ឈមកំពូល — កម្រិតទាប = លេខ · កម្រិតខ្ពស់ = សមីការ $(ax+b)^\circ$ */
+function lx(a,b){return(a===1?"":a)+"x"+(b<0?" − "+(-b):b>0?" + "+b:"")}
+function lxT(a,b){return(a===1?"":a)+"x"+(b<0?"-"+(-b):b>0?"+"+b:"")}
+var PARN={cor:"corresponding",alt:"alternate",co:"co-interior"};
+function paraNum(type){return function(){var ang=pick([35,40,45,50,55,60,65,70,75,80,100,105,110,115,120,125,130,135,140]),v=ri(0,3),ans=type==="co"?180-ang:ang;
+  return K("c7_"+type,"Two parallel lines are crossed by a transversal. One of the angles is $"+ang+"^\\circ$. Find the size of the "+PARN[type]+" angle marked $x$.",[A(ans,null,"num","x =")],
+   type==="co"?"Co-interior angles add up to $180^\\circ$: $180-"+ang+"="+ans+"^\\circ$.":PARN[type].charAt(0).toUpperCase()+PARN[type].slice(1)+" angles are equal: $x="+ang+"^\\circ$.",
+   GF.para({type:type,v:v,ang:ang,l1:ang+"°",l2:"x°"}))}}
+function paraAlg(type){return function(){var x=ri(6,20),a=ri(2,4),c=ri(1,a-1),b=ri(5,20),v1,d,v=ri(0,3);
+  if(type==="co"){c=ri(1,3);b=ri(-5,15);v1=a*x+b;d=180-v1-c*x}else{v1=a*x+b;d=v1-c*x}
+  var l1="("+lx(a,b)+")°",l2="("+lx(c,d)+")°",e1="("+lxT(a,b)+")",e2="("+lxT(c,d)+")";
+  return K("c7_"+type+"x","Two parallel lines are crossed by a transversal. The "+PARN[type]+" angles are $"+e1+"^\\circ$ and $"+e2+"^\\circ$. Find $x$.",[A(x,null,"num","x =")],
+   type==="co"?"Co-interior angles add up to $180^\\circ$: $"+e1+"+"+e2+"=180\\Rightarrow "+(a+c)+"x"+sg(b+d)+"=180\\Rightarrow x="+x+"$.":"Equal angles: $"+lxT(a,b)+"="+lxT(c,d)+"\\Rightarrow "+(a-c)+"x="+(d-b)+"\\Rightarrow x="+x+"$.",
+   GF.para({type:type,v:v,ang:v1,l1:l1,l2:l2}))}}
+var VOS=[["NE","SW"],["NW","SE"],["SW","NE"],["SE","NW"]];
+function voNum(){var ang=pick([35,40,45,50,55,60,65,70,75,80,100,110,120,130,140]),s=VOS[ri(0,3)],lab={};lab[s[0]]=ang+"°";lab[s[1]]="x°";
+  return K("c7_vo","Two straight lines cross. One of the angles is $"+ang+"^\\circ$. Find the angle $x$ vertically opposite it.",[A(ang,null,"num","x =")],"Vertically opposite angles are equal: $x="+ang+"^\\circ$.",GF.cross({t:(s[0]==="NE"||s[0]==="SW")?ang:180-ang,lab:lab}))}
+function voAlg(){var x=ri(6,20),a=ri(2,4),c=ri(1,a-1),b=ri(5,20),v1=a*x+b,d=v1-c*x,s=VOS[ri(0,3)],lab={};lab[s[0]]="("+lx(a,b)+")°";lab[s[1]]="("+lx(c,d)+")°";
+  return K("c7_vox","Two straight lines cross. Two vertically opposite angles are $("+lxT(a,b)+")^\\circ$ and $("+lxT(c,d)+")^\\circ$. Find $x$.",[A(x,null,"num","x =")],"Vertically opposite angles are equal: $"+lxT(a,b)+"="+lxT(c,d)+"\\Rightarrow "+(a-c)+"x="+(d-b)+"\\Rightarrow x="+x+"$.",GF.cross({t:(s[0]==="NE"||s[0]==="SW")?v1:180-v1,lab:lab}))}
+G7[9]={1:L(G6[9][1],G6[9][2],paraNum("cor"),paraNum("alt"),paraNum("co"),voNum),2:L(G6[9][3],paraAlg("cor"),paraAlg("alt"),voAlg),3:L(G9[8][3],G6[9][3],paraAlg("co"),paraAlg("alt"),paraAlg("cor"))};
 G7[10]={1:L(G6[10][1]),2:L(G6[10][2]),3:L(G6[10][3],G9[10][1])};
 G7[11]={1:L(G9[11][1]),2:L(G9[11][1],G9[11][2]),3:L(G9[11][2])};
 G7[12]={1:L(G9[12][1],G6[12][1]),2:L(G9[12][1]),3:L(G9[12][2])};
