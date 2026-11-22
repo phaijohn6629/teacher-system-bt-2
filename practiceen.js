@@ -583,21 +583,41 @@ var GF=(function(){
  /* GF.circle({kind:"circle"|"sector", r (ស្លាកកាំ), d (ស្លាកអង្កត់ផ្ចិត — បើមាន គូរអង្កត់ផ្ចិតជំនួសកាំ), ang (ដឺក្រេ ចម្រៀក 20–160), arc (ស្លាកធ្នូ), angLab}) */
  /* GF.circle({th:"cen|semi|cyc|tan|alt|seg", x,y (មុំដែលឱ្យ — រូបត្រូវមាត្រដ្ឋានពិត ព្រោះធ្នូគណនាពីមុំ), lab:{កំពូល:ស្លាកមុំ}}) — ទ្រឹស្ដីបទរង្វង់
    cen = មុំផ្ចិត/មុំចារឹក (lab C,O) · semi = កន្លះរង្វង់ (lab A,B) · cyc = ចតុកោណចារឹក (lab A,C) · tan = ប៉ះពីរពីចំណុចខាងក្រៅ (lab P,O) · alt = ឆ្លាស់អង្កត់ធ្នូ (lab A,C) · seg = ផ្នែកដូចគ្នា (lab A,B,C,D) */
- function thm(o){var x=o.x||40,y=o.y||40,lab=o.lab||{},R0=1.5,P={},pts={},cm=[],tx=[],sp,k,th=o.th,O=false,od="s";
+ function thm(o){var x=o.x||40,y=o.y||40,lab=o.lab||{},R0=1.5,P={},pts={},cm=[],tx=[],sp,k,th=o.th,O=false,od="s",hide=o.hide||[],ex=[[-R0,-R0],[R0,R0]],extra=[],mdir=null;
   function pol(a){return[R0*Math.cos(a*R),R0*Math.sin(a*R)]}
   function at(m){for(var q in m)P[q]=pol(m[q])}
   function G(n){return n==="O"?[0,0]:P[n]}
+  function nm(n){return(o.ren&&o.ren[n])||n}
+  function rf2(n){return hide.indexOf(n)>=0?xy(G(n)):nm(n)}
   if(th==="cen"){at({A:-x,B:x,C:180});sp={s:["O A","O B","C A","C B"],a:[["C","A","B"],["O","A","B"]]};O=true}
-  else if(th==="semi"){at({A:180,B:0,C:2*x});sp={s:["A B","A C","C B"],a:[["A","B","C"],["B","A","C"]],r:[["A","C","B"]]};O=true}
-  else if(th==="cyc"){at({A:270,B:90-x,C:90,D:90+x});sp={s:["A B","B C","C D","D A"],a:[["A","D","B"],["C","B","D"]]}}
-  else if(th==="tan"){var f=Math.min(65,(180-x)/2);at({A:f,B:-f});P.P=[R0/Math.cos(f*R),0];sp={s:["O A","O B","P A","P B"],a:[["P","A","B"],["O","A","B"]],r:[["O","A","P"],["O","B","P"]]};O=true;od="w"}
-  else if(th==="alt"){at({A:270,B:270+2*x,C:90+x});var Ta=[P.A[0]+1.6,P.A[1]];P.T=Ta;sp={s:["A T","A B","C A","C B"],a:[["A","T","B"],["C","A","B"]]}}
-  else{var bc=(360-2*x-2*y)/2,t0=200;at({A:t0,B:t0+2*x,C:t0+2*x+bc,D:t0+2*x+bc+2*y});sp={s:["A B","B C","C D","D A","A C","B D"],a:[["D","A","B"],["B","D","C"],["C","A","B"],["A","D","C"]]}}
-  for(k in P)pts[k]=[P[k][0],P[k][1],dir8(out([0,0],P[k]))];if(O)pts.O=[0,0,od];
-  cm.push("circle O "+R0+" black");sp.s.forEach(function(z){cm.push("seg "+z+" black")});
-  (sp.r||[]).forEach(function(z){cm.push("right "+z.join(" "))});
-  sp.a.forEach(function(z){var V=z[0],t=lab[V];if(t)wedge(cm,tx,G(V),G(z[1]),G(z[2]),V,z[1],z[2],t,th==="seg"?"in2":"in")});
-  var ex=[[-R0,-R0],[R0,R0]];if(P.P)ex.push(P.P);if(P.T)ex.push(P.T);
+  else if(th==="semi"){at({A:180,B:0,C:2*x});sp={s:["A B","A C","C B"],a:[["A","B","C"],["B","A","C"],["C","A","B"]],r:o.nr?[]:[["A","C","B"]]};O=true}
+  else if(th==="cyc"){at({A:270,B:90-x,C:90,D:90+x});sp={s:["A B","B C","C D","D A"],a:[["A","D","B"],["C","B","D"]]};
+   if(o.e){P.E=[P.C[0]+(P.C[0]-P.B[0])*.5,P.C[1]+(P.C[1]-P.B[1])*.5];sp.s.push("C E");sp.a.push(["C","D","E","E"]);ex.push(P.E)}}
+  else if(th==="cyc2"){var a=o.a,b=o.b,g=(Math.max(0,2*a+2*b-360)+Math.min(2*a,2*b))/2,al=360-2*a-2*b+g,t0=250;at({A:t0,B:t0+al,C:t0+al+2*a-g,D:t0+al+2*a-g+g});
+   sp={s:["A B","B C","C D","D A"],a:[["A","D","B"],["B","A","C"],["C","B","D"],["D","C","A"]]}}
+  else if(th==="tan"){var f=Math.min(65,(180-x)/2);at({A:f,B:-f});P.P=[R0/Math.cos(f*R),0];sp={s:["O A","O B","P A","P B"],a:[["P","A","B"],["O","A","B"]],r:[["O","A","P"],["O","B","P"]]};O=true;od="w";ex.push(P.P)}
+  else if(th==="tg1"||th==="tg2"){var kk=Math.max(.3,Math.min(.8,o.k||.6)),ph=Math.acos(kk)/R;P.A=[R0/kk,0];at({T:ph});if(th==="tg2"){P.B=pol(ph);P.C=pol(-ph);delete P.T}
+   sp=th==="tg1"?{s:["O T","O A","A T"],a:[],r:[["O","T","A"]]}:{s:["O B","O C","O A","A B","A C"],a:[],r:[["O","B","A"],["O","C","A"]]};O=true;od="w";ex.push(P.A)}
+  else if(th==="chd"){var dd=Math.max(.15,Math.min(.85,o.dd||.5)),hh=R0*Math.sqrt(1-dd*dd);P.A=[-hh,-R0*dd];P.B=[hh,-R0*dd];P.M=[0,-R0*dd];sp={s:["A B","O M","O A"],a:[],r:[["O","M","B"]]};O=true;od="n"}
+  else if(th==="alt"){at({A:270,B:270+2*x,C:90+x});P.T=[P.A[0]+1.6,P.A[1]];sp={s:["A T","A B","C A","C B"],a:[["A","T","B"],["C","A","B"]]};ex.push(P.T)}
+  else if(th==="chx"){var bc=(360-x-y)/2,t1=200,dA=t1,dB=t1+x,dC=dB+bc,dD=dC+y;at({A:dA,B:dB,C:dC,D:dD});
+   var pa=P.A,pc=P.C,pb=P.B,pd=P.D,d1=[pc[0]-pa[0],pc[1]-pa[1]],d2=[pd[0]-pb[0],pd[1]-pb[1]],den=d1[0]*d2[1]-d1[1]*d2[0],tt=((pb[0]-pa[0])*d2[1]-(pb[1]-pa[1])*d2[0])/den;
+   P.M=[pa[0]+d1[0]*tt,pa[1]+d1[1]*tt];sp={s:["A C","B D"],a:[["M","A","B"]]};extra=[[dA,dB,x+"°"],[dC,dD,y+"°"]];var ub=out(P.M,pa),uc=out(P.M,pb);mdir=dir8([-(ub[0]+uc[0]),-(ub[1]+uc[1])])}
+  else if(th==="secm"){var tn=x/2,tf=180-y/2,N=pol(tn),F=pol(tf),Mx=N[0]-N[1]*(F[0]-N[0])/(F[1]-N[1]);
+   if(!(Mx>R0*1.3&&Mx<R0*4)){tn=25;tf=125;N=pol(tn);F=pol(tf);Mx=N[0]-N[1]*(F[0]-N[0])/(F[1]-N[1])}
+   P.M=[Mx,0];P.N1=pol(tn);P.N2=pol(-tn);P.F1=pol(tf);P.F2=pol(-tf);hide=["N1","N2","F1","F2"];sp={s:["M F1","M F2"],a:[["M","N1","N2"]]};ex.push(P.M);extra=[[-tn,tn,x+"°","in"],[tf,360-tf,y+"°"]]}
+  else{var bc2=(360-2*x-2*y)/2,t2=200;at({A:t2,B:t2+2*x,C:t2+2*x+bc2,D:t2+2*x+bc2+2*y});sp={s:["A B","B C","C D","D A","A C","B D"],a:[["D","A","B"],["B","D","C"],["C","A","B"],["A","D","C"]]}}
+  for(k in P)pts[hide.indexOf(k)>=0?"_"+k:nm(k)]=[P[k][0],P[k][1],hide.indexOf(k)>=0?"":dir8(out([0,0],P[k]))];if(O)pts.O=[0,0,od];if(mdir&&pts.M)pts.M[2]=mdir;
+  cm.push("circle O "+R0+" black");
+  sp.s.forEach(function(z){var w=z.split(" "),c=/^(gray|blue|red)$/.test(w[2]||"")?w[2]:"black";cm.push("seg "+rf2(w[0])+" "+rf2(w[1])+" "+c)});
+  (sp.r||[]).forEach(function(z){cm.push("right "+z.map(rf2).join(" "))});
+  sp.a.forEach(function(z){var V=z[0],t=lab[z[3]||V];if(t)wedge(cm,tx,G(V),G(z[1]),G(z[2]),rf2(V),rf2(z[1]),rf2(z[2]),t,th==="seg"?"in2":"in")});
+  /* o.sl=[[p,q,ស្លាក,ទិស±1]] ស្លាកលើអង្កត់ (កាត់កែងចេញពីផ្ចិត ឬតាមទិស x) */
+  (o.sl||[]).forEach(function(z){var p1=G(z[0]),q1=G(z[1]),dx=q1[0]-p1[0],dy=q1[1]-p1[1],l=Math.hypot(dx,dy)||1,n=[-dy/l,dx/l],m=[(p1[0]+q1[0])/2,(p1[1]+q1[1])/2];
+   if(z[3]!=null){if(n[0]*z[3]<0||(Math.abs(n[0])<.01&&n[1]*z[3]<0))n=[-n[0],-n[1]]}else if(n[0]*m[0]+n[1]*m[1]<0)n=[-n[0],-n[1]];tx.push([m[0],m[1],z[2],n[0],n[1],z[4]||0])});
+  /* o.arcs=[[ដឺក្រេ១,ដឺក្រេ២,ស្លាក,"in"?]] ស្លាកធ្នូ (ក្រៅរង្វង់ ឬក្នុង) */
+  (o.arcs||extra).forEach(function(z){var m=(z[0]+z[1])/2*R,c=Math.cos(m),sn=Math.sin(m);if(z[3]==="in")tx.push([.62*R0*c,.62*R0*sn,z[2],0,0]);else tx.push([R0*c,R0*sn,z[2],c,sn])});
+  for(k in P)ex.push(P[k]);
   return FB(pts,cm,{tx:tx,ext:ex})}
  function circle(o){if(o.th)return thm(o);var R0=1.6,cm=[],tx=[],pts={},t=R*30;
   if(o.kind!=="sector"){pts.O=[0,0,"s"];cm.push("circle O "+R0+" black");
@@ -606,7 +626,7 @@ var GF=(function(){
    return FB(pts,cm,{tx:tx,ext:[[-R0,-R0],[R0,R0]]})}
   var an=o.ang||60,a0=-an/2*R,A=[R0*Math.cos(a0),R0*Math.sin(a0)],Bn=[R0*Math.cos(a0+an*R),R0*Math.sin(a0+an*R)],ps=["(0,0)",xy(A)],i,N=Math.max(4,Math.round(an/6));
   for(i=1;i<N;i++){var q=a0+an*R*i/N;ps.push(xy([R0*Math.cos(q),R0*Math.sin(q)]))}ps.push(xy(Bn));cm.push("poly "+ps.join(" ")+" black");
-  pts._o=[0,0,""];wedge(cm,tx,[0,0],A,Bn,"(0,0)",xy(A),xy(Bn),o.angLab,"in");
+  pts._o=[0,0,""];if(an<180)wedge(cm,tx,[0,0],A,Bn,"(0,0)",xy(A),xy(Bn),o.angLab,"in");else if(o.angLab)tx.push([R0*.45*Math.cos(a0+an*R/2),R0*.45*Math.sin(a0+an*R/2),o.angLab,0,0]);
   if(o.r)tx.push([A[0]/2,A[1]/2,o.r,Math.sin(a0),-Math.cos(a0)]);
   if(o.arc){var am=a0+an*R/2;tx.push([R0*Math.cos(am),R0*Math.sin(am),o.arc,Math.cos(am),Math.sin(am)])}
   return FB(pts,cm,{tx:tx,ext:[[0,0],A,Bn,[R0*Math.cos(a0+an*R/2),R0*Math.sin(a0+an*R/2)]]})}

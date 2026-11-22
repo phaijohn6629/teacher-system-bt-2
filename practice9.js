@@ -12,6 +12,8 @@ function r2(v){return Math.round(v*100)/100}
 function onC(deg,R){var t=deg*Math.PI/180;return r2(R*Math.cos(t))+","+r2(R*Math.sin(t))}   /* ចំណុចលើរង្វង់ផ្ចិត O */
 function money(v){return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
 var TR=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15]];
+/* 🖼 រូបរង្វង់ពី practiceen.js (PXEN.GF.circle) — ផ្ទុកក្រោយ ដូច្នេះហៅពេលបង្កើតសំណួរ · បើគ្មាន → គ្មានរូប (មិនបាក់) */
+function GFC(o){try{return window.PXEN.GF.circle(o)}catch(e){return ""}}
 var G={};
 /* ===== ១ រ៉ាឌីកាល់ ===== */
 G[1]={1:function(){var a=ri(2,15),b=nz(-5,5);
@@ -96,20 +98,20 @@ G[11]={1:function(){var x=ri(-6,9),y=ri(-6,9);
     return Q("ក្នុងទ្រុងមួយមានមាន់ និងទន្សាយ។ រាប់ក្បាលបាន $"+(c+r)+"$ និងជើងបាន $"+(2*c+4*r)+"$ ។ តើមានមាន់ និងទន្សាយប៉ុន្មាន?",[A(c,null,"num","មាន់ ="),A(r,null,"num","ទន្សាយ =")],"$\\begin{cases}x+y="+(c+r)+"\\\\2x+4y="+(2*c+4*r)+"\\end{cases}$ ⇒ $x="+c+"$ , $y="+r+"$")}};
 /* ===== ១២ រង្វង់ និងបន្ទាត់ ===== */
 G[12]={1:function(){var T=pick(TR),k=T[2]/5,R=r2(T[0]/k),D=r2(T[2]/k),ang=Math.acos(T[0]/T[2])*180/Math.PI;
-    return Q("បន្ទាត់ $(AT)$ ប៉ះរង្វង់ផ្ចិត $O$ កាំ $"+T[0]+"$ ត្រង់ $T$ ។ បើ $OA="+T[2]+"$ គណនា $AT$",[A(T[1],null,"num","AT =")],"$OT\\perp AT$ ⇒ $AT=\\sqrt{"+(T[2]*T[2])+"-"+(T[0]*T[0])+"}="+T[1]+"$","nogrid\nnoaxes\ncircle O "+R+"\nO(0,0)\nA("+D+",0)\nT("+onC(ang,R)+")\nseg O T\nseg O A gray\nseg A T red")},
+    return Q("បន្ទាត់ $(AT)$ ប៉ះរង្វង់ផ្ចិត $O$ កាំ $"+T[0]+"$ ត្រង់ $T$ ។ បើ $OA="+T[2]+"$ គណនា $AT$",[A(T[1],null,"num","AT =")],"$OT\\perp AT$ ⇒ $AT=\\sqrt{"+(T[2]*T[2])+"-"+(T[0]*T[0])+"}="+T[1]+"$",GFC({th:"tg1",k:T[0]/T[2],sl:[["O","T",String(T[0]),-1],["O","A",String(T[2]),-1],["A","T","x",1]]}))},
   2:function(){var T=pick(TR),k=T[2]/4,R=r2(T[2]/k),d=r2(T[0]/k),h=r2(T[1]/k);
-    return Q("រង្វង់ផ្ចិត $O$ កាំ $"+T[2]+"$ ។ អង្កត់ធ្នូ $[AB]$ ឋិតនៅចម្ងាយ $"+T[0]+"$ ពីផ្ចិត $O$ ។ គណនាប្រវែង $AB$",[A(2*T[1],null,"num","AB =")],"$OH\\perp AB$ ហើយ $H$ ជាចំណុចកណ្ដាល ⇒ $AH=\\sqrt{"+(T[2]*T[2])+"-"+(T[0]*T[0])+"}="+T[1]+"$ ⇒ $AB="+(2*T[1])+"$","nogrid\nnoaxes\ncircle O "+R+"\nO(0,0)\nA("+(-h)+","+d+")\nB("+h+","+d+")\nH(0,"+d+")\nseg A B\nseg O H red\nseg O A gray")},
+    return Q("រង្វង់ផ្ចិត $O$ កាំ $"+T[2]+"$ ។ អង្កត់ធ្នូ $[AB]$ ឋិតនៅចម្ងាយ $"+T[0]+"$ ពីផ្ចិត $O$ ។ គណនាប្រវែង $AB$",[A(2*T[1],null,"num","AB =")],"$OH\\perp AB$ ហើយ $H$ ជាចំណុចកណ្ដាល ⇒ $AH=\\sqrt{"+(T[2]*T[2])+"-"+(T[0]*T[0])+"}="+T[1]+"$ ⇒ $AB="+(2*T[1])+"$",GFC({th:"chd",dd:T[0]/T[2],sl:[["A","B","x",null,12],["O","M",String(T[0]),1],["O","A",String(T[2]),-1]]}))},
   3:function(){var a=ri(4,12),b=ri(4,12),c=ri(4,12),d=a+c-b;while(d<3){c++;d=a+c-b}
     return Q("ចតុកោណ $ABCD$ ចារឹកក្រៅរង្វង់ (ជ្រុងទាំង ៤ ប៉ះរង្វង់)។ $AB="+a+"$ , $BC="+b+"$ , $CD="+c+"$ ។ គណនា $AD$",[A(d,null,"num","AD =")],"ចតុកោណចារឹកក្រៅរង្វង់៖ $AB+CD=BC+AD$ ⇒ $AD="+a+"+"+c+"-"+b+"="+d+"$")}};
 /* ===== ១៣ លក្ខណៈមុំនៃរង្វង់ ===== */
-G[13]={1:function(){var al=ri(15,80),rev=Math.random()<.5,R=3,fig="nogrid\nnoaxes\ncircle O "+R+" gray\nO(0,0)\nA("+onC(270-al,R)+")\nB("+onC(270+al,R)+")\nC("+onC(90+ri(-30,30),R)+")\nseg C A\nseg C B\nseg O A\nseg O B\nangle A C B\nangle A O B";
+G[13]={1:function(){var al=ri(15,80),rev=Math.random()<.5,R=3,fig=GFC({th:"cen",x:al,lab:rev?{O:2*al+"°",C:"?"}:{C:al+"°",O:"?"}});
     return rev?Q("មុំផ្ចិត $\\widehat{AOB}="+(2*al)+"^\\circ$ ។ គណនាមុំចារឹក $\\widehat{ACB}$ (ដឺក្រេ)",[A(al,null,"num","∠ACB =")],"មុំចារឹក $=\\dfrac12$ មុំផ្ចិតដែលស្កាត់ធ្នូតែមួយ ⇒ $"+al+"^\\circ$",fig)
       :Q("មុំចារឹក $\\widehat{ACB}="+al+"^\\circ$ ។ គណនាមុំផ្ចិត $\\widehat{AOB}$ (ដឺក្រេ)",[A(2*al,null,"num","∠AOB =")],"មុំផ្ចិត $=2\\times$ មុំចារឹក ⇒ $"+(2*al)+"^\\circ$",fig)},
   2:function(){var a=ri(50,130),b=ri(50,130);
-    return Q("ចតុកោណ $ABCD$ ចារឹកក្នុងរង្វង់ មាន $\\widehat{A}="+a+"^\\circ$ និង $\\widehat{B}="+b+"^\\circ$ ។ គណនា $\\widehat{C}$ និង $\\widehat{D}$",[A(180-a,null,"num","∠C ="),A(180-b,null,"num","∠D =")],"មុំឈមនៃចតុកោណចារឹកក្នុងរង្វង់បំពេញគ្នា ⇒ $\\widehat C=180^\\circ-"+a+"^\\circ="+(180-a)+"^\\circ$ · $\\widehat D="+(180-b)+"^\\circ$","nogrid\nnoaxes\ncircle O 3 gray\nA("+onC(200,3)+")\nB("+onC(290,3)+")\nC("+onC(10,3)+")\nD("+onC(110,3)+")\npoly A B C D")},
+    return Q("ចតុកោណ $ABCD$ ចារឹកក្នុងរង្វង់ មាន $\\widehat{A}="+a+"^\\circ$ និង $\\widehat{B}="+b+"^\\circ$ ។ គណនា $\\widehat{C}$ និង $\\widehat{D}$",[A(180-a,null,"num","∠C ="),A(180-b,null,"num","∠D =")],"មុំឈមនៃចតុកោណចារឹកក្នុងរង្វង់បំពេញគ្នា ⇒ $\\widehat C=180^\\circ-"+a+"^\\circ="+(180-a)+"^\\circ$ · $\\widehat D="+(180-b)+"^\\circ$",GFC({th:"cyc2",a:a,b:b,lab:{A:a+"°",B:b+"°",C:"?",D:"?"}}))},
   3:function(){var x=ri(20,80)*2,y=ri(20,80)*2,ins=Math.random()<.5;if(!ins&&x===y)y+=10;var big=Math.max(x,y),sm=Math.min(x,y);
-    return ins?Q("អង្កត់ធ្នូ $[AC]$ និង $[BD]$ កាត់គ្នាត្រង់ $M$ ក្នុងរង្វង់។ ធ្នូ $\\overset{\\frown}{AB}="+x+"^\\circ$ និង $\\overset{\\frown}{CD}="+y+"^\\circ$ ។ គណនា $\\widehat{AMB}$",[A((x+y)/2,null,"num","∠AMB =")],"មុំមានកំពូលក្នុងរង្វង់ $=\\dfrac{"+x+"^\\circ+"+y+"^\\circ}{2}="+((x+y)/2)+"^\\circ$")
-      :Q("ពីចំណុច $M$ ក្រៅរង្វង់ គូសបន្ទាត់កាត់ពីរ ស្កាត់ធ្នូ $"+big+"^\\circ$ (ឆ្ងាយ) និង $"+sm+"^\\circ$ (ជិត)។ គណនាមុំត្រង់ $M$",[A((big-sm)/2,null,"num","∠M =")],"មុំមានកំពូលក្រៅរង្វង់ $=\\dfrac{"+big+"^\\circ-"+sm+"^\\circ}{2}="+((big-sm)/2)+"^\\circ$")}};
+    return ins?Q("អង្កត់ធ្នូ $[AC]$ និង $[BD]$ កាត់គ្នាត្រង់ $M$ ក្នុងរង្វង់។ ធ្នូ $\\overset{\\frown}{AB}="+x+"^\\circ$ និង $\\overset{\\frown}{CD}="+y+"^\\circ$ ។ គណនា $\\widehat{AMB}$",[A((x+y)/2,null,"num","∠AMB =")],"មុំមានកំពូលក្នុងរង្វង់ $=\\dfrac{"+x+"^\\circ+"+y+"^\\circ}{2}="+((x+y)/2)+"^\\circ$",GFC({th:"chx",x:x,y:y,lab:{M:"?"}}))
+      :Q("ពីចំណុច $M$ ក្រៅរង្វង់ គូសបន្ទាត់កាត់ពីរ ស្កាត់ធ្នូ $"+big+"^\\circ$ (ឆ្ងាយ) និង $"+sm+"^\\circ$ (ជិត)។ គណនាមុំត្រង់ $M$",[A((big-sm)/2,null,"num","∠M =")],"មុំមានកំពូលក្រៅរង្វង់ $=\\dfrac{"+big+"^\\circ-"+sm+"^\\circ}{2}="+((big-sm)/2)+"^\\circ$",GFC({th:"secm",x:sm,y:big,lab:{M:"?"}}))}};
 /* ===== ១៤ ទ្រឹស្ដីបទតាលែស ===== */
 function thFig(t){var Ax=2,Ay=5,D=[r2(Ax*(1-t)),r2(Ay*(1-t))],E=[r2(Ax+(6-Ax)*t),r2(Ay*(1-t))];return"nogrid\nnoaxes\nA("+Ax+","+Ay+")\nB(0,0)\nC(6,0)\nD("+D[0]+","+D[1]+")\nE("+E[0]+","+E[1]+")\npoly A B C\nseg D E red"}
 G[14]={1:function(){var a=ri(1,4),b=a+ri(1,4),n=ri(1,4),m=ri(1,5);
@@ -503,30 +505,30 @@ mx(11,3,[function(){var a=ri(1,5),b=nz(-5,5),c=nz(-9,9),k=pick([2,3,-2,-1]),inf=
 /* ១២ រង្វង់ និងបន្ទាត់ */
 mx(12,1,[function(){var T=pick([[5,3,4],[13,5,12],[10,6,8],[17,8,15],[25,7,24],[15,9,12]]),R=T[0],d=T[1],h=T[2];
    if(Math.random()<.5)return K("chd","រង្វង់ផ្ចិត $O$ កាំ $"+R+"$ cm មានអង្កត់ធ្នូ $AB="+2*h+"$ cm ។ គណនាចម្ងាយពី $O$ ទៅ $AB$",[A(d,null,"num","OM =")],
-     "គូស $OM\\perp AB$ ត្រង់ $M$ ⇒ $M$ ជាចំណុចកណ្ដាល $AB$ ⇒ $AM="+h+"$ ⇒ $OM=\\sqrt{OA^2-AM^2}=\\sqrt{"+R*R+"-"+h*h+"}="+d+"$ cm");
+     "គូស $OM\\perp AB$ ត្រង់ $M$ ⇒ $M$ ជាចំណុចកណ្ដាល $AB$ ⇒ $AM="+h+"$ ⇒ $OM=\\sqrt{OA^2-AM^2}=\\sqrt{"+R*R+"-"+h*h+"}="+d+"$ cm",GFC({th:"chd",dd:d/R,sl:[["A","B",2*h+" cm",null,12],["O","M","x",1],["O","A",R+" cm",-1]]}));
    return K("chl","រង្វង់ផ្ចិត $O$ កាំ $"+R+"$ cm ។ អង្កត់ធ្នូ $AB$ មានចម្ងាយពីផ្ចិត $OM="+d+"$ cm ។ គណនា $AB$",[A(2*h,null,"num","AB =")],
-     "$OM\\perp AB$ ⇒ $M$ ជាចំណុចកណ្ដាល $AB$ ⇒ $AM=\\sqrt{"+R*R+"-"+d*d+"}="+h+"$ ⇒ $AB="+2*h+"$ cm")}],.45);
+     "$OM\\perp AB$ ⇒ $M$ ជាចំណុចកណ្ដាល $AB$ ⇒ $AM=\\sqrt{"+R*R+"-"+d*d+"}="+h+"$ ⇒ $AB="+2*h+"$ cm",GFC({th:"chd",dd:d/R,sl:[["A","B","x",null,12],["O","M",d+" cm",1],["O","A",R+" cm",-1]]}))}],.45);
 mx(12,2,[function(){var r=ri(3,9),r2=ri(1,r-1),c=ri(0,4),d=[r+r2+ri(1,5),r+r2,ri(r-r2+1,r+r2-1),r-r2,ri(0,r-r2-1)][c];
    return K("cps","រង្វង់ពីរមានកាំ $r="+r+"$ cm និង $r'="+r2+"$ cm ហើយចម្ងាយរវាងផ្ចិតទាំងពីរ $d="+d+"$ cm ។ តើរង្វង់ទាំងពីរមានបន្ទាត់ប៉ះរួមប៉ុន្មាន?",[A([4,3,2,1,0][c],null,"num","ចំនួន =")],
      "$r+r'="+(r+r2)+"$ , $r-r'="+(r-r2)+"$ ។ "+["$d>r+r'$ ⇒ នៅក្រៅគ្នា ⇒ $4$ បន្ទាត់","$d=r+r'$ ⇒ ប៉ះគ្នាខាងក្រៅ ⇒ $3$ បន្ទាត់","$r-r'\\lt d\\lt r+r'$ ⇒ កាត់គ្នាពីរចំណុច ⇒ $2$ បន្ទាត់","$d=r-r'$ ⇒ ប៉ះគ្នាខាងក្នុង ⇒ $1$ បន្ទាត់","$d\\lt r-r'$ ⇒ រង្វង់តូចនៅក្នុងរង្វង់ធំ ⇒ គ្មានបន្ទាត់ប៉ះរួម"][c])}],.45);
 mx(12,3,[function(){var T=pick(TR),k=ri(1,2),R=T[0]*k,AB=T[1]*k,OA=T[2]*k;
    return K("tg2","ពីចំណុច $A$ ក្រៅរង្វង់ផ្ចិត $O$ កាំ $"+R+"$ cm គេគូសបន្ទាត់ប៉ះ $AB$ និង $AC$ ($B,C$ ជាចំណុចប៉ះ) ។ $OA="+OA+"$ cm ។ គណនា $AB$ , $AC$ និងបរិមាត្រចតុកោណ $ABOC$",
      [A(AB,null,"num","AB ="),A(AB,null,"num","AC ="),A(2*AB+2*R,null,"num","P =")],
-     "$OB\\perp AB$ ⇒ $AB=\\sqrt{OA^2-OB^2}=\\sqrt{"+OA*OA+"-"+R*R+"}="+AB+"$ · បន្ទាត់ប៉ះពីរគូសពីចំណុចតែមួយស្មើគ្នា ⇒ $AC=AB="+AB+"$ · $P=2AB+2R="+(2*AB+2*R)+"$ cm")}],.4);
+     "$OB\\perp AB$ ⇒ $AB=\\sqrt{OA^2-OB^2}=\\sqrt{"+OA*OA+"-"+R*R+"}="+AB+"$ · បន្ទាត់ប៉ះពីរគូសពីចំណុចតែមួយស្មើគ្នា ⇒ $AC=AB="+AB+"$ · $P=2AB+2R="+(2*AB+2*R)+"$ cm",GFC({th:"tg2",k:R/OA,sl:[["O","B",R+" cm",-1],["O","A",OA+" cm",-1],["A","B","?",1],["A","C","?",1]]}))}],.4);
 /* ១៣ លក្ខណៈមុំនៃរង្វង់ */
 mx(13,1,[function(){var al=ri(15,75);
    return K("smc","$[AB]$ ជាអង្កត់ផ្ចិតនៃរង្វង់ ហើយ $C$ ជាចំណុចនៅលើរង្វង់ ។ $\\widehat{CAB}="+al+"^\\circ$ ។ គណនា $\\widehat{ACB}$ និង $\\widehat{ABC}$",[A(90,null,"num","ACB ="),A(90-al,null,"num","ABC =")],
-     "មុំចារឹកក្នុងកន្លះរង្វង់ ⇒ $\\widehat{ACB}=90^\\circ$ ⇒ $\\widehat{ABC}=180^\\circ-90^\\circ-"+al+"^\\circ="+(90-al)+"^\\circ$")}],.4);
+     "មុំចារឹកក្នុងកន្លះរង្វង់ ⇒ $\\widehat{ACB}=90^\\circ$ ⇒ $\\widehat{ABC}=180^\\circ-90^\\circ-"+al+"^\\circ="+(90-al)+"^\\circ$",GFC({th:"semi",x:al,nr:true,lab:{A:al+"°",B:"?",C:"?"}}))}],.4);
 mx(13,2,[
  function(){var arc=2*ri(20,80);
    return K("tch","បន្ទាត់ $(AT)$ ប៉ះរង្វង់ត្រង់ $A$ ហើយ $[AB]$ ជាអង្កត់ធ្នូ ។ ធ្នូ $\\overset{\\frown}{AB}="+arc+"^\\circ$ (ធ្នូនៅក្នុងមុំ $\\widehat{TAB}$) ។ គណនា $\\widehat{TAB}$ និងមុំចារឹក $\\widehat{ACB}$",[A(arc/2,null,"num","TAB ="),A(arc/2,null,"num","ACB =")],
-     "មុំផ្គុំដោយបន្ទាត់ប៉ះ និងអង្កត់ធ្នូ ៖ $\\widehat{TAB}=\\widehat{ACB}=\\dfrac12\\overset{\\frown}{AB}=\\dfrac{"+arc+"^\\circ}{2}="+arc/2+"^\\circ$")},
+     "មុំផ្គុំដោយបន្ទាត់ប៉ះ និងអង្កត់ធ្នូ ៖ $\\widehat{TAB}=\\widehat{ACB}=\\dfrac12\\overset{\\frown}{AB}=\\dfrac{"+arc+"^\\circ}{2}="+arc/2+"^\\circ$",GFC({th:"alt",x:arc/2,lab:{A:"?",C:"?"},arcs:[[270,270+arc,arc+"°"]]}))},
  function(){var a=ri(50,120);
    return K("exq","ចតុកោណ $ABCD$ ចារឹកក្នុងរង្វង់ ។ $E$ នៅលើបន្លាយ $[BC]$ ។ $\\widehat{A}="+a+"^\\circ$ ។ គណនា $\\widehat{BCD}$ និងមុំក្រៅ $\\widehat{DCE}$",[A(180-a,null,"num","BCD ="),A(a,null,"num","DCE =")],
-     "មុំឈមបន្ថែមគ្នា ⇒ $\\widehat{BCD}=180^\\circ-"+a+"^\\circ="+(180-a)+"^\\circ$ · មុំក្រៅស្មើមុំឈមខាងក្នុង ⇒ $\\widehat{DCE}=\\widehat A="+a+"^\\circ$")}],.45);
+     "មុំឈមបន្ថែមគ្នា ⇒ $\\widehat{BCD}=180^\\circ-"+a+"^\\circ="+(180-a)+"^\\circ$ · មុំក្រៅស្មើមុំឈមខាងក្នុង ⇒ $\\widehat{DCE}=\\widehat A="+a+"^\\circ$",GFC({th:"cyc",x:a,e:true,lab:{A:a+"°",C:"?",E:"?"}}))}],.45);
 mx(13,3,[function(){var r=ri(2,12),al=pick([30,45,60,72,90,120,135,150,180,240]),S=fr(r*r*al,360),L=fr(2*r*al,360);
    return K("sct","ចម្រៀកថាសមានកាំ $r="+r+"$ cm និងមុំផ្ចិត $\\alpha="+al+"^\\circ$ ។ គណនាផ្ទៃក្រឡា និងប្រវែងធ្នូ (ទុក $\\pi$)",[A(S.s+"*pi",pT(S),"num","S ="),A(L.s+"*pi",pT(L),"num","ធ្នូ =")],
-     "$S=\\pi r^2\\times\\dfrac{\\alpha}{360^\\circ}=\\pi\\times"+r*r+"\\times\\dfrac{"+al+"}{360}="+pT(S)+"$ cm² · $\\overset{\\frown}{AB}=2\\pi r\\times\\dfrac{\\alpha}{360^\\circ}="+pT(L)+"$ cm")}],.4);
+     "$S=\\pi r^2\\times\\dfrac{\\alpha}{360^\\circ}=\\pi\\times"+r*r+"\\times\\dfrac{"+al+"}{360}="+pT(S)+"$ cm² · $\\overset{\\frown}{AB}=2\\pi r\\times\\dfrac{\\alpha}{360^\\circ}="+pT(L)+"$ cm",GFC({kind:"sector",ang:al,r:r+" cm",angLab:al+"°"}))}],.4);
 /* ១៤ ទ្រឹស្ដីបទតាលែស */
 mx(14,1,[function(){var a=ri(4,30);
    return K("mdt","ក្នុងត្រីកោណ $ABC$ ៖ $E$ ជាចំណុចកណ្ដាល $[AB]$ និង $F$ ជាចំណុចកណ្ដាល $[AC]$ ។ $BC="+a+"$ cm ។ គណនា $EF$",[A(a/2,null,"num","EF =")],
@@ -866,11 +868,11 @@ vx(13,2,[
  function(){var a=2*ri(15,75);
    return K("n_iso","ក្នុងរង្វង់ផ្ចិត $O$ ៖ $\\widehat{AOB}="+ang(a)+"$ ។ គណនា $\\widehat{OAB}$",[A((180-a)/2,null,"num","OAB =")],"$OA=OB$ ⇒ ត្រីកោណសមបាត ⇒ $\\widehat{OAB}=\\dfrac{180^\\circ-"+ang(a)+"}{2}="+ang((180-a)/2)+"$")},
  function(){var a=ri(25,85);
-   return K("n_boc2","ត្រីកោណ $ABC$ ចារឹកក្នុងរង្វង់ផ្ចិត $O$ មាន $\\widehat{BAC}="+ang(a)+"$ ។ គណនា $\\widehat{BOC}$",[A(2*a,null,"num","BOC =")],"មុំផ្ចិត = ២ ដងមុំចារឹកស្កាត់ធ្នូដូចគ្នា ⇒ $\\widehat{BOC}=2\\times"+ang(a)+"="+ang(2*a)+"$")}]);
+   return K("n_boc2","ត្រីកោណ $ABC$ ចារឹកក្នុងរង្វង់ផ្ចិត $O$ មាន $\\widehat{BAC}="+ang(a)+"$ ។ គណនា $\\widehat{BOC}$",[A(2*a,null,"num","BOC =")],"មុំផ្ចិត = ២ ដងមុំចារឹកស្កាត់ធ្នូដូចគ្នា ⇒ $\\widehat{BOC}=2\\times"+ang(a)+"="+ang(2*a)+"$",GFC({th:"cen",x:a,ren:{A:"B",B:"C",C:"A"},lab:{C:a+"°",O:"?"}}))}]);
 vx(13,3,[
  function(){var C=pick([[6,60],[6,120],[4,90],[3,120],[9,40],[10,72],[12,30],[6,150]]),r=C[0],al=C[1],S=fr(al*r*r,360);
    return K("n_secr","ចម្រៀកថាមួយមានកាំ $"+r+"$ cm និងផ្ទៃក្រឡា $"+pT(S)+"$ cm² ។ គណនាមុំផ្ចិត $\\alpha$ (ដឺក្រេ)",[A(al,null,"num","α =")],
-     "$S=\\dfrac{\\pi r^2\\alpha}{360}$ ⇒ $\\alpha=\\dfrac{360S}{\\pi r^2}=\\dfrac{360\\times"+S.t+"}{"+(r*r)+"}="+ang(al)+"$")},
+     "$S=\\dfrac{\\pi r^2\\alpha}{360}$ ⇒ $\\alpha=\\dfrac{360S}{\\pi r^2}=\\dfrac{360\\times"+S.t+"}{"+(r*r)+"}="+ang(al)+"$",GFC({kind:"sector",ang:al,r:r+" cm",angLab:"α"}))},
  function(){var a=ri(30,140);
    return K("n_pab","ពីចំណុច $P$ ក្រៅរង្វង់ គូសបន្ទាត់ប៉ះ $PA$ និង $PB$ ។ $\\widehat{APB}="+ang(a)+"$ ។ គណនារង្វាស់ធ្នូតូច $AB$",[A(180-a,null,"num","ធ្នូ =")],
      "$\\widehat{AOB}=180^\\circ-"+ang(a)+"="+ang(180-a)+"$ (ចតុកោណ $PAOB$ មានមុំកែងពីរ) ⇒ ធ្នូតូច $AB="+ang(180-a)+"$")}]);
@@ -1270,21 +1272,21 @@ vx(11,4,[
  function(){var w=ri(4,15),l=w+ri(2,10);return K("g9p_11_field","វាលស្រែរាងចតុកោណកែងមានបរិមាត្រ $"+(2*(w+l))+"$ m ហើយបណ្ដោយវែងជាងទទឹង $"+(l-w)+"$ m ។ គណនាផ្ទៃក្រឡា",[A(w*l,null,"num","S =")],"$x+y="+(w+l)+"$ , $x-y="+(l-w)+"$ ⇒ $"+l+"\\times"+w+"="+(w*l)+"$ m²")}]);
 /* ---------- ១២ រង្វង់ និងបន្ទាត់ ---------- */
 vx(12,1,[function(){var R=ri(2,12),d=R+nz(-5,5);if(d<0)d=R+3;var pos=d<R?"កាត់":d===R?"ប៉ះ":"មិនកាត់";return K("g9_12_pos","រង្វង់កាំ $"+R+"$ cm ហើយចម្ងាយពីផ្ចិតទៅបន្ទាត់ $(d)$ គឺ $"+d+"$ cm ។ ចំនួនចំណុចប្រសព្វ?",[A(d<R?2:d===R?1:0,null,"num","=")],"$d"+(d<R?"<":d===R?"=":">")+"R$ ⇒ "+pos)}]);
-vx(12,2,[function(){var T=pick(TR),k=ri(1,3);return K("g9_12_tl","ពីចំណុច $M$ គូសបន្ទាត់ប៉ះ $MT$ ទៅរង្វង់ផ្ចិត $O$ កាំ $"+(T[0]*k)+"$ ។ បើ $OM="+(T[2]*k)+"$ គណនា $MT$",[A(T[1]*k,null,"num","MT =")],"$OT\\perp MT$ ⇒ $MT=\\sqrt{"+(T[2]*k)+"^2-"+(T[0]*k)+"^2}="+(T[1]*k)+"$")}]);
-vx(12,3,[function(){var T=pick(TR),k=ri(1,2);return K("g9_12_two","ពីចំណុច $M$ ក្រៅរង្វង់ គូសបន្ទាត់ប៉ះ $MA$ និង $MB$ ។ $MA="+(T[1]*k)+"$ និងកាំ $"+(T[0]*k)+"$ ។ គណនា $MB$ និង $OM$ ហើយបរិមាត្រចតុកោណ $OAMB$",[A(T[1]*k,null,"num","MB ="),A(T[2]*k,null,"num","OM ="),A(2*(T[0]+T[1])*k,null,"num","P =")],"$MA=MB$ · $OM=\\sqrt{"+(T[0]*k)+"^2+"+(T[1]*k)+"^2}="+(T[2]*k)+"$ · $P=2("+(T[0]*k)+"+"+(T[1]*k)+")$")}]);
+vx(12,2,[function(){var T=pick(TR),k=ri(1,3);return K("g9_12_tl","ពីចំណុច $M$ គូសបន្ទាត់ប៉ះ $MT$ ទៅរង្វង់ផ្ចិត $O$ កាំ $"+(T[0]*k)+"$ ។ បើ $OM="+(T[2]*k)+"$ គណនា $MT$",[A(T[1]*k,null,"num","MT =")],"$OT\\perp MT$ ⇒ $MT=\\sqrt{"+(T[2]*k)+"^2-"+(T[0]*k)+"^2}="+(T[1]*k)+"$",GFC({th:"tg1",ren:{A:"M"},k:T[0]/T[2],sl:[["O","T",String(T[0]*k),-1],["O","A",String(T[2]*k),-1],["A","T","x",1]]}))}]);
+vx(12,3,[function(){var T=pick(TR),k=ri(1,2);return K("g9_12_two","ពីចំណុច $M$ ក្រៅរង្វង់ គូសបន្ទាត់ប៉ះ $MA$ និង $MB$ ។ $MA="+(T[1]*k)+"$ និងកាំ $"+(T[0]*k)+"$ ។ គណនា $MB$ និង $OM$ ហើយបរិមាត្រចតុកោណ $OAMB$",[A(T[1]*k,null,"num","MB ="),A(T[2]*k,null,"num","OM ="),A(2*(T[0]+T[1])*k,null,"num","P =")],"$MA=MB$ · $OM=\\sqrt{"+(T[0]*k)+"^2+"+(T[1]*k)+"^2}="+(T[2]*k)+"$ · $P=2("+(T[0]*k)+"+"+(T[1]*k)+")$",GFC({th:"tg2",ren:{A:"M",B:"A",C:"B"},k:T[0]/T[2],sl:[["O","B",String(T[0]*k),-1],["A","B",String(T[1]*k),1],["A","C","?",1],["O","A","?",-1]]}))}]);
 lvset(12,5,[
  function(){var R=ri(2,15);return K("g9_12_d","រង្វង់មានអង្កត់ផ្ចិត $"+(2*R)+"$ cm ។ រកកាំ",[A(R,null,"num","R =")],"$R=\\dfrac{"+(2*R)+"}{2}="+R+"$")},
  function(){var R=ri(2,15);return K("g9_12_tan","បន្ទាត់ $(d)$ ប៉ះរង្វង់ផ្ចិត $O$ កាំ $"+R+"$ ត្រង់ $T$ ។ គណនាចម្ងាយពី $O$ ទៅ $(d)$ និងមុំ $\\widehat{OTd}$ (ដឺក្រេ)",[A(R,null,"num","d ="),A(90,null,"num","មុំ =")],"បន្ទាត់ប៉ះកែងនឹងកាំ ⇒ $d=R="+R+"$ , មុំ $90^\\circ$")},
- function(){var T=pick(TR),k=ri(1,3);return K("g9_12_chd","ខ្សែធ្នូ $AB$ វែង $"+(2*T[1]*k)+"$ ក្នុងរង្វង់កាំ $"+(T[2]*k)+"$ ។ គណនាចម្ងាយពីផ្ចិតទៅខ្សែធ្នូ",[A(T[0]*k,null,"num","d =")],"$d=\\sqrt{"+(T[2]*k)+"^2-"+(T[1]*k)+"^2}="+(T[0]*k)+"$")},
+ function(){var T=pick(TR),k=ri(1,3);return K("g9_12_chd","ខ្សែធ្នូ $AB$ វែង $"+(2*T[1]*k)+"$ ក្នុងរង្វង់កាំ $"+(T[2]*k)+"$ ។ គណនាចម្ងាយពីផ្ចិតទៅខ្សែធ្នូ",[A(T[0]*k,null,"num","d =")],"$d=\\sqrt{"+(T[2]*k)+"^2-"+(T[1]*k)+"^2}="+(T[0]*k)+"$",GFC({th:"chd",dd:T[0]/T[2],sl:[["A","B",String(2*T[1]*k),null,12],["O","M","x",1],["O","A",String(T[2]*k),-1]]}))},
  function(){var R=ri(2,12),d=ri(1,20);while(d===R)d++;return K("g9_12_in","រង្វង់ផ្ចិត $O$ កាំ $"+R+"$ ។ ចំណុច $M$ មាន $OM="+d+"$ ។ $M$ នៅក្នុងរង្វង់ឬទេ? (១=ក្នុង · ០=ក្រៅ)",[A(d<R?1:0,null,"num","=")],"$OM"+(d<R?"<":">")+"R$")},
  function(){var R=ri(3,15),d=ri(1,2*R),n=d<R?2:d===R?1:0;return K("g9_12_dl","បន្ទាត់ $(d)$ នៅចម្ងាយ $"+d+"$ cm ពីផ្ចិតរង្វង់អង្កត់ផ្ចិត $"+(2*R)+"$ cm ។ រកចំនួនចំណុចប្រសព្វ",[A(n,null,"num","=")],"$R="+R+"$ · $d"+(d<R?"<":d===R?"=":">")+"R$ ⇒ $"+n+"$ ចំណុច")},
- function(){var T=pick(TR),k=ri(1,3);return K("g9_12_om","បន្ទាត់ប៉ះ $MT$ វែង $"+(T[1]*k)+"$ និងកាំ $"+(T[0]*k)+"$ ។ គណនា $OM$",[A(T[2]*k,null,"num","OM =")],"$\\sqrt{"+(T[0]*k)+"^2+"+(T[1]*k)+"^2}="+(T[2]*k)+"$")}]);
+ function(){var T=pick(TR),k=ri(1,3);return K("g9_12_om","បន្ទាត់ប៉ះ $MT$ វែង $"+(T[1]*k)+"$ និងកាំ $"+(T[0]*k)+"$ ។ គណនា $OM$",[A(T[2]*k,null,"num","OM =")],"$\\sqrt{"+(T[0]*k)+"^2+"+(T[1]*k)+"^2}="+(T[2]*k)+"$",GFC({th:"tg1",ren:{A:"M"},k:T[0]/T[2],sl:[["O","T",String(T[0]*k),-1],["O","A","x",-1],["A","T",String(T[1]*k),1]]}))}]);
 lvset(12,6,[
- function(){var T=pick(TR),k=ri(1,3);return K("g9_12_cr","ខ្សែធ្នូវែង $"+(2*T[1]*k)+"$ នៅចម្ងាយ $"+(T[0]*k)+"$ ពីផ្ចិត ។ រកកាំរង្វង់",[A(T[2]*k,null,"num","R =")],"ពាក់កណ្ដាលខ្សែធ្នូ $"+(T[1]*k)+"$ ⇒ $R=\\sqrt{"+(T[1]*k)+"^2+"+(T[0]*k)+"^2}="+(T[2]*k)+"$")},
- function(){var R=ri(3,9),d=ri(1,R-1),s=R*R-d*d;return K("g9_12_chr","រង្វង់កាំ $"+R+"$ ។ ខ្សែធ្នូនៅចម្ងាយ $"+d+"$ ពីផ្ចិត ។ គណនាប្រវែងខ្សែធ្នូ (ទុក $\\sqrt{\\ }$)",[A("sqrt("+(4*s)+")",sqT(4*s),"num","=")],"$2\\sqrt{"+R+"^2-"+d+"^2}=2\\sqrt{"+s+"}="+sqT(4*s)+"$")},
+ function(){var T=pick(TR),k=ri(1,3);return K("g9_12_cr","ខ្សែធ្នូវែង $"+(2*T[1]*k)+"$ នៅចម្ងាយ $"+(T[0]*k)+"$ ពីផ្ចិត ។ រកកាំរង្វង់",[A(T[2]*k,null,"num","R =")],"ពាក់កណ្ដាលខ្សែធ្នូ $"+(T[1]*k)+"$ ⇒ $R=\\sqrt{"+(T[1]*k)+"^2+"+(T[0]*k)+"^2}="+(T[2]*k)+"$",GFC({th:"chd",dd:T[0]/T[2],sl:[["A","B",String(2*T[1]*k),null,12],["O","M",String(T[0]*k),1],["O","A","x",-1]]}))},
+ function(){var R=ri(3,9),d=ri(1,R-1),s=R*R-d*d;return K("g9_12_chr","រង្វង់កាំ $"+R+"$ ។ ខ្សែធ្នូនៅចម្ងាយ $"+d+"$ ពីផ្ចិត ។ គណនាប្រវែងខ្សែធ្នូ (ទុក $\\sqrt{\\ }$)",[A("sqrt("+(4*s)+")",sqT(4*s),"num","=")],"$2\\sqrt{"+R+"^2-"+d+"^2}=2\\sqrt{"+s+"}="+sqT(4*s)+"$",GFC({th:"chd",dd:d/R,sl:[["A","B","x",null,12],["O","M",String(d),1],["O","A",String(R),-1]]}))},
  function(){var a=ri(2,8),b=ri(2,8),c=ri(2,8);return K("g9_12_tri","ត្រីកោណ $ABC$ ចារឹកក្រៅរង្វង់ ៖ រង្វង់ប៉ះ $AB$ , $BC$ , $CA$ ។ ប្រវែងបន្ទាត់ប៉ះពី $A$ , $B$ , $C$ គឺ $"+a+"$ , $"+b+"$ , $"+c+"$ ។ គណនាបរិមាត្រ",[A(2*(a+b+c),null,"num","P =")],"បន្ទាត់ប៉ះពីចំណុចតែមួយស្មើគ្នា ⇒ $2("+a+"+"+b+"+"+c+")="+(2*(a+b+c))+"$")},
  function(){var R1=ri(2,9),R2=ri(2,9),c=pick([0,1,2]),d=c===0?R1+R2:c===1?R1+R2+ri(1,5):Math.abs(R1-R2)+1;if(c===2&&d>=R1+R2){d=R1+R2;c=0}return K("g9_12_cc","រង្វង់ពីរកាំ $"+R1+"$ និង $"+R2+"$ មានចម្ងាយផ្ចិត $"+d+"$ ។ ចំនួនចំណុចរួម?",[A(c===0?1:c===1?0:2,null,"num","=")],(c===0?"$d=R_1+R_2$ ⇒ ប៉ះក្រៅ ⇒ $1$":c===1?"$d>R_1+R_2$ ⇒ $0$":"$|R_1-R_2|<d<R_1+R_2$ ⇒ $2$"))},
- function(){var R=ri(2,10),T=pick(TR),k=ri(1,2),D=T[2]*k;return K("g9_12_ext","ពីចំណុច $M$ ចម្ងាយ $"+D+"$ ពីផ្ចិត គូសបន្ទាត់ប៉ះទៅរង្វង់ កាំ $"+(T[0]*k)+"$ ។ រកប្រវែងបន្ទាត់ប៉ះ និងផ្ទៃក្រឡាត្រីកោណ $OMT$",[A(T[1]*k,null,"num","MT ="),A(T[0]*T[1]*k*k/2,null,"num","S =")],"$MT="+(T[1]*k)+"$ · $S=\\dfrac12\\cdot"+(T[0]*k)+"\\cdot"+(T[1]*k)+"="+(T[0]*T[1]*k*k/2)+"$")},
+ function(){var R=ri(2,10),T=pick(TR),k=ri(1,2),D=T[2]*k;return K("g9_12_ext","ពីចំណុច $M$ ចម្ងាយ $"+D+"$ ពីផ្ចិត គូសបន្ទាត់ប៉ះទៅរង្វង់ កាំ $"+(T[0]*k)+"$ ។ រកប្រវែងបន្ទាត់ប៉ះ និងផ្ទៃក្រឡាត្រីកោណ $OMT$",[A(T[1]*k,null,"num","MT ="),A(T[0]*T[1]*k*k/2,null,"num","S =")],"$MT="+(T[1]*k)+"$ · $S=\\dfrac12\\cdot"+(T[0]*k)+"\\cdot"+(T[1]*k)+"="+(T[0]*T[1]*k*k/2)+"$",GFC({th:"tg1",ren:{A:"M"},k:T[0]/T[2],sl:[["O","T",String(T[0]*k),-1],["O","A",String(D),-1],["A","T","x",1]]}))},
  function(){var R=ri(3,12),h=ri(1,R-1),s=2*R*h-h*h;return K("g9_12_sag","រង្វង់កាំ $"+R+"$ ។ ខ្សែធ្នូ $AB$ ដែលចម្ងាយពីផ្ចិតទៅ $AB$ គឺ $"+(R-h)+"$ ។ គណនា $\\left(\\dfrac{AB}{2}\\right)^2$",[A(s,null,"num","=")],"$"+R+"^2-"+(R-h)+"^2="+s+"$")}]);
 vx(12,4,[
  function(){var T=pick(TR),k=ri(1,2);return K("g9p_12_rope","ធុងទឹករាងស៊ីឡាំងកាំ $"+(T[0]*k)+"$ m ។ គេចងខ្សែពីបង្គោល $M$ ដែលនៅឆ្ងាយពីផ្ចិតធុង $"+(T[2]*k)+"$ m ឱ្យប៉ះនឹងធុង (មើលពីលើ) ។ ខ្សែត្រង់ពី $M$ ដល់ចំណុចប៉ះវែងប៉ុន្មាន m?",[A(T[1]*k,null,"num","=")],"កាំកែងនឹងបន្ទាត់ប៉ះ ⇒ $\\sqrt{"+(T[2]*k)+"^2-"+(T[0]*k)+"^2}="+(T[1]*k)+"$ m")},
@@ -1293,12 +1295,12 @@ vx(12,4,[
  function(){var R=ri(3,10),L=ri(2,9);return K("g9p_12_belt","ខ្សែចងពីម៉ាស៊ីន ៖ ពីចំណុច $M$ គូសខ្សែប៉ះពីរ $MA$ , $MB$ ទៅកង់ (រង្វង់) ។ បើ $MA="+L+"$ dm តើ $MB$ ប៉ុន្មាន dm?",[A(L,null,"num","MB =")],"បន្ទាត់ប៉ះពីចំណុចតែមួយស្មើគ្នា ⇒ $"+L+"$")}]);
 /* ---------- ១៣ លក្ខណៈមុំនៃរង្វង់ ---------- */
 vx(13,1,[
- function(){var c=2*ri(10,85);return K("g9_13_ic","មុំផ្ចិត $\\widehat{AOB}="+ang(c)+"$ ។ គណនាមុំចារឹក $\\widehat{ACB}$ ដែលស្កាត់ធ្នូ $AB$ ដូចគ្នា",[A(c/2,null,"num","=")],"មុំចារឹក $=\\dfrac12$ មុំផ្ចិត $="+ang(c/2)+"$")},
- function(){var i=ri(10,85);return K("g9_13_ci","មុំចារឹក $\\widehat{ACB}="+ang(i)+"$ ។ គណនាមុំផ្ចិត $\\widehat{AOB}$ ស្កាត់ធ្នូដូចគ្នា",[A(2*i,null,"num","=")],"$2\\times"+i+"="+(2*i)+"^\\circ$")}]);
-vx(13,2,[function(){var a=ri(20,70);return K("g9_13_semi","$[AB]$ ជាអង្កត់ផ្ចិត ហើយ $C$ នៅលើរង្វង់ ។ បើ $\\widehat{CAB}="+ang(a)+"$ គណនា $\\widehat{CBA}$",[A(90-a,null,"num","=")],"$\\widehat{ACB}=90^\\circ$ (ចារឹកក្នុងកន្លះរង្វង់) ⇒ $90-"+a+"="+(90-a)+"^\\circ$")}]);
+ function(){var c=2*ri(10,85);return K("g9_13_ic","មុំផ្ចិត $\\widehat{AOB}="+ang(c)+"$ ។ គណនាមុំចារឹក $\\widehat{ACB}$ ដែលស្កាត់ធ្នូ $AB$ ដូចគ្នា",[A(c/2,null,"num","=")],"មុំចារឹក $=\\dfrac12$ មុំផ្ចិត $="+ang(c/2)+"$",GFC({th:"cen",x:c/2,lab:{O:c+"°",C:"?"}}))},
+ function(){var i=ri(10,85);return K("g9_13_ci","មុំចារឹក $\\widehat{ACB}="+ang(i)+"$ ។ គណនាមុំផ្ចិត $\\widehat{AOB}$ ស្កាត់ធ្នូដូចគ្នា",[A(2*i,null,"num","=")],"$2\\times"+i+"="+(2*i)+"^\\circ$",GFC({th:"cen",x:i,lab:{C:i+"°",O:"?"}}))}]);
+vx(13,2,[function(){var a=ri(20,70);return K("g9_13_semi","$[AB]$ ជាអង្កត់ផ្ចិត ហើយ $C$ នៅលើរង្វង់ ។ បើ $\\widehat{CAB}="+ang(a)+"$ គណនា $\\widehat{CBA}$",[A(90-a,null,"num","=")],"$\\widehat{ACB}=90^\\circ$ (ចារឹកក្នុងកន្លះរង្វង់) ⇒ $90-"+a+"="+(90-a)+"^\\circ$",GFC({th:"semi",x:a,nr:true,lab:{A:a+"°",B:"?"}}))}]);
 vx(13,3,[
- function(){var x=ri(20,60),y=ri(20,60);return K("g9_13_tc","$AT$ ប៉ះរង្វង់ត្រង់ $A$ ។ ខ្សែធ្នូ $AB$ បង្កើតមុំ $\\widehat{TAB}="+ang(x)+"$ ។ $C$ នៅលើធ្នូធំ ។ គណនា $\\widehat{ACB}$ និងមុំផ្ចិត $\\widehat{AOB}$",[A(x,null,"num","ACB ="),A(2*x,null,"num","AOB =")],"មុំបន្ទាត់ប៉ះ-ខ្សែធ្នូ $=$ មុំចារឹក $="+ang(x)+"$ · មុំផ្ចិត $"+ang(2*x)+"$")},
- function(){var a=ri(40,130),b=ri(40,130);return K("g9_13_cq2","$ABCD$ ចារឹកក្នុងរង្វង់ ។ $\\widehat A="+ang(a)+"$ , $\\widehat B="+ang(b)+"$ ។ គណនា $\\widehat C+\\widehat D$ និង $\\widehat C-\\widehat D$",[A(360-a-b,null,"num","C+D ="),A(b-a,null,"num","C−D =")],"$\\widehat C=180-"+a+"="+(180-a)+"$ , $\\widehat D=180-"+b+"="+(180-b)+"$")}]);
+ function(){var x=ri(20,60),y=ri(20,60);return K("g9_13_tc","$AT$ ប៉ះរង្វង់ត្រង់ $A$ ។ ខ្សែធ្នូ $AB$ បង្កើតមុំ $\\widehat{TAB}="+ang(x)+"$ ។ $C$ នៅលើធ្នូធំ ។ គណនា $\\widehat{ACB}$ និងមុំផ្ចិត $\\widehat{AOB}$",[A(x,null,"num","ACB ="),A(2*x,null,"num","AOB =")],"មុំបន្ទាត់ប៉ះ-ខ្សែធ្នូ $=$ មុំចារឹក $="+ang(x)+"$ · មុំផ្ចិត $"+ang(2*x)+"$",GFC({th:"alt",x:x,lab:{A:x+"°",C:"?"}}))},
+ function(){var a=ri(40,130),b=ri(40,130);return K("g9_13_cq2","$ABCD$ ចារឹកក្នុងរង្វង់ ។ $\\widehat A="+ang(a)+"$ , $\\widehat B="+ang(b)+"$ ។ គណនា $\\widehat C+\\widehat D$ និង $\\widehat C-\\widehat D$",[A(360-a-b,null,"num","C+D ="),A(b-a,null,"num","C−D =")],"$\\widehat C=180-"+a+"="+(180-a)+"$ , $\\widehat D=180-"+b+"="+(180-b)+"$",GFC({th:"cyc2",a:a,b:b,lab:{A:a+"°",B:b+"°",C:"?",D:"?"}}))}]);
 lvset(13,5,[
  function(){var a=ri(30,150);return K("g9_13_cq","$ABCD$ ជាចតុកោណចារឹកក្នុងរង្វង់ ។ $\\widehat A="+ang(a)+"$ ។ គណនា $\\widehat C$",[A(180-a,null,"num","=")],"មុំឈមបូកគ្នា $180^\\circ$ ⇒ $"+(180-a)+"^\\circ$")},
  function(){var i=ri(15,80);return K("g9_13_same","មុំចារឹក $\\widehat{ACB}="+ang(i)+"$ ។ $D$ នៅលើធ្នូដូចគ្នានឹង $C$ ។ គណនា $\\widehat{ADB}$",[A(i,null,"num","=")],"មុំចារឹកស្កាត់ធ្នូតែមួយស្មើគ្នា ⇒ $"+ang(i)+"$")},
