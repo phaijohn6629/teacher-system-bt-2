@@ -155,7 +155,7 @@ G9[8]={1:L(
  function(){var b=ri(25,75),ap=180-2*b;
    return K("iso","Triangle $ABC$ is isosceles with $AB=AC$. Angle $BAC=$ $"+ap+"^\\circ$. Find angle $ABC$.",[A(b,null,"num","angle =")],"Base angles are equal: $\\dfrac{180-"+ap+"}{2}="+b+"^\\circ$.",GF.tri({ang:[ap,b,b],lab:{A:ap+"°",B:"x°"}}))},
  function(){var n=ri(5,12);
-   return K("isum","Find the sum of the interior angles of a polygon with $"+n+"$ sides.",[A((n-2)*180,null,"num","sum =")],"$(n-2)\\times180^\\circ="+(n-2)+"\\times180^\\circ="+(n-2)*180+"^\\circ$")}),
+   return K("isum","Find the sum of the interior angles of a polygon with $"+n+"$ sides.",[A((n-2)*180,null,"num","sum =")],"$(n-2)\\times180^\\circ="+(n-2)+"\\times180^\\circ="+(n-2)*180+"^\\circ$",n<=12?GF.poly({n:n}):"")}),
  2:L(
  function(){var x=ri(12,20),p=ri(5,20),q=ri(5,20),a1=2*x+p,a2=3*x-q,a3=180-a1-a2,r=a3-x;
    return K("trx","The angles of a triangle are $(2x+"+p+")^\\circ$, $(3x-"+q+")^\\circ$ and $(x"+sg(r)+")^\\circ$. Find $x$.",[A(x,null,"num","x =")],"The angles add up to $180^\\circ$: $6x"+sg(p-q+r)+"=180\\Rightarrow x="+x+"$.",GF.tri({names:"",out:true,ang:[a1,a2,a3],lab:{A:"(2x + "+p+")°",B:"(3x − "+q+")°",C:"(x "+(r<0?"− ":"+ ")+Math.abs(r)+")°"}}))},
@@ -164,14 +164,15 @@ G9[8]={1:L(
  function(){var n=pick([5,6,8,9,10,12,15,18,20,24,30,36]);
    return K("ext","Each exterior angle of a regular polygon is $"+360/n+"^\\circ$. How many sides does the polygon have?",[A(n,null,"num","n =")],"Exterior angles add up to $360^\\circ$: $n=\\dfrac{360}{"+360/n+"}="+n+"$.")},
  function(){var n=pick([5,6,8,9,10,12,15,18,20]);
-   return K("int","Find the size of one interior angle of a regular polygon with $"+n+"$ sides.",[A(180-360/n,null,"num","angle =")],"Exterior angle $=\\dfrac{360}{"+n+"}="+360/n+"^\\circ$, interior angle $=180-"+360/n+"="+(180-360/n)+"^\\circ$.")}),
+   return K("int","Find the size of one interior angle of a regular polygon with $"+n+"$ sides.",[A(180-360/n,null,"num","angle =")],"Exterior angle $=\\dfrac{360}{"+n+"}="+360/n+"^\\circ$, interior angle $=180-"+360/n+"="+(180-360/n)+"^\\circ$.",n<=12?GF.poly({n:n,int:{at:0,lab:"x°"}}):"")}),
  3:L(
  function(){var x=ri(10,40),a=pick([2,3]),b=ri(-10,20),alt=Math.random()<.5,ang=a*x+b,oth=alt?ang:180-ang;
    if(oth<=0||ang<=0||ang>=180){x=25;a=2;b=10;ang=60;oth=alt?60:120}
    return K("pl","Two parallel lines are crossed by a transversal. Two "+(alt?"alternate":"co-interior")+" angles are $("+a+"x"+sg(b)+")^\\circ$ and $"+oth+"^\\circ$. Find $x$.",[A(x,null,"num","x =")],
-     alt?"Alternate angles are equal: $"+a+"x"+sg(b)+"="+oth+"\\Rightarrow x="+x+"$.":"Co-interior angles add up to $180^\\circ$: $"+a+"x"+sg(b)+"+"+oth+"=180\\Rightarrow x="+x+"$.")},
+     alt?"Alternate angles are equal: $"+a+"x"+sg(b)+"="+oth+"\\Rightarrow x="+x+"$.":"Co-interior angles add up to $180^\\circ$: $"+a+"x"+sg(b)+"+"+oth+"=180\\Rightarrow x="+x+"$.",
+     GF.para((function(){var l={uSW:"("+a+"x"+(b<0?" − "+(-b):b>0?" + "+b:"")+")°"};l[alt?"lNE":"lNW"]=oth+"°";return{t:ang,lab:l}})()))},
  function(){var k=[1,2,3,4],n=pick([4,5]),c=k.slice(0,n-1);var tot=(n-2)*180,x;do{c=[];for(var i=0;i<n;i++)c.push(ri(1,4));x=tot/sum(c)}while(x%1);
-   return K("pal","The angles of a "+(n===4?"quadrilateral":"pentagon")+" are $"+c.map(function(v){return(v===1?"":v)+"x"}).join(", ")+"$ (in degrees). Find $x$.",[A(x,null,"num","x =")],"Interior angle sum $="+tot+"^\\circ$, so $"+sum(c)+"x="+tot+"\\Rightarrow x="+x+"$.")})};
+   return K("pal","The angles of a "+(n===4?"quadrilateral":"pentagon")+" are $"+c.map(function(v){return(v===1?"":v)+"x"}).join(", ")+"$ (in degrees). Find $x$.",[A(x,null,"num","x =")],"Interior angle sum $="+tot+"^\\circ$, so $"+sum(c)+"x="+tot+"\\Rightarrow x="+x+"$.",GF.poly({n:n,lab:c.map(function(v){return(v===1?"":v)+"x°"})}))})};
 /* 9 Pythagoras' theorem */
 G9[9]={1:L(
  function(){var T=pick(TR),k=ri(1,3);
@@ -490,7 +491,7 @@ function FB(pts,cmds,o){o=o||{};var xs=[],ys=[],k,L=[],r=function(v){return Math
   L=L.concat(cmds);
   /* o.tx=[[x,y,"ស្លាក",nx,ny]]៖ ស្លាកកណ្ដាលចំណុច (x,y) រុញទៅទិស (nx,ny) ក្រៅរូប — fig.js text ចាប់ពីខាងឆ្វេង ដូច្នេះគណនាទំហំអក្សរ (~6.6px/តួ) តាមមាត្រដ្ឋានរូប (W=380) */
   var xu=352/(x1-x0),yu=(Math.max(200,Math.min(460,380*(y1-y0)/(x1-x0)))-28)/(y1-y0);
-  (o.tx||[]).forEach(function(t){var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+7:0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
+  (o.tx||[]).forEach(function(t){var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+7+(t[5]||0):0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
     L.push("text ("+r(t[0]+nx*d/xu-hw/xu)+","+r(t[1]+ny*d/yu-4/yu)+") "+t[2])});if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
   return L.join("\n")}
 function mid(P,Q,dx,dy){return"("+(Math.round(((P[0]+Q[0])/2+(dx||0))*1000)/1000)+","+(Math.round(((P[1]+Q[1])/2+(dy||0))*1000)/1000)+")"}
@@ -533,7 +534,33 @@ var GF=(function(){
   side(tx,A,C,g,o.hyp);
   if(o.ang){var atA=(o.ang.at==="A"||o.ang.at===N[0]),ia=atA?0:2,io=atA?2:0;cm.push("angle "+RN[1]+" "+RN[ia]+" "+RN[io]+" "+(o.ang.lab||""))}
   return FB(pts,cm,{tx:tx})}
- return{tri:tri,rightTri:rightTri}})();
+ /* មុំមួយ៖ ធ្នូ (fig.js) + ស្លាកដាក់ដោយ tx — mode "in" = ក្នុងមុំ (ចម្ងាយតាមទំហំមុំ) · "out" = ក្រៅកំពូល */
+ function wedge(cm,tx,V,p,q,Rv,Rp,Rq,t,mode){var u=out(V,p),w=out(V,q),b=out([0,0],[u[0]+w[0],u[1]+w[1]]),deg=Math.acos(Math.max(-1,Math.min(1,u[0]*w[0]+u[1]*w[1])))/R;
+  cm.push("angle "+Rp+" "+Rv+" "+Rq);if(!t)return;
+  if(mode==="out")tx.push([V[0],V[1],t,-b[0],-b[1]]);else{var d=deg<30?1.2:deg<45?1.05:deg<65?.9:.75;tx.push([V[0]+b[0]*d,V[1]+b[1]*d,t,0,0])}}
+ function xy(P){return"("+rf(P[0])+","+rf(P[1])+")"}
+ /* GF.poly({n (3–12), reg:true (ពហុកោណធម្មតា), lab:[ស្លាកមុំក្នុង ក្រៅកំពូល…], int:{at,lab} (មុំក្នុងមួយ ស្លាកក្នុងមុំ), ext:{at,lab} (មុំក្រៅមួយ)}) — កំពូលគ្មានអក្សរ */
+ function poly(o){var n=o.n,JA=[0,9,-7,6,-5,8],JR=[0,.13,-.08,.1,-.06,.07],P=[],reg=!!o.reg||o.int||o.ext,i,cm,tx=[],pts={},lab=o.lab||[];
+  for(i=0;i<n;i++){var th=(-90-180/n+360*i/n+(reg?0:JA[i%6]))*R,rd=reg?1:1+JR[i%6];P.push([rd*Math.cos(th),rd*Math.sin(th)])}
+  var Q={};P.forEach(function(v,k){Q[k]=v});fit(Q,3.4);P=P.map(function(_,k){return Q[k]});
+  var g=[0,0];P.forEach(function(v){g[0]+=v[0]/n;g[1]+=v[1]/n});
+  cm=["poly "+P.map(xy).join(" ")+" black"];P.forEach(function(v,k){pts["_"+k]=[v[0],v[1],""]});
+  function nb(k){return[P[(k+n-1)%n],P[(k+1)%n]]}
+  lab.forEach(function(t,k){if(!t)return;var b=nb(k);wedge(cm,tx,P[k],b[0],b[1],xy(P[k]),xy(b[0]),xy(b[1]),t,"out")});
+  if(o.int){var k=o.int.at||0,b=nb(k);wedge(cm,tx,P[k],b[0],b[1],xy(P[k]),xy(b[0]),xy(b[1]),o.int.lab,"in")}
+  if(o.ext){var k2=o.ext.at||0,b2=nb(k2),u=out(b2[0],P[k2]),D=[P[k2][0]+u[0],P[k2][1]+u[1]];pts._D=[D[0],D[1],""];cm.push("seg "+xy(P[k2])+" "+xy(D)+" black");wedge(cm,tx,P[k2],D,b2[1],xy(P[k2]),xy(D),xy(b2[1]),o.ext.lab,"in")}
+  return FB(pts,cm,{tx:tx})}
+ /* GF.para({t (មុំបន្ទាត់ខ្វែង 35–145°), lab:{uNE,uNW,uSW,uSE,lNE,lNW,lSW,lSE}}) — u = ប្រសព្វលើបន្ទាត់ស្របខាងលើ · l = ខាងក្រោម · NE/NW/SW/SE = មុំរវាងកាំ */
+ function para(o){var t=Math.max(35,Math.min(145,o.t||60)),H=1.5,dr=[Math.cos(t*R),Math.sin(t*R)],lab=o.lab||{},Pl=[0,0],Pu=[H*dr[0]/dr[1],H],sh=-Pu[0]/2,cm=[],tx=[],pts={},k;
+  Pl[0]+=sh;Pu[0]+=sh;var x0=Math.min(Pl[0],Pu[0])-2.2,x1=Math.max(Pl[0],Pu[0])+2.2,E0=[Pl[0]-dr[0]*.8,Pl[1]-dr[1]*.8],E1=[Pu[0]+dr[0]*.8,Pu[1]+dr[1]*.8];
+  cm.push("seg "+xy([x0,0])+" "+xy([x1,0])+" black","seg "+xy([x0,H])+" "+xy([x1,H])+" black","seg "+xy(E0)+" "+xy(E1)+" blue");
+  pts._l=[Pl[0],Pl[1],""];pts._u=[Pu[0],Pu[1],""];
+  [["u",Pu],["l",Pl]].forEach(function(c){var V=c[1],r=[V[0]+1,V[1]],l=[V[0]-1,V[1]],up=[V[0]+dr[0],V[1]+dr[1]],dn=[V[0]-dr[0],V[1]-dr[1]],S={NE:[r,up],NW:[up,l],SW:[l,dn],SE:[dn,r]};
+   Object.keys(S).forEach(function(z){var tt=lab[c[0]+z];if(!tt)return;cm.push("angle "+xy(S[z][0])+" "+xy(V)+" "+xy(S[z][1]));
+    /* ស្លាកដាក់ក្បែរបន្ទាត់ស្រប (ទៅខាងមុំ) ឆ្ងាយពីបន្ទាត់ខ្វែងគ្រប់គ្រាន់ — ស្លាកវែងមិនជាន់ */
+    tx.push([V[0],V[1],tt,z[1]==="E"?1:-1,z[0]==="N"?.4:-.4,16+Math.abs(10/Math.tan(t*R))])})});
+  return FB(pts,cm,{tx:tx,ext:[E0,E1,[x0,0],[x1,H]]})}
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

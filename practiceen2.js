@@ -7,7 +7,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var X=window.PX,E=window.PXEN,Q=X.Q,A=X.A,ri=X.ri,nz=X.nz,pick=X.pick,fr=X.fr,sg=X.sg,co=X.co,poly=X.poly,polyT=X.polyT,sgp=X.sgp,gcd=X.gcd;
+var X=window.PX,E=window.PXEN,GF=E.GF,Q=X.Q,A=X.A,ri=X.ri,nz=X.nz,pick=X.pick,fr=X.fr,sg=X.sg,co=X.co,poly=X.poly,polyT=X.polyT,sgp=X.sgp,gcd=X.gcd;
 var K=E.K,L=E.L,r2=E.r2,sum=E.sum,nf=E.nf,tbl=E.tbl,pt=E.pt,G9=E.G9,G10=E.G10;
 function lcm(a,b){return a/gcd(a,b)*b}
 function big(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
@@ -155,9 +155,9 @@ G6[9]={1:L(
    return K("ra","A right angle is split into two angles. One of them is $"+a+"^\\circ$. Find the other.",[A(90-a,null,"num","°")],"$90-"+a+"="+(90-a)+"^\\circ$")}),
  3:L(
  function(){var t=ri(20,140),apex=Math.random()<.5;if(!apex&&t>=90)t=ri(20,85);
-   return K("iso","An isosceles triangle has "+(apex?"an angle of $"+t+"^\\circ$ between its two equal sides":"two equal angles of $"+t+"^\\circ$")+". Find the size of "+(apex?"each of the other two angles":"the third angle")+".",[A(apex?(180-t)/2:180-2*t,null,"num","°")],apex?"$(180-"+t+")\\div2="+(180-t)/2+"^\\circ$":"$180-2\\times"+t+"="+(180-2*t)+"^\\circ$")},
+   return K("iso","An isosceles triangle has "+(apex?"an angle of $"+t+"^\\circ$ between its two equal sides":"two equal angles of $"+t+"^\\circ$")+". Find the size of "+(apex?"each of the other two angles":"the third angle")+".",[A(apex?(180-t)/2:180-2*t,null,"num","°")],apex?"$(180-"+t+")\\div2="+(180-t)/2+"^\\circ$":"$180-2\\times"+t+"="+(180-2*t)+"^\\circ$",apex?GF.tri({ang:[t,(180-t)/2,(180-t)/2],lab:{A:t+"°",B:"x°",C:"x°"}}):GF.tri({ang:[180-2*t,t,t],lab:{A:"x°",B:t+"°",C:t+"°"}}))},
  function(){var a=ri(60,120),b=ri(60,120),c=ri(50,110);
-   return K("qd","Three angles of a quadrilateral are $"+a+"^\\circ$, $"+b+"^\\circ$ and $"+c+"^\\circ$. Find the fourth angle.",[A(360-a-b-c,null,"num","°")],"Angles in a quadrilateral add up to $360^\\circ$: $360-"+a+"-"+b+"-"+c+"="+(360-a-b-c)+"^\\circ$")})};
+   return K("qd","Three angles of a quadrilateral are $"+a+"^\\circ$, $"+b+"^\\circ$ and $"+c+"^\\circ$. Find the fourth angle.",[A(360-a-b-c,null,"num","°")],"Angles in a quadrilateral add up to $360^\\circ$: $360-"+a+"-"+b+"-"+c+"="+(360-a-b-c)+"^\\circ$",GF.poly({n:4,lab:[a+"°",b+"°",c+"°","x°"]}))})};
 /* 10 Area and perimeter */
 G6[10]={1:L(
  function(){var l=ri(3,20),w=ri(2,15);
