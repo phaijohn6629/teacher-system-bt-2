@@ -10,6 +10,8 @@ function ft(n,d){return(n<0?"-":"")+"\\dfrac{"+Math.abs(n)+"}{"+d+"}"}
 function pt(p){return"("+p[0]+";"+p[1]+")"}
 function r2(v){return Math.round(v*100)/100}
 var TR=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[12,16,20],[7,24,25]];
+/* 🖼 រូប 3D ពី practiceen.js (PXEN.GF.solid) — ហៅពេលបង្កើតសំណួរ · បើគ្មាន → គ្មានរូប (មិនបាក់) */
+function GFS(o){try{return window.PXEN.GF.solid(o)}catch(e){return ""}}
 var G={};
 /* ===== ១ ចំនួនសនិទាន ===== */
 G[1]={1:function(){var b=ri(2,9),d=ri(2,9),a=nz(-9,9),c=nz(-9,9),r=fr(a*d+c*b,b*d);
@@ -136,11 +138,11 @@ G[17]={1:function(){var m=ri(2,12)*3;
     return Q("ក្នុងត្រីកោណ $ABC$ ៖ $I$ ជាចំណុចប្រសព្វកន្លះបន្ទាត់ពុះមុំ $B$ និង $C$ ។ $\\widehat A="+a+"^\\circ$ ។ គណនា $\\widehat{BIC}$",[A(90+a/2,null,"num","∠BIC =")],"$\\widehat{BIC}=180^\\circ-\\dfrac{\\widehat B+\\widehat C}{2}=90^\\circ+\\dfrac{\\widehat A}{2}="+(90+a/2)+"^\\circ$")}};
 /* ===== ១៨ រូបធរណីមាត្រមានវិមាត្របី ===== */
 G[18]={1:function(){var b=ri(2,12),h=ri(2,10),L=ri(3,15);
-    return Q("ព្រីសត្រីកោណមួយ មានបាតជាត្រីកោណ (បាត $"+b+"$ កម្ពស់ $"+h+"$) និងប្រវែងព្រីស $"+L+"$ ។ គណនាមាឌ",[A(b*h*L/2,null,"num","V =")],"បាត $S=\\dfrac{bh}{2}$ ⇒ $V=S\\times L=\\dfrac{"+b+"\\times"+h+"}{2}\\times"+L+"="+(b*h*L/2)+"$")},
+    return Q("ព្រីសត្រីកោណមួយ មានបាតជាត្រីកោណ (បាត $"+b+"$ កម្ពស់ $"+h+"$) និងប្រវែងព្រីស $"+L+"$ ។ គណនាមាឌ",[A(b*h*L/2,null,"num","V =")],"បាត $S=\\dfrac{bh}{2}$ ⇒ $V=S\\times L=\\dfrac{"+b+"\\times"+h+"}{2}\\times"+L+"="+(b*h*L/2)+"$",GFS({k:"prism",w:b,h:h,d:L,lw:b+"",lh:h+"",ld:L+""}))},
   2:function(){var a=ri(2,12),h=ri(1,8)*3;
-    return Q("ពីរ៉ាមីតបាតការេជ្រុង $"+a+"$ កម្ពស់ $"+h+"$ ។ គណនាមាឌ",[A(a*a*h/3,null,"num","V =")],"$V=\\dfrac13 a^2h=\\dfrac13\\times"+(a*a)+"\\times"+h+"="+(a*a*h/3)+"$")},
+    return Q("ពីរ៉ាមីតបាតការេជ្រុង $"+a+"$ កម្ពស់ $"+h+"$ ។ គណនាមាឌ",[A(a*a*h/3,null,"num","V =")],"$V=\\dfrac13 a^2h=\\dfrac13\\times"+(a*a)+"\\times"+h+"="+(a*a*h/3)+"$",GFS({k:"pyr",w:a,h:h,lw:a+"",lh:h+""}))},
   3:function(){var r=ri(1,9),h=ri(1,6)*3;
-    return Q("កោនមួយមានកាំបាត $"+r+"$ និងកម្ពស់ $"+h+"$ ។ គណនាមាឌ (ទុក $\\pi$)",[A((r*r*h/3)+"*pi",(r*r*h/3)+"\\pi","num","V =")],"$V=\\dfrac13\\pi r^2h=\\dfrac13\\pi\\times"+(r*r)+"\\times"+h+"="+(r*r*h/3)+"\\pi$")}};
+    return Q("កោនមួយមានកាំបាត $"+r+"$ និងកម្ពស់ $"+h+"$ ។ គណនាមាឌ (ទុក $\\pi$)",[A((r*r*h/3)+"*pi",(r*r*h/3)+"\\pi","num","V =")],"$V=\\dfrac13\\pi r^2h=\\dfrac13\\pi\\times"+(r*r)+"\\times"+h+"="+(r*r*h/3)+"\\pi$",GFS({k:"cone",w:r,h:h,lr:r+"",lh:h+""}))}};
 /* ===== ១៩ មាត្រដ្ឋាន ===== */
 G[19]={1:function(){var n=pick([10000,25000,50000,100000,200000]),c=ri(2,20),km=c*n/100000;
     return Q("ផែនទីមាត្រដ្ឋាន $1:"+n+"$ ។ ចម្ងាយលើផែនទី $"+c+"\\text{ cm}$ ។ តើចម្ងាយពិតប៉ុន្មានគីឡូម៉ែត្រ?",[A(km,null,"num","km =")],"$"+c+"\\times"+n+"="+(c*n)+"\\text{ cm}="+km+"\\text{ km}$")},
@@ -257,10 +259,10 @@ P4[17]=[function(){var m=ri(2,12)*3;
       [A(T[2]*k/2,null,"num","m =")],"អ៊ីប៉ូតេនុស $="+(T[2]*k)+"$ ⇒ មេដ្យានពីកំពូលកែង $=\\dfrac{"+(T[2]*k)+"}{2}="+(T[2]*k/2)+"$ m")}];
 P4[18]=[function(){var b=ri(2,4)*1,h=ri(1,3),L=ri(2,5);
     return Q("⛺ តង់បោះជំរុំរាងព្រីសត្រីកោណ៖ មុខតង់ជាត្រីកោណ បាត $"+b+"$ m កម្ពស់ $"+h+"$ m ហើយតង់វែង $"+L+"$ m ។ តើខ្យល់ក្នុងតង់មានមាឌប៉ុន្មាន $\\text{m}^3$?",
-      [A(b*h*L/2,null,"num","m³ =")],"$V=\\dfrac{"+b+"\\times"+h+"}{2}\\times"+L+"="+(b*h*L/2)+"$")},
+      [A(b*h*L/2,null,"num","m³ =")],"$V=\\dfrac{"+b+"\\times"+h+"}{2}\\times"+L+"="+(b*h*L/2)+"$",GFS({k:"prism",w:b,h:h,d:L,lw:b+" m",lh:h+" m",ld:L+" m"}))},
   function(){var r=pick([2,3,4]),h=ri(3,4)*3;
     return Q("🍦 កោនការ៉េមមួយ កាំមាត់ $"+r+"$ cm និងជម្រៅ $"+h+"$ cm ។ តើការ៉េមពេញកោន (មិនគិតផ្នែកលើស) មានមាឌប៉ុន្មាន $\\text{cm}^3$? (ទុក $\\pi$)",
-      [A((r*r*h/3)+"*pi",(r*r*h/3)+"\\pi","num","V =")],"$V=\\frac13\\pi r^2h=\\frac13\\pi\\times"+(r*r)+"\\times"+h+"="+(r*r*h/3)+"\\pi$")}];
+      [A((r*r*h/3)+"*pi",(r*r*h/3)+"\\pi","num","V =")],"$V=\\frac13\\pi r^2h=\\frac13\\pi\\times"+(r*r)+"\\times"+h+"="+(r*r*h/3)+"\\pi$",GFS({k:"cone",w:r,h:h,lr:r+" cm",lh:h+" cm"}))}];
 P4[19]=[function(){var n=pick([25000,50000,100000]),c=ri(2,20);
     return Q("🗺️ ផែនទីខេត្តមួយ មាត្រដ្ឋាន $1:"+money(n)+"$ ។ ពីសាលាទៅវត្ត លើផែនទី $"+c+"$ cm ។ តើចម្ងាយពិតប៉ុន្មាន km?",
       [A(c*n/100000,null,"num","km =")],"$"+c+"\\times"+n+"="+money(c*n)+"$ cm $="+(c*n/100000)+"$ km")},
@@ -505,17 +507,17 @@ vx(17,3,[
  function(){var a=ri(2,12);return K("s8_gx","$G$ ជាទីប្រជុំទម្ងន់ ។ មេដ្យាន $AM=3x$ និង $AG=x+"+a+"$ ។ រក $x$",[A(a,null,"num","x =")],"$AG=\\dfrac23AM=2x$ ⇒ $x+"+a+"=2x$ ⇒ $x="+a+"$")}]);
 /* ១៨ រូបធរណីមាត្រមានវិមាត្របី */
 vx(18,1,[
- function(){var a=ri(2,12);return K("s8_cube","គូបគែម $"+a+"$ ។ គណនាមាឌ និងផ្ទៃក្រឡាសរុប",[A(a*a*a,null,"num","V ="),A(6*a*a,null,"num","S =")],"$V="+(a*a*a)+"$ · $S=6\\times"+(a*a)+"="+(6*a*a)+"$")},
- function(){var a=ri(2,12),b=ri(2,10),c=ri(2,10);return K("s8_cuboid","ប្រលេពីប៉ែតកែង $"+a+"\\times"+b+"\\times"+c+"$ ។ គណនាមាឌ",[A(a*b*c,null,"num","V =")],"$"+(a*b*c)+"$")},
- function(){var r=ri(1,8),h=ri(2,12);return K("s8_cyl","ស៊ីឡាំងកាំបាត $"+r+"$ កម្ពស់ $"+h+"$ ។ គណនាមាឌ (ទុក $\\pi$)",[A((r*r*h)+"*pi",(r*r*h)+"\\pi","num","V =")],"$\\pi r^2h="+(r*r*h)+"\\pi$")}]);
+ function(){var a=ri(2,12);return K("s8_cube","គូបគែម $"+a+"$ ។ គណនាមាឌ និងផ្ទៃក្រឡាសរុប",[A(a*a*a,null,"num","V ="),A(6*a*a,null,"num","S =")],"$V="+(a*a*a)+"$ · $S=6\\times"+(a*a)+"="+(6*a*a)+"$",GFS({k:"cuboid",w:1,h:1,d:1,lw:a+"",lh:a+"",ld:a+""}))},
+ function(){var a=ri(2,12),b=ri(2,10),c=ri(2,10);return K("s8_cuboid","ប្រលេពីប៉ែតកែង $"+a+"\\times"+b+"\\times"+c+"$ ។ គណនាមាឌ",[A(a*b*c,null,"num","V =")],"$"+(a*b*c)+"$",GFS({k:"cuboid",w:a,h:c,d:b,lw:a+"",lh:c+"",ld:b+""}))},
+ function(){var r=ri(1,8),h=ri(2,12);return K("s8_cyl","ស៊ីឡាំងកាំបាត $"+r+"$ កម្ពស់ $"+h+"$ ។ គណនាមាឌ (ទុក $\\pi$)",[A((r*r*h)+"*pi",(r*r*h)+"\\pi","num","V =")],"$\\pi r^2h="+(r*r*h)+"\\pi$",GFS({k:"cyl",w:r,h:h,lr:r+"",lh:h+""}))}]);
 vx(18,2,[
- function(){var a=ri(2,10),h=3*ri(1,6);return K("s8_pyrh","ពីរ៉ាមីតបាតការេជ្រុង $"+a+"$ មានមាឌ $"+(a*a*h/3)+"$ ។ គណនាកម្ពស់",[A(h,null,"num","h =")],"$h=\\dfrac{3V}{a^2}=\\dfrac{"+(a*a*h)+"}{"+(a*a)+"}="+h+"$")},
- function(){var r=ri(1,8),h=ri(2,12);return K("s8_cyls","ស៊ីឡាំងកាំបាត $"+r+"$ កម្ពស់ $"+h+"$ ។ គណនាផ្ទៃក្រឡាខាង (ទុក $\\pi$)",[A((2*r*h)+"*pi",(2*r*h)+"\\pi","num","S =")],"$2\\pi rh="+(2*r*h)+"\\pi$")},
- function(){var T=pick(TR);return K("s8_cone","កោនមានកាំបាត $"+T[0]+"$ និងកម្ពស់ $"+T[1]+"$ ។ គណនាជនេត្រ (ប្រវែងបន្ទាត់ទ្រេត)",[A(T[2],null,"num","l =")],"$l=\\sqrt{"+T[0]+"^2+"+T[1]+"^2}="+T[2]+"$")}]);
+ function(){var a=ri(2,10),h=3*ri(1,6);return K("s8_pyrh","ពីរ៉ាមីតបាតការេជ្រុង $"+a+"$ មានមាឌ $"+(a*a*h/3)+"$ ។ គណនាកម្ពស់",[A(h,null,"num","h =")],"$h=\\dfrac{3V}{a^2}=\\dfrac{"+(a*a*h)+"}{"+(a*a)+"}="+h+"$",GFS({k:"pyr",w:a,h:h,lw:a+"",lh:"h"}))},
+ function(){var r=ri(1,8),h=ri(2,12);return K("s8_cyls","ស៊ីឡាំងកាំបាត $"+r+"$ កម្ពស់ $"+h+"$ ។ គណនាផ្ទៃក្រឡាខាង (ទុក $\\pi$)",[A((2*r*h)+"*pi",(2*r*h)+"\\pi","num","S =")],"$2\\pi rh="+(2*r*h)+"\\pi$",GFS({k:"cyl",w:r,h:h,lr:r+"",lh:h+""}))},
+ function(){var T=pick(TR);return K("s8_cone","កោនមានកាំបាត $"+T[0]+"$ និងកម្ពស់ $"+T[1]+"$ ។ គណនាជនេត្រ (ប្រវែងបន្ទាត់ទ្រេត)",[A(T[2],null,"num","l =")],"$l=\\sqrt{"+T[0]+"^2+"+T[1]+"^2}="+T[2]+"$",GFS({k:"cone",w:T[0],h:T[1],lr:T[0]+"",lh:T[1]+"",ls:"l"}))}]);
 vx(18,3,[
- function(){var T=pick(TR);return K("s8_conel","កោនកាំបាត $"+T[0]+"$ កម្ពស់ $"+T[1]+"$ ។ គណនាផ្ទៃក្រឡាខាង (ទុក $\\pi$)",[A((T[0]*T[2])+"*pi",(T[0]*T[2])+"\\pi","num","S =")],"$l="+T[2]+"$ ⇒ $\\pi rl="+(T[0]*T[2])+"\\pi$")},
+ function(){var T=pick(TR);return K("s8_conel","កោនកាំបាត $"+T[0]+"$ កម្ពស់ $"+T[1]+"$ ។ គណនាផ្ទៃក្រឡាខាង (ទុក $\\pi$)",[A((T[0]*T[2])+"*pi",(T[0]*T[2])+"\\pi","num","S =")],"$l="+T[2]+"$ ⇒ $\\pi rl="+(T[0]*T[2])+"\\pi$",GFS({k:"cone",w:T[0],h:T[1],lr:T[0]+"",lh:T[1]+""}))},
  function(){var b=ri(1,3),k=ri(2,5);return K("s8_melt","រំលាយគូបគែម $"+(b*k)+"$ cm ធ្វើគូបតូចៗគែម $"+b+"$ cm ។ បានប៉ុន្មានគូប?",[A(k*k*k,null,"num","=")],"$\\left(\\dfrac{"+(b*k)+"}{"+b+"}\\right)^3="+(k*k*k)+"$")},
- function(){var a=ri(10,30),b=ri(10,30),h=ri(1,5);return K("s8_disp","ធុងទឹករាងប្រលេពីប៉ែតកែង បាត $"+a+"\\times"+b+"$ cm ។ ដាក់ដុំថ្មចូល ទឹកឡើង $"+h+"$ cm (មិនហៀរ) ។ គណនាមាឌដុំថ្ម",[A(a*b*h,null,"num","V =")],"មាឌទឹកឡើង $="+a+"\\times"+b+"\\times"+h+"="+(a*b*h)+"$ cm³")}]);
+ function(){var a=ri(10,30),b=ri(10,30),h=ri(1,5);return K("s8_disp","ធុងទឹករាងប្រលេពីប៉ែតកែង បាត $"+a+"\\times"+b+"$ cm ។ ដាក់ដុំថ្មចូល ទឹកឡើង $"+h+"$ cm (មិនហៀរ) ។ គណនាមាឌដុំថ្ម",[A(a*b*h,null,"num","V =")],"មាឌទឹកឡើង $="+a+"\\times"+b+"\\times"+h+"="+(a*b*h)+"$ cm³",GFS({k:"cuboid",w:a,h:h*4,d:b,lw:a+" cm",lh:h+" cm",ld:b+" cm"}))}]);
 /* ១៩ មាត្រដ្ឋាន */
 vx(19,1,[
  function(){var n=pick([50,100,200]),c=ri(2,12);return K("s8_plan19","ប្លង់ផ្ទះមាត្រដ្ឋាន $1:"+n+"$ ។ បន្ទប់វែង $"+c+"$ cm លើប្លង់ ។ ប្រវែងពិតប៉ុន្មាន m?",[A(c*n/100,null,"num","m =")],"$"+c+"\\times"+n+"="+(c*n)+"$ cm $="+(c*n/100)+"$ m")},
