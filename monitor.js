@@ -401,7 +401,7 @@ function monCx(){
   function add(d,p){var k=d+"|"+p;if(!rows[k]){rows[k]={d:d,p:p,c:"",a:"",ls:""};keys.push(k)}return rows[k]}
   for(var d=1;d<=nd;d++){
     var dt=new Date(y,m-1,d),wd=dt.getDay(),ds=y+"-"+p2(m)+"-"+p2(d);
-    if(!wd||SCHX.FIXHOL[p2(m)+"-"+p2(d)])continue;
+    if(!wd||SCHX.holOf(y,m,d))continue;
     blocks(j.sch||[],(wd+6)%7).forEach(function(p){add(ds,p)});
   }
   (j.cxr||[]).forEach(function(r){if(r.d.slice(0,7)===mxMo){var o=add(r.d,r.p);o.c=r.c;o.a=r.a;o.ls=r.ls}});

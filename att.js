@@ -19,6 +19,8 @@ function ck(n){return String(n||"").replace(/[^A-Za-z0-9-]/g,"")}
 function skey(s){return s.id?"i:"+s.id:"n:"+s.n}
 function today(){var d=new Date();return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())}
 function dOf(s){var a=s.split("-").map(Number);return new Date(a[0],a[1]-1,a[2])}
+/* ថ្ងៃបុណ្យ ("NHD"|"HD"|"") ពី sched.js (SCHX) */
+function holC(s){var a=String(s).split("-");return window.SCHX&&SCHX.holOf?SCHX.holOf(+a[0],+a[1],+a[2]):""}
 function dLabel(s){var a=s.split("-").map(Number);return"ថ្ងៃ"+KhCal.WD[dOf(s).getDay()]+" "+kn(p2(a[2])+"/"+p2(a[1])+"/"+a[0])}
 function hrs(p){var m=/^(\d+)(?:-(\d+))?$/.exec(p);return m?(+(m[2]||m[1]))-(+m[1])+1:1}
 function pFirst(p){return+(/^\d+/.exec(p)||[99])[0]}
@@ -74,8 +76,8 @@ function box(){
   if(!A.day)A.day=today();
   var mo=A.day.slice(0,7),o=A.docs[docId(x,mo)];
   if(!o||(!o.d&&!o.p)){load(x,mo).then(box).catch(function(e){console.error("att:",e)});}
-  var di=(dOf(A.day).getDay()+6)%7,sun=dOf(A.day).getDay()===0,hol=window.SCHX&&SCHX.FIXHOL[A.day.slice(5)];
-  var R=recOf(x,A.day),bl=sun?[]:blocksOf(x.list,di),seen={};bl.forEach(function(b){seen[b.p]=1});
+  var di=(dOf(A.day).getDay()+6)%7,sun=dOf(A.day).getDay()===0,hol=holC(A.day),off=sun||!!hol;
+  var R=recOf(x,A.day),bl=off?[]:blocksOf(x.list,di),seen={};bl.forEach(function(b){seen[b.p]=1});
   if(R)Object.keys(R).forEach(function(p){if(!seen[p])bl.push({p:p,s:R[p].s||"",t:R[p].t||"",x:1})});
   bl.sort(function(a,b){return pFirst(a.p)-pFirst(b.p)});
   var done=bl.filter(function(b){return R&&R[b.p]}).length,ed=canDay(x,A.day);
@@ -86,8 +88,8 @@ function box(){
   if(o&&o.err)h+="<p class=cxwarn>⚠️ "+esc(o.err)+"</p>";
   if(!R)h+="<p class=note>កំពុងផ្ទុក…</p>";
   else{
-    h+="<div class=att-day>"+esc(dLabel(A.day))+(hol?" · <span class=att-hol>ថ្ងៃបុណ្យ</span>":"")+(x.mon&&!ed?" · <span class=note style='margin:0'>🔒 ប្រធានថ្នាក់ស្រង់/កែបានតែថ្ងៃនេះ និងម្សិលមិញ</span>":"")+"</div>";
-    if(!bl.length)h+="<p class=note>"+(sun?"ថ្ងៃអាទិត្យ — គ្មានម៉ោងសិក្សា។":"មិនមានម៉ោងសិក្សាក្នុងកាលវិភាគសម្រាប់ថ្ងៃនេះទេ។")+(ed&&!sun?" ចុច «＋ ម៉ោងផ្សេង» ដើម្បីស្រង់។":"")+"</p>";
+    h+="<div class=att-day>"+esc(dLabel(A.day))+(hol?" · <span class=att-hol>"+esc(SCHX.holLbl(hol))+"</span>":"")+(x.mon&&!ed?" · <span class=note style='margin:0'>🔒 ប្រធានថ្នាក់ស្រង់/កែបានតែថ្ងៃនេះ និងម្សិលមិញ</span>":"")+"</div>";
+    if(!bl.length)h+="<p class=note>"+(sun?"ថ្ងៃអាទិត្យ — គ្មានម៉ោងសិក្សា។":hol?"ថ្ងៃបុណ្យ — គ្មានម៉ោងសិក្សា។":"មិនមានម៉ោងសិក្សាក្នុងកាលវិភាគសម្រាប់ថ្ងៃនេះទេ។")+(ed&&!sun?" ចុច «＋ ម៉ោងផ្សេង» ដើម្បីស្រង់។":"")+"</p>";
     h+="<div class=att-ps>"+bl.map(function(b){
       var r=R[b.p],cnt={L:0,E:0,U:0};if(r)Object.keys(r.r||{}).forEach(function(s){cnt[r.r[s]]=(cnt[r.r[s]]||0)+1});
       return"<div class='att-p"+(r?" on":"")+(A.ed===b.p?" cur":"")+"'><div class=att-pt>"+(r?"✅":"⏳")+" "+pName(b.p)+"</div>"+
@@ -162,7 +164,7 @@ function logHtml(x,o){
   for(var dd=1;dd<=nd;dd++){
     var ds=A.logMo+"-"+p2(dd);if(ds>td)break;
     var dt=dOf(ds),di=(dt.getDay()+6)%7,R=D[p2(dd)]||{};
-    var bl=dt.getDay()===0?[]:blocksOf(x.list,di),seen={};bl.forEach(function(b){seen[b.p]=1});
+    var bl=(dt.getDay()===0||holC(ds))?[]:blocksOf(x.list,di),seen={};bl.forEach(function(b){seen[b.p]=1});
     Object.keys(R).forEach(function(p){if(!seen[p])bl.push({p:p,s:R[p].s||"",t:R[p].t||""})});
     if(!bl.length)continue;
     bl.sort(function(a,b){return pFirst(a.p)-pFirst(b.p)});

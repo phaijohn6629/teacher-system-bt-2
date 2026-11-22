@@ -4,8 +4,8 @@
   "v": 2
  },
  "att.js": {
-  "hash": "b0489ab120162eeec2d7f3c6460171a83fecd594",
-  "v": 5
+  "hash": "048143b347375406974abaf8b9a859589596f37f",
+  "v": 6
  },
  "classorg.js": {
   "hash": "e351cfd312370c024e03c52a2d9db2218457fa9d",
@@ -52,8 +52,8 @@
   "v": 75
  },
  "excerpt.js": {
-  "hash": "2de873b619255df302df114a28c5948c2f49e8e7",
-  "v": 19
+  "hash": "d10c45a469df085f31456db9a2a83cf2038ba932",
+  "v": 20
  },
  "exgen.js": {
   "hash": "1208abbbd120f67fc83860133c2cbbf3d0f556a3",
@@ -128,8 +128,8 @@
   "v": 23
  },
  "monitor.js": {
-  "hash": "61f05cbe674241bf84ee710657449e0e28cc7ec1",
-  "v": 10
+  "hash": "fe75430ee9aa7153a2466cfd99275af25a16cb13",
+  "v": 11
  },
  "monthly.js": {
   "hash": "e808a5d73c7b62f7d64998278ba9a40d6ffb83a8",
@@ -196,8 +196,8 @@
   "v": 41
  },
  "sched.js": {
-  "hash": "aa6881616f33b71d1e6bcba62c8f9bf7dd1942d4",
-  "v": 25
+  "hash": "cf915e302878ac08d24d3e0b5155225ac715618e",
+  "v": 26
  },
  "script.js": {
   "hash": "7f4145caac98f795b0681c19ed17d853f34f1caa",

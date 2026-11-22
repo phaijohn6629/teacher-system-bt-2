@@ -83,7 +83,7 @@ function cxFill(silent,from){   /* from = "YYYY-MM-DD" → បំពេញតែ
   for(var y=y0,m=m0;y<y1||(y===y1&&m<=m1);){
     for(var d=1;d<=dim(y,m);d++){
       var wd=new Date(y,m-1,d).getDay(),i=(wd+6)%7;
-      if(wd===0||FIXHOL[p2(m)+"-"+p2(d)])continue;
+      if(wd===0||X.holOf(y,m,d))continue;
       var k=iso(y,m,d),ex=byD[k]||[],skip=rec.skip||[];if(from&&k<from)continue;
       cls.forEach(function(c){
         var bl=cxBlocks(i,c);if(!bl.length)return;

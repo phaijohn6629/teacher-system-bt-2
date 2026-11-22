@@ -11,7 +11,12 @@ var PT=[null,"7:30 - 8:15","8:20 - 9:05","9:25 - 10:10","10:15 - 11:00","12:30 -
 var BRK={2:"សម្រាក 9:05 - 9:25",4:"សម្រាក 11:00 - 12:30",6:"សម្រាក 14:05 - 14:25",8:"សម្រាក 16:00 - 16:10"};
 var HC=[["b","ម៉ោងបង្រៀនមូលដ្ឋាន","មូលដ្ឋាន"],["i","បង្រៀនម៉ោងលើស (ក្នុងរដ្ឋបាល)","លើស ក្នុង"],["o","បង្រៀនម៉ោងលើស (ក្រៅរដ្ឋបាល)","លើស ក្រៅ"],["l","ប្រធានក្រុមបច្ចេកទេស","ប្រធានក្រុម"],["v","អនុប្រធានក្រុមបច្ចេកទេស","អនុប្រធាន"],["c","បន្ទុកថ្នាក់","បន្ទុកថ្នាក់"],["u","បច្ចេកទេស/ប្រចាំការ","ប្រចាំការ"],["x","ផ្សេងៗ","ផ្សេងៗ"]];
 var ST=["បង្រៀន","ឈប់សម្រាក","បុណ្យជាតិ","សកម្មភាពផ្សេងៗ"],STS={"បង្រៀន":"ប","ឈប់សម្រាក":"ឈ","បុណ្យជាតិ":"បុ","សកម្មភាពផ្សេងៗ":"សក"};
-var FIXHOL={"01-01":1,"01-07":1,"03-08":1,"04-14":1,"04-15":1,"04-16":1,"05-01":1,"05-14":1,"06-18":1,"09-24":1,"10-15":1,"10-29":1,"11-09":1,"12-29":1};
+/* ថ្ងៃបុណ្យ៖ NHD = បុណ្យជាតិកម្ពុជា · HD = បុណ្យអន្តរជាតិ (តម្លៃជាអក្សរ → truthy ដូចមុន)
+   FIXHOL = ថ្ងៃថេរជារៀងរាល់ឆ្នាំ (MM-DD) · YHOL = ថ្ងៃប្ដូរតាមឆ្នាំ (YYYY-MM-DD ឧ. បុណ្យអុំទូក) → ត្រូវបន្ថែមតាមប្រកាសក្រសួងរៀងរាល់ឆ្នាំ */
+var FIXHOL={"01-01":"HD","01-07":"NHD","03-08":"HD","04-14":"NHD","04-15":"NHD","04-16":"NHD","05-01":"HD","05-14":"NHD","06-01":"HD","06-18":"NHD","09-24":"NHD","10-15":"NHD","10-29":"NHD","11-09":"NHD","12-29":"NHD"};
+var YHOL={"2026-11-23":"NHD","2026-11-24":"NHD","2026-11-25":"NHD"};
+function holOf(y,m,d){return YHOL[y+"-"+p2(m)+"-"+p2(d)]||FIXHOL[p2(m)+"-"+p2(d)]||""}
+function holLbl(c){return c==="NHD"?"[NHD] បុណ្យជាតិ":c==="HD"?"[HD] បុណ្យអន្តរជាតិ":""}
 var NORM=18;
 function p2(n){return(n<10?"0":"")+n}
 function iso(y,m,d){return y+"-"+p2(m)+"-"+p2(d)}
@@ -230,7 +235,7 @@ function getRec(create){
 }
 function defDay(id,y,m,n){
   var wd=new Date(y,m-1,n).getDay(),di=(wd+6)%7,s=wd===0?null:schedPer(id,di),st;
-  if(FIXHOL[p2(m)+"-"+p2(n)])st="បុណ្យជាតិ";
+  if(holOf(y,m,n))st="បុណ្យជាតិ";
   else if(wd===0)st="ឈប់សម្រាក";
   else if(wd===6&&!(s.b+s.i+s.o+s.u))st="ឈប់សម្រាក";
   else st="បង្រៀន";
@@ -571,7 +576,7 @@ function tsPrintHTML(){
       var dt=new Date(w0.getFullYear(),w0.getMonth(),w0.getDate()+k),inM=dt.getMonth()===m-1,dd=dt.getDate(),cdy=inM?curDay(rec,y,m,dd):null;
       var txt=inM&&cdy?(cdy.w||""):"",holi=inM&&cdy&&inRange(rec,y,m,dd)&&cdy.st==="បុណ្យជាតិ";
       ds+="<td><span class=dd>"+p2(dd)+"</span><span class=lk>"+khShort(dt.getFullYear(),dt.getMonth()+1,dd)+"</span></td>";
-      cs+="<td>"+wpLines(txt)+(holi?"<div class=hl>បុណ្យជាតិ</div>":"")+"</td>";
+      cs+="<td>"+wpLines(txt)+(holi?"<div class=hl>"+esc(holLbl(holOf(y,m,dd))||"បុណ្យជាតិ")+"</div>":"")+"</td>";
     }
     wp+=ds+"</tr>"+cs+"</tr>";
   });
@@ -592,5 +597,5 @@ $("tsCsv").onclick=function(){
   for(var d=1;d<=n;d++){if(!inRange(rec,y,m,d))continue;var cd=curDay(rec,y,m,d);rows.push([iso(y,m,d),KhCal.WD[new Date(y,m-1,d).getDay()],khShort(y,m,d),cd.st].concat(HC.map(function(c){return cd.h[c[0]]||0})).concat([(cd.w||"").replace(/\r?\n/g," | ")]))}
   dlCSV(rows,"timesheet-"+tsT+"-"+tsMo+".csv");
 };
-window.SCHX={PT:PT,BRK:BRK,schOf:schOf,canEd:canEd,getSig:getSig,fontsOk:fontsOk,doPrintNow:doPrintNow,LOGO2:LOGO2,iso:iso,dim:dim,kh:kh,p2:p2,FIXHOL:FIXHOL,tsMo:function(){return tsMo}};
+window.SCHX={PT:PT,BRK:BRK,schOf:schOf,canEd:canEd,getSig:getSig,fontsOk:fontsOk,doPrintNow:doPrintNow,LOGO2:LOGO2,iso:iso,dim:dim,kh:kh,p2:p2,FIXHOL:FIXHOL,YHOL:YHOL,holOf:holOf,holLbl:holLbl,tsMo:function(){return tsMo}};
 })();
