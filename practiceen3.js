@@ -11,6 +11,7 @@ var K=E.K,L=E.L,r2=E.r2,sum=E.sum,nf=E.nf,sqT=E.sqT,piT=E.piT,pt=E.pt,cv=E.cv,DP
 function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
 function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
 var pe=E.GF.pe;
+function GX(k,o){try{var r=window.PXEN.GF[k](o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🖼 រូបសុវត្ថិភាព (try/catch + ការពារ NaN) */
 function dpe(p){var n=Math.max(p.n[0],p.n[1]),c=[],i;for(i=0;i<=n;i++)c.push(0);c[n-p.n[0]]+=p.c[0];c[n-p.n[1]]+=p.c[1];c[n]+=p.c[2];return pe(c)}
 function fT(f){return f.t}
 function pw(c,n){/* c·xⁿ ជា LaTeX (ដំបូង) */if(!c)return"";var a=Math.abs(c),s=c<0?"-":"";return s+(a===1&&n?"":a)+(n===0?"":n===1?"x":"x^{"+n+"}")}
@@ -49,7 +50,7 @@ G11[2]={1:L(G10[6][1]),2:L(G10[6][2],
      GCV({sc:true,f:pe([a,-a*(r1+r2),c]),pts:[{p:[r1,0],lt:pt([r1,0])},{p:[r2,0],lt:pt([r2,0])},{p:[0,c],lt:pt([0,c])}],x:[xv-w-2,xv+w+2]}))}),
  3:L(
  function(){var x=ri(3,15),k=ri(1,8);
-   return K("qw","A rectangle has length $(x+"+k+")$ cm and width $x$ cm. Its area is $"+x*(x+k)+"$ cm². Find $x$.",[A(x,null,"num","x =")],"$x(x+"+k+")="+x*(x+k)+"\\Rightarrow x^2+"+k+"x-"+x*(x+k)+"=0\\Rightarrow(x-"+x+")(x+"+(x+k)+")=0$, $x\\gt 0$ so $x="+x+"$")},
+   return K("qw","A rectangle has length $(x+"+k+")$ cm and width $x$ cm. Its area is $"+x*(x+k)+"$ cm². Find $x$.",[A(x,null,"num","x =")],"$x(x+"+k+")="+x*(x+k)+"\\Rightarrow x^2+"+k+"x-"+x*(x+k)+"=0\\Rightarrow(x-"+x+")(x+"+(x+k)+")=0$, $x\\gt 0$ so $x="+x+"$",GX("rect",{k:"rect",w:2,h:3,base:"x cm",left:"(x + "+k+") cm",mid:"area = "+x*(x+k)+" cm²"}))},
  function(){var r=ri(-6,3),s=r+ri(1,7);
    return K("qi","Solve $"+polyT([1,-(r+s),r*s])+"\\lt 0$. The answer is $a\\lt x\\lt b$.",[A(r,null,"num","a ="),A(s,null,"num","b =")],"$(x"+sg(-r)+")(x"+sg(-s)+")\\lt 0$: the curve is below the $x$-axis between the roots, so $"+r+"\\lt x\\lt "+s+"$.",GCV({f:pe([1,-(r+s),r*s]),ax:[{x:r,t:"a"},{x:s,t:"b"}],area:{a:r,b:s}}))})};
 /* 3 Indices and exponential growth */
@@ -115,7 +116,7 @@ G11[7]={1:L(
  function(){var k=ri(2,30)/10*pick([1,-1]),x1=Math.atan(k)/D;if(x1<0)x1+=180;var x2=x1+180;
    return K("tt","Solve $\\tan x="+k+"$ for $0^\\circ\\le x\\le360^\\circ$. "+DP,[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],"$\\tan^{-1}("+k+")$ gives $"+dg(Math.atan(k)/D)+"^\\circ$; $\\tan$ repeats every $180^\\circ$: $x="+dg(x1)+"^\\circ,"+dg(x2)+"^\\circ$",GCV({f:"tan(x*pi/180)",x:[-30,390],y:[-4,4],xt:[90,180,270,360],vl:[{x:90},{x:270}],hl:[{y:k,t:"y = "+k}],pts:[{p:[x1,k],n:"x1",drop:true},{p:[x2,k],n:"x2",drop:true}]}))},
  function(){var a=ri(3,12),b=ri(3,12),c=ri(2,10),t=Math.atan(c/Math.sqrt(a*a+b*b))/D;
-   return K("t3","A cuboid measures $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm (height). Calculate the angle between a space diagonal and the base. "+DP,[A(nf(t),null,"num","angle =")],"Base diagonal $=\\sqrt{"+a*a+"+"+b*b+"}$, $\\tan\\theta=\\dfrac{"+c+"}{\\sqrt{"+(a*a+b*b)+"}}\\Rightarrow\\theta="+dg(t)+"^\\circ$")}),
+   return K("t3","A cuboid measures $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm (height). Calculate the angle between a space diagonal and the base. "+DP,[A(nf(t),null,"num","angle =")],"Base diagonal $=\\sqrt{"+a*a+"+"+b*b+"}$, $\\tan\\theta=\\dfrac{"+c+"}{\\sqrt{"+(a*a+b*b)+"}}\\Rightarrow\\theta="+dg(t)+"^\\circ$",GX("solid",{k:"cuboid",w:a,h:c,d:b,lw:a+" cm",lh:c+" cm",ld:b+" cm",diag:"?"}))}),
  3:L(
  function(){var s=2*ri(2,8),h=ri(4,15),t=Math.atan(h/(s/Math.SQRT2))/D;
    return K("pyr","A pyramid has a square base of side $"+s+"$ cm. Its vertex is $"+h+"$ cm vertically above the centre of the base. Calculate the angle between a sloping edge and the base. "+DP,[A(nf(t),null,"num","angle =")],"Half-diagonal $=\\dfrac{"+s+"\\sqrt2}{2}="+dg(s/Math.SQRT2)+"$, $\\tan\\theta=\\dfrac{"+h+"}{"+dg(s/Math.SQRT2)+"}\\Rightarrow\\theta="+dg(t)+"^\\circ$")},
@@ -161,7 +162,7 @@ G11[12]={1:L(function(){var a=ri(8,25),b=ri(8,25),n=ri(1,Math.min(a,b)-1);
    return K("sc","$n(\\mathscr E)="+U+"$, $n(A)="+a+"$, $n(B)="+b+"$ and $n(A\\cap B)="+n+"$. Find $n(A'\\cap B)$ and $n((A\\cup B)')$.",[A(b-n,null,"num","n(A'∩B) ="),A(U-(a+b-n),null,"num","n((A∪B)') =")],"$n(A'\\cap B)="+b+"-"+n+"="+(b-n)+"$, $n((A\\cup B)')="+U+"-"+(a+b-n)+"="+(U-(a+b-n))+"$")})};
 /* 13 Mensuration */
 G11[13]={1:L(G10[11][3]),
- 2:L(function(){var r=ri(2,12);return K("ssa","Find the surface area of a sphere of radius $"+r+"$ cm, in terms of $\\pi$. [$A=4\\pi r^2$]",[A(4*r*r+"*pi",4*r*r+"\\pi","num","cm²")],"$4\\pi\\times"+r*r+"="+4*r*r+"\\pi$ cm²")},G10[11][3]),
+ 2:L(function(){var r=ri(2,12);return K("ssa","Find the surface area of a sphere of radius $"+r+"$ cm, in terms of $\\pi$. [$A=4\\pi r^2$]",[A(4*r*r+"*pi",4*r*r+"\\pi","num","cm²")],"$4\\pi\\times"+r*r+"="+4*r*r+"\\pi$ cm²",GX("solid",{k:"sph",w:r,h:r,lr:r+" cm"}))},G10[11][3]),
  3:L(function(){var r=3*ri(1,4),h=ri(2,15),V=fr(2*r*r*r+3*r*r*h,3);
    return K("hc","A solid is made from a cylinder of radius $"+r+"$ cm and height $"+h+"$ cm with a hemisphere of the same radius on top. Find its total volume in terms of $\\pi$.",[A(V.s+"*pi",piT(V),"num","cm³")],"Cylinder $\\pi r^2h="+r*r*h+"\\pi$, hemisphere $\\tfrac23\\pi r^3="+2*r*r*r/3+"\\pi$; total $="+piT(V)+"$ cm³")})};
 var LES11=[
@@ -225,9 +226,9 @@ G12[4]={1:L(
    return K("rd","Convert $"+piT(fr(f[0],f[1]))+"$ radians to degrees.",[A(180*f[0]/f[1],null,"num","°")],"$\\times\\dfrac{180}{\\pi}$: $"+180*f[0]/f[1]+"^\\circ$")}),
  2:L(
  function(){var r=ri(2,15),t=ri(2,25)/10;
-   return K("al","A sector has radius $"+r+"$ cm and angle $"+t+"$ radians. Find the arc length.",[A(nf(r*t),null,"num","cm")],"$s=r\\theta="+r+"\\times"+t+"="+nf(r*t)+"$ cm")},
+   return K("al","A sector has radius $"+r+"$ cm and angle $"+t+"$ radians. Find the arc length.",[A(nf(r*t),null,"num","cm")],"$s=r\\theta="+r+"\\times"+t+"="+nf(r*t)+"$ cm",GX("circle",{kind:"sector",ang:Math.max(25,Math.min(160,Math.round(t*57.3))),r:r+" cm",angLab:t+" rad"}))},
  function(){var r=ri(2,15),t=ri(2,25)/10;
-   return K("sa","A sector has radius $"+r+"$ cm and angle $"+t+"$ radians. Find its area.",[A(nf(r*r*t/2),null,"num","cm²")],"$A=\\tfrac12r^2\\theta=\\tfrac12\\times"+r*r+"\\times"+t+"="+nf(r*r*t/2)+"$ cm²")}),
+   return K("sa","A sector has radius $"+r+"$ cm and angle $"+t+"$ radians. Find its area.",[A(nf(r*r*t/2),null,"num","cm²")],"$A=\\tfrac12r^2\\theta=\\tfrac12\\times"+r*r+"\\times"+t+"="+nf(r*r*t/2)+"$ cm²",GX("circle",{kind:"sector",ang:Math.max(25,Math.min(160,Math.round(t*57.3))),r:r+" cm",angLab:t+" rad"}))}),
  3:L(
  function(){var r=ri(4,15),t=ri(5,25)/10,S=r*r/2*(t-Math.sin(t));
    return K("seg","A chord subtends an angle of $"+t+"$ radians at the centre of a circle of radius $"+r+"$ cm. Find the area of the minor segment. "+DP,[A(nf(S),null,"num","cm²")],"$\\tfrac12r^2(\\theta-\\sin\\theta)=\\tfrac12\\times"+r*r+"("+t+"-\\sin"+t+")="+dg(S)+"$ cm²")},

@@ -18,6 +18,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
+function GX(k,o){try{var r=window.PXEN.GF[k](o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🖼 រូបសុវត្ថិភាព (try/catch + ការពារ NaN) */
 function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
 function GCS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📊 រូបស្ថិតិ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
@@ -104,7 +105,7 @@ add([9],32,2,function(){var a=nz(-6,6),b=nz(-6,6),k=ri(2,6),m=nz(-7,7);
   return EX("ca8",1,"",[{q:"Expand and simplify $(x"+sg(a)+")(x"+sg(b)+")$.",a:[A(poly([1,a+b,a*b]),polyT([1,a+b,a*b]),"expr","=")],m:2},
    {q:"Factorise $"+k+"x^2"+co(k*m,"x")+"$.",a:[A(k+"*x*(x"+sg(m)+")",k+"x(x"+sg(m)+")","expr","=")],m:2}],"(a) $x^2"+co(b,"x")+co(a,"x")+sg(a*b)+"$ (b) common factor $"+k+"x$")});
 add([8,9],32,3,function(){var w=ri(2,9),l=w+ri(2,8),A0=l*w,k=l-w;
-  return EX("ca9",2,"The length of a rectangle is $"+k+"$ cm more than its width $x$ cm. The perimeter is "+2*(l+w)+" cm.",[
+  return EXF(GX("rect",{k:"rect",w:2,h:3,base:"x cm",left:"(x + "+k+") cm"}),"ca9",2,"The length of a rectangle is $"+k+"$ cm more than its width $x$ cm. The perimeter is "+2*(l+w)+" cm.",[
    {q:"Show that $4x+"+2*k+"="+2*(l+w)+"$ and find the width.",a:[A(w,null,"num","x =")],m:2},
    {q:"Work out the area of the rectangle.",a:[A(A0,null,"num","cm²")],m:2}],"(a) $2(x+x+"+k+")="+2*(l+w)+"\\Rightarrow x="+w+"$ (b) $"+l+"\\times"+w+"="+A0+"$")});
 
@@ -119,13 +120,13 @@ add([8,9],33,3,function(){var r=ri(3,20)/2*2;
   var FIGv=FB({O:[0,0,"n"],P:[-2,0,"w"],Q:[2,0,"e"]},["circle O 2 black","seg P Q black","text (0,-0.45) "+2*r+" cm"],{ext:[[-2,-2],[2,2]]});return EXF(FIGv,"cg3",2,"A circular table has diameter "+2*r+" cm.",[{q:"Calculate the circumference of the table. "+DP1,a:[A(nf(2*Math.PI*r),null,"num","cm")],m:2},{q:"Calculate the area of the table top. "+DP1,a:[A(nf(Math.PI*r*r),null,"num","cm²")],m:2}],
    "(a) $\\pi d="+Math.round(2*Math.PI*r*10)/10+"$ (b) $\\pi r^2="+Math.round(Math.PI*r*r*10)/10+"$")});
 add([7,8],33,2,function(){var a=ri(10,40),b=ri(10,30),c=ri(5,20);
-  return EX("cg4",1,"A fish tank is a cuboid "+a+" cm long, "+b+" cm wide and "+c+" cm high.",[{q:"Work out the volume of the tank in cm³.",a:[A(a*b*c,null,"num","cm³")],m:1},{q:"Write the volume in litres. (1 litre = 1000 cm³)",a:[A(nf(a*b*c/1000),null,"num","litres")],m:1}],
+  return EXF(GX("solid",{k:"cuboid",w:a,h:c,d:b,lw:a+" cm",lh:c+" cm",ld:b+" cm"}),"cg4",1,"A fish tank is a cuboid "+a+" cm long, "+b+" cm wide and "+c+" cm high.",[{q:"Work out the volume of the tank in cm³.",a:[A(a*b*c,null,"num","cm³")],m:1},{q:"Write the volume in litres. (1 litre = 1000 cm³)",a:[A(nf(a*b*c/1000),null,"num","litres")],m:1}],
    "(a) $"+a+"\\times"+b+"\\times"+c+"="+a*b*c+"$ (b) $\\div1000="+nf(a*b*c/1000)+"$")});
 add([9],33,3,function(){var L=ri(5,12),d=ri(1,L-2),h=Math.sqrt(L*L-d*d);
   var sc=3.2/L,FIGv=FB({O:[0,0,"sw"],W:[0,h*sc,"n"],F:[d*sc,0,"se"]},["seg O W black","seg O F black","seg F W blue","right W O F","text "+mid([d*sc,0],[0,h*sc],.5,.2)+" "+L+" m","text "+mid([0,0],[d*sc,0],0,-.4)+" "+d+" m"]);return EXF(FIGv,"cg5",2,"A ladder "+L+" m long leans against a vertical wall. The foot of the ladder is "+d+" m from the wall.",[{q:"Calculate how far up the wall the ladder reaches. "+DP,a:[A(nf(h),null,"num","m")],m:3}],
    "Pythagoras: $\\sqrt{"+L+"^2-"+d+"^2}=\\sqrt{"+(L*L-d*d)+"}="+r2(h)+"$ m")});
 add([8,9],33,2,function(){var n=pick([5,6,8,9,10,12]);
-  return EX("cg6",1,"This is a regular polygon with "+n+" sides.",[{q:"Work out the size of one exterior angle.",a:[A(nf(360/n),null,"num","°")],m:1},{q:"Work out the size of one interior angle.",a:[A(nf(180-360/n),null,"num","°")],m:1}],
+  return EXF(GX("poly",{n:n,reg:true}),"cg6",1,"This is a regular polygon with "+n+" sides.",[{q:"Work out the size of one exterior angle.",a:[A(nf(360/n),null,"num","°")],m:1},{q:"Work out the size of one interior angle.",a:[A(nf(180-360/n),null,"num","°")],m:1}],
    "(a) $360\\div"+n+"="+nf(360/n)+"^\\circ$ (b) $180-"+nf(360/n)+"="+nf(180-360/n)+"^\\circ$")});
 add([7,8],33,1,function(){var P=[nz(-5,5),nz(-5,5)],v=[nz(-4,4),nz(-4,4)];
   return EXF(GCC({pts:[{n:"P",p:P,c:"blue"}],ext:[[P[0],-P[1]],[P[0]+v[0],P[1]+v[1]]]}),"cg7",1,"Point $P$ has coordinates "+pt(P)+".",[{q:"$P$ is reflected in the $x$-axis. Write down the coordinates of the image.",a:[A(P[0],null,"num","x ="),A(-P[1],null,"num","y =")],m:1},

@@ -20,6 +20,7 @@ function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catc
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
 function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
 var pe=window.PXEN.GF.pe;
+function GX(k,o){try{var r=window.PXEN.GF[k](o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🖼 រូបសុវត្ថិភាព (try/catch + ការពារ NaN) */
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
 function GCS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📊 រូបស្ថិតិ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
@@ -113,7 +114,7 @@ var A8=function(){var a=nz(2,7),b=ri(-5,6),c=ri(-6,8),k=pick([2,3,5]);
    {q:"Find the $n$th term of sequence C in the form $k\\times2^n$.",a:[A(k,null,"num","k =")],m:2}],
    "A: difference $"+a+"$; B: compare with $1,4,9,16$; C: compare with $2,4,8,16$")};
 var A10=function(){var a=ri(1,5),b=ri(1,3),Ar=ri(20,90),cA=2,cB=4*a-b,cC=-(a*b)-Ar;/* (x+a)(2x−b)… use (x+a)(2x+... ) */var p=2,q=2*a-b,r=-a*b-Ar,Dd=q*q-4*p*r,x=(-q+Math.sqrt(Dd))/(2*p);
-  return EX("xa10",4,"A rectangle has length $(x+"+a+")$ cm and width $(2x-"+b+")$ cm. The area of the rectangle is "+Ar+" cm².",[
+  return EXF(GX("rect",{k:"rect",w:2,h:3,base:"(x + "+a+") cm",left:"(2x − "+b+") cm",mid:"area = "+Ar+" cm²"}),"xa10",4,"A rectangle has length $(x+"+a+")$ cm and width $(2x-"+b+")$ cm. The area of the rectangle is "+Ar+" cm².",[
    {q:"Show that $2x^2"+co(q,"x")+"+c=0$ and find the value of $c$.",a:[A(r,null,"num","c =")],m:2},
    {q:"Solve the equation to find the value of $x$. "+DP,a:[A(nf(x),null,"num","x =")],m:3},
    {q:"Calculate the perimeter of the rectangle. "+DP,a:[A(nf(2*(x+a+2*x-b)),null,"num","cm")],m:1}],

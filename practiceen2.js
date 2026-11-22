@@ -8,6 +8,7 @@
 (function(){
 "use strict";
 var X=window.PX,E=window.PXEN,GF=E.GF,Q=X.Q,A=X.A,ri=X.ri,nz=X.nz,pick=X.pick,fr=X.fr,sg=X.sg,co=X.co,poly=X.poly,polyT=X.polyT,sgp=X.sgp,gcd=X.gcd;
+function GX(k,o){try{var r=window.PXEN.GF[k](o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🖼 រូបសុវត្ថិភាព (try/catch + ការពារ NaN) */
 var K=E.K,L=E.L,r2=E.r2,sum=E.sum,nf=E.nf,tbl=E.tbl,pt=E.pt,G9=E.G9,G10=E.G10;
 function lcm(a,b){return a/gcd(a,b)*b}
 function big(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
@@ -147,14 +148,14 @@ G6[8]={1:L(
 /* 9 Angles */
 G6[9]={1:L(
  function(){var a=ri(20,160);
-   return K("sl","Two angles lie on a straight line. One angle is $"+a+"^\\circ$. Find the other angle.",[A(180-a,null,"num","°")],"Angles on a straight line add up to $180^\\circ$: $180-"+a+"="+(180-a)+"^\\circ$")},
+   return K("sl","Two angles lie on a straight line. One angle is $"+a+"^\\circ$. Find the other angle.",[A(180-a,null,"num","°")],"Angles on a straight line add up to $180^\\circ$: $180-"+a+"="+(180-a)+"^\\circ$",GX("rays",{k:"line",ang:[a,180-a],lab:[a+"°","x°"]}))},
  function(){var a=ri(40,150),b=ri(40,150);
-   return K("ap","Three angles meet at a point. Two of them are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(360-a-b,null,"num","°")],"Angles around a point add up to $360^\\circ$: $360-"+a+"-"+b+"="+(360-a-b)+"^\\circ$")}),
+   return K("ap","Three angles meet at a point. Two of them are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(360-a-b,null,"num","°")],"Angles around a point add up to $360^\\circ$: $360-"+a+"-"+b+"="+(360-a-b)+"^\\circ$",GX("rays",{k:"point",ang:[a,b,360-a-b],lab:[a+"°",b+"°","x°"]}))}),
  2:L(
  function(){var a=ri(25,80),b=ri(20,70);
    return K("tri6","Two angles of a triangle are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(180-a-b,null,"num","°")],"Angles in a triangle add up to $180^\\circ$: $180-"+a+"-"+b+"="+(180-a-b)+"^\\circ$",GF.tri({ang:[a,b,180-a-b],lab:{A:a+"°",B:b+"°",C:"x°"}}))},
  function(){var a=ri(10,80);
-   return K("ra","A right angle is split into two angles. One of them is $"+a+"^\\circ$. Find the other.",[A(90-a,null,"num","°")],"$90-"+a+"="+(90-a)+"^\\circ$")}),
+   return K("ra","A right angle is split into two angles. One of them is $"+a+"^\\circ$. Find the other.",[A(90-a,null,"num","°")],"$90-"+a+"="+(90-a)+"^\\circ$",GX("rays",{k:"right",ang:[a,90-a],lab:[a+"°","x°"]}))}),
  3:L(
  function(){var t=ri(20,140),apex=Math.random()<.5;if(!apex&&t>=90)t=ri(20,85);
    return K("iso","An isosceles triangle has "+(apex?"an angle of $"+t+"^\\circ$ between its two equal sides":"two equal angles of $"+t+"^\\circ$")+". Find the size of "+(apex?"each of the other two angles":"the third angle")+".",[A(apex?(180-t)/2:180-2*t,null,"num","°")],apex?"$(180-"+t+")\\div2="+(180-t)/2+"^\\circ$":"$180-2\\times"+t+"="+(180-2*t)+"^\\circ$",apex?GF.tri({ang:[t,(180-t)/2,(180-t)/2],lab:{A:t+"°",B:"x°",C:"x°"}}):GF.tri({ang:[180-2*t,t,t],lab:{A:"x°",B:t+"°",C:t+"°"}}))},
@@ -173,9 +174,9 @@ G6[10]={1:L(
    return K("pg","A parallelogram has base $"+b+"$ cm and perpendicular height $"+h+"$ cm. Find its area.",[A(b*h,null,"num","cm²")],"$\\text{base}\\times\\text{height}="+b*h+"$ cm²",GF.rect({k:"para",w:b,h:h,base:b+" cm",height:h+" cm"}))}),
  3:L(
  function(){var W=ri(6,15),H=ri(6,15),w=ri(2,W-2),h=ri(2,H-2),S=W*H-w*h;
-   return K("cmp","An L-shape is made by cutting a $"+w+"$ cm by $"+h+"$ cm rectangle from the corner of a $"+W+"$ cm by $"+H+"$ cm rectangle. Find the area of the L-shape.",[A(S,null,"num","cm²")],"$"+W+"\\times"+H+"-"+w+"\\times"+h+"="+W*H+"-"+w*h+"="+S+"$ cm²")},
+   return K("cmp","An L-shape is made by cutting a $"+w+"$ cm by $"+h+"$ cm rectangle from the corner of a $"+W+"$ cm by $"+H+"$ cm rectangle. Find the area of the L-shape.",[A(S,null,"num","cm²")],"$"+W+"\\times"+H+"-"+w+"\\times"+h+"="+W*H+"-"+w*h+"="+S+"$ cm²",GX("lshape",{W:W,H:H,w:w,h:h}))},
  function(){var l=ri(5,25),w=ri(2,l-1),P=2*(l+w);
-   return K("rpl","A rectangle has perimeter $"+P+"$ cm and width $"+w+"$ cm. Find its length.",[A(l,null,"num","cm")],"$"+P+"\\div2="+(l+w)+"$, length $="+(l+w)+"-"+w+"="+l+"$ cm")})};
+   return K("rpl","A rectangle has perimeter $"+P+"$ cm and width $"+w+"$ cm. Find its length.",[A(l,null,"num","cm")],"$"+P+"\\div2="+(l+w)+"$, length $="+(l+w)+"-"+w+"="+l+"$ cm",GX("rect",{k:"rect",w:3,h:2,base:"x cm",left:w+" cm"}))})};
 /* 11 Volume, measures and time */
 G6[11]={1:L(
  function(){var a=ri(2,12),b=ri(2,10),c=ri(2,10);
@@ -278,7 +279,7 @@ G8[6]={1:L(G9[6][1]),2:L(G9[6][1],G9[6][2]),3:L(G9[6][2])};
 G8[7]={1:L(G9[7][1]),2:L(G9[7][1],G9[7][2]),3:L(G9[7][2])};
 G8[8]={1:L(G6[7][2],G10[2][1]),2:L(G10[2][1],G6[7][3]),3:L(G10[2][2],G6[7][3])};
 G8[9]={1:L(G9[8][1]),2:L(G9[8][1],G9[8][2]),3:L(G9[8][2],G9[8][3])};
-G8[10]={1:L(function(){var r=ri(2,15);return K("cc","A circle has radius $"+r+"$ cm. Find its circumference in terms of $\\pi$.",[A(2*r+"*pi",2*r+"\\pi","num","cm")],"$C=2\\pi r="+2*r+"\\pi$ cm")}),
+G8[10]={1:L(function(){var r=ri(2,15);return K("cc","A circle has radius $"+r+"$ cm. Find its circumference in terms of $\\pi$.",[A(2*r+"*pi",2*r+"\\pi","num","cm")],"$C=2\\pi r="+2*r+"\\pi$ cm",GX("circle",{r:r+" cm"}))}),
  2:L(G9[10][1]),3:L(G9[10][3])};
 G8[11]={1:L(G6[10][2],G6[11][1]),2:L(G9[10][1],G9[10][2]),3:L(G9[10][2])};
 G8[12]={1:L(G9[11][1]),2:L(G9[11][2]),3:L(G9[11][2],G9[11][3])};

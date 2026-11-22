@@ -27,6 +27,7 @@ function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinit
 function GCT(o){try{var r=window.PXEN.GF.circleTh(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* ⭕ រូបទ្រឹស្ដីបទរង្វង់ */
 function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
 function pe(c){return window.PXEN.GF.pe(c)}
+function GX(k,o){try{var r=window.PXEN.GF[k](o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🖼 រូបសុវត្ថិភាព (try/catch + ការពារ NaN) */
 function GS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
 function cR(a,m){var R=2;a.forEach(function(p){R=Math.max(R,Math.abs(p[0])+(m||1),Math.abs(p[1])+(m||1))});return Math.min(R,14)}
 function cv(v){return"\\begin{pmatrix}"+v[0]+"\\\\"+v[1]+"\\end{pmatrix}"}
@@ -214,7 +215,7 @@ G9[10]={1:L(
  function(){var r=ri(3,12),t=pick([30,40,45,60,72,90,120,135,150]),Ar=fr(r*r*t,360),Le=fr(2*r*t,360);
    return K("sec","A sector of a circle has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Find, in terms of $\\pi$, (a) the arc length (b) the area of the sector.",[A(Le.s+"*pi",piT(Le),"num","(a)"),A(Ar.s+"*pi",piT(Ar),"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+piT(Le)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+piT(Ar)+"$ cm²",GF.circle({kind:"sector",ang:t,r:r+" cm",angLab:t+"°"}))},
  function(){var r=ri(2,15);
-   return K("rad","The area of a circle is $"+r*r+"\\pi$ cm². Find its radius.",[A(r,null,"num","r =")],"$\\pi r^2="+r*r+"\\pi\\Rightarrow r^2="+r*r+"\\Rightarrow r="+r+"$ cm")})};
+   return K("rad","The area of a circle is $"+r*r+"\\pi$ cm². Find its radius.",[A(r,null,"num","r =")],"$\\pi r^2="+r*r+"\\pi\\Rightarrow r^2="+r*r+"\\Rightarrow r="+r+"$ cm",GX("circle",{r:"r"}))})};
 /* 11 Transformations and bearings */
 G9[11]={1:L(
  function(){var P=[nz(-6,6),nz(-6,6)],t=pick(["the $x$-axis","the $y$-axis","the line $y=x$"]),R=t==="the $x$-axis"?[P[0],-P[1]]:t==="the $y$-axis"?[-P[0],P[1]]:[P[1],P[0]];
@@ -920,6 +921,24 @@ var GF=(function(){
     x:[x0,x1] y:[y0,y1] បង្អួច (មិនដាក់ = ស្វ័យប្រវត្តិ) · eq:true មាត្រដ្ឋានដូចគ្នា · sc:true ក្រឡា+លេខអ័ក្ស (លំនាំដើម = គ្រោង គ្មានលេខ + NOT TO SCALE)
     xt/yt:[តម្លៃ ឬ [តម្លៃ,"ស្លាក"]] លេខអ័ក្សដាក់ដោយខ្លួនឯង (គ្រោង) · pts:[{p:[x,y],n:"P"|"x1",lt:"(2, 3)",hole,d:["ne",…],drop}] · ax:[{x,t}] ឫសលើអ័ក្ស x · ay:[{y,t}]
     vl:[{x,t}] hl:[{y,t}] បន្ទាត់ដាច់ៗ · tan:{x,t} nor:{x,t} បន្ទាត់ប៉ះ/កែង (កែងមើលឃើញ) · area:{a,b,g:"expr",t:"R"} · segs:[{a,b,c,dash}] · tx:[[x,y,"អក្សរ",ពណ៌]] */
+ /* GF.rays({k:"line"|"point"|"right", ang:[ដឺក្រេនីមួយៗ], lab:[ស្លាកមុំនីមួយៗ]}) — មុំលើបន្ទាត់ត្រង់ (180°) · ជុំវិញចំណុច (360°) · មុំកែង (90°) · ស្លាកមុំ ? = x° */
+ function rays(o){var k=o.k||"line",an=o.ang||[60,120],lab=o.lab||[],L=2.1,V=[0,0],cm=[],tx=[],b=[],st=k==="point"?25:0,acc=st,i,P=function(a){return[L*Math.cos(a*R),L*Math.sin(a*R)]};
+  b.push(st);for(i=0;i<an.length;i++){acc+=an[i];b.push(acc)}
+  if(k==="line"){cm.push("seg "+xy([-L,0])+" "+xy([L,0])+" black");b.slice(1,-1).forEach(function(a){cm.push("seg (0,0) "+xy(P(a))+" blue")})}
+  else if(k==="right"){b.forEach(function(a){cm.push("seg (0,0) "+xy(P(a))+" "+(a===b[0]||a===b[b.length-1]?"black":"blue"))})}
+  else{b.slice(0,-1).forEach(function(a,j){cm.push("seg (0,0) "+xy(P(a))+" "+(j%2?"blue":"black"))})}
+  if(k==="right"&&an.length>1)cm.push("right "+xy(P(b[0]))+" (0,0) "+xy(P(b[b.length-1])));
+  for(i=0;i<an.length;i++){var a0=b[i],a1=b[i+1],mid=(a0+a1)/2*R,q=lab[i];
+   if(k==="right"&&an.length===1){cm.push("right "+xy(P(a0))+" (0,0) "+xy(P(a1)));continue}
+   cm.push("angle "+xy(P(a0))+" (0,0) "+xy(P(a1)));
+   if(q)tx.push([0,0,q,Math.cos(mid),Math.sin(mid),an[i]<40?30:an[i]<70?24:19])}
+  return FB({_o:[0,0,""]},cm,{tx:tx,ext:[[-L,-L*.2],[L,L*(k==="line"?.2:1)],[0,k==="line"?L:0],[-L*(k==="right"?0:1),-L*(k==="point"?1:0)]]})}
+ /* GF.lshape({W,H,w,h}) — រាង L៖ ចតុកោណ W×H កាត់ជ្រុងខាងលើស្ដាំ w×h (ស្លាកគ្រប់ជ្រុងដែលឱ្យ · មុំកែងគ្រប់កំពូល) */
+ function lshape(o){var W=o.W,H=o.H,w=o.w,h=o.h,sc=3.2/Math.max(W,H),fw=Math.min(Math.max(w/W,.32),.68)*W,fh=Math.min(Math.max(h/H,.32),.68)*H,V=[[0,0],[W,0],[W,H-fh],[W-fw,H-fh],[W-fw,H],[0,H]].map(function(p){return[p[0]*sc,p[1]*sc]}),cm=["poly "+V.map(xy).join(" ")+" black"],tx=[],pts={},i,g=[0,0];
+  V.forEach(function(v,j){pts["_"+j]=[v[0],v[1],""];g[0]+=v[0]/6;g[1]+=v[1]/6});
+  for(i=0;i<6;i++)cm.push("right "+xy(V[(i+5)%6])+" "+xy(V[i])+" "+xy(V[(i+1)%6]));
+  side(tx,V[0],V[1],g,W+" cm");side(tx,V[5],V[0],g,H+" cm");tx.push([(V[3][0]+V[4][0])/2,(V[3][1]+V[4][1])/2,h+" cm",-1,0]);tx.push([(V[2][0]+V[3][0])/2,(V[2][1]+V[3][1])/2,w+" cm",0,-1]);
+  return FB(pts,cm,{tx:tx})}
  function pe(c){var n=c.length-1,s="";c.forEach(function(v,i){var e=n-i;if(!v)return;var a=Math.abs(v),t=e===0?String(a):(a===1?"":a+"*")+(e===1?"x":"x^"+e);s+=(v<0?"-":(s?"+":""))+t});return s||"0"}
  function curve(o){var FG=window.FIG;if(!FG||!FG.parse)throw"FIG";
   var W=380,PAD=14,sc=!!o.sc,cm=[],obs=[],labs=[],fs=[],pts=[],sg=[],j,k;
@@ -995,7 +1014,7 @@ var GF=(function(){
   (o.hl||[]).forEach(function(z){if(!z.t)return;var Y=py(z.y),cw=z.t.length*6.6,cs=[];for(var q=0;q<8;q++){var X=W-PAD-6-cw-q*38;cs.push({b:[X,Y-15,X+cw,Y-2],bl:[X,Y-5]},{b:[X,Y+4,X+cw,Y+17],bl:[X,Y+15]})}place(cs,function(c){txt(c.bl[0],c.bl[1],z.t,"gray")})});
   (o.tx||[]).forEach(function(z){place(tbox(px(z[0]),py(z[1]),"",z[2]),function(c){txt(c.bl[0],c.bl[1],z[2],z[3]||"black")})});
   return cm.join("\n")}
- return{curve:curve,pe:pe,stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
+ return{curve:curve,pe:pe,stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rays:rays,lshape:lshape,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
