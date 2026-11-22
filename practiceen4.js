@@ -18,6 +18,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
+var pe=window.PXEN.GF.pe;
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
 function GCS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📊 រូបស្ថិតិ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
@@ -84,7 +86,7 @@ var A3=function(){var A0=[ri(-3,5),ri(-3,9)],dx=2*nz(-3,3),dy=2*nz(-4,4),B0=[A0[
   return EXF(GCC({pts:[{n:"A",p:A0,c:"blue"},{n:"B",p:B0,c:"blue"}],segs:[{a:A0,b:B0,c:"blue"}]}),"xa3",2,"",[{q:"$A$ is the point "+pt(A0)+" and $B$ is the point "+pt(B0)+".\nFind the equation of the perpendicular bisector of the line $AB$. Give your answer in the form $y=mx+c$.",a:[A(m.s,m.t,"num","m ="),A(c.s,c.t,"num","c =")],m:5}],
    "Midpoint "+pt(M)+", gradient $AB=\\dfrac{"+dy+"}{"+dx+"}$, perpendicular gradient $="+m.t+"$, $c="+c.t+"$")};
 var A4=function(){var a=ri(1,3),d=ri(-6,6),ymx=2*a*a*a+d,ymn=-2*a*a*a+d;
-  return EX("xa4",2,"A curve has equation $y=x^3-"+3*a*a+"x"+co(d,"")+"$.",[
+  return EXF(GCV({f:pe([1,0,-3*a*a,d]),pts:[{p:[-a,ymx],n:"A"},{p:[a,ymn],n:"B"}],hl:[{y:d,t:"y = k"}],x:[-a*2.2,a*2.2]}),"xa4",2,"A curve has equation $y=x^3-"+3*a*a+"x"+co(d,"")+"$.",[
    {q:"Find $\\dfrac{dy}{dx}$.",a:[A("3x^2-"+3*a*a,"3x^2-"+3*a*a,"expr","dy/dx =")],m:2},
    {q:"Find the coordinates of the maximum point and of the minimum point.",a:[A(-a,null,"num","max x ="),A(ymx,null,"num","max y ="),A(a,null,"num","min x ="),A(ymn,null,"num","min y =")],m:4},
    {q:"The equation $x^3-"+3*a*a+"x"+co(d,"")+"=k$ has three solutions. Find the range of possible values of $k$. Write it as $p\\lt k\\lt q$.",a:[A(ymn,null,"num","p ="),A(ymx,null,"num","q =")],m:2}],
@@ -101,7 +103,7 @@ var A6=function(){var a=pick([2,3,4,5]),b=nz(-9,9);
    {q:"Find $f^{-1}(x)$.",a:[A("(x"+sg(b)+")/"+a,"\\dfrac{x"+sg(b)+"}{"+a+"}","expr","f⁻¹(x) =")],m:2}],
    "(b) $"+a+"(3x-2)"+co(-b,"")+"="+polyT([3*a,-2*a-b])+"$ (c) $y="+a+"x"+co(-b,"")+"\\Rightarrow x=\\dfrac{y"+sg(b)+"}{"+a+"}$")};
 var A7=function(){var m=nz(-2,3),c=ri(-2,4),B=-(2+m),C=-3-c,Dd=B*B-4*C,x1=(-B-Math.sqrt(Dd))/2,x2=(-B+Math.sqrt(Dd))/2;
-  return EX("xa7",4,"",[{q:"The line $y="+co(m,"x",true)+co(c,"")+"$ intersects the curve $y=x^2-2x-3$ at the points $P$ and $Q$.\nFind the coordinates of $P$ and $Q$. You must show all your working. "+DP,
+  return EXF(GCV({f:pe([1,-2,-3]),fs:[{f:pe([m,c]),c:"red",t:"y = "+(m===1?"":m===-1?"-":m===0?"":m)+(m===0?"":"x")+(c===0?"":(m===0?c:(c<0?" - "+(-c):" + "+c)))}],pts:[{p:[x1,m*x1+c],n:"P"},{p:[x2,m*x2+c],n:"Q"}],x:[Math.min(x1,x2)-2,Math.max(x1,x2)+2]}),"xa7",4,"",[{q:"The line $y="+co(m,"x",true)+co(c,"")+"$ intersects the curve $y=x^2-2x-3$ at the points $P$ and $Q$.\nFind the coordinates of $P$ and $Q$. You must show all your working. "+DP,
    a:[A(nf(x1),null,"num","P: x ="),A(nf(m*x1+c),null,"num","y ="),A(nf(x2),null,"num","Q: x ="),A(nf(m*x2+c),null,"num","y =")],m:6}],
    "$x^2-2x-3="+co(m,"x",true)+co(c,"")+"\\Rightarrow "+polyT([1,B,C])+"=0\\Rightarrow x=\\dfrac{"+(-B)+"\\pm\\sqrt{"+Dd+"}}{2}="+r2(x1)+",\\ "+r2(x2)+"$")};
 var A8=function(){var a=nz(2,7),b=ri(-5,6),c=ri(-6,8),k=pick([2,3,5]);

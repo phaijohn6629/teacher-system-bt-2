@@ -25,6 +25,8 @@ function trg(){var a=[ri(1,4),ri(1,4)],b=[a[0]+ri(2,4),a[1]+ri(0,1)],c=[a[0]+ri(
 /* 📊 GS — រូបស្ថិតិ (GF.stat) · try/catch + ការពារ NaN */
 function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
 function GCT(o){try{var r=window.PXEN.GF.circleTh(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* ⭕ រូបទ្រឹស្ដីបទរង្វង់ */
+function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
+function pe(c){return window.PXEN.GF.pe(c)}
 function GS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
 function cR(a,m){var R=2;a.forEach(function(p){R=Math.max(R,Math.abs(p[0])+(m||1),Math.abs(p[1])+(m||1))});return Math.min(R,14)}
 function cv(v){return"\\begin{pmatrix}"+v[0]+"\\\\"+v[1]+"\\end{pmatrix}"}
@@ -367,12 +369,12 @@ G10[5]={1:L(G9[4][2],G9[4][1]),
 /* 6 Equations and quadratics */
 G10[6]={1:L(G9[5][2],
  function(){var r=nz(-7,7),s;do{s=nz(-7,7)}while(s===r);var lo=Math.min(r,s),hi=Math.max(r,s);
-   return K("qf","Solve $"+polyT([1,-(r+s),r*s])+"=0$.",[A(lo,null,"num","x₁ ="),A(hi,null,"num","x₂ =")],"$(x"+sg(-r)+")(x"+sg(-s)+")=0\\Rightarrow x="+lo+"$ or $x="+hi+"$")}),
+   return K("qf","Solve $"+polyT([1,-(r+s),r*s])+"=0$.",[A(lo,null,"num","x₁ ="),A(hi,null,"num","x₂ =")],"$(x"+sg(-r)+")(x"+sg(-s)+")=0\\Rightarrow x="+lo+"$ or $x="+hi+"$",GCV({f:pe([1,-(r+s),r*s]),ax:[{x:lo,t:"x1"},{x:hi,t:"x2"}]}))}),
  2:L(
  function(){var a=pick([1,2,3]),b=nz(-9,9),c=nz(-9,9),D=b*b-4*a*c;if(D<=0||Math.sqrt(D)%1===0){c=-Math.abs(c)-1;D=b*b-4*a*c;if(Math.sqrt(D)%1===0){c--;D=b*b-4*a*c}}var x1=(-b-Math.sqrt(D))/(2*a),x2=(-b+Math.sqrt(D))/(2*a);
-   return K("qfm","Solve $"+polyT([a,b,c])+"=0$. "+DP,[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],"$x=\\dfrac{"+(-b)+"\\pm\\sqrt{"+D+"}}{"+2*a+"}$, so $x="+r2(x1)+"$ or $x="+r2(x2)+"$.")},
+   return K("qfm","Solve $"+polyT([a,b,c])+"=0$. "+DP,[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],"$x=\\dfrac{"+(-b)+"\\pm\\sqrt{"+D+"}}{"+2*a+"}$, so $x="+r2(x1)+"$ or $x="+r2(x2)+"$.",GCV({f:pe([a,b,c]),ax:[{x:x1,t:"x1"},{x:x2,t:"x2"}]}))},
  function(){var p=nz(-6,6),q=ri(-10,10);
-   return K("cts","Write $"+polyT([1,2*p,p*p+q])+"$ in the form $(x+a)^2+b$.",[A(p,null,"num","a ="),A(q,null,"num","b =")],"$(x"+sg(p)+")^2-"+p*p+sg(p*p+q)+"=(x"+sg(p)+")^2"+co(q,"")+"$")}),
+   return K("cts","Write $"+polyT([1,2*p,p*p+q])+"$ in the form $(x+a)^2+b$.",[A(p,null,"num","a ="),A(q,null,"num","b =")],"$(x"+sg(p)+")^2-"+p*p+sg(p*p+q)+"=(x"+sg(p)+")^2"+co(q,"")+"$",GCV({f:pe([1,2*p,p*p+q]),pts:[{p:[-p,q],n:"V"}]}))}),
  3:L(
  function(){var r=ri(1,6),s;do{s=ri(-6,6)}while(s===0||s===r||s===-r);
    /* x + k/x = m  ⇒ x² − mx + k = 0 */var m=r+s,k=r*s,lo=Math.min(r,s),hi=Math.max(r,s);
@@ -386,12 +388,12 @@ G10[7]={1:L(G9[7][3],G9[5][2]),
    return K("tick","At a concert, adult tickets cost USD "+a+" and child tickets cost USD "+c+". $"+n+"$ tickets were sold for a total of USD "+(a*x+c*y)+". How many adult tickets and child tickets were sold?",[A(x,null,"num","adults ="),A(y,null,"num","children =")],"$x+y="+n+"$ and $"+a+"x+"+c+"y="+(a*x+c*y)+"$. Then $"+(a-c)+"x="+(a*x+c*y-c*n)+"\\Rightarrow x="+x+"$, $y="+y+"$.")},
  G9[5][3]),
  3:L(
- function(){var r=ri(-4,2),s=r+ri(1,5),k=ri(-3,3),b=-(r+s)-1,c=r*s+k;
+ function(){var r=ri(-4,2),s=r+ri(1,5),k=ri(-3,3),b=1-(r+s),c=r*s+k;
    /* y = x + k  and y = x² + bx + c ⇒ x² + (b−1)x + (c−k) = 0 with roots r,s */
    return K("slq","Solve the simultaneous equations $y=x"+co(k,"")+"$ and $y="+polyT([1,b,c])+"$. Give the $x$-coordinates of the points of intersection.",[A(r,null,"num","x₁ ="),A(s,null,"num","x₂ =")],
-     "$x^2"+co(b,"x")+sg(c)+"=x"+co(k,"")+"\\Rightarrow "+polyT([1,b-1,c-k])+"=0\\Rightarrow (x"+sg(-r)+")(x"+sg(-s)+")=0$")},
+     "$x^2"+co(b,"x")+sg(c)+"=x"+co(k,"")+"\\Rightarrow "+polyT([1,b-1,c-k])+"=0\\Rightarrow (x"+sg(-r)+")(x"+sg(-s)+")=0$",GCV({f:pe([1,b,c]),fs:[{f:pe([1,k]),c:"red"}],pts:[{p:[r,r+k],n:"A"},{p:[s,s+k],n:"B"}]}))},
  function(){var k=ri(2,10);
-   return K("qin","Solve the inequality $x^2\\lt "+k*k+"$. The solution is $a\\lt x\\lt b$. Find $a$ and $b$.",[A(-k,null,"num","a ="),A(k,null,"num","b =")],"$x^2-"+k*k+"\\lt 0\\Rightarrow(x-"+k+")(x+"+k+")\\lt 0\\Rightarrow -"+k+"\\lt x\\lt "+k+"$")})};
+   return K("qin","Solve the inequality $x^2\\lt "+k*k+"$. The solution is $a\\lt x\\lt b$. Find $a$ and $b$.",[A(-k,null,"num","a ="),A(k,null,"num","b =")],"$x^2-"+k*k+"\\lt 0\\Rightarrow(x-"+k+")(x+"+k+")\\lt 0\\Rightarrow -"+k+"\\lt x\\lt "+k+"$",GCV({f:pe([1,0,-k*k]),ax:[{x:-k,t:"a"},{x:k,t:"b"}],area:{a:-k,b:k}}))})};
 /* 8 Sequences */
 G10[8]={1:L(G9[6][1],G9[6][2]),2:L(G9[6][3],G9[6][2]),
  3:L(G9[6][3],
@@ -913,7 +915,87 @@ var GF=(function(){
    else for(c=0;c<360;c+=45){var mn=360;rays[i].forEach(function(a){mn=Math.min(mn,Math.abs(((c-a)%360+540)%360-180))});if(mn>bd){bd=mn;best=c}}
    pts[(nm?"":"_")+(nm||i)]=[p[0],p[1],nm?dir8([Math.sin(best*R),Math.cos(best*R)]):""]});
   return FB(pts,cm,{tx:tx,ext:ext})}
- return{stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
+ /* 📈 GF.curve — ក្រាបអនុគមន៍ (ខ្សែកោងរលូនគូរដោយ fig.js) · ស្លាកដាក់ដោយស្វ័យប្រវត្តិ គ្មានជាន់គ្នា គ្មានដាច់គែម · «?»/ឈ្មោះ = មិនបង្ហាញចម្លើយ
+    f:"x^2-4*x+3" (កន្សោម fig.js), d:[a,b] ដែន, c ពណ៌, t ស្លាកខ្សែ, fs:[{f,d,c,dash,t}] ខ្សែបន្ថែម,
+    x:[x0,x1] y:[y0,y1] បង្អួច (មិនដាក់ = ស្វ័យប្រវត្តិ) · eq:true មាត្រដ្ឋានដូចគ្នា · sc:true ក្រឡា+លេខអ័ក្ស (លំនាំដើម = គ្រោង គ្មានលេខ + NOT TO SCALE)
+    xt/yt:[តម្លៃ ឬ [តម្លៃ,"ស្លាក"]] លេខអ័ក្សដាក់ដោយខ្លួនឯង (គ្រោង) · pts:[{p:[x,y],n:"P"|"x1",lt:"(2, 3)",hole,d:["ne",…],drop}] · ax:[{x,t}] ឫសលើអ័ក្ស x · ay:[{y,t}]
+    vl:[{x,t}] hl:[{y,t}] បន្ទាត់ដាច់ៗ · tan:{x,t} nor:{x,t} បន្ទាត់ប៉ះ/កែង (កែងមើលឃើញ) · area:{a,b,g:"expr",t:"R"} · segs:[{a,b,c,dash}] · tx:[[x,y,"អក្សរ",ពណ៌]] */
+ function pe(c){var n=c.length-1,s="";c.forEach(function(v,i){var e=n-i;if(!v)return;var a=Math.abs(v),t=e===0?String(a):(a===1?"":a+"*")+(e===1?"x":"x^"+e);s+=(v<0?"-":(s?"+":""))+t});return s||"0"}
+ function curve(o){var FG=window.FIG;if(!FG||!FG.parse)throw"FIG";
+  var W=380,PAD=14,sc=!!o.sc,cm=[],obs=[],labs=[],fs=[],pts=[],sg=[],j,k;
+  function r3(v){return Math.round(v*1000)/1000}function Pt(p){return"("+r3(p[0])+","+r3(p[1])+")"}
+  function add(z,c0){var pf=FG.parse(z.f);fs.push({s:z.f,f:function(x){return pf(x,0)},d:z.d||null,c:z.c||c0,dash:!!z.dash,t:z.t})}
+  if(o.f)add(o,"blue");(o.fs||[]).forEach(function(z){add(z,"red")});if(!fs.length)throw"fn";
+  (o.pts||[]).forEach(function(z){pts.push(z)});
+  (o.ax||[]).forEach(function(z){pts.push({p:[z.x,0],n:z.t,d:sc?["n","ne","nw"]:["s","se","sw"]})});
+  (o.ay||[]).forEach(function(z){pts.push({p:[0,z.y],n:z.t,d:sc?["e","ne","se"]:["w","nw","sw","e"]})});
+  /* បង្អួច */
+  var kx=[0],ky=[0];pts.forEach(function(z){kx.push(z.p[0]);ky.push(z.p[1])});(o.vl||[]).forEach(function(z){kx.push(z.x)});(o.hl||[]).forEach(function(z){ky.push(z.y)});
+  if(o.area)kx.push(o.area.a,o.area.b);if(o.tan)kx.push(o.tan.x);if(o.nor)kx.push(o.nor.x);(o.xt||[]).forEach(function(v){kx.push(v.length?v[0]:v)});(o.yt||[]).forEach(function(v){ky.push(v.length?v[0]:v)});
+  var X0,X1,Y0,Y1,a,b,pd;
+  if(o.x){X0=o.x[0];X1=o.x[1]}else{a=Math.min.apply(null,kx);b=Math.max.apply(null,kx);pd=Math.max(1,(b-a)*.25);X0=a-pd;X1=b+pd;if(X1-X0<8){var cx=(X0+X1)/2;X0=cx-4;X1=cx+4}}
+  if(o.y){Y0=o.y[0];Y1=o.y[1]}else{var ys=ky.slice();fs.forEach(function(z){if(z.dash)return;for(j=0;j<=120;j++){var x=X0+(X1-X0)*(.15+.7*j/120);if(z.d&&(x<z.d[0]||x>z.d[1]))continue;var v=z.f(x);if(isFinite(v)&&Math.abs(v)<1e5)ys.push(v)}});
+   a=Math.min.apply(null,ys);b=Math.max.apply(null,ys);pd=Math.max(1,(b-a)*.15);Y0=a-pd*1.1;Y1=b+pd*1.3}
+  var w=X1-X0,h=Y1-Y0,e;
+  if(o.eq){var m=Math.max(w,h),cx2=(X0+X1)/2,cy2=(Y0+Y1)/2;if(sc)m=Math.ceil(m);X0=cx2-m/2;X1=X0+m;Y0=cy2-m/2;Y1=Y0+m;if(sc){X0=Math.floor(X0);X1=X0+m;Y0=Math.floor(Y0);Y1=Y0+m}}
+  else{if(h/w<.6&&!o.y){e=(.6*w-h)/2;Y0-=e;Y1+=e}else if(h/w>1.15&&!o.x){e=(h/1.15-w)/2;X0-=e;X1+=e}if(sc){X0=Math.floor(X0);X1=Math.ceil(X1);Y0=Math.floor(Y0);Y1=Math.ceil(Y1)}}
+  w=X1-X0;h=Y1-Y0;
+  var H=Math.max(200,Math.min(460,W*h/w)),xu=(W-2*PAD)/w,yu=(H-2*PAD)/h;
+  function px(x){return PAD+(x-X0)*xu}function py(y){return H-PAD-(y-Y0)*yu}
+  function dx(p){return X0+(p-PAD)/xu}function dy(p){return Y0+(H-PAD-p)/yu}
+  function dv(f,x){var hh=1e-5;return(f(x+hh)-f(x-hh))/(2*hh)}
+  /* បន្ទាត់ប៉ះ/កែង (ជាចម្រៀកត្រង់ ប្រវែងជា pixel) */
+  function pseg(tx0,kind,spec){var f0=fs[0].f,m0=dv(f0,tx0),y1=f0(tx0),ux=1,uy=m0*yu/xu,l=Math.hypot(ux,uy);ux/=l;uy/=l;if(kind==="n"){var t=ux;ux=-uy;uy=t}
+   var Lp=o.eq||kind==="t"?120:105;sg.push({a:[tx0-Lp*ux/xu,y1-Lp*uy/yu],b:[tx0+Lp*ux/xu,y1+Lp*uy/yu],c:spec.c||(kind==="t"?"red":"green"),t:spec.t,end:[tx0+Lp*ux/xu,y1+Lp*uy/yu],end2:[tx0-Lp*ux/xu,y1-Lp*uy/yu]})}
+  if(o.tan)pseg(o.tan.x,"t",o.tan);if(o.nor)pseg(o.nor.x,"n",o.nor);
+  (o.segs||[]).forEach(function(z){sg.push(z)});
+  pts.forEach(function(z){if(z.drop)sg.push({a:z.p,b:[z.p[0],0],c:"gray",dash:true})});
+  /* ឧបសគ្គ (obstacles) ក្នុងចន្លោះ pixel */
+  function ob(x,y){if(x>-30&&x<W+30&&y>-30&&y<H+30)obs.push([x,y])}
+  function obL(x1,y1,x2,y2){var n=Math.max(2,Math.round(Math.hypot(x2-x1,y2-y1)/3));for(var q=0;q<=n;q++)ob(x1+(x2-x1)*q/n,y1+(y2-y1)*q/n)}
+  var xa=px(0),ya=py(0);
+  obL(PAD,ya,W-PAD,ya);obL(xa,PAD,xa,H-PAD);
+  if(sc){obL(PAD,ya+8,W-PAD,ya+8);obL(PAD,ya+15,W-PAD,ya+15);obL(xa-9,PAD,xa-9,H-PAD);obL(xa-20,PAD,xa-20,H-PAD)}
+  fs.forEach(function(z){var lo=Math.max(X0,z.d?z.d[0]:X0),hi=Math.min(X1,z.d?z.d[1]:X1),n=Math.max(2,Math.round((hi-lo)*xu/2.5));for(j=0;j<=n;j++){var x=lo+(hi-lo)*j/n,y=z.f(x);if(isFinite(y)&&Math.abs(y)<1e6)ob(px(x),py(y))}});
+  sg.forEach(function(z){obL(px(z.a[0]),py(z.a[1]),px(z.b[0]),py(z.b[1]))});
+  (o.vl||[]).forEach(function(z){obL(px(z.x),PAD,px(z.x),H-PAD)});(o.hl||[]).forEach(function(z){obL(PAD,py(z.y),W-PAD,py(z.y))});
+  pts.forEach(function(z){var X=px(z.p[0]),Y=py(z.p[1]);ob(X,Y);ob(X-4,Y);ob(X+4,Y);ob(X,Y-4);ob(X,Y+4)});
+  function hit(bx){var n=0;if(bx[0]<3||bx[2]>W-3||bx[1]<6||bx[3]>H-3)n+=100;obs.forEach(function(q){if(q[0]>bx[0]-2&&q[0]<bx[2]+2&&q[1]>bx[1]-2&&q[1]<bx[3]+2)n++});labs.forEach(function(r){if(!(r[2]<bx[0]-2||r[0]>bx[2]+2||r[3]<bx[1]-2||r[1]>bx[3]+2))n+=60});return n}
+  function place(c,fn){var best=null,bn=1e9;for(var q=0;q<c.length;q++){var n=hit(c[q].b);if(n<bn){bn=n;best=c[q];if(!n)break}}if(!best)return;labs.push(best.b);fn(best)}
+  function txt(bx,bl,t,col){cm.push("text ("+r3(dx(bx))+","+r3(dy(bl))+") "+String(t).replace(/(red|blue|green|orange|purple|black|gray)$/i,"$1​")+" "+(col||"black"))}
+  function tbox(X,Y,s,t,dirs){var w2=String(t).length*6.6,out=[],D={ne:[7,-7],nw:[-7-w2,-7],se:[7,16],sw:[-7-w2,16],n:[-w2/2,-9],s:[-w2/2,17],e:[9,4],w:[-9-w2,4]};(dirs||["ne","nw","se","sw","n","s","e","w"]).concat(["ne","nw","se","sw","n","s","e","w"]).forEach(function(d){var v=D[d];out.push({b:[X+v[0],Y+v[1]-10,X+v[0]+w2,Y+v[1]+3],bl:[X+v[0],Y+v[1]]})});return out}
+  /* បង្អួច + អ័ក្ស */
+  if(!sc)cm.push("nogrid","noaxes");cm.push("window x="+r3(X0)+".."+r3(X1)+" y="+r3(Y0)+".."+r3(Y1));
+  if(o.area){var A0=o.area,fa=fs[0].f,ga=A0.g?FG.parse(A0.g):null;cm.push("area y="+fs[0].s+(A0.g?"|y="+A0.g:"")+" ["+r3(A0.a)+","+r3(A0.b)+"] "+(A0.c||"blue"));
+   if(A0.t){var bx0=A0.a,bt=-1;for(j=0;j<=40;j++){var xx=A0.a+(A0.b-A0.a)*j/40,th=Math.abs(fa(xx)-(ga?ga(xx,0):0));if(th>bt){bt=th;bx0=xx}}var my=(fa(bx0)+(ga?ga(bx0,0):0))/2,cw=String(A0.t).length*6.6,c0=[];[0,-9,9,-18,18].forEach(function(s){c0.push({b:[px(bx0)-cw/2,py(my)+s-10,px(bx0)+cw/2,py(my)+s+3],bl:[px(bx0)-cw/2,py(my)+s+4]})});
+    place(c0,function(c){txt(c.bl[0],c.bl[1],A0.t,"#1e3a8a")})}}
+  if(!sc){cm.push("vec "+Pt([X0,0])+" "+Pt([X1,0])+" black","vec "+Pt([0,Y0])+" "+Pt([0,Y1])+" black");
+   var lx=[W-PAD-18,ya-8],ly=[xa+7,22];labs.push([lx[0],lx[1]-10,lx[0]+8,lx[1]+3],[ly[0],ly[1]-10,ly[0]+8,ly[1]+3]);txt(lx[0],lx[1],"x","black");txt(ly[0],ly[1],"y","black");
+   var ob0=[xa-13,ya+14];labs.push([ob0[0],ob0[1]-10,ob0[0]+9,ob0[1]+3]);txt(ob0[0],ob0[1],"O","black");
+   (o.xt||[]).forEach(function(v){var val=v.length?v[0]:v,lb=String(v.length?v[1]:v),X=px(val),tk=3.5/yu;if(!val)return;cm.push("seg "+Pt([val,-tk])+" "+Pt([val,tk])+" black");var cw=lb.length*6.6;labs.push([X-cw/2,ya+5,X+cw/2,ya+17]);txt(X-cw/2,ya+16,lb,"black")});
+   (o.yt||[]).forEach(function(v){var val=v.length?v[0]:v,lb=String(v.length?v[1]:v),Y=py(val),tk=3.5/xu;if(!val)return;cm.push("seg "+Pt([-tk,val])+" "+Pt([tk,val])+" black");var cw=lb.length*6.6;labs.push([xa-8-cw,Y-6,xa-4,Y+5]);txt(xa-7-cw,Y+4,lb,"black")})}
+  /* ខ្សែកោង */
+  fs.forEach(function(z){cm.push((z.dash?"dash ":"")+"y="+z.s+(z.d?" ["+r3(z.d[0])+","+r3(z.d[1])+"]":"")+" "+z.c)});
+  (o.vl||[]).forEach(function(z){cm.push("dash x="+r3(z.x)+" gray")});(o.hl||[]).forEach(function(z){cm.push("dash y="+r3(z.y)+" gray")});
+  sg.forEach(function(z){if(!z.dash){cm.push("seg "+Pt(z.a)+" "+Pt(z.b)+" "+(z.c||"black"));return}
+   var L=Math.hypot(px(z.b[0])-px(z.a[0]),py(z.b[1])-py(z.a[1])),n=Math.max(4,Math.round(L/6));for(j=0;j<n;j+=2){var s0=j/n,s1=(j+1)/n;cm.push("seg "+Pt([z.a[0]+(z.b[0]-z.a[0])*s0,z.a[1]+(z.b[1]-z.a[1])*s0])+" "+Pt([z.a[0]+(z.b[0]-z.a[0])*s1,z.a[1]+(z.b[1]-z.a[1])*s1])+" "+(z.c||"gray"))}});
+  /* ចំណុច + ឈ្មោះ */
+  pts.forEach(function(z){var X=px(z.p[0]),Y=py(z.p[1]),col=z.c||"black",nm=z.n&&/^[A-Za-z]\w*'*$/.test(z.n)&&!/^(x|y)$/i.test(z.n)?z.n:"";
+   if(z.hole)cm.push("hole "+Pt(z.p)+" "+col);
+   if(nm&&!z.hole){var D={ne:[7,-8,"s"],nw:[-7,-8,"e"],se:[7,16,"s"],sw:[-7,16,"e"],n:[0,-8],s:[0,16],e:[7,5],w:[-7,5]},wd=nm.length*7.4,cs=[];(z.d||[]).concat(["ne","nw","se","sw","n","s","e","w"]).forEach(function(d){var dx0=/e/.test(d)?7:/w/.test(d)?-7:0,dy0=/s/.test(d)?16:/n/.test(d)?-8:5,x=X+dx0,y=Y+dy0,x0=dx0>0?x:dx0<0?x-wd:x-wd/2;cs.push({b:[x0,y-11,x0+wd,y+3],d:d})});
+    place(cs,function(c){cm.push(nm+Pt(z.p)+" "+c.d+" "+col)})}
+   else{if(!z.hole)cm.push(Pt(z.p)+" "+col);var lab=z.lt||z.n;if(lab&&(z.lt||!nm))place(tbox(X,Y,"",lab,z.d),function(c){txt(c.bl[0],c.bl[1],lab,col)})}});
+  if(!sc&&o.nts!==false){var nt="NOT TO SCALE",nw=nt.length*6.6,cs2=[[W-PAD-nw,26],[PAD+2,26],[W-PAD-nw,H-PAD-2],[PAD+30,H-PAD-2]].map(function(s){return{b:[s[0],s[1]-10,s[0]+nw,s[1]+3],bl:s}});place(cs2,function(c){txt(c.bl[0],c.bl[1],nt,"gray")})}
+  /* ស្លាកខ្សែ · បន្ទាត់ · ប្រយោគ */
+  fs.forEach(function(z){if(!z.t)return;var lo=Math.max(X0,z.d?z.d[0]:X0),hi=Math.min(X1,z.d?z.d[1]:X1),cw=z.t.length*6.6,cs=[];
+   for(var q=0;q<16;q++){var x=lo+(hi-lo)*(.93-q*.055),y=z.f(x);if(!isFinite(y)||y<Y0+h*.07||y>Y1-h*.07)continue;var X=px(x),Y=py(y);[[7,-7],[7,16],[-7-cw,-7],[-7-cw,16]].forEach(function(s){cs.push({b:[X+s[0],Y+s[1]-10,X+s[0]+cw,Y+s[1]+3],bl:[X+s[0],Y+s[1]]})})}
+   place(cs,function(c){txt(c.bl[0],c.bl[1],z.t,z.c)})});
+  sg.forEach(function(z){if(!z.t)return;var p1=z.end||z.b;place(tbox(px(p1[0]),py(p1[1]),"",z.t),function(c){txt(c.bl[0],c.bl[1],z.t,z.c)})});
+  (o.vl||[]).forEach(function(z){if(!z.t)return;var X=px(z.x),cw=z.t.length*6.6,cs=[];for(var q=0;q<8;q++){var Y=24+q*22;cs.push({b:[X+5,Y-10,X+5+cw,Y+3],bl:[X+5,Y]},{b:[X-5-cw,Y-10,X-5,Y+3],bl:[X-5-cw,Y]})}place(cs,function(c){txt(c.bl[0],c.bl[1],z.t,"gray")})});
+  (o.hl||[]).forEach(function(z){if(!z.t)return;var Y=py(z.y),cw=z.t.length*6.6,cs=[];for(var q=0;q<8;q++){var X=W-PAD-6-cw-q*38;cs.push({b:[X,Y-15,X+cw,Y-2],bl:[X,Y-5]},{b:[X,Y+4,X+cw,Y+17],bl:[X,Y+15]})}place(cs,function(c){txt(c.bl[0],c.bl[1],z.t,"gray")})});
+  (o.tx||[]).forEach(function(z){place(tbox(px(z[0]),py(z[1]),"",z[2]),function(c){txt(c.bl[0],c.bl[1],z[2],z[3]||"black")})});
+  return cm.join("\n")}
+ return{curve:curve,pe:pe,stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

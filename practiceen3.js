@@ -9,6 +9,9 @@
 var X=window.PX,E=window.PXEN,Q=X.Q,A=X.A,ri=X.ri,nz=X.nz,pick=X.pick,fr=X.fr,sg=X.sg,co=X.co,poly=X.poly,polyT=X.polyT,sgp=X.sgp,gcd=X.gcd,cnk=X.cnk;
 var K=E.K,L=E.L,r2=E.r2,sum=E.sum,nf=E.nf,sqT=E.sqT,piT=E.piT,pt=E.pt,cv=E.cv,DP=E.DP,TR=E.TR,D=E.D,G9=E.G9,G10=E.G10;
 function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
+function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
+var pe=E.GF.pe;
+function dpe(p){var n=Math.max(p.n[0],p.n[1]),c=[],i;for(i=0;i<=n;i++)c.push(0);c[n-p.n[0]]+=p.c[0];c[n-p.n[1]]+=p.c[1];c[n]+=p.c[2];return pe(c)}
 function fT(f){return f.t}
 function pw(c,n){/* c·xⁿ ជា LaTeX (ដំបូង) */if(!c)return"";var a=Math.abs(c),s=c<0?"-":"";return s+(a===1&&n?"":a)+(n===0?"":n===1?"x":"x^{"+n+"}")}
 function pwS(c,n){return c?(c<0?"-":"+")+pw(Math.abs(c),n):""}
@@ -40,19 +43,25 @@ G11[1]={1:L(
 /* 2 Quadratics */
 G11[2]={1:L(G10[6][1]),2:L(G10[6][2],
  function(){var p=nz(-6,6),q=ri(-9,9);
-   return K("tp","Find the coordinates of the turning point of $y="+polyT([1,-2*p,p*p+q])+"$.",[A(p,null,"num","x ="),A(q,null,"num","y =")],"$y=(x"+sg(-p)+")^2"+co(q,"")+"$, so the minimum point is $"+pt([p,q])+"$.")}),
+   return K("tp","Find the coordinates of the turning point of $y="+polyT([1,-2*p,p*p+q])+"$.",[A(p,null,"num","x ="),A(q,null,"num","y =")],"$y=(x"+sg(-p)+")^2"+co(q,"")+"$, so the minimum point is $"+pt([p,q])+"$.",GCV({f:pe([1,-2*p,p*p+q]),pts:[{p:[p,q],n:"P",d:["s","se","sw"]}]}))},
+ function(){var a=pick([1,2,3])*pick([1,-1]),xv=ri(-1,1),w=ri(2,4),r1=xv-w,r2=xv+w,c=a*r1*r2,vy=-a*w*w;
+   return K("grq","The diagram shows the graph of $y=ax^2+bx+c$. It crosses the $x$-axis at $"+pt([r1,0])+"$ and $"+pt([r2,0])+"$ and crosses the $y$-axis at $"+pt([0,c])+"$. Find the value of $a$ and the coordinates of the turning point.",[A(a,null,"num","a ="),A(xv,null,"num","x ="),A(vy,null,"num","y =")],"$y=a(x"+sg(-r1)+")(x"+sg(-r2)+")$. At $x=0$: $"+c+"=a\\times"+sgp(-r1)+"\\times"+sgp(-r2)+"\\Rightarrow a="+a+"$. The turning point is midway between the roots: $x=\\dfrac{"+r1+"+"+sgp(r2)+"}{2}="+xv+"$, $y="+a+"("+(xv-r1)+")("+(xv-r2)+")="+vy+"$.",
+     GCV({sc:true,f:pe([a,-a*(r1+r2),c]),pts:[{p:[r1,0],lt:pt([r1,0])},{p:[r2,0],lt:pt([r2,0])},{p:[0,c],lt:pt([0,c])}],x:[xv-w-2,xv+w+2]}))}),
  3:L(
  function(){var x=ri(3,15),k=ri(1,8);
    return K("qw","A rectangle has length $(x+"+k+")$ cm and width $x$ cm. Its area is $"+x*(x+k)+"$ cm². Find $x$.",[A(x,null,"num","x =")],"$x(x+"+k+")="+x*(x+k)+"\\Rightarrow x^2+"+k+"x-"+x*(x+k)+"=0\\Rightarrow(x-"+x+")(x+"+(x+k)+")=0$, $x\\gt 0$ so $x="+x+"$")},
  function(){var r=ri(-6,3),s=r+ri(1,7);
-   return K("qi","Solve $"+polyT([1,-(r+s),r*s])+"\\lt 0$. The answer is $a\\lt x\\lt b$.",[A(r,null,"num","a ="),A(s,null,"num","b =")],"$(x"+sg(-r)+")(x"+sg(-s)+")\\lt 0$: the curve is below the $x$-axis between the roots, so $"+r+"\\lt x\\lt "+s+"$.")})};
+   return K("qi","Solve $"+polyT([1,-(r+s),r*s])+"\\lt 0$. The answer is $a\\lt x\\lt b$.",[A(r,null,"num","a ="),A(s,null,"num","b =")],"$(x"+sg(-r)+")(x"+sg(-s)+")\\lt 0$: the curve is below the $x$-axis between the roots, so $"+r+"\\lt x\\lt "+s+"$.",GCV({f:pe([1,-(r+s),r*s]),ax:[{x:r,t:"a"},{x:s,t:"b"}],area:{a:r,b:s}}))})};
 /* 3 Indices and exponential growth */
 G11[3]={1:L(G10[4][1],
  function(){var a=ri(2,5),m=ri(2,6),n=ri(2,4);
    return K("ip","Simplify $("+a+"x^{"+m+"})^{"+n+"}$ to the form $kx^p$.",[A(Math.pow(a,n),null,"num","k ="),A(m*n,null,"num","p =")],"$"+a+"^{"+n+"}x^{"+m+"\\times"+n+"}="+Math.pow(a,n)+"x^{"+m*n+"}$")}),
  2:L(G10[4][3],
  function(){var P=ri(2,9)*1000,r=pick([2,3,4,5,8]),n=ri(3,10),v=Math.round(P*Math.pow(1+r/100,n));
-   return K("eg","A town has a population of $"+P+"$. The population grows by $"+r+"\\%$ each year. Find the population after $"+n+"$ years, correct to the nearest whole number.",[A(v,null,"num","=")],"$"+P+"\\times"+nf(1+r/100)+"^{"+n+"}="+v+"$")}),
+   return K("eg","A town has a population of $"+P+"$. The population grows by $"+r+"\\%$ each year. Find the population after $"+n+"$ years, correct to the nearest whole number.",[A(v,null,"num","=")],"$"+P+"\\times"+nf(1+r/100)+"^{"+n+"}="+v+"$")},
+ function(){var a=ri(1,5),b=pick([2,3]),v=a*b*b,y3=a*b*b*b;
+   return K("exg","The diagram shows the graph of $y=ab^x$, where $a$ and $b$ are positive constants. The graph passes through $"+pt([0,a])+"$ and $"+pt([2,v])+"$. Find the value of $b$ and the value of $y$ when $x=3$.",[A(b,null,"num","b ="),A(y3,null,"num","y =")],"$a="+a+"$ (when $x=0$, $y=a$). At $x=2$: $"+a+"b^2="+v+"\\Rightarrow b^2="+b*b+"\\Rightarrow b="+b+"$. When $x=3$: $y="+a+"\\times"+b+"^3="+y3+"$.",
+     GCV({sc:true,f:a+"*"+b+"^x",pts:[{p:[0,a],lt:pt([0,a])},{p:[2,v],lt:pt([2,v])}],x:[-3,4],y:[-Math.ceil(a*b*b*b/6),a*b*b*b+Math.ceil(a*b*b*b/6)]}))}),
  3:L(
  function(){var C=pick([[2,3,2],[3,2,3],[2,3,3],[3,2,2],[3,4,2],[4,3,2]]),p=C[0],q=C[1],b=C[2],x=Math.pow(b,q),k=Math.pow(b,p);
    return K("fe","Solve $x^{\\frac{"+p+"}{"+q+"}}="+k+"$.",[A(x,null,"num","x =")],"Raise both sides to the power $\\dfrac{"+q+"}{"+p+"}$: $x="+k+"^{\\frac{"+q+"}{"+p+"}}=("+b+"^{"+p+"})^{\\frac{"+q+"}{"+p+"}}="+b+"^{"+q+"}="+x+"$")},
@@ -67,16 +76,16 @@ function dpoly(){var n=[ri(2,4),ri(1,2),0],c=[nz(-5,5),nz(-6,6),ri(-9,9)];n[1]=n
   return{f:f,dT:pw(d[0],d[1])+pwS(d[2],d[3]),dV:pwV(d[0],d[1])+"+"+pwV(d[2],d[3]),dv:function(x){return d[0]*Math.pow(x,d[1])+d[2]*Math.pow(x,d[3])},c:c,n:n}}
 G11[5]={1:L(
  function(){var p=dpoly();return K("dd","Find $\\dfrac{dy}{dx}$ when $y="+p.f+"$.",[A(p.dV,p.dT,"expr","dy/dx =")],"Multiply by the power and reduce the power by $1$: $\\dfrac{dy}{dx}="+p.dT+"$")},
- function(){var p=dpoly(),x=ri(-3,3);return K("gc","Find the gradient of the curve $y="+p.f+"$ at the point where $x="+x+"$.",[A(p.dv(x),null,"num","gradient =")],"$\\dfrac{dy}{dx}="+p.dT+"$, at $x="+x+"$: $"+p.dv(x)+"$")}),
+ function(){var p=dpoly(),x=ri(-3,3);return K("gc","Find the gradient of the curve $y="+p.f+"$ at the point where $x="+x+"$.",[A(p.dv(x),null,"num","gradient =")],"$\\dfrac{dy}{dx}="+p.dT+"$, at $x="+x+"$: $"+p.dv(x)+"$",GCV({f:dpe(p),pts:[{p:[x,p.c[0]*Math.pow(x,p.n[0])+p.c[1]*Math.pow(x,p.n[1])+p.c[2]],n:"P"}],tan:{x:x},x:[x-2.5,x+2.5]}))}),
  2:L(
  function(){var p=nz(-5,5),q=ri(-9,9);
-   return K("sp","Find the coordinates of the stationary point of $y="+polyT([1,-2*p,p*p+q])+"$.",[A(p,null,"num","x ="),A(q,null,"num","y =")],"$\\dfrac{dy}{dx}=2x"+sg(-2*p)+"=0\\Rightarrow x="+p+"$, $y="+q+"$")},
+   return K("sp","Find the coordinates of the stationary point of $y="+polyT([1,-2*p,p*p+q])+"$.",[A(p,null,"num","x ="),A(q,null,"num","y =")],"$\\dfrac{dy}{dx}=2x"+sg(-2*p)+"=0\\Rightarrow x="+p+"$, $y="+q+"$",GCV({f:pe([1,-2*p,p*p+q]),pts:[{p:[p,q],n:"P",d:["s","se","sw"]}]}))},
  function(){var a=nz(-3,3),b=nz(-5,5),c=ri(-6,6),x0=ri(-3,3),y0=a*x0*x0+b*x0+c,m=2*a*x0+b,k=y0-m*x0;
-   return K("tg","Find the equation of the tangent to $y="+polyT([a,b,c])+"$ at the point where $x="+x0+"$. Give it in the form $y=mx+c$.",[A(m,null,"num","m ="),A(k,null,"num","c =")],"$\\dfrac{dy}{dx}="+polyT([2*a,b])+"$, so $m="+m+"$. Point $"+pt([x0,y0])+"$: $c="+y0+"-"+sgp(m)+"\\times"+sgp(x0)+"="+k+"$")}),
+   return K("tg","Find the equation of the tangent to $y="+polyT([a,b,c])+"$ at the point where $x="+x0+"$. Give it in the form $y=mx+c$.",[A(m,null,"num","m ="),A(k,null,"num","c =")],"$\\dfrac{dy}{dx}="+polyT([2*a,b])+"$, so $m="+m+"$. Point $"+pt([x0,y0])+"$: $c="+y0+"-"+sgp(m)+"\\times"+sgp(x0)+"="+k+"$",GCV({f:pe([a,b,c]),pts:[{p:[x0,y0],n:"P"}],tan:{x:x0,t:"tangent"},x:[x0-3,x0+3]}))}),
  3:L(
  function(){var p=ri(-3,1),q=p+ri(1,4),b=-3*(p+q)/2,c=3*p*q;if(b%1){q++;b=-3*(p+q)/2;c=3*p*q}var d=ri(-5,5),f=function(x){return x*x*x+b*x*x+c*x+d};
    return K("sn","The curve $y=x^3"+co(b,"x^2")+co(c,"x")+co(d,"")+"$ has two stationary points. Find the $x$-coordinate of the maximum point and of the minimum point.",[A(p,null,"num","max x ="),A(q,null,"num","min x =")],
-     "$\\dfrac{dy}{dx}=3x^2"+co(2*b,"x")+co(c,"")+"=3(x"+sg(-p)+")(x"+sg(-q)+")=0$. $\\dfrac{d^2y}{dx^2}=6x"+co(2*b,"")+"$ is negative at $x="+p+"$ (maximum) and positive at $x="+q+"$ (minimum).")},
+     "$\\dfrac{dy}{dx}=3x^2"+co(2*b,"x")+co(c,"")+"=3(x"+sg(-p)+")(x"+sg(-q)+")=0$. $\\dfrac{d^2y}{dx^2}=6x"+co(2*b,"")+"$ is negative at $x="+p+"$ (maximum) and positive at $x="+q+"$ (minimum).",GCV({f:pe([1,b,c,d]),pts:[{p:[p,f(p)],n:"A"},{p:[q,f(q)],n:"B"}],x:[p-2.5,q+2.5]}))},
  function(){var a=ri(1,9),b=ri(1,8);
    return K("dn","Find $\\dfrac{dy}{dx}$ when $y=\\dfrac{"+a+"}{x}+"+b+"\\sqrt{x}$.",[A("-"+a+"/x^2+"+b+"/(2*sqrt(x))","-\\dfrac{"+a+"}{x^2}+\\dfrac{"+b+"}{2\\sqrt x}","expr","dy/dx =")],"$y="+a+"x^{-1}+"+b+"x^{\\frac12}\\Rightarrow\\dfrac{dy}{dx}=-"+a+"x^{-2}+"+fr(b,2).t+"x^{-\\frac12}$")})};
 /* 6 Similarity */
@@ -96,15 +105,15 @@ G11[6]={1:L(
  function(){var k=pick([2,3,4]),m=ri(20,300);
    return K("sm","Two similar statues are made of the same material. The larger statue is $"+k+"$ times as tall as the smaller one. The smaller has mass $"+m+"$ g. Find the mass of the larger.",[A(m*k*k*k,null,"num","g")],"Mass is proportional to volume: $"+m+"\\times"+k+"^3="+m*k*k*k+"$ g")})};
 /* 7 Trigonometry: graphs and 3D */
-function trigEq(f){var C=pick(SP),v=C[0],neg=Math.random()<.4,a,b;
+function trigEq(f){var C=pick(SP),v=f==="cos"?90-C[0]:C[0],neg=Math.random()<.4,a,b;   /* cos 60°=½ · cos 30°=√3/2 → មុំគោលរបស់ cos = 90−មុំតារាង */
   if(f==="sin"){a=neg?180+v:v;b=neg?360-v:180-v}else{a=neg?180-v:v;b=neg?180+v:360-v}
   if(f==="cos"&&!neg&&v===60){}return{q:"\\"+f+" x="+(neg?"-":"")+C[1],a:Math.min(a,b),b:Math.max(a,b),v:v,neg:neg}}
 G11[7]={1:L(
- function(){var t=trigEq("sin");return K("ts","Solve $"+t.q+"$ for $0^\\circ\\le x\\le360^\\circ$.",[A(t.a,null,"num","x₁ ="),A(t.b,null,"num","x₂ =")],"Principal value $"+t.v+"^\\circ$; $\\sin$ is "+(t.neg?"negative in the 3rd and 4th quadrants":"positive in the 1st and 2nd quadrants")+": $x="+t.a+"^\\circ,"+t.b+"^\\circ$")},
- function(){var t=trigEq("cos");return K("tc","Solve $"+t.q+"$ for $0^\\circ\\le x\\le360^\\circ$.",[A(t.a,null,"num","x₁ ="),A(t.b,null,"num","x₂ =")],"Principal value $"+t.v+"^\\circ$; $\\cos$ is "+(t.neg?"negative in the 2nd and 3rd quadrants":"positive in the 1st and 4th quadrants")+": $x="+t.a+"^\\circ,"+t.b+"^\\circ$")}),
+ function(){var t=trigEq("sin");return K("ts","Solve $"+t.q+"$ for $0^\\circ\\le x\\le360^\\circ$.",[A(t.a,null,"num","x₁ ="),A(t.b,null,"num","x₂ =")],"Principal value $"+t.v+"^\\circ$; $\\sin$ is "+(t.neg?"negative in the 3rd and 4th quadrants":"positive in the 1st and 2nd quadrants")+": $x="+t.a+"^\\circ,"+t.b+"^\\circ$",GCV({f:"sin(x*pi/180)",x:[-30,390],y:[-1.5,1.5],xt:[90,180,270,360],yt:[1,-1],hl:[{y:Math.sin(t.a*Math.PI/180),t:"y = k"}],pts:[{p:[t.a,Math.sin(t.a*Math.PI/180)],n:"x1",drop:true},{p:[t.b,Math.sin(t.b*Math.PI/180)],n:"x2",drop:true}]}))},
+ function(){var t=trigEq("cos");return K("tc","Solve $"+t.q+"$ for $0^\\circ\\le x\\le360^\\circ$.",[A(t.a,null,"num","x₁ ="),A(t.b,null,"num","x₂ =")],"Principal value $"+t.v+"^\\circ$; $\\cos$ is "+(t.neg?"negative in the 2nd and 3rd quadrants":"positive in the 1st and 4th quadrants")+": $x="+t.a+"^\\circ,"+t.b+"^\\circ$",GCV({f:"cos(x*pi/180)",x:[-30,390],y:[-1.5,1.5],xt:[90,180,270,360],yt:[1,-1],hl:[{y:Math.cos(t.a*Math.PI/180),t:"y = k"}],pts:[{p:[t.a,Math.cos(t.a*Math.PI/180)],n:"x1",drop:true},{p:[t.b,Math.cos(t.b*Math.PI/180)],n:"x2",drop:true}]}))}),
  2:L(
  function(){var k=ri(2,30)/10*pick([1,-1]),x1=Math.atan(k)/D;if(x1<0)x1+=180;var x2=x1+180;
-   return K("tt","Solve $\\tan x="+k+"$ for $0^\\circ\\le x\\le360^\\circ$. "+DP,[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],"$\\tan^{-1}("+k+")$ gives $"+dg(Math.atan(k)/D)+"^\\circ$; $\\tan$ repeats every $180^\\circ$: $x="+dg(x1)+"^\\circ,"+dg(x2)+"^\\circ$")},
+   return K("tt","Solve $\\tan x="+k+"$ for $0^\\circ\\le x\\le360^\\circ$. "+DP,[A(nf(x1),null,"num","x₁ ="),A(nf(x2),null,"num","x₂ =")],"$\\tan^{-1}("+k+")$ gives $"+dg(Math.atan(k)/D)+"^\\circ$; $\\tan$ repeats every $180^\\circ$: $x="+dg(x1)+"^\\circ,"+dg(x2)+"^\\circ$",GCV({f:"tan(x*pi/180)",x:[-30,390],y:[-4,4],xt:[90,180,270,360],vl:[{x:90},{x:270}],hl:[{y:k,t:"y = "+k}],pts:[{p:[x1,k],n:"x1",drop:true},{p:[x2,k],n:"x2",drop:true}]}))},
  function(){var a=ri(3,12),b=ri(3,12),c=ri(2,10),t=Math.atan(c/Math.sqrt(a*a+b*b))/D;
    return K("t3","A cuboid measures $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm (height). Calculate the angle between a space diagonal and the base. "+DP,[A(nf(t),null,"num","angle =")],"Base diagonal $=\\sqrt{"+a*a+"+"+b*b+"}$, $\\tan\\theta=\\dfrac{"+c+"}{\\sqrt{"+(a*a+b*b)+"}}\\Rightarrow\\theta="+dg(t)+"^\\circ$")}),
  3:L(
@@ -167,9 +176,9 @@ var G12={};
 /* 1 Quadratics */
 G12[1]={1:L(
  function(){var a=pick([1,2,3]),p=nz(-5,5),q=ri(-9,9);
-   return K("cs","Express $"+polyT([a,2*a*p,a*p*p+q])+"$ in the form $"+(a===1?"":a)+"(x+p)^2+q$.",[A(p,null,"num","p ="),A(q,null,"num","q =")],"$"+(a===1?"":a+"\\left(x^2"+co(2*p,"x")+"\\right)"+sg(a*p*p+q)+"=")+(a===1?"":a)+"(x"+sg(p)+")^2"+co(q,"")+"$")},
+   return K("cs","Express $"+polyT([a,2*a*p,a*p*p+q])+"$ in the form $"+(a===1?"":a)+"(x+p)^2+q$.",[A(p,null,"num","p ="),A(q,null,"num","q =")],"$"+(a===1?"":a+"\\left(x^2"+co(2*p,"x")+"\\right)"+sg(a*p*p+q)+"=")+(a===1?"":a)+"(x"+sg(p)+")^2"+co(q,"")+"$",GCV({f:pe([a,2*a*p,a*p*p+q]),pts:[{p:[-p,q],n:"V"}]}))},
  function(){var a=pick([1,2,-1]),p=nz(-5,5),q=ri(-9,9);
-   return K("mv","Find the "+(a>0?"minimum":"maximum")+" value of $"+polyT([a,-2*a*p,a*p*p+q])+"$ and the value of $x$ at which it occurs.",[A(q,null,"num","value ="),A(p,null,"num","x =")],"$"+(a===1?"":a===-1?"-":a)+"(x"+sg(-p)+")^2"+co(q,"")+"$, so the "+(a>0?"minimum":"maximum")+" is $"+q+"$ when $x="+p+"$")}),
+   return K("mv","Find the "+(a>0?"minimum":"maximum")+" value of $"+polyT([a,-2*a*p,a*p*p+q])+"$ and the value of $x$ at which it occurs.",[A(q,null,"num","value ="),A(p,null,"num","x =")],"$"+(a===1?"":a===-1?"-":a)+"(x"+sg(-p)+")^2"+co(q,"")+"$, so the "+(a>0?"minimum":"maximum")+" is $"+q+"$ when $x="+p+"$",GCV({f:pe([a,-2*a*p,a*p*p+q]),pts:[{p:[p,q],n:"V"}]}))}),
  2:L(
  function(){var c=ri(1,9)*ri(1,1),k=2*Math.sqrt(c*c);
    return K("er","The equation $x^2+kx+"+c*c+"=0$ has equal roots. Find the positive value of $k$.",[A(2*c,null,"num","k =")],"Equal roots: $b^2-4ac=0\\Rightarrow k^2-4\\times"+c*c+"=0\\Rightarrow k=\\pm"+2*c+"$")},
@@ -179,20 +188,20 @@ G12[1]={1:L(
  function(){var c=ri(1,8);
    return K("kr","Find the set of values of $k$ for which $x^2+kx+"+c*c+"=0$ has two distinct real roots. The answer is $k\\lt a$ or $k\\gt b$.",[A(-2*c,null,"num","a ="),A(2*c,null,"num","b =")],"$k^2-4\\times"+c*c+"\\gt 0\\Rightarrow k^2\\gt "+4*c*c+"\\Rightarrow k\\lt -"+2*c+"$ or $k\\gt "+2*c+"$")},
  function(){var m=nz(-4,4),b=ri(-5,5),c=ri(-5,5),k=c-(m-b)*(m-b)/4;var K0=fr(4*c-(m-b)*(m-b),4);
-   return K("tl","The line $y="+co(m,"x",true)+"+k$ is a tangent to the curve $y="+polyT([1,b,c])+"$. Find $k$.",[A(K0.s,K0.t,"num","k =")],"$x^2"+co(b-m,"x")+sg(c)+"-k=0$ has equal roots: $("+(b-m)+")^2-4("+c+"-k)=0\\Rightarrow k="+K0.t+"$")})};
+   return K("tl","The line $y="+co(m,"x",true)+"+k$ is a tangent to the curve $y="+polyT([1,b,c])+"$. Find $k$.",[A(K0.s,K0.t,"num","k =")],"$x^2"+co(b-m,"x")+sg(c)+"-k=0$ has equal roots: $("+(b-m)+")^2-4("+c+"-k)=0\\Rightarrow k="+K0.t+"$",GCV({f:pe([1,b,c]),pts:[{p:[(m-b)/2,(m-b)*(m-b)/4+b*(m-b)/2+c],n:"T"}],tan:{x:(m-b)/2,t:"y = "+(m===1?"":m===-1?"-":m)+"x + k"},x:[(m-b)/2-3,(m-b)/2+3]}))})};
 /* 2 Functions */
 G12[2]={1:L(
  function(){var a=nz(-5,5),b=ri(-9,9);
-   return K("rg","$f(x)=(x"+sg(a)+")^2"+sg(b)+"$ for $x\\in\\mathbb R$. Find the least value of $f(x)$ (so the range is $f(x)\\ge c$).",[A(b,null,"num","c =")],"$(x"+sg(a)+")^2\\ge0$, so $f(x)\\ge"+b+"$")},
+   return K("rg","$f(x)=(x"+sg(a)+")^2"+sg(b)+"$ for $x\\in\\mathbb R$. Find the least value of $f(x)$ (so the range is $f(x)\\ge c$).",[A(b,null,"num","c =")],"$(x"+sg(a)+")^2\\ge0$, so $f(x)\\ge"+b+"$",GCV({f:pe([1,2*a,a*a+b]),hl:[{y:b,t:"y = c"}],pts:[{p:[-a,b],n:"V"}]}))},
  G10[9][2]),
  2:L(G10[9][3],
  function(){var a=nz(-5,5),b=ri(-9,9);
-   return K("iq","$f(x)=(x"+sg(a)+")^2"+sg(b)+"$ for $x\\ge"+(-a)+"$. Find $f^{-1}(x)$.",[A("sqrt(x"+sg(-b)+")"+sg(-a),"\\sqrt{x"+sg(-b)+"}"+sg(-a),"expr","f⁻¹(x) =")],"$y=(x"+sg(a)+")^2"+sg(b)+"\\Rightarrow x"+sg(a)+"=\\sqrt{y"+sg(-b)+"}$ (positive root since $x\\ge"+(-a)+"$)")}),
+   return K("iq","$f(x)=(x"+sg(a)+")^2"+sg(b)+"$ for $x\\ge"+(-a)+"$. Find $f^{-1}(x)$.",[A("sqrt(x"+sg(-b)+")"+sg(-a),"\\sqrt{x"+sg(-b)+"}"+sg(-a),"expr","f⁻¹(x) =")],"$y=(x"+sg(a)+")^2"+sg(b)+"\\Rightarrow x"+sg(a)+"=\\sqrt{y"+sg(-b)+"}$ (positive root since $x\\ge"+(-a)+"$)",GCV({eq:true,f:"(x+("+a+"))^2+("+b+")",d:[-a,Math.max(-a,b)+6],fs:[{f:"sqrt(x-("+b+"))-("+a+")",d:[b,Math.max(-a,b)+6],t:"y = f⁻¹(x)"},{f:"x",dash:1,c:"gray"}],t:"y = f(x)",x:[Math.min(-a,b)-2,Math.max(-a,b)+6],y:[Math.min(-a,b)-2,Math.max(-a,b)+6],pts:[{p:[-a,b]},{p:[b,-a]}]}))}),
  3:L(
  function(){var a=nz(-3,3),b=nz(-5,5),x=ri(-5,5),k=a*a*x+a*b+b;
    return K("ff","$f(x)="+co(a,"x",true)+co(b,"")+"$. Solve $ff(x)="+k+"$.",[A(x,null,"num","x =")],"$ff(x)="+a+"("+co(a,"x",true)+co(b,"")+")"+co(b,"")+"="+co(a*a,"x",true)+co(a*b+b,"")+"="+k+"\\Rightarrow x="+x+"$")},
  function(){var a=ri(1,6),b=ri(1,5);
-   return K("ir","$f(x)=\\dfrac{x+"+a+"}{x-"+b+"}$ for $x\\ne"+b+"$. Find $f^{-1}(x)$.",[A("("+b+"*x+"+a+")/(x-1)","\\dfrac{"+b+"x+"+a+"}{x-1}","expr","f⁻¹(x) =")],"$y(x-"+b+")=x+"+a+"\\Rightarrow x(y-1)="+b+"y+"+a+"\\Rightarrow f^{-1}(x)=\\dfrac{"+b+"x+"+a+"}{x-1}$")})};
+   return K("ir","$f(x)=\\dfrac{x+"+a+"}{x-"+b+"}$ for $x\\ne"+b+"$. Find $f^{-1}(x)$.",[A("("+b+"*x+"+a+")/(x-1)","\\dfrac{"+b+"x+"+a+"}{x-1}","expr","f⁻¹(x) =")],"$y(x-"+b+")=x+"+a+"\\Rightarrow x(y-1)="+b+"y+"+a+"\\Rightarrow f^{-1}(x)=\\dfrac{"+b+"x+"+a+"}{x-1}$",GCV({f:"(x+"+a+")/(x-"+b+")",x:[b-5,b+5],y:[-5,7],vl:[{x:b,t:"x = "+b}]}))})};
 /* 3 Coordinate geometry */
 G12[3]={1:L(
  function(){var a=ri(-6,6),b=ri(-6,6),r=ri(1,9);
@@ -263,10 +272,10 @@ G12[7]={1:L(G11[5][1],
    return K("ch","Find $\\dfrac{dy}{dx}$ when $y=("+co(a,"x",true)+co(b,"")+")^{"+n+"}$.",[A(n*a+"*("+poly([a,b])+")^"+(n-1),n*a+"("+polyT([a,b])+")^{"+(n-1)+"}","expr","dy/dx =")],"Chain rule: $"+n+"("+polyT([a,b])+")^{"+(n-1)+"}\\times"+sgp(a)+"="+n*a+"("+polyT([a,b])+")^{"+(n-1)+"}$")}),
  2:L(G11[5][2],
  function(){var a=nz(-3,3),b=nz(-5,5),c=ri(-6,6),x0=ri(-3,3),m=2*a*x0+b;if(!m){b++;m=2*a*x0+b}var g=fr(-1,m);
-   return K("nm","Find the gradient of the normal to $y="+polyT([a,b,c])+"$ at the point where $x="+x0+"$.",[A(g.s,g.t,"num","gradient =")],"Gradient of tangent $="+m+"$, so the normal gradient is $-\\dfrac{1}{"+m+"}="+g.t+"$")}),
+   return K("nm","Find the gradient of the normal to $y="+polyT([a,b,c])+"$ at the point where $x="+x0+"$.",[A(g.s,g.t,"num","gradient =")],"Gradient of tangent $="+m+"$, so the normal gradient is $-\\dfrac{1}{"+m+"}="+g.t+"$",GCV({f:pe([a,b,c]),pts:[{p:[x0,a*x0*x0+b*x0+c],n:"P"}],nor:{x:x0,t:"normal"},x:[x0-3,x0+3]}))}),
  3:L(
  function(){var k=pick([1,4,9,16,25]),r=Math.sqrt(k);
-   return K("sx","Find the coordinates of the stationary point of $y=x+\\dfrac{"+k+"}{x}$ for $x\\gt 0$.",[A(r,null,"num","x ="),A(2*r,null,"num","y =")],"$\\dfrac{dy}{dx}=1-\\dfrac{"+k+"}{x^2}=0\\Rightarrow x="+r+"$, $y="+r+"+\\dfrac{"+k+"}{"+r+"}="+2*r+"$")},
+   return K("sx","Find the coordinates of the stationary point of $y=x+\\dfrac{"+k+"}{x}$ for $x\\gt 0$.",[A(r,null,"num","x ="),A(2*r,null,"num","y =")],"$\\dfrac{dy}{dx}=1-\\dfrac{"+k+"}{x^2}=0\\Rightarrow x="+r+"$, $y="+r+"+\\dfrac{"+k+"}{"+r+"}="+2*r+"$",GCV({f:"x+"+k+"/x",d:[r/6,r*3.4],fs:[{f:"x",dash:1,c:"gray",t:"y = x"}],x:[-r*.6,r*3.4],y:[-r*.8,r*5],pts:[{p:[r,2*r],n:"P"}]}))},
  function(){var r=ri(2,10),dr=pick([0.1,0.2,0.5,2,3]);
    return K("rc","The radius of a sphere increases at $"+dr+"$ cm s$^{-1}$. Find the rate of increase of the volume when the radius is $"+r+"$ cm, in terms of $\\pi$. [$V=\\tfrac43\\pi r^3$]",[A(nf(4*r*r*dr)+"*pi",nf(4*r*r*dr)+"\\pi","num","dV/dt =")],"$\\dfrac{dV}{dt}=\\dfrac{dV}{dr}\\times\\dfrac{dr}{dt}=4\\pi r^2\\times"+dr+"=4\\pi\\times"+r*r+"\\times"+dr+"="+nf(4*r*r*dr)+"\\pi$")})};
 /* 8 Integration */
@@ -274,7 +283,10 @@ G12[8]={1:L(
  function(){var c=[nz(-4,4)*3,nz(-4,4)*2,nz(-6,6)];
    return K("ip","Find $\\displaystyle\\int("+pw(c[0],2)+pwS(c[1],1)+sg(c[2])+")\\,dx$.",[A(poly([c[0]/3,c[1]/2,c[2],0]),polyT([c[0]/3,c[1]/2,c[2],0])+"+C","anti","∫ =")],"Increase the power by $1$ and divide by the new power: $"+polyT([c[0]/3,c[1]/2,c[2],0])+"+C$")},
  function(){var a=ri(-2,1),b=a+ri(1,3),c=[nz(-3,3)*3,nz(-4,4)*2,ri(-5,5)],F=function(x){return c[0]/3*x*x*x+c[1]/2*x*x+c[2]*x};
-   return K("di","Evaluate $\\displaystyle\\int_{"+a+"}^{"+b+"}("+pw(c[0],2)+pwS(c[1],1)+(c[2]?sg(c[2]):"")+")\\,dx$.",[A(F(b)-F(a),null,"num","=")],"$\\left["+polyT([c[0]/3,c[1]/2,c[2],0])+"\\right]_{"+a+"}^{"+b+"}="+F(b)+"-("+F(a)+")="+(F(b)-F(a))+"$")}),
+   return K("di","Evaluate $\\displaystyle\\int_{"+a+"}^{"+b+"}("+pw(c[0],2)+pwS(c[1],1)+(c[2]?sg(c[2]):"")+")\\,dx$.",[A(F(b)-F(a),null,"num","=")],"$\\left["+polyT([c[0]/3,c[1]/2,c[2],0])+"\\right]_{"+a+"}^{"+b+"}="+F(b)+"-("+F(a)+")="+(F(b)-F(a))+"$")},
+ function(){var a=ri(1,4),b=ri(1,6),m=ri(0,1),n=m+ri(2,3),A0=fr(a*(n*n*n-m*m*m)+3*b*(n-m),3);
+   return K("au","The diagram shows the region $R$ bounded by the curve $y="+(a===1?"":a)+"x^2+"+b+"$, the $x$-axis and the lines $x="+m+"$ and $x="+n+"$. Find the area of $R$.",[A(A0.s,A0.t,"num","area =")],"Area $=\\displaystyle\\int_{"+m+"}^{"+n+"}("+(a===1?"":a)+"x^2+"+b+")\\,dx=\\left["+fr(a,3).t+"x^3+"+b+"x\\right]_{"+m+"}^{"+n+"}="+A0.t+"$",
+     GCV({sc:true,f:pe([a,0,b]),area:{a:m,b:n,t:"R"},x:[-1,n+1]}))}),
  2:L(
  function(){var a=nz(-3,4),b=nz(-5,5),n=ri(2,5);
    return K("il","Find $\\displaystyle\\int("+co(a,"x",true)+co(b,"")+")^{"+n+"}\\,dx$.",[A("("+poly([a,b])+")^"+(n+1)+"/"+(a*(n+1)),"\\dfrac{("+polyT([a,b])+")^{"+(n+1)+"}}{"+a*(n+1)+"}+C","anti","∫ =")],"$\\dfrac{("+polyT([a,b])+")^{"+(n+1)+"}}{"+(n+1)+"\\times"+sgp(a)+"}+C$")},
@@ -282,9 +294,9 @@ G12[8]={1:L(
    return K("cv","A curve has $\\dfrac{dy}{dx}="+pw(a,2)+pwS(b,1)+"$ and passes through $"+pt([x0,y0])+"$. Find the equation of the curve.",[A(poly([a/3,b/2,0,c]),polyT([a/3,b/2,0,c]),"expr","y =")],"$y="+polyT([a/3,b/2,0,0])+"+c$; substitute $"+pt([x0,y0])+"$: $c="+c+"$")}),
  3:L(
  function(){var p=ri(1,4),q=ri(1,4),A0=fr(Math.pow(p+q,3),6);
-   return K("ar","Find the area enclosed between the curve $y="+polyT([-1,q-p,p*q])+"$ and the $x$-axis.",[A(A0.s,A0.t,"num","area =")],"The roots are $x=-"+p+"$ and $x="+q+"$. Area $=\\displaystyle\\int_{-"+p+"}^{"+q+"}("+polyT([-1,q-p,p*q])+")\\,dx="+A0.t+"$")},
+   return K("ar","Find the area enclosed between the curve $y="+polyT([-1,q-p,p*q])+"$ and the $x$-axis.",[A(A0.s,A0.t,"num","area =")],"The roots are $x=-"+p+"$ and $x="+q+"$. Area $=\\displaystyle\\int_{-"+p+"}^{"+q+"}("+polyT([-1,q-p,p*q])+")\\,dx="+A0.t+"$",GCV({f:pe([-1,q-p,p*q]),ax:[{x:-p,t:"A"},{x:q,t:"B"}],area:{a:-p,b:q,t:"R"}}))},
  function(){var k=ri(1,6),A0=fr(k*k*k,6);
-   return K("ab","Find the area of the region enclosed by the curve $y=x^2$ and the line $y="+(k===1?"":k)+"x$.",[A(A0.s,A0.t,"num","area =")],"They meet at $x=0$ and $x="+k+"$. Area $=\\displaystyle\\int_0^{"+k+"}("+(k===1?"":k)+"x-x^2)\\,dx=\\left[\\tfrac{"+k+"}{2}x^2-\\tfrac13x^3\\right]_0^{"+k+"}="+A0.t+"$")})};
+   return K("ab","Find the area of the region enclosed by the curve $y=x^2$ and the line $y="+(k===1?"":k)+"x$.",[A(A0.s,A0.t,"num","area =")],"They meet at $x=0$ and $x="+k+"$. Area $=\\displaystyle\\int_0^{"+k+"}("+(k===1?"":k)+"x-x^2)\\,dx=\\left[\\tfrac{"+k+"}{2}x^2-\\tfrac13x^3\\right]_0^{"+k+"}="+A0.t+"$",GCV({f:pe([1,0,0]),fs:[{f:(k===1?"x":k+"*x"),c:"red"}],area:{a:0,b:k,g:(k===1?"x":k+"*x"),t:"R"},pts:[{p:[k,k*k],n:"P"}]}))})};
 var LES12=[
  ["Pure Mathematics 1",[[1,"Quadratics"],[2,"Functions"],[3,"Coordinate geometry"],[4,"Circular measure"],[5,"Trigonometry"],[6,"Series"],[7,"Differentiation"],[8,"Integration"]]]];
 

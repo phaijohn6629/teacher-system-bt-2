@@ -16,6 +16,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GCV(o){try{var r=window.PXEN.GF.curve(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបក្រាបអនុគមន៍ (GF.curve) */
+var pe=window.PXEN.GF.pe;
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
@@ -70,13 +72,13 @@ var G6X={31:{1:L(g1,g2),2:L(g3,g4),3:L(g1,g3)},32:{1:L(g6,g7),2:L(g8,g6),3:L(g5,
    G12 · AS Level 9709 Pure Mathematics 1 style
    ================================================================= */
 var P1=function(){var a=pick([1,2,3]),b=nz(-5,5),c=ri(-8,8);
-  return EX("q1",1,"$f(x)="+polyT([a,2*a*b,a*b*b+c])+"$",[
+  return EXF(GCV({f:pe([a,2*a*b,a*b*b+c]),pts:[{p:[-b,c],n:"V",d:["s","se","sw"]}]}),"q1",1,"$f(x)="+polyT([a,2*a*b,a*b*b+c])+"$",[
    {q:"Express $f(x)$ in the form $a(x+b)^2+c$, where $a$, $b$ and $c$ are constants.",a:[A(a,null,"num","a ="),A(b,null,"num","b ="),A(c,null,"num","c =")],m:3},
    {q:"State the coordinates of the vertex of the graph of $y=f(x)$.",a:[A(-b,null,"num","x ="),A(c,null,"num","y =")],m:1},
    {q:"The function $f$ is now defined for $x\\ge"+(-b)+"$. Find an expression for $f^{-1}(x)$.",a:[A((-b)+"+sqrt((x"+sg(-c)+")/"+a+")",(-b===0?"":(-b)+"+")+"\\sqrt{\\dfrac{x"+sg(-c)+"}{"+a+"}}","expr","f⁻¹(x) =")],m:3}],
    "(a) $"+(a===1?"":a)+"(x"+sg(b)+")^2"+co(c,"")+"$ (b) "+pt([-b,c])+" (c) $y-"+sgp(c)+"="+a+"(x"+sg(b)+")^2\\Rightarrow x="+(-b)+"+\\sqrt{\\dfrac{y"+sg(-c)+"}{"+a+"}}$ (positive root because $x\\ge"+(-b)+"$)")};
 var P2=function(){var p=nz(-4,4),s=ri(1,4),k=ri(-6,6),q=k+s*s,m1=p-2*s,m2=p+2*s;
-  return EX("q2",1,"The line $y=mx"+co(k,"")+"$ is a tangent to the curve $y=x^2"+co(p,"x")+co(q,"")+"$.",[
+  return EXF(GCV({f:pe([1,p,q]),fs:[{f:pe([m1,k]),c:"red",t:"y = mx + k"},{f:pe([m2,k]),c:"green",t:"y = mx + k"}],pts:[{p:[-s,s*s-p*s+q],n:"T"},{p:[s,s*s+p*s+q],n:"U"}],x:[-s-3,s+3]}),"q2",1,"The line $y=mx"+co(k,"")+"$ is a tangent to the curve $y=x^2"+co(p,"x")+co(q,"")+"$.",[
    {q:"Find the possible values of the constant $m$.",a:[A(m1,null,"num","m₁ ="),A(m2,null,"num","m₂ =")],m:4},
    {q:"For the larger value of $m$, find the $x$-coordinate of the point of contact.",a:[A(s,null,"num","x =")],m:2}],
    "(a) $x^2+("+p+"-m)x+"+(q-k)+"=0$ has equal roots: $("+p+"-m)^2=4\\times"+(q-k)+"\\Rightarrow m="+m1+"$ or $"+m2+"$ (b) $x=\\dfrac{m-"+sgp(p)+"}{2}="+s+"$")};
@@ -110,17 +112,17 @@ var P7b=function(){var a=ri(2,9)*8,r=pick([[1,2],[1,4],[3,4],[2,3]]),u2=a*r[0]/r
    {q:"Find the common ratio and the first term.",a:[A(fr(r[0],r[1]).s,fr(r[0],r[1]).t,"num","r ="),A(a,null,"num","a =")],m:3},{q:"Find the sum to infinity.",a:[A(S.s,S.t,"num","S∞ =")],m:2}],
    "(a) $r^2=\\dfrac{"+nf(u4)+"}{"+nf(u2)+"}$, $r="+fr(r[0],r[1]).t+"$, $a="+a+"$ (b) $\\dfrac{a}{1-r}="+S.t+"$")};
 var P8=function(){var p=ri(-2,1),q=p+ri(1,3),d=ri(-5,5),f=function(x){return 2*x*x*x-3*(p+q)*x*x+6*p*q*x+d};
-  return EX("q8",1,"A curve has equation $y=2x^3"+co(-3*(p+q),"x^2")+co(6*p*q,"x")+co(d,"")+"$.",[
+  return EXF(GCV({f:pe([2,-3*(p+q),6*p*q,d]),pts:[{p:[p,f(p)],n:"A"},{p:[q,f(q)],n:"B"}],x:[p-1.8,q+1.8]}),"q8",1,"A curve has equation $y=2x^3"+co(-3*(p+q),"x^2")+co(6*p*q,"x")+co(d,"")+"$.",[
    {q:"Find $\\dfrac{dy}{dx}$.",a:[A(poly([6,-6*(p+q),6*p*q]),polyT([6,-6*(p+q),6*p*q]),"expr","dy/dx =")],m:2},
    {q:"Find the coordinates of the stationary points and determine their nature.",a:[A(p,null,"num","max x ="),A(f(p),null,"num","max y ="),A(q,null,"num","min x ="),A(f(q),null,"num","min y =")],m:5}],
    "$\\dfrac{dy}{dx}=6(x"+sg(-p)+")(x"+sg(-q)+")=0$. $\\dfrac{d^2y}{dx^2}=12x"+co(-6*(p+q),"")+"$: negative at $x="+p+"$ (maximum), positive at $x="+q+"$ (minimum)")};
 var P8b=function(){var b=nz(-4,4),c=ri(-5,5),x0=ri(-2,3),y0=x0*x0+b*x0+c,g=2*x0+b;if(!g){b++;y0=x0*x0+b*x0+c;g=2*x0+b}var m=fr(-1,g),cc=fr(y0*g+x0,g),xi=fr(y0*g+x0,1);
-  return EX("q8b",1,"The point $P$ on the curve $y=x^2"+co(b,"x")+co(c,"")+"$ has $x$-coordinate "+x0+".",[
+  return EXF(GCV({f:pe([1,b,c]),pts:[{p:[x0,y0],n:"P"}],nor:{x:x0,t:"normal"},x:[x0-3,x0+3]}),"q8b",1,"The point $P$ on the curve $y=x^2"+co(b,"x")+co(c,"")+"$ has $x$-coordinate "+x0+".",[
    {q:"Find the equation of the normal to the curve at $P$, in the form $y=mx+c$.",a:[A(m.s,m.t,"num","m ="),A(cc.s,cc.t,"num","c =")],m:4},
    {q:"The normal meets the $x$-axis at $Q$. Find the $x$-coordinate of $Q$.",a:[A(xi.s,xi.t,"num","x =")],m:1}],
    "Gradient of tangent $="+g+"$, normal gradient $="+m.t+"$, through "+pt([x0,y0]))};
 var P9=function(){var p=ri(0,2),q=p+ri(2,4),Ar=fr(Math.pow(q-p,3),6),a=ri(1,4),b=ri(1,5),h=ri(1,4),V=fr(a*h*h+2*b*h,2);
-  var FIGv=FB({},["y=-(x"+fx(p)+")*(x"+fx(q)+") blue","area y=-(x"+fx(p)+")*(x"+fx(q)+") ["+p+","+q+"]"],{axes:1,nts:false,ext:[[p-1,-1],[q+1,Math.pow((q-p)/2,2)+.5]]});return EXF(FIGv,"q9",1,"",[{q:"Find the area of the region enclosed by the curve $y="+polyT([-1,p+q,-p*q])+"$ and the $x$-axis.",a:[A(Ar.s,Ar.t,"num","area =")],m:4},
+  var FIGv=GCV({f:pe([-1,p+q,-p*q]),ax:[{x:p,t:"A"},{x:q,t:"B"}],area:{a:p,b:q,t:"R"}})||FB({},["y=-(x"+fx(p)+")*(x"+fx(q)+") blue","area y=-(x"+fx(p)+")*(x"+fx(q)+") ["+p+","+q+"]"],{axes:1,nts:false,ext:[[p-1,-1],[q+1,Math.pow((q-p)/2,2)+.5]]});return EXF(FIGv,"q9",1,"",[{q:"Find the area of the region enclosed by the curve $y="+polyT([-1,p+q,-p*q])+"$ and the $x$-axis.",a:[A(Ar.s,Ar.t,"num","area =")],m:4},
    {q:"The region between $y=\\sqrt{"+(a===1?"":a)+"x+"+b+"}$, the $x$-axis and the lines $x=0$ and $x="+h+"$ is rotated through $360^\\circ$ about the $x$-axis. Find the volume obtained, in terms of $\\pi$.",a:[A(V.s+"*pi",piT(V),"num","V =")],m:3}],
    "(a) roots $"+p+"$ and $"+q+"$: $\\int_{"+p+"}^{"+q+"}y\\,dx="+Ar.t+"$ (b) $\\pi\\int_0^{"+h+"}("+(a===1?"":a)+"x+"+b+")dx=\\pi\\left["+fr(a,2).t+"x^2+"+b+"x\\right]_0^{"+h+"}="+piT(V)+"$")};
 var P9b=function(){var k=pick([3,6,9]),m=ri(1,6),x0=pick([1,4,9]),c=ri(-6,6),y0=2*k/3*Math.pow(x0,1.5)-m*x0+c;
