@@ -179,7 +179,7 @@ G6[10]={1:L(
 /* 11 Volume, measures and time */
 G6[11]={1:L(
  function(){var a=ri(2,12),b=ri(2,10),c=ri(2,10);
-   return K("vc","Find the volume of a cuboid measuring $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm.",[A(a*b*c,null,"num","cm³")],"$"+a+"\\times"+b+"\\times"+c+"="+a*b*c+"$ cm³")},
+   return K("vc","Find the volume of a cuboid measuring $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm.",[A(a*b*c,null,"num","cm³")],"$"+a+"\\times"+b+"\\times"+c+"="+a*b*c+"$ cm³",GF.solid({k:"cuboid",w:a,h:c,d:b,lw:a+" cm",lh:c+" cm",ld:b+" cm"}))},
  function(){var C=pick([["cm","m",100],["m","km",1000],["g","kg",1000],["ml","litres",1000],["mm","cm",10]]),v=ri(1,90)*C[2]/pick([1,2,4,5]),big2=Math.random()<.5;
    return big2?K("cv","Convert $"+nf(v/C[2])+"$ "+C[1]+" to "+C[0]+".",[A(v,null,"num",C[0])],"$1$ "+C[1]+" $="+C[2]+"$ "+C[0]+", so $"+nf(v/C[2])+"\\times"+C[2]+"="+v+"$ "+C[0])
      :K("cv","Convert $"+v+"$ "+C[0]+" to "+C[1]+".",[A(nf(v/C[2]),null,"num",C[1])],"$"+v+"\\div"+C[2]+"="+nf(v/C[2])+"$ "+C[1])}),
@@ -187,10 +187,10 @@ G6[11]={1:L(
  function(){var s=ri(6*60,15*60),d=ri(25,250),e=s+d;
    return K("ti","A film starts at "+hm(s)+" and finishes at "+hm(e)+". How long is the film in minutes?",[A(d,null,"num","minutes")],"From "+hm(s)+" to "+hm(e)+" is $"+Math.floor(d/60)+"$ h $"+d%60+"$ min $="+d+"$ minutes")},
  function(){var a=ri(2,10);
-   return K("cub","A cube has edges of length $"+a+"$ cm. Find its volume.",[A(a*a*a,null,"num","cm³")],"$"+a+"^3="+a*a*a+"$ cm³")}),
+   return K("cub","A cube has edges of length $"+a+"$ cm. Find its volume.",[A(a*a*a,null,"num","cm³")],"$"+a+"^3="+a*a*a+"$ cm³",GF.solid({k:"cuboid",w:1,h:1,d:1,lw:a+" cm",lh:a+" cm",ld:a+" cm"}))}),
  3:L(
  function(){var c=pick([1,2,5]),a=c*ri(2,6),b=c*ri(2,6),h=c*ri(2,6);
-   return K("fit","How many cubes with edge $"+c+"$ cm fit exactly into a box measuring $"+a+"$ cm by $"+b+"$ cm by $"+h+"$ cm?",[A(a*b*h/(c*c*c),null,"num","cubes")],"$("+a+"\\div"+c+")\\times("+b+"\\div"+c+")\\times("+h+"\\div"+c+")="+a*b*h/(c*c*c)+"$")},
+   return K("fit","How many cubes with edge $"+c+"$ cm fit exactly into a box measuring $"+a+"$ cm by $"+b+"$ cm by $"+h+"$ cm?",[A(a*b*h/(c*c*c),null,"num","cubes")],"$("+a+"\\div"+c+")\\times("+b+"\\div"+c+")\\times("+h+"\\div"+c+")="+a*b*h/(c*c*c)+"$",GF.solid({k:"cuboid",w:a,h:h,d:b,lw:a+" cm",lh:h+" cm",ld:b+" cm"}))},
  function(){var s=ri(20,90),t=pick([2,3,4,5]);
    return K("sp","A car travels at $"+s+"$ km per hour for $"+t+"$ hours. How far does it travel?",[A(s*t,null,"num","km")],"$"+s+"\\times"+t+"="+s*t+"$ km")})};
 /* 12 Statistics */

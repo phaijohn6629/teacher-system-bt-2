@@ -188,7 +188,7 @@ G9[9]={1:L(
  function(){var P=[ri(-6,5),ri(-6,5)],B=[ri(-6,5),ri(-6,5)];if(P[0]===B[0]&&P[1]===B[1])B[0]++;var d2=(B[0]-P[0])*(B[0]-P[0])+(B[1]-P[1])*(B[1]-P[1]);
    return K("dist","Find the exact length of the line segment joining $"+pt(P)+"$ and $"+pt(B)+"$.",[A("sqrt("+d2+")",sqT(d2),"num","length =")],"$d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}=\\sqrt{"+d2+"}="+sqT(d2)+"$")},
  function(){var a=ri(2,10),b=ri(2,10),c=ri(2,10),d=Math.sqrt(a*a+b*b+c*c);
-   return K("cub","A cuboid measures $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm. Calculate the length of its longest diagonal. "+DP,[A(nf(d),null,"num","cm")],"$d=\\sqrt{"+a+"^2+"+b+"^2+"+c+"^2}=\\sqrt{"+(a*a+b*b+c*c)+"}="+r2(d)+"$ cm")})};
+   return K("cub","A cuboid measures $"+a+"$ cm by $"+b+"$ cm by $"+c+"$ cm. Calculate the length of its longest diagonal. "+DP,[A(nf(d),null,"num","cm")],"$d=\\sqrt{"+a+"^2+"+b+"^2+"+c+"^2}=\\sqrt{"+(a*a+b*b+c*c)+"}="+r2(d)+"$ cm",GF.solid({k:"cuboid",w:a,h:c,d:b,lw:a+" cm",lh:c+" cm",ld:b+" cm",diag:"d"}))})};
 /* 10 Circles, area and volume */
 G9[10]={1:L(
  function(){var r=ri(2,15),dia=Math.random()<.4;
@@ -197,9 +197,9 @@ G9[10]={1:L(
    return K("trap","A trapezium has parallel sides $"+a+"$ cm and $"+b+"$ cm and height $"+h+"$ cm. Find its area.",[A(S.s,S.t,"num","cm²")],"$A=\\dfrac{(a+b)h}{2}=\\dfrac{("+a+"+"+b+")\\times"+h+"}{2}="+S.t+"$ cm²",GF.rect({k:"trap",w:b,h:h,top:a+" cm",base:b+" cm",height:h+" cm"}))}),
  2:L(
  function(){var r=ri(2,9),h=ri(3,15);
-   return K("cyl","A cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Find its volume in terms of $\\pi$.",[A(r*r*h+"*pi",r*r*h+"\\pi","num","cm³")],"$V=\\pi r^2h=\\pi\\times"+r*r+"\\times"+h+"="+r*r*h+"\\pi$ cm³")},
+   return K("cyl","A cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Find its volume in terms of $\\pi$.",[A(r*r*h+"*pi",r*r*h+"\\pi","num","cm³")],"$V=\\pi r^2h=\\pi\\times"+r*r+"\\times"+h+"="+r*r*h+"\\pi$ cm³",GF.solid({k:"cyl",w:r,h:h,lr:r+" cm",lh:h+" cm"}))},
  function(){var r=ri(2,9),h=ri(3,15);
-   return K("csa","A closed cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Find its total surface area in terms of $\\pi$.",[A((2*r*r+2*r*h)+"*pi",(2*r*r+2*r*h)+"\\pi","num","cm²")],"$2\\pi r^2+2\\pi rh="+2*r*r+"\\pi+"+2*r*h+"\\pi="+(2*r*r+2*r*h)+"\\pi$ cm²")}),
+   return K("csa","A closed cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Find its total surface area in terms of $\\pi$.",[A((2*r*r+2*r*h)+"*pi",(2*r*r+2*r*h)+"\\pi","num","cm²")],"$2\\pi r^2+2\\pi rh="+2*r*r+"\\pi+"+2*r*h+"\\pi="+(2*r*r+2*r*h)+"\\pi$ cm²",GF.solid({k:"cyl",w:r,h:h,lr:r+" cm",lh:h+" cm"}))}),
  3:L(
  function(){var r=ri(3,12),t=pick([30,40,45,60,72,90,120,135,150]),Ar=fr(r*r*t,360),Le=fr(2*r*t,360);
    return K("sec","A sector of a circle has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Find, in terms of $\\pi$, (a) the arc length (b) the area of the sector.",[A(Le.s+"*pi",piT(Le),"num","(a)"),A(Ar.s+"*pi",piT(Ar),"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+piT(Le)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+piT(Ar)+"$ cm²",GF.circle({kind:"sector",ang:t,r:r+" cm",angLab:t+"°"}))},
@@ -400,12 +400,12 @@ G10[11]={1:L(
  function(){var r=ri(3,15),t=ri(20,160);
    return K("sec2","A sector has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Calculate (a) the arc length (b) the area. "+DP,[A(nf(2*Math.PI*r*t/360),null,"num","(a)"),A(nf(Math.PI*r*r*t/360),null,"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+r2(2*Math.PI*r*t/360)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+r2(Math.PI*r*r*t/360)+"$ cm²",GF.circle({kind:"sector",ang:t,r:r+" cm",angLab:t+"°"}))},
  function(){var r=ri(2,12),h=ri(3,20);
-   return K("cylv","A cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Calculate its volume. "+DP,[A(nf(Math.PI*r*r*h),null,"num","cm³")],"$V=\\pi r^2h="+r2(Math.PI*r*r*h)+"$ cm³")}),
+   return K("cylv","A cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Calculate its volume. "+DP,[A(nf(Math.PI*r*r*h),null,"num","cm³")],"$V=\\pi r^2h="+r2(Math.PI*r*r*h)+"$ cm³",GF.solid({k:"cyl",w:r,h:h,lr:r+" cm",lh:h+" cm"}))}),
  3:L(
  function(){var T=pick(TR),r=T[0],h=T[1],l=T[2];
-   return K("cone","A cone has base radius $"+r+"$ cm and perpendicular height $"+h+"$ cm. (a) Find the slant height. (b) Find the volume in terms of $\\pi$.",[A(l,null,"num","(a)"),A(r*r*h/3+"*pi",fr(r*r*h,3).d===1?r*r*h/3+"\\pi":"\\dfrac{"+r*r*h+"\\pi}{3}","num","(b)")],"$l=\\sqrt{"+r+"^2+"+h+"^2}="+l+"$ cm, $V=\\dfrac13\\pi r^2h=\\dfrac{"+r*r*h+"}{3}\\pi$ cm³")},
+   return K("cone","A cone has base radius $"+r+"$ cm and perpendicular height $"+h+"$ cm. (a) Find the slant height. (b) Find the volume in terms of $\\pi$.",[A(l,null,"num","(a)"),A(r*r*h/3+"*pi",fr(r*r*h,3).d===1?r*r*h/3+"\\pi":"\\dfrac{"+r*r*h+"\\pi}{3}","num","(b)")],"$l=\\sqrt{"+r+"^2+"+h+"^2}="+l+"$ cm, $V=\\dfrac13\\pi r^2h=\\dfrac{"+r*r*h+"}{3}\\pi$ cm³",GF.solid({k:"cone",w:r,h:h,lr:r+" cm",lh:h+" cm"}))},
  function(){var r=ri(2,9),V=fr(4*r*r*r,3);
-   return K("sph","The volume of a sphere is $"+(V.d===1?V.n:"\\dfrac{"+V.n+"}{"+V.d+"}")+"\\pi$ cm³. Find its radius. [$V=\\tfrac43\\pi r^3$]",[A(r,null,"num","r =")],"$\\dfrac43\\pi r^3="+V.t+"\\pi\\Rightarrow r^3="+r*r*r+"\\Rightarrow r="+r+"$ cm")})};
+   return K("sph","The volume of a sphere is $"+(V.d===1?V.n:"\\dfrac{"+V.n+"}{"+V.d+"}")+"\\pi$ cm³. Find its radius. [$V=\\tfrac43\\pi r^3$]",[A(r,null,"num","r =")],"$\\dfrac43\\pi r^3="+V.t+"\\pi\\Rightarrow r^3="+r*r*r+"\\Rightarrow r="+r+"$ cm",GF.solid({k:"sph",lr:"r"}))})};
 /* 12 Trigonometry */
 G10[12]={1:L(
  function(){var t=ri(20,70),h=ri(5,20),f=pick(["sin","cos","tan"]),v=f==="sin"?h*Math.sin(t*D):f==="cos"?h*Math.cos(t*D):h*Math.tan(t*D);
@@ -592,7 +592,33 @@ var GF=(function(){
   if(o.r)tx.push([A[0]/2,A[1]/2,o.r,Math.sin(a0),-Math.cos(a0)]);
   if(o.arc){var am=a0+an*R/2;tx.push([R0*Math.cos(am),R0*Math.sin(am),o.arc,Math.cos(am),Math.sin(am)])}
   return FB(pts,cm,{tx:tx,ext:[[0,0],A,Bn,[R0*Math.cos(a0+an*R/2),R0*Math.sin(a0+an*R/2)]]})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para,rect:shape,circle:circle}})();
+ /* GF.solid({k:"cuboid"|"cyl"|"cone"|"sph", w,h,d (សមាមាត្ររាង · cuboid: w=បណ្ដោយ h=កម្ពស់ d=ជម្រៅ · cyl/cone: w=កាំ h=កម្ពស់), lw,lh,ld,lr,ls,diag (ស្លាក — cuboid: lw=បាត lh=កម្ពស់ ld=ជម្រៅ diag=អង្កត់ទ្រូង · cyl/cone/sph: lr កាំ, lh កម្ពស់, ls ជ្រុងទ្រេត)})
+   projection ទ្រេត៖ គែមមើលឃើញជាខ្សែជាប់ · គែមខាងក្រោយ (បាំង) ជាខ្សែចុចៗ (បំបែកជាកំណាត់ខ្លីៗ ព្រោះ fig.js គ្មានខ្សែចុច) · រង្វង់បាតជា ellipse ធ្នូមុខជាប់ ធ្នូក្រោយចុច */
+ function solid(o){var k=o.k,cm=[],tx=[],ext=[],i;
+  function sg(P,Q,c){cm.push("seg "+xy(P)+" "+xy(Q)+" "+(c||"black"))}
+  function dsh(P,Q,c){var L=Math.hypot(Q[0]-P[0],Q[1]-P[1]),n=Math.max(4,Math.round(L/.12));for(var j=0;j<n;j+=2){var a=j/n,b=Math.min(1,(j+1)/n);sg([P[0]+(Q[0]-P[0])*a,P[1]+(Q[1]-P[1])*a],[P[0]+(Q[0]-P[0])*b,P[1]+(Q[1]-P[1])*b],c||"gray")}}
+  function el(cx,cy,rx,ry,t0,t1,dash,c){var N=Math.max(8,Math.round(Math.abs(t1-t0)/Math.PI*30)),pr=null;for(var j=0;j<=N;j++){var t=t0+(t1-t0)*j/N,q=[cx+rx*Math.cos(t),cy+ry*Math.sin(t)];if(pr&&(!dash||j%2===1))sg(pr,q,c);pr=q}}
+  function lb(P,Q,t,nx,ny){if(t)tx.push([(P[0]+Q[0])/2,(P[1]+Q[1])/2,t,nx,ny])}
+  if(k==="cuboid"){var w=o.w||3,h=o.h||2,d=o.d||2,m=Math.max(w,h,d);w=Math.max(w,m*.4);h=Math.max(h,m*.4);d=Math.max(d,m*.4);
+   var P={a0:[0,0],a1:[w,0],a2:[w,h],a3:[0,h]},sx=.43*d,sy=.3*d;[0,1,2,3].forEach(function(j){P["b"+j]=[P["a"+j][0]+sx,P["a"+j][1]+sy]});fit(P,3.4);
+   var g=[0,0];Object.keys(P).forEach(function(z){g[0]+=P[z][0]/8;g[1]+=P[z][1]/8;ext.push(P[z])});
+   [["a0","a1"],["a1","a2"],["a2","a3"],["a3","a0"],["a3","b3"],["a2","b2"],["b3","b2"],["a1","b1"],["b1","b2"]].forEach(function(e){sg(P[e[0]],P[e[1]])});
+   [["a0","b0"],["b0","b1"],["b0","b3"]].forEach(function(e){dsh(P[e[0]],P[e[1]])});
+   function sd(a,b,t){if(!t)return;var mm=[(P[a][0]+P[b][0])/2,(P[a][1]+P[b][1])/2],u=out(g,mm);tx.push([mm[0],mm[1],t,u[0],u[1]])}
+   sd("a0","a1",o.lw);sd("a3","a0",o.lh);sd("a1","b1",o.ld);
+   if(o.diag){dsh(P.a0,P.b2,"blue");var dx=P.b2[0]-P.a0[0],dy=P.b2[1]-P.a0[1],dl=Math.hypot(dx,dy);tx.push([P.a0[0]+dx*.62,P.a0[1]+dy*.62,o.diag,-dy/dl,dx/dl])}
+   return FB({},cm,{tx:tx,ext:ext})}
+  var hh=Math.max(.8,Math.min(3,(o.h||2)/(o.w||1))),ry=.3,Rr=1.6;
+  if(k==="cyl"){el(0,0,1,ry,Math.PI,2*Math.PI,false,"black");el(0,0,1,ry,0,Math.PI,true,"gray");el(0,hh,1,ry,0,2*Math.PI,false,"black");
+   sg([-1,0],[-1,hh]);sg([1,0],[1,hh]);if(o.lr){sg([0,hh],[1,hh],"blue");tx.push([1,hh,o.lr,1,.6])}
+   if(o.lh)tx.push([1,hh/2,o.lh,1,0]);ext=[[-1,-ry],[1,hh+ry]]}
+  else if(k==="cone"){el(0,0,1,ry,Math.PI,2*Math.PI,false,"black");el(0,0,1,ry,0,Math.PI,true,"gray");sg([0,hh],[-1,0]);sg([0,hh],[1,0]);
+   dsh([0,hh],[0,0],"blue");dsh([0,0],[1,0],"blue");if(o.lr)tx.push([1,0,o.lr,1,-.5]);if(o.lh)tx.push([0,hh*.3,o.lh,-1,0]);
+   if(o.ls){var nn=Math.hypot(hh,1);tx.push([.5,hh/2,o.ls,hh/nn,1/nn])}ext=[[-1,-ry],[1,hh+.1]]}
+  else{cm.push("circle O "+Rr+" black");el(0,0,Rr,Rr*.3,Math.PI,2*Math.PI,false,"gray");el(0,0,Rr,Rr*.3,0,Math.PI,true,"gray");
+   var ea=R*35,E=[Rr*Math.cos(ea),Rr*Math.sin(ea)];sg([0,0],E,"blue");if(o.lr)tx.push([E[0]/2,E[1]/2,o.lr,-Math.sin(ea),Math.cos(ea)]);ext=[[-Rr,-Rr],[Rr,Rr]]}
+  return FB({_c:[0,k==="sph"?0:0,""]},cm,{tx:tx,ext:ext})}
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para,rect:shape,circle:circle,solid:solid}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
