@@ -1117,7 +1117,87 @@ var KM={
  "9:n_ms":function(q){var a=(q.q.match(/(\d+)\^\\circ/g)||[]).map(function(z){return parseInt(z)});return a.length>=4?GF.poly({n:5,lab:[a[0]+"°",a[1]+"°",a[2]+"°",a[3]+"°","x°"]}):""}
 };
 ["9:b14_1","9:g9_14_ec","9:g9_14_bc","9:g9_14_ad","9:g9_14_ac","9:g9_14_de","9:b14_2","9:n_ec2","9:g9_14_db","9:g9_14_x","9:b14_3","9:n_x2","9:g9_14_alg"].forEach(function(k){KM[k]=thalesF});
+/* ===== KM2 (2026-11-22) — GF.coord · GF.stat · GF.circle(th) · GF.rays · GF.vec · GF.curve សម្រាប់ទម្រង់ខ្មែរ (ថ្នាក់ទី៨–១០ + ៧·១៣)
+   ច្បាប់៖ គូរតែអ្វីដែលសំណួរឱ្យ · ចម្លើយ = «?» ឬមិនគូរ (ext = ពង្រីកបង្អួចតែមិនគូរ) · ការអានមិនបាន → គ្មានរូប ===== */
+function PT(t){var o={},re=/([A-Z])\s*\(\s*(-?\d+(?:\.\d+)?)\s*;\s*(-?\d+(?:\.\d+)?)\s*\)/g,m,c=clean(t);while((m=re.exec(c)))if(!o[m[1]])o[m[1]]=[+m[2],+m[3]];return o}
+function bigP(a){return a.some(function(p){return!p||Math.abs(p[0])>20||Math.abs(p[1])>20})}
+function LN(t){if(/x\s*\^/.test(t))return[];var o=[],c=clean(t).replace(/\bcolon\b/g," "),re=/y\s*=\s*(-?\s*\d*\.?\d*)\s*x\s*(?:([+-])\s*(\d+(?:\.\d+)?))?(?!\s*[+-]?\s*[A-Za-z])/g,m;
+  while((m=re.exec(c))){var s=m[1].replace(/\s/g,""),a=s===""?1:s==="-"?-1:+s,b=m[3]?(m[2]==="-"?-1:1)*+m[3]:0;if(a&&isFinite(a)&&!o.some(function(z){return z.m===a&&z.c===b}))o.push({m:a,c:b})}return o}
+function lineLab(m,c){return"y = "+(m===1?"":m===-1?"-":m)+"x"+(c?(c<0?" − "+(-c):" + "+c):"")}
+function cpts(p,names,col){return names.filter(function(n){return p[n]}).map(function(n){return{n:n,p:p[n],c:col||"blue"}})}
+function CO(o){return GF.coord(o)}
+function segF(names){return function(q){var p=PT(q.q),a=names.filter(function(n){return p[n]});if(a.length<2)return"";var v=a.map(function(n){return p[n]});if(bigP(v))return"";
+  return CO({pts:cpts(p,a),segs:[{a:v[0],b:v[1],c:"blue"}]})}}
+function segAny(q){var p=PT(q.q),k=Object.keys(p);if(k.length<2)return"";var v=[p[k[0]],p[k[1]]];if(bigP(v))return"";return CO({pts:cpts(p,k.slice(0,2)),segs:[{a:v[0],b:v[1],c:"blue"}]})}
+function triF(q){var p=PT(q.q),v=[p.A,p.B,p.C];if(bigP(v))return"";return CO({polys:[{v:v,n:"ABC",c:"blue",nl:true}]})}
+function midF(q){var p=PT(q.q),A=p.A,B=p.B;if(!A||!B||bigP([A,B]))return"";var dx=B[0]-A[0],dy=B[1]-A[1],l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l;if(ny<0||(ny===0&&nx<0)){nx=-nx;ny=-ny}
+  return CO({pts:cpts(p,["A","B"]),segs:[{a:A,b:B,c:"blue"}],ring:[{p:[(A[0]+B[0])/2,(A[1]+B[1])/2],t:"M(?, ?)",nx:nx,ny:ny}]})}
+function endF(q){var p=PT(q.q),M=p.M,A=p.A;if(!M||!A||bigP([M,A]))return"";return CO({pts:cpts(p,["M","A"]),ext:[[2*M[0]-A[0],2*M[1]-A[1]]]})}
+function reflF(q){var p=PT(q.q),k=Object.keys(p);if(!k.length||bigP([p[k[0]]]))return"";var A=p[k[0]];
+  if(/Oy|y'y|y′y/.test(q.q))return CO({pts:[{n:k[0],p:A,c:"blue"}],ext:[[-A[0],A[1]]]});
+  if(/Ox|x'x|x′x/.test(q.q))return CO({pts:[{n:k[0],p:A,c:"blue"}],ext:[[A[0],-A[1]]]});return""}
+function lnWin(L,P){var R=4;L.forEach(function(l){R=Math.max(R,Math.ceil(Math.abs(l.c))+1);if(l.m)R=Math.max(R,Math.ceil(Math.abs(l.c/l.m))+1)});P.forEach(function(p){R=Math.max(R,Math.ceil(Math.abs(p[0]))+1,Math.ceil(Math.abs(p[1]))+1)});return Math.min(R,14)}
+function linesF(withInt,withPts){return function(q){var L=LN(q.q);if(!L.length||L.length>2)return"";var p=withPts?PT(q.q):{},pv=Object.keys(p).map(function(k){return p[k]}),R=lnWin(L,pv),ext=[];
+  if(withInt&&L.length===2&&L[0].m!==L[1].m){var x=(L[1].c-L[0].c)/(L[0].m-L[1].m);ext.push([x,L[0].m*x+L[0].c]);R=Math.max(R,Math.ceil(Math.abs(x))+1,Math.ceil(Math.abs(L[0].m*x+L[0].c))+1);R=Math.min(R,14)}
+  return CO({x:[-R,R],y:[-R,R],lines:L.map(function(l,i){return{m:l.m,c:l.c,col:i?"red":"blue",t:lineLab(l.m,l.c)}}),pts:cpts(p,Object.keys(p)),ext:ext})}}
+function pgmF(q){var p=PT(q.q);if(!p.A||!p.B||!p.C)return"";var D=[p.A[0]+p.C[0]-p.B[0],p.A[1]+p.C[1]-p.B[1]];if(bigP([p.A,p.B,p.C,D]))return"";return CO({pts:cpts(p,["A","B","C"]),segs:[{a:p.A,b:p.B,c:"blue"},{a:p.B,b:p.C,c:"blue"}],ext:[D]})}
+function cenF(q){var p=PT(q.q);if(!p.A||!p.B||!p.C)return"";return CO({polys:[{v:[p.A,p.B,p.C],n:"ABC",c:"blue",nl:true}]})}
+function origF(q){var p=PT(q.q),k=Object.keys(p).filter(function(n){return n!=="O"});if(!k.length||bigP([p[k[0]]]))return"";return CO({pts:[{n:"O",p:[0,0],c:"blue"},{n:k[0],p:p[k[0]],c:"blue"}],segs:[{a:[0,0],b:p[k[0]],c:"blue"}]})}
+function soF(q){var p=PT(q.q),A=p.A;if(!A||bigP([A]))return"";return CO({pts:[{n:"A",p:A,c:"blue"}],ext:[[-A[0],-A[1]]]})}
+/* 📊 តារាងប្រេកង់ \begin{array}…  → GF.stat bar (« ? » ឬអក្សរ = មិនគូរ) */
+function tabl(t){var m=/\\begin\{array\}\{[^}]*\}([\s\S]*?)\\end\{array\}/.exec(t);if(!m)return null;var r=m[1].replace(/\\hline/g,"").split("\\\\").map(function(s){return s.trim()}).filter(Boolean).map(function(s){return s.split("&").map(function(c){return c.trim()})});
+  if(r.length<2||r[0].length<3||r[0].length!==r[1].length||r[0].length>9)return null;return{x:r[0].slice(1),f:r[1].slice(1).map(function(c){return/^\d+$/.test(c)?+c:null})}}
+function barF(q){var T=tabl(q.q);if(!T||T.f.every(function(v){return v===null}))return"";return GF.stat({k:"bar",cats:T.x.map(function(c){return c.replace(/\[\s*(\d+)\s*;\s*(\d+)\s*\)/,"$1-$2")}),vals:T.f,yt:"f"})}
+function pairs(t){var c=clean(t),i=c.indexOf("៖");if(i<0)return null;c=c.slice(i+1);var j=c.indexOf("។");if(j>=0)c=c.slice(0,j);var o=[];c.split("·").forEach(function(s){var m=/^\s*(.+?)\s+(\d+)\s*$/.exec(s);if(m)o.push([m[1].replace(/\s+/g," "),+m[2]])});return o.length>=3&&o.length<=7?o:null}
+function pieF(q){var a=pairs(q.q);if(!a)return"";var tot=a.reduce(function(s,z){return s+z[1]},0);return GF.stat({k:"pie",lab:a.map(function(z){return z[0]}),vals:a.map(function(z){return z[1]}),tot:tot,ang:a.map(function(){return""})})}
+function histF(q){var re=/\[\s*(\d+)\s*;\s*(\d+)\s*\)\s*៖\s*(\d+)/g,c=clean(q.q),m,e=[],h=[],last=null;while((m=re.exec(c))){if(last!==null&&+m[1]!==last)return"";if(last===null)e.push(+m[1]);e.push(+m[2]);h.push(+m[3]);last=+m[2]}
+  if(h.length<3||h.length>7)return"";var w=e[1]-e[0];for(var i=1;i<e.length;i++)if(e[i]-e[i-1]!==w)return"";return GF.stat({k:"hist",e:e,h:h,yt:"f"})}
+/* ⭕ ទ្រឹស្ដីបទរង្វង់ (GF.circle th) */
+function thF(o){return function(q){return GF.circle(o(q))}}
+/* 📐 មុំលើបន្ទាត់ / ជុំវិញចំណុច (GF.rays) */
+function raysPt(q){var n=nums(q.q);if(n.length<2)return"";var a=n[0],b=n[1];if(a+b>=330)return"";return GF.rays({k:"point",ang:[a,b,360-a-b],lab:[a+"°",b+"°","x°"]})}
+function raysOne(k,tot){return function(q){var a=nums(q.q).filter(function(v){return v>0&&v<tot})[0];if(!a||a<12||tot-a<12)return"";return GF.rays({k:k,ang:[a,tot-a],lab:[a+"°","x°"]})}}
+function raysLx(q){var A=angs(q.q);if(A.length<2)return"";var x=xv(q),a=val(A[0],x),b=val(A[1],x);if(!(a>12&&b>12&&Math.abs(a+b-180)<1e-6))return"";return GF.rays({k:"line",ang:[a,b],lab:[A[0].l,A[1].l]})}
+/* ➡️ វ៉ិចទ័រ (GF.vec · វ៉ិចទ័រដែលសំណួរឱ្យតែប៉ុណ្ណោះ) */
+function vecF(q){var re=/vec\s*([a-z])\s*\(\s*(-?\d+)\s*;\s*(-?\d+)\s*\)/g,c=clean(q.q),m,v=[];while((m=re.exec(c)))if(v.length<3)v.push({n:m[1],v:[+m[2],+m[3]]});if(!v.length)return"";return GF.vec({v:v})}
+/* 📈 ប៉ារ៉ាបូល y=ax²+bx+c (GF.curve) */
+function quad(t){var m=/(?:y|f\(x\))\s*=\s*([^$។]*)/.exec(t);if(!m)return null;var s=m[1].replace(/\s+/g,"").replace(/x\^\{?2\}?/g,"X"),tm=s.match(/[+-]?[^+-]+/g);if(!tm)return null;var a=0,b=0,c=0;
+  for(var i=0;i<tm.length;i++){var z=tm[i],k;if(/X$/.test(z)){k=z.slice(0,-1);a=k===""||k==="+"?1:k==="-"?-1:+k}else if(/x$/.test(z)){k=z.slice(0,-1);b=k===""||k==="+"?1:k==="-"?-1:+k}else if(/^[+-]?\d+$/.test(z))c=+z;else return null}
+  return a&&isFinite(a+b+c)?[a,b,c]:null}
+function quadF(q){var c=quad(q.q);if(!c||Math.abs(c[0])>4||Math.abs(c[1])>12||Math.abs(c[2])>20)return"";var a=c[0],b=c[1],k=c[2],xv=-b/(2*a),x0=Math.floor(Math.min(xv-3,-1)),x1=Math.ceil(Math.max(xv+3,1)),F=function(x){return a*x*x+b*x+k},ys=[F(x0),F(x1),F(xv),0];
+  var y0=Math.floor(Math.min.apply(null,ys))-1,y1=Math.ceil(Math.max.apply(null,ys))+1;return GF.curve({f:GF.pe(c),x:[x0,x1],y:[y0,y1]})}
+Object.assign(KM,{
+ /* ថ្នាក់ទី៨ ប្លង់កូអរដោនេ */
+ "8:s8_mid":midF,"8:s8_dx":segF(["A","B"]),"8:s8_sym":reflF,"8:s8_slope":segF(["A","B"]),"8:s8_inter":linesF(true,false),"8:s8_area9":linesF(false,false),"8:s8_par9":linesF(false,true),
+ /* ថ្នាក់ទី៩ ចម្ងាយ · ចំណុចកណ្ដាល */
+ "9:g9_9_hz":segAny,"9:n_hor":segAny,"9:g9_9_vt":segAny,"9:g9_9_ax":segAny,"9:g9_9_rad":segAny,"9:g9_9_d":segAny,"9:g9_9_orig":segAny,"9:n_do":segAny,"9:g9_9_sq":segAny,"9:n_diam":segAny,"9:g9_9_circ":segAny,
+ "9:g9_9_mid":midF,"9:g9_9_end":endF,"9:mep":endF,"9:n_pgm":pgmF,"9:n_refl":reflF,
+ "9:n_per":triF,"9:g9_9_per":triF,"9:n_ar":triF,"9:g9_9_iso":triF,"9:g9_9_rt":triF,"9:rtc":triF,
+ /* ថ្នាក់ទី៩ សមីការបន្ទាត់ */
+ "9:icp":linesF(false,false),"9:g9_10_rd":linesF(false,false),"9:n_ix":linesF(true,false),"9:g9_10_int":linesF(true,false),"9:g9_10_tri":linesF(false,false),"9:n_tri":linesF(false,false),"9:g9_10_xint":linesF(false,false),"9:g9_10_yint":linesF(false,false),"9:g9_10_perp":linesF(false,true),"9:prl":linesF(false,true),
+ /* ថ្នាក់ទី១០ កូអរដោនេ · បន្ទាត់ */
+ "10:s10_d0":origF,"10:s10_hor":segAny,"10:s10_cen":cenF,"10:s10_peri":triF,"10:s10_par":pgmF,"10:s10_area_41":triF,"10:s10_so":soF,
+ "10:s10_ix":linesF(true,false),"10:s10_int_42":linesF(false,false),"10:s10_perp":linesF(false,true),"10:s10_eq2":segF(["A","B"]),"10:s10_med":segF(["A","B"]),
+ /* ស្ថិតិ */
+ "9:n_max":barF,"9:g9_6_rd":barF,"9:n_miss":barF,"9:n_rel":barF,"9:n_cum":barF,"9:fdc":barF,"9:n_pcl":barF,"9:fgr":barF,"9:g9_6_min":barF,"9:g9_6_two":barF,"9:g9_6_N":barF,"9:g9_6_ge":barF,"9:g9_6_dif":barF,"9:g9_6_lt":barF,"9:g9_6_mis":barF,"9:g9_6_rng":barF,"9:g9_6_rp":barF,"9:g9_6_cum":barF,
+ "8:s8_medt":barF,"8:s8_rel":barF,"10:s10_less":barF,"10:s10_max":barF,"10:s10_cum":barF,"10:s10_pg":barF,"10:s10_miss":barF,
+ "9:n_ang":pieF,"9:g9_6_pie":pieF,"9:g9_6_cls":histF,"9:g9_6_mod":histF,
+ /* មុំ */
+ "7:s7_360":raysPt,"7:b13_2":raysOne("line",180),"7:b13_1":raysOne("right",90),"7:s7_lx":raysLx,
+ /* រង្វង់ */
+ "9:g9_13_dia":function(){return GF.circle({th:"semi",x:35,lab:{C:"?"}})},
+ "9:n_same":thF(function(q){var v=nums(q.q).filter(function(z){return z>5&&z<150})[0];return{th:"seg",x:v,y:35,lab:{C:v+"°",D:"?"}}}),
+ "9:g9_13_same":thF(function(q){var v=nums(q.q).filter(function(z){return z>5&&z<150})[0];return{th:"seg",x:v,y:35,lab:{C:v+"°",D:"?"}}}),
+ "9:g9_13_cq":thF(function(q){var v=nums(q.q).filter(function(z){return z>20&&z<160})[0];return{th:"cyc",x:v,lab:{A:v+"°",C:"?"}}}),
+ "9:n_pab":thF(function(q){var v=nums(q.q).filter(function(z){return z>10&&z<170})[0];return{th:"tan",x:v,lab:{P:v+"°",O:"?"}}}),
+  "9:n_oa":function(q){var n=nums(q.q),t=n[0],r=n[1],d=Math.hypot(t,r);return GF.circle({th:"tg1",k:r/d,sl:[["O","T",r+" cm"],["A","T",t+" cm"],["O","A","?"]]})},
+ "9:n_rad":function(q){var n=nums(q.q),c=n[0],dd=n[1],r=Math.hypot(c/2,dd);return GF.circle({th:"chd",dd:dd/r,sl:[["A","B",c+" cm"],["O","M",dd+" cm"],["O","A","?"]]})},
+ /* វ៉ិចទ័រ */
+ "10:s10_vk":vecF,"10:s10_vsub":vecF,"10:s10_lin_81":vecF,"10:s10_combv":vecF,"10:s10_ab_81":segF(["A","B"]),"10:s10_len":segF(["A","B"]),"10:s10_pgm":pgmF,
+ /* អនុគមន៍ដឺក្រេទី២ */
+ "10:s10_y0":quadF,"10:s10_axis":quadF,"10:s10_val":quadF
+});
 var OVR={"8:b14_1":1,"8:b14_2":1,"8:b14_3":1,"9:b14_1":1,"9:b14_2":1,"9:b14_3":1};   /* ជំនួសរូបអ័ក្សចាស់ */
-[7,8,9].forEach(function(g){var R=GR[g];if(!R)return;Object.keys(R.G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){var f=R.G[l][v];if(!f||f._km)return;
+[7,8,9,10,11,12].forEach(function(g){var R=GR[g];if(!R)return;Object.keys(R.G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){var f=R.G[l][v];if(!f||f._km)return;
   var w=function(){var q=f.apply(this,arguments);if(q&&q.kd){var k=g+":"+q.kd;if(KM[k]&&(!q.fig||OVR[k])){try{var r=KM[k](q);if(r&&!/NaN|undefined|Infinity/.test(r))q.fig=r}catch(e){}}}return q};w._km=1;R.G[l][v]=w})})});
 })();
