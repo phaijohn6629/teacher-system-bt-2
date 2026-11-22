@@ -523,7 +523,3 @@ html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!
     .brand-logo { animation: none !important; }
     .modern-card:hover { transform: none; }
 }
-/* អ្នកប្រើដែលចង់កាត់បន្ថយចលនា */
-@media (prefers-reduced-motion: reduce) {
-    .brand-logo { animation: none !important; }
-}
