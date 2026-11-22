@@ -200,7 +200,8 @@ function accTx(k,tid,cn,fn){
       fn(acc);
       var clean={},pw={};Object.keys(acc).forEach(function(r){var x=jcopy(acc[r]);if(x.pw)pw[r]=x.pw;delete x.pw;clean[r]=x});
       if(!Object.keys(acc).length&&cur){tx.delete(mref(k));if(ps.exists())tx.delete(pref(k));return acc}
-      tx.set(mref(k),{o:tid,acc:clean,j:cur&&cur.j||j0});   /* គ្មាន pw ក្នុង mc */
+      if(cur){var up={acc:clean};if(!cur.j)up.j=j0;tx.update(mref(k),up)}   /* មានរួច → កែតែ acc (រក្សា field ផ្សេង) · គ្មាន pw ក្នុង mc */
+      else tx.set(mref(k),{o:tid,acc:clean,j:j0});
       if(Object.keys(pw).length)tx.set(pref(k),{o:tid,p:pw});else if(ps.exists())tx.delete(pref(k));
       return acc;
     });

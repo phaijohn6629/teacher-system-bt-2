@@ -107,7 +107,7 @@ function save(now){
     E.u=new Date().toISOString();cPut(E,E.u);o.u=E.u;
     /* 📦 រក្សាទុកជាពីរឯកសារ៖ exams/{id} = សង្ខេប (បញ្ជីទាញតែនេះ · លឿន) · exams/{id}__c = ខ្លឹមសារពេញ (ទាញពេលបើក) */
     /* សង្ខេបត្រូវសរសេរជាមួយជានិច្ច (u ថ្មី → ឧបករណ៍ផ្សេងដឹងថាត្រូវទាញខ្លឹមសារថ្មី) */
-    F.setDoc(F.doc(window.db,"exams",E.id+"__c"),{o:E.o,k:"c",u:E.u,j:JSON.stringify(o)}).then(function(){return F.setDoc(F.doc(window.db,"exams",E.id),sumOf(E))}).then(function(){X.lastW[E.id]={j:jj};X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
+    (function(){var b=F.writeBatch(window.db);b.set(F.doc(window.db,"exams",E.id+"__c"),{o:E.o,k:"c",u:E.u,j:JSON.stringify(o)});b.set(F.doc(window.db,"exams",E.id),sumOf(E));return b.commit()})().then(function(){X.lastW[E.id]={j:jj};X.dirty=false;X.status="✅ បានរក្សាទុក";stat()},function(e){console.error("exam save:",e);X.status="⚠️ មិនទាន់រក្សាទុក ("+(e&&e.code==="permission-denied"?"សូម Admin Publish firestore.rules":"អ៊ីនធឺណិត")+")";stat()});
     try{localStorage.setItem("exCk",E.ck||"")}catch(e){}
   },now?0:2500);stat();
 }

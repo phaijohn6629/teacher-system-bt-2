@@ -428,7 +428,10 @@ $("f").onsubmit=function(e){
   save();$("dlg").close();render();notify("រក្សាទុកព័ត៌មានគ្រូរួចរាល់!");if(isNewT)createAccounts([o]);
   var pp=profs[o.id];   /* ប្រវត្តិរូបដែលគ្រូបានកែ → ធ្វើបច្ចុប្បន្នភាពតាម Admin កុំឱ្យជាន់គ្នា */
   if(!isNewT&&pp&&window.FB){var np=Object.assign({},pp,{nm:o.name,g:o.g,dob:o.dob,ph:o.ph.slice(0,40),ad:o.ad.slice(0,200),sub:o.sub.slice(0,60),deg:o.deg.slice(0,80),sd:o.sd,u:new Date().toISOString()});
-    window.FB.setDoc(window.FB.doc(window.db,"profiles",o.id),np).then(function(){profs[o.id]=np}).catch(function(e){console.error(e)})}
+    var upd={nm:np.nm,g:np.g,dob:np.dob,ph:np.ph,ad:np.ad,sub:np.sub,deg:np.deg,sd:np.sd,u:np.u};   /* តែ field ដែល Admin កែ → មិនជាន់ bio/photo */
+    window.FB.updateDoc(window.FB.doc(window.db,"profiles",o.id),upd).then(function(){profs[o.id]=np}).catch(function(e){
+      if(e&&e.code==="not-found")return window.FB.setDoc(window.FB.doc(window.db,"profiles",o.id),np).then(function(){profs[o.id]=np});
+      console.error(e)}).catch(function(e){console.error(e)})}
 };
 
 $("tb").onclick=function(e){

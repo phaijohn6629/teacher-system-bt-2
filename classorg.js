@@ -141,7 +141,10 @@ function setPhoto(ro){
     if(!(isAdm()||who.id===ogT)){alert("ដាក់រូបបានតែគ្រូខ្លួនឯង ឬ Admin");return}
     return pickImg(function(f){shrinkPhoto(f,function(d){
       var p=Object.assign({o:ogT},profs[ogT]||{},{photo:d,u:new Date().toISOString()});
-      window.FB.setDoc(window.FB.doc(window.db,"profiles",ogT),p).then(function(){profs[ogT]=p;renderOrg();notify("បានដាក់រូបគ្រូទីប្រឹក្សា")})
+      var ok=function(){profs[ogT]=p;renderOrg();notify("បានដាក់រូបគ្រូទីប្រឹក្សា")};
+      window.FB.updateDoc(window.FB.doc(window.db,"profiles",ogT),{photo:d,u:p.u}).then(ok,function(e){
+        if(e&&e.code==="not-found")return window.FB.setDoc(window.FB.doc(window.db,"profiles",ogT),p).then(ok);
+        throw e})
         .catch(function(e){alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិរក្សាទុករូបទេ":"មិនអាចរក្សាទុករូបបានទេ")});
     })});
   }
