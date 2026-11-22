@@ -58,7 +58,7 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-16 · `sw.js` cache = `ngs-app-v87`)
+## Current State (up to date as of 2026-11-16 · `sw.js` cache = `ngs-app-v64`)
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
@@ -368,9 +368,9 @@
 
 ## Autonomous Agent & Quality Assurance Rules (Teacher_System)
 1. **Cache & Versioning Discipline (CRITICAL):**
-   - Whenever modifying any `.js`, `.css`, or `.html` file (`hub.js`, `exam.js`, `quiz.js`, `practice.html`, etc.), ALWAYS increment the `?v=` query parameter in HTML imports AND bump the Service Worker cache version in `sw.js` (currently `ngs-app-v126` -> `ngs-app-v127`, etc.).
+   - Whenever modifying any `.js`, `.css`, or `.html` file (`hub.js`, `exam.js`, `quiz.js`, `practice.html`, etc.), ALWAYS increment the `?v=` query parameter in HTML imports AND bump the Service Worker cache version in `sw.js` (currently `ngs-app-v64` -> `ngs-app-v65`, etc.).
 2. **Monthly Exam & Quiz Scoring Rules (`exam.js`, `quiz.js`, `monthly.js`):**
-   - Scoring code in production (`ngs-app-v126`) is correct: **do not change** the scoring in `exam.js` or `monthly.js` unless the user asks. Verify only; never add hard caps of 25 (grade 12) or 20 (grades 7–9) on your own.
+   - Scoring code in production (`ngs-app-v64`) is correct: **do not change** the scoring in `exam.js` or `monthly.js` unless the user asks. Verify only; never add hard caps of 25 (grade 12) or 20 (grades 7–9) on your own.
    - `EXP.total(E)` (defined as `total(P)` in `expaper.js`, exported as `EXP.total`, used by `exam.js`) must stay the sum of each section's `pts` (`secs[].pts`, missing/non-numeric = 0), so the paper's total mark follows what the teacher sets.
    - `maxes(c)` in `monthly.js` must stay `T = rs.mx[parseInt(c.n)] || 100` (the class's configured maximum; grade = `parseInt("12NGS-B")`), with `a/t/h/b/c/o = T × W.x` and `act = T × (W.a+W.t+W.h+W.b)`, where `W = cfg().w`. `scaleC()` must keep the divide-by-zero guard (full ≤ 0 or non-numeric → null).
    - When auditing, report whether these two functions still match this description; report differences, do not fix them silently.

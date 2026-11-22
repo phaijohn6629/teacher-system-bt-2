@@ -73,7 +73,7 @@ function box(){
   if(!x||!x.c.st.length){el.innerHTML="";return}
   if(!A.day)A.day=today();
   var mo=A.day.slice(0,7),o=A.docs[docId(x,mo)];
-  if(!o||(!o.d&&!o.p)){load(x,mo).then(box);}
+  if(!o||(!o.d&&!o.p)){load(x,mo).then(box).catch(function(e){console.error("att:",e)});}
   var di=(dOf(A.day).getDay()+6)%7,sun=dOf(A.day).getDay()===0,hol=window.SCHX&&SCHX.FIXHOL[A.day.slice(5)];
   var R=recOf(x,A.day),bl=sun?[]:blocksOf(x.list,di),seen={};bl.forEach(function(b){seen[b.p]=1});
   if(R)Object.keys(R).forEach(function(p){if(!seen[p])bl.push({p:p,s:R[p].s||"",t:R[p].t||"",x:1})});
@@ -127,7 +127,7 @@ function save(x){
     notify("បានរក្សាទុកវត្តមាន "+pName(p).replace(/<[^>]+>/g,""));
     if(x.mon)mLog(x,day,p,old,r);
   },function(e){A.busy=false;console.error("att save:",e);box();
-    alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ។ សូម Admin Publish firestore.rules កំណែថ្មី (មាន att)។":"មិនអាចរក្សាទុកបានទេ · សូមពិនិត្យអ៊ីនធឺណិត")});
+    alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ។ សូម Admin Publish firestore.rules កំណែថ្មី (មាន att)។":"មិនអាចរក្សាទុកបានទេ · សូមពិនិត្យអ៊ីនធឺណិត")}).catch(function(e){A.busy=false;console.error("att after-save:",e)});
 }
 /* ប្រវត្តិសកម្មភាព (ដូច monitor.js) */
 function mLog(x,day,p,old,r){
@@ -143,12 +143,12 @@ function logDlg(){
   if(!A.logMo)A.logMo=A.day.slice(0,7);
   var d=$("attDlg");if(!d){d=document.createElement("dialog");d.id="attDlg";d.className="wide";document.body.appendChild(d);
     d.addEventListener("click",function(e){var b=e.target.closest("[data-al]");if(e.target===d)d.close();if(!b)return;var a=b.dataset.al;
-      if(a==="x")d.close();else if(a==="st"){A.logSt=A.logSt===b.dataset.k?"":b.dataset.k;logDlg()}else if(a==="pr")printLog();else if(a==="rf"){var y=ctx();if(y)load(y,A.logMo,true).then(logDlg)}});
+      if(a==="x")d.close();else if(a==="st"){A.logSt=A.logSt===b.dataset.k?"":b.dataset.k;logDlg()}else if(a==="pr")printLog();else if(a==="rf"){var y=ctx();if(y)load(y,A.logMo,true).then(logDlg).catch(function(e){console.error("att:",e)})}});
     d.addEventListener("change",function(e){if(e.target.id==="alMo"&&/^\d{4}-\d{2}$/.test(e.target.value)){A.logMo=e.target.value;A.logSt="";logDlg()}});
     d.addEventListener("close",function(){A.logOpen=false});}
   A.logOpen=true;
   var o=A.docs[docId(x,A.logMo)];
-  if(!o||(!o.d&&!o.p)){d.innerHTML="<div class=dlgb><p class=note>កំពុងផ្ទុក…</p></div>";if(!d.open)d.showModal();load(x,A.logMo).then(function(){if(A.logOpen)logDlg()});return}
+  if(!o||(!o.d&&!o.p)){d.innerHTML="<div class=dlgb><p class=note>កំពុងផ្ទុក…</p></div>";if(!d.open)d.showModal();load(x,A.logMo).then(function(){if(A.logOpen)logDlg()}).catch(function(e){console.error("att:",e)});return}
   if(!o.d){if(!d.open)d.showModal();return}
   d.innerHTML=logHtml(x,o);
   if(!d.open)d.showModal();
