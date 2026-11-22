@@ -18,6 +18,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
 function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
+function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
 function GCS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📊 រូបស្ថិតិ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
@@ -131,7 +132,7 @@ add([7,8],33,1,function(){var P=[nz(-5,5),nz(-5,5)],v=[nz(-4,4),nz(-4,4)];
    {q:"$P$ is translated "+Math.abs(v[0])+" units "+(v[0]>0?"right":"left")+" and "+Math.abs(v[1])+" units "+(v[1]>0?"up":"down")+". Write down the coordinates of the image.",a:[A(P[0]+v[0],null,"num","x ="),A(P[1]+v[1],null,"num","y =")],m:1}],
    "(a) "+pt([P[0],-P[1]])+" (b) "+pt([P[0]+v[0],P[1]+v[1]]))});
 add([9],33,2,function(){var b=ri(1,359),s=pick([25000,50000,100000]),c=ri(3,15),f=function(v){return("00"+v).slice(-3)};
-  return EX("cg8",1,"",[{q:"The bearing of B from A is "+f(b)+"°. Work out the bearing of A from B.",a:[A((b+180)%360,null,"num","bearing =")],m:1},
+  return EXF(GBR({legs:[{b:b,d:3}],arcs:[{at:0,to:1,lab:f(b)+"°"},{at:1,to:0,lab:"?"}]}),"cg8",1,"",[{q:"The bearing of B from A is "+f(b)+"°. Work out the bearing of A from B.",a:[A((b+180)%360,null,"num","bearing =")],m:1},
    {q:"On a map with scale 1 : "+s+", the distance between A and B is "+c+" cm. Work out the real distance in kilometres.",a:[A(nf(c*s/100000),null,"num","km")],m:2}],
    "(a) $"+f(b)+(b<180?"+":"-")+"180="+f((b+180)%360)+"$ (b) $"+c+"\\times"+s+"$ cm $="+nf(c*s/100000)+"$ km")});
 add([8,9],33,3,function(){var d=ri(60,300),t=pick([1.5,2,2.5,3,4]),s=d/t,m=ri(20,90);

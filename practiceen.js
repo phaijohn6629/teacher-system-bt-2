@@ -23,6 +23,8 @@ function pt(p){return"("+p[0]+", "+p[1]+")"}
 function GC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
 function trg(){var a=[ri(1,4),ri(1,4)],b=[a[0]+ri(2,4),a[1]+ri(0,1)],c=[a[0]+ri(0,3),a[1]+ri(2,4)],sx=pick([1,-1]),sy=pick([1,-1]);return[a,b,c].map(function(p){return[sx*p[0],sy*p[1]]})}
 /* 📊 GS — រូបស្ថិតិ (GF.stat) · try/catch + ការពារ NaN */
+function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
+function GCT(o){try{var r=window.PXEN.GF.circleTh(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* ⭕ រូបទ្រឹស្ដីបទរង្វង់ */
 function GS(o){try{var r=window.PXEN.GF.stat(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
 function cR(a,m){var R=2;a.forEach(function(p){R=Math.max(R,Math.abs(p[0])+(m||1),Math.abs(p[1])+(m||1))});return Math.min(R,14)}
 function cv(v){return"\\begin{pmatrix}"+v[0]+"\\\\"+v[1]+"\\end{pmatrix}"}
@@ -238,7 +240,7 @@ G9[11]={1:L(
    return K("enl","A shape with area $"+A0+"$ cm² is enlarged by scale factor $"+k+"$. Find the area of the image.",[A(nf(A0*k*k),null,"num","cm²")],"Area scale factor $=k^2="+nf(k*k)+"$, so area $="+A0+"\\times"+nf(k*k)+"="+nf(A0*k*k)+"$ cm²")}),
  3:L(
  function(){var b=ri(1,359),r=(b+180)%360,f=function(v){return("00"+v).slice(-3)};
-   return K("bear","The bearing of $B$ from $A$ is $"+f(b)+"^\\circ$. Find the bearing of $A$ from $B$.",[A(r,f(r),"num","bearing =")],"Back bearing $="+f(b)+(b<180?"+":"-")+"180="+f(r)+"^\\circ$")},
+   return K("bear","The bearing of $B$ from $A$ is $"+f(b)+"^\\circ$. Find the bearing of $A$ from $B$.",[A(r,f(r),"num","bearing =")],"Back bearing $="+f(b)+(b<180?"+":"-")+"180="+f(r)+"^\\circ$",GBR({legs:[{b:b,d:3}],arcs:[{at:0,to:1,lab:f(b)+"°"},{at:1,to:0,lab:"?"}]}))},
  function(){var n=pick([25000,50000,100000,200000]),c=ri(2,20)+pick([0,0.5]),km=c*n/100000;
    return K("scl","A map has scale $1:"+n+"$. Two towns are $"+c+"$ cm apart on the map. Find the real distance in km.",[A(nf(km),null,"num","km")],"$"+c+"\\times"+n+"="+nf(c*n)+"$ cm $="+nf(km)+"$ km")})};
 /* 12 Averages and spread */
@@ -468,6 +470,17 @@ G10[13]={1:L(
    return K("alt","$TA$ is a tangent to a circle at $A$. $AB$ is a chord and $C$ is a point on the major arc. Angle $TAB="+x+"^\\circ$. Find angle $ACB$.",[A(x,null,"num","ACB =")],"Alternate segment theorem: the angle between the tangent and the chord equals the angle in the alternate segment, so $ACB="+x+"^\\circ$.",GF.circle({th:"alt",x:x,lab:{A:x+"°",C:"?"}}))},
  function(){var x=ri(25,70),y=ri(25,70);
    return K("seg","$A$, $B$, $C$ and $D$ lie on a circle. Angle $ADB="+x+"^\\circ$ and angle $DBC="+y+"^\\circ$. Find angle $ACB$ and angle $DAC$.",[A(x,null,"num","ACB ="),A(y,null,"num","DAC =")],"Angles in the same segment are equal: $ACB=ADB="+x+"^\\circ$ and $DAC=DBC="+y+"^\\circ$.",GF.circle({th:"seg",x:x,y:y,lab:{D:x+"°",B:y+"°",C:"?",A:"?"}}))})};
+/* ➕ ទ្រឹស្ដីបទរង្វង់បន្ថែម៖ ប៉ះ ⊥ កាំ · ប៉ះពីរពីចំណុចខាងក្រៅ · អង្កត់ធ្នូកាត់កែងពីផ្ផិត (រូប GF.circleTh) */
+(function(){var TRP=[[5,12,13],[8,15,17],[6,8,10],[9,12,15],[7,24,25],[3,4,5],[20,21,29]];
+ var f1=function(){var x=ri(20,70);
+  return K("tgo","$TA$ is a tangent to a circle, centre $O$, at $T$. Angle $TOA="+x+"^\\circ$. Find angle $OAT$.",[A(90-x,null,"num","OAT =")],"A tangent is perpendicular to the radius, so $OTA=90^\\circ$. Angles in triangle $OTA$: $OAT=180-90-"+x+"="+(90-x)+"^\\circ$.",GCT({th:"tg1",k:.55,x:x,lab:{O:x+"°",A:"?"}}))};
+ var f2=function(){var t=ri(4,18);
+  return K("tg2","$AB$ and $AC$ are tangents to a circle at $B$ and $C$. $AB="+t+"$ cm. Find the length of $AC$.",[A(t,null,"num","AC =")],"Tangents drawn from the same external point are equal in length, so $AC=AB="+t+"$ cm.",GCT({th:"tg2",k:.55,sl:[["A","B",t+" cm"],["A","C","?"]]}))};
+ var f3=function(){var z=pick(TRP),m=ri(1,2),r=z[0]*m,t=z[1]*m,d=z[2]*m;
+  return K("tgr","$AT$ is a tangent to a circle, centre $O$, at $T$. The radius is $"+r+"$ cm and $OA="+d+"$ cm. Find the length of $AT$.",[A(t,null,"num","AT =")],"The tangent is perpendicular to the radius, so $OTA=90^\\circ$. Pythagoras: $AT^2="+d+"^2-"+r+"^2="+(d*d-r*r)+"\\Rightarrow AT="+t+"$ cm.",GCT({th:"tg1",k:r/d,sl:[["O","T",r+" cm"],["O","A",d+" cm",null,7],["A","T","?"]]}))};
+ var f4=function(){var z=pick(TRP),m=ri(1,2),h=z[1]*m,dd=z[0]*m,r=z[2]*m;
+  return K("chdr","$AB$ is a chord of a circle, centre $O$, and $AB="+2*h+"$ cm. The perpendicular distance from $O$ to $AB$ is $"+dd+"$ cm. Find the radius of the circle.",[A(r,null,"num","r =")],"The perpendicular from the centre bisects the chord, so $AM="+h+"$ cm. Pythagoras in triangle $OMA$: $r^2="+dd+"^2+"+h+"^2="+(dd*dd+h*h)+"\\Rightarrow r="+r+"$ cm.",GCT({th:"chd",dd:dd/r,sl:[["A","B",2*h+" cm"],["O","M",dd+" cm"],["O","A","?"]]}))};
+ var o2=G10[13][2],o3=G10[13][3];G10[13][2]=L(o2,f1,f2);G10[13][3]=L(o3,f3,f4)})();
 /* 14 Vectors */
 G10[14]={1:L(
  function(){var a=[nz(-6,6),nz(-6,6)],b=[nz(-6,6),nz(-6,6)];
@@ -640,7 +653,7 @@ var GF=(function(){
    sp={s:["A B","B C","C D","D A"],a:[["A","D","B"],["B","A","C"],["C","B","D"],["D","C","A"]]}}
   else if(th==="tan"){var f=Math.min(65,(180-x)/2);at({A:f,B:-f});P.P=[R0/Math.cos(f*R),0];sp={s:["O A","O B","P A","P B"],a:[["P","A","B"],["O","A","B"]],r:[["O","A","P"],["O","B","P"]]};O=true;od="w";ex.push(P.P)}
   else if(th==="tg1"||th==="tg2"){var kk=Math.max(.3,Math.min(.8,o.k||.6)),ph=Math.acos(kk)/R;P.A=[R0/kk,0];at({T:ph});if(th==="tg2"){P.B=pol(ph);P.C=pol(-ph);delete P.T}
-   sp=th==="tg1"?{s:["O T","O A","A T"],a:[],r:[["O","T","A"]]}:{s:["O B","O C","O A","A B","A C"],a:[],r:[["O","B","A"],["O","C","A"]]};O=true;od="w";ex.push(P.A)}
+   sp=th==="tg1"?{s:["O T","O A","A T"],a:[["O","T","A"],["A","T","O"]],r:[["O","T","A"]]}:{s:["O B","O C","O A","A B","A C"],a:[],r:[["O","B","A"],["O","C","A"]]};O=true;od="w";ex.push(P.A)}
   else if(th==="chd"){var dd=Math.max(.15,Math.min(.85,o.dd||.5)),hh=R0*Math.sqrt(1-dd*dd);P.A=[-hh,-R0*dd];P.B=[hh,-R0*dd];P.M=[0,-R0*dd];sp={s:["A B","O M","O A"],a:[],r:[["O","M","B"]]};O=true;od="n"}
   else if(th==="alt"){at({A:270,B:270+2*x,C:90+x});P.T=[P.A[0]+1.6,P.A[1]];sp={s:["A T","A B","C A","C B"],a:[["A","T","B"],["C","A","B"]]};ex.push(P.T)}
   else if(th==="chx"){var bc=(360-x-y)/2,t1=200,dA=t1,dB=t1+x,dC=dB+bc,dD=dC+y;at({A:dA,B:dB,C:dC,D:dD});
@@ -650,7 +663,7 @@ var GF=(function(){
    if(!(Mx>R0*1.3&&Mx<R0*4)){tn=25;tf=125;N=pol(tn);F=pol(tf);Mx=N[0]-N[1]*(F[0]-N[0])/(F[1]-N[1])}
    P.M=[Mx,0];P.N1=pol(tn);P.N2=pol(-tn);P.F1=pol(tf);P.F2=pol(-tf);hide=["N1","N2","F1","F2"];sp={s:["M F1","M F2"],a:[["M","N1","N2"]]};ex.push(P.M);extra=[[-tn,tn,x+"°","in"],[tf,360-tf,y+"°"]]}
   else{var bc2=(360-2*x-2*y)/2,t2=200;at({A:t2,B:t2+2*x,C:t2+2*x+bc2,D:t2+2*x+bc2+2*y});sp={s:["A B","B C","C D","D A","A C","B D"],a:[["D","A","B"],["B","D","C"],["C","A","B"],["A","D","C"]]}}
-  for(k in P)pts[hide.indexOf(k)>=0?"_"+k:nm(k)]=[P[k][0],P[k][1],hide.indexOf(k)>=0?"":dir8(out([0,0],P[k]))];if(O)pts.O=[0,0,od];if(mdir&&pts.M)pts.M[2]=mdir;
+  for(k in P)pts[hide.indexOf(k)>=0?"_"+k:nm(k)]=[P[k][0],P[k][1],hide.indexOf(k)>=0?"":dir8(out([0,0],P[k]))];if(O)pts.O=[0,0,od];if(mdir&&pts.M)pts.M[2]=mdir;if(th==="chd"&&pts.M)pts.M[2]="nw";
   cm.push("circle O "+R0+" black");
   sp.s.forEach(function(z){var w=z.split(" "),c=/^(gray|blue|red)$/.test(w[2]||"")?w[2]:"black";cm.push("seg "+rf2(w[0])+" "+rf2(w[1])+" "+c)});
   (sp.r||[]).forEach(function(z){cm.push("right "+z.map(rf2).join(" "))});
@@ -868,7 +881,39 @@ var GF=(function(){
    else{var pp=o.c.map(function(c,j){return[mxq(e[j]),c/ym3*Hc3]});for(i=0;i+1<pp.length;i++)seg(pp[i],pp[i+1],"blue");pp.forEach(function(c){fillR(circR(c,.09),"#2f6fd0",16)})}
    if(o.xt)tx.push([Wc3/2,-1.5,o.xt,0,0]);ext.push([0,-2]);}
   return FB({},cm,{tx:tx,ext:ext,nts:false})}
- return{stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob,thales:thales}})();
+ /* GF.bearing({legs:[{b (ទិស 0–360°), d (ប្រវែងពិត), from (លិបិក្រមចំណុចចាប់ផ្ដើម · លំនាំដើម = ចំណុចមុន), dl (ស្លាកចម្ងាយ)}], n:["A","B","C"…] (ឈ្មោះចំណុច · "" = គ្មានឈ្មោះ),
+     arcs:[{at:i, to:j, lab:"075°"|"?", r}] (ព្រួញទិសខាងជើង N ត្រង់បញ្ឈរនៅចំណុច i + ធ្នូតាមទ្រនិចនាឡិកាពី N ទៅ i→j · ស្លាកមុំ «?» = ផ្នែកសំណួរសុំរក),
+     chords:[{a,b,dl}] (ជ្រុងបិទប្រផេះ), north:[i…] (N បន្ថែមគ្មានធ្នូ)})
+   ចំណុចចាប់ផ្ដើម A=(0,0) · រូបត្រូវមាត្រដ្ឋានពិតតាមទិស/ប្រវែង · ស្លាកចំណុចជ្រើសទិសក្នុងចន្លោះធំបំផុតរវាងបន្ទាត់ N/ជ្រុង/ស្លាកមុំ */
+ function bearing(o){var legs=o.legs||[],NM=o.n||["A","B","C","D","E","F"],Q={},P=[[0,0]],cm=[],tx=[],ext=[],pts={},rays=[],Ng={},segs=[],avoid=[],lbs=[],k;
+  var dm=0;legs.forEach(function(l){dm=Math.max(dm,l.d||3)});
+  legs.forEach(function(l,i){var f=P[l.from==null?i:l.from],t=l.b*R,d=Math.max(l.d||3,.55*dm);P.push([f[0]+d*Math.sin(t),f[1]+d*Math.cos(t)])});
+  P.forEach(function(p,i){Q[i]=p});fit(Q,3.2);P=P.map(function(_,i){return Q[i]});
+  function bg(a,b){return(Math.atan2(P[b][0]-P[a][0],P[b][1]-P[a][1])/R+360)%360}
+  function ds(a,b){return Math.hypot(P[b][0]-P[a][0],P[b][1]-P[a][1])}
+  function dseg(c,p,q){var dx=q[0]-p[0],dy=q[1]-p[1],t=Math.max(0,Math.min(1,((c[0]-p[0])*dx+(c[1]-p[1])*dy)/(dx*dx+dy*dy||1)));return Math.hypot(c[0]-p[0]-t*dx,c[1]-p[1]-t*dy)}
+  P.forEach(function(_,i){rays[i]=[]});
+  var g=[0,0];P.forEach(function(p){g[0]+=p[0]/P.length;g[1]+=p[1]/P.length});
+  legs.forEach(function(l,i){var f=l.from==null?i:l.from;cm.push("seg "+xy(P[f])+" "+xy(P[i+1])+" black");rays[f].push(bg(f,i+1));rays[i+1].push(bg(i+1,f));segs.push([P[f],P[i+1]]);lbs.push([P[f],P[i+1],l.dl,segs.length-1])});
+  (o.chords||[]).forEach(function(c){cm.push("seg "+xy(P[c.a])+" "+xy(P[c.b])+" gray");rays[c.a].push(bg(c.a,c.b));rays[c.b].push(bg(c.b,c.a));segs.push([P[c.a],P[c.b]]);lbs.push([P[c.a],P[c.b],c.dl,segs.length-1])});
+  var rmax={};(o.arcs||[]).forEach(function(a){Ng[a.at]=1;rmax[a.at]=Math.max(rmax[a.at]||0,a.r||Math.min(.75,.42*ds(a.at,a.to)))});(o.north||[]).forEach(function(i){Ng[i]=1});
+  (o.arcs||[]).forEach(function(a){var V=P[a.at],b=bg(a.at,a.to),rr=a.r||Math.min(.75,.42*ds(a.at,a.to)),n=Math.max(6,Math.ceil(b/12)),j,pr=null;
+   for(j=0;j<=n;j++){var t=b*R*j/n,q=[V[0]+rr*Math.sin(t),V[1]+rr*Math.cos(t)];if(pr)cm.push("seg "+xy(pr)+" "+xy(q)+" blue");pr=q;avoid.push(q)}
+   var tb=b*R,E=[V[0]+rr*Math.sin(tb),V[1]+rr*Math.cos(tb)],tg=[Math.cos(tb),-Math.sin(tb)],nr=[Math.sin(tb),Math.cos(tb)],bk=[E[0]-.15*tg[0],E[1]-.15*tg[1]];
+   cm.push("seg "+xy(E)+" "+xy([bk[0]+.07*nr[0],bk[1]+.07*nr[1]])+" blue","seg "+xy(E)+" "+xy([bk[0]-.07*nr[0],bk[1]-.07*nr[1]])+" blue");
+   if(a.lab){var m=b/2*R,lx=Math.sin(m),ly=Math.cos(m),lp;rays[a.at].push(b<38?-60:b/2);
+    if(b<38){lp=[V[0]-.32,V[1]+rr*.8];tx.push([V[0],V[1]+rr*.8,a.lab,-1,0,2])}else{lp=[V[0]+(rr+.3)*lx,V[1]+(rr+.3)*ly];tx.push([V[0]+rr*Math.sin(m),V[1]+rr*Math.cos(m),a.lab,lx,ly,2])}avoid.push(lp)}});
+  for(k in Ng){var V0=P[k],Ln=Math.max(1,(rmax[k]||0)+.5),tip=[V0[0],V0[1]+Ln];rays[k].push(0);cm.push("vec "+xy(V0)+" "+xy(tip)+" black");tx.push([tip[0],tip[1],"N",0,1]);ext.push([tip[0],tip[1]+.35]);segs.push([V0,tip])}
+  /* ស្លាកចម្ងាយ៖ ជ្រើសខាងណាឆ្ងាយបំផុតពីបន្ទាត់ផ្សេង · ធ្នូ · ស្លាកមុំ */
+  lbs.forEach(function(z){if(!z[2])return;var p=z[0],q=z[1],m=[(p[0]+q[0])/2,(p[1]+q[1])/2],u=out(p,q),best=null,bs=-1;
+   [[u[1],-u[0]],[-u[1],u[0]]].forEach(function(nv){var c=[m[0]+nv[0]*.4,m[1]+nv[1]*.4],sc=9;segs.forEach(function(sg,j){if(j!==z[3])sc=Math.min(sc,dseg(c,sg[0],sg[1]))});avoid.forEach(function(w){sc=Math.min(sc,Math.hypot(c[0]-w[0],c[1]-w[1])*.8)});if(sc>bs+1e-9){bs=sc;best=nv}});
+   tx.push([m[0],m[1],z[2],best[0],best[1],6])});
+  P.forEach(function(p,i){var nm=NM[i]==null?"":NM[i],best=0,bd=-1,c;ext.push(p);
+   if(!rays[i].length)best=(Math.atan2(p[0]-g[0],p[1]-g[1])/R+360)%360;
+   else for(c=0;c<360;c+=45){var mn=360;rays[i].forEach(function(a){mn=Math.min(mn,Math.abs(((c-a)%360+540)%360-180))});if(mn>bd){bd=mn;best=c}}
+   pts[(nm?"":"_")+(nm||i)]=[p[0],p[1],nm?dir8([Math.sin(best*R),Math.cos(best*R)]):""]});
+  return FB(pts,cm,{tx:tx,ext:ext})}
+ return{stat:stat,coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,circleTh:thm,bearing:bearing,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

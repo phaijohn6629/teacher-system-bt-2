@@ -8,6 +8,7 @@
 "use strict";
 var X=window.PX,E=window.PXEN,Q=X.Q,A=X.A,ri=X.ri,nz=X.nz,pick=X.pick,fr=X.fr,sg=X.sg,co=X.co,poly=X.poly,polyT=X.polyT,sgp=X.sgp,gcd=X.gcd,cnk=X.cnk;
 var K=E.K,L=E.L,r2=E.r2,sum=E.sum,nf=E.nf,sqT=E.sqT,piT=E.piT,pt=E.pt,cv=E.cv,DP=E.DP,TR=E.TR,D=E.D,G9=E.G9,G10=E.G10;
+function GBR(o){try{var r=window.PXEN.GF.bearing(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 🧭 រូប Bearings */
 function fT(f){return f.t}
 function pw(c,n){/* c·xⁿ ជា LaTeX (ដំបូង) */if(!c)return"";var a=Math.abs(c),s=c<0?"-":"";return s+(a===1&&n?"":a)+(n===0?"":n===1?"x":"x^{"+n+"}")}
 function pwS(c,n){return c?(c<0?"-":"+")+pw(Math.abs(c),n):""}
@@ -111,7 +112,7 @@ G11[7]={1:L(
    return K("pyr","A pyramid has a square base of side $"+s+"$ cm. Its vertex is $"+h+"$ cm vertically above the centre of the base. Calculate the angle between a sloping edge and the base. "+DP,[A(nf(t),null,"num","angle =")],"Half-diagonal $=\\dfrac{"+s+"\\sqrt2}{2}="+dg(s/Math.SQRT2)+"$, $\\tan\\theta=\\dfrac{"+h+"}{"+dg(s/Math.SQRT2)+"}\\Rightarrow\\theta="+dg(t)+"^\\circ$")},
  function(){var a=ri(5,20),b=ri(5,20),t1=ri(20,80),t2=t1+ri(60,120),ang=t2-t1,d=Math.sqrt(a*a+b*b-2*a*b*Math.cos((180-ang)*D));
    return K("bc","A ship sails $"+a+"$ km on a bearing of $0"+("0"+t1).slice(-2)+"^\\circ$, then $"+b+"$ km on a bearing of $"+("00"+t2).slice(-3)+"^\\circ$. Calculate its distance from the starting point. "+DP,[A(nf(d),null,"num","km")],
-     "The angle between the two legs is $180^\\circ-"+ang+"^\\circ="+(180-ang)+"^\\circ$. Cosine rule: $d^2="+a+"^2+"+b+"^2-2\\times"+a+"\\times"+b+"\\cos"+(180-ang)+"^\\circ\\Rightarrow d="+dg(d)+"$ km")})};
+     "The angle between the two legs is $180^\\circ-"+ang+"^\\circ="+(180-ang)+"^\\circ$. Cosine rule: $d^2="+a+"^2+"+b+"^2-2\\times"+a+"\\times"+b+"\\cos"+(180-ang)+"^\\circ\\Rightarrow d="+dg(d)+"$ km",GBR({legs:[{b:t1,d:a,dl:a+" km"},{b:t2,d:b,dl:b+" km"}],chords:[{a:0,b:2,dl:"?"}],arcs:[{at:0,to:1,lab:("00"+t1).slice(-3)+"°"},{at:1,to:2,lab:("00"+t2).slice(-3)+"°"}]}))})};
 /* 8 Vectors and geometry */
 G11[8]={1:L(G10[14][2],
  function(){return K("vm","$O$ is the origin, $\\overrightarrow{OA}=\\mathbf a$ and $\\overrightarrow{OB}=\\mathbf b$. $M$ is the midpoint of $AB$. Write $\\overrightarrow{OM}=p\\mathbf a+q\\mathbf b$. Find $p$ and $q$.",[A("1/2","\\frac12","num","p ="),A("1/2","\\frac12","num","q =")],"$\\overrightarrow{OM}=\\mathbf a+\\tfrac12(\\mathbf b-\\mathbf a)=\\tfrac12\\mathbf a+\\tfrac12\\mathbf b$")}),
