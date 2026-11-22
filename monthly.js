@@ -11,6 +11,7 @@
 "use strict";
 var DEF={w:{a:.15,t:.15,h:.15,b:.15,c:.2,o:.2},gr:[.904,.804,.704,.604,.504]};
 var COL=[["a","សកម្មភាព\nក្នុងថ្នាក់"],["t1","តេស្ត\nលើកទី១"],["t2","តេស្ត\nលើកទី២"],["h","ស្រាវជ្រាវ"],["b","សៀវភៅ\nកត់ត្រា"]];
+var SUBJ="គណិតវិទ្យា";   /* មុខវិជ្ជា (ពិន្ទុទាំងអស់ជាពិន្ទុគណិតវិទ្យា · មិនប៉ះការគណនា) */
 var mT="",mI=0,mM=(function(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)})();
 function cfg(){var m=rs.ms||{};return{w:Object.assign({},DEF.w,m.w||{}),gr:(m.gr&&m.gr.length===5)?m.gr:DEF.gr}}
 function cls(){var cl=rs.c[mT]||[];if(mI>=cl.length)mI=0;return cl[mI]}
@@ -93,7 +94,7 @@ function msHtml(c,ed){
         "<td class=ms-auto data-o=a>"+fmt(o.a)+"</td><td class=ms-auto data-o=t>"+fmt(o.t)+"</td><td class=ms-auto data-o=h>"+fmt(o.h)+"</td><td class=ms-auto data-o=b>"+fmt(o.b)+"</td><td class='ms-auto ms-b' data-o=act>"+fmt(o.act)+"</td>"+
         "<td class=ms-in><input data-r="+i+" data-mk=c value='"+esc(r.c==null?"":r.c)+"' inputmode=decimal "+(ed?"":"readonly")+(r.cs!=null&&r.c!=null&&+r.c===+r.cs?" class=ms-auto-in title='📝 ពីប្រឡងទម្រង់បិទ (កែបាន)'":"")+"></td><td class=ms-in><input data-r="+i+" data-mk=o value='"+esc(r.o==null?"":r.o)+"' inputmode=decimal "+(ed?"":"readonly")+"></td>"+
         "<td class=ms-b data-o=tot>"+fmt(o.tot)+"</td><td data-o=g>"+gbadge(o.g)+"</td></tr>"}).join("")+"</tbody></table></div>";
-  return testInfo(R,c)+h+summary(c)+settingsHtml();
+  return "<div class=ms-subj><b>📘 មុខវិជ្ជា៖ "+esc(SUBJ)+"</b> · ថ្នាក់ "+esc(c.n)+" · "+moTxt()+"</div>"+testInfo(R,c)+h+summary(c)+settingsHtml();
 }
 function msMark(c){$("msBody")._h=msHtml(c,canE())}   /* បន្ទាប់ពីកែក្នុងកន្លែង (in-place) → កត់ត្រា HTML ថ្មី ដូច្នេះ Sync ពី Cloud មិនបង្កើតតារាងឡើងវិញ */
 /* ប្រអប់តេស្ត៖ ✏️ ដោយដៃ (ស្វ័យប្រវត្តិមិនជាន់) · 📝 ពីតេស្ត (ស្វ័យប្រវត្តិ · កែបាន) */
@@ -250,15 +251,15 @@ function moTxt(){var p=mM.split("-");return"ខែ"+M[+p[1]-1]+" ឆ្នាំ
 $("msXl").onclick=function(){
   var c=cls();if(!c)return;var A=rowsOut(c);
   loadXL(function(){
-    var ws=XLSX.utils.aoa_to_sheet([["ពិន្ទុប្រចាំខែ · ថ្នាក់ "+c.n+" · "+moTxt()+" · "+tn(mT)],[]].concat(A));ws["!cols"]=[{wch:5},{wch:22}].concat(A[0].slice(2).map(function(){return{wch:12}}));
-    var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,c.n.slice(0,30));XLSX.writeFile(wb,"ពិន្ទុប្រចាំខែ-"+c.n+"-"+mM+".xlsx");
+    var ws=XLSX.utils.aoa_to_sheet([["ពិន្ទុប្រចាំខែ · មុខវិជ្ជា "+SUBJ+" · ថ្នាក់ "+c.n+" · "+moTxt()+" · "+tn(mT)],[]].concat(A));ws["!cols"]=[{wch:5},{wch:22}].concat(A[0].slice(2).map(function(){return{wch:12}}));
+    var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,c.n.slice(0,30));XLSX.writeFile(wb,"ពិន្ទុប្រចាំខែ-"+SUBJ+"-"+c.n+"-"+mM+".xlsx");
   });
 };
 $("msPr").onclick=function(){
   var c=cls();if(!c)return;var A=rowsOut(c),I=inf();
   var h="<div class='pg osum msp'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
    "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
-   "<h2 class=moul style='text-align:center;font-size:13pt;margin:4px 0 2px'>តារាងពិន្ទុប្រចាំខែ</h2><p style='text-align:center;margin:0 0 6px'>ថ្នាក់ <b>"+esc(c.n)+"</b> · "+moTxt()+" · គ្រូ៖ <b>"+esc(tn(mT))+"</b></p>"+
+   "<h2 class=moul style='text-align:center;font-size:13pt;margin:4px 0 2px'>តារាងពិន្ទុប្រចាំខែ</h2><p style='text-align:center;margin:0 0 6px'>ថ្នាក់ <b>"+esc(c.n)+"</b> · មុខវិជ្ជា <b>"+esc(SUBJ)+"</b> · "+moTxt()+" · គ្រូ៖ <b>"+esc(tn(mT))+"</b></p>"+
    "<table class=ct><thead><tr>"+A[0].map(function(x){return"<th>"+esc(x)+"</th>"}).join("")+"</tr></thead><tbody>"+A.slice(1).map(function(r){return"<tr>"+r.map(function(x,j){return"<td"+(j===1?" style='text-align:left'":"")+">"+esc(x)+"</td>"}).join("")+"</tr>"}).join("")+"</tbody></table>"+
    wpFoot(mT,tn(mT),"គ្រូបង្រៀន",true)+"</div>";
   window.SCHX.fontsOk().then(function(){doPrint(h)});
