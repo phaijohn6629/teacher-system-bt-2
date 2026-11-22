@@ -162,7 +162,7 @@ function splitPts(tot,n){tot=+tot||0;n=Math.max(1,n|0);var h=Math.round(tot*2),b
 /* ⚖️ ទម្ងន់តាមលេខរ៉ូម៉ាំង៖ ទម្ងន់ = ចំនួនសំណួរ × កម្រិត (កម្រិតខ្លាំងជាង = ទម្ងន់ធំជាង) · បើកម្រិតដូចគ្នា/មិនស្គាល់ → កើនតាមលំដាប់ (១ → ២) · ពិន្ទុតូចបំផុត ០,៥ ក្នុងមួយផ្នែក · បូកត្រូវសរុបជានិច្ច */
 var LW={1:1,5:1.25,2:1.5,6:1.75,3:2,4:2.25};
 function wts(secs){secs=secs||[];var N=secs.length,lv=secs.map(function(z){return LW[z.lv]}),flat=lv.some(function(v){return v===undefined})||lv.every(function(v){return v===lv[0]});
-  return secs.map(function(z,i){var n=Math.max(1,(z.it||[]).length||+z.n||1),f=flat?(N>1?1+i/(N-1):1):lv[i];return n*f})}
+  return secs.map(function(z,i){var r=N>1?i/(N-1):0,f=flat?1+r:lv[i]*(1+.25*r);return f})}   /* ទម្ងន់ = កម្រិត (មិនគិតចំនួនសំណួរ) → រ៉ូម៉ាំងក្រោយ/ពិបាកជាង ទទួលពិន្ទុរួមធំជាង */
 function splitW(tot,w){var h=Math.round((+tot||0)*2),n=w.length,sw=0,a=[],r=[],u=0,i;if(!n)return[];w.forEach(function(v){sw+=v>0?v:0});if(h<n||sw<=0)return splitPts(tot,n);
   for(i=0;i<n;i++){var x=(h-n)*Math.max(0,w[i])/sw;a.push(1+Math.floor(x));r.push(x-Math.floor(x));u+=a[i]}
   var ix=r.map(function(_,k){return k}).sort(function(p,q){return r[q]-r[p]||q-p});for(i=0;i<h-u;i++)a[ix[i]]++;return a.map(function(v){return v/2})}
@@ -179,11 +179,11 @@ function stepHtml(x,pts){var S=solSteps(noP(x.sol));if(!S.length||!(pts>0))retur
     if(cur.length)parts.push("$$\\begin{aligned}"+cur.join("\\\\")+"\\end{aligned}$$");so.push("@@PC"+i+"@@"+parts.join("\n"))});return{so:so.join("\n"),G:G}}
 function keyBox(x,full,pp,stp){
   if(stp&&x.sol&&pp&&pp.p>0){var sh=stepHtml(x,pp.p);if(sh){var hh=TX(sh.so);sh.G.forEach(function(g,i){hh=hh.replace("@@PC"+i+"@@",pc(g.p))});
-    return"<div class='exp-k exp-kf exp-kp'>"+fig(x.kfig)+"<div class=exp-ks>"+hh+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span>"+pc(pp.c)+"</div></div>"}}
+    return"<div class='exp-k exp-kf exp-kp'>"+fig(x.kfig)+"<div class=exp-ks>"+hh+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span></div></div>"}}   /* ទម្រង់បើក៖ ពិន្ទុតាមជំហានប៉ុណ្ណោះ (បូក = ពិន្ទុលំហាត់) · គ្មានលេខសរុបបង្គរ */
   if(x.sol&&(full||/\n|\$\$/.test(x.sol))){var m=pp&&pp.p>=1?Math.floor(pp.p)/2:0;
-    var so=noP(x.sol);if(m){var ti=so.indexOf("\\text{តាម"),j=ti>=0?so.lastIndexOf("$$",ti):so.indexOf("$$");if(j<0||(ti>=0&&j<0))j=0;
+    if(stp)m=0;var so=noP(x.sol);if(m){var ti=so.indexOf("\\text{តាម"),j=ti>=0?so.lastIndexOf("$$",ti):so.indexOf("$$");if(j<0||(ti>=0&&j<0))j=0;
       if(ti>=0&&so.lastIndexOf("$$",ti)<0){var k2=so.lastIndexOf("$",ti);j=k2>=0?k2:0}so=so.slice(0,j)+"@@PC@@"+so.slice(j)}   /* រង្វង់ពិន្ទុនៅជួរ «តាម …» ឬរូបមន្តដំបូង */
-    return"<div class='exp-k exp-kf"+(pp&&pp.p?" exp-kp":"")+"'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(so).replace("@@PC@@",m?pc(m):"")+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span>"+(pp&&pp.p?pc(pp.c):"")+"</div></div>"}
+    return"<div class='exp-k exp-kf"+(pp&&pp.p?" exp-kp":"")+"'>"+fig(x.kfig)+"<div class=exp-ks>"+TX(so).replace("@@PC@@",m?pc(m):"")+"</div><div class=exp-ka><b>ដូចនេះ</b> <span class=exp-bx>"+TX(noP(ansLbl(x))||"—")+"</span>"+(pp&&pp.p?pc(stp?pp.p:pp.c):"")+"</div></div>"}
   return"<div class=exp-k><div><b>ចម្លើយ៖</b> "+TX(noP(x.ans)||"—")+"</div>"+(x.sol?"<div class=exp-ks>"+TX(noP(x.sol))+"</div>":"")+"</div>"}
 
 /* 🖨️ បែងទំព័រដោយខ្លួនឯង (ចម្លើយពីរជួរឈរ)៖ Safari បោះពុម្ព column-count កាត់បន្ទាត់អក្សរ/រូបពាក់កណ្ដាលទំព័រ
