@@ -150,7 +150,9 @@ G6[9]={1:L(
    return K("sl","Two angles lie on a straight line. One angle is $"+a+"^\\circ$. Find the other angle.",[A(180-a,null,"num","°")],"Angles on a straight line add up to $180^\\circ$: $180-"+a+"="+(180-a)+"^\\circ$")},
  function(){var a=ri(40,150),b=ri(40,150);
    return K("ap","Three angles meet at a point. Two of them are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(360-a-b,null,"num","°")],"Angles around a point add up to $360^\\circ$: $360-"+a+"-"+b+"="+(360-a-b)+"^\\circ$")}),
- 2:L(G9[8][1],
+ 2:L(
+ function(){var a=ri(25,80),b=ri(20,70);
+   return K("tri6","Two angles of a triangle are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(180-a-b,null,"num","°")],"Angles in a triangle add up to $180^\\circ$: $180-"+a+"-"+b+"="+(180-a-b)+"^\\circ$",GF.tri({ang:[a,b,180-a-b],lab:{A:a+"°",B:b+"°",C:"x°"}}))},
  function(){var a=ri(10,80);
    return K("ra","A right angle is split into two angles. One of them is $"+a+"^\\circ$. Find the other.",[A(90-a,null,"num","°")],"$90-"+a+"="+(90-a)+"^\\circ$")}),
  3:L(
@@ -161,14 +163,14 @@ G6[9]={1:L(
 /* 10 Area and perimeter */
 G6[10]={1:L(
  function(){var l=ri(3,20),w=ri(2,15);
-   return K("rap","A rectangle is $"+l+"$ cm long and $"+w+"$ cm wide. Find (a) its area (b) its perimeter.",[A(l*w,null,"num","(a) cm²"),A(2*(l+w),null,"num","(b) cm")],"Area $="+l+"\\times"+w+"="+l*w+"$ cm², perimeter $=2("+l+"+"+w+")="+2*(l+w)+"$ cm")},
+   return K("rap","A rectangle is $"+l+"$ cm long and $"+w+"$ cm wide. Find (a) its area (b) its perimeter.",[A(l*w,null,"num","(a) cm²"),A(2*(l+w),null,"num","(b) cm")],"Area $="+l+"\\times"+w+"="+l*w+"$ cm², perimeter $=2("+l+"+"+w+")="+2*(l+w)+"$ cm",GF.rect({k:"rect",w:l,h:w,base:l+" cm",left:w+" cm"}))},
  function(){var s=ri(2,15);
-   return K("sqa","A square has an area of $"+s*s+"$ cm². Find the length of one side.",[A(s,null,"num","cm")],"$\\sqrt{"+s*s+"}="+s+"$ cm")}),
+   return K("sqa","A square has an area of $"+s*s+"$ cm². Find the length of one side.",[A(s,null,"num","cm")],"$\\sqrt{"+s*s+"}="+s+"$ cm",GF.rect({k:"rect",sq:true,base:"x cm",mid:s*s+" cm²"}))}),
  2:L(
  function(){var b=ri(2,20),h=ri(2,16),S=fr(b*h,2);
-   return K("ta","A triangle has base $"+b+"$ cm and perpendicular height $"+h+"$ cm. Find its area.",[A(S.s,nf(b*h/2),"num","cm²")],"$\\tfrac12\\times"+b+"\\times"+h+"="+nf(b*h/2)+"$ cm²")},
+   return K("ta","A triangle has base $"+b+"$ cm and perpendicular height $"+h+"$ cm. Find its area.",[A(S.s,nf(b*h/2),"num","cm²")],"$\\tfrac12\\times"+b+"\\times"+h+"="+nf(b*h/2)+"$ cm²",GF.rect({k:"tri",w:b,h:h,base:b+" cm",height:h+" cm"}))},
  function(){var b=ri(3,20),h=ri(2,15);
-   return K("pg","A parallelogram has base $"+b+"$ cm and perpendicular height $"+h+"$ cm. Find its area.",[A(b*h,null,"num","cm²")],"$\\text{base}\\times\\text{height}="+b*h+"$ cm²")}),
+   return K("pg","A parallelogram has base $"+b+"$ cm and perpendicular height $"+h+"$ cm. Find its area.",[A(b*h,null,"num","cm²")],"$\\text{base}\\times\\text{height}="+b*h+"$ cm²",GF.rect({k:"para",w:b,h:h,base:b+" cm",height:h+" cm"}))}),
  3:L(
  function(){var W=ri(6,15),H=ri(6,15),w=ri(2,W-2),h=ri(2,H-2),S=W*H-w*h;
    return K("cmp","An L-shape is made by cutting a $"+w+"$ cm by $"+h+"$ cm rectangle from the corner of a $"+W+"$ cm by $"+H+"$ cm rectangle. Find the area of the L-shape.",[A(S,null,"num","cm²")],"$"+W+"\\times"+H+"-"+w+"\\times"+h+"="+W*H+"-"+w*h+"="+S+"$ cm²")},

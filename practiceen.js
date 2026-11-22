@@ -192,9 +192,9 @@ G9[9]={1:L(
 /* 10 Circles, area and volume */
 G9[10]={1:L(
  function(){var r=ri(2,15),dia=Math.random()<.4;
-   return K("cir","A circle has "+(dia?"diameter $"+2*r:"radius $"+r)+"$ cm. Find, in terms of $\\pi$, (a) the circumference (b) the area.",[A(2*r+"*pi",2*r+"\\pi","num","(a)"),A(r*r+"*pi",r*r+"\\pi","num","(b)")],"$C=2\\pi r="+2*r+"\\pi$ cm, $A=\\pi r^2="+r*r+"\\pi$ cm²")},
+   return K("cir","A circle has "+(dia?"diameter $"+2*r:"radius $"+r)+"$ cm. Find, in terms of $\\pi$, (a) the circumference (b) the area.",[A(2*r+"*pi",2*r+"\\pi","num","(a)"),A(r*r+"*pi",r*r+"\\pi","num","(b)")],"$C=2\\pi r="+2*r+"\\pi$ cm, $A=\\pi r^2="+r*r+"\\pi$ cm²",GF.circle(dia?{d:2*r+" cm"}:{r:r+" cm"}))},
  function(){var a=ri(3,12),b=a+ri(1,8),h=ri(2,10),S=fr((a+b)*h,2);
-   return K("trap","A trapezium has parallel sides $"+a+"$ cm and $"+b+"$ cm and height $"+h+"$ cm. Find its area.",[A(S.s,S.t,"num","cm²")],"$A=\\dfrac{(a+b)h}{2}=\\dfrac{("+a+"+"+b+")\\times"+h+"}{2}="+S.t+"$ cm²")}),
+   return K("trap","A trapezium has parallel sides $"+a+"$ cm and $"+b+"$ cm and height $"+h+"$ cm. Find its area.",[A(S.s,S.t,"num","cm²")],"$A=\\dfrac{(a+b)h}{2}=\\dfrac{("+a+"+"+b+")\\times"+h+"}{2}="+S.t+"$ cm²",GF.rect({k:"trap",w:b,h:h,top:a+" cm",base:b+" cm",height:h+" cm"}))}),
  2:L(
  function(){var r=ri(2,9),h=ri(3,15);
    return K("cyl","A cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Find its volume in terms of $\\pi$.",[A(r*r*h+"*pi",r*r*h+"\\pi","num","cm³")],"$V=\\pi r^2h=\\pi\\times"+r*r+"\\times"+h+"="+r*r*h+"\\pi$ cm³")},
@@ -202,7 +202,7 @@ G9[10]={1:L(
    return K("csa","A closed cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Find its total surface area in terms of $\\pi$.",[A((2*r*r+2*r*h)+"*pi",(2*r*r+2*r*h)+"\\pi","num","cm²")],"$2\\pi r^2+2\\pi rh="+2*r*r+"\\pi+"+2*r*h+"\\pi="+(2*r*r+2*r*h)+"\\pi$ cm²")}),
  3:L(
  function(){var r=ri(3,12),t=pick([30,40,45,60,72,90,120,135,150]),Ar=fr(r*r*t,360),Le=fr(2*r*t,360);
-   return K("sec","A sector of a circle has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Find, in terms of $\\pi$, (a) the arc length (b) the area of the sector.",[A(Le.s+"*pi",piT(Le),"num","(a)"),A(Ar.s+"*pi",piT(Ar),"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+piT(Le)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+piT(Ar)+"$ cm²")},
+   return K("sec","A sector of a circle has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Find, in terms of $\\pi$, (a) the arc length (b) the area of the sector.",[A(Le.s+"*pi",piT(Le),"num","(a)"),A(Ar.s+"*pi",piT(Ar),"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+piT(Le)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+piT(Ar)+"$ cm²",GF.circle({kind:"sector",ang:t,r:r+" cm",angLab:t+"°"}))},
  function(){var r=ri(2,15);
    return K("rad","The area of a circle is $"+r*r+"\\pi$ cm². Find its radius.",[A(r,null,"num","r =")],"$\\pi r^2="+r*r+"\\pi\\Rightarrow r^2="+r*r+"\\Rightarrow r="+r+"$ cm")})};
 /* 11 Transformations and bearings */
@@ -394,11 +394,11 @@ G10[10]={1:L(G9[7][1],G9[7][2]),2:L(G9[7][2],
 /* 11 Mensuration */
 G10[11]={1:L(
  function(){var r=ri(2,20)/2;
-   return K("ca","A circle has radius $"+r+"$ cm. Calculate its area. "+DP,[A(nf(Math.PI*r*r),null,"num","cm²")],"$A=\\pi r^2=\\pi\\times"+r+"^2="+r2(Math.PI*r*r)+"$ cm²")},
+   return K("ca","A circle has radius $"+r+"$ cm. Calculate its area. "+DP,[A(nf(Math.PI*r*r),null,"num","cm²")],"$A=\\pi r^2=\\pi\\times"+r+"^2="+r2(Math.PI*r*r)+"$ cm²",GF.circle({r:r+" cm"}))},
  G9[10][1]),
  2:L(
  function(){var r=ri(3,15),t=ri(20,160);
-   return K("sec2","A sector has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Calculate (a) the arc length (b) the area. "+DP,[A(nf(2*Math.PI*r*t/360),null,"num","(a)"),A(nf(Math.PI*r*r*t/360),null,"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+r2(2*Math.PI*r*t/360)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+r2(Math.PI*r*r*t/360)+"$ cm²")},
+   return K("sec2","A sector has radius $"+r+"$ cm and angle $"+t+"^\\circ$. Calculate (a) the arc length (b) the area. "+DP,[A(nf(2*Math.PI*r*t/360),null,"num","(a)"),A(nf(Math.PI*r*r*t/360),null,"num","(b)")],"Arc $=\\dfrac{"+t+"}{360}\\times2\\pi\\times"+r+"="+r2(2*Math.PI*r*t/360)+"$ cm, area $=\\dfrac{"+t+"}{360}\\times\\pi\\times"+r+"^2="+r2(Math.PI*r*r*t/360)+"$ cm²",GF.circle({kind:"sector",ang:t,r:r+" cm",angLab:t+"°"}))},
  function(){var r=ri(2,12),h=ri(3,20);
    return K("cylv","A cylinder has radius $"+r+"$ cm and height $"+h+"$ cm. Calculate its volume. "+DP,[A(nf(Math.PI*r*r*h),null,"num","cm³")],"$V=\\pi r^2h="+r2(Math.PI*r*r*h)+"$ cm³")}),
  3:L(
@@ -560,7 +560,39 @@ var GF=(function(){
     /* ស្លាកដាក់ក្បែរបន្ទាត់ស្រប (ទៅខាងមុំ) ឆ្ងាយពីបន្ទាត់ខ្វែងគ្រប់គ្រាន់ — ស្លាកវែងមិនជាន់ */
     tx.push([V[0],V[1],tt,z[1]==="E"?1:-1,z[0]==="N"?.4:-.4,16+Math.abs(10/Math.tan(t*R))])})});
   return FB(pts,cm,{tx:tx,ext:[E0,E1,[x0,0],[x1,H]]})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para}})();
+ /* GF.rect({k:"rect"|"para"|"trap"|"tri", w,h (សមាមាត្ររាង), base,top,left,right,height,diag,mid (ស្លាក), sq:true})
+   rect = ចតុកោណកែង/ការ៉េ (ស្លាក base/top/left/right/diag/mid + ស៊ុមមុំកែង) · para/trap/tri = មានបន្ទាត់កម្ពស់ (ប្រផេះ) + ស្លាក height ក្បែរវា + មុំកែង */
+ function shape(o){var k=o.k||"rect",w=o.w||3,h=o.h||2,V,foot=null,top=null,P={},i;
+  if(w/h>2.2)h=w/2.2;if(w/h<.45)w=h*.45;
+  if(k==="rect"){if(o.sq)h=w;V=[[0,0],[w,0],[w,h],[0,h]]}
+  else if(k==="para"){var sh=Math.min(w*.3,h*.9);V=[[0,0],[w,0],[w+sh,h],[sh,h]];top=3;foot=[sh,0]}
+  else if(k==="trap"){var tp=w*.55,of=(w-tp)/2;V=[[0,0],[w,0],[of+tp,h],[of,h]];top=3;foot=[of,0]}
+  else{V=[[0,0],[w,0],[w*.3,h]];top=2;foot=[w*.3,0]}
+  V.forEach(function(v,j){P["v"+j]=v});if(foot)P.f=foot;fit(P,3.4);
+  V=V.map(function(_,j){return P["v"+j]});foot=foot?P.f:null;
+  var n=V.length,g=[0,0],cm=["poly "+V.map(xy).join(" ")+" black"],tx=[],pts={};V.forEach(function(v){g[0]+=v[0]/n;g[1]+=v[1]/n});
+  V.forEach(function(v,j){pts["_"+j]=[v[0],v[1],""]});
+  if(k==="rect"){if(o.rm!==false)for(i=0;i<4;i++)cm.push("right "+xy(V[(i+3)%4])+" "+xy(V[i])+" "+xy(V[(i+1)%4]));
+   side(tx,V[0],V[1],g,o.base);side(tx,V[2],V[3],g,o.top);side(tx,V[3],V[0],g,o.left);side(tx,V[1],V[2],g,o.right);
+   if(o.diag){cm.push("seg "+xy(V[0])+" "+xy(V[2])+" gray");var dx=V[2][0]-V[0][0],dy=V[2][1]-V[0][1],dl=Math.hypot(dx,dy);tx.push([(V[0][0]+V[2][0])/2,(V[0][1]+V[2][1])/2,o.diag,-dy/dl,dx/dl])}}
+  else if(k==="tri"){side(tx,V[0],V[1],g,o.base);side(tx,V[1],V[2],g,o.right);side(tx,V[2],V[0],g,o.left)}
+  else{side(tx,V[0],V[1],g,o.base);side(tx,V[2],V[3],g,o.top);side(tx,V[3],V[0],g,o.left);side(tx,V[1],V[2],g,o.right)}
+  if(foot){var T=V[top];cm.push("seg "+xy(T)+" "+xy(foot)+" gray","right "+xy(T)+" "+xy(foot)+" "+xy(V[1]));if(o.height)tx.push([T[0],(T[1]+foot[1])/2,o.height,1,0])}
+  if(o.mid)tx.push([g[0],g[1]*(k==="tri"?1:1),o.mid,0,0]);
+  return FB(pts,cm,{tx:tx})}
+ /* GF.circle({kind:"circle"|"sector", r (ស្លាកកាំ), d (ស្លាកអង្កត់ផ្ចិត — បើមាន គូរអង្កត់ផ្ចិតជំនួសកាំ), ang (ដឺក្រេ ចម្រៀក 20–160), arc (ស្លាកធ្នូ), angLab}) */
+ function circle(o){var R0=1.6,cm=[],tx=[],pts={},t=R*30;
+  if(o.kind!=="sector"){pts.O=[0,0,"s"];cm.push("circle O "+R0+" black");
+   if(o.d){var a=R*20,A=[-R0*Math.cos(a),-R0*Math.sin(a)],B=[R0*Math.cos(a),R0*Math.sin(a)];cm.push("seg "+xy(A)+" "+xy(B)+" blue");tx.push([0,0,o.d,-Math.sin(a),Math.cos(a)])}
+   else{var E=[R0*Math.cos(t),R0*Math.sin(t)];cm.push("seg O "+xy(E)+" blue");if(o.r)tx.push([E[0]/2,E[1]/2,o.r,-Math.sin(t),Math.cos(t)])}
+   return FB(pts,cm,{tx:tx,ext:[[-R0,-R0],[R0,R0]]})}
+  var an=o.ang||60,a0=-an/2*R,A=[R0*Math.cos(a0),R0*Math.sin(a0)],Bn=[R0*Math.cos(a0+an*R),R0*Math.sin(a0+an*R)],ps=["(0,0)",xy(A)],i,N=Math.max(4,Math.round(an/6));
+  for(i=1;i<N;i++){var q=a0+an*R*i/N;ps.push(xy([R0*Math.cos(q),R0*Math.sin(q)]))}ps.push(xy(Bn));cm.push("poly "+ps.join(" ")+" black");
+  pts._o=[0,0,""];wedge(cm,tx,[0,0],A,Bn,"(0,0)",xy(A),xy(Bn),o.angLab,"in");
+  if(o.r)tx.push([A[0]/2,A[1]/2,o.r,Math.sin(a0),-Math.cos(a0)]);
+  if(o.arc){var am=a0+an*R/2;tx.push([R0*Math.cos(am),R0*Math.sin(am),o.arc,Math.cos(am),Math.sin(am)])}
+  return FB(pts,cm,{tx:tx,ext:[[0,0],A,Bn,[R0*Math.cos(a0+an*R/2),R0*Math.sin(a0+an*R/2)]]})}
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para,rect:shape,circle:circle}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
