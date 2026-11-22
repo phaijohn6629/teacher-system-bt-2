@@ -1197,6 +1197,61 @@ Object.assign(KM,{
  /* អនុគមន៍ដឺក្រេទី២ */
  "10:s10_y0":quadF,"10:s10_axis":quadF,"10:s10_val":quadF
 });
+/* ===== KM3 (2026-11-22) — GF.curve សម្រាប់ទម្រង់អនុគមន៍ ថ្នាក់ទី១០–១២ (ក្រាបអនុគមន៍ដែលសំណួរឱ្យតែប៉ុណ្ណោះ)
+   ច្បាប់៖ គូរតែអនុគមន៍ដែលសំណួរឱ្យ (គ្រោង គ្មានលេខអ័ក្ស) · មិនគូរចម្លើយ (ចំណុចបរមា · អាស៊ីមតូត · បន្ទាត់ប៉ះ · ប្រសព្វ) · អានមិនបាន → គ្មានរូប ===== */
+function brc(s,i){var d=0;for(;i<s.length;i++){if(s[i]=="{")d++;else if(s[i]=="}"&&--d===0)return i}return-1}
+function tx2f(t,tv){var k,a,b,s=String(t);if(tv){for(var k0=0;k0<2;k0++)s=s.replace(/(^|[^\\A-Za-z])t(?![A-Za-z])/g,"$1x")}s=s.replace(/\\left|\\right|\\displaystyle|\\,|\\!|\\;/g,"").replace(/\\cdot|\\times/g,"*").replace(/\\dfrac|\\tfrac/g,"\\frac").replace(/\\(ln|sin|cos|tan)(?![a-z])/g,"$1").replace(/\\pi/g,"pi");
+ s=s.replace(/([0-9x\)])e\^/g,"$1*e^");
+ while((k=s.indexOf("\\frac{"))>=0){a=brc(s,k+5);if(a<0||s[a+1]!=="{")return null;b=brc(s,a+1);if(b<0)return null;s=s.slice(0,k)+"(("+s.slice(k+6,a)+")/("+s.slice(a+2,b)+"))"+s.slice(b+1)}
+ while((k=s.indexOf("\\sqrt"))>=0){if(s[k+5]==="{"){a=brc(s,k+5);if(a<0)return null;s=s.slice(0,k)+"sqrt("+s.slice(k+6,a)+")"+s.slice(a+1)}else{var m=/^\\sqrt\s*([a-z0-9])/.exec(s.slice(k));if(!m)return null;s=s.slice(0,k)+"sqrt("+m[1]+")"+s.slice(k+m[0].length)}}
+ s=s.replace(/(^|[^A-Za-z])e\^\{/g,"$1exp{").replace(/(^|[^A-Za-z])e\^([a-z])/g,"$1exp($2)");
+ while((k=s.indexOf("exp{"))>=0){a=brc(s,k+3);if(a<0)return null;s=s.slice(0,k)+"exp("+s.slice(k+4,a)+")"+s.slice(a+1)}
+ while((k=s.indexOf("^{"))>=0){a=brc(s,k+1);if(a<0)return null;s=s.slice(0,k)+"^("+s.slice(k+2,a)+")"+s.slice(a+1)}
+ s=s.replace(/(sin|cos|tan|ln)\s*(\d*\.?\d*)\s*x/g,function(m,f,n){return f+"("+(n?n+"*":"")+"x)"}).replace(/\|([^|]+)\|/g,"abs($1)").replace(/\s+/g,"");
+ if(/[{}\\|]/.test(s))return null;
+ var r=s.replace(/exp|sqrt|sin|cos|tan|ln|abs|pi/g,"");if(/[a-wyzA-Z]/.test(r))return null;
+ s=s.replace(/(\d|\))(?=[x(a-z])/g,"$1*").replace(/x(?=\(|exp|sqrt|sin|cos|tan|ln|abs|x)/g,"x*").replace(/\)(?=\()/g,")*");
+ return s}
+function fsegs(q,tv){var o=[],re=/\$([^$]+)\$/g,m,t;while((m=re.exec(q))){t=m[1];var h=/^\s*(?:(?:f|g|h|C|P|S|s)\(\s*[xt]\s*\)|y)\s*=\s*(.+)$/.exec(t);if(!h||/cases|lim|int|\\le|\\ge|<|>/.test(h[1]))continue;var e=tx2f(h[1],tv);if(e)o.push(e)}return o}
+function evf(e){try{var f=window.FIG.parse(e);return function(x){return f(x,0)}}catch(z){return null}}
+function ywin(F,x0,x1){var v=[],i,y;for(i=0;i<=240;i++){y=F[0]((x0+(x1-x0)*i/240));if(isFinite(y)&&Math.abs(y)<1e6)v.push(y)}
+ F.slice(1).forEach(function(g){for(i=0;i<=240;i++){y=g(x0+(x1-x0)*i/240);if(isFinite(y)&&Math.abs(y)<1e6)v.push(y)}});if(v.length<8)return null;v.sort(function(a,b){return a-b});
+ var lo=Math.min(v[Math.floor(v.length*.04)],0),hi=Math.max(v[Math.ceil(v.length*.96)-1],0),p=Math.max(1,(hi-lo)*.12);return[Math.floor(lo-p),Math.ceil(hi+p)]}
+function autoR(F){var R=0,i,x,y0,y1,d0,d1,h=1e-4;for(i=-600;i<600;i++){x=i*.05;y0=F(x);y1=F(x+.05);if(isFinite(y0)&&isFinite(y1)&&y0*y1<0)R=Math.max(R,Math.abs(x));d0=(F(x+h)-F(x-h))/(2*h);d1=(F(x+.05+h)-F(x+.05-h))/(2*h);if(isFinite(d0)&&isFinite(d1)&&d0*d1<0)R=Math.max(R,Math.abs(x))}
+ return Math.min(Math.max(Math.ceil(R*1.35)+1,3),30)}
+/* cv({n:ចំនួនខ្សែ, v:"t", pos:true ដែន x>0, trig:true, pt:true ចំណុចប៉ះ, vl:[…]}) */
+function cv(o){o=o||{};return function(q){var E=fsegs(q.q,o.v),n=o.n||1;if(E.length!==n)return"";var F=E.map(evf);if(F.some(function(f){return!f}))return"";
+ var x0,x1,R=autoR(F[0]);
+ if(o.trig){var k=+(/(\d+)\s*\*?\s*x/.exec(E[0])||[0,1])[1],T=(/tan/.test(E[0])?Math.PI:2*Math.PI)/k;x0=-1.25*T;x1=1.25*T}
+ else if(o.pos){x0=-R/5;x1=R}else{x0=-R;x1=R}
+ if(o.pt){var mm=/x\s*=\s*(-?\d+)/.exec(q.q.replace(/\$[^$]*(?:y|f)\s*\(?[xt]?\)?\s*=[^$]*\$/g," "));if(mm){x0=Math.min(x0,+mm[1]-3);x1=Math.max(x1,+mm[1]+3)}}
+ if(o.x){x0=o.x[0];x1=o.x[1]}
+ var Fw=o.pos?F.map(function(f){return function(x){return x>0?f(x):NaN}}):F,y=ywin(Fw,x0,x1);if(!y)return"";
+ var a={f:E[0],x:[x0,x1],y:y};if(o.pos)a.d=[Math.max(.02,x1/400),x1];if(o.trig&&/tan/.test(E[0])){y=[-5,5];a.y=y}
+ if(n>1)a.fs=E.slice(1).map(function(e,i){var z={f:e};if(o.pos)z.d=a.d;return z});
+ if(o.pt){var t=q.q.replace(/\$[^$]*(?:y|f)\s*\(?[xt]?\)?\s*=[^$]*\$/g," "),m=/x\s*=\s*(-?\d+)/.exec(t);if(!m)return"";var px=+m[1],py=F[0](px);if(!isFinite(py)||px<x0||px>x1)return"";a.pts=[{p:[px,py]}]}
+ if(o.vl)a.vl=o.vl.map(function(v){return{x:v}});
+ return GF.curve(a)}}
+/* ∫ក្រាបនៃអនុគមន៍ក្នុងចន្លោះដែលឱ្យ (ស្រមោលផ្ទៃក្រោមខ្សែ · មិនបង្ហាញតម្លៃអាំងតេក្រាល) */
+function bnd(s){s=s.replace(/\\left|\\right|\\displaystyle/g,"").replace(/\\[dt]?frac\{\\pi\}\{(\d+)\}/g,"(pi/$1)").replace(/\\pi/g,"pi").replace(/[{}\s]/g,"");var m=/^e\^(\d+)$/.exec(s);if(m)return Math.exp(+m[1]);if(!/^[-+]?[\d.]+$|^\(pi\/\d+\)$|^pi$|^e$/.test(s))return null;return s==="e"?Math.E:s==="pi"?Math.PI:s[0]==="("?Math.PI/(+s.slice(4,-1)):+s}
+function tok(c,i){var j;if(c[i]==="{"){j=brc(c,i);return j<0?null:[c.slice(i+1,j),j+1]}return[c[i],i+1]}
+function intF(q){var c=q.q.replace(/\\left|\\right|\\displaystyle/g,""),k=c.indexOf("\\int_");if(k<0)return"";var t1=tok(c,k+5);if(!t1||c[t1[1]]!=="^")return"";var t2=tok(c,t1[1]+1);if(!t2)return"";var a=bnd(t1[0]),b=bnd(t2[0]);if(a===null||b===null||!(b>a))return"";
+ var body=c.slice(t2[1]).replace(/\$.*$/,"").replace(/\\,?\s*dx\s*$/,"").replace(/\\dfrac\{dx\}\{([^{}]+)\}/,"\\frac{1}{$1}").replace(/\\,/g,"");if(/dx|\\int|\^\{\d+\}x|\\sin\^|\\cos\^/.test(body))return"";var e=tx2f(body);if(!e)return"";var f=evf(e);if(!f)return"";
+ var p=Math.max((b-a)*.35,.4),x0=a>=0?Math.max(a-p,0):a-p,x1=b+p,y=ywin([f],a,b);if(!y)return"";var yy=[Math.min(y[0],-1),Math.max(y[1],1)];for(var i=0;i<=40;i++){if(!isFinite(f(a+(b-a)*i/40)))return""}
+ return GF.curve({f:e,x:[x0,x1],y:yy,area:{a:a,b:b}})}
+function volF(q){var RB=/\(\s*\$?\s*(-?\d+)\s*\\le\s*x\s*\\le\s*(\d+)\s*\$?\s*\)/,m=RB.exec(q.q),E=fsegs(q.q.replace(RB,""));if(!m||E.length!==1)return"";var a=+m[1],b=+m[2],f=evf(E[0]);if(!f)return"";var y=ywin([f],a,b);if(!y)return"";
+ var p=Math.max((b-a)*.35,.4);return GF.curve({f:E[0],x:[a-p,b+p],y:[Math.min(y[0],-1),Math.max(y[1],1)],area:{a:a,b:b}})}
+Object.assign(KM,{
+ "10:s10_pli":cv({n:2}),"10:s10_proj_62":cv({v:"t"}),"10:s10_even":cv(),"10:s10_hv":cv(),"10:s10_sqi":cv({n:2,pos:true}),
+ "11:s31_per2":cv({trig:true}),"11:s31_amp":cv({trig:true}),"11:s31_tanp":cv({trig:true}),"11:s31_mm2":cv({trig:true}),"11:s31_odd":cv({trig:true}),
+ "11:s52_inc":cv(),"11:s52_max":cv(),"11:s52_tan":cv({pt:true}),
+ "11:s53_crit":cv(),"11:s53_mono":cv(),"11:s53_min":cv(),"11:s53_inf":cv(),"11:s53_quad":cv(),"11:s53_abs":cv({vl:[0,7],x:[-1.5,8.5]}),
+ "12:t32_slope":cv({pt:true}),"12:t32_tanp":cv({pt:true}),"12:tg_r":cv({pt:true,pos:true}),"12:tg_l":cv({pt:true,pos:true}),"12:tg_c":cv({pt:true}),
+ "12:t32_minc":cv({pos:true}),"12:t32_vmin":cv(),"12:t32_dec":cv(),"12:t32_profit":cv(),"12:t41_ext":cv({pos:true}),
+ "12:t42_der":cv(),"12:xt_e":cv({pt:true}),"12:et":cv({pt:true}),"12:op_drug":cv({v:"t",pos:true}),"12:xt_l":cv({pt:true,pos:true}),"12:dv_abs":cv(),
+ "12:ig_ab":cv({n:2}),"12:ig_ac":cv({n:2}),"12:ig_vp":volF,"12:ig_vs":volF,"12:ig_vl":volF
+});
+["ig_exp","ig_poly","ig_trk","ig_inv","lg","un","uu","pf","bp","ig_bpc","ig_bpl","ig_bpe","ig_bps","ig_subs","ig_subx","ig_subl"].forEach(function(k){KM["12:"+k]=intF});
 var OVR={"8:b14_1":1,"8:b14_2":1,"8:b14_3":1,"9:b14_1":1,"9:b14_2":1,"9:b14_3":1};   /* ជំនួសរូបអ័ក្សចាស់ */
 [7,8,9,10,11,12].forEach(function(g){var R=GR[g];if(!R)return;Object.keys(R.G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){var f=R.G[l][v];if(!f||f._km)return;
   var w=function(){var q=f.apply(this,arguments);if(q&&q.kd){var k=g+":"+q.kd;if(KM[k]&&(!q.fig||OVR[k])){try{var r=KM[k](q);if(r&&!/NaN|undefined|Infinity/.test(r))q.fig=r}catch(e){}}}return q};w._km=1;R.G[l][v]=w})})});

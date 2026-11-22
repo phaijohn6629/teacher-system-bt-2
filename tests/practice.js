@@ -45,4 +45,9 @@ if(window.FIG){var KM2="8:s8_mid,8:s8_dx,8:s8_sym,8:s8_slope,8:s8_inter,8:s8_are
     var h;try{h=window.FIG.svg(q.fig)}catch(e){h=""}if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("KM2BAD "+k+" "+String(q.fig).slice(0,100));
     if(/\?\s*,\s*\?/.test(q.fig)&&/[Mm]\(\s*-?\d/.test(q.fig))B("KM2LEAK "+k)}})})});
   KM2.forEach(function(k){if(!km2[k])B("KM2NOFIG "+k)});print("km2 figs "+mkn+" forms "+KM2.length)}
+/* 🔗 KM3 (Khmer ថ្នាក់ទី១០–១២ ← PXEN.GF.curve)៖ ទម្រង់អនុគមន៍/អាំងតេក្រាលក្នុងបញ្ជីត្រូវមានរូបយ៉ាងតិច ១ ក្នុង ២០០ ដង · រូបគូរបាន គ្មាន NaN/fig-err */
+if(window.FIG){var KM3="10:s10_even,10:s10_hv,10:s10_pli,10:s10_proj_62,10:s10_sqi,11:s31_amp,11:s31_mm2,11:s31_odd,11:s31_per2,11:s31_tanp,11:s52_inc,11:s52_max,11:s52_tan,11:s53_abs,11:s53_crit,11:s53_inf,11:s53_min,11:s53_mono,11:s53_quad,12:dv_abs,12:et,12:ig_ab,12:ig_ac,12:ig_vl,12:ig_vp,12:ig_vs,12:op_drug,12:t32_dec,12:t32_minc,12:t32_profit,12:t32_slope,12:t32_tanp,12:t32_vmin,12:t41_ext,12:t42_der,12:tg_c,12:tg_l,12:tg_r,12:xt_e,12:xt_l,12:ig_exp,12:ig_poly,12:ig_trk,12:ig_inv,12:lg,12:un,12:uu,12:pf,12:bp,12:ig_bpc,12:ig_bpl,12:ig_bpe,12:ig_bps,12:ig_subs,12:ig_subx,12:ig_subl".split(","),km3={};KM3.forEach(function(k){km3[k]=0});var m3=0;
+  [10,11,12].forEach(function(g){Object.keys(GR[g].G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){if(!GR[g].G[l][v])return;for(var i=0;i<200;i++){var q;try{q=GR[g].G[l][v]()}catch(e){continue}var k=g+":"+q.kd;if(!(k in km3)||!q.fig)continue;km3[k]++;m3++;
+    var h;try{h=window.FIG.svg(q.fig)}catch(e){h=""}if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("KM3BAD "+k+" "+String(q.fig).slice(0,100))}})})});
+  KM3.forEach(function(k){if(!km3[k])B("KM3NOFIG "+k)});print("km3 figs "+m3+" forms "+KM3.length)}
 print("practice: grades "+Object.keys(GR).length+" made "+tot+" figs "+figN+" bad "+bad);
