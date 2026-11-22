@@ -77,4 +77,28 @@ ok(/function abSummary\(E\)/.test(X)&&/abSummary\(E\)\+"<div id=exV>"/.test(X),"
 ok(/function editB\(E,s\)/.test(X)&&/data-ei='"\+i\+"\|"\+j\+\(editB\(E,s\)\?"\|b":""\)/.test(X),"editor renders paper ខ items with |b");
 ok(/p\[2\]==="b"\?"itB":"it"/.test(X)&&/k==="instB"\)\{s\.instB=t\.value/.test(X),"edits of paper ខ are written to itB / instB");
 ok(/if\(a==="pv"\)\{X\.pv=/.test(X)&&/ក\/ខ|វិញ្ញាសា ខ/.test(X),"switching ក/ខ rebuilds the editor");
+/* 📊 ទម្រង់បើក៖ ចែកពិន្ទុតាមលំហាត់ និងតាមជំហាន — បូកត្រូវពិន្ទុជានិច្ច (ជំហាន ០,៥) · តាមថ្នាក់៖ ២០ (៧–៩) · ៣០ (១០) · ២៥ (១១–១២) */
+var EXPsrc=src("expaper.js"),SPsrc=grab(EXPsrc,/function splitPts\(/,/\nfunction mathSplit/),STsrc=grab(EXPsrc,/function mathSplit\(/,/\nfunction stepHtml/);
+ok(SPsrc&&STsrc,"extracted splitPts/solSteps sources");
+var noP=function(s){return String(s||"")};eval(SPsrc+";"+STsrc);
+var sm=function(a){return Math.round(a.reduce(function(x,y){return x+y},0)*2)/2};
+[[20,4],[20,5],[30,5],[30,4],[30,6],[25,5],[25,4],[25,3],[20,3],[25,7],[30,10]].forEach(function(c){var a=splitPts(c[0],c[1]);ok(a.length===c[1]&&sm(a)===c[0],"splitPts "+c+" → "+a);ok(a.every(function(v){return v>0&&v*2===Math.floor(v*2)}),"splitPts half-units "+c);ok(Math.max.apply(null,a)-Math.min.apply(null,a)<=.5,"splitPts even "+c)});
+ok(splitPts(20,4).join()==="5,5,5,5"&&splitPts(25,4).join()==="6,6,6.5,6.5","splitPts exact values");
+/* stepGroups៖ បូក = ពិន្ទុ · គ្របដណ្ដប់គ្រប់ជំហាន · ជំហានច្រើនជាងពិន្ទុ → បញ្ចូលគ្នា */
+for(var nn=1;nn<=9;nn++)[.5,1,2,3,4,5,6.5,7.5].forEach(function(p){var G=stepGroups(nn,p);ok(sm(G.map(function(g){return g.p}))===p,"stepGroups sum n"+n+" p"+p);ok(G[0].a===0&&G[G.length-1].b===nn-1,"stepGroups cover n"+n+" p"+p);
+  ok(G.every(function(g,i){return g.b>=g.a&&(!i||g.a===G[i-1].b+1)&&g.p>0}),"stepGroups contiguous n"+n+" p"+p)});
+/* ⚖️ ចែកតាមលេខរ៉ូម៉ាំង៖ បូកត្រូវសរុប · ជំហាន ០,៥ · ≥ ០,៥ · កើនតាមលំដាប់ (កម្រិតដូចគ្នា) · ទម្ងន់តាមកម្រិត/ចំនួនសំណួរ */
+var WTsrc=grab(EXPsrc,/var LW=\{/,/\nfunction mathSplit/);ok(WTsrc,"extracted wts/splitW");eval(WTsrc);
+[[20,4],[20,5],[30,5],[25,5],[25,4],[30,6],[20,3],[17.5,5],[1,3],[10,10]].forEach(function(c){var secs=[];for(var i=0;i<c[1];i++)secs.push({lv:2,it:[{}]});var a=splitW(c[0],wts(secs));
+  ok(a.length===c[1]&&sm(a)===c[0],"splitW sum "+c+" → "+a);ok(a.every(function(v){return v*2===Math.floor(v*2)&&(c[0]<c[1]/2||v>=.5)}),"splitW half-units "+c);
+  if(c[0]>=c[1]*1.5)ok(a.every(function(v,k){return!k||v>=a[k-1]}),"splitW non-decreasing "+c+" → "+a)});
+ok(splitW(20,wts([{lv:2,it:[{}]},{lv:2,it:[{}]},{lv:2,it:[{}]},{lv:2,it:[{}]},{lv:2,it:[{}]}])).join()==="3,3.5,4,4.5,5","splitW 20/5 ramp exact");
+var wA=splitW(20,wts([{lv:1,it:[{},{},{}]},{lv:2,it:[{},{}]},{lv:3,it:[{}]}]));ok(sm(wA)===20&&wA[2]>wA[0]/3,"splitW level+count weights "+wA);
+ok(splitW(20,[]).length===0,"splitW empty");
+var S1=solSteps("$f'(x)=2x+2=0$ ⇒ $x=-1$ ⇒ $f(-1)=6$");ok(S1.length>=4,"solSteps arrow+= split: "+S1.length);
+var S2=solSteps("\\text{តាមរូបមន្ត}\n$$\\begin{aligned}a&=1\\\\b&=2\\\\c&=3\\end{aligned}$$");ok(S2.length===4&&S2[1].m==="a&=1","solSteps aligned rows: "+JSON.stringify(S2));
+var S3=solSteps("$a=\\dfrac{-2-(4)}{-3-(-5)}=\\dfrac{-6}{2}=-3$");ok(S3.length===3&&/^a&=/.test(S3[0].m)&&/^&=/.test(S3[2].m),"solSteps chain = : "+JSON.stringify(S3));
+ok(solSteps("").length===0&&solSteps(null).length===0,"solSteps empty");
+ok(/stp:!!E\.stp/.test(X)&&/data-ex=opn/.test(X)&&/EXP\.splitPts/.test(X)&&/opTarget\(g\)\{return g>=11\?25:g===10\?30:20\}/.test(X),"exam.js wires open-format panel (20/30/25)");
+ok(/total:total,splitPts/.test(EXPsrc)&&/function total\(P\)\{return\(P\.secs\|\|\[\]\)\.reduce\(function\(s,x\)\{return s\+\(\+x\.pts\|\|0\)\},0\)\}/.test(EXPsrc),"EXP.total unchanged (sum of secs pts)");
 print("exam: checks "+n+" bad "+bad);

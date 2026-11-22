@@ -94,7 +94,16 @@ function newExam(){
 function gOf(E){return E.fmt==="cam"?(+E.camg||110):parseInt(E.cls)||0}
 function camDef(E){var c=parseInt(E.cls)||0;return 100+(c>=6&&c<=12?c:10)}
 function resetSecs(E){var g=gOf(E),L=lsList(g),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(g,f0[0])]:[];if(E.ab)E.secs.forEach(function(s){fill(s,g,"itB")})}
-function P(E){return{camg:E.camg,gt:E.fmt==="cam"&&window.PRACT&&PRACT.GR[gOf(E)]?PRACT.GR[gOf(E)].title:"",calc:E.calc!==false,font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
+function P(E){return{camg:E.camg,gt:E.fmt==="cam"&&window.PRACT&&PRACT.GR[gOf(E)]?PRACT.GR[gOf(E)].title:"",calc:E.calc!==false,font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",stp:!!E.stp,school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
+/* 📐 ទម្រង់បើក៖ ពិន្ទុសរុបតាមថ្នាក់ (៧–៩ = ២០ · ១០ = ៣០ · ១១–១២ = ២៥) · បែងស្មើលើចំនួនលំហាត់ (EXP.splitPts) → បូកត្រូវពិន្ទុវិញ្ញាសា */
+function opTarget(g){return g>=11?25:g===10?30:20}
+function opBox(E,g){var T=+E.opT||opTarget(g),N=+E.opN||(E.secs&&E.secs.length)||5;return"<div style='display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px;padding:8px;border:1px dashed var(--bd,#cbd5e1);border-radius:8px'><b style='align-self:center'>📐 ប្រឡងទម្រង់បើក</b>"+
+    "<label style='font-size:12px'>ពិន្ទុសរុប <input type=number min=5 max=100 step=0.5 data-ef=opT value="+T+" style='width:70px'></label>"+
+    "<label style='font-size:12px'>ចំនួនលំហាត់ <input type=number min=1 max=10 data-ef=opN value="+N+" style='width:60px'></label>"+
+    "<label style='font-size:12px'>របៀបបែង <select data-ef=opW style='width:auto'><option value=lv"+(E.opW==="eq"?"":" selected")+">តាមកម្រិត (រ៉ូម៉ាំងចុងទម្ងន់ធំ)</option><option value=eq"+(E.opW==="eq"?" selected":"")+">ស្មើគ្នា</option></select></label>"+
+    "<button type=button class=primary data-ex=opn>⚖️ បែងពិន្ទុស្វ័យប្រវត្តិ</button>"+
+    "<label style='display:flex;gap:6px;align-items:center;font-size:12px'><input type=checkbox data-ef=stp"+(E.stp?" checked":"")+" style='width:auto;margin:0'> បង្ហាញពិន្ទុតាមជំហានក្នុងអត្រាកំណែ</label>"+
+    "<small class=note style='flex-basis:100%;margin:0'>ថ្នាក់ទី៧–៩ = ២០ · ទី១០ = ៣០ · ទី១១–១២ = ២៥ ពិន្ទុ · ចម្លើយខ្លីនៅដដែល · អាចកែពិន្ទុផ្នែកនីមួយៗដោយដៃបាន</small></div>"}
 /* ---------- រក្សាទុក (exams/{id}) ---------- */
 /* ⚡ Quota៖ រង់ចាំ ២.៥ វិនាទីក្រោយការកែចុងក្រោយ · មិនសរសេរបើខ្លឹមសារដូចលើកមុនដែលបានរក្សាទុក (X.lastW តាមវិញ្ញាសា) */
 function save(now){
@@ -205,6 +214,8 @@ function editor(){
     (g===12&&window.EXGEN&&EXGEN.bac?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='bac|a' style='flex:1'>📋 វិញ្ញាសាត្រៀមបាក់ឌុប (៧ ផ្នែក · តាមសៀវភៅ)</button><button type=button data-ex='bac|b' style='flex:1'>📋 គំរូសាកល្បង NGS (៨ ផ្នែក)</button></div>":"")+
     (E.fmt==="cam"&&window.CAMPAPERS&&CAMPAPERS[g]?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'>"+Object.keys(CAMPAPERS[g]).map(function(k){return"<button type=button class=primary data-ex='cpp|"+k+"' style='flex:1'>📋 "+esc(CAMPAPERS[g][k].label)+"</button>"}).join("")+"</div>":"")+
     (g===9&&window.EXGEN&&EXGEN.dip?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex=dip style='flex:1'>🎓 វិញ្ញាសាត្រៀមប្រឡងឌីប្លូម (៧ ផ្នែក · ១០០ ពិន្ទុ · ១២០ នាទី)</button></div>":"")+
+    (E.fmt==="cam"||E.fmt==="bac"||E.fmt==="dip"?"":opBox(E,g))+
+    (E.fmt==="cam"||E.fmt==="bac"||E.fmt==="dip"?"":opBox(E,g))+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
         "<select data-es='"+i+"|lv'>"+tplOpts(g,s)+"<optgroup label='🧮 លំហាត់ហ្វឹកហាត់'>"+LVO.filter(function(v){var G0=PRACT.GR[g]&&PRACT.GR[g].G[s.ls];return v===4?hasLv4(g,s.ls):!!(G0&&G0[v])}).map(function(v){return"<option value="+v+(String(v)===String(s.lv)?" selected":"")+">"+LVN[v]+"</option>"}).join("")+"</optgroup></select>"+
@@ -381,6 +392,11 @@ function act(a,q){
   else if(a==="cpp"){var PD=window.CAMPAPERS&&CAMPAPERS[g]&&CAMPAPERS[g][q[1]],pp=PD&&PD.secs;if(!pp||E.secs.length&&!confirm("ជំនួសសំណួរទាំងអស់ដោយក្រដាសប្រឡង «"+PD.label+"» ពេញ?"))return;var used={};
     E.secs=pp.map(function(x){var s2={ls:x[0],lv:x[1],n:1,pts:4,inst:""};for(var t=0;t<8;t++){fill(s2,g);if(!used[s2.it[0].kd])break}used[s2.it[0].kd]=1;s2.pts=s2.it[0].mk||4;if(E.ab)fill(s2,g,"itB");return s2});
     E.calc=PD.calc;E.title=PD.title;E.dur=Math.round(EXP.total(E)*1.2/5)*5}
+  else if(a==="opn"){var oT=+E.opT||opTarget(g),oN=Math.min(10,Math.max(1,Math.round(+E.opN||E.secs.length||5)));
+    if(oN<E.secs.length&&!confirm("កាត់ផ្នែកចុងក្រោយចេញ "+(E.secs.length-oN)+" ផ្នែក ដើម្បីឱ្យនៅ "+oN+" លំហាត់?"))return;
+    var oL=lsList(g),oLs=E.secs.length?E.secs[E.secs.length-1].ls:(oL[0]&&oL[0][1][0][0]);if(!oLs){alert("ថ្នាក់នេះមិនមានម៉ាស៊ីនបង្កើតលំហាត់");return}
+    while(E.secs.length<oN)E.secs.push(newSec(g,E.secs.length?E.secs[E.secs.length-1].ls:oLs));E.secs.length=oN;
+    var oP=E.opW==="eq"?EXP.splitPts(oT,oN):EXP.splitW(oT,EXP.wts(E.secs));E.secs.forEach(function(z,k){z.pts=oP[k]});E.stp=true;E.opT=oT;E.opN=oN}
   else if(a==="rg"){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"&&isT(s)){fill(s,g);if(E.ab)fill(s,g,"itB")}
   else if(a==="ri"){var j=+q[2];s.it[j]=mkItem(g,s.ls,s.lv,s.it.concat(s.itB||[]));if(E.ab&&s.itB)s.itB[j]=mkItem(g,s.ls,s.lv,s.itB.concat(s.it),shapeOf(s.it[j]))}   /* 🔄 → ទម្រង់ថ្មី · ខ តាមទម្រង់ ក */
@@ -400,6 +416,9 @@ function onInput(e){
       save();editor();return}
     if(f==="camg"){E.camg=+t.value;if(!E.secs.length||confirm("ប្ដូរកម្រិត Cambridge → បង្កើតផ្នែកទាំងអស់ឡើងវិញ?"))resetSecs(E);save();editor();return}
     if(f==="calc"){E.calc=t.checked;save();prev();return}
+    if(f==="stp"){E.stp=t.checked;save();prev();return}
+    if(f==="opT"||f==="opN"){E[f]=Math.max(0,+t.value||0);save();return}
+    if(f==="opW"){E.opW=t.value==="eq"?"eq":"lv";save();return}
     if(f==="ab"){E.ab=t.checked;if(E.ab)E.secs.forEach(function(s){fill(s,gOf(E),"itB")});save();editor();return}
     if(f==="cls"){var og=gOf(E);E.cls=t.value;if(gOf(E)!==og&&E.secs.length&&confirm("ថ្នាក់ថ្មីជាកម្រិតផ្សេង។ បង្កើតផ្នែកទាំងអស់ឡើងវិញតាមកម្រិតថ្នាក់ថ្មី?")){var L=lsList(gOf(E)),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(gOf(E),f0[0])]:[]}save();editor();return}
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
