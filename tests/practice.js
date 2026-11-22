@@ -26,4 +26,9 @@ Object.keys(GR[9].G).forEach(function(l){[1,5,2,6,3,4].forEach(function(v){var k
  ["2∜3","2*3^(1/4)"],["root(4;16)","2"],["∛(-8)","-2"],["∛8+√4","4"],["∛2∛4","2"],["root(5,32)x","2x"]].forEach(function(c){var r=X.check(c[0],c[1],/x/.test(c[1])?"expr":"num");if(!r.ok)B("ROOT "+c[0]+" ≠ "+c[1]+" "+(r.err||""))});
 ["11∛5","2∜3","root(5,x)"].forEach(function(u){try{var t=window.PRACT.tex(X.parse(u));if(!/\\sqrt\[[345]\]/.test(t))B("ROOTTEX "+u+" "+t)}catch(e){B("ROOTTEX "+u+" "+e)}});
 if(X.check("11∛5","11*5^(1/2)","num").ok)B("ROOT false positive");
-print("practice: grades "+Object.keys(GR).length+" made "+tot+" bad "+bad);
+/* 🖼 រូបសំណួរ (fig)៖ ពិនិត្យថា FIG.svg គូរបានគ្រប់រូបដោយគ្មាន fig-err (សរុបតាមម៉ូឌុល Cambridge G9 មេរៀន 8–9 ដែលប្រើ PXEN.GF) */
+try{eval(read("fig.js"))}catch(e){B("FIGLOAD "+e)}
+var figN=0;if(window.FIG)Object.keys(GR).forEach(function(g){var G=GR[g].G;Object.keys(G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){if(!G[l][v])return;for(var i=0;i<40;i++){var q=G[l][v]();if(!q.fig)continue;figN++;var h;try{h=window.FIG.svg(q.fig)}catch(e){B("FIGTHROW g"+g+" l"+l+" v"+v+" "+(q.kd||"")+" "+e);continue}
+  if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("FIGBAD g"+g+" l"+l+" v"+v+" "+(q.kd||"")+" "+q.fig.slice(0,120))}})})});
+[[109,8],[109,9]].forEach(function(c){var n=0;[1,2,3].forEach(function(v){for(var i=0;i<60;i++){if(GR[c[0]].G[c[1]][v]().fig)n++}});if(n<20)B("FIGCOV g"+c[0]+" l"+c[1]+" only "+n+" figs")});
+print("practice: grades "+Object.keys(GR).length+" made "+tot+" figs "+figN+" bad "+bad);

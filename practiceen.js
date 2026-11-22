@@ -151,10 +151,16 @@ G9[7]={1:L(
 /* 8 Angles and polygons */
 G9[8]={1:L(
  function(){var a=ri(25,80),b=ri(20,70);
-   return K("tri","Two angles of a triangle are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(180-a-b,null,"num","angle =")],"Angles in a triangle add up to $180^\\circ$: $180-"+a+"-"+b+"="+(180-a-b)+"^\\circ$.")},
+   return K("tri","Two angles of a triangle are $"+a+"^\\circ$ and $"+b+"^\\circ$. Find the third angle.",[A(180-a-b,null,"num","angle =")],"Angles in a triangle add up to $180^\\circ$: $180-"+a+"-"+b+"="+(180-a-b)+"^\\circ$.",GF.tri({ang:[a,b,180-a-b],lab:{A:a+"°",B:b+"°",C:"x°"}}))},
+ function(){var b=ri(25,75),ap=180-2*b;
+   return K("iso","Triangle $ABC$ is isosceles with $AB=AC$. Angle $BAC=$ $"+ap+"^\\circ$. Find angle $ABC$.",[A(b,null,"num","angle =")],"Base angles are equal: $\\dfrac{180-"+ap+"}{2}="+b+"^\\circ$.",GF.tri({ang:[ap,b,b],lab:{A:ap+"°",B:"x°"}}))},
  function(){var n=ri(5,12);
    return K("isum","Find the sum of the interior angles of a polygon with $"+n+"$ sides.",[A((n-2)*180,null,"num","sum =")],"$(n-2)\\times180^\\circ="+(n-2)+"\\times180^\\circ="+(n-2)*180+"^\\circ$")}),
  2:L(
+ function(){var x=ri(12,20),p=ri(5,20),q=ri(5,20),a1=2*x+p,a2=3*x-q,a3=180-a1-a2,r=a3-x;
+   return K("trx","The angles of a triangle are $(2x+"+p+")^\\circ$, $(3x-"+q+")^\\circ$ and $(x"+sg(r)+")^\\circ$. Find $x$.",[A(x,null,"num","x =")],"The angles add up to $180^\\circ$: $6x"+sg(p-q+r)+"=180\\Rightarrow x="+x+"$.",GF.tri({names:"",out:true,ang:[a1,a2,a3],lab:{A:"(2x + "+p+")°",B:"(3x − "+q+")°",C:"(x "+(r<0?"− ":"+ ")+Math.abs(r)+")°"}}))},
+ function(){var a=ri(30,80),b=ri(25,70);
+   return K("exa","In triangle $ABC$, angle $A="+a+"^\\circ$ and angle $B="+b+"^\\circ$. The side $BC$ is extended to $D$. Find the exterior angle $ACD$.",[A(a+b,null,"num","angle ACD =")],"Exterior angle = sum of the two opposite interior angles: $"+a+"+"+b+"="+(a+b)+"^\\circ$.",GF.tri({ang:[a,b,180-a-b],lab:{A:a+"°",B:b+"°"},ext:{at:"C",lab:"x°"}}))},
  function(){var n=pick([5,6,8,9,10,12,15,18,20,24,30,36]);
    return K("ext","Each exterior angle of a regular polygon is $"+360/n+"^\\circ$. How many sides does the polygon have?",[A(n,null,"num","n =")],"Exterior angles add up to $360^\\circ$: $n=\\dfrac{360}{"+360/n+"}="+n+"$.")},
  function(){var n=pick([5,6,8,9,10,12,15,18,20]);
@@ -169,14 +175,14 @@ G9[8]={1:L(
 /* 9 Pythagoras' theorem */
 G9[9]={1:L(
  function(){var T=pick(TR),k=ri(1,3);
-   return K("hyp","A right-angled triangle has shorter sides $"+T[0]*k+"$ cm and $"+T[1]*k+"$ cm. Find the length of the hypotenuse.",[A(T[2]*k,null,"num","cm")],"$c^2="+T[0]*k+"^2+"+T[1]*k+"^2="+T[2]*T[2]*k*k+"\\Rightarrow c="+T[2]*k+"$ cm")},
+   return K("hyp","A right-angled triangle has shorter sides $"+T[0]*k+"$ cm and $"+T[1]*k+"$ cm. Find the length of the hypotenuse.",[A(T[2]*k,null,"num","cm")],"$c^2="+T[0]*k+"^2+"+T[1]*k+"^2="+T[2]*T[2]*k*k+"\\Rightarrow c="+T[2]*k+"$ cm",GF.rightTri({w:T[0],h:T[1],base:T[0]*k+" cm",height:T[1]*k+" cm",hyp:"x cm"}))},
  function(){var T=pick(TR),k=ri(1,3);
-   return K("sh","The hypotenuse of a right-angled triangle is $"+T[2]*k+"$ cm and one side is $"+T[1]*k+"$ cm. Find the length of the third side.",[A(T[0]*k,null,"num","cm")],"$a^2="+T[2]*k+"^2-"+T[1]*k+"^2="+T[0]*T[0]*k*k+"\\Rightarrow a="+T[0]*k+"$ cm")}),
+   return K("sh","The hypotenuse of a right-angled triangle is $"+T[2]*k+"$ cm and one side is $"+T[1]*k+"$ cm. Find the length of the third side.",[A(T[0]*k,null,"num","cm")],"$a^2="+T[2]*k+"^2-"+T[1]*k+"^2="+T[0]*T[0]*k*k+"\\Rightarrow a="+T[0]*k+"$ cm",GF.rightTri({w:T[0],h:T[1],base:"x cm",height:T[1]*k+" cm",hyp:T[2]*k+" cm"}))}),
  2:L(
  function(){var a=ri(2,12),b=ri(2,12),c=Math.sqrt(a*a+b*b);if(c%1===0)b++;c=Math.sqrt(a*a+b*b);
-   return K("h2","A right-angled triangle has shorter sides $"+a+"$ cm and $"+b+"$ cm. Calculate the length of the hypotenuse. "+DP,[A(nf(c),null,"num","cm")],"$c=\\sqrt{"+a*a+"+"+b*b+"}=\\sqrt{"+(a*a+b*b)+"}="+r2(c)+"$ cm")},
+   return K("h2","A right-angled triangle has shorter sides $"+a+"$ cm and $"+b+"$ cm. Calculate the length of the hypotenuse. "+DP,[A(nf(c),null,"num","cm")],"$c=\\sqrt{"+a*a+"+"+b*b+"}=\\sqrt{"+(a*a+b*b)+"}="+r2(c)+"$ cm",GF.rightTri({w:a,h:b,base:a+" cm",height:b+" cm",hyp:"x cm"}))},
  function(){var L0=ri(5,12),d=ri(1,L0-2),h=Math.sqrt(L0*L0-d*d);
-   return K("lad","A ladder of length $"+L0+"$ m leans against a vertical wall. The foot of the ladder is $"+d+"$ m from the wall. How high up the wall does the ladder reach? "+DP,[A(nf(h),null,"num","m")],"$h=\\sqrt{"+L0+"^2-"+d+"^2}=\\sqrt{"+(L0*L0-d*d)+"}="+r2(h)+"$ m")}),
+   return K("lad","A ladder of length $"+L0+"$ m leans against a vertical wall. The foot of the ladder is $"+d+"$ m from the wall. How high up the wall does the ladder reach? "+DP,[A(nf(h),null,"num","m")],"$h=\\sqrt{"+L0+"^2-"+d+"^2}=\\sqrt{"+(L0*L0-d*d)+"}="+r2(h)+"$ m",GF.rightTri({names:"",w:d,h:h,base:d+" m",height:"h m",hyp:L0+" m"}))}),
  3:L(
  function(){var P=[ri(-6,5),ri(-6,5)],B=[ri(-6,5),ri(-6,5)];if(P[0]===B[0]&&P[1]===B[1])B[0]++;var d2=(B[0]-P[0])*(B[0]-P[0])+(B[1]-P[1])*(B[1]-P[1]);
    return K("dist","Find the exact length of the line segment joining $"+pt(P)+"$ and $"+pt(B)+"$.",[A("sqrt("+d2+")",sqT(d2),"num","length =")],"$d=\\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}=\\sqrt{"+d2+"}="+sqT(d2)+"$")},
@@ -474,17 +480,61 @@ var LES10=[
 
 /* 🖼 រូបសំណួរ (fig.js)៖ pts={A:[x,y,"ne"]} · cmds=["seg A B",…] · o.axes (អ័ក្ស) · o.nts=false (មិនសរសេរ NOT TO SCALE) · o.ext=[[x,y]] */
 function FB(pts,cmds,o){o=o||{};var xs=[],ys=[],k,L=[],r=function(v){return Math.round(v*1000)/1000};
-  for(k in pts){xs.push(pts[k][0]);ys.push(pts[k][1])}(o.ext||[]).forEach(function(p){xs.push(p[0]);ys.push(p[1])});
+  for(k in pts){xs.push(pts[k][0]);ys.push(pts[k][1])}(o.ext||[]).concat(o.tx||[]).forEach(function(p){xs.push(p[0]);ys.push(p[1])});
   var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys),m=Math.max(x1-x0,y1-y0)*.14+.5;
   x0-=m;x1+=m;y0-=m;y1+=m+(o.nts===false?0:m*.6);
   if(o.axes){x0=Math.floor(Math.min(x0,-1));x1=Math.ceil(Math.max(x1,1));y0=Math.floor(Math.min(y0,-1));y1=Math.ceil(Math.max(y1,1))}
   var w=x1-x0,h=y1-y0;if(h/w<.55){var e=(.55*w-h)/2;y0-=e;y1+=e}else if(h/w>1.1){var e2=(h/1.1-w)/2;x0-=e2;x1+=e2}
   if(!o.axes)L.push("nogrid","noaxes");L.push("window x="+r(x0)+".."+r(x1)+" y="+r(y0)+".."+r(y1));
-  for(k in pts)L.push(k+"("+r(pts[k][0])+","+r(pts[k][1])+")"+(pts[k][2]?" "+pts[k][2]:""));
-  L=L.concat(cmds);if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
+  for(k in pts)L.push((k[0]==="_"?"":k)+"("+r(pts[k][0])+","+r(pts[k][1])+")"+(pts[k][2]?" "+pts[k][2]:""));   /* កូនសោចាប់ផ្ដើម «_» = ចំណុចគ្មានឈ្មោះ (មិនបង្ហាញអក្សរ) */
+  L=L.concat(cmds);
+  /* o.tx=[[x,y,"ស្លាក",nx,ny]]៖ ស្លាកកណ្ដាលចំណុច (x,y) រុញទៅទិស (nx,ny) ក្រៅរូប — fig.js text ចាប់ពីខាងឆ្វេង ដូច្នេះគណនាទំហំអក្សរ (~6.6px/តួ) តាមមាត្រដ្ឋានរូប (W=380) */
+  var xu=352/(x1-x0),yu=(Math.max(200,Math.min(460,380*(y1-y0)/(x1-x0)))-28)/(y1-y0);
+  (o.tx||[]).forEach(function(t){var hw=String(t[2]).length*3.3,nx=t[3]||0,ny=t[4]||0,d=(nx||ny)?Math.abs(nx)*hw+Math.abs(ny)*7+7:0;   /* ចម្ងាយកែងពីចំណុច = កន្លះទទឹង·|nx| + កន្លះកម្ពស់·|ny| + គម្លាត */
+    L.push("text ("+r(t[0]+nx*d/xu-hw/xu)+","+r(t[1]+ny*d/yu-4/yu)+") "+t[2])});if(o.nts!==false)L.push("text ("+r(x1-(x1-x0)*.3)+","+r(y1-(y1-y0)*.06)+") NOT TO SCALE gray");
   return L.join("\n")}
 function mid(P,Q,dx,dy){return"("+(Math.round(((P[0]+Q[0])/2+(dx||0))*1000)/1000)+","+(Math.round(((P[1]+Q[1])/2+(dy||0))*1000)/1000)+")"}
-window.PXEN={K:K,FB:FB,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
+
+/* 📐 GF — ជំនួយគូររូបធរណីមាត្រ (ទិន្នន័យមុន រូបតាមក្រោយ៖ generator បញ្ជូនលេខតែមួយទៅទាំងសំណួរ និងរូប)
+   GF.tri({ang:[A,B,C] (ដឺក្រេពិត សម្រាប់រាង), lab:{A,B,C (មុំ) · a,b,c (ជ្រុងឈមនឹង A,B,C)}, names:"ABC" ("" = គ្មានអក្សរកំពូល), right:"B", ext:{at:"C",lab:"x°"}})
+   GF.rightTri({w,h (សមាមាត្ររាង), names:"ABC" (កែងត្រង់ B), base,height,hyp (ស្លាកជ្រុង), ang:{at:"A"|"C",lab}})
+   ស្លាកជា Unicode (°, cm², θ) — fig.js មិន render LaTeX · ចេញជា string សម្រាប់ដាក់ក្នុង K(...,fig) */
+var GF=(function(){
+ var R=Math.PI/180,D8=["e","ne","n","nw","w","sw","s","se"];
+ function dir8(d){return D8[((Math.round(Math.atan2(d[1],d[0])/R/45)%8)+8)%8]}
+ function out(g,m){var dx=m[0]-g[0],dy=m[1]-g[1],l=Math.hypot(dx,dy)||1;return[dx/l,dy/l]}
+ function fit(P,sc){var k,xs=[],ys=[];for(k in P){xs.push(P[k][0]);ys.push(P[k][1])}
+  var x0=Math.min.apply(null,xs),x1=Math.max.apply(null,xs),y0=Math.min.apply(null,ys),y1=Math.max.apply(null,ys),f=sc/(Math.max(x1-x0,y1-y0)||1);
+  for(k in P)P[k]=[(P[k][0]-(x0+x1)/2)*f,(P[k][1]-(y0+y1)/2)*f];return P}
+ function side(tx,p,q,g,t){if(!t)return;var m=[(p[0]+q[0])/2,(p[1]+q[1])/2],d=out(g,m);tx.push([m[0],m[1],t,d[0],d[1]])}
+ function names(o){var n=o.names==null?"ABC":o.names;return n.length===3?{N:n.split(""),show:true}:{N:["A","B","C"],show:false}}
+ function rf(v){return Math.round(v*1000)/1000}
+ function ref(nn,P,k){return nn.show?k:"("+rf(P[k][0])+","+rf(P[k][1])+")"}   /* គ្មានឈ្មោះ → ប្រើកូអរដោនេ (x,y) ក្នុងពាក្យបញ្ជា */
+ function tri(o){var nn=names(o),N=nn.N,a=o.ang,lab=o.lab||{},L=4,P={},c=L*Math.sin(a[2]*R)/Math.sin(a[0]*R);
+  P[N[1]]=[0,0];P[N[2]]=[L,0];P[N[0]]=[c*Math.cos(a[1]*R),c*Math.sin(a[1]*R)];if(o.ext)P.D=[L*1.38,0];
+  fit(P,3.4);var A=P[N[0]],B=P[N[1]],C=P[N[2]],g=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3],pts={},cm,tx=[],Rf=function(k){return ref(nn,P,k)},RN=N.map(Rf);
+  cm=["poly "+RN.join(" ")+" black"];
+  N.forEach(function(k){pts[(nn.show?"":"_")+k]=[P[k][0],P[k][1],nn.show?dir8(out(g,P[k])):""]});
+  /* មុំតូច (<45°)៖ ស្លាក fig.js (R+12px) ជាន់ជ្រុង → គូរតែធ្នូ ហើយដាក់ស្លាកក្នុងត្រីកោណតាមអ័ក្សពាក់កណ្ដាលមុំ · o.out = ស្លាកមុំទាំងអស់នៅក្រៅកំពូល (ស្លាកវែង) */
+  N.forEach(function(v,i){var t=lab["ABC"[i]];if(!t||o.right===v)return;var p=P[N[(i+1)%3]],q=P[N[(i+2)%3]],V=P[v],arc="angle "+RN[(i+1)%3]+" "+RN[i]+" "+RN[(i+2)%3],u=out(V,p),w=out(V,q),b=out([0,0],[u[0]+w[0],u[1]+w[1]]);
+   if(o.out){cm.push(arc);tx.push([V[0],V[1],t,-b[0],-b[1]])}
+   else if(a[i]<45){cm.push(arc);var d=a[i]<25?1.25:1.05;tx.push([V[0]+b[0]*d,V[1]+b[1]*d,t,0,0])}
+   else cm.push(arc+" "+t)});
+  if(o.right){var ri0=N.indexOf(o.right),i1=(ri0+1)%3,i2=(ri0+2)%3;cm.push("right "+RN[i1]+" "+RN[ri0]+" "+RN[i2])}
+  side(tx,B,C,g,lab.a);side(tx,C,A,g,lab.b);side(tx,A,B,g,lab.c);
+  if(o.ext){var at=N.indexOf(o.ext.at);pts[(nn.show?"":"_")+"D"]=[P.D[0],P.D[1],nn.show?"e":""];var Dr=nn.show?"D":"("+rf(P.D[0])+","+rf(P.D[1])+")";cm.push("seg "+RN[at]+" "+Dr+" black");cm.push("angle "+RN[at===2?0:1]+" "+RN[at]+" "+Dr+" "+(o.ext.lab||""))}
+  return FB(pts,cm,{tx:tx})}
+ function rightTri(o){var w=o.w||4,h=o.h||3,nn=names(o),N=nn.N,P={};if(w/h>2.2)h=w/2.2;if(w/h<.45)w=h*.45;
+  P[N[1]]=[0,0];P[N[2]]=[w,0];P[N[0]]=[0,h];fit(P,3.4);
+  var A=P[N[0]],B=P[N[1]],C=P[N[2]],g=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3],pts={},tx=[],RN=N.map(function(k){return ref(nn,P,k)}),cm=["poly "+RN.join(" ")+" black","right "+RN[0]+" "+RN[1]+" "+RN[2]],pre=nn.show?"":"_",dirs={};
+  dirs[N[0]]="nw";dirs[N[1]]="sw";dirs[N[2]]="se";N.forEach(function(k){pts[pre+k]=[P[k][0],P[k][1],nn.show?dirs[k]:""]});
+  if(o.base)tx.push([(B[0]+C[0])/2,B[1],o.base,0,-1]);
+  if(o.height)tx.push([A[0],(A[1]+B[1])/2,o.height,-1,0]);
+  side(tx,A,C,g,o.hyp);
+  if(o.ang){var atA=(o.ang.at==="A"||o.ang.at===N[0]),ia=atA?0:2,io=atA?2:0;cm.push("angle "+RN[1]+" "+RN[ia]+" "+RN[io]+" "+(o.ang.lab||""))}
+  return FB(pts,cm,{tx:tx})}
+ return{tri:tri,rightTri:rightTri}})();
+window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
 })();
