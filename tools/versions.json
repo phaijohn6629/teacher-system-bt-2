@@ -75,6 +75,10 @@
   "hash": "4a0e5828a7582f74ee69b54ed9459ba09210ac71",
   "v": 6
  },
+ "hubdata_en.js": {
+  "hash": "9ccadc99421740afc23cea3bf348faf886c5f90e",
+  "v": 3
+ },
  "khcal.js": {
   "hash": "652046b95b4b8a94b974a0cc061aea9f9ffe20ea",
   "v": 1
@@ -200,8 +204,8 @@
   "v": 26
  },
  "script.js": {
-  "hash": "7f4145caac98f795b0681c19ed17d853f34f1caa",
-  "v": 199
+  "hash": "6672408dc3caba4dff007db8019b42866d4444a7",
+  "v": 201
  },
  "slide_presenter.css": {
   "hash": "9ec18c6952f75ee3a0ff7637269c988118633329",

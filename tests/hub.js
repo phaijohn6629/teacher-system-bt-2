@@ -4,7 +4,7 @@
    ដំណើរការពីថតគម្រោង៖ jsc tests/hub.js */
 var H=function(){return P};var P=new Proxy(H,{get:function(t,k){if(k===Symbol.toPrimitive)return function(){return""};if(k==="length")return 0;return P},apply:function(){return P},construct:function(){return P}});
 var window=this;var document=P,localStorage={_:{},getItem:function(k){return this._[k]||null},setItem:function(k,v){this._[k]=String(v)},removeItem:function(k){delete this._[k]}},location={hash:"",search:""},navigator={},setInterval=function(){},setTimeout=function(){},addEventListener=function(){},console={log:print,error:print,warn:print};
-eval(read("practice.js"));eval(read("practice9.js"));eval(read("hubdata.js"));eval(read("hub.js"));
+eval(read("practice.js"));eval(read("practice9.js"));["practiceen.js","practiceen2.js","practiceen3.js","practiceen4.js","practiceen5.js","practiceen6.js"].forEach(function(f){eval(read(f))});eval(read("hubdata.js"));eval(read("hubdata_en.js"));eval(read("hub.js"));
 var bad=0,n=0,KH=/[ក-៿]/;
 function B(m){bad++;if(bad<25)print(m)}
 function bal(t){var d=(String(t).match(/\$/g)||[]).length;if(d%2)return false;var c=0;for(var i=0;i<t.length;i++){if(t[i]==="{")c++;else if(t[i]==="}"){c--;if(c<0)return false}}return c===0}
@@ -79,4 +79,12 @@ Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d
     (c.match(/<li>[\s\S]*?<\/li>/g)||[]).forEach(function(li){if((li.match(/\$/g)||[]).length%2)B("STEP$ g"+g+" l"+l+" v"+v+" "+li.slice(0,80))});
     (c.match(/\$[^$]*\$/g)||[]).forEach(function(m){if(/<[a-zA-Z\/!]/.test(m))B("RAW< g"+g+" l"+l+" v"+v+" "+m.slice(0,60))})}})})});
   PRACT.S.qs=[];n+=ex})();
+/* 🇬🇧 Cambridge (hubdata_en.js) ៖ គ្រប់មេរៀន Stage 6–12 (G6–G12) មានមេរៀនសង្ខេបពិត (មិនមែនសារ generic) · គ្រប់កម្រិតបង្ហាញ */
+var enN=0;[106,107,108,109,110,111,112].forEach(function(g){var R=PRACT.GR[g];if(!R){B("NO GR "+g);return}
+  R.les.forEach(function(c){c[1].forEach(function(x){var l=x[0],s=HUB.starter(g,l);enN++;if(!s||!s.length){B("NO EN STARTER g"+g+" l"+l);return}
+    s.forEach(function(y){n++;if(!y.t||!y.s||!y.f||!y.f.length||!y.k||!y.ex||!y.ex.length)B("EN INCOMPLETE g"+g+" l"+l);
+      [y.s,y.k].concat(y.ex.reduce(function(a,e){return a.concat(e)},[])).forEach(function(t){if(!bal(t))B("EN BAL g"+g+" l"+l+" "+String(t).slice(0,50));if(KH.test(t))B("EN KHMER g"+g+" l"+l);if(/\x01-\x08/.test(t))B("EN CTRL")});
+      y.f.forEach(function(f){if(!bal(f)||/\$/.test(f)||KH.test(f))B("EN FORMULA g"+g+" l"+l+" "+f)})});
+    HUB.LV.forEach(function(v){var h=HUB.html(g,l,v,x[1],true);if(h.indexOf("has not added a summary")>=0)B("EN GENERIC g"+g+" l"+l+" v"+v)})})})});
+print("EN lessons checked "+enN);
 print("hub: subtopics "+n+" bad "+bad);
