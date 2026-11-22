@@ -532,7 +532,7 @@ var GF=(function(){
   if(o.base)tx.push([(B[0]+C[0])/2,B[1],o.base,0,-1]);
   if(o.height)tx.push([A[0],(A[1]+B[1])/2,o.height,-1,0]);
   side(tx,A,C,g,o.hyp);
-  if(o.ang){var atA=(o.ang.at==="A"||o.ang.at===N[0]),ia=atA?0:2,io=atA?2:0;wedge(cm,tx,P[N[ia]],B,P[N[io]],RN[ia],RN[1],RN[io],o.ang.lab,"in")}
+  if(o.ang){var atA=(o.ang.at==="top"||o.ang.at===N[0]),ia=atA?0:2,io=atA?2:0;wedge(cm,tx,P[N[ia]],B,P[N[io]],RN[ia],RN[1],RN[io],o.ang.lab,"in")}
   return FB(pts,cm,{tx:tx})}
  /* មុំមួយ៖ ធ្នូ (fig.js) + ស្លាកដាក់ដោយ tx — mode "in" = ក្នុងមុំ (ចម្ងាយតាមទំហំមុំ) · "out" = ក្រៅកំពូល */
  function wedge(cm,tx,V,p,q,Rv,Rp,Rq,t,mode){var u=out(V,p),w=out(V,q),b=out([0,0],[u[0]+w[0],u[1]+w[1]]),deg=Math.acos(Math.max(-1,Math.min(1,u[0]*w[0]+u[1]*w[1])))/R;

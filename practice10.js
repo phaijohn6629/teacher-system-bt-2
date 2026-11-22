@@ -75,6 +75,11 @@ G[34]={1:function(){var a=nz(-4,4),b=ri(-8,8),c=ri(-8,8),v=fr(c-b,a);
     return Q("ដោះស្រាយប្រព័ន្ធ $\\begin{cases}"+a+"<x<"+b+"\\\\"+c+"<x<"+d+"\\end{cases}$ ៖ ចម្លើយ $\\alpha<x<\\beta$",[A(lo,null,"num","α ="),A(hi,null,"num","β =")],"ប្រសព្វនៃចន្លោះ ⇒ $"+lo+"<x<"+hi+"$")}};
 /* ===== ជំពូកទី៤ ធរណីមាត្រក្នុងប្លង់ ===== */
 var TR=[[3,4,5],[6,8,10],[5,12,13],[8,6,10],[4,3,5]];
+/* 🖼 រូបត្រីកោណពី practiceen.js (PXEN.GF.rightTri / tri) — ហៅពេលបង្កើតសំណួរ · បើគ្មាន → គ្មានរូប (មិនបាក់) */
+function GFR(o){try{return window.PXEN.GF.rightTri(o)}catch(e){return ""}}
+function GFT(o){try{return window.PXEN.GF.tri(o)}catch(e){return ""}}
+var DG=Math.PI/180;
+function cosAng(a,b,c){return Math.acos((b*b+c*c-a*a)/(2*b*c))/DG}   /* មុំឈមជ្រុង a ពីជ្រុងទាំងបី */
 G[41]={1:function(){var P=[ri(-5,5),ri(-5,5)],Q2=[ri(-5,5),ri(-5,5)];
     return Q("រកកូអរដោនេចំណុចកណ្ដាល $M$ នៃ $[AB]$ ដែល $A"+pt(P)+"$ , $B"+pt(Q2)+"$",[A(fr(P[0]+Q2[0],2).s,fr(P[0]+Q2[0],2).t,"num","x ="),A(fr(P[1]+Q2[1],2).s,fr(P[1]+Q2[1],2).t,"num","y =")],"$M\\left(\\frac{x_A+x_B}2;\\frac{y_A+y_B}2\\right)$","A("+P[0]+","+P[1]+")\nB("+Q2[0]+","+Q2[1]+")\nseg A B")},
   2:function(){var T=pick(TR),P=[ri(-4,3),ri(-4,3)],s=[pick([1,-1]),pick([1,-1])],B=[P[0]+s[0]*T[0],P[1]+s[1]*T[1]];
@@ -101,17 +106,17 @@ G[44]={1:function(){var m=nz(-3,3),p=ri(-4,4),r=fr(-p,m);
     return Q("អានពីក្រាប៖ $x^2"+co(-(r1+r2),"x")+sg(r1*r2,0)+"\\ge 0$ ពេល $x\\le a$ ឬ $x\\ge b$ ។ រក $a$, $b$",[A(r1,null,"num","a ="),A(r2,null,"num","b =")],"ផ្នែកក្រាបនៅលើអ័ក្ស $Ox$ ៖ $x\\le"+r1+"$ ឬ $x\\ge"+r2+"$","y=x^2"+co(-(r1+r2),"x")+sg(r1*r2,0)+"\nA("+r1+",0)\nB("+r2+",0)")}};
 /* ===== ជំពូកទី៥ ផលធៀបត្រីកោណមាត្រ ===== */
 G[51]={1:function(){var T=pick(TR),f=pick(["sin","cos","tan"]),v=f==="sin"?fr(T[0],T[2]):f==="cos"?fr(T[1],T[2]):fr(T[0],T[1]);
-    return Q("ត្រីកោណ $ABC$ កែងត្រង់ $C$ មាន $BC="+T[0]+"$ , $AC="+T[1]+"$ , $AB="+T[2]+"$ ។ គណនា $\\"+f+" A$",[A(v.s,v.t,"num",f+" A =")],"$\\sin A=\\frac{BC}{AB}$ · $\\cos A=\\frac{AC}{AB}$ · $\\tan A=\\frac{BC}{AC}$ ⇒ $"+v.t+"$","A(0,0)\nC("+T[1]+",0)\nB("+T[1]+","+T[0]+")\npoly A C B\nangle B A C")},
+    return Q("ត្រីកោណ $ABC$ កែងត្រង់ $C$ មាន $BC="+T[0]+"$ , $AC="+T[1]+"$ , $AB="+T[2]+"$ ។ គណនា $\\"+f+" A$",[A(v.s,v.t,"num",f+" A =")],"$\\sin A=\\frac{BC}{AB}$ · $\\cos A=\\frac{AC}{AB}$ · $\\tan A=\\frac{BC}{AC}$ ⇒ $"+v.t+"$",GFR({names:"ACB",w:T[0],h:T[1],base:String(T[0]),height:String(T[1]),hyp:String(T[2]),ang:{at:"top",lab:"A"}}))},
   2:function(){var T=pick(TR);
-    return Q("ត្រីកោណកែងត្រង់ $C$ មាន $BC="+T[0]+"$ និង $AB="+T[2]+"$ ។ គណនា $AC$ និង $\\cos A$",[A(T[1],null,"num","AC ="),A(fr(T[1],T[2]).s,fr(T[1],T[2]).t,"num","cos A =")],"ពីតាគ័រ $AC=\\sqrt{"+(T[2]*T[2])+"-"+(T[0]*T[0])+"}="+T[1]+"$","A(0,0)\nC("+T[1]+",0)\nB("+T[1]+","+T[0]+")\npoly A C B")},
+    return Q("ត្រីកោណកែងត្រង់ $C$ មាន $BC="+T[0]+"$ និង $AB="+T[2]+"$ ។ គណនា $AC$ និង $\\cos A$",[A(T[1],null,"num","AC ="),A(fr(T[1],T[2]).s,fr(T[1],T[2]).t,"num","cos A =")],"ពីតាគ័រ $AC=\\sqrt{"+(T[2]*T[2])+"-"+(T[0]*T[0])+"}="+T[1]+"$",GFR({names:"ACB",w:T[0],h:T[1],base:String(T[0]),height:"x",hyp:String(T[2]),ang:{at:"top",lab:"A"}}))},
   3:function(){var C=pick([["30°","sqrt(3)/2","\\frac{\\sqrt3}{2}","1/2","\\frac12"],["45°","sqrt(2)/2","\\frac{\\sqrt2}{2}","sqrt(2)/2","\\frac{\\sqrt2}{2}"],["60°","1/2","\\frac12","sqrt(3)/2","\\frac{\\sqrt3}{2}"]]);
     return Q("គណនា $\\cos "+C[0]+"$ និង $\\sin "+C[0]+"$",[A(C[1],C[2],"num","cos ="),A(C[3],C[4],"num","sin =")],"តម្លៃពិសេស")}};
 G[52]={1:function(){var d=ri(5,30),C=pick([["30°","sqrt(3)/3","\\frac{\\sqrt3}{3}"],["45°","1","1"],["60°","sqrt(3)","\\sqrt3"]]);
-    return Q("ពីចំណុចឆ្ងាយ $"+d+"$ ម៉ែត្រពីជើងបង្គោល គេមើលឃើញចុងបង្គោលក្រោមមុំ $"+C[0]+"$ ។ គណនាកម្ពស់បង្គោល",[A(d+"*"+C[1],d+(C[2]==="1"?"":C[2]),"num","h =")],"$h="+d+"\\tan "+C[0]+"$","A(0,0)\nB("+d+",0)\nT("+d+","+(d*({"30°":0.5774,"45°":1,"60°":1.732})[C[0]]).toFixed(2)+")\npoly A B T\nangle B A T")},
+    return Q("ពីចំណុចឆ្ងាយ $"+d+"$ ម៉ែត្រពីជើងបង្គោល គេមើលឃើញចុងបង្គោលក្រោមមុំ $"+C[0]+"$ ។ គណនាកម្ពស់បង្គោល",[A(d+"*"+C[1],d+(C[2]==="1"?"":C[2]),"num","h =")],"$h="+d+"\\tan "+C[0]+"$",GFR({names:"TBA",w:d,h:d*({"30°":0.5774,"45°":1,"60°":1.732})[C[0]],base:d+" m",height:"h",ang:{at:"base",lab:C[0]}}))},
   2:function(){var h=ri(3,12),C=pick([["30°",2,"2"],["45°","sqrt(2)","\\sqrt2"],["60°","2/sqrt(3)","\\frac{2}{\\sqrt3}"]]);
-    return Q("ជណ្ដើរមួយផ្អែកលើជញ្ជាំង បង្កើតមុំ $"+C[0]+"$ ជាមួយដី ហើយចុងជណ្ដើរនៅកម្ពស់ $"+h+"$ ម៉ែត្រ។ គណនាប្រវែងជណ្ដើរ",[A(h+"*"+C[1],null,"num","L =")],"$L=\\frac{h}{\\sin "+C[0]+"}$")},
+    return Q("ជណ្ដើរមួយផ្អែកលើជញ្ជាំង បង្កើតមុំ $"+C[0]+"$ ជាមួយដី ហើយចុងជណ្ដើរនៅកម្ពស់ $"+h+"$ ម៉ែត្រ។ គណនាប្រវែងជណ្ដើរ",[A(h+"*"+C[1],null,"num","L =")],"$L=\\frac{h}{\\sin "+C[0]+"}$",GFR({names:"",w:h/Math.tan(parseInt(C[0])*DG),h:h,height:h+" m",hyp:"L",ang:{at:"base",lab:C[0]}}))},
   3:function(){var a=ri(3,9),b=ri(3,9),C=pick([[60,"1/2",.5],[120,"-1/2",-.5],[90,"0",0]]),c2=a*a+b*b-2*a*b*C[2];
-    return Q("ត្រីកោណ $ABC$ មាន $b="+a+"$ , $c="+b+"$ និងមុំ $A="+C[0]+"^\\circ$ ។ គណនា $a^2$ (ច្បាប់កូស៊ីនុស)",[A(Math.round(c2),null,"num","a² =")],"$a^2=b^2+c^2-2bc\\cos A="+(a*a)+"+"+(b*b)+"-2\\cdot"+a+"\\cdot"+b+"\\cdot("+C[1]+")="+Math.round(c2)+"$")}};
+    return Q("ត្រីកោណ $ABC$ មាន $b="+a+"$ , $c="+b+"$ និងមុំ $A="+C[0]+"^\\circ$ ។ គណនា $a^2$ (ច្បាប់កូស៊ីនុស)",[A(Math.round(c2),null,"num","a² =")],"$a^2=b^2+c^2-2bc\\cos A="+(a*a)+"+"+(b*b)+"-2\\cdot"+a+"\\cdot"+b+"\\cdot("+C[1]+")="+Math.round(c2)+"$",(function(){var a2=Math.sqrt(c2),Bn=cosAng(a,b,a2);return GFT({ang:[C[0],Bn,180-C[0]-Bn],lab:{A:C[0]+"°",b:String(a),c:String(b),a:"a"}})})())}};
 /* ===== ជំពូកទី៦ អនុគមន៍ ===== */
 G[61]={1:function(){var a=nz(-3,3),b=ri(-5,5),x=ri(-4,4);
     return Q("$f(x)="+co(a,"x",true)+sg(b,0)+"$ ។ គណនា $f("+x+")$",[A(a*x+b,null,"num","f("+x+") =")],"$f("+x+")="+(a*x+b)+"$","y="+a+"x"+sg(b,0))},
@@ -269,16 +274,16 @@ P4[44]=[function(){var m=ri(2,6)*1000,c=m*ri(3,12);
       [A(r1,null,"num","a ="),A(r2v,null,"num","b =")],"ឫស $"+r1+"$ និង $"+r2v+"$ ⇒ $"+r1+"\\le x\\le"+r2v+"$","y=-(x-"+r1+")(x-"+r2v+")")}];
 P4[51]=[function(){var h=ri(1,5)*10,d=h*pick([8,10,12]),t=fr(h,d);
     return Q("♿ ផ្លូវជម្រាលឡើងខ្ពស់ $"+h+"$ cm លើចម្ងាយផ្ដេក $"+d+"$ cm ។ ស្តង់ដារតម្រូវ $\\tan\\alpha\\le\\frac1{12}$ ។ (ក) គណនា $\\tan\\alpha$ (ខ) ត្រូវស្តង់ដារទេ? ($1$/$0$)",
-      [A(t.s,t.t,"num","(ក) tan ="),A(h/d<=1/12+1e-9?1:0,null,"num","(ខ) =")],"$\\tan\\alpha=\\dfrac{"+h+"}{"+d+"}="+t.t+"$ "+(h/d<=1/12+1e-9?"\\le":">")+"\\frac1{12}")},
+      [A(t.s,t.t,"num","(ក) tan ="),A(h/d<=1/12+1e-9?1:0,null,"num","(ខ) =")],"$\\tan\\alpha=\\dfrac{"+h+"}{"+d+"}="+t.t+"$ "+(h/d<=1/12+1e-9?"\\le":">")+"\\frac1{12}",GFR({names:"",w:d,h:h,base:d+" cm",height:h+" cm",ang:{at:"base",lab:"α"}}))},
   function(){var T=pick(TR),t=fr(T[1],T[0]);
     return Q("☀️ បង្គោលកម្ពស់ $"+T[1]+"$ m មានស្រមោលវែង $"+T[0]+"$ m ។ មុំ $\\alpha$ រវាងកាំរស្មីព្រះអាទិត្យ និងដី មាន $\\tan\\alpha$ ប៉ុន្មាន? ហើយ $\\sin\\alpha$?",
-      [A(t.s,t.t,"num","tan ="),A(fr(T[1],T[2]).s,fr(T[1],T[2]).t,"num","sin =")],"$\\tan\\alpha=\\frac{"+T[1]+"}{"+T[0]+"}$ · កាំរស្មី $="+T[2]+"$ ⇒ $\\sin\\alpha=\\frac{"+T[1]+"}{"+T[2]+"}$")}];
+      [A(t.s,t.t,"num","tan ="),A(fr(T[1],T[2]).s,fr(T[1],T[2]).t,"num","sin =")],"$\\tan\\alpha=\\frac{"+T[1]+"}{"+T[0]+"}$ · កាំរស្មី $="+T[2]+"$ ⇒ $\\sin\\alpha=\\frac{"+T[1]+"}{"+T[2]+"}$",GFR({names:"",w:T[0],h:T[1],base:T[0]+" m",height:T[1]+" m",ang:{at:"base",lab:"α"}}))}];
 P4[52]=[function(){var d=ri(2,10)*10,C=pick([["45°","1","1"],["60°","sqrt(3)","\\sqrt3"],["30°","sqrt(3)/3","\\frac{\\sqrt3}{3}"]]);
     return Q("🏞️ ដើម្បីវាស់ទទឹងទន្លេ សិស្សឈរត្រង់ $A$ ទល់មុខដើមឈើ $T$ ត្រើយម្ខាង រួចដើរតាមមាត់ទន្លេ $"+d+"$ m ដល់ $B$ ហើយវាស់បាន $\\widehat{ABT}="+C[0]+"$ ($TA\\perp AB$)។ ទទឹងទន្លេ $AT$ ប៉ុន្មាន m? (សរសេរ $\\sqrt{\\ }$ បាន)",
-      [A(d+"*"+C[1],(C[1]==="1"?d:d+C[2]),"num","AT =")],"$AT="+d+"\\tan"+C[0]+"$","nogrid\nnoaxes\nA(0,0)\nB(5,0)\nT(0,"+r2(5*({"45°":1,"60°":1.732,"30°":0.577})[C[0]])+")\npoly A B T\nangle A B T")},
+      [A(d+"*"+C[1],(C[1]==="1"?d:d+C[2]),"num","AT =")],"$AT="+d+"\\tan"+C[0]+"$",GFR({names:"TAB",w:d,h:d*({"45°":1,"60°":1.732,"30°":0.577})[C[0]],base:d+" m",height:"AT",ang:{at:"base",lab:C[0]}}))},
   function(){var a=ri(3,10),b=ri(3,10),c2=a*a+b*b-a*b,r=Math.round(Math.sqrt(c2));
     return Q("⛵ ទូកពីរចេញពីកំពង់ផែ ក្នុងទិសដៅបង្កើតមុំ $60^\\circ$ ។ ក្រោយមួយម៉ោង ទូកទី១ ឆ្ងាយ $"+a+"$ km ទូកទី២ ឆ្ងាយ $"+b+"$ km ។ ទូកទាំងពីរឃ្លាតគ្នាប៉ុន្មាន km? (សរសេរ $\\sqrt{\\ }$ បាន)",
-      [A(r*r===c2?r:"sqrt("+c2+")",r*r===c2?String(r):"\\sqrt{"+c2+"}","num","km =")],"ច្បាប់កូស៊ីនុស៖ $d^2="+a+"^2+"+b+"^2-2\\cdot"+a+"\\cdot"+b+"\\cos60^\\circ="+c2+"$")}];
+      [A(r*r===c2?r:"sqrt("+c2+")",r*r===c2?String(r):"\\sqrt{"+c2+"}","num","km =")],"ច្បាប់កូស៊ីនុស៖ $d^2="+a+"^2+"+b+"^2-2\\cdot"+a+"\\cdot"+b+"\\cos60^\\circ="+c2+"$",(function(){var a2=Math.sqrt(c2),Bn=cosAng(b,a,a2);return GFT({ang:[60,Bn,180-60-Bn],lab:{A:"60°",c:a+" km",b:b+" km",a:"?"}})})())}];
 P4[61]=[function(){var C=ri(-5,40);
     return Q("🌡️ បំប្លែងសីតុណ្ហភាព៖ $F(C)=1.8C+32$ ។ (ក) ថ្ងៃនេះ $"+C+"^\\circ$C ស្មើប៉ុន្មាន $^\\circ$F? (ខ) $212^\\circ$F ស្មើប៉ុន្មាន $^\\circ$C?",
       [A(r2(1.8*C+32),null,"num","(ក) °F ="),A(100,null,"num","(ខ) °C =")],"$1.8\\times"+sgp(C)+"+32="+r2(1.8*C+32)+"$ · $1.8C+32=212\\Rightarrow C=100$")},
@@ -592,8 +597,8 @@ vx(44,3,[
 /* ៥.១ ផលធៀបត្រីកោណមាត្រ */
 var SPC=[["\\sin30^\\circ",fr(1,2)],["\\cos60^\\circ",fr(1,2)],["\\tan45^\\circ",fr(1,1)],["\\sin90^\\circ",fr(1,1)],["\\cos0^\\circ",fr(1,1)],["\\cos90^\\circ",fr(0,1)]];
 vx(51,1,[
- function(){var T=pick(TR),v=fr(T[1],T[2]);return K("s10_sinB","ត្រីកោណ $ABC$ កែងត្រង់ $C$ មាន $BC="+T[0]+"$ , $AC="+T[1]+"$ , $AB="+T[2]+"$ ។ គណនា $\\sin B$",[A(v.s,v.t,"num","sin B =")],"$\\sin B=\\dfrac{AC}{AB}="+v.t+"$")},
- function(){var T=pick(TR),v=fr(T[1],T[0]);return K("s10_cot","ត្រីកោណ $ABC$ កែងត្រង់ $C$ មាន $BC="+T[0]+"$ , $AC="+T[1]+"$ ។ គណនា $\\cot A$",[A(v.s,v.t,"num","cot A =")],"$\\cot A=\\dfrac{AC}{BC}="+v.t+"$")},
+ function(){var T=pick(TR),v=fr(T[1],T[2]);return K("s10_sinB","ត្រីកោណ $ABC$ កែងត្រង់ $C$ មាន $BC="+T[0]+"$ , $AC="+T[1]+"$ , $AB="+T[2]+"$ ។ គណនា $\\sin B$",[A(v.s,v.t,"num","sin B =")],"$\\sin B=\\dfrac{AC}{AB}="+v.t+"$",GFR({names:"ACB",w:T[0],h:T[1],base:String(T[0]),height:String(T[1]),hyp:String(T[2]),ang:{at:"base",lab:"B"}}))},
+ function(){var T=pick(TR),v=fr(T[1],T[0]);return K("s10_cot","ត្រីកោណ $ABC$ កែងត្រង់ $C$ មាន $BC="+T[0]+"$ , $AC="+T[1]+"$ ។ គណនា $\\cot A$",[A(v.s,v.t,"num","cot A =")],"$\\cot A=\\dfrac{AC}{BC}="+v.t+"$",GFR({names:"ACB",w:T[0],h:T[1],base:String(T[0]),height:String(T[1]),ang:{at:"top",lab:"A"}}))},
  function(){var a=pick(SPC),b=pick(SPC),m=ri(1,4),n=ri(1,4),v=fr(m*a[1].n*b[1].d+n*b[1].n*a[1].d,a[1].d*b[1].d);return K("s10_spv","គណនា $"+m+a[0]+"+"+n+b[0]+"$",[A(v.s,v.t,"num","=")],"$"+a[0]+"="+a[1].t+"$ · $"+b[0]+"="+b[1].t+"$ ⇒ $"+v.t+"$")}]);
 vx(51,2,[
  function(){var T=pick(TR),s=fr(T[0],T[2]),c=fr(T[1],T[2]);return K("s10_sc","$A$ ជាមុំស្រួចដែល $\\sin A="+s.t+"$ ។ គណនា $\\cos A$",[A(c.s,c.t,"num","cos A =")],"$\\cos A=\\sqrt{1-\\sin^2A}="+c.t+"$")},
@@ -602,20 +607,20 @@ vx(51,2,[
 vx(51,3,[
  function(){var t=pick([2,3,4,5,fr(1,2),fr(1,3),fr(3,2)]),n=typeof t==="number"?t:t.n,d=typeof t==="number"?1:t.d,r=fr(n+d,n-d),tt=typeof t==="number"?String(t):t.t;return K("s10_ex","$\\tan A="+tt+"$ ។ គណនា $E=\\dfrac{\\sin A+\\cos A}{\\sin A-\\cos A}$",[A(r.s,r.t,"num","E =")],"ចែកនឹង $\\cos A$ ⇒ $E=\\dfrac{\\tan A+1}{\\tan A-1}="+r.t+"$")},
  function(){var b=ri(10,80);return K("s10_co","រកមុំស្រួច $\\alpha$ ដែល $\\sin\\alpha=\\cos"+ang(b)+"$",[A(90-b,null,"num","α =")],"$\\sin\\alpha=\\cos(90^\\circ-\\alpha)$ ⇒ $"+ang(90-b)+"$")},
- function(){var h=2*ri(1,8),C=pick([[30,"opp"],[60,"opp"],[45,"opp"]]),ans=C[0]===30?[String(h/2),String(h/2)]:C[0]===60?[(h/2)+"*sqrt(3)",(h/2===1?"":h/2)+"\\sqrt3"]:[(h/2)+"*sqrt(2)",(h/2===1?"":h/2)+"\\sqrt2"];return K("s10_side","ត្រីកោណ $ABC$ កែងត្រង់ $C$ មានអ៊ីប៉ូតេនុស $AB="+h+"$ និង $\\widehat A="+ang(C[0])+"$ ។ គណនា $BC$",[A(ans[0],ans[1],"num","BC =")],"$BC=AB\\sin"+ang(C[0])+"="+ans[1]+"$")}]);
+ function(){var h=2*ri(1,8),C=pick([[30,"opp"],[60,"opp"],[45,"opp"]]),ans=C[0]===30?[String(h/2),String(h/2)]:C[0]===60?[(h/2)+"*sqrt(3)",(h/2===1?"":h/2)+"\\sqrt3"]:[(h/2)+"*sqrt(2)",(h/2===1?"":h/2)+"\\sqrt2"];return K("s10_side","ត្រីកោណ $ABC$ កែងត្រង់ $C$ មានអ៊ីប៉ូតេនុស $AB="+h+"$ និង $\\widehat A="+ang(C[0])+"$ ។ គណនា $BC$",[A(ans[0],ans[1],"num","BC =")],"$BC=AB\\sin"+ang(C[0])+"="+ans[1]+"$",GFR({names:"ACB",w:Math.tan(C[0]*DG),h:1,base:"x",hyp:String(h),ang:{at:"top",lab:C[0]+"°"}}))}]);
 /* ៥.២ ការអនុវត្ត */
 vx(52,1,[
- function(){var L=2*ri(2,12);return K("s10_ramp","ផ្លូវឡើងទ្រេតវែង $"+L+"$ m បង្កើតមុំ $30^\\circ$ ជាមួយដី ។ តើចុងផ្លូវខ្ពស់ពីដីប៉ុន្មាន m?",[A(L/2,null,"num","h =")],"$h="+L+"\\sin30^\\circ="+(L/2)+"$")},
- function(){var h=ri(3,20);return K("s10_shadow","ដើមឈើកម្ពស់ $"+h+"$ m ។ ពេលកាំរស្មីព្រះអាទិត្យធ្វើមុំ $45^\\circ$ ជាមួយដី តើស្រមោលវែងប៉ុន្មាន m?",[A(h,null,"num","=")],"$\\tan45^\\circ=1$ ⇒ ស្រមោល $="+h+"$ m")},
- function(){var h=ri(5,40);return K("s10_dep","ពីកំពូលប៉មកម្ពស់ $"+h+"$ m គេមើលឃើញទូកមួយក្រោមមុំចុះ $30^\\circ$ ។ តើទូកនៅឆ្ងាយពីជើងប៉មប៉ុន្មាន m? (ទុក $\\sqrt{\\ }$)",[A(h+"*sqrt(3)",h+"\\sqrt3","num","=")],"$d=\\dfrac{h}{\\tan30^\\circ}="+h+"\\sqrt3$")}]);
+ function(){var L=2*ri(2,12);return K("s10_ramp","ផ្លូវឡើងទ្រេតវែង $"+L+"$ m បង្កើតមុំ $30^\\circ$ ជាមួយដី ។ តើចុងផ្លូវខ្ពស់ពីដីប៉ុន្មាន m?",[A(L/2,null,"num","h =")],"$h="+L+"\\sin30^\\circ="+(L/2)+"$",GFR({names:"",w:Math.cos(30*DG),h:.5,height:"h",hyp:L+" m",ang:{at:"base",lab:"30°"}}))},
+ function(){var h=ri(3,20);return K("s10_shadow","ដើមឈើកម្ពស់ $"+h+"$ m ។ ពេលកាំរស្មីព្រះអាទិត្យធ្វើមុំ $45^\\circ$ ជាមួយដី តើស្រមោលវែងប៉ុន្មាន m?",[A(h,null,"num","=")],"$\\tan45^\\circ=1$ ⇒ ស្រមោល $="+h+"$ m",GFR({names:"",w:1,h:1,height:h+" m",base:"x",ang:{at:"base",lab:"45°"}}))},
+ function(){var h=ri(5,40);return K("s10_dep","ពីកំពូលប៉មកម្ពស់ $"+h+"$ m គេមើលឃើញទូកមួយក្រោមមុំចុះ $30^\\circ$ ។ តើទូកនៅឆ្ងាយពីជើងប៉មប៉ុន្មាន m? (ទុក $\\sqrt{\\ }$)",[A(h+"*sqrt(3)",h+"\\sqrt3","num","=")],"$d=\\dfrac{h}{\\tan30^\\circ}="+h+"\\sqrt3$",GFR({names:"",w:h*1.732,h:h,height:h+" m",base:"x",ang:{at:"base",lab:"30°"}}))}]);
 vx(52,2,[
- function(){var b=ri(2,10),c=ri(2,10),C=pick([[30,fr(1,2)],[150,fr(1,2)],[90,fr(1,1)]]),S=fr(b*c*C[1].n,2*C[1].d);return K("s10_area_52","ត្រីកោណ $ABC$ មាន $AB="+c+"$ , $AC="+b+"$ និង $\\widehat A="+ang(C[0])+"$ ។ គណនាផ្ទៃក្រឡា",[A(S.s,S.t,"num","S =")],"$S=\\dfrac12bc\\sin A="+S.t+"$")},
- function(){var a=ri(2,10);return K("s10_iso","ត្រីកោណសមបាតមានជ្រុងអង្គ $"+a+"$ និងមុំកំពូល $120^\\circ$ ។ គណនាបាត (ទុក $\\sqrt{\\ }$)",[A(a+"*sqrt(3)",a+"\\sqrt3","num","=")],"$b^2="+(a*a)+"+"+(a*a)+"-2\\cdot"+(a*a)+"\\cos120^\\circ="+(3*a*a)+"$ ⇒ $"+a+"\\sqrt3$")},
- function(){var a=ri(1,9);return K("s10_hyp","ត្រីកោណកែងមានជ្រុងជាប់មុំកែង $"+a+"$ និង $"+a+"\\sqrt3$ ។ តើមុំឈមនឹងជ្រុង $"+a+"\\sqrt3$ ស្មើប៉ុន្មានដឺក្រេ?",[A(60,null,"num","=")],"$\\tan\\theta=\\sqrt3$ ⇒ $60^\\circ$")}]);
+ function(){var b=ri(2,10),c=ri(2,10),C=pick([[30,fr(1,2)],[150,fr(1,2)],[90,fr(1,1)]]),S=fr(b*c*C[1].n,2*C[1].d);return K("s10_area_52","ត្រីកោណ $ABC$ មាន $AB="+c+"$ , $AC="+b+"$ និង $\\widehat A="+ang(C[0])+"$ ។ គណនាផ្ទៃក្រឡា",[A(S.s,S.t,"num","S =")],"$S=\\dfrac12bc\\sin A="+S.t+"$",(function(){var a2=Math.sqrt(b*b+c*c-2*b*c*Math.cos(C[0]*DG)),Bn=cosAng(b,c,a2);return GFT({ang:[C[0],Bn,180-C[0]-Bn],lab:{A:C[0]+"°",b:String(b),c:String(c)}})})())},
+ function(){var a=ri(2,10);return K("s10_iso","ត្រីកោណសមបាតមានជ្រុងអង្គ $"+a+"$ និងមុំកំពូល $120^\\circ$ ។ គណនាបាត (ទុក $\\sqrt{\\ }$)",[A(a+"*sqrt(3)",a+"\\sqrt3","num","=")],"$b^2="+(a*a)+"+"+(a*a)+"-2\\cdot"+(a*a)+"\\cos120^\\circ="+(3*a*a)+"$ ⇒ $"+a+"\\sqrt3$",GFT({ang:[120,30,30],lab:{A:"120°",b:String(a),c:String(a),a:"?"}}))},
+ function(){var a=ri(1,9);return K("s10_hyp","ត្រីកោណកែងមានជ្រុងជាប់មុំកែង $"+a+"$ និង $"+a+"\\sqrt3$ ។ តើមុំឈមនឹងជ្រុង $"+a+"\\sqrt3$ ស្មើប៉ុន្មានដឺក្រេ?",[A(60,null,"num","=")],"$\\tan\\theta=\\sqrt3$ ⇒ $60^\\circ$",GFR({names:"",w:a,h:a*Math.sqrt(3),base:String(a),height:a+"√3",ang:{at:"base",lab:"θ"}}))}]);
 vx(52,3,[
- function(){var a=ri(2,15);return K("s10_sinr","ត្រីកោណ $ABC$ មាន $a=BC="+a+"$ និង $\\widehat A=30^\\circ$ ។ គណនាកាំ $R$ នៃរង្វង់ចារឹកក្រៅ",[A(a,null,"num","R =")],"$\\dfrac{a}{\\sin A}=2R$ ⇒ $2R=\\dfrac{"+a+"}{1/2}$ ⇒ $R="+a+"$")},
- function(){var a=ri(1,8),b=ri(1,8),S=fr(a*b,4);return K("s10_ar60","ត្រីកោណមានជ្រុងពីរ $"+a+"$ និង $"+b+"$ ហើយមុំរវាងវា $60^\\circ$ ។ គណនាផ្ទៃក្រឡា (ទុក $\\sqrt{\\ }$)",[A(S.s+"*sqrt(3)",(S.d===1?(S.n===1?"":S.n):"\\dfrac{"+S.n+"}{"+S.d+"}")+"\\sqrt3","num","S =")],"$\\dfrac12\\cdot"+a+"\\cdot"+b+"\\cdot\\dfrac{\\sqrt3}{2}$")},
- function(){var b=ri(2,9),c=ri(2,9),a=ri(Math.abs(b-c)+1,b+c-1),cs=fr(b*b+c*c-a*a,2*b*c);return K("s10_cosA","ត្រីកោណមានជ្រុង $a="+a+"$ , $b="+b+"$ , $c="+c+"$ ។ គណនា $\\cos A$",[A(cs.s,cs.t,"num","cos A =")],"$\\cos A=\\dfrac{b^2+c^2-a^2}{2bc}=\\dfrac{"+(b*b+c*c-a*a)+"}{"+(2*b*c)+"}="+cs.t+"$")}]);
+ function(){var a=ri(2,15);return K("s10_sinr","ត្រីកោណ $ABC$ មាន $a=BC="+a+"$ និង $\\widehat A=30^\\circ$ ។ គណនាកាំ $R$ នៃរង្វង់ចារឹកក្រៅ",[A(a,null,"num","R =")],"$\\dfrac{a}{\\sin A}=2R$ ⇒ $2R=\\dfrac{"+a+"}{1/2}$ ⇒ $R="+a+"$",GFT({ang:[30,75,75],lab:{A:"30°",a:String(a)}}))},
+ function(){var a=ri(1,8),b=ri(1,8),S=fr(a*b,4);return K("s10_ar60","ត្រីកោណមានជ្រុងពីរ $"+a+"$ និង $"+b+"$ ហើយមុំរវាងវា $60^\\circ$ ។ គណនាផ្ទៃក្រឡា (ទុក $\\sqrt{\\ }$)",[A(S.s+"*sqrt(3)",(S.d===1?(S.n===1?"":S.n):"\\dfrac{"+S.n+"}{"+S.d+"}")+"\\sqrt3","num","S =")],"$\\dfrac12\\cdot"+a+"\\cdot"+b+"\\cdot\\dfrac{\\sqrt3}{2}$",(function(){var c3=Math.sqrt(a*a+b*b-a*b),An=cosAng(a,b,c3);return GFT({ang:[An,120-An,60],lab:{C:"60°",a:String(a),b:String(b)}})})())},
+ function(){var b=ri(2,9),c=ri(2,9),a=ri(Math.abs(b-c)+1,b+c-1),cs=fr(b*b+c*c-a*a,2*b*c);return K("s10_cosA","ត្រីកោណមានជ្រុង $a="+a+"$ , $b="+b+"$ , $c="+c+"$ ។ គណនា $\\cos A$",[A(cs.s,cs.t,"num","cos A =")],"$\\cos A=\\dfrac{b^2+c^2-a^2}{2bc}=\\dfrac{"+(b*b+c*c-a*a)+"}{"+(2*b*c)+"}="+cs.t+"$",(function(){var A1=cosAng(a,b,c),B1=cosAng(b,a,c);return GFT({ang:[A1,B1,180-A1-B1],lab:{A:"A",a:String(a),b:String(b),c:String(c)}})})())}]);
 /* ៦.១ អនុគមន៍ */
 vx(61,1,[
  function(){var a=nz(-4,4),b=ri(-6,6),x=ri(-5,5),k=a*x+b;return K("s10_inv","$f(x)="+co(a,"x",true)+sg(b,0)+"$ ។ រក $x$ ដែល $f(x)="+k+"$",[A(x,null,"num","x =")],"$"+a+"x="+(k-b)+"$ ⇒ $x="+x+"$")},
