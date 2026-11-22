@@ -30,7 +30,7 @@ var w=lpELoad();ok(!w.b&&!w.c,"null / array entries dropped");ok(Array.isArray(w
 ok(w.e.title===undefined&&w.e.steps[0].tc.join("|")==="1||z","non-string values coerced");
 /* 📋 ទិន្នន័យកិច្ចតែងការ (lp7–lp12 · lessonplans.js)៖ ជំហានទី៤ «ពង្រឹងពុទ្ធិ» ជួរ «ខ្លឹមសារមេរៀន» (ct) មិនត្រូវទទេ ឬមានតែស្លាកដំណាក់កាល (Evaluate…)
    — ចន្លោះដែលស្គាល់ពីការបំប្លែង .docx ស្ថិតក្នុង LP4_KNOWN (ត្រូវបំពេញបន្ថែម · ពេលបំពេញរួច ត្រូវដកចេញពីបញ្ជី) · ផែនការថ្មី/ផ្សេងត្រូវតែគ្រប់ */
-var LP4_KNOWN=["7_13#3","7_13#4","7_14#1","7_14#3","7_15#2","7_16#1","7_17#1","7_17#2","7_19#3","7_1#5","7_4#4","7_5#3","7_6#1","7_8#1","7_8#5","7_9#3","9_15#2","11_22#4","11_61#1","11_61#2"];
+var LP4_KNOWN=["7_13#3","7_13#4","7_14#1","7_14#3","7_15#2","7_16#1","7_17#1","7_17#2","7_19#3","7_1#5","7_4#4","7_5#3","7_6#1","7_8#1","7_8#5","7_9#3","11_22#4","11_61#1","11_61#2"];
 var LP4_LAB=/^\s*(Engage|Explore|Explain|Elaborate|Evaluate)\s*$/i;
 function lp4Bad(P){var st=P&&P.steps&&P.steps[3],ct=((st&&st.ct)||[]).filter(function(x){return String(x).trim()});return!ct.length||ct.every(function(x){return LP4_LAB.test(x)})}
 window={};["lp7.js","lp8.js","lp9.js","lp10.js","lp11.js","lp12.js"].forEach(function(f){eval(read(f))});
