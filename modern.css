@@ -520,6 +520,5 @@ html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!
     .modern-card, .wrap, .card, .stat, header, .floating-nav, .snav, #allMenu, .login-box, #loginPop, dialog::backdrop {
         -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
     }
-    .brand-logo { animation: none !important; }
     .modern-card:hover { transform: none; }
 }
