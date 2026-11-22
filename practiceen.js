@@ -728,8 +728,106 @@ var GF=(function(){
     [0,1].forEach(function(j){var e=[4.3,yy[i]+oy[j]],bb=B1[i][j];cm.push("seg "+xy(nx)+" "+xy(e)+" black");var l2=Math.hypot(e[0]-nx[0],e[1]-nx[1]);tx.push([(nx[0]+e[0])/2,(nx[1]+e[1])/2,String(bb[1]),0,j?-1:1]);tx.push([e[0],e[1],String(bb[0]),1,0])})});
    [[0,0],[2.1,.95],[2.1,-.95]].forEach(function(p0){ext.push(p0)});ext.push([5,1.5],[5,-1.5],[-.2,0])}
   return FB({},cm,{tx:tx,ext:ext})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob}})();
+ /* GF.thales({t (សមាមាត្រ AD/AB, រូបមិនត្រូវមាត្រដ្ឋាន), ad,db,ae,ec,de,bc,ab,ac (ស្លាក — "" = មិនបង្ហាញ · "?" = មិនស្គាល់)}) — ត្រីកោណ ABC មាន (DE)∥(BC) (ទ្រឹស្ដីបទតាលែស) */
+ function thales(o){var t=o.t||.5,A=[0,2.2],B=[-1.9,0],C=[1.9,0],D=[A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t],E=[A[0]+(C[0]-A[0])*t,A[1]+(C[1]-A[1])*t],g=[0,.9],cm=[],tx=[],pts={A:[A[0],A[1],"n"],B:[B[0],B[1],"sw"],C:[C[0],C[1],"se"],D:[D[0],D[1],"w"],E:[E[0],E[1],"e"]};
+  cm.push("poly A B C black","seg D E blue");
+  function sd(p,q,t0,ex,ny){if(t0===undefined||t0==="")return;var m=[(p[0]+q[0])/2,(p[1]+q[1])/2],u=out(g,m);tx.push([m[0],m[1],t0,u[0],ny==null?u[1]:ny,ex||0])}
+  sd(A,D,o.ad,0);sd(D,B,o.db,0);sd(A,E,o.ae,0);sd(E,C,o.ec,0);
+  sd(A,B,o.ab!==undefined&&o.ab!==""?"AB = "+o.ab:o.ab,30);sd(A,C,o.ac!==undefined&&o.ac!==""?"AC = "+o.ac:o.ac,30);
+  if(o.de!==undefined&&o.de!=="")tx.push([(D[0]+E[0])/2,D[1],o.de,0,-1]);
+  if(o.bc!==undefined&&o.bc!=="")tx.push([0,0,o.bc,0,-1]);
+  return FB(pts,cm,{tx:tx,ext:[A,B,C,[0,-.3]]})}
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});
+})();
+
+/* ======================================================================
+   🔗 KM — ភ្ជាប់រូប PXEN.GF ទៅលំហាត់កម្មវិធីខ្មែរ (practice7–11) ដោយអានលេខពីអត្ថបទសំណួរ
+   ទ្វារ៖ q.fig មិនទាន់មាន + KM["{ថ្នាក់}:{kd}"] ត្រូវគ្នា · ការអានមិនបាន/កំហុស → គ្មានរូប (សំណួរនៅដំណើរការ) · "?" = ផ្នែកដែលសំណួរសុំរក
+   ====================================================================== */
+(function(){
+"use strict";
+var X=window.PX,GF=window.PXEN&&window.PXEN.GF,GR=window.PRACT&&window.PRACT.GR;if(!GF||!GR)return;
+function clean(t){return String(t).replace(/\\text\{[^}]*\}/g,"").replace(/\\(?:circ|cdot|times|dfrac|frac|parallel|perp|widehat|triangle|le|ge|pi)/g," ").replace(/[$\\{}^]/g," ")}
+function nums(t){return(clean(t).match(/-?\d+(?:\.\d+)?/g)||[]).map(Number)}
+var KC={"ក្រហម":"red","ខៀវ":"blue","បៃតង":"green","លឿង":"yellow","ស":"white"};
+function bag(t){var it=[],m,re=/(ក្រហម|ខៀវ|បៃតង|លឿង|ស)\s*(\d+)/g;while((m=re.exec(t)))it.push([KC[m[1]],+m[2]]);return it}
+function spin(t){var m=/ចែកជា\s*(\d+)\s*ផ្នែក[^\d]*?(?:ក្នុងនោះ\s*)?(\d+)\s*ផ្នែក\s*ពណ៌\s*(ក្រហម|ខៀវ|បៃតង|លឿង)/.exec(t);if(!m)return"";var n=+m[1],k=+m[2],c=KC[m[3]],cols=[];for(var i=0;i<n;i++)cols.push(i<k?c:"white");return GF.prob({k:"spinner",n:n,cols:cols})}
+function comp(t){var m=/\\d?frac\{(\d+)\}\{(\d+)\}/.exec(t);if(!m)return"";return GF.prob({k:"scale",p:+m[1]/+m[2],l1:m[1]+"/"+m[2],l2:"?"})}
+function bagF(q){var it=bag(clean(q.q));return it.length>=2?GF.prob({k:"bag",items:it}):""}
+function coin2(){return GF.prob({k:"tree",a:[["ក្បាល","1/2"],["កន្ទុយ","1/2"]],b:[["ក្បាល","1/2"],["កន្ទុយ","1/2"]]})}
+/* មុំលើបន្ទាត់ស្រប / បន្ទាត់កាត់គ្នា ដែលមានសមីការ (ax+b)° */
+function angs(raw){var o=[],re=/\((\d*)x([+-]\d+)?\)\^\\circ|(\d+)\^\\circ/g,m;while((m=re.exec(raw))){if(m[3]!==undefined)o.push({v:+m[3],l:m[3]+"°"});else{var a=m[1]===""?1:+m[1],b=m[2]?+m[2]:0;o.push({x:[a,b],l:"("+(a===1?"":a)+"x"+(b<0?" − "+(-b):b>0?" + "+b:"")+")°"})}}return o}
+function xv(q){return +(q.a&&q.a[0]&&q.a[0].v)}
+function val(z,x){return z.x?z.x[0]*x+z.x[1]:z.v}
+function paraAng(type,w){return function(q){var A=angs(q.q);if(A.length<2&&w!=="one")return"";var x=xv(q),v=A[0]?val(A[0],x):0;if(isNaN(v)||v<=0||v>=180)v=A[1]?val(A[1],x):60;
+  return GF.para({type:type,v:Math.floor(Math.random()*4),ang:v,l1:A[0].l,l2:A[1]?A[1].l:"x°"})}}
+function paraOne(type){return function(q){var A=angs(q.q);if(!A.length)return"";return GF.para({type:type,v:Math.floor(Math.random()*4),ang:A[0].v,l1:A[0].l,l2:"x°"})}}
+function rectF(k,f){return function(q){var n=nums(q.q);return f(n,/cm/.test(q.q)?" cm":"",q)}}
+function rt(w,h,b,hh,hy){return GF.rightTri({names:"",w:w,h:h,base:b,height:hh,hyp:hy})}
+function thalesF(q){var t=clean(q.q).replace(/\s+/g," "),o={t:.5},get=function(n){var m=new RegExp("(?:^|[^A-Z])"+n+"\\s*=\\s*([\\w+\\-]+)").exec(t);return m?m[1].replace(/-/," − ").replace(/\+/," + "):""},
+  asked=/(?:គណនា|រក)\s*([A-Z]{2})/.exec(t);["AD","DB","AB","AE","EC","AC","DE","BC"].forEach(function(n){var v=get(n);o[n.toLowerCase()]=v});
+  if(asked&&o[asked[1].toLowerCase()]!==undefined)o[asked[1].toLowerCase()]="?";
+  if(!(o.ad||o.db||o.ae||o.ec||o.de||o.bc))return"";return GF.thales(o)}
+var KM={
+ /* ប្រូបាប */
+ "7:s7_spin":function(q){return spin(clean(q.q))},"8:s8_spin":function(q){return spin(clean(q.q))},"9:n_spin":function(q){return spin(clean(q.q))},
+ "7:s7_comp":function(q){return comp(q.q)},"8:b11_3":function(q){return comp(q.q)},"9:g9_8_comp":function(q){return comp(q.q)},"9:pcm":function(q){return comp(q.q)},
+ "7:s7_not":bagF,"7:b20_2":bagF,"7:s7_add":bagF,"8:s8_bag":bagF,"8:s8_addb":bagF,"9:b8_2":bagF,"9:p2":bagF,"9:pdp":bagF,"9:g9_8_nr":bagF,"9:g9_8_diff":bagF,"9:n_atl":bagF,"9:g9_8_rep":bagF,
+ "8:b11_1":coin2,"7:s7_2c":coin2,"9:g9_8_2c":coin2,
+ /* មុំ · បន្ទាត់ស្រប */
+ "7:s7_alt":paraOne("alt"),"7:s7_cx":paraAng("cor"),"7:b14_3":paraAng("alt"),"7:s7_cix":paraAng("co"),
+ "7:s7_vx":function(q){var A=angs(q.q);if(A.length<2)return"";var x=xv(q),v=val(A[0],x);if(!(v>0&&v<180))v=60;return GF.cross({t:v,lab:{NE:A[0].l,SW:A[1].l}})},
+ /* ត្រីកោណ */
+ "7:b15_1":function(q){var n=nums(q.q);return GF.tri({ang:[n[0],n[1],180-n[0]-n[1]],lab:{A:n[0]+"°",B:n[1]+"°",C:"x°"}})},
+ "7:b15_2":function(q){var n=nums(q.q);return GF.tri({ang:[n[0],n[1],180-n[0]-n[1]],lab:{A:n[0]+"°",B:n[1]+"°"},ext:{at:"C",lab:"x°"}})},
+ "7:b15_3":function(q){var m=/widehat\s*([ABC])\s*=\s*(\d+)/.exec(q.q);if(!m)return"";var v=+m[2];return m[1]==="A"?GF.tri({ang:[v,(180-v)/2,(180-v)/2],lab:{A:v+"°",B:"x°"}}):GF.tri({ang:[180-2*v,v,v],lab:{A:"x°",B:v+"°"}})},
+ "7:s7_x3":function(q){var A=angs(q.q);if(A.length<3)return"";var x=xv(q),a=A.map(function(z){return val(z,x)});if(a.some(function(v){return!(v>0)}))return"";return GF.tri({names:"",out:true,ang:a,lab:{A:A[0].l,B:A[1].l,C:A[2].l}})},
+ "7:s7_tp":function(q){var n=nums(q.q),b=n[0],a=n[1],A=Math.acos((b*b+b*b-a*a)/(2*b*b))/(Math.PI/180);return GF.tri({ang:[A,(180-A)/2,(180-A)/2],lab:{b:b+" cm",c:b+" cm",a:a+" cm"}})},
+ "7:s7_rt":function(q){var n=nums(q.q),B=n[0];return GF.rightTri({names:"CAB",w:Math.tan(B*Math.PI/180),h:1,ang:{at:"base",lab:B+"°"}})},
+ /* ផ្ទៃក្រឡា · បរិមាត្រ */
+ "7:s7_sq":rectF("sq",function(n,u){return GF.rect({k:"rect",sq:true,base:n[0]+u,left:n[0]+u})}),
+ "7:s7_pa":rectF("pa",function(n,u){return GF.rect({k:"para",w:n[0],h:n[1],base:n[0]+u,height:n[1]+u})}),
+ "7:b16_2":rectF("tri",function(n,u){return GF.rect({k:"tri",w:n[0],h:n[1],base:n[0]+u,height:n[1]+u})}),
+ "7:b16_3":rectF("trap",function(n,u){return GF.rect({k:"trap",w:n[0],h:n[2],base:n[0]+u,top:n[1]+u,height:n[2]+u})}),
+ "7:s7_rw":rectF("rw",function(n,u){return GF.rect({k:"rect",w:n[1],h:n[1]*.6,base:n[1]+u,left:"?",mid:n[0]+" cm²"})}),
+ "7:s7_th":rectF("th",function(n,u){return GF.rect({k:"tri",w:n[1],h:n[1]*.7,base:n[1]+u,height:"?",mid:n[0]+" cm²"})}),
+ "8:s8_tri":rectF("tri",function(n,u){return GF.rect({k:"tri",w:n[0],h:n[1],base:String(n[0]),height:String(n[1])})}),
+ "8:b15_1":rectF("pa",function(n){return GF.rect({k:"para",w:n[0],h:n[1],base:String(n[0]),height:String(n[1])})}),
+ "8:b15_2":rectF("trap",function(n){return GF.rect({k:"trap",w:n[0],h:n[2],base:String(n[0]),top:String(n[1]),height:String(n[2])})}),
+ "8:s8_trh":rectF("trh",function(n){return GF.rect({k:"trap",w:n[0],h:n[0]*.45,base:String(n[0]),top:String(n[1]),height:"?",mid:String(n[2])})}),
+ "8:s8_rev15":rectF("rev",function(n){return GF.rect({k:"para",w:n[1]*1.6,h:n[1],base:String(n[1]),height:"?",mid:String(n[0])})}),
+ "8:s8_para":rectF("pa",function(n){return GF.rect({k:"para",w:n[0],h:n[1],base:n[0]+" cm",left:n[1]+" cm"})}),
+ "8:s8_sq13":rectF("sq",function(n){return GF.rect({k:"rect",sq:true,base:n[0]+" cm",diag:"x"})}),
+ /* រង្វង់ */
+ "7:s7_cdi":function(q){var n=nums(q.q);return GF.circle({d:n[0]+" cm"})},"7:b17_1":function(q){var n=nums(q.q);return GF.circle({r:n[0]+" cm"})},
+ "7:b17_2":function(q){var n=nums(q.q);return GF.circle({d:n[0]+" cm"})},
+ "8:s8_area16":function(q){var n=nums(q.q);return GF.circle({r:String(n[0])})},"8:s8_circ":function(q){var n=nums(q.q);return GF.circle({r:String(n[0])})},"8:b16_1":function(q){var n=nums(q.q);return GF.circle({d:String(n[0])})},
+ "8:s8_dia":function(q){var n=nums(q.q);return GF.circle({d:"?"})},
+ /* ពីតាហ្គ័រ */
+ "8:b14_1":function(q){var n=nums(q.q);return GF.rightTri({names:"ACB",w:n[0],h:n[1],base:String(n[0]),height:String(n[1]),hyp:"x"})},
+ "8:b14_2":function(q){var n=nums(q.q);return GF.rightTri({names:"ACB",w:n[1],h:n[1]*1.3,base:String(n[1]),height:"x",hyp:String(n[0])})},
+ "8:b14_3":function(q){var n=nums(q.q);return rt(n[1],Math.sqrt(Math.max(1,n[0]*n[0]-n[1]*n[1])),n[1]+" m","h",n[0]+" m")},
+ "8:s8_sqrt":function(q){var n=nums(q.q);return rt(n[0],n[1],String(n[0]),String(n[1]),"x")},
+ "8:s8_ship":function(q){var n=nums(q.q);return rt(n[1],n[0],n[1]+" km",n[0]+" km","x")},
+ "8:s8_rarea":function(q){var n=nums(q.q);return rt(Math.sqrt(Math.max(1,n[0]*n[0]-n[1]*n[1])),n[1],"?",String(n[1]),String(n[0]))},
+ "8:s8_rect14":function(q){var n=nums(q.q);return GF.rect({k:"rect",w:n[0],h:n[1],base:String(n[0]),left:String(n[1]),diag:"x"})},
+ "8:s8_tv":function(q){var n=nums(q.q);return GF.rect({k:"rect",w:n[1],h:n[0],base:String(n[1]),left:String(n[0]),diag:"x"})},
+ "8:s8_box":function(q){var n=nums(q.q);return GF.solid({k:"cuboid",w:n[0],h:n[2],d:n[1],lw:String(n[0]),lh:String(n[2]),ld:String(n[1]),diag:"x"})},
+ "9:pyl":function(q){var n=nums(q.q);return GF.rightTri({names:"BAC",w:n[1],h:Math.sqrt(Math.max(1,n[0]*n[0]-n[1]*n[1])),base:"?",height:String(n[1]),hyp:String(n[0])})},
+ "9:pyh":function(q){var n=nums(q.q);return GF.rightTri({names:"BAC",w:n[1],h:n[0],base:String(n[1]),height:String(n[0]),hyp:"?"})},
+ "9:n_lad":function(q){var n=nums(q.q);return rt(n[1],Math.sqrt(Math.max(1,n[0]*n[0]-n[1]*n[1])),n[1]+" m","?",n[0]+" m")},
+ "9:n_rd":function(q){var n=nums(q.q);return GF.rect({k:"rect",w:n[0]>n[1]?n[1]:n[1],h:Math.sqrt(Math.max(1,n[0]*n[0]-n[1]*n[1])),base:n[1]+" cm",left:"?",diag:n[0]+" cm"})},
+ "9:pap":function(q){var n=nums(q.q);return GF.solid({k:"cuboid",w:n[0],h:n[2],d:n[1],lw:String(n[0]),lh:String(n[2]),ld:String(n[1]),diag:"x"})},
+ /* ពហុកោណ */
+ "9:g9_16_sum":function(q){var n=nums(q.q)[0];return n<=12?GF.poly({n:n}):""},"9:b16_1":function(q){var n=nums(q.q)[0];return n<=12?GF.poly({n:n}):""},
+ "9:n_in":function(q){var n=nums(q.q)[0];return n<=12?GF.poly({n:n,int:{at:0,lab:"x°"}}):""},"9:g9_16_int":function(q){var n=nums(q.q)[0];return n<=12?GF.poly({n:n,int:{at:0,lab:"x°"}}):""},
+ "9:n_ms":function(q){var a=(q.q.match(/(\d+)\^\\circ/g)||[]).map(function(z){return parseInt(z)});return a.length>=4?GF.poly({n:5,lab:[a[0]+"°",a[1]+"°",a[2]+"°",a[3]+"°","x°"]}):""}
+};
+["9:b14_1","9:g9_14_ec","9:g9_14_bc","9:g9_14_ad","9:g9_14_ac","9:g9_14_de","9:b14_2","9:n_ec2","9:g9_14_db","9:g9_14_x","9:b14_3","9:n_x2","9:g9_14_alg"].forEach(function(k){KM[k]=thalesF});
+var OVR={"8:b14_1":1,"8:b14_2":1,"8:b14_3":1,"9:b14_1":1,"9:b14_2":1,"9:b14_3":1};   /* ជំនួសរូបអ័ក្សចាស់ */
+[7,8,9].forEach(function(g){var R=GR[g];if(!R)return;Object.keys(R.G).forEach(function(l){[1,2,3,4,5,6].forEach(function(v){var f=R.G[l][v];if(!f||f._km)return;
+  var w=function(){var q=f.apply(this,arguments);if(q&&q.kd){var k=g+":"+q.kd;if(KM[k]&&(!q.fig||OVR[k])){try{var r=KM[k](q);if(r&&!/NaN|undefined|Infinity/.test(r))q.fig=r}catch(e){}}}return q};w._km=1;R.G[l][v]=w})})});
 })();
