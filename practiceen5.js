@@ -17,6 +17,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function lcm(a,b){return a/gcd(a,b)*b}
@@ -84,7 +85,8 @@ add([7,8,9],32,1,function(){var a=ri(2,9),d=ri(2,7),n=ri(10,30),N=a+(n-1)*d;
    {q:"Find an expression for the $n$th term in the form $an+b$.",a:[A(d,null,"num","a ="),A(a-d,null,"num","b =")],m:2}],
    "(a) add $"+d+"$ (b) $"+a+"+"+(n-1)+"\\times"+d+"="+N+"$ (c) $"+d+"n"+co(a-d,"")+"$")});
 add([9],32,2,function(){var m=nz(-4,5),c=ri(-6,8),x=ri(-3,5);
-  return EX("ca5",1,"A straight line has equation $y="+co(m,"x",true)+co(c,"")+"$.",[
+  var Rc=Math.max(6,Math.abs(c)+2,Math.abs(m*x+c)+1);
+  return EXF(GCC({x:[-Rc,Rc],y:[-Rc,Rc],lines:[{m:m,c:c,col:"blue"}]}),"ca5",1,"A straight line has equation $y="+co(m,"x",true)+co(c,"")+"$.",[
    {q:"Write down the gradient of the line.",a:[A(m,null,"num","gradient =")],m:1},
    {q:"Write down the coordinates of the point where the line crosses the $y$-axis.",a:[A(0,null,"num","x ="),A(c,null,"num","y =")],m:1},
    {q:"The point $("+x+",\\ k)$ lies on the line. Find the value of $k$.",a:[A(m*x+c,null,"num","k =")],m:1}],
@@ -124,7 +126,7 @@ add([8,9],33,2,function(){var n=pick([5,6,8,9,10,12]);
   return EX("cg6",1,"This is a regular polygon with "+n+" sides.",[{q:"Work out the size of one exterior angle.",a:[A(nf(360/n),null,"num","°")],m:1},{q:"Work out the size of one interior angle.",a:[A(nf(180-360/n),null,"num","°")],m:1}],
    "(a) $360\\div"+n+"="+nf(360/n)+"^\\circ$ (b) $180-"+nf(360/n)+"="+nf(180-360/n)+"^\\circ$")});
 add([7,8],33,1,function(){var P=[nz(-5,5),nz(-5,5)],v=[nz(-4,4),nz(-4,4)];
-  return EX("cg7",1,"Point $P$ has coordinates "+pt(P)+".",[{q:"$P$ is reflected in the $x$-axis. Write down the coordinates of the image.",a:[A(P[0],null,"num","x ="),A(-P[1],null,"num","y =")],m:1},
+  return EXF(GCC({pts:[{n:"P",p:P,c:"blue"}],ext:[[P[0],-P[1]],[P[0]+v[0],P[1]+v[1]]]}),"cg7",1,"Point $P$ has coordinates "+pt(P)+".",[{q:"$P$ is reflected in the $x$-axis. Write down the coordinates of the image.",a:[A(P[0],null,"num","x ="),A(-P[1],null,"num","y =")],m:1},
    {q:"$P$ is translated "+Math.abs(v[0])+" units "+(v[0]>0?"right":"left")+" and "+Math.abs(v[1])+" units "+(v[1]>0?"up":"down")+". Write down the coordinates of the image.",a:[A(P[0]+v[0],null,"num","x ="),A(P[1]+v[1],null,"num","y =")],m:1}],
    "(a) "+pt([P[0],-P[1]])+" (b) "+pt([P[0]+v[0],P[1]+v[1]]))});
 add([9],33,2,function(){var b=ri(1,359),s=pick([25000,50000,100000]),c=ri(3,15),f=function(v){return("00"+v).slice(-3)};

@@ -19,6 +19,10 @@ function sfr(n,d){var f=fr(n,d);return f}
 function stdT(m,k){return m+"\\times10^{"+k+"}"}
 function tbl(L0,R){return"\\begin{array}{|c|"+R[0].map(function(){return"c|"}).join("")+"}\\hline "+L0.map(function(l,i){return l+"&"+R[i].join("&")}).join("\\\\\\hline ")+"\\\\\\hline\\end{array}"}
 function pt(p){return"("+p[0]+", "+p[1]+")"}
+/* 📈 GC — រូបប្លង់កូអរដោនេ (GF.coord) · try/catch + ការពារ NaN → គ្មានរូប ប៉ុន្តែសំណួរនៅដំណើរការ */
+function GC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}
+function trg(){var a=[ri(1,4),ri(1,4)],b=[a[0]+ri(2,4),a[1]+ri(0,1)],c=[a[0]+ri(0,3),a[1]+ri(2,4)],sx=pick([1,-1]),sy=pick([1,-1]);return[a,b,c].map(function(p){return[sx*p[0],sy*p[1]]})}
+function cR(a,m){var R=2;a.forEach(function(p){R=Math.max(R,Math.abs(p[0])+(m||1),Math.abs(p[1])+(m||1))});return Math.min(R,14)}
 function cv(v){return"\\begin{pmatrix}"+v[0]+"\\\\"+v[1]+"\\end{pmatrix}"}
 var D=Math.PI/180,TR=[[3,4,5],[5,12,13],[6,8,10],[8,15,17],[7,24,25],[9,12,15]];
 function sig(v,n){if(!v)return 0;var k=Math.floor(Math.log10(Math.abs(v)))+1-n,p=Math.pow(10,k);return Math.round(v/p)*p}
@@ -135,17 +139,17 @@ G9[6]={1:L(
 /* 7 Straight-line graphs */
 G9[7]={1:L(
  function(){var P=[ri(-5,5),ri(-5,5)],dx=nz(-5,5),dy=ri(-8,8),B=[P[0]+dx,P[1]+dy],m=fr(dy,dx);
-   return K("gr","Find the gradient of the line through $A"+pt(P)+"$ and $B"+pt(B)+"$.",[A(m.s,m.t,"num","gradient =")],"$m=\\dfrac{y_2-y_1}{x_2-x_1}=\\dfrac{"+dy+"}{"+dx+"}="+m.t+"$")},
+   return K("gr","Find the gradient of the line through $A"+pt(P)+"$ and $B"+pt(B)+"$.",[A(m.s,m.t,"num","gradient =")],"$m=\\dfrac{y_2-y_1}{x_2-x_1}=\\dfrac{"+dy+"}{"+dx+"}="+m.t+"$",GC({pts:[{n:"A",p:P,c:"blue"},{n:"B",p:B,c:"blue"}],segs:[{a:P,b:B,c:"blue"}]}))},
  function(){var a=nz(-6,6),b=pick([1,2,3,-1,-2]),c=nz(-12,12),m=fr(-a,b),k=fr(c,b);
    return K("gi","The line $L$ has equation $"+co(a,"x",true)+co(b,"y")+"="+c+"$. Find the gradient and the $y$-intercept of $L$.",[A(m.s,m.t,"num","gradient ="),A(k.s,k.t,"num","y-intercept =")],"Rearrange to $y=mx+c$: $y="+m.t+"x"+(k.n<0?"":"+")+k.t+"$.")}),
  2:L(
  function(){var m=nz(-3,4),c=ri(-6,6),x1=ri(-4,1),x2=x1+ri(1,4);
-   return K("lt","Find the equation of the line through $"+pt([x1,m*x1+c])+"$ and $"+pt([x2,m*x2+c])+"$ in the form $y=mx+c$.",[A(m,null,"num","m ="),A(c,null,"num","c =")],"$m=\\dfrac{"+m*(x2-x1)+"}{"+(x2-x1)+"}="+m+"$, then $c="+(m*x1+c)+"-"+sgp(m)+"\\times"+sgp(x1)+"="+c+"$.")},
+   return K("lt","Find the equation of the line through $"+pt([x1,m*x1+c])+"$ and $"+pt([x2,m*x2+c])+"$ in the form $y=mx+c$.",[A(m,null,"num","m ="),A(c,null,"num","c =")],"$m=\\dfrac{"+m*(x2-x1)+"}{"+(x2-x1)+"}="+m+"$, then $c="+(m*x1+c)+"-"+sgp(m)+"\\times"+sgp(x1)+"="+c+"$.",GC({pts:[{p:[x1,m*x1+c],c:"blue"},{p:[x2,m*x2+c],c:"blue"}]}))},
  function(){var P=[ri(-6,6),ri(-6,6)],B=[ri(-6,6),ri(-6,6)],x=fr(P[0]+B[0],2),y=fr(P[1]+B[1],2);
-   return K("mp","Find the midpoint of $AB$ where $A"+pt(P)+"$ and $B"+pt(B)+"$.",[A(x.s,x.t,"num","x ="),A(y.s,y.t,"num","y =")],"Midpoint $=\\left(\\dfrac{x_1+x_2}{2},\\dfrac{y_1+y_2}{2}\\right)=\\left("+x.t+", "+y.t+"\\right)$")}),
+   return K("mp","Find the midpoint of $AB$ where $A"+pt(P)+"$ and $B"+pt(B)+"$.",[A(x.s,x.t,"num","x ="),A(y.s,y.t,"num","y =")],"Midpoint $=\\left(\\dfrac{x_1+x_2}{2},\\dfrac{y_1+y_2}{2}\\right)=\\left("+x.t+", "+y.t+"\\right)$",(function(){var dx=B[0]-P[0],dy=B[1]-P[1],l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l;if(ny<0||(ny===0&&nx<0)){nx=-nx;ny=-ny}return GC({pts:[{n:"A",p:P,c:"blue"},{n:"B",p:B,c:"blue"}],segs:[{a:P,b:B,c:"blue"}],ring:[{p:[(P[0]+B[0])/2,(P[1]+B[1])/2],t:"M(?, ?)",nx:nx,ny:ny}]})})())}),
  3:L(
  function(){var m=nz(-4,4),c0=ri(-5,5),P=[ri(-4,4),ri(-4,4)],c=P[1]-m*P[0];
-   return K("par","Find the equation of the line parallel to $y="+polyT([m,c0])+"$ that passes through $"+pt(P)+"$.",[A(m,null,"num","m ="),A(c,null,"num","c =")],"Parallel lines have equal gradients, so $m="+m+"$. Then $c="+P[1]+"-"+sgp(m)+"\\times"+sgp(P[0])+"="+c+"$.")},
+   return K("par","Find the equation of the line parallel to $y="+polyT([m,c0])+"$ that passes through $"+pt(P)+"$.",[A(m,null,"num","m ="),A(c,null,"num","c =")],"Parallel lines have equal gradients, so $m="+m+"$. Then $c="+P[1]+"-"+sgp(m)+"\\times"+sgp(P[0])+"="+c+"$.",(function(){var R=cR([P,[0,c0]],3);return GC({x:[-R,R],y:[-R,R],lines:[{m:m,c:c0,col:"blue"}],pts:[{n:"P",p:P,c:"red"}]})})())},
  function(){var x=ri(-5,6),y=ri(-5,6),a=ri(1,5),b=nz(-4,4),c=ri(1,5),d;do{d=nz(-4,4)}while(a*d===b*c);
    return K("sim","Solve the simultaneous equations $"+co(a,"x",true)+co(b,"y")+"="+(a*x+b*y)+"$ and $"+co(c,"x",true)+co(d,"y")+"="+(c*x+d*y)+"$.",[A(x,null,"num","x ="),A(y,null,"num","y =")],"Eliminate one variable (multiply and subtract), then substitute back: $x="+x+"$, $y="+y+"$.")})};
 /* 8 Angles and polygons */
@@ -208,13 +212,26 @@ G9[10]={1:L(
 /* 11 Transformations and bearings */
 G9[11]={1:L(
  function(){var P=[nz(-6,6),nz(-6,6)],t=pick(["the $x$-axis","the $y$-axis","the line $y=x$"]),R=t==="the $x$-axis"?[P[0],-P[1]]:t==="the $y$-axis"?[-P[0],P[1]]:[P[1],P[0]];
-   return K("ref","The point $P"+pt(P)+"$ is reflected in "+t+". Find the coordinates of the image.",[A(R[0],null,"num","x ="),A(R[1],null,"num","y =")],"Image $"+pt(R)+"$")},
+   return K("ref","The point $P"+pt(P)+"$ is reflected in "+t+". Find the coordinates of the image.",[A(R[0],null,"num","x ="),A(R[1],null,"num","y =")],"Image $"+pt(R)+"$",(function(){return GC({pts:[{n:"P",p:P,c:"blue"}],lines:t==="the line $y=x$"?[{m:1,c:0,dash:true,t:"y = x"}]:[],ext:[R]})})())},
+ function(){var T=trg(),mx=Math.min(T[0][0],T[1][0],T[2][0]),Mx=Math.max(T[0][0],T[1][0],T[2][0]),my=Math.min(T[0][1],T[1][1],T[2][1]),My=Math.max(T[0][1],T[1][1],T[2][1]),ty=pick(["x","y","vx","hy"]),kx=pick([mx-ri(1,2),Mx+ri(1,2)]),ky=pick([my-ri(1,2),My+ri(1,2)]),
+   rf2=function(p){return ty==="x"?[p[0],-p[1]]:ty==="y"?[-p[0],p[1]]:ty==="vx"?[2*kx-p[0],p[1]]:[p[0],2*ky-p[1]]},Im=rf2(T[0]),nm=ty==="x"?"the $x$-axis":ty==="y"?"the $y$-axis":ty==="vx"?"the line $x="+kx+"$":"the line $y="+ky+"$";
+   return K("reft","Triangle $ABC$ has vertices $A"+pt(T[0])+"$, $B"+pt(T[1])+"$ and $C"+pt(T[2])+"$. It is reflected in "+nm+". Find the coordinates of the image of $A$.",[A(Im[0],null,"num","x ="),A(Im[1],null,"num","y =")],
+     "Each point goes to the same distance on the other side of "+nm+": "+(ty==="x"?"$(x,y)\\to(x,-y)$":ty==="y"?"$(x,y)\\to(-x,y)$":ty==="vx"?"$x\\to"+(2*kx)+"-x$":"$y\\to"+(2*ky)+"-y$")+", so $A'="+pt(Im)+"$.",
+     GC({ext:[rf2(T[0]),rf2(T[1]),rf2(T[2])],polys:[{v:T,n:"ABC",c:"blue"}],lines:ty==="vx"?[{x:kx,dash:true,t:"x = "+kx}]:ty==="hy"?[{y:ky,dash:true,t:"y = "+ky}]:[]}))},
  function(){var P=[ri(-6,6),ri(-6,6)],v=[nz(-5,5),nz(-5,5)];
-   return K("tr","The point $A"+pt(P)+"$ is translated by the vector $"+cv(v)+"$. Find the coordinates of the image.",[A(P[0]+v[0],null,"num","x ="),A(P[1]+v[1],null,"num","y =")],"$("+P[0]+sg(v[0])+", "+P[1]+sg(v[1])+")="+pt([P[0]+v[0],P[1]+v[1]])+"$")}),
+   return K("tr","The point $A"+pt(P)+"$ is translated by the vector $"+cv(v)+"$. Find the coordinates of the image.",[A(P[0]+v[0],null,"num","x ="),A(P[1]+v[1],null,"num","y =")],"$("+P[0]+sg(v[0])+", "+P[1]+sg(v[1])+")="+pt([P[0]+v[0],P[1]+v[1]])+"$",(function(){return GC({pts:[{n:"A",p:P,c:"blue"}],ext:[[P[0]+v[0],P[1]+v[1]]]})})())}),
  2:L(
+ function(){var T=trg(),Pc=[ri(-3,3),ri(-3,3)],t=pick([90,180,-90]),rr=function(p){var rx=p[0]-Pc[0],ry=p[1]-Pc[1];return t===180?[Pc[0]-rx,Pc[1]-ry]:t===90?[Pc[0]-ry,Pc[1]+rx]:[Pc[0]+ry,Pc[1]-rx]},Im=rr(T[0]),all=T.concat([rr(T[1]),rr(T[2]),Im]);
+   return K("rotc","Triangle $ABC$ has vertices $A"+pt(T[0])+"$, $B"+pt(T[1])+"$ and $C"+pt(T[2])+"$. It is rotated "+(t===180?"$180^\\circ$":"$90^\\circ$ "+(t===90?"anticlockwise":"clockwise"))+" about the point $P"+pt(Pc)+"$. Find the coordinates of the image of $A$.",[A(Im[0],null,"num","x ="),A(Im[1],null,"num","y =")],
+     "Vector $PA=("+(T[0][0]-Pc[0])+","+(T[0][1]-Pc[1])+")$, "+(t===180?"$180^\\circ$: $(x,y)\\to(-x,-y)$":t===90?"$90^\\circ$ anticlockwise: $(x,y)\\to(-y,x)$":"$90^\\circ$ clockwise: $(x,y)\\to(y,-x)$")+", so the image of $A$ is $"+pt(Im)+"$.",
+     GC({polys:[{v:T,n:"ABC",c:"blue"}],pts:[{n:"P",p:Pc,c:"red"}],ext:all}))},
+ function(){var T=trg(),Pc=[ri(-3,3),ri(-3,3)],k=pick([2,3]),en=function(p){return[Pc[0]+k*(p[0]-Pc[0]),Pc[1]+k*(p[1]-Pc[1])]},Im=en(T[0]);
+   return K("enlc","Triangle $ABC$ has vertices $A"+pt(T[0])+"$, $B"+pt(T[1])+"$ and $C"+pt(T[2])+"$. It is enlarged with centre $P"+pt(Pc)+"$ and scale factor $"+k+"$. Find the coordinates of the image of $A$.",[A(Im[0],null,"num","x ="),A(Im[1],null,"num","y =")],
+     "$PA=("+(T[0][0]-Pc[0])+","+(T[0][1]-Pc[1])+")$, so $PA'="+k+"\\times PA=("+(Im[0]-Pc[0])+","+(Im[1]-Pc[1])+")$ and $A'="+pt(Im)+"$.",
+     GC({polys:[{v:T,n:"ABC",c:"blue"}],pts:[{n:"P",p:Pc,c:"red"}],ext:[Im,en(T[1]),en(T[2])]}))},
  function(){var P=[nz(-6,6),nz(-6,6)],t=pick([90,180,-90]),R=t===180?[-P[0],-P[1]]:t===90?[-P[1],P[0]]:[P[1],-P[0]];
    return K("rot","The point $"+pt(P)+"$ is rotated "+(t===180?"$180^\\circ$":"$90^\\circ$ "+(t===90?"anticlockwise":"clockwise"))+" about the origin. Find the coordinates of the image.",[A(R[0],null,"num","x ="),A(R[1],null,"num","y =")],
-     (t===180?"$(x,y)\\to(-x,-y)$":t===90?"$(x,y)\\to(-y,x)$":"$(x,y)\\to(y,-x)$")+": image $"+pt(R)+"$")},
+     (t===180?"$(x,y)\\to(-x,-y)$":t===90?"$(x,y)\\to(-y,x)$":"$(x,y)\\to(y,-x)$")+": image $"+pt(R)+"$",(function(){return GC({pts:[{n:"P",p:P,c:"blue"}],ext:[R]})})())},
  function(){var k=pick([2,3,4,0.5]),A0=ri(3,20);
    return K("enl","A shape with area $"+A0+"$ cm² is enlarged by scale factor $"+k+"$. Find the area of the image.",[A(nf(A0*k*k),null,"num","cm²")],"Area scale factor $=k^2="+nf(k*k)+"$, so area $="+A0+"\\times"+nf(k*k)+"="+nf(A0*k*k)+"$ cm²")}),
  3:L(
@@ -388,7 +405,7 @@ G10[10]={1:L(G9[7][1],G9[7][2]),2:L(G9[7][2],
    return K("perp","Line $L_1$ has gradient $"+mm.t+"$. Line $L_2$ is perpendicular to $L_1$ and passes through $"+pt(P)+"$. Find the equation of $L_2$ in the form $y=mx+c$.",[A(pm.s,pm.t,"num","m ="),A(c.s,c.t,"num","c =")],"Perpendicular gradient $=-\\dfrac{1}{m}="+pm.t+"$, then $c="+P[1]+"-("+pm.t+")("+P[0]+")="+c.t+"$.")}),
  3:L(
  function(){var A0=[ri(-4,4),ri(-4,4)],dx=2*nz(-3,3),dy=2*nz(-3,3),B0=[A0[0]+dx,A0[1]+dy],M=[A0[0]+dx/2,A0[1]+dy/2],m=fr(-dx,dy),c=fr(M[1]*dy+dx*M[0],dy);
-   return K("pb","Find the equation of the perpendicular bisector of $AB$, where $A"+pt(A0)+"$ and $B"+pt(B0)+"$. Give your answer in the form $y=mx+c$.",[A(m.s,m.t,"num","m ="),A(c.s,c.t,"num","c =")],"Midpoint $"+pt(M)+"$, gradient of $AB=\\dfrac{"+dy+"}{"+dx+"}$, perpendicular gradient $="+m.t+"$, so $c="+c.t+"$.")},
+   return K("pb","Find the equation of the perpendicular bisector of $AB$, where $A"+pt(A0)+"$ and $B"+pt(B0)+"$. Give your answer in the form $y=mx+c$.",[A(m.s,m.t,"num","m ="),A(c.s,c.t,"num","c =")],"Midpoint $"+pt(M)+"$, gradient of $AB=\\dfrac{"+dy+"}{"+dx+"}$, perpendicular gradient $="+m.t+"$, so $c="+c.t+"$.",GC({pts:[{n:"A",p:A0,c:"blue"},{n:"B",p:B0,c:"blue"}],segs:[{a:A0,b:B0,c:"blue"}]}))},
  function(){var x=ri(-5,5),y=ri(-5,5),m1=nz(-3,3),m2;do{m2=nz(-3,3)}while(m2===m1);
    return K("int2","Find the coordinates of the point where $y="+polyT([m1,y-m1*x])+"$ meets $y="+polyT([m2,y-m2*x])+"$.",[A(x,null,"num","x ="),A(y,null,"num","y =")],"$"+polyT([m1,y-m1*x])+"="+polyT([m2,y-m2*x])+"\\Rightarrow "+(m1-m2)+"x="+((m1-m2)*x)+"\\Rightarrow x="+x+"$, $y="+y+"$.")})};
 /* 11 Mensuration */
@@ -767,7 +784,31 @@ var GF=(function(){
   if(o.de!==undefined&&o.de!=="")tx.push([(D[0]+E[0])/2,D[1],o.de,0,-1]);
   if(o.bc!==undefined&&o.bc!=="")tx.push([0,0,o.bc,0,-1]);
   return FB(pts,cm,{tx:tx,ext:[A,B,C,[0,-.3]]})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob,thales:thales}})();
+ /* GF.coord({x:[x0,x1], y:[y0,y1] (ស្រេចចិត្ត — បើគ្មាន គណនាពីមាតិកា ហើយបង្ខំឱ្យជាចំនួនគត់ + មាត្រដ្ឋានស្មើ), grid+អ័ក្សមានព្រួញ·លេខ (fig.js)
+     pts:[{n:"A", p:[x,y], d:"ne" (ទិសស្លាក), c:"red"}] · segs:[{a:[x,y], b:[x,y], c}] · polys:[{v:[[x,y]…], n:"ABC" (ស្រេចចិត្ត), c, nl:true (ដាក់ស្លាកកំពូល)}]
+     lines:[{m,c} (y=mx+c) | {x:k} | {y:k}, dash:true, c, t:"ស្លាក"}] · vecs:[{a,b,c}] · tx:[[x,y,"អក្សរ",c]] (ស្លាកអក្សរកណ្ដាលចំណុច) · ring:[{p,t}] (ចំណុចចំហ + «?» ប្រទាក់ទិសកែងនឹងអង្កត់)
+   មិនបង្ហាញចម្លើយ៖ generator បញ្ជូនតែរូបដើម/ចំណុចដែលសំណួរឱ្យ (រូបឆ្លុះ · រូបបង្វិល · ចំណុចកណ្ដាលត្រូវដាក់ជា «?»)) */
+ function coord(o){var cm=[],xs=[0],ys=[0],X0,X1,Y0,Y1,P=function(p){return"("+rf(p[0])+","+rf(p[1])+")"},C=function(c){return c?" "+c:""},add=function(p){xs.push(p[0]);ys.push(p[1])};
+  (o.pts||[]).forEach(function(z){add(z.p)});(o.polys||[]).forEach(function(z){z.v.forEach(add)});(o.segs||[]).forEach(function(z){add(z.a);add(z.b)});(o.vecs||[]).forEach(function(z){add(z.a);add(z.b)});(o.ring||[]).forEach(function(z){add(z.p)});(o.tx||[]).forEach(function(z){add(z)});(o.ext||[]).forEach(add);
+  X0=Math.floor(Math.min.apply(null,xs)-1);X1=Math.ceil(Math.max.apply(null,xs)+1);Y0=Math.floor(Math.min.apply(null,ys)-1);Y1=Math.ceil(Math.max.apply(null,ys)+1);
+  if(o.x){X0=o.x[0];X1=o.x[1]}if(o.y){Y0=o.y[0];Y1=o.y[1]}
+  if(X1-X0<6){var cxm=Math.round((X0+X1)/2);X0=cxm-3;X1=cxm+3}if(Y1-Y0<6){var cym=Math.round((Y0+Y1)/2);Y0=cym-3;Y1=cym+3}
+  var w=X1-X0,h=Y1-Y0;if(h/w<.6){var e=Math.ceil((.6*w-h)/2);Y0-=e;Y1+=e}else if(h/w>1.15){var e2=Math.ceil((h/1.15-w)/2);X0-=e2;X1+=e2}
+  cm.push("window x="+X0+".."+X1+" y="+Y0+".."+Y1);
+  var pxu=352/(X1-X0),pyu=(Math.max(200,Math.min(460,380*(Y1-Y0)/(X1-X0)))-28)/(Y1-Y0);
+  function lineS(z){return z.x!=null?"x="+rf(z.x):z.y!=null?"y="+rf(z.y):"y="+(z.m?rf(z.m)+"*x"+(z.c?(z.c<0?"-":"+")+rf(Math.abs(z.c)):""):rf(z.c||0))}
+  (o.lines||[]).forEach(function(z){cm.push((z.dash?"dash ":"")+lineS(z)+C(z.c2||z.col||(z.dash?"":"blue")));
+   if(z.t){var px,py;if(z.x!=null){px=z.x+.12;py=Y1-.5}else if(z.y!=null){px=X1-.2-z.t.length*3.3/pxu*2;py=z.y+.35}else{px=X1-.2-z.t.length*6.6/pxu;py=z.m*px+z.c+.4;if(py>Y1-.4||py<Y0+.4){py=Math.max(Y0+.5,Math.min(Y1-.5,py))}}cm.push("text "+P([px,py])+" "+z.t+C(z.col||(z.dash?"gray":"blue")))}});
+  (o.polys||[]).forEach(function(z){cm.push("poly "+z.v.map(P).join(" ")+C(z.c||"blue"));
+   var gx=0,gy=0;z.v.forEach(function(q){gx+=q[0]/z.v.length;gy+=q[1]/z.v.length});
+   z.v.forEach(function(q,i){cm.push((z.n?z.n[i]:"")+P(q)+(z.n?" "+dir8([(q[0]-gx)*pxu,(q[1]-gy)*pyu]):"")+C(z.c||"blue"))})});
+  (o.segs||[]).forEach(function(z){cm.push("seg "+P(z.a)+" "+P(z.b)+C(z.c||"black"))});
+  (o.vecs||[]).forEach(function(z){cm.push("vec "+P(z.a)+" "+P(z.b)+C(z.c||"red"))});
+  (o.pts||[]).forEach(function(z){cm.push((z.n||"")+P(z.p)+(z.d?" "+z.d:"")+C(z.c||"black"))});
+  (o.ring||[]).forEach(function(z){cm.push("hole "+P(z.p)+" red");if(z.t){var nx=z.nx==null?0:z.nx,ny=z.ny==null?1:z.ny;cm.push("text "+P([z.p[0]+nx*(12+z.t.length*3.3*Math.abs(nx))/pxu-z.t.length*3.3/pxu,z.p[1]+ny*14/pyu-(ny<0?5:0)/pyu])+" "+z.t+" red")}});
+  (o.tx||[]).forEach(function(z){var t=String(z[2]);cm.push("text "+P([z[0]-t.length*3.3/pxu,z[1]-4/pyu])+" "+t+C(z[3]||"black"))});
+  return cm.join("\n")}
+ return{coord:coord,tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob,thales:thales}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

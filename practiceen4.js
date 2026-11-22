@@ -18,6 +18,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
@@ -79,7 +80,7 @@ var A2=function(){var b=ri(2,5),d=ri(2,6),a=nz(-6,6),c=nz(-6,6),k=ri(2,9);if(b==
    {q:"Factorise $x^2-"+k*k+"$.",a:[A("(x-"+k+")*(x+"+k+")","(x-"+k+")(x+"+k+")","expr","=")],m:1}],
    "(a) $\\dfrac{"+d+"(x"+sg(a)+")+"+b+"(x"+sg(-c)+")}{"+b*d+"}$ (b) difference of two squares")};
 var A3=function(){var A0=[ri(-3,5),ri(-3,9)],dx=2*nz(-3,3),dy=2*nz(-4,4),B0=[A0[0]+dx,A0[1]+dy],M=[A0[0]+dx/2,A0[1]+dy/2],m=fr(-dx,dy),c=fr(M[1]*dy+dx*M[0],dy);
-  return EX("xa3",2,"",[{q:"$A$ is the point "+pt(A0)+" and $B$ is the point "+pt(B0)+".\nFind the equation of the perpendicular bisector of the line $AB$. Give your answer in the form $y=mx+c$.",a:[A(m.s,m.t,"num","m ="),A(c.s,c.t,"num","c =")],m:5}],
+  return EXF(GCC({pts:[{n:"A",p:A0,c:"blue"},{n:"B",p:B0,c:"blue"}],segs:[{a:A0,b:B0,c:"blue"}]}),"xa3",2,"",[{q:"$A$ is the point "+pt(A0)+" and $B$ is the point "+pt(B0)+".\nFind the equation of the perpendicular bisector of the line $AB$. Give your answer in the form $y=mx+c$.",a:[A(m.s,m.t,"num","m ="),A(c.s,c.t,"num","c =")],m:5}],
    "Midpoint "+pt(M)+", gradient $AB=\\dfrac{"+dy+"}{"+dx+"}$, perpendicular gradient $="+m.t+"$, $c="+c.t+"$")};
 var A4=function(){var a=ri(1,3),d=ri(-6,6),ymx=2*a*a*a+d,ymn=-2*a*a*a+d;
   return EX("xa4",2,"A curve has equation $y=x^3-"+3*a*a+"x"+co(d,"")+"$.",[

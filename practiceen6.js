@@ -16,6 +16,7 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
 function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GCC(o){try{var r=window.PXEN.GF.coord(o);return/NaN|undefined|Infinity/.test(r)?"":r}catch(e){return""}}   /* 📈 រូបប្លង់កូអរដោនេ */
 function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
@@ -56,7 +57,7 @@ var g11=function(){var s=ri(7*60,10*60),d=ri(40,150),kg=ri(11,95)/10;
 var g12=function(){var a=ri(2,6),b=ri(2,6),c=ri(2,5),ml=ri(12,95)*50;
   return EX("p6l",2,"",[{q:"A cuboid is made from 1 cm cubes. It is "+a+" cubes long, "+b+" cubes wide and "+c+" cubes high. What is its volume?",a:[A(a*b*c,null,"num","cm³")],m:1},{q:"Change "+ml+" ml into litres.",a:[A(nf(ml/1000),null,"num","litres")],m:1}],"(a) $"+a+"\\times"+b+"\\times"+c+"$ (b) $\\div1000$")};
 var g13=function(){var P=[ri(1,8),ri(1,8)],v=[nz(-3,4),nz(-3,4)];
-  return EX("p6m",1,"Point $A$ is at "+pt(P)+".",[{q:"$A$ moves "+Math.abs(v[0])+" squares "+(v[0]>0?"right":"left")+" and "+Math.abs(v[1])+" squares "+(v[1]>0?"up":"down")+". Write down its new coordinates.",a:[A(P[0]+v[0],null,"num","x ="),A(P[1]+v[1],null,"num","y =")],m:1}],pt([P[0]+v[0],P[1]+v[1]]))};
+  return EXF(GCC({pts:[{n:"A",p:P,c:"blue"}],ext:[[P[0]+v[0],P[1]+v[1]]]}),"p6m",1,"Point $A$ is at "+pt(P)+".",[{q:"$A$ moves "+Math.abs(v[0])+" squares "+(v[0]>0?"right":"left")+" and "+Math.abs(v[1])+" squares "+(v[1]>0?"up":"down")+". Write down its new coordinates.",a:[A(P[0]+v[0],null,"num","x ="),A(P[1]+v[1],null,"num","y =")],m:1}],pt([P[0]+v[0],P[1]+v[1]]))};
 var g14=function(){var m=ri(2,15),a=[m,m],c={};c[m]=2;while(a.length<7){var v=ri(1,20);if(!c[v]){c[v]=1;a.push(v)}}a.sort(function(){return Math.random()-.5});var s=a.slice().sort(function(x,y){return x-y});
   return EX("p6n",1,"Here are the numbers of goals scored in 7 matches: $"+a.join(",\\ ")+"$",[{q:"Write down the mode.",a:[A(m,null,"num","=")],m:1},{q:"Find the median.",a:[A(s[3],null,"num","=")],m:1},{q:"Find the range.",a:[A(s[6]-s[0],null,"num","=")],m:1}],"In order: "+s.join(", "))};
 var g15=function(){var n=pick([6,8,10]),k=ri(1,n-1),c=pick(["red","blue","yellow"]),p=fr(k,n);
