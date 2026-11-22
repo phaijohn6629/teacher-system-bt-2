@@ -17,6 +17,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
     p.a.forEach(function(x,k){x.l=(lt&&k===0?lt+" ":"")+(x.l||"");a.push(x);mks.push(k===p.a.length-1?p.m:0)})});
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
+function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
 function hm(m){return Math.floor(m/60)+" "+("0"+m%60).slice(-2)}
@@ -189,12 +191,12 @@ var S3=function(){var b=[1.2,1.5,1.6,1.7,1.9],f=[ri(8,16),ri(15,25),ri(25,40),ri
    {q:"In a histogram of this data, find the frequency density for the class $1.6\\lt h\\le1.7$.",a:[A(nf(fd),null,"num","f.d. =")],m:2}],
    "(a) midpoints $1.35, 1.55, 1.65, 1.8$: $\\dfrac{"+nf(r2(S))+"}{"+N+"}="+r2(mean)+"$ (b) $\\dfrac{"+f[2]+"}{0.1}="+nf(fd)+"$")};
 var S4=function(){var r=ri(3,8),b=ri(3,8),T=r+b,same=fr(r*(r-1)+b*(b-1),T*(T-1)),one=fr(T*(T-1)-r*(r-1),T*(T-1));
-  return EX("xs4",4,"A bag contains "+r+" red sweets and "+b+" blue sweets. Sam takes two sweets at random, without replacement.",[
+  return EXF(GP({k:"tree",a:[["R","?"],["B","?"]],b:[["R","?"],["B","?"]]}),"xs4",4,"A bag contains "+r+" red sweets and "+b+" blue sweets. Sam takes two sweets at random, without replacement.",[
    {q:"Find the probability that both sweets are the same colour.",a:[A(same.s,same.t,"num","P =")],m:3},
    {q:"Find the probability that at least one sweet is blue.",a:[A(one.s,one.t,"num","P =")],m:3}],
    "(a) $\\dfrac{"+r+"}{"+T+"}\\times\\dfrac{"+(r-1)+"}{"+(T-1)+"}+\\dfrac{"+b+"}{"+T+"}\\times\\dfrac{"+(b-1)+"}{"+(T-1)+"}="+same.t+"$ (b) $1-P(\\text{both red})="+one.t+"$")};
 var S5=function(){var a=ri(10,25),b=ri(10,25),n=ri(2,Math.min(a,b)-2),U=a+b-n+ri(3,12),o=fr(a-n,U);
-  return EX("xs5",2,"In a group of "+U+" students, "+a+" study French ($F$), "+b+" study Spanish ($S$) and "+n+" study both.",[
+  return EXF(GVV({k:2,names:["F","S"],lab:{ab:String(n),a:"?",b:"?",out:"?"},cap:["n(U) = "+U,"n(F) = "+a+" · n(S) = "+b]}),"xs5",2,"In a group of "+U+" students, "+a+" study French ($F$), "+b+" study Spanish ($S$) and "+n+" study both.",[
    {q:"Find $n((F\\cup S)')$.",a:[A(U-(a+b-n),null,"num","=")],m:2},
    {q:"A student is chosen at random. Find the probability that this student studies French but not Spanish.",a:[A(o.s,o.t,"num","P =")],m:2}],
    "(a) $"+U+"-("+a+"+"+b+"-"+n+")="+(U-(a+b-n))+"$ (b) $\\dfrac{"+(a-n)+"}{"+U+"}"+(gcd(a-n,U)>1?"="+o.t:"")+"$")};

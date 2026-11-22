@@ -201,7 +201,7 @@ G6[12]={1:L(
 /* 13 Probability */
 G6[13]={1:L(G9[13][1],G9[13][2]),2:L(G9[13][1],
  function(){var n=pick([6,8,10]),k=ri(1,n-1),p=fr(k,n);
-   return K("sp6","A fair spinner has $"+n+"$ equal sections numbered $1$ to $"+n+"$. Find the probability of getting a number greater than $"+(n-k)+"$.",[A(p.s,p.t,"num","P =")],"$"+k+"$ of the $"+n+"$ numbers are greater than $"+(n-k)+"$: $P="+p.t+"$")}),
+   return K("sp6","A fair spinner has $"+n+"$ equal sections numbered $1$ to $"+n+"$. Find the probability of getting a number greater than $"+(n-k)+"$.",[A(p.s,p.t,"num","P =")],"$"+k+"$ of the $"+n+"$ numbers are greater than $"+(n-k)+"$: $P="+p.t+"$",GF.prob({k:"spinner",n:n,nums:true}))}),
  3:L(G9[13][2],G9[13][3])};
 var LES6=[
  ["Number",[[1,"Place value and rounding"],[2,"Factors, multiples and primes"],[3,"Fractions"],[4,"Decimals and percentages"],[5,"Calculation"],[6,"Negative numbers"]]],

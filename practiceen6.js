@@ -15,6 +15,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
     p.a.forEach(function(x,k){x.l=(lt&&k===0?lt+" ":"")+(x.l||"");a.push(x);mks.push(k===p.a.length-1?p.m:0)})});
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
+function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function L(){var a=[].slice.call(arguments);return function(){return pick(a)()}}
 function hm(m){return("0"+Math.floor(m/60)%24).slice(-2)+":"+("0"+m%60).slice(-2)}
@@ -58,9 +60,9 @@ var g13=function(){var P=[ri(1,8),ri(1,8)],v=[nz(-3,4),nz(-3,4)];
 var g14=function(){var m=ri(2,15),a=[m,m],c={};c[m]=2;while(a.length<7){var v=ri(1,20);if(!c[v]){c[v]=1;a.push(v)}}a.sort(function(){return Math.random()-.5});var s=a.slice().sort(function(x,y){return x-y});
   return EX("p6n",1,"Here are the numbers of goals scored in 7 matches: $"+a.join(",\\ ")+"$",[{q:"Write down the mode.",a:[A(m,null,"num","=")],m:1},{q:"Find the median.",a:[A(s[3],null,"num","=")],m:1},{q:"Find the range.",a:[A(s[6]-s[0],null,"num","=")],m:1}],"In order: "+s.join(", "))};
 var g15=function(){var n=pick([6,8,10]),k=ri(1,n-1),c=pick(["red","blue","yellow"]),p=fr(k,n);
-  return EX("p6o",1,"A spinner has "+n+" equal sections. "+k+" of them are "+c+" and the rest are white.",[{q:"What is the probability of landing on "+c+"?",a:[A(p.s,p.t,"num","P =")],m:1},{q:"What is the probability of landing on white?",a:[A(fr(n-k,n).s,fr(n-k,n).t,"num","P =")],m:1}],"(a) $"+p.t+"$ (b) $"+fr(n-k,n).t+"$")};
+  return EXF(GP({k:"spinner",n:n,cols:Array.apply(null,Array(n)).map(function(_,i){return i<k?c:"white"})}),"p6o",1,"A spinner has "+n+" equal sections. "+k+" of them are "+c+" and the rest are white.",[{q:"What is the probability of landing on "+c+"?",a:[A(p.s,p.t,"num","P =")],m:1},{q:"What is the probability of landing on white?",a:[A(fr(n-k,n).s,fr(n-k,n).t,"num","P =")],m:1}],"(a) $"+p.t+"$ (b) $"+fr(n-k,n).t+"$")};
 var g16=function(){var a=ri(5,15),b=ri(5,15),n=ri(1,4),N=a+b-n+ri(2,8);
-  return EX("p6p",1,"In a class of "+N+" children, "+a+" have a cat, "+b+" have a dog and "+n+" have both.",[{q:"How many children have a cat but not a dog?",a:[A(a-n,null,"num","=")],m:1},{q:"How many children have neither a cat nor a dog?",a:[A(N-(a+b-n),null,"num","=")],m:1}],"(a) $"+a+"-"+n+"$ (b) $"+N+"-("+a+"+"+b+"-"+n+")$")};
+  return EXF(GVV({k:2,names:["C","D"],lab:{ab:String(n),a:"?",b:"?",out:"?"},cap:["n(U) = "+N,"n(C) = "+a+" · n(D) = "+b]}),"p6p",1,"In a class of "+N+" children, "+a+" have a cat, "+b+" have a dog and "+n+" have both.",[{q:"How many children have a cat but not a dog?",a:[A(a-n,null,"num","=")],m:1},{q:"How many children have neither a cat nor a dog?",a:[A(N-(a+b-n),null,"num","=")],m:1}],"(a) $"+a+"-"+n+"$ (b) $"+N+"-("+a+"+"+b+"-"+n+")$")};
 var G6X={31:{1:L(g1,g2),2:L(g3,g4),3:L(g1,g3)},32:{1:L(g6,g7),2:L(g8,g6),3:L(g5,g8)},33:{1:L(g9,g13),2:L(g10,g11),3:L(g12,g10)},34:{1:L(g14,g15),2:L(g16,g15),3:L(g14,g16)}};
 
 /* =================================================================

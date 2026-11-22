@@ -242,17 +242,17 @@ G9[12]={1:L(
 /* 13 Probability */
 G9[13]={1:L(
  function(){var r=ri(2,9),b=ri(2,9),g=ri(1,6),T=r+b+g,c=pick([["red",r],["blue",b],["green",g]]),p=fr(c[1],T);
-   return K("p1","A bag contains $"+r+"$ red, $"+b+"$ blue and $"+g+"$ green counters. One counter is taken at random. Find the probability that it is "+c[0]+".",[A(p.s,p.t,"num","P =")],"$P=\\dfrac{"+c[1]+"}{"+T+"}="+p.t+"$")},
+   return K("p1","A bag contains $"+r+"$ red, $"+b+"$ blue and $"+g+"$ green counters. One counter is taken at random. Find the probability that it is "+c[0]+".",[A(p.s,p.t,"num","P =")],"$P=\\dfrac{"+c[1]+"}{"+T+"}="+p.t+"$",GF.prob({k:"bag",items:[["red",r],["blue",b],["green",g]]}))},
  function(){var d=pick([10,20,25,50,100]),n=ri(1,d-1),q=fr(d-n,d),p=fr(n,d);
-   return K("pnot","The probability that it rains tomorrow is $"+nf(n/d)+"$. Find the probability that it does not rain tomorrow.",[A(q.s,nf((d-n)/d),"num","P =")],"$1-"+nf(n/d)+"="+nf((d-n)/d)+"$")}),
+   return K("pnot","The probability that it rains tomorrow is $"+nf(n/d)+"$. Find the probability that it does not rain tomorrow.",[A(q.s,nf((d-n)/d),"num","P =")],"$1-"+nf(n/d)+"="+nf((d-n)/d)+"$",GF.prob({k:"scale",p:n/d,l1:nf(n/d),l2:"?"}))}),
  2:L(
  function(){var s=pick([4,5,8]),k=ri(1,s-1),p=fr(k,2*s);
-   return K("ind","A fair spinner has $"+s+"$ equal sections numbered $1$ to $"+s+"$. A fair coin is also thrown. Find the probability of getting a number less than or equal to $"+k+"$ and a head.",[A(p.s,p.t,"num","P =")],"Independent events: $\\dfrac{"+k+"}{"+s+"}\\times\\dfrac12="+p.t+"$")},
+   return K("ind","A fair spinner has $"+s+"$ equal sections numbered $1$ to $"+s+"$. A fair coin is also thrown. Find the probability of getting a number less than or equal to $"+k+"$ and a head.",[A(p.s,p.t,"num","P =")],"Independent events: $\\dfrac{"+k+"}{"+s+"}\\times\\dfrac12="+p.t+"$",GF.prob({k:"spinner",n:s,nums:true,coin:true}))},
  function(){var p=pick([[1,4],[1,5],[2,5],[3,10],[1,6],[3,8]]),n=p[1]*ri(5,30);
    return K("exp","The probability that a biased dice lands on six is $\\dfrac{"+p[0]+"}{"+p[1]+"}$. The dice is rolled $"+n+"$ times. How many sixes would you expect?",[A(n*p[0]/p[1],null,"num","expected =")],"$"+n+"\\times\\dfrac{"+p[0]+"}{"+p[1]+"}="+n*p[0]/p[1]+"$")}),
  3:L(
  function(){var r=ri(3,8),b=ri(2,7),T=r+b,p=fr(r*(r-1),T*(T-1));
-   return K("wr","A box contains $"+r+"$ red and $"+b+"$ blue pens. Two pens are taken at random without replacement. Find the probability that both pens are red.",[A(p.s,p.t,"num","P =")],"$\\dfrac{"+r+"}{"+T+"}\\times\\dfrac{"+(r-1)+"}{"+(T-1)+"}="+p.t+"$")},
+   return K("wr","A box contains $"+r+"$ red and $"+b+"$ blue pens. Two pens are taken at random without replacement. Find the probability that both pens are red.",[A(p.s,p.t,"num","P =")],"$\\dfrac{"+r+"}{"+T+"}\\times\\dfrac{"+(r-1)+"}{"+(T-1)+"}="+p.t+"$",GF.prob({k:"tree",a:[["R","?"],["B","?"]],b:[["R","?"],["B","?"]]}))},
  function(){var n=pick([50,80,100,200]),k=ri(5,n/2),N=pick([500,1000,2000]),p=fr(k,n);
    return K("rf","A drawing pin is dropped $"+n+"$ times and lands point up $"+k+"$ times. (a) Find the relative frequency of landing point up. (b) Estimate how many times it lands point up in $"+N+"$ drops.",[A(p.s,p.t,"num","(a)"),A(nf(N*k/n),null,"num","(b)")],"(a) $\\dfrac{"+k+"}{"+n+"}="+p.t+"$ (b) $"+N+"\\times"+p.t+"="+nf(N*k/n)+"$")})};
 
@@ -464,13 +464,13 @@ G10[15]={1:L(G9[12][1],G9[12][2]),2:L(G9[12][3],G9[12][2]),
 G10[16]={1:L(G9[13][1],G9[13][2]),
  2:L(
  function(){var a=pick([[1,4],[2,5],[3,10],[1,3],[3,5]]),b=pick([[1,2],[2,3],[3,4],[1,5]]),p=fr(a[0]*b[0],a[1]*b[1]),q=fr((a[1]-a[0])*(b[1]-b[0]),a[1]*b[1]);
-   return K("tree","The probability that Ana is late is $\\dfrac{"+a[0]+"}{"+a[1]+"}$ and, independently, the probability that Ben is late is $\\dfrac{"+b[0]+"}{"+b[1]+"}$. Find the probability that (a) both are late (b) neither is late.",[A(p.s,p.t,"num","(a)"),A(q.s,q.t,"num","(b)")],"(a) $\\dfrac{"+a[0]+"}{"+a[1]+"}\\times\\dfrac{"+b[0]+"}{"+b[1]+"}="+p.t+"$ (b) $\\dfrac{"+(a[1]-a[0])+"}{"+a[1]+"}\\times\\dfrac{"+(b[1]-b[0])+"}{"+b[1]+"}="+q.t+"$")},
+   return K("tree","The probability that Ana is late is $\\dfrac{"+a[0]+"}{"+a[1]+"}$ and, independently, the probability that Ben is late is $\\dfrac{"+b[0]+"}{"+b[1]+"}$. Find the probability that (a) both are late (b) neither is late.",[A(p.s,p.t,"num","(a)"),A(q.s,q.t,"num","(b)")],"(a) $\\dfrac{"+a[0]+"}{"+a[1]+"}\\times\\dfrac{"+b[0]+"}{"+b[1]+"}="+p.t+"$ (b) $\\dfrac{"+(a[1]-a[0])+"}{"+a[1]+"}\\times\\dfrac{"+(b[1]-b[0])+"}{"+b[1]+"}="+q.t+"$",GF.prob({k:"tree",a:[["Ana late",a[0]+"/"+a[1]],["not late","?"]],b:[["Ben late",b[0]+"/"+b[1]],["not late","?"]]}))},
  G9[13][2]),
  3:L(
  function(){var r=ri(3,8),b=ri(2,7),T=r+b,p=fr(T*(T-1)-b*(b-1),T*(T-1));
-   return K("al1","A bag contains $"+r+"$ red and $"+b+"$ blue balls. Two balls are taken at random without replacement. Find the probability that at least one ball is red.",[A(p.s,p.t,"num","P =")],"$1-P(\\text{both blue})=1-\\dfrac{"+b+"}{"+T+"}\\times\\dfrac{"+(b-1)+"}{"+(T-1)+"}="+p.t+"$")},
+   return K("al1","A bag contains $"+r+"$ red and $"+b+"$ blue balls. Two balls are taken at random without replacement. Find the probability that at least one ball is red.",[A(p.s,p.t,"num","P =")],"$1-P(\\text{both blue})=1-\\dfrac{"+b+"}{"+T+"}\\times\\dfrac{"+(b-1)+"}{"+(T-1)+"}="+p.t+"$",GF.prob({k:"tree",a:[["R","?"],["B","?"]],b:[["R","?"],["B","?"]]}))},
  function(){var U=ri(30,60),a=ri(10,25),b=ri(10,25),n=ri(2,Math.min(a,b)-1);if(a+b-n>U)U=a+b-n+ri(0,10);
-   return K("venn","In a class of $"+U+"$ students, $"+a+"$ study French, $"+b+"$ study Spanish and $"+n+"$ study both. A student is chosen at random. Find the probability that the student studies French or Spanish (or both).",[A(fr(a+b-n,U).s,fr(a+b-n,U).t,"num","P =")],"$n(F\\cup S)="+a+"+"+b+"-"+n+"="+(a+b-n)+"$, so $P=\\dfrac{"+(a+b-n)+"}{"+U+"}"+(gcd(a+b-n,U)>1?"="+fr(a+b-n,U).t:"")+"$")})};
+   return K("venn","In a class of $"+U+"$ students, $"+a+"$ study French, $"+b+"$ study Spanish and $"+n+"$ study both. A student is chosen at random. Find the probability that the student studies French or Spanish (or both).",[A(fr(a+b-n,U).s,fr(a+b-n,U).t,"num","P =")],"$n(F\\cup S)="+a+"+"+b+"-"+n+"="+(a+b-n)+"$, so $P=\\dfrac{"+(a+b-n)+"}{"+U+"}"+(gcd(a+b-n,U)>1?"="+fr(a+b-n,U).t:"")+"$",GF.venn({k:2,names:["F","S"],lab:{ab:String(n),a:"?",b:"?",out:"?"},cap:["n(U) = "+U,"n(F) = "+a+" · n(S) = "+b]}))})};
 
 var LES10=[
  ["Number",[[1,"Standard form and bounds"],[2,"Ratio, proportion and rates"],[3,"Percentages and interest"],[4,"Indices and surds"]]],
@@ -700,7 +700,35 @@ var GF=(function(){
   cap.forEach(function(t,j){tx.push([0,rect[1]-.4-j*.34,t,0,0])});
   ext=[[rect[0],rect[1]-.4-Math.max(0,cap.length-1)*.34-.3],[rect[2],rect[3]]];
   return FB({},cm,{tx:tx,ext:ext})}
- return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn}})();
+ /* GF.prob({k:"bag"|"scale"|"spinner"|"tree", …}) — រូបជំនួយប្រូបាប (មិនបង្ហាញចម្លើយ៖ ផ្នែកដែលសំណួរសុំរកប្រើ «?»)
+   bag    : items:[["red",5],["blue",9],…] — ≤ 24 គ្រាប់ គូរគ្រាប់ពណ៌ផ្ទាល់ · ច្រើនជាងនេះ គូរក្រុមគ្រាប់ + លេខចំនួន
+   scale  : p (0–1), l1 (ស្លាកផ្នែក 0→p), l2 (ស្លាកផ្នែក p→1, ឧ. "?") — ព្រឹត្តិការណ៍ផ្ទុយ
+   spinner: n (ផ្នែកស្មើ), nums:true (លេខ 1…n) ឬ cols:[ពណ៌ក្នុងផ្នែកនីមួយៗ] · coin:true (បន្ថែមកាក់ H/T)
+   tree   : a:[[ស្លាក,ប្រូបា],[…]] (ដំណាក់ទី១) · b ឬ b2:[[…],[…]] (ដំណាក់ទី២ ដូចគ្នា ឬផ្សេងគ្នាតាមមែក) */
+ function prob(o){var k=o.k,cm=[],tx=[],ext=[],CM={red:"red",blue:"blue",green:"green",yellow:"orange",orange:"orange",white:"gray",black:"black",purple:"purple",pink:"purple"};
+  function fillP(q,col){var z="poly "+q.map(xy).join(" ")+" "+col;for(var j=0;j<7;j++)cm.push(z)}
+  function disc(c,r,col){var q=[];for(var j=0;j<16;j++)q.push([c[0]+r*Math.cos(j*Math.PI/8),c[1]+r*Math.sin(j*Math.PI/8)]);fillP(q,col);cm.push("circle "+xy(c)+" "+r+" "+col)}
+  function box(x0,y0,x1,y1){cm.push("poly "+xy([x0,y0])+" "+xy([x1,y0])+" "+xy([x1,y1])+" "+xy([x0,y1])+" black");ext.push([x0,y0],[x1,y1])}
+  if(k==="bag"){var it=o.items,T=0;it.forEach(function(z){T+=+z[1]||0});
+   if(T<=24){var per=T<=12?6:8,rows=Math.ceil(T/per),sp=.55,idx=0;it.forEach(function(z){var col=CM[z[0]]||"gray";for(var j=0;j<z[1];j++){var r0=Math.floor(idx/per),c0=idx%per,inRow=Math.min(per,T-r0*per);disc([(c0-(inRow-1)/2)*sp,((rows-1)/2-r0)*sp],.2,col);idx++}});
+    box(-(Math.min(per,T)-1)*sp/2-.5,-(rows-1)*sp/2-.5,(Math.min(per,T)-1)*sp/2+.5,(rows-1)*sp/2+.5)}
+   else{var m=it.length;it.forEach(function(z,j){var x=(j-(m-1)/2)*1.4;disc([x,.2],.38,CM[z[0]]||"gray");tx.push([x,-.45,String(z[1]),0,0])});box(-(m*1.4)/2,-.85,(m*1.4)/2,.85)}}
+  else if(k==="scale"){var p=o.p,Lx=4,mk=function(x,y,y2,c){cm.push("seg "+xy([x,y])+" "+xy([x,y2])+" "+c)};
+   cm.push("seg "+xy([0,0])+" "+xy([Lx,0])+" black");[0,p,1].forEach(function(v){mk(v*Lx,-.08,.08,"black")});tx.push([0,-.3,"0",0,0],[Lx,-.3,"1",0,0]);
+   cm.push("seg "+xy([0,.22])+" "+xy([p*Lx,.22])+" blue","seg "+xy([p*Lx,.22])+" "+xy([Lx,.22])+" red");[0,p*Lx].forEach(function(x){mk(x,.15,.29,"blue")});[p*Lx,Lx].forEach(function(x){mk(x,.15,.29,"red")});
+   if(o.l1)tx.push([p*Lx/2,.22,o.l1,0,1]);if(o.l2)tx.push([(p+1)*Lx/2,.22,o.l2,0,1]);ext.push([-.3,-.5],[Lx+.3,.7])}
+  else if(k==="spinner"){var n=o.n,cx=o.coin?-1.6:0,Rr=1.2,j2;cm.push("circle "+xy([cx,0])+" "+Rr+" black");
+   for(j2=0;j2<n;j2++){var a0=90-360*j2/n,a1=90-360*(j2+1)/n,am=(a0+a1)/2,c0=[cx+Rr*Math.cos(a0*R),Rr*Math.sin(a0*R)];cm.push("seg "+xy([cx,0])+" "+xy(c0)+" black");
+    if(o.cols&&o.cols[j2]&&o.cols[j2]!=="white"){var q=[[cx,0]];for(var t=0;t<=6;t++){var a=(a0+(a1-a0)*t/6)*R;q.push([cx+Rr*Math.cos(a),Rr*Math.sin(a)])}fillP(q,CM[o.cols[j2]]||"gray")}
+    if(o.nums)tx.push([cx+.74*Rr*Math.cos(am*R),.74*Rr*Math.sin(am*R),String(j2+1),0,0])}
+   var ar=[[cx-.13,Rr+.42],[cx+.13,Rr+.42],[cx,Rr+.1]];fillP(ar,"black");ext.push([cx-Rr,-Rr],[cx+Rr,Rr+.45]);
+   if(o.coin){var cc=[1.6,0];cm.push("circle "+xy(cc)+" .6 black");tx.push([cc[0],0,"H / T",0,0]);ext.push([2.3,-.6],[2.3,.6])}}
+  else{var A1=o.a||[["",""],["",""]],B1=o.b2||[o.b||A1,o.b||A1],yy=[.95,-.95],oy=[.45,-.45];
+   [0,1].forEach(function(i){var nx=[2.1,yy[i]];cm.push("seg "+xy([0,0])+" "+xy(nx)+" black");tx.push([nx[0]/2,nx[1]/2,String(A1[i][1]),-.6,i?-.8:.8]);tx.push([nx[0],nx[1],String(A1[i][0]),-.3,i?-1:1]);
+    [0,1].forEach(function(j){var e=[4.3,yy[i]+oy[j]],bb=B1[i][j];cm.push("seg "+xy(nx)+" "+xy(e)+" black");var l2=Math.hypot(e[0]-nx[0],e[1]-nx[1]);tx.push([(nx[0]+e[0])/2,(nx[1]+e[1])/2,String(bb[1]),0,j?-1:1]);tx.push([e[0],e[1],String(bb[0]),1,0])})});
+   [[0,0],[2.1,.95],[2.1,-.95]].forEach(function(p0){ext.push(p0)});ext.push([5,1.5],[5,-1.5],[-.2,0])}
+  return FB({},cm,{tx:tx,ext:ext})}
+ return{tri:tri,rightTri:rightTri,poly:poly,para:para,cross:cross,rect:shape,circle:circle,solid:solid,venn:venn,prob:prob}})();
 window.PXEN={K:K,FB:FB,GF:GF,mid:mid,L:L,r2:r2,rn:rn,sum:sum,sqT:sqT,piT:piT,stdT:stdT,tbl:tbl,pt:pt,cv:cv,nf:nf,std:std,sig:sig,DP:DP,TR:TR,D:D,G9:G9,G10:G10};   /* ជំនួយសម្រាប់ practiceen2.js */
 X.reg(109,{en:true,tab:"🇬🇧 G9 · Stage 9",title:"Grade 9 · Cambridge Lower Secondary Stage 9",les:LES9,G:G9});
 X.reg(110,{en:true,tab:"🇬🇧 G10 · IGCSE",title:"Grade 10 · Cambridge IGCSE (0580)",les:LES10,G:G10});

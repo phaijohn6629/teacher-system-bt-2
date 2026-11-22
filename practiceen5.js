@@ -16,6 +16,8 @@ function EX(kd,P,stem,parts,sol){var q=stem||"",a=[],mks=[],n=parts.length;
     p.a.forEach(function(x,k){x.l=(lt&&k===0?lt+" ":"")+(x.l||"");a.push(x);mks.push(k===p.a.length-1?p.m:0)})});
   var o=K(kd,q,a,sol);o.mk=sum(parts.map(function(p){return p.m}));o.mks=mks;o.ex=true;o.pp=P;return o}
 function EXF(f){var o=EX.apply(null,[].slice.call(arguments,1));try{o.fig=f}catch(e){}return o}
+function GP(o){try{return window.PXEN.GF.prob(o)}catch(e){return ""}}
+function GVV(o){try{return window.PXEN.GF.venn(o)}catch(e){return ""}}   /* 🖼 រូបប្រូបាប/វ៉ែន — គ្មានរូបបើ PXEN មិនទាន់ផ្ទុក */
 var FB=E.FB,mid=E.mid;function fx(v){return v<0?"+"+(-v):"-"+v}
 function lcm(a,b){return a/gcd(a,b)*b}
 function hm(m){return("0"+Math.floor(m/60)%24).slice(-2)+":"+("0"+m%60).slice(-2)}
@@ -142,7 +144,7 @@ add([8,9],34,2,function(){var x=[0,1,2,3,4],f=x.map(function(){return ri(1,9)}),
    {q:"Work out the total number of pets.",a:[A(S,null,"num","=")],m:1},{q:"Work out the mean number of pets per student. Give your answer as a fraction or decimal.",a:[A(m.s,m.t,"num","=")],m:1}],
    "(a) $"+F+"$ (b) $\\sum fx="+S+"$ (c) $\\frac{"+S+"}{"+F+"}$")});
 add([7,8],34,1,function(){var n=pick([8,10,12]),k=ri(1,n-1),p=fr(k,n),q=fr(n-k,n),c=pick(["red","blue","green"]);
-  return EX("cs3",1,"A spinner has "+n+" equal sections. "+k+" of the sections are "+c+".",[{q:"Write down the probability that the spinner lands on "+c+".",a:[A(p.s,p.t,"num","P =")],m:1},{q:"Write down the probability that the spinner does not land on "+c+".",a:[A(q.s,q.t,"num","P =")],m:1}],
+  return EXF(GP({k:"spinner",n:n,cols:Array.apply(null,Array(n)).map(function(_,i){return i<k?c:"white"})}),"cs3",1,"A spinner has "+n+" equal sections. "+k+" of the sections are "+c+".",[{q:"Write down the probability that the spinner lands on "+c+".",a:[A(p.s,p.t,"num","P =")],m:1},{q:"Write down the probability that the spinner does not land on "+c+".",a:[A(q.s,q.t,"num","P =")],m:1}],
    "(a) $\\frac{"+k+"}{"+n+"}$ (b) $1-"+p.t+"="+q.t+"$")});
 add([9],34,2,function(){var n=pick([50,80,100,200]),k=ri(5,n/2),N=pick([300,500,1000]);
   return EX("cs4",1,"Leo drops a drawing pin "+n+" times. It lands point up "+k+" times.",[{q:"Write down the relative frequency of the pin landing point up.",a:[A(fr(k,n).s,fr(k,n).t,"num","=")],m:1},
