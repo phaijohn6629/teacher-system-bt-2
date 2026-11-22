@@ -504,3 +504,94 @@ window.addEventListener("DOMContentLoaded", () => {
     wrap.appendChild(btn); wrap.appendChild(x);
     document.body.appendChild(wrap);
 });
+const MATH_SLIDES_INDEX_URL = "https://phaijohnaa-netizen.github.io/math-slides/slides_index.json";
+const MATH_SLIDES_BASE_URL = "https://phaijohnaa-netizen.github.io/math-slides/";
+
+window.fetchMathSlidesIndex = async function () {
+  const res = await fetch(MATH_SLIDES_INDEX_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error("Failed to load slides_index.json");
+  return await res.json();
+};
+
+window.getMathSlideUrl = function (path) {
+  if (!path) return "";
+  return MATH_SLIDES_BASE_URL + String(path).replace(/^\/+/, "");
+};
+
+window.loadMathGradeSlides = async function (grade = "G10") {
+  const indexData = await window.fetchMathSlidesIndex();
+  const chapters = indexData?.grades?.[grade] || [];
+  return chapters.map((ch) => ({
+    chapter: ch.chapter,
+    title: ch.title,
+    lessons: (ch.lessons || []).map((lesson) => ({
+      ...lesson,
+      slideUrl: window.getMathSlideUrl(lesson.path),
+    })),
+  }));
+};
+
+/* ===== 🎞️ ស្លាយបង្រៀន (Math Teaching Studio) — ផ្ទាំងជ្រើសរើសថ្នាក់ · ជំពូក · មេរៀន ===== */
+(function () {
+  var GR = ["G10", "G11", "G12"], cur = "G10", cache = {}, q = "";
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function okUrl(u) { return typeof u === "string" && u.indexOf(MATH_SLIDES_BASE_URL) === 0 && u.indexOf('"') < 0 && u.indexOf("'") < 0; }
+  function $(id) { return document.getElementById(id); }
+  function cleanTitle(l, ch) {
+    var t = String(l.title || l.code || ""), p = String(ch.title || "");
+    if (p && t.indexOf(p) === 0) t = t.slice(p.length).trim();
+    return t || String(l.code || "");
+  }
+  function ensure() {
+    var d = $("mtsSlidesDlg");
+    if (d) return d;
+    d = document.createElement("dialog");
+    d.id = "mtsSlidesDlg"; d.className = "msd";
+    d.innerHTML = "<div class=msd-h><h3>🎞️ ស្លាយបង្រៀន <small>Math Teaching Studio</small></h3><button type=button class=msd-x data-msd=close aria-label='បិទ'>✕</button></div>" +
+      "<div class=msd-tabs role=tablist>" + GR.map(function (g) { return "<button type=button role=tab data-msd-g='" + g + "'>ថ្នាក់ទី" + g.slice(1) + "</button>"; }).join("") + "</div>" +
+      "<input id=msdQ type=search placeholder='🔍 ស្វែងរកមេរៀន…' aria-label='ស្វែងរកមេរៀន' autocomplete=off>" +
+      "<div id=msdB class=msd-b></div>";
+    document.body.appendChild(d);
+    d.addEventListener("click", function (e) {
+      if (e.target === d || e.target.closest("[data-msd=close]")) { d.close(); return; }
+      var t = e.target.closest("[data-msd-g]");
+      if (t) { cur = t.dataset.msdG; q = ""; $("msdQ").value = ""; load(); return; }
+      var a = e.target.closest("[data-msd-u]");
+      if (a && okUrl(a.dataset.msdU)) window.open(a.dataset.msdU, "_blank", "noopener");
+    });
+    $("msdQ").addEventListener("input", function () { q = this.value.trim().toLowerCase(); draw(); });
+    return d;
+  }
+  function draw() {
+    var b = $("msdB"), data = cache[cur];
+    document.querySelectorAll("#mtsSlidesDlg [data-msd-g]").forEach(function (t) { t.setAttribute("aria-selected", t.dataset.msdG === cur ? "true" : "false"); });
+    if (!b) return;
+    if (data === "loading") { b.innerHTML = "<p class=msd-n>⏳ កំពុងផ្ទុកបញ្ជីមេរៀន…</p>"; return; }
+    if (data === "err") { b.innerHTML = "<p class=msd-n>⚠️ មិនអាចផ្ទុកបញ្ជីស្លាយបានទេ។ <button type=button data-msd-g='" + cur + "'>🔄 ព្យាយាមម្ដងទៀត</button></p>"; return; }
+    var h = "", n = 0;
+    (data || []).forEach(function (ch) {
+      var ls = (ch.lessons || []).filter(function (l) { return !q || (String(l.title) + " " + (l.code || "") + " " + (ch.title || "")).toLowerCase().indexOf(q) >= 0; });
+      if (!ls.length) return;
+      n += ls.length;
+      h += "<details class=msd-c" + (q || n === ls.length ? " open" : "") + "><summary>" + esc(ch.title || ("ជំពូកទី" + ch.chapter)) + " <span>" + ls.length + "</span></summary>" +
+        ls.map(function (l) {
+          return okUrl(l.slideUrl) ? "<button type=button class=msd-l data-msd-u='" + l.slideUrl + "'><i>" + esc(l.part != null ? l.part : "") + "</i><span>" + esc(cleanTitle(l, ch)) + "</span><em>↗</em></button>" : "";
+        }).join("") + "</details>";
+    });
+    b.innerHTML = h || "<p class=msd-n>មិនមានមេរៀនត្រូវនឹងការស្វែងរកទេ។</p>";
+  }
+  function load() {
+    if (cache[cur] && cache[cur] !== "err" && cache[cur] !== "loading") { draw(); return; }
+    cache[cur] = "loading"; draw();
+    var g = cur;
+    window.loadMathGradeSlides(g).then(function (r) { cache[g] = r; if (g === cur) draw(); }).catch(function () { cache[g] = "err"; if (g === cur) draw(); });
+  }
+  window.openMathSlides = function () {
+    var d = ensure();
+    if (!d.open) d.showModal();
+    load();
+  };
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("[data-mts-slides]")) window.openMathSlides();
+  });
+})();

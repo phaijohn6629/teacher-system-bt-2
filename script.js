@@ -2796,7 +2796,7 @@ function renderDash(){
   /* ចូលរហ័ស */
   var qa=[["p5","📊","បញ្ចូលពិន្ទុសិស្ស","លទ្ធផលសិក្សា"],["p8","🧑‍🎓","សិស្ស និងអវត្តមាន","បញ្ជី · អវត្តមាន"],["p2","📋","កិច្ចតែងការ","ចំនួនប្រចាំខែ"],["p9","📝","របាយការណ៍ការងារ","ប្រចាំខែ"],["p10","🏆","ស្នាដៃរបស់ខ្ញុំ","កត់ត្រា · បោះពុម្ព"],["p11","📚","ឯកសារជំនួយ","កិច្ចតែងការ · ស្លាយ · វីដេអូ"],["p12","🗓️","កាលវិភាគបង្រៀន","តារាង ១១ ម៉ោង"],["p13","⏱️","Timesheet & Workplan","ប្រចាំខែ · ប្រតិទិនខ្មែរ"],["prof","👤","ប្រវត្តិរូបរបស់ខ្ញុំ","រូបថត · ព័ត៌មាន"]];
   if(adm)qa.unshift(["p1","👥","ទិន្នន័យគ្រូ","គ្រប់គ្រងគណនី"]);
-  $("dQa").innerHTML=qa.map(function(x){return"<button type=button class=qa data-go='"+x[0]+"'><span class=qi aria-hidden=true>"+x[1]+"</span><b>"+x[2]+"</b><span class=qs>"+x[3]+"</span></button>"}).join("");
+  $("dQa").innerHTML=qa.map(function(x){return"<button type=button class=qa data-go='"+x[0]+"'><span class=qi aria-hidden=true>"+x[1]+"</span><b>"+x[2]+"</b><span class=qs>"+x[3]+"</span></button>"}).join("")+"<button type=button class=qa data-mts-slides><span class=qi aria-hidden=true>🎞️</span><b>ស្លាយបង្រៀន</b><span class=qs>Math Teaching Studio · ថ្នាក់ទី១០–១២</span></button>";
   /* លទ្ធផលសិក្សា (និទ្ទេស) */
   var per=0,PN=["","ឆមាសទី១","ឆមាសទី២","ប្រចាំឆ្នាំ"];
   [3,2,1].forEach(function(p){if(!per&&cls.some(function(x){var o=cnt(x.c,p);return o.A+o.B+o.C+o.D+o.E+o.F>0}))per=p});

@@ -48,8 +48,8 @@
   "v": 1
  },
  "exam.js": {
-  "hash": "802dd5427bd0d3f9332762743579fee904fd7cae",
-  "v": 103
+  "hash": "aaaed7e9febc5b963c6024e83ffd0eef11081657",
+  "v": 110
  },
  "excerpt.js": {
   "hash": "d10c45a469df085f31456db9a2a83cf2038ba932",
@@ -204,16 +204,16 @@
   "v": 26
  },
  "script.js": {
-  "hash": "6672408dc3caba4dff007db8019b42866d4444a7",
-  "v": 201
+  "hash": "0b5d031c30ddd816bd1c11b986c01a8de4ed3a25",
+  "v": 202
  },
  "slide_presenter.css": {
-  "hash": "9ec18c6952f75ee3a0ff7637269c988118633329",
-  "v": 2
+  "hash": "d0465ba9612c92a6bf85988f1bac8094256d33c2",
+  "v": 3
  },
  "slide_presenter.js": {
-  "hash": "fe1f7175202e10f602de1743d82d311d4f676c06",
-  "v": 2
+  "hash": "a5e45dd78fdcfbe016cca5906b5da611e23ee314",
+  "v": 3
  },
  "storeadm.js": {
   "hash": "7e7525271a314501027e8838ddbb8db9c11c9e7d",
