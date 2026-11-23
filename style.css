@@ -335,6 +335,13 @@ body.pm .pg.land{page-break-inside:avoid}
 .vpr th{background:#eee!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .vpr .sbt .sg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .vpr svg{max-height:200px}
+/* ស៊ុមតារាង/កាតបិទជិតគ្រប់ទំព័រ (តាមទម្រង់ .rpt) */
+.vpr table{border-collapse:separate!important;border-spacing:0;border:0!important;border-left:1px solid #000!important}
+.vpr th,.vpr td{border:0!important;border-right:1px solid #000!important;border-bottom:1px solid #000!important}
+.vpr thead th{border-top:1px solid #000!important}
+.vpr thead{display:table-header-group}.vpr tr{break-inside:avoid;page-break-inside:avoid}
+.vpr .card.vbig{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.vpr .card,.vpr .stbl{overflow:visible}
 .cxg td.cp{text-align:center;white-space:nowrap;font-size:10pt}.cxg td.cp small{font-size:8.5pt;color:#333}
 .cxg td.cd{vertical-align:middle;white-space:normal}
 #cxG tr.cxday td{background:var(--soft);padding:6px 8px}

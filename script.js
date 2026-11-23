@@ -1085,7 +1085,7 @@ function cardHTML(c,i,RK){
   }
   var t1=sa(s,"a",c),t2=sa(s,"b",c),n=ac(c,1).length+ac(c,2).length,ok=!!gof(s,c,3),a1=abp(s,1),a2=abp(s,2);
   return"<div class='pg card-pr'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year||"............")+"</b></div></div>"+
+    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGOBTP()+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='margin-left:auto;text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
     "<h2 class=moul style='text-align:center;font-size:14pt;margin:10px 0'>ប័ណ្ណពិន្ទុសិស្ស</h2>"+
     "<table class=ct style='margin-bottom:10px'><tbody><tr><td style='text-align:left'>ឈ្មោះសិស្ស៖ <b>"+esc(s.n)+"</b></td><td style='text-align:left'>លេខសម្គាល់៖ "+esc(s.id||"—")+"</td><td style='text-align:left'>ភេទ៖ "+esc(s.g||"—")+"</td></tr><tr><td style='text-align:left'>ថ្នាក់៖ <b>"+esc(c.n)+"</b></td><td style='text-align:left'>មុខវិជ្ជា៖ គណិតវិទ្យា</td><td style='text-align:left'>គ្រូបង្រៀន៖ "+esc(t.name||"")+"</td></tr></tbody></table>"+
     sem(1)+"<div style='height:8px'></div>"+sem(2)+"<div style='height:8px'></div>"+
@@ -1420,14 +1420,15 @@ function renderV(){
   }
   if(h!==vSigB||!$("vbody").firstChild){$("vbody").innerHTML=h;vSigB=h}
 }
+function vHead(){try{return localStorage.getItem("ahHead")||""}catch(e){return""}}
 /* បោះពុម្ពក្រាហ្វិក និងវិភាគ (ប្រើមាតិកាដែលបង្ហាញនៅលើអេក្រង់) */
 $("vpr").onclick=function(){
   renderV();var I=inf(),PN=["","ឆមាសទី១","ឆមាសទី២","ប្រចាំឆ្នាំ"],c=curCls();
-  var h="<div class='pg opr vpr'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+  var h="<div class='pg opr vpr rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
    "<div class=hl><div style='display:flex;align-items:center;gap:10px'><img src='"+LOGOBT()+"' class=logo style='border-radius:50%' alt=''><div><b>"+esc(I.school)+"</b><br>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div><div style='text-align:right'>ឆ្នាំសិក្សា៖ <b>"+esc(I.year)+"</b></div></div>"+
    "<h2 class=moul style='text-align:center;font-size:14pt;margin:6px 0 2px'>ក្រាហ្វិក និងវិភាគលទ្ធផលសិក្សា</h2>"+
    "<p style='text-align:center;margin:0 0 8px'>គ្រូ៖ <b>"+esc(tn(rt))+"</b>"+(c?" · ថ្នាក់៖ <b>"+esc(c.n)+"</b>":"")+" · "+PN[rp]+"</p>"+
-   $("vbody").innerHTML+wpFoot(who.id,who.name,"អ្នករៀបចំ",true)+"</div>";
+   $("vbody").innerHTML+repFoot(who.id,who.name,vHead())+"</div>";
   window.SCHX.fontsOk().then(function(){doPrint(h)});
 };
 $("vt").onchange=function(){rt=this.value;rc=0;renderV()};
