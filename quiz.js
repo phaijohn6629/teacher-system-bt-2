@@ -665,7 +665,7 @@ function grade(t){
   }).sort(function(a,b){return b.sc-a.sc||String(a.s.sn).localeCompare(String(b.s.sn),"km")});
 }
 /* ===================== 🎓 Certificate (cert.js · ផ្ទុកតាមតម្រូវការ) =====================
-   ដល់លក្ខខណ្ឌ៖ ចំណាត់ថ្នាក់ទី១–៣ (ពិន្ទុ ≥ CERT_RANK_MIN% · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា + tie) ឬ ភាគរយ ≥ ខ្សែកំណត់ (លំនាំដើម ៨០%)
+   (លក្ខខណ្ឌលម្អិតនៅខាងក្រោម · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា + tie)
    ត្រូវការចម្លើយត្រឹមត្រូវផ្ទុករួច (keyOf) បើមិនដូច្នោះពិន្ទុជា ០ ទាំងអស់ */
 var certP=null;
 function certLoad(){
@@ -674,17 +674,32 @@ function certLoad(){
   certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=5";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
   return certP;
 }
-var CERT_RANK_MIN=50;   /* ចំណាត់ថ្នាក់ទី១–៣ ត្រូវមានពិន្ទុយ៉ាងតិច ៥០% (កុំឱ្យ Certificate «ជ័យលាភី» ចេញលើពិន្ទុទាបពេក) */
-function certPct(){var v=NaN;try{v=parseFloat(localStorage.getItem("certPct"))}catch(x){}return isFinite(v)&&v>=1&&v<=100?v:80}
-function certKind(t,R){   /* → [{r,rank,kind}] តាមលំដាប់ R (ពិន្ទុធំ → តូច) */
-  if(!t||!t.items||!t.items.length||!Object.keys(keyOf[t.id]||{}).length)return[];
-  var pc=certPct();
-  return R.map(function(r){
-    var rank=1+R.filter(function(x){return x.sc>r.sc}).length;
-    if(r.sc>0&&rank<=3&&r.p>=CERT_RANK_MIN)return{r:r,rank:rank,kind:"rank",tie:R.filter(function(x){return x.sc===r.sc}).length>1};
-    if(r.p>=pc)return{r:r,rank:rank,kind:"pass"};
-    return null;
-  }).filter(Boolean);
+/* 🔒 Certificate = ពានរង្វាន់ពិសេស មិនមែនចេញគ្រប់តេស្តទេ · លក្ខខណ្ឌតឹង៖
+   ១) គ្រូត្រូវបើកដោយដៃក្នុងតេស្តនោះ (checkbox · លំនាំដើម = បិទ · ចងចាំក្នុងឧបករណ៍ certOn_{id})
+   ២) តេស្តត្រូវបិទហើយ (លទ្ធផលចុងក្រោយ) · មានយ៉ាងតិច CERT_MIN_Q លំហាត់ · សិស្សផ្ញើយ៉ាងតិច CERT_MIN_N នាក់ · ចម្លើយត្រឹមត្រូវផ្ទុករួច
+   ៣) កាត់សិស្សមានសញ្ញាសង្ស័យ (ផ្ញើស្វ័យប្រវត្តិដោយចាកចេញ · ចាកចេញ > ២ ដង · ចម្លង/បិទភ្ជាប់) ចេញ មុនរាប់ចំណាត់ថ្នាក់
+   ៤) ខ្សែពិន្ទុជាប់ ≥ CERT_PCT_MIN% (លំនាំដើម ៨០%) · ចំណាត់ថ្នាក់ទី១–៣ ត្រូវ ≥ max(ខ្សែ, CERT_PCT_MIN)% ហើយមិនលើស CERT_RANK_MAX នាក់ (ស្មើគ្នាច្រើនពេក = មិនចេញ «ជ័យលាភី») */
+var CERT_PCT_MIN=70,CERT_PCT_DEF=80,CERT_MIN_Q=10,CERT_MIN_N=5,CERT_RANK_MAX=5;
+function certPct(){var v=NaN;try{v=parseFloat(localStorage.getItem("certPct"))}catch(x){}return isFinite(v)&&v>=CERT_PCT_MIN&&v<=100?v:CERT_PCT_DEF}
+function certOn(t){try{return!!t&&localStorage.getItem("certOn_"+t.id)==="1"}catch(x){return false}}
+function certBad(s){return!!(s.ax||(s.lv||0)>2||(s.cp||0)>0)}
+function certGate(t,R){   /* → "" បើអាចចេញបាន · បើមិនដូច្នោះ ហេតុផល */
+  if(!t||!t.items)return"គ្មានតេស្ត";
+  if(!Object.keys(keyOf[t.id]||{}).length)return"ចម្លើយត្រឹមត្រូវមិនទាន់ផ្ទុក";
+  if(t.items.length<CERT_MIN_Q)return"តេស្តត្រូវមានយ៉ាងតិច "+kn(CERT_MIN_Q)+" លំហាត់";
+  if(t.open)return"ត្រូវបិទតេស្តជាមុន (លទ្ធផលចុងក្រោយ)";
+  if(R.length<CERT_MIN_N)return"ត្រូវមានសិស្សផ្ញើយ៉ាងតិច "+kn(CERT_MIN_N)+" នាក់";
+  return"";
+}
+function certKind(t,R){   /* → [{r,rank,kind,tie}] តាមលំដាប់ R (ពិន្ទុធំ → តូច) · [] បើមិនបើក ឬមិនដល់លក្ខខណ្ឌតេស្ត */
+  if(!certOn(t)||certGate(t,R))return[];
+  var pc=certPct(),C=R.filter(function(r){return!certBad(r.s)});   /* ចំណាត់ថ្នាក់រាប់ក្នុងចំណោមសិស្សស្អាតតែប៉ុណ្ណោះ */
+  var rm=Math.max(pc,CERT_PCT_MIN),L=C.map(function(r){
+    var rank=1+C.filter(function(x){return x.sc>r.sc}).length;
+    return{r:r,rank:rank,kind:r.sc>0&&rank<=3&&r.p>=rm?"rank":(r.p>=pc?"pass":""),tie:C.filter(function(x){return x.sc===r.sc}).length>1};
+  });
+  if(L.filter(function(e){return e.kind==="rank"}).length>CERT_RANK_MAX)L.forEach(function(e){if(e.kind==="rank")e.kind=e.r.p>=pc?"pass":""});
+  return L.filter(function(e){return e.kind});
 }
 function certItem(t,e){
   var r=e.r,d=r.s.at?new Date(String(r.s.at).replace(" ","T")):null;
@@ -694,7 +709,7 @@ function certItem(t,e){
 function certPrint(sid){
   var t=curTest;if(!t)return;var R=grade(t),L=certKind(t,R);
   if(sid)L=L.filter(function(e){return e.r.s.sid===sid});
-  if(!L.length){notify(sid?"សិស្សនេះមិនទាន់ដល់លក្ខខណ្ឌ Certificate ទេ":"មិនមានសិស្សដល់លក្ខខណ្ឌ Certificate ទេ (ពិនិត្យខ្សែពិន្ទុ)");return}
+  if(!L.length){notify(certOn(t)&&certGate(t,R)?"🔒 "+certGate(t,R):sid?"សិស្សនេះមិនទាន់ដល់លក្ខខណ្ឌ Certificate ទេ":"មិនមានសិស្សដល់លក្ខខណ្ឌ Certificate ទេ (ពិនិត្យខ្សែពិន្ទុ)");return}
   if(!sid&&L.length>1&&!confirm("បោះពុម្ព Certificate សរុប "+kn(L.length)+" សន្លឹក (១ សិស្ស = ១ សន្លឹក)?"))return;
   certLoad().then(function(){return window.CERT.print(L.map(function(e){return certItem(t,e)}))})
     .catch(function(){notify("⚠️ មិនអាចផ្ទុក Certificate បានទេ · សូមពិនិត្យអ៊ីនធឺណិត")});
@@ -748,7 +763,7 @@ function renderRes(){
     "<select id=qrK title='ប្រភេទតេស្ត' style='width:auto;margin:0'>"+Object.keys(KIND).map(function(k){return"<option value="+k+((t.kind||"g")===k?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
     ((t.kind||"g")!=="g"?"<input id=qrM type=month value='"+(t.mo||curMo())+"' style='width:150px;margin:0'>":"")+
     "<button type=button data-qa=link>🔗 តំណ/QR</button><button type=button data-qa=toggle>"+(t.open?"🔒 បិទតេស្ត":"🔓 បើកតេស្តវិញ")+"</button>"+
-    "<button type=button data-qa=csv>⬇️ Excel</button><span class=qr-cert title='Certificate ដល់ជាប់ចំណាត់ថ្នាក់ទី១–៣ ឬពិន្ទុ ≥ ខ្សែកំណត់' style='display:inline-flex;gap:4px;align-items:center'><button type=button data-qa=cert>🎓 Certificate (+kn(certKind(t,R).length)+)</button><label class=note style='margin:0'>≥ <input id=qrCp type=number min=1 max=100 value='"+certPct()+"' style='width:60px;margin:0'>%</label></span><button type=button class=primary data-qa=drive>💾 រក្សាទុកក្នុង Drive</button><button type=button class=danger data-qa=del>🗑️</button></div>"+
+    "<button type=button data-qa=csv>⬇️ Excel</button><span class=qr-cert title='Certificate = ពានរង្វាន់ពិសេស៖ បើកដោយដៃ · តេស្តបិទ · សិស្ស ≥ ៥ នាក់ · ≥ ១០ លំហាត់ · ខ្សែ ≥ ៧០%' style='display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap'><label class=note style='margin:0'><input type=checkbox id=qrCo"+(certOn(t)?" checked":"")+"> 🎓 បើក Certificate</label>"+(certOn(t)?(certGate(t,R)?"<span class=note style='margin:0;color:#b45309'>🔒 "+esc(certGate(t,R))+"</span>":"<button type=button data-qa=cert>🎓 បោះពុម្ព ("+kn(certKind(t,R).length)+")</button><label class=note style='margin:0'>ខ្សែ ≥ <input id=qrCp type=number min="+CERT_PCT_MIN+" max=100 value='"+certPct()+"' style='width:60px;margin:0'>%</label>"):"")+"</span><button type=button class=primary data-qa=drive>💾 រក្សាទុកក្នុង Drive</button><button type=button class=danger data-qa=del>🗑️</button></div>"+
     (v2?"<div class=qr-sec>🔒 <b>តេស្តមានការការពារ</b> · មួយឈ្មោះ មួយឧបករណ៍ · ផ្ញើបានក្នុងរយៈពេលកំណត់"+(t.dur?" (+១០ នាទី)":"")+(t.pc?" · 🔑 លេខកូដចូល <b class=qz-pcb>"+esc(pcOf[t.id]||"…")+"</b>":"")+"</div>":"<div class=qr-sec off>ℹ️ តេស្តនេះបង្កើតមុនការការពារថ្មី (គ្មានលេខកូដ · គ្មានការកំណត់ឧបករណ៍)</div>")+
     "<div class=qr-kpi><div><b>"+kn(R.length)+"/"+kn((t.names||[]).length)+"</b>បានធ្វើ</div>"+(v2?"<div><b style='color:#d97706'>"+kn(progLive.length)+"</b>⏳ កំពុងធ្វើ</div>"+(progStale.length?"<div><b style='color:#b91c1c'>"+kn(progStale.length)+"</b>⚠️ មិនបានផ្ញើ</div>":""):"")+"<div><b>"+(n?kn((avg).toFixed(1)):"—")+"/"+kn(n)+"</b>មធ្យម</div><div><b>"+kn(R.filter(function(r){return r.p>=50}).length)+"</b>ជាប់ (≥៥០%)</div><div><b style='color:#b91c1c'>"+kn(R.filter(function(r){return r.s.lv||r.s.cp}).length)+"</b>🚩 សង្ស័យ</div><div id=qrDrv><b>"+(driveTok()?"✅":"—")+"</b>Drive ស្វ័យប្រវត្តិ</div></div>"+
     "<div class=wrap><table><thead><tr><th>ចំណាត់ថ្នាក់</th><th>ឈ្មោះសិស្ស</th><th>ពិន្ទុ</th><th>ភាគរយ</th><th>ពេលផ្ញើ</th><th>រយៈពេល</th><th title='ចាកចេញពីផ្ទាំងតេស្ត (ប្ដូរ Tab/កម្មវិធី) · ចម្លង/បិទភ្ជាប់'>🚩 សង្ស័យ</th><th></th></tr></thead><tbody>"+
@@ -973,7 +988,8 @@ $("qzBody").addEventListener("change",function(e){
   else if(id==="qmT"){mk.tid=el.value;mk.ci=0;mk.ls={};mk.pt={};mk.items=null;renderMake()}else if(id==="qmC"){mk.ci=+el.value;mk.ls={};mk.pt={};mk.items=null;renderMake()}
   else if(id==="qmPc")mk.pc=el.checked;else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;else if(id==="qmX")mk.lx=+el.value||0;
   else if(id==="qmK"){mk.kind=el.value;mk.title=($("qmTi")||{}).value||mk.title;renderMake()}else if(id==="qmM")mk.mo=el.value;
-  else if(id==="qrCp"&&curTest){var cv=parseFloat(el.value);if(isFinite(cv)&&cv>=1&&cv<=100){try{localStorage.setItem("certPct",String(cv))}catch(x){}}renderRes()}
+  else if(id==="qrCo"&&curTest){try{localStorage.setItem("certOn_"+curTest.id,el.checked?"1":"0")}catch(x){}renderRes()}
+  else if(id==="qrCp"&&curTest){var cv=parseFloat(el.value);if(isFinite(cv)&&cv>=CERT_PCT_MIN&&cv<=100){try{localStorage.setItem("certPct",String(cv))}catch(x){}}renderRes()}
   else if((id==="qrK"||id==="qrM")&&curTest){
     var t=curTest,k=$("qrK").value,mo=k==="g"?"":(($("qrM")||{}).value||t.mo||curMo()),FB=window.FB,ops=[FB.updateDoc(FB.doc(window.db,"tests",t.id),{kind:k,mo:mo})];
     var dup=k==="g"?null:tests.filter(function(x){return x.id!==t.id&&x.o===t.o&&x.cls===t.cls&&x.kind===k&&x.mo===mo})[0];
