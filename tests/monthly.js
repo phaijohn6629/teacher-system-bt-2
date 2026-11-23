@@ -19,4 +19,15 @@ function maxC(cn){return Math.round((mx[parseInt(cn)]||100)*0.2*100)/100}
 eq(maxC("12NGS-B"),25,"grade 12");eq(maxC("7A"),20,"grade 7");eq(maxC("9NGS-A"),20,"grade 9");eq(maxC("10B"),30,"grade 10");eq(maxC("11C"),25,"grade 11");
 ok(/scaleC\(v,xc\.n,Mc\)/.test(S),"syncTests uses scaleC");
 ok(/W\.c/.test(S)&&/rs\.mx\[parseInt\(c\.n\)\]/.test(S),"max from rs.mx[grade] × W.c");
+/* និទ្ទេស ៖ A≥90 B≥80 C≥70 D≥60 E≥50 (ស្តង់ដារតែមួយ ៧–១២ · ការពារ floating-point) */
+var rs={ms:{}};
+eval(blk("var DEF=","var mT=")+blk("function cfg()","function cls()")+blk("function grade(p)","function gbadge"));
+function gr(t,f){return grade(t/f)}
+eq(gr(135,150),"A","135/150");eq(gr(135.4,150),"A","135.4/150");eq(gr(120,150),"B","120/150");
+eq(gr(119.99,150),"C","119.99/150");eq(gr(134.99,150),"B","134.99/150");eq(gr(105,150),"C","105/150");
+eq(gr(90,150),"D","90/150");eq(gr(75,150),"E","75/150");eq(gr(74.9,150),"F","74.9/150");
+eq(gr(0.1+0.2+89.7,100),"A","float 90.0000000001");eq(gr(89.99999999999999,100),"A","float 89.99999999999999");eq(gr(89.9,100),"B","89.9/100");eq(gr(90,100),"A","90/100");
+eq(gr(25*0.9,25),"A","25 scale");eq(gr(20*0.8,20),"B","20 scale");
+rs.ms.gr=[.904,.804,.704,.604,.504];eq(gr(135.4,150),"A","old saved thresholds replaced");
+rs.ms.gr=[.95,.8,.7,.6,.5];eq(gr(135.4,150),"B","custom thresholds kept");
 print("monthly: checks "+n+" bad "+bad);

@@ -9,11 +9,14 @@
    ======================================================================== */
 (function(){
 "use strict";
-var DEF={w:{a:.15,t:.15,h:.15,b:.15,c:.2,o:.2},gr:[.904,.804,.704,.604,.504]};
+var DEF={w:{a:.15,t:.15,h:.15,b:.15,c:.2,o:.2},gr:[.9,.8,.7,.6,.5]};
+/* ស្តង់ដារតែមួយ (ថ្នាក់ទី៧–១២) ៖ A ≥90% · B ≥80% · C ≥70% · D ≥60% · E ≥50% · F ក្រោមនេះ · តម្លៃលំនាំដើមចាស់ .904… (ដែលធ្វើឱ្យ 90.27% បាន B) ត្រូវជំនួសស្វ័យប្រវត្តិ */
+var OLDGR=[.904,.804,.704,.604,.504];
+function isOldGr(g){return g.length===5&&g.every(function(x,i){return Math.abs(x-OLDGR[i])<1e-9})}
 var COL=[["a","សកម្មភាព\nក្នុងថ្នាក់"],["t1","តេស្ត\nលើកទី១"],["t2","តេស្ត\nលើកទី២"],["h","ស្រាវជ្រាវ"],["b","សៀវភៅ\nកត់ត្រា"]];
 var SUBJ="គណិតវិទ្យា";   /* មុខវិជ្ជា (ពិន្ទុទាំងអស់ជាពិន្ទុគណិតវិទ្យា · មិនប៉ះការគណនា) */
 var mT="",mI=0,mM=(function(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)})();
-function cfg(){var m=rs.ms||{};return{w:Object.assign({},DEF.w,m.w||{}),gr:(m.gr&&m.gr.length===5)?m.gr:DEF.gr}}
+function cfg(){var m=rs.ms||{};return{w:Object.assign({},DEF.w,m.w||{}),gr:(m.gr&&m.gr.length===5&&!isOldGr(m.gr))?m.gr:DEF.gr}}
 function cls(){var cl=rs.c[mT]||[];if(mI>=cl.length)mI=0;return cl[mI]}
 function canE(){return !!(who&&(isAdm()||who.id===mT))}
 function key(s){return s.id?"i:"+s.id:"n:"+s.n}
