@@ -1,0 +1,49 @@
+/* ==========================================================================
+   prime.css — Rean Math Prime · App theme 60-30-10 (index.html only)
+   60% ផ្ទៃ #F8FAFC · 30% Royal Navy #1E3A8A · 10% Gold #D97706
+   មិនប៉ះឯកសាររដ្ឋបាល/វិញ្ញាសា (.pg · .tsx · print) — ស្ទីលនៅទីនេះប្រើតែលើអេក្រង់។
+   ========================================================================== */
+:root{--prime-bg:#F8FAFC;--prime-navy:#1E3A8A;--prime-navy-2:#2B4FB3;--prime-gold:#D97706}
+
+/* Light */
+:root[data-theme="light"]{
+  --bg-main:var(--prime-bg);--bg:var(--prime-bg);
+  --card-bg:rgba(255,255,255,.92);--panel:#fff;
+  --text-main:#0F172A;--ink:#0F172A;--text-muted:#475569;--mute:#475569;
+  --border-glow:rgba(30,58,138,.16);--line:rgba(30,58,138,.16);
+  --brand:var(--prime-navy);--brand-ink:#fff;--accent:var(--prime-gold);
+  --soft:#E8EEF9;--primary-gradient:linear-gradient(135deg,#1E3A8A 0%,#2B4FB3 100%);
+  --nav-bg:rgba(255,255,255,.92);--nav-line:rgba(30,58,138,.25);
+  --sn-bg:linear-gradient(180deg,#EEF3FC 0%,#F8FAFC 100%);--sn-tg:#E8EEF9;--sn-h:#1E3A8A;--sn-hv:rgba(30,58,138,.08);--sn-bd:rgba(30,58,138,.18);
+}
+/* Dark (លំនាំដើមរបស់ modern.css) */
+:root:not([data-theme="light"]),:root[data-theme="dark"]{
+  --bg-main:#0B1220;--bg:#0B1220;--card-bg:rgba(18,28,51,.78);--panel:#121C33;
+  --brand:#4C6FD1;--brand-ink:#fff;--accent:#F59E0B;
+  --soft:rgba(255,255,255,.06);--primary-gradient:linear-gradient(135deg,#1E3A8A 0%,#2B4FB3 100%);
+  --nav-bg:rgba(11,18,32,.88);
+  --sn-bg:linear-gradient(180deg,#0F1A33 0%,#14214A 100%);--sn-tg:#14214A;--sn-h:#9DB4F0;--sn-bd:rgba(157,180,240,.2);
+}
+
+@media screen{
+  /* 30% — Header ពណ៌ Royal Navy */
+  header{background:var(--prime-navy);color:#fff;border-bottom:3px solid var(--prime-gold)}
+  header .brand-name{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#fff;font-size:1.05rem}
+  header .brand-sub{color:rgba(255,255,255,.82)}
+  header .hdr-acts button{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+  header .hdr-acts .profile-trigger{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.3)}
+  .profile-trigger .avatar{background:var(--prime-gold)}
+  .prime-logo{width:48px;height:48px;flex:0 0 auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))}
+  /* ប៊ូតុងសំខាន់ + ចំណុចសង្កត់ធ្ងន់ */
+  .welcome-banner{box-shadow:0 10px 25px rgba(30,58,138,.28)}
+  .sn-i.active{box-shadow:0 6px 16px rgba(30,58,138,.35)}
+  @media (min-width:1200px){.snav{box-shadow:4px 0 24px rgba(30,58,138,.12)}}
+  #stTb thead th.today{background:linear-gradient(135deg,#D97706,#F59E0B)}
+}
+/* ទំព័រ Login */
+.prime-lg{display:flex;align-items:center;gap:12px;margin:0 0 6px}
+.prime-lg img{width:64px;height:64px;flex:0 0 auto}
+.prime-nm{font-family:"Khmer OS Muol Light","Moul",system-ui,sans-serif;font-size:1.15rem;line-height:1.4;color:var(--brand)}
+.login-box h2{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:var(--ink)!important;font-size:1.05rem}
+:root[data-theme="light"] .login-box{box-shadow:0 8px 24px rgba(30,58,138,.12)}
+@media print{.prime-logo,.prime-lg{display:none!important}}

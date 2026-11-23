@@ -7,22 +7,24 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="google-site-verification" content="GWhey1Dte_gKGoM2QsrZQKyHtKzOftVLoxJoRBP80iE" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</title>
+<title>Rean Math Prime</title>
 <!-- ⚡ Login លឿន៖ ទាញ Firebase SDK ព្រមគ្នាជាមួយទំព័រ · បើកផ្លូវទៅម៉ាស៊ីន Google ជាមុន -->
 <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js" crossorigin><link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js" crossorigin><link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js" crossorigin>
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin><link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin><link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin>
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4f46e5"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1E3A8A"><link rel="apple-touch-icon" sizes="180x180" href="icon-180.png"><link rel="icon" type="image/png" sizes="192x192" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes">
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){var t=0,u=function(){if(Date.now()-t>6e4){t=Date.now();try{r.update()}catch(e){}}};document.addEventListener("visibilitychange",function(){if(!document.hidden)u()});window.addEventListener("focus",u)}).catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <link rel="stylesheet" href="style.css?v=145">
 <link rel="stylesheet" href="modern.css?v=23">
+<link rel="stylesheet" href="prime.css?v=2">
 
 </head>
 <body>
 
 <!-- ផ្ទាំង Login -->
 <div id="loginSection" class="login-box" hidden>
+  <div class="prime-lg"><img src="logo-prime.svg" alt="" width="64" height="64"><div class="prime-nm">Rean Math Prime</div></div>
   <h2>🔐 ចូលប្រើប្រាស់ប្រព័ន្ធ</h2>
   <p class="note">សូមបញ្ចូលលេខសម្គាល់គ្រូ (ឧ. T001) និងលេខសម្ងាត់ផ្ទាល់ខ្លួន.</p>
   <label for="loginId">លេខសម្គាល់គ្រូ (Teacher ID)</label>
@@ -38,10 +40,10 @@
 <div id="appSection" hidden>
 <header>
   <div class="brand">
-    <img id="ngsLogo" hidden alt="" src="logo-ngs.jpg" data-inl="1"><img class="brand-logo" src="logo-bt.jpg" data-inl="1" alt="ស្លាកសញ្ញាវិទ្យាល័យបឹងត្របែក" width="48" height="48">
+    <img id="ngsLogo" hidden alt="" src="logo-ngs.jpg" data-inl="1"><img class="brand-logo" src="logo-bt.jpg" data-inl="1" alt="ស្លាកសញ្ញាវិទ្យាល័យបឹងត្របែក" width="48" height="48" hidden style="display:none"><img class="prime-logo" src="logo-prime.svg" alt="Rean Math Prime" width="48" height="48">
     <div class="brand-txt">
-      <div class="brand-name">វិទ្យាល័យបឹងត្របែក</div>
-      <h1 class="brand-sub">សាលារៀនជំនាន់ថ្មី (NGS) · ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</h1>
+      <div class="brand-name">Rean Math Prime</div>
+      <h1 class="brand-sub">ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យគ្រូបង្រៀន</h1>
     </div>
   </div>
   <div class="hdr-acts">
