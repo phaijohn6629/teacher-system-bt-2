@@ -1246,3 +1246,10 @@ body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-
 .rsg .rb,.rsg .rn{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400;white-space:nowrap;line-height:1.9}
 .rsg .rb{font-size:9pt}.rsg .rn{font-size:10pt}.rsg .rs{height:18mm;display:flex;align-items:flex-end;justify-content:center}.rsg .rs .sgi{max-height:17mm}
 .rsg .rc1{margin-top:12mm}.rsg .rc2{margin-top:6mm}.rsg .rc3{margin-top:0}
+/* របាយការណ៍៖ ស៊ុមតារាងបិទជិតគ្រប់ទំព័រ (separate · ក្បាលតារាងមាន border-top ខ្លួនឯង) + ជើងក្រោមមានលំនឹង */
+.rpt table.ct,body.pm #prt .rpt table.ct{border-collapse:separate!important;border-spacing:0;border:0!important;border-left:1px solid #000!important}
+.rpt table.ct :is(th,td),body.pm #prt .rpt table.ct :is(th,td){border:0!important;border-right:1px solid #000!important;border-bottom:1px solid #000!important}
+.rpt table.ct thead th,body.pm #prt .rpt table.ct thead th,.rpt table.ct tr.pdfpad td{border-top:1px solid #000!important}
+.rpt table.ct tr.pdfpad:not(:has(th)) td[style*="height"]{border:0!important}
+.rpt .rsg{grid-template-columns:1.05fr .9fr 1.45fr;gap:2mm;padding-right:2mm}
+.rsg .rt{font-size:9pt}.rsg .rc3 .rt{font-size:8.5pt}.rsg .rc2{position:relative;left:-4mm}.rsg .rc3{position:relative;left:-3mm}
