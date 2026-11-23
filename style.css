@@ -1239,3 +1239,10 @@ body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-
 .rpt table.ct{border-collapse:collapse}.rpt table.ct tr,.rpt img.wim{break-inside:avoid;page-break-inside:avoid}.rpt img.wim{max-height:52mm;object-fit:contain}
 .rpt thead{display:table-header-group}.rpt .cxf{break-inside:avoid;page-break-inside:avoid;overflow:visible}
 @media print{body.pm #prt .rpt{overflow:visible!important;height:auto!important}body.pm #prt .rpt tr{break-inside:avoid;page-break-inside:avoid}}
+
+/* ===== ជើងក្រោមរបាយការណ៍ (.rsg)៖ ៣ ជួរឈរ ចុះពីស្តាំទៅឆ្វេង ===== */
+.rpt .rsg{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:3mm;align-items:start;margin:8mm 0 0;break-inside:avoid;page-break-inside:avoid;break-before:avoid;page-break-before:avoid;overflow:visible}
+.rsg .rc{text-align:center;min-width:0}.rsg .rt{font-size:9.5pt;line-height:1.6;white-space:nowrap}
+.rsg .rb,.rsg .rn{font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400;white-space:nowrap;line-height:1.9}
+.rsg .rb{font-size:9pt}.rsg .rn{font-size:10pt}.rsg .rs{height:18mm;display:flex;align-items:flex-end;justify-content:center}.rsg .rs .sgi{max-height:17mm}
+.rsg .rc1{margin-top:12mm}.rsg .rc2{margin-top:6mm}.rsg .rc3{margin-top:0}

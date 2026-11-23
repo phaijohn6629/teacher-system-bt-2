@@ -557,6 +557,15 @@ function wpFoot(id,name,lbl,mid){
    "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>"+esc(lbl||"ហត្ថលេខា និងឈ្មោះ")+"</div>"+
    "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(name||"")+"</b></div></div></div>";
 }
+/* ជើងក្រោមរបាយការណ៍ការងារ៖ ៣ ជួរឈរ ចុះបន្តិចម្ដងៗពីស្តាំទៅឆ្វេង (ស្តាំខ្ពស់ជាងគេ) */
+function repFoot(id,name){
+  var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
+  var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
+  return"<div class='cxf rsg'>"+
+   "<div class='rc rc1'><div class=rt>បានឃើញ និងឯកភាព</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div><div class='rn moul'>គីម មិថុនា</div></div>"+
+   "<div class='rc rc2'><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>ជ.ប្រធានក្រុមបច្ចេកទេស</div><div class=rs></div><div class='rn moul'>ម៉េត បញ្ញារិទ្ធ</div></div>"+
+   "<div class='rc rc3'>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នករៀបចំរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
+}
 $("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
 $("mo").innerHTML=MK.map(function(m,i){return"<option value="+i+">"+m+"</option>"}).join("");
 $("mo").onchange=function(){cur=+this.value;renderK()};
@@ -1700,7 +1709,7 @@ function reportHTML(){
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>របាយការណ៍ការងារ"+esc(role)+"គណិតវិទ្យា ប្រចាំខែ"+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
     "<p style='text-indent:1.2cm;margin:6px 0'>គោរពជម្រាបជូនគណៈគ្រប់គ្រង សូមជូនរបាយការណ៍ការងារក្រុមបច្ចេកទេសគណិតវិទ្យា នៅ"+esc(I.school)+" សាលារៀនជំនាន់ថ្មី (NGS) មានដូចតទៅ៖</p>"+
     "<table class=ct style='width:100%'><thead><tr><th style='width:16%'>កាលបរិច្ឆេទ</th><th style='width:18%'>រយៈពេល</th><th>ខ្លឹមសារសកម្មភាព</th><th style='width:24%'>សកម្មភាព (រូបភាព...)</th></tr></thead><tbody>"+(rows||"<tr><td colspan=4>—</td></tr>")+"</tbody></table>"+
-    wpFoot(wt,t.name,"អ្នករៀបចំរបាយការណ៍",true)+"</div>";
+    repFoot(wt,t.name)+"</div>";
 }
 $("wpr").onclick=function(){if(!wlist().length){alert("មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។");return}window.SCHX.fontsOk().then(function(){doPrint(reportHTML())})};
 $("wex").onclick=function(){
