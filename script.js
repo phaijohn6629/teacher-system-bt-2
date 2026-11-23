@@ -558,12 +558,20 @@ function wpFoot(id,name,lbl,mid){
    "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(name||"")+"</b></div></div></div>";
 }
 /* ជើងក្រោមរបាយការណ៍ការងារ៖ ៣ ជួរឈរ ចុះបន្តិចម្ដងៗពីស្តាំទៅឆ្វេង (ស្តាំខ្ពស់ជាងគេ) */
-function repFoot(id,name){
+/* ចំណងជើងជួរកណ្ដាល៖ «ប្រធានក្រុមបច្ចេកទេស» (ប្រធាន) ឬ «ជ.ប្រធានក្រុមបច្ចេកទេស» (អនុប្រធាន) តាមឈ្មោះ/តួនាទី · លំនាំដើម = ម៉េត បញ្ញារិទ្ធ (ជ.ប្រធាន) */
+function repHead(hn){
+  var n=String(hn||"ម៉េត បញ្ញារិទ្ធ").replace(/\s+/g," ").trim(),T=(typeof data!=="undefined"&&data&&data.filter)?data:[];
+  var t=T.filter(function(x){return x&&String(x.name||"").replace(/\s+/g," ").trim()===n})[0],P="ប្រធានក្រុមបច្ចេកទេស",D="ជ.ប្រធានក្រុមបច្ចេកទេស";
+  var m={"ម៉េត បញ្ញារិទ្ធ":D,"ផៃ ចន":P};
+  return{n:n,t:m[n]||(t&&String(t.rl||"").replace(/[\u200b\u200c\u200d\s]/g,"")==="ប្រធាន"?P:D)};
+}
+function repFoot(id,name,hn){
+  var H=repHead(hn);
   var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
   var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
   return"<div class='cxf rsg'>"+
    "<div class='rc rc1'><div class=rt>បានឃើញ និងឯកភាព</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div><div class='rn moul'>គីម មិថុនា</div></div>"+
-   "<div class='rc rc2'><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>ជ.ប្រធានក្រុមបច្ចេកទេស</div><div class=rs></div><div class='rn moul'>ម៉េត បញ្ញារិទ្ធ</div></div>"+
+   "<div class='rc rc2'><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>"+esc(H.t)+"</div><div class=rs></div><div class='rn moul'>"+esc(H.n)+"</div></div>"+
    "<div class='rc rc3'>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នករៀបចំរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
 }
 $("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
@@ -1810,12 +1818,12 @@ $("ahX").onclick=function(){
 };
 $("ahP").onclick=function(){
   var I=inf(),nm=ahT==="*"?"គ្រូទាំងអស់":(teacherOf(ahT).name||""),f=$("ahF").value,g=$("ahG").value;
-  var h="<div class='pg'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGO+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
+  var h="<div class='pg rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGOBTP()+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>តារាងស្នាដៃគ្រូបង្រៀន</h2><p style='margin:4px 0'>គ្រូ៖ <b>"+esc(nm)+"</b>"+(f||g?" · រយៈពេល៖ "+esc(fdd(f)||"…")+" ដល់ "+esc(fdd(g)||"…"):"")+"</p>"+
     "<table class=ct>"+$("ahM").innerHTML+"</table>"+
     (ahT==="*"?"<div style='height:10px'></div><table class=ct>"+$("ahS").innerHTML+"</table><p style='font-size:9.5pt;margin:4px 0'>"+AHC.map(function(c,i){return(i+1)+"="+esc(c)}).join(" · ")+"</p>":"")+
-    wpFoot(who.id,who.name,"អ្នករៀបចំ",true)+"</div>";
+    repFoot(who.id,who.name)+"</div>";
   doPrint(h);
 };
 
