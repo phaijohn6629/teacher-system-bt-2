@@ -1,5 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Rean Math Prime">
-<polygon points="64,6 114,35 114,93 64,122 14,93 14,35" fill="#1E3A8A" stroke="#D97706" stroke-width="5" stroke-linejoin="round"/>
-<text x="64" y="72" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-weight="700" font-size="40" fill="#fff">RM</text>
-<text x="64" y="104" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-weight="700" font-size="30" fill="#D97706">π</text>
+<polygon points="64,7 113.5,35.5 113.5,92.5 64,121 14.5,92.5 14.5,35.5" fill="#1E3A8A" stroke="#1E3A8A" stroke-width="7" stroke-linejoin="round"/>
+<polygon points="64,15 106.6,39.5 106.6,88.5 64,113 21.4,88.5 21.4,39.5" fill="none" stroke="#D97706" stroke-width="2.4" stroke-linejoin="round"/>
+<g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+<path d="M37 59V37H47a7.5 7.5 0 0 1 0 15H37M46 52l9 7"/>
+<path d="M63 59V37l14 16 14-16v22"/>
+</g>
+<g fill="none" stroke="#D97706" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M45 75H83M55 75c0 7-1 13-3 18M72 75v13a4 4 0 0 0 4 4h2"/>
+</g>
 </svg>
