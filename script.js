@@ -1736,8 +1736,11 @@ function ahAll(){
   ids.forEach(function(id){(ah.r[id]||[]).forEach(function(e){if((!f||e.d>=f)&&(!g||e.d<=g))o.push({e:e,o:id})})});
   return o;
 }
+var ahInit=0;
+function ahMonth(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),z=function(n){return("0"+n).slice(-2)};return[y+"-"+z(m+1)+"-01",y+"-"+z(m+1)+"-"+z(new Date(y,m+1,0).getDate())]}
 function renderA(){
   var isAdmin=(isAdm());
+  if(!ahInit){ahInit=1;var r0=ahMonth();$("ahF").value=r0[0];$("ahG").value=r0[1]}
   if(!isAdmin)ahT=who.id;else if(!ahT)ahT=who.id;
   $("ahT").innerHTML=(isAdmin?"<option value='*'"+(ahT==="*"?" selected":"")+">គ្រូទាំងអស់</option>":"")+data.filter(function(t){return isAdmin||t.id===who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===ahT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   var fk=$("ahK").value||"*",fl2=$("ahL").value||"*";
@@ -1780,6 +1783,7 @@ function ahOpen(e,owner){
   $("dlgAh").showModal();
 }
 $("ahA").onclick=function(){ahOpen(null)};
+$("ahAll").onclick=function(){$("ahF").value="";$("ahG").value="";renderA()};
 $("cxAh").onclick=function(){$("dlgAh").close()};
 $("okAh").onclick=function(){
   var t=$("dAhT").value.trim(),d=$("dAhD").value,k=$("dAhK").value.trim();
@@ -1791,6 +1795,7 @@ $("okAh").onclick=function(){
   }else{
     var owner=(ahT==="*"?who.id:ahT);rec.u=uid("a");(ah.r[owner]=ah.r[owner]||[]).push(rec);
   }
+  if($("ahF").value&&d<$("ahF").value)$("ahF").value=d;if($("ahG").value&&d>$("ahG").value)$("ahG").value=d;   /* ពង្រីកចន្លោះថ្ងៃ ឱ្យឃើញកំណត់ត្រាដែលទើបដាក់ */
   savA();$("dlgAh").close();renderA();notify("បានរក្សាទុកស្នាដៃ");
 };
 $("ahL2").onclick=function(e){
