@@ -15,6 +15,8 @@ function kn(v){return String(v).replace(/\d/g,function(d){return KM[+d]})}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function src(u){return typeof window.safeSrc==="function"?window.safeSrc(u):""}
 function fnv(s,seed){var h=(2166136261^(seed|0))>>>0;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h>>>0}
+/* ឈ្មោះ៖ NFC · ដកចន្លោះដើម/ចុង · ចន្លោះច្រើន/ចន្លោះពិសេស → ១ ចន្លោះ (ឧ. «ផៃ  ចន» = «ផៃ ចន») */
+function cleanName(n){return String(n==null?"":n).normalize("NFC").replace(/[\s\u00A0]+/g," ").trim()}
 function num(x){x=+x;return isFinite(x)?(Math.round(x*100)/100):0}
 
 /* លេខវិញ្ញាបនបត្រ៖ «CT-» + ៦ តួ (ពី t_sid) + «-» + ៣ តួ checksum (t · sid · ពិន្ទុ · សរុប) */
@@ -53,7 +55,7 @@ var CSS=
 ".cert-print .ct-fv{height:calc(15*var(--u));width:100%;display:flex;align-items:flex-end;justify-content:center;font-size:calc(3.9*var(--u));padding-bottom:calc(.8*var(--u));white-space:nowrap}"+
 ".cert-print .ct-fv img{max-height:calc(14*var(--u));max-width:calc(46*var(--u))}"+
 ".cert-print .ct-fl{width:100%;border-top:calc(.45*var(--u)) solid var(--cn);padding-top:calc(1*var(--u));font-size:calc(3.3*var(--u));color:#475569}"+
-".cert-print .ct-fl .ct-mo{display:block;font-size:calc(3.5*var(--u));margin-bottom:calc(.4*var(--u))}"+
+".cert-print .ct-fl .ct-mo{display:block;white-space:nowrap;font-size:calc(3.5*var(--u));margin-bottom:calc(.4*var(--u))}"+
 ".cert-print .ct-fv b{color:var(--cn);letter-spacing:.05em}"+
 "@page cert{size:A4 landscape;margin:0}"+
 ".cert-print.pg.land{height:calc(209*var(--u))!important;overflow:hidden}"+   /* style.css មាន .pg.land{height:170mm!important} សម្រាប់ប្លង់តុ → ត្រូវជំនួស */
@@ -107,7 +109,7 @@ function html(o){
       "<div class=ct-ft>"+
         "<div class=ct-fc><div class=ct-fv>"+esc(o.date||dateKh())+"</div><div class=ct-fl>កាលបរិច្ឆេទ</div></div>"+
         "<div class=ct-fc><div class=ct-fv><b>"+esc(o.id||"")+"</b></div><div class=ct-fl>លេខវិញ្ញាបនបត្រ</div></div>"+
-        "<div class=ct-fc><div class=ct-fv>"+(sg?"<img src='"+sg+"' alt=''>":"")+"</div><div class=ct-fl><span class=ct-mo>"+esc(o.teacher||"")+"</span>ហត្ថលេខាគ្រូបង្រៀន</div></div>"+
+        "<div class=ct-fc><div class=ct-fv>"+(sg?"<img src='"+sg+"' alt=''>":"")+"</div><div class=ct-fl><span class=ct-mo>"+esc(cleanName(o.teacher))+"</span>ហត្ថលេខាគ្រូបង្រៀន</div></div>"+
       "</div>"+
     "</div></div>";
 }
@@ -117,12 +119,13 @@ function print(list){
   css();
   var w=window.who||{},X=window.SCHX,sig="";try{sig=X&&X.getSig&&w.id?X.getSig(w.id):""}catch(e){}
   var inf=typeof window.inf==="function"?window.inf():{};
-  var h=list.map(function(o){return html(Object.assign({school:inf.school,teacher:w.name,sig:sig},o))}).join("");
+  var tn=cleanName(w.name);   /* ឈ្មោះអ្នកចុះហត្ថលេខា គណនាម្ដង → ដូចគ្នាគ្រប់សន្លឹក */
+  var h=list.map(function(o){return html(Object.assign({school:inf.school,sig:sig},o,{teacher:tn}))}).join("");
   return(X&&X.fontsOk?X.fontsOk():Promise.resolve()).then(function(){
     if(typeof window.outChoose!=="function")throw new Error("outChoose");
     window.outChoose(h);return true;
   });
 }
-window.CERT={html:html,print:print,id:certId,dateKh:dateKh,css:CSS};
+window.CERT={clean:cleanName,html:html,print:print,id:certId,dateKh:dateKh,css:CSS};
 css();
 })();

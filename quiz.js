@@ -665,22 +665,23 @@ function grade(t){
   }).sort(function(a,b){return b.sc-a.sc||String(a.s.sn).localeCompare(String(b.s.sn),"km")});
 }
 /* ===================== 🎓 Certificate (cert.js · ផ្ទុកតាមតម្រូវការ) =====================
-   ដល់លក្ខខណ្ឌ៖ ចំណាត់ថ្នាក់ទី១–៣ (ពិន្ទុ > ០ · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា) ឬ ភាគរយ ≥ ខ្សែកំណត់ (លំនាំដើម ៨០%)
+   ដល់លក្ខខណ្ឌ៖ ចំណាត់ថ្នាក់ទី១–៣ (ពិន្ទុ ≥ CERT_RANK_MIN% · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា + tie) ឬ ភាគរយ ≥ ខ្សែកំណត់ (លំនាំដើម ៨០%)
    ត្រូវការចម្លើយត្រឹមត្រូវផ្ទុករួច (keyOf) បើមិនដូច្នោះពិន្ទុជា ០ ទាំងអស់ */
 var certP=null;
 function certLoad(){
   if(window.CERT)return Promise.resolve();
   if(certP)return certP;
-  certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=4";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
+  certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=5";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
   return certP;
 }
+var CERT_RANK_MIN=50;   /* ចំណាត់ថ្នាក់ទី១–៣ ត្រូវមានពិន្ទុយ៉ាងតិច ៥០% (កុំឱ្យ Certificate «ជ័យលាភី» ចេញលើពិន្ទុទាបពេក) */
 function certPct(){var v=NaN;try{v=parseFloat(localStorage.getItem("certPct"))}catch(x){}return isFinite(v)&&v>=1&&v<=100?v:80}
 function certKind(t,R){   /* → [{r,rank,kind}] តាមលំដាប់ R (ពិន្ទុធំ → តូច) */
   if(!t||!t.items||!t.items.length||!Object.keys(keyOf[t.id]||{}).length)return[];
   var pc=certPct();
   return R.map(function(r){
     var rank=1+R.filter(function(x){return x.sc>r.sc}).length;
-    if(r.sc>0&&rank<=3)return{r:r,rank:rank,kind:"rank",tie:R.filter(function(x){return x.sc===r.sc}).length>1};
+    if(r.sc>0&&rank<=3&&r.p>=CERT_RANK_MIN)return{r:r,rank:rank,kind:"rank",tie:R.filter(function(x){return x.sc===r.sc}).length>1};
     if(r.p>=pc)return{r:r,rank:rank,kind:"pass"};
     return null;
   }).filter(Boolean);
