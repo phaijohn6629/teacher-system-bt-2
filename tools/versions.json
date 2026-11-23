@@ -8,8 +8,8 @@
   "v": 6
  },
  "cert.js": {
-  "hash": "83f62d46f1a10aad5f5d1c62a00efd24a537e9e7",
-  "v": 5
+  "hash": "41afe929e61808efdcf3042e1ecb79e7d98277a2",
+  "v": 6
  },
  "classorg.js": {
   "hash": "e351cfd312370c024e03c52a2d9db2218457fa9d",
@@ -204,8 +204,8 @@
   "v": 1
  },
  "quiz.js": {
-  "hash": "4eb845456886542da2156c7094d75134ac0c867c",
-  "v": 47
+  "hash": "4f5e99d31af58c4afc001cf8bab8cfb7da1bbaf6",
+  "v": 48
  },
  "sched.js": {
   "hash": "cf915e302878ac08d24d3e0b5155225ac715618e",

@@ -17,6 +17,8 @@ function src(u){return typeof window.safeSrc==="function"?window.safeSrc(u):""}
 function fnv(s,seed){var h=(2166136261^(seed|0))>>>0;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h>>>0}
 /* ឈ្មោះ៖ NFC · ដកចន្លោះដើម/ចុង · ចន្លោះច្រើន/ចន្លោះពិសេស → ១ ចន្លោះ (ឧ. «ផៃ  ចន» = «ផៃ ចន») */
 function cleanName(n){return String(n==null?"":n).normalize("NFC").replace(/[\s\u00A0]+/g," ").trim()}
+/* វិនាទី → «X នាទី Z វិនាទី» (ដកផ្នែកសូន្យ) */
+function durKh(d){var m=Math.floor(d/60),s=d%60;return(m?kn(m)+" នាទី":"")+(m&&s?" ":"")+(s?kn(s)+" វិនាទី":"")}
 function num(x){x=+x;return isFinite(x)?(Math.round(x*100)/100):0}
 
 /* លេខវិញ្ញាបនបត្រ៖ «CT-» + ៦ តួ (ពី t_sid) + «-» + ៣ តួ checksum (t · sid · ពិន្ទុ · សរុប) */
@@ -88,8 +90,11 @@ function html(o){
   var rank=+o.rank,isRank=o.kind==="rank"&&rank>=1&&rank<=3,sc=num(o.score),mx=num(o.max),pct=mx>0?Math.round(sc/mx*100):0;
   var sub=isRank?"ជ័យលាភីចំណាត់ថ្នាក់ទី "+kn(rank)+(o.tie?" (ស្មើគ្នា)":""):"ជាប់លក្ខខណ្ឌពិន្ទុ";
   var sg=src(o.sig||"");
+  /* ⏱️ ពេលធ្វើ (វិនាទី) និងពេលសរុប (នាទី) · មិនមាន/មិនត្រឹមត្រូវ → មិនបង្ហាញ (គ្មាន NaN/undefined) */
+  var dsec=+o.dur,lim=+o.limit,took=isFinite(dsec)&&dsec>0&&dsec<=86400?durKh(Math.round(dsec)):"";
+  var timeTx=took?" ដោយចំណាយពេល <b class=nw>"+took+"</b>"+(isFinite(lim)&&lim>0&&lim<=1440?" លើ <b class=nw>"+kn(Math.round(lim))+" នាទី</b>សរុប":""):"";
   var score="<span class=nw>"+kn(sc)+" / "+kn(mx)+"</span> (<span class=nw>"+kn(pct)+"%</span>)";
-  var body="ដែលបានបំពេញតេស្ត <b>«"+esc(o.title)+"»</b> ដោយទទួលបានពិន្ទុ <b>"+score+"</b>"+
+  var body="ដែលបានបំពេញតេស្ត <b>«"+esc(o.title)+"»</b> ដោយទទួលបានពិន្ទុ <b>"+score+"</b>"+timeTx+
     (isRank?" ហើយឈរ <b class=nw>ចំណាត់ថ្នាក់ទី "+kn(rank)+(o.tie?" (ស្មើគ្នា)":"")+"</b>"
             :(+o.pass>0?" ដែលស្មើ ឬលើសខ្សែពិន្ទុជាប់ <b class=nw>"+kn(num(o.pass))+"%</b>":" ដែលបានដល់លក្ខខណ្ឌពិន្ទុកំណត់"))+
     "។ សូមអបអរសាទរ និងជូនពរឱ្យបន្តខិតខំរៀនសូត្របន្ថែមទៀត។";

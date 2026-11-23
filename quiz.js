@@ -662,7 +662,7 @@ function grade(t){
   return subs.map(function(s){
     var sc=0;t.items.forEach(function(q){var k=K[q.id];if(k&&correct({t:k.t,a:k.a},s.a&&s.a[q.id]))sc++});
     return{s:s,sc:sc,n:t.items.length,p:t.items.length?sc/t.items.length*100:0};
-  }).sort(function(a,b){return b.sc-a.sc||String(a.s.sn).localeCompare(String(b.s.sn),"km")});
+  }).sort(function(a,b){return b.sc-a.sc||tCmp(a,b)||String(a.s.sn).localeCompare(String(b.s.sn),"km")});
 }
 /* ===================== 🎓 Certificate (cert.js · ផ្ទុកតាមតម្រូវការ) =====================
    (លក្ខខណ្ឌលម្អិតនៅខាងក្រោម · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា + tie)
@@ -671,7 +671,7 @@ var certP=null;
 function certLoad(){
   if(window.CERT)return Promise.resolve();
   if(certP)return certP;
-  certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=5";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
+  certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=6";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
   return certP;
 }
 /* 🔒 Certificate = ពានរង្វាន់ពិសេស មិនមែនចេញគ្រប់តេស្តទេ · លក្ខខណ្ឌតឹង៖
@@ -691,19 +691,25 @@ function certGate(t,R){   /* → "" បើអាចចេញបាន · បើ�
   if(R.length<CERT_MIN_N)return"ត្រូវមានសិស្សផ្ញើយ៉ាងតិច "+kn(CERT_MIN_N)+" នាក់";
   return"";
 }
+/* ⏱️ ពេលវេលា៖ s.dur = វិនាទីដែលសិស្សប្រើជាក់ស្តែង (១–៨៦៤០០) · t.dur = នាទីសរុបរបស់តេស្ត · គ្មាន/មិនត្រឹមត្រូវ = មិនស្គាល់ (null)
+   ពិន្ទុស្មើគ្នា → អ្នកប្រើពេលតិចជាងឈ្នះ · មិនស្គាល់ពេល = ក្រោយអ្នកស្គាល់ពេល · «ស្មើគ្នា» = ពិន្ទុស្មើ + ពេលស្មើ (វិនាទីដូចគ្នា ឬមិនស្គាល់ទាំងពីរ) */
+function durOf(s){var d=s&&+s.dur;return isFinite(d)&&d>0&&d<=86400?Math.round(d):null}
+function tCmp(x,y){var a=durOf(x.s),b=durOf(y.s);if(a===b)return 0;if(a==null)return 1;if(b==null)return-1;return a-b}   /* <0 = x លឿនជាង */
+function better(x,y){return x.sc!==y.sc?x.sc>y.sc:tCmp(x,y)<0}
+function sameRank(x,y){return x.sc===y.sc&&tCmp(x,y)===0}
 function certKind(t,R){   /* → [{r,rank,kind,tie}] តាមលំដាប់ R (ពិន្ទុធំ → តូច) · [] បើមិនបើក ឬមិនដល់លក្ខខណ្ឌតេស្ត */
   if(!certOn(t)||certGate(t,R))return[];
   var pc=certPct(),C=R.filter(function(r){return!certBad(r.s)});   /* ចំណាត់ថ្នាក់រាប់ក្នុងចំណោមសិស្សស្អាតតែប៉ុណ្ណោះ */
   var rm=Math.max(pc,CERT_PCT_MIN),L=C.map(function(r){
-    var rank=1+C.filter(function(x){return x.sc>r.sc}).length;
-    return{r:r,rank:rank,kind:r.sc>0&&rank<=3&&r.p>=rm?"rank":(r.p>=pc?"pass":""),tie:C.filter(function(x){return x.sc===r.sc}).length>1};
+    var rank=1+C.filter(function(x){return better(x,r)}).length;
+    return{r:r,rank:rank,kind:r.sc>0&&rank<=3&&r.p>=rm?"rank":(r.p>=pc?"pass":""),tie:C.filter(function(x){return x!==r&&sameRank(x,r)}).length>0};
   });
   if(L.filter(function(e){return e.kind==="rank"}).length>CERT_RANK_MAX)L.forEach(function(e){if(e.kind==="rank")e.kind=e.r.p>=pc?"pass":""});
   return L.filter(function(e){return e.kind});
 }
 function certItem(t,e){
   var r=e.r,d=r.s.at?new Date(String(r.s.at).replace(" ","T")):null;
-  return{name:r.s.sn,cls:t.cls,title:t.title,score:r.sc,max:r.n,kind:e.kind,rank:e.rank,tie:!!e.tie,pass:certPct(),id:window.CERT.id(t.id,r.s.sid,r.sc,r.n),
+  return{name:r.s.sn,cls:t.cls,title:t.title,score:r.sc,max:r.n,kind:e.kind,rank:e.rank,tie:!!e.tie,pass:certPct(),dur:durOf(r.s),limit:+t.dur>0?+t.dur:0,id:window.CERT.id(t.id,r.s.sid,r.sc,r.n),
     date:window.CERT.dateKh(d&&!isNaN(d)?d:new Date())}
 }
 function certPrint(sid){
