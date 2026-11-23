@@ -65,6 +65,7 @@ function renderOrg(){
   if(!c){$("ogBody").innerHTML="<p class=note>គ្រូនេះមិនទាន់មានថ្នាក់ទេ។ សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សនៅផ្ទាំង «លទ្ធផលសិក្សា» ឬ «សិស្ស និងអវត្តមាន» ជាមុន។</p>";return}
   if(!c.st.length){$("ogBody").innerHTML="<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានសិស្សទេ។ សូមបញ្ចូលសិស្សជាមុន (អាចនាំចូលពី Excel នៅផ្ទាំង «សិស្ស និងអវត្តមាន»)។</p>";return}
   if(ogV==="seat")return renderSeat(c,ed);
+  if(ogV==="wheel")return window.WHEEL?WHEEL.render(c,$("ogBody")):0;   /* 🎡 wheel.js · អានតែប៉ុណ្ណោះ */
   var gOpt=function(v){var o="<option value=0>—</option>";for(var k=1;k<=n;k++)o+="<option value="+k+(k===v?" selected":"")+">ក្រុមទី"+kn(k)+"</option>";return o};
   var rOpt=function(v){return"<option value=''>—</option>"+Object.keys(RO).map(function(k){return"<option value="+k+(k===v?" selected":"")+">"+RO[k]+"</option>"}).join("")};
   var rows=c.st.map(function(s,i){var r=rOf(c,s);
@@ -156,7 +157,7 @@ $("ogBody").addEventListener("click",function(e){
   if(x){var c=cls();if(!c||!canE())return;var o=org(c);if(o.ph)delete o.ph[x.dataset.ogdel];savR();renderOrg();return}
   var b=e.target.closest("[data-ogph]");if(b)setPhoto(b.dataset.ogph);
 });
-$("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}window.SCHX.fontsOk().then(function(){doPrint(ogV==="seat"?seatFit(seatPrint(c)):printHTML(c))})};
+$("ogPr").onclick=function(){var c=cls();if(!c){alert("សូមជ្រើសថ្នាក់ជាមុន");return}if(ogV==="wheel"){alert("កងបង្វិលមិនមានទម្រង់បោះពុម្ពទេ។ សូមជ្រើស «រចនាសម្ព័ន្ធ» ឬ «ប្លង់តុ»");return}window.SCHX.fontsOk().then(function(){doPrint(ogV==="seat"?seatFit(seatPrint(c)):printHTML(c))})};
 
 /* 🎲 ចាប់ក្រុម 3D & 👆 ដៃរត់ */
 function initPickerUI(){
