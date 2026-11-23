@@ -665,29 +665,29 @@ function grade(t){
   }).sort(function(a,b){return b.sc-a.sc||String(a.s.sn).localeCompare(String(b.s.sn),"km")});
 }
 /* ===================== 🎓 Certificate (cert.js · ផ្ទុកតាមតម្រូវការ) =====================
-   ដល់លក្ខខណ្ឌ៖ ចំណាត់ថ្នាក់ទី១–៣ (ពិន្ទុ > ០ · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា) ឬ ភាគរយ ≥ ខ្សែកំណត់ (លំនាំដើម ៥០%)
+   ដល់លក្ខខណ្ឌ៖ ចំណាត់ថ្នាក់ទី១–៣ (ពិន្ទុ > ០ · ពិន្ទុស្មើគ្នា = ចំណាត់ថ្នាក់ដូចគ្នា) ឬ ភាគរយ ≥ ខ្សែកំណត់ (លំនាំដើម ៨០%)
    ត្រូវការចម្លើយត្រឹមត្រូវផ្ទុករួច (keyOf) បើមិនដូច្នោះពិន្ទុជា ០ ទាំងអស់ */
 var certP=null;
 function certLoad(){
   if(window.CERT)return Promise.resolve();
   if(certP)return certP;
-  certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=3";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
+  certP=new Promise(function(ok,no){var s=document.createElement("script");s.src="cert.js?v=4";s.onload=ok;s.onerror=function(){certP=null;no(new Error("cert.js"))};document.body.appendChild(s)});
   return certP;
 }
-function certPct(){var v=NaN;try{v=parseFloat(localStorage.getItem("certPct"))}catch(x){}return isFinite(v)&&v>=1&&v<=100?v:50}
+function certPct(){var v=NaN;try{v=parseFloat(localStorage.getItem("certPct"))}catch(x){}return isFinite(v)&&v>=1&&v<=100?v:80}
 function certKind(t,R){   /* → [{r,rank,kind}] តាមលំដាប់ R (ពិន្ទុធំ → តូច) */
   if(!t||!t.items||!t.items.length||!Object.keys(keyOf[t.id]||{}).length)return[];
   var pc=certPct();
   return R.map(function(r){
     var rank=1+R.filter(function(x){return x.sc>r.sc}).length;
-    if(r.sc>0&&rank<=3)return{r:r,rank:rank,kind:"rank"};
+    if(r.sc>0&&rank<=3)return{r:r,rank:rank,kind:"rank",tie:R.filter(function(x){return x.sc===r.sc}).length>1};
     if(r.p>=pc)return{r:r,rank:rank,kind:"pass"};
     return null;
   }).filter(Boolean);
 }
 function certItem(t,e){
   var r=e.r,d=r.s.at?new Date(String(r.s.at).replace(" ","T")):null;
-  return{name:r.s.sn,cls:t.cls,title:t.title,score:r.sc,max:r.n,kind:e.kind,rank:e.rank,id:window.CERT.id(t.id,r.s.sid,r.sc,r.n),
+  return{name:r.s.sn,cls:t.cls,title:t.title,score:r.sc,max:r.n,kind:e.kind,rank:e.rank,tie:!!e.tie,pass:certPct(),id:window.CERT.id(t.id,r.s.sid,r.sc,r.n),
     date:window.CERT.dateKh(d&&!isNaN(d)?d:new Date())}
 }
 function certPrint(sid){

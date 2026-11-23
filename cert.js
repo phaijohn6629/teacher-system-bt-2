@@ -1,7 +1,7 @@
 /* ========================================================================
    🎓 cert.js — វិញ្ញាបនបត្រសិស្ស (Certificate) · ផ្ទុកតាមតម្រូវការ (lazy) ដោយ quiz.js
    - CERT.html({name,cls,title,score,max,date,id,kind,rank,school,teacher,sig,motto}) → HTML A4 landscape មួយសន្លឹក
-       kind = "pass" (ជាប់ពិន្ទុកំណត់) | "rank" (ចំណាត់ថ្នាក់ទី ១–៣ · rank = 1|2|3)
+       kind = "pass" (ជាប់ពិន្ទុកំណត់ · pass = ខ្សែ % ស្រេចចិត្ត) | "rank" (ចំណាត់ថ្នាក់ទី ១–៣ · rank = 1|2|3 · tie = ស្មើគ្នា)
    - CERT.print([ព័ត៌មានសិស្ស…]) → បោះពុម្ព/PDF តាម outChoose (script.js) · ១ សិស្ស = ១ សន្លឹក
    - CERT.id(t,sid,score,max) → លេខវិញ្ញាបនបត្រ (ប្រើ id ដែលមានស្រាប់ + checksum)
    ❗ មិនប៉ះ .pg / prime.css / expaper.js · ស្ទីលទាំងអស់ស្ថិតក្នុង .cert-print (ពណ៌ផ្ទាល់ខ្លួន · មិនពឹងលើ theme)
@@ -26,96 +26,99 @@ function certId(t,sid,sc,n){
 function dateKh(d){d=d||new Date();return"ថ្ងៃទី "+kn(d.getDate())+" ខែ "+MON[d.getMonth()]+" ឆ្នាំ"+kn(d.getFullYear())}
 
 var CSS=
-".cert-print{--u:1mm;--cn:#1E3A8A;--cg:#D97706;position:relative;box-sizing:border-box;width:calc(297*var(--u));height:calc(209*var(--u));margin:0 auto;padding:calc(9*var(--u));background:#fff;color:#0F172A;overflow:hidden;font-family:'Khmer OS Battambang','Battambang',serif;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}"+
+".cert-print{--u:1mm;--cn:#1E3A8A;--cg:#D97706;position:relative;box-sizing:border-box;width:calc(297*var(--u));height:calc(209*var(--u));margin:0 auto;padding:0;background:#fff;color:#0F172A;overflow:hidden;font-family:'Khmer OS Battambang','Battambang',serif;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}"+
 ".cert-print *{box-sizing:border-box}"+
-".cert-print .ct-b1{position:absolute;inset:calc(5*var(--u));border:calc(1.6*var(--u)) solid var(--cn)}"+
-".cert-print .ct-b2{position:absolute;inset:calc(8*var(--u));border:calc(.5*var(--u)) solid var(--cg)}"+
-".cert-print .ct-c{position:absolute;width:calc(14*var(--u));height:calc(14*var(--u));border:calc(1.6*var(--u)) solid var(--cg)}"+
-".cert-print .ct-c.a{top:calc(11*var(--u));left:calc(11*var(--u));border-right:0;border-bottom:0}"+
-".cert-print .ct-c.b{top:calc(11*var(--u));right:calc(11*var(--u));border-left:0;border-bottom:0}"+
-".cert-print .ct-c.c{bottom:calc(11*var(--u));left:calc(11*var(--u));border-right:0;border-top:0}"+
-".cert-print .ct-c.d{bottom:calc(11*var(--u));right:calc(11*var(--u));border-left:0;border-top:0}"+
-".cert-print .ct-in{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;text-align:center;padding:calc(7*var(--u)) calc(16*var(--u)) calc(6*var(--u))}"+
+".cert-print .ct-f1{position:absolute;inset:calc(6*var(--u));border:calc(1.3*var(--u)) solid var(--cn)}"+
+".cert-print .ct-f2{position:absolute;inset:calc(9*var(--u));border:calc(.35*var(--u)) solid var(--cg)}"+
+".cert-print .ct-dm{position:absolute;width:calc(3.6*var(--u));height:calc(3.6*var(--u));background:var(--cg);transform:rotate(45deg)}"+
+".cert-print .ct-dm.a{top:calc(7.2*var(--u));left:calc(7.2*var(--u))}.cert-print .ct-dm.b{top:calc(7.2*var(--u));right:calc(7.2*var(--u))}"+
+".cert-print .ct-dm.c{bottom:calc(7.2*var(--u));left:calc(7.2*var(--u))}.cert-print .ct-dm.d{bottom:calc(7.2*var(--u));right:calc(7.2*var(--u))}"+
+".cert-print .ct-dc{position:absolute;top:calc(10*var(--u));width:calc(34*var(--u));height:calc(189*var(--u))}"+
+".cert-print .ct-dc.l{left:calc(10*var(--u))}.cert-print .ct-dc.r{right:calc(10*var(--u));transform:scaleX(-1)}"+
+".cert-print .ct-in{position:absolute;inset:calc(14*var(--u)) calc(40*var(--u)) calc(14*var(--u));display:flex;flex-direction:column;align-items:center;text-align:center}"+
 ".cert-print .ct-mo{font-family:'Khmer OS Muol Light','Moul',serif;font-weight:400;color:var(--cn)}"+
-".cert-print .ct-top{display:flex;align-items:center;justify-content:center;gap:calc(4*var(--u))}"+
-".cert-print .ct-top img{height:calc(15*var(--u));width:auto;object-fit:contain}"+
-".cert-print .ct-sc{font-size:calc(4.6*var(--u));line-height:1.6}"+
-".cert-print .ct-mt{font-size:calc(3.4*var(--u));color:#475569;margin-top:calc(.5*var(--u))}"+
-".cert-print .ct-ti{font-size:calc(9.5*var(--u));line-height:1.5;margin-top:calc(4*var(--u));color:var(--cn)}"+
-".cert-print .ct-bd{width:calc(36*var(--u));height:calc(.8*var(--u));background:var(--cg);margin:calc(1.6*var(--u)) auto calc(2.6*var(--u))}"+
-".cert-print .ct-sub{font-size:calc(4.2*var(--u))}"+
-".cert-print .ct-nm{font-family:'Khmer OS Muol Light','Moul',serif;font-weight:400;color:var(--cn);margin:calc(2.4*var(--u)) 0 calc(1*var(--u));line-height:1.7;max-width:100%;border-bottom:calc(.4*var(--u)) dotted var(--cg);padding:0 calc(10*var(--u)) calc(.6*var(--u));overflow-wrap:anywhere}"+
-".cert-print .ct-tx{font-size:calc(4.4*var(--u));line-height:1.8;max-width:calc(230*var(--u));margin-top:calc(1.5*var(--u))}"+
-".cert-print .ct-tx b{color:var(--cn)}"+
-".cert-print .ct-md{display:inline-flex;align-items:center;justify-content:center;width:calc(17*var(--u));height:calc(17*var(--u));border-radius:50%;font-family:'Khmer OS Muol Light','Moul',serif;font-size:calc(8*var(--u));color:#fff;margin-top:calc(2*var(--u));border:calc(.9*var(--u)) double #fff;box-shadow:0 0 0 calc(.8*var(--u)) var(--cg)}"+
-".cert-print .ct-md.r1{background:#D97706}.cert-print .ct-md.r2{background:#64748B}.cert-print .ct-md.r3{background:#9A5B25}"+
-".cert-print .ct-ft{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:calc(8*var(--u));font-size:calc(3.5*var(--u))}"+
-".cert-print .ct-ft>div{min-width:0}"+
-".cert-print .ct-id{text-align:left;color:#475569;line-height:1.7}"+
-".cert-print .ct-id b{color:var(--cn);letter-spacing:.04em}"+
-".cert-print .ct-sg{text-align:center;min-width:calc(70*var(--u))}"+
-".cert-print .ct-sg .sp{height:calc(14*var(--u));display:flex;align-items:center;justify-content:center}"+
-".cert-print .ct-sg .sp img{max-height:calc(13*var(--u));max-width:calc(45*var(--u))}"+
-".cert-print .ct-sg .ct-mo{font-size:calc(3.6*var(--u))}"+
+".cert-print .ct-lg{width:calc(31*var(--u));height:calc(26*var(--u));display:block}"+
+".cert-print .ct-ti{font-size:calc(13*var(--u));line-height:1.55;margin-top:calc(1*var(--u))}"+
+".cert-print .ct-ln{display:flex;align-items:center;justify-content:center;gap:0;margin:calc(2*var(--u)) 0 calc(3*var(--u))}"+
+".cert-print .ct-ln i{display:block;height:calc(.7*var(--u));width:calc(34*var(--u));background:var(--cn)}.cert-print .ct-ln i.g{width:calc(16*var(--u));background:var(--cg)}"+
+".cert-print .ct-st{font-size:calc(5.4*var(--u));color:var(--cg);font-family:'Khmer OS Muol Light','Moul',serif;line-height:1.6;white-space:nowrap}"+
+".cert-print .ct-sc{font-size:calc(3.8*var(--u));color:#475569;margin-top:calc(.3*var(--u))}"+
+".cert-print .ct-sub{font-size:calc(4.8*var(--u));margin-top:calc(11*var(--u));color:#334155}"+
+".cert-print .ct-nm{font-family:'Khmer OS Muol Light','Moul',serif;font-weight:400;color:var(--cn);margin:calc(3*var(--u)) 0 calc(1.2*var(--u));line-height:1.7;max-width:100%;padding:0 calc(6*var(--u)) calc(.8*var(--u));border-bottom:calc(.45*var(--u)) solid var(--cg);overflow-wrap:anywhere}"+
+".cert-print .ct-cl{font-size:calc(5*var(--u));color:#334155;white-space:nowrap}"+
+".cert-print .ct-tx{font-size:calc(4.8*var(--u));line-height:1.9;max-width:calc(212*var(--u));margin-top:calc(6*var(--u));color:#1e293b}"+
+".cert-print .ct-tx b{color:var(--cn)}.cert-print .nw{white-space:nowrap}"+
+".cert-print .ct-ft{margin-top:auto;width:calc(100% + 16*var(--u));display:grid;grid-template-columns:1fr 1fr 1fr;gap:calc(10*var(--u));align-items:start;padding-bottom:calc(3*var(--u))}"+
+".cert-print .ct-fc{display:flex;flex-direction:column;align-items:center;min-width:0}"+
+".cert-print .ct-fv{height:calc(15*var(--u));width:100%;display:flex;align-items:flex-end;justify-content:center;font-size:calc(3.9*var(--u));padding-bottom:calc(.8*var(--u));white-space:nowrap}"+
+".cert-print .ct-fv img{max-height:calc(14*var(--u));max-width:calc(46*var(--u))}"+
+".cert-print .ct-fl{width:100%;border-top:calc(.45*var(--u)) solid var(--cn);padding-top:calc(1*var(--u));font-size:calc(3.3*var(--u));color:#475569}"+
+".cert-print .ct-fl .ct-mo{display:block;font-size:calc(3.5*var(--u));margin-bottom:calc(.4*var(--u))}"+
+".cert-print .ct-fv b{color:var(--cn);letter-spacing:.05em}"+
 "@page cert{size:A4 landscape;margin:0}"+
-"body.pm #prt .cert-print.pg{page:cert;padding:calc(9*var(--u));border:0;line-height:1.5;font-size:inherit;break-inside:avoid;page-break-inside:avoid}"+
+".cert-print.pg.land{height:calc(209*var(--u))!important;overflow:hidden}"+   /* style.css មាន .pg.land{height:170mm!important} សម្រាប់ប្លង់តុ → ត្រូវជំនួស */
+
+"body.pm #prt .cert-print.pg{page:cert;padding:0;border:0;line-height:1.5;font-size:inherit;break-inside:avoid;page-break-inside:avoid}"+
 "body.pm #prt>.cert-print.pg.land{break-after:page;page-break-after:always}"+
 "body.pm #prt>.cert-print.pg.land:last-child{break-after:avoid!important;page-break-after:avoid!important}"+
 ".pdfw .cert-print{--u:.946mm}";
 function css(){if(document.getElementById("certCss"))return;var s=document.createElement("style");s.id="certCss";s.textContent=CSS;document.head.appendChild(s)}
 
-function nameSize(n){var l=String(n||"").length;return l>34?5.2:l>26?6.2:l>18?7.4:8.6}
+function nameSize(n){var l=String(n||"").length;return l>34?5.8:l>26?6.9:l>18?8.2:9.6}
+
+/* ឡូហ្គោ Rean Math Prime (RM + π) · SVG ស្ថិតនៅក្នុងកូដ (មិនទាញឯកសារ · គ្មានផ្ទៃ/ចលនា/ស្រមោល) ·
+   ពណ៌ដូច logo-prime.svg ប៉ុន្តែ stroke សជាប់ផ្ទៃខៀវ → ប្ដូរជា Navy ដើម្បីឱ្យមើលឃើញលើផ្ទៃស */
+var LOGO="<svg class=ct-lg viewBox='212 66 256 214' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'><g transform='translate(18,-1)' fill='none' stroke-linecap='round' stroke-linejoin='round'>"+
+  "<path d='M252 170 C282 225 300 262 345 262 H434' stroke='#D97706' stroke-width='12'/>"+
+  "<g stroke='#1E3A8A' stroke-width='12'><path d='M205 262 V80 H262 A45 45 0 0 1 262 170 H205'/><path d='M350 170 V80 L395 140 L440 80 V262'/></g>"+
+  "<g stroke='#D97706' stroke-width='9'><path d='M356 198 Q388 190 422 198'/><path d='M375 198 Q373 225 366 244'/><path d='M406 198 V228 Q406 246 424 244'/></g></g></svg>";
+/* តុបតែងគណិតវិទ្យាស្រាល (opacity ទាប · គែមឆ្វេង/ស្ដាំ) · ទំហំ 34 × 189 (ឯកតា --u) */
+var DEC="<svg class='ct-dc %S' viewBox='0 0 34 189' xmlns='http://www.w3.org/2000/svg' aria-hidden='true'><g fill='none'>"+
+  "<g stroke='#1E3A8A' stroke-opacity='.10' stroke-width='.35'><circle cx='0' cy='38' r='12'/><circle cx='0' cy='38' r='20'/><circle cx='0' cy='38' r='28'/></g>"+
+  "<path d='M2 189 Q17 96 32 189' stroke='#D97706' stroke-opacity='.28' stroke-width='.5'/>"+
+  "<path d='M0 118 C6 104 10 104 16 118 S27 132 34 118' stroke='#1E3A8A' stroke-opacity='.14' stroke-width='.5'/>"+
+  "<path d='M6 80 L16 64 L26 80 Z' stroke='#D97706' stroke-opacity='.30' stroke-width='.45'/>"+
+  "<g fill='#D97706' fill-opacity='.30' stroke='none'>"+(function(){var o="";for(var y=0;y<5;y++)for(var x=0;x<4;x++)o+="<circle cx='"+(6+x*6)+"' cy='"+(146+y*6)+"' r='.55'/>";return o})()+"</g>"+
+  "</g></svg>";
 
 function html(o){
   o=o||{};
   var rank=+o.rank,isRank=o.kind==="rank"&&rank>=1&&rank<=3,sc=num(o.score),mx=num(o.max),pct=mx>0?Math.round(sc/mx*100):0;
-  var title=isRank?"វិញ្ញាបនបត្រ ជ័យលាភីចំណាត់ថ្នាក់ទី "+kn(rank):"វិញ្ញាបនបត្រ ជាប់លក្ខខណ្ឌពិន្ទុ";
-  var logo=src(o.logo||"");   /* ត្រូវជា data URL / https (បញ្ជូនដោយ print()) */
+  var sub=isRank?"ជ័យលាភីចំណាត់ថ្នាក់ទី "+kn(rank)+(o.tie?" (ស្មើគ្នា)":""):"ជាប់លក្ខខណ្ឌពិន្ទុ";
   var sg=src(o.sig||"");
-  var body="ដែលបានបំពេញតេស្ត <b>«"+esc(o.title)+"»</b> ដោយទទួលបានពិន្ទុ <b>"+kn(sc)+" / "+kn(mx)+"</b> ("+kn(pct)+"%)"+
-    (isRank?" ហើយឈរ <b>ចំណាត់ថ្នាក់ទី "+kn(rank)+"</b> ក្នុងចំណោមសិស្សទាំងអស់"
-            :" ដែលបានដល់លក្ខខណ្ឌពិន្ទុដែលបានកំណត់")+
+  var score="<span class=nw>"+kn(sc)+" / "+kn(mx)+"</span> (<span class=nw>"+kn(pct)+"%</span>)";
+  var body="ដែលបានបំពេញតេស្ត <b>«"+esc(o.title)+"»</b> ដោយទទួលបានពិន្ទុ <b>"+score+"</b>"+
+    (isRank?" ហើយឈរ <b class=nw>ចំណាត់ថ្នាក់ទី "+kn(rank)+(o.tie?" (ស្មើគ្នា)":"")+"</b>"
+            :(+o.pass>0?" ដែលស្មើ ឬលើសខ្សែពិន្ទុជាប់ <b class=nw>"+kn(num(o.pass))+"%</b>":" ដែលបានដល់លក្ខខណ្ឌពិន្ទុកំណត់"))+
     "។ សូមអបអរសាទរ និងជូនពរឱ្យបន្តខិតខំរៀនសូត្របន្ថែមទៀត។";
   return"<div class='pg land cert-print'>"+
-    "<div class=ct-b1></div><div class=ct-b2></div><i class='ct-c a'></i><i class='ct-c b'></i><i class='ct-c c'></i><i class='ct-c d'></i>"+
+    "<div class=ct-f1></div><div class=ct-f2></div><i class='ct-dm a'></i><i class='ct-dm b'></i><i class='ct-dm c'></i><i class='ct-dm d'></i>"+
+    DEC.replace("%S","l")+DEC.replace("%S","r")+
     "<div class=ct-in>"+
-      "<div class=ct-top>"+(logo?"<img src='"+logo+"' alt=''>":"")+"<div><div class='ct-mo ct-sc'>"+esc(o.school||"វិទ្យាល័យបឹងត្របែក")+"</div>"+
-        "<div class=ct-mt>"+esc(o.motto||"សាលារៀនជំនាន់ថ្មី (NGS)")+"</div></div></div>"+
-      "<div class='ct-mo ct-ti'>"+esc(title)+"</div><div class=ct-bd></div>"+
+      LOGO+
+      "<div class='ct-mo ct-ti'>វិញ្ញាបនបត្រ</div>"+
+      "<div class=ct-ln><i></i><i class=g></i><i></i></div>"+
+      "<div class=ct-st>"+esc(sub)+"</div>"+
+      "<div class=ct-sc>Rean Math Prime · "+esc(o.school||"វិទ្យាល័យបឹងត្របែក")+"</div>"+
       "<div class=ct-sub>សូមប្រគល់វិញ្ញាបនបត្រនេះជូន</div>"+
       "<div class=ct-nm style='font-size:calc("+nameSize(o.name)+"*var(--u))'>"+esc(o.name)+"</div>"+
-      "<div class=ct-sub>"+(o.cls?"សិស្សថ្នាក់ "+esc(o.cls):"")+"</div>"+
+      (o.cls?"<div class=ct-cl>សិស្សថ្នាក់ "+esc(o.cls)+"</div>":"")+
       "<div class=ct-tx>"+body+"</div>"+
-      (isRank?"<div class='ct-md r"+rank+"'>"+kn(rank)+"</div>":"")+
       "<div class=ct-ft>"+
-        "<div class=ct-id>លេខវិញ្ញាបនបត្រ៖ <b>"+esc(o.id||"")+"</b><br>កាលបរិច្ឆេទ៖ "+esc(o.date||dateKh())+"</div>"+
-        "<div class=ct-sg><div>រាជធានីភ្នំពេញ "+esc(o.date||dateKh())+"</div><div class='ct-mo'>គ្រូបង្រៀន</div>"+
-        "<div class=sp>"+(sg?"<img src='"+sg+"' alt=''>":"")+"</div><div class='ct-mo'>"+esc(o.teacher||"")+"</div></div>"+
+        "<div class=ct-fc><div class=ct-fv>"+esc(o.date||dateKh())+"</div><div class=ct-fl>កាលបរិច្ឆេទ</div></div>"+
+        "<div class=ct-fc><div class=ct-fv><b>"+esc(o.id||"")+"</b></div><div class=ct-fl>លេខវិញ្ញាបនបត្រ</div></div>"+
+        "<div class=ct-fc><div class=ct-fv>"+(sg?"<img src='"+sg+"' alt=''>":"")+"</div><div class=ct-fl><span class=ct-mo>"+esc(o.teacher||"")+"</span>ហត្ថលេខាគ្រូបង្រៀន</div></div>"+
       "</div>"+
     "</div></div>";
 }
 
-/* រូបសាលា → data URL (safeSrc ទទួលតែ data:image/…;base64 ឬ https:// · មិនទទួល path ទាក់ទង) · ទាញម្ដង រក្សាក្នុង memory
-   data URL ក៏ជួយឱ្យ window.print() មិនត្រូវរង់ចាំរូប · បរាជ័យ → គ្មាន logo (មិនបិទ Certificate) */
-var logoP=null;
-function logoData(){
-  if(logoP)return logoP;
-  logoP=new Promise(function(ok){
-    var t=setTimeout(function(){ok("")},4000);
-    try{fetch("logo-bt.jpg").then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(bl){
-      var fr=new FileReader();fr.onload=function(){clearTimeout(t);ok(String(fr.result||""))};fr.onerror=function(){clearTimeout(t);ok("")};fr.readAsDataURL(bl)
-    }).catch(function(){clearTimeout(t);ok("")})}catch(e){clearTimeout(t);ok("")}
-  }).then(function(u){if(!u)logoP=null;return u});
-  return logoP;
-}
 function print(list){
   list=(list||[]).filter(Boolean);if(!list.length)return Promise.resolve(false);
   css();
   var w=window.who||{},X=window.SCHX,sig="";try{sig=X&&X.getSig&&w.id?X.getSig(w.id):""}catch(e){}
   var inf=typeof window.inf==="function"?window.inf():{};
-  var fonts=X&&X.fontsOk?X.fontsOk():Promise.resolve();
-  return Promise.all([logoData(),fonts]).then(function(r){
-    var lg=src(r[0]),h=list.map(function(o){return html(Object.assign({school:inf.school,teacher:w.name,sig:sig,logo:lg||""},o))}).join("");
+  var h=list.map(function(o){return html(Object.assign({school:inf.school,teacher:w.name,sig:sig},o))}).join("");
+  return(X&&X.fontsOk?X.fontsOk():Promise.resolve()).then(function(){
     if(typeof window.outChoose!=="function")throw new Error("outChoose");
     window.outChoose(h);return true;
   });
