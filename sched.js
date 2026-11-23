@@ -299,13 +299,13 @@ function wrSync(){
   var rec=getRec(false);
   if(!rec){if(!Object.keys(by).length)return;rec=getRec(true);ch=true}
   rec.days=rec.days||{};
-  /* ពិដាន «ប្រធានក្រុម» ≤ ៤ ម៉ោង · «អនុប្រធាន» ≤ ២ ម៉ោង/សប្ដាហ៍ (ច័ន្ទ→អាទិត្យ) · ម៉ោងលើស → «មូលដ្ឋាន» (xb) · មូលដ្ឋានលើស ១៨ → «លើស ក្នុង» (xs)
+  /* ពិដាន «ប្រធានក្រុម» ≤ ៤ ម៉ោង · «អនុប្រធាន» ≤ ២ ម៉ោង/សប្ដាហ៍ (អាទិត្យ→សៅរ៍) · ម៉ោងលើស → «មូលដ្ឋាន» (xb) · មូលដ្ឋានលើស ១៨ → «លើស ក្នុង» (xs)
      អនុប្រធាន (តួនាទីក្នុងបញ្ជីគ្រូ) → ជួរ h.v (la→va) · ផ្សេងទៀត → ជួរ h.l */
   var vice=(teacherOf(tsT).rl||"")==="អនុប្រធាន",col=vice?"v":"l",ak=vice?"va":"la",oc=vice?"l":"v",oak=vice?"la":"va",CAP=vice?2:4;
   var r2=function(x){return Math.round(x*100)/100},raw={},plan={},seen={};
   (wr.r[tsT]||[]).forEach(function(e){var mi=tmin(e.b)-tmin(e.a);if(e.d&&mi>0)raw[e.d]=(raw[e.d]||0)+mi/60});
   for(var q=1;q<=n;q++){
-    var off=(new Date(y,m-1,q).getDay()+6)%7,mon=new Date(y,m-1,q-off),mk=mon.getTime();
+    var off=new Date(y,m-1,q).getDay(),mon=new Date(y,m-1,q-off),mk=mon.getTime();
     if(seen[mk])continue;seen[mk]=1;
     var used=0,R=0;
     for(var k=0;k<7;k++){
@@ -313,7 +313,7 @@ function wrSync(){
       var rw=r2(raw[iso(dt.getFullYear(),dt.getMonth()+1,dd)]||0),l=r2(Math.min(rw,Math.max(0,CAP-used))),xb=r2(rw-l),b0=0;
       used+=l;
       if(inM){var c0=rec.days[dd];if(c0){fixDay(c0,y,m,dd);b0=num(c0.h&&c0.h.b)-num(c0.xb)+num(c0.xs)}else b0=num(defDay(tsT,y,m,dd).h.b)}
-      else if(dt.getDay())b0=schedPer(tsT,k).b;
+      else if(dt.getDay())b0=schedPer(tsT,dt.getDay()-1).b;
       var tb=b0+xb,bd=Math.max(0,Math.min(tb,NORM-R)),xs=Math.min(xb,r2(tb-bd));
       R+=b0+xb-xs;
       if(inM)plan[dd]={l:l,xb:xb,xs:xs};
