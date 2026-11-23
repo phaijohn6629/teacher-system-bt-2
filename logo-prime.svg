@@ -1,11 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Rean Math Prime">
 <polygon points="64,7 113.5,35.5 113.5,92.5 64,121 14.5,92.5 14.5,35.5" fill="#1E3A8A" stroke="#1E3A8A" stroke-width="7" stroke-linejoin="round"/>
 <polygon points="64,15 106.6,39.5 106.6,88.5 64,113 21.4,88.5 21.4,39.5" fill="none" stroke="#D97706" stroke-width="2.4" stroke-linejoin="round"/>
-<g fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-<path d="M37 59V37H47a7.5 7.5 0 0 1 0 15H37M46 52l9 7"/>
-<path d="M63 59V37l14 16 14-16v22"/>
-</g>
-<g fill="none" stroke="#D97706" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round">
-<path d="M45 75H83M55 75c0 7-1 13-3 18M72 75v13a4 4 0 0 0 4 4h2"/>
+<g transform="translate(2 0)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="6">
+<path d="M60 47L74 66 88 47" stroke="#D97706"/>
+<path d="M36 79V47H50a8.5 8.5 0 0 1 0 17H36M48 64L60 79V47M88 47V79" stroke="#fff"/>
 </g>
 </svg>

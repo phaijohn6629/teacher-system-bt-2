@@ -33,11 +33,11 @@
   header .hdr-acts button{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
   header .hdr-acts .profile-trigger{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.3)}
   .profile-trigger .avatar{background:var(--prime-gold)}
-  .prime-logo{width:46px;height:46px;flex:0 0 auto}
-  header .brand{gap:14px}
-  header .brand-txt{display:flex;flex-direction:column;gap:3px}
-  header .brand-name{line-height:1.25;letter-spacing:.01em}
-  header .brand-sub{line-height:1.35;margin:0}
+  .prime-logo{width:42px;height:42px;flex:0 0 auto}
+  header .brand{gap:12px}
+  header .brand-txt{display:flex;flex-direction:column;gap:1px}
+  header .brand-name{line-height:1.25;font-size:1rem;letter-spacing:.02em}
+  header .brand-sub{line-height:1.3;margin:0;font-size:.7rem;font-weight:400;opacity:.7;color:#fff}
   /* ប៊ូតុងសំខាន់ + ចំណុចសង្កត់ធ្ងន់ */
   .welcome-banner{box-shadow:0 10px 25px rgba(30,58,138,.28)}
   .sn-i.active{box-shadow:0 6px 16px rgba(30,58,138,.35)}
