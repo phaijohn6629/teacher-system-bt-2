@@ -6,6 +6,7 @@ var H=function(){return P};var P=new Proxy(H,{get:function(t,k){if(k===Symbol.to
 var window=this;var document=P,localStorage={_:{},getItem:function(k){return this._[k]||null},setItem:function(k,v){this._[k]=String(v)},removeItem:function(k){delete this._[k]}},location={hash:"",search:""},navigator={},setInterval=function(){},setTimeout=function(){},addEventListener=function(){},console={log:print,error:print,warn:print};
 eval(read("practice.js"));eval(read("practice9.js"));["practiceen.js","practiceen2.js","practiceen3.js","practiceen4.js","practiceen5.js","practiceen6.js"].forEach(function(f){eval(read(f))});eval(read("hubdata.js"));eval(read("hubdata_en.js"));eval(read("hub.js"));
 var bad=0,n=0,KH=/[ក-៿]/;
+function mathSafe0(t){return String(t==null?"":t).replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(m){return m.replace(/</g,"&lt;").replace(/>/g,"&gt;")})}
 function B(m){bad++;if(bad<25)print(m)}
 function bal(t){var d=(String(t).match(/\$/g)||[]).length;if(d%2)return false;var c=0;for(var i=0;i<t.length;i++){if(t[i]==="{")c++;else if(t[i]==="}"){c--;if(c<0)return false}}return c===0}
 function mathKh(t){var m=String(t).replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g,function(x){return KH.test(x)?"\u0000":""});return m.indexOf("\u0000")>=0}
@@ -75,7 +76,7 @@ Object.keys(HUB.VIDEOS).forEach(function(k){var v=HUB.VIDEOS[k];n++;if(!/^\d+_\d
 (function(){var GR=PRACT.GR,ex=0;Object.keys(GR).forEach(function(g){var en=!!GR[g].en;Object.keys(GR[g].G).forEach(function(l){HUB.LV.forEach(function(v){var G=GR[g].G[l];if(typeof G[v]!=="function")return;
   for(var r=0;r<3;r++){var on=G[v]();PRACT.S.qs=[on];HUB._reset(g+"_"+l+"_"+v);var h=HUB.html(+g,+l,v,"x",en);ex++;
     var c=(h.match(/<div class=hub-xc[\s\S]*$/)||[""])[0];if(!c){B("NO EXAMPLE g"+g+" l"+l+" v"+v);return}
-    if(c.indexOf(on.q)>=0&&on.q.length>25)B("EXAMPLE = ON-SCREEN g"+g+" l"+l+" v"+v);
+    var xq=((c.match(/<div class=hub-xq>([\s\S]*?)<\/div>/)||[])[1]||"");if(xq&&xq===mathSafe0(on.q)&&on.q.length>25)B("EXAMPLE = ON-SCREEN g"+g+" l"+l+" v"+v);
     (c.match(/<li>[\s\S]*?<\/li>/g)||[]).forEach(function(li){if((li.match(/\$/g)||[]).length%2)B("STEP$ g"+g+" l"+l+" v"+v+" "+li.slice(0,80))});
     (c.match(/\$[^$]*\$/g)||[]).forEach(function(m){if(/<[a-zA-Z\/!]/.test(m))B("RAW< g"+g+" l"+l+" v"+v+" "+m.slice(0,60))})}})})});
   PRACT.S.qs=[];n+=ex})();

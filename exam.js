@@ -118,7 +118,7 @@ function opBox(E,g){var T=+E.opT||opTarget(g),N=+E.opN||(E.secs&&E.secs.length)|
     "<label style='font-size:12px'>របៀបបែង <select data-ef=opW style='width:auto'><option value=lv"+(E.opW==="eq"?"":" selected")+">តាមកម្រិត (រ៉ូម៉ាំងចុងទម្ងន់ធំ)</option><option value=eq"+(E.opW==="eq"?" selected":"")+">ស្មើគ្នា</option></select></label>"+
     "<button type=button class=primary data-ex=opn>⚖️ បែងពិន្ទុស្វ័យប្រវត្តិ</button>"+
     "<label style='display:flex;gap:6px;align-items:center;font-size:12px'><input type=checkbox data-ef=stp"+(E.stp?" checked":"")+" style='width:auto;margin:0'> បង្ហាញពិន្ទុតាមជំហានក្នុងអត្រាកំណែ</label>"+
-    "<small class=note style='flex-basis:100%;margin:0'>ថ្នាក់ទី៧–៩ = ២០ · ទី១០ = ៣០ · ទី១១–១២ = ២៥ ពិន្ទុ · ចម្លើយខ្លីនៅដដែល · អាចកែពិន្ទុផ្នែកនីមួយៗដោយដៃបាន</small></div>"}
+    "<small class=note style='flex-basis:100%;margin:0'>ថ្នាក់ទី៧–៩ = ២០ · ទី១០ = ៣០ · ទី១១–១២ = ២៥ ពិន្ទុ · ពិន្ទុផ្នែកចម្លើយខ្លីនៅដដែល · អាចកែពិន្ទុផ្នែកនីមួយៗដោយដៃបាន</small></div>"}
 /* ---------- រក្សាទុក (exams/{id}) ---------- */
 /* ⚡ Quota៖ រង់ចាំ ២.៥ វិនាទីក្រោយការកែចុងក្រោយ · មិនសរសេរបើខ្លឹមសារដូចលើកមុនដែលបានរក្សាទុក (X.lastW តាមវិញ្ញាសា) */
 function save(now){
@@ -229,7 +229,6 @@ function editor(){
     (g===12&&window.EXGEN&&EXGEN.bac?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='bac|a' style='flex:1'>📋 វិញ្ញាសាត្រៀមបាក់ឌុប (៧ ផ្នែក · តាមសៀវភៅ)</button><button type=button data-ex='bac|b' style='flex:1'>📋 គំរូសាកល្បង NGS (៨ ផ្នែក)</button></div>":"")+
     (E.fmt==="cam"&&window.CAMPAPERS&&CAMPAPERS[g]?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'>"+Object.keys(CAMPAPERS[g]).map(function(k){return"<button type=button class=primary data-ex='cpp|"+k+"' style='flex:1'>📋 "+esc(CAMPAPERS[g][k].label)+"</button>"}).join("")+"</div>":"")+
     (g===9&&window.EXGEN&&EXGEN.dip?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex=dip style='flex:1'>🎓 វិញ្ញាសាត្រៀមប្រឡងឌីប្លូម (៧ ផ្នែក · ១០០ ពិន្ទុ · ១២០ នាទី)</button></div>":"")+
-    (E.fmt==="cam"||E.fmt==="bac"||E.fmt==="dip"?"":opBox(E,g))+
     (E.fmt==="cam"||E.fmt==="bac"||E.fmt==="dip"?"":opBox(E,g))+
     E.secs.map(function(s,i){
       return"<div class=ex-sec><div class=ex-sh><b>"+EXP.RN[i]+".</b><select data-es='"+i+"|ls'>"+lsOpts(g,s.ls)+"</select>"+
