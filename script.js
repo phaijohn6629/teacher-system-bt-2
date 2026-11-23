@@ -1696,6 +1696,7 @@ $("wfile").onchange=function(e){
   notify("បានភ្ជាប់រូបភាពសម្រាប់ការបោះពុម្ព (មិនរក្សាទុកក្នុង Cloud)");
 };
 var LOGO=(document.getElementById("ngsLogo")||{}).src||new URL("logo-ngs.jpg",location.href).href;
+function LOGOBTP(){return new URL("logo-bt.png",location.href).href}   /* ឡូហ្គោ BT ផ្ទៃថ្លា (របាយការណ៍ការងារ) */
 function LOGOBT(){return(document.querySelector(".brand-logo")||{}).src||new URL("logo-bt.jpg",location.href).href}
 function reportHTML(){
   var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"";
@@ -1705,7 +1706,7 @@ function reportHTML(){
     return"<tr><td>"+fdd(e.d)+"</td><td>"+(dur(e.a,e.b)||"")+(e.a&&e.b?"<br>("+ft(e.a)+"-"+ft(e.b)+")"+ampm(e.b):"")+"</td><td style='text-align:left'>"+cc.map(function(x,i){return esc(x)}).join("<br>")+"</td><td>"+ims+"</td></tr>";
   }).join("");
   return"<div class='pg rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGOBT()+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
+    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGOBTP()+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>របាយការណ៍ការងារ"+esc(role)+"គណិតវិទ្យា ប្រចាំខែ"+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
     "<p style='text-indent:1.2cm;margin:6px 0'>គោរពជម្រាបជូនគណៈគ្រប់គ្រង សូមជូនរបាយការណ៍ការងារក្រុមបច្ចេកទេសគណិតវិទ្យា នៅ"+esc(I.school)+" សាលារៀនជំនាន់ថ្មី (NGS) មានដូចតទៅ៖</p>"+
     "<table class=ct style='width:100%'><thead><tr><th style='width:16%'>កាលបរិច្ឆេទ</th><th style='width:18%'>រយៈពេល</th><th>ខ្លឹមសារសកម្មភាព</th><th style='width:24%'>សកម្មភាព (រូបភាព...)</th></tr></thead><tbody>"+(rows||"<tr><td colspan=4>—</td></tr>")+"</tbody></table>"+
