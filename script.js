@@ -1816,6 +1816,8 @@ $("ahX").onclick=function(){
   ahAll().sort(function(a,b){return(a.e.d||"").localeCompare(b.e.d||"")}).forEach(function(x){rows.push([fdd(x.e.d),teacherOf(x.o).name||x.o,AHC[+x.e.c]||"",lvt(x.e.l),x.e.t,x.e.k||"",x.e.n||""])});
   dlCSV(rows,"achievements.csv");
 };
+try{var ahHv=localStorage.getItem("ahHead");if(ahHv&&[].some.call($("ahH").options,function(o){return o.value===ahHv}))$("ahH").value=ahHv}catch(e){}
+$("ahH").onchange=function(){try{localStorage.setItem("ahHead",this.value)}catch(e){}};
 $("ahP").onclick=function(){
   var I=inf(),nm=ahT==="*"?"គ្រូទាំងអស់":(teacherOf(ahT).name||""),f=$("ahF").value,g=$("ahG").value;
   var h="<div class='pg rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
@@ -1823,7 +1825,7 @@ $("ahP").onclick=function(){
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>តារាងស្នាដៃគ្រូបង្រៀន</h2><p style='margin:4px 0'>គ្រូ៖ <b>"+esc(nm)+"</b>"+(f||g?" · រយៈពេល៖ "+esc(fdd(f)||"…")+" ដល់ "+esc(fdd(g)||"…"):"")+"</p>"+
     "<table class=ct>"+$("ahM").innerHTML+"</table>"+
     (ahT==="*"?"<div style='height:10px'></div><table class=ct>"+$("ahS").innerHTML+"</table><p style='font-size:9.5pt;margin:4px 0'>"+AHC.map(function(c,i){return(i+1)+"="+esc(c)}).join(" · ")+"</p>":"")+
-    repFoot(who.id,who.name)+"</div>";
+    repFoot(who.id,who.name,$("ahH").value)+"</div>";
   doPrint(h);
 };
 
