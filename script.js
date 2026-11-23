@@ -1658,7 +1658,7 @@ $("wtb").oninput=function(e){
 };
 /* ប្ដូរថ្ងៃ → តម្រៀបជួរឡើងវិញតែពេលចេញពីប្រអប់ថ្ងៃ (កុំកាត់ការវាយ/ផ្ទាំងប្រតិទិន) */
 var wSort=false;
-$("wtb").onchange=function(e){var p=e.target.dataset.w;if(p&&p.slice(-2)==="|d")wSort=true};
+$("wtb").onchange=function(e){var p=e.target.dataset.w;if(p&&p.slice(-2)==="|d"){wSort=true;var v=e.target.value;if(/^\d{4}-\d{2}-\d{2}$/.test(v)&&v.slice(0,7)!==wmo){wmo=v.slice(0,7);$("wm").value=wmo}}};
 $("wtb").addEventListener("focusout",function(e){var p=e.target.dataset&&e.target.dataset.w;if(!wSort||!p||p.slice(-2)!=="|d")return;setTimeout(function(){if(wSort&&!pickerBusy()){wSort=false;renderW()}},250)});
 $("wtb").onclick=function(e){
   var b=e.target.closest("button");if(!b)return;
