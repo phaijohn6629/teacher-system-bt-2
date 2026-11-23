@@ -353,6 +353,28 @@
 - Paper ខ: item j has the same form as paper ក item j, with different numbers (≈99%). 🔄 on one item gives a new form, and paper ខ follows it.
 - The exam generator makes open-response items, so there are no auto-generated distractors. Multiple-choice options exist only in the quiz bank (`quiz.js`), entered by teachers.
 
+## Future Roadmap / Pending Task — Exam syllabus-point alignment (planned 2026-11-23, **no code changed yet**)
+
+### Audit findings (exam.js, exgen.js)
+- Practice items in «វិញ្ញាសាប្រឡង» come from the **same generators** as the practice page: `exam.js` `mkItem()` calls `PRACT.GR[g].G[ls][lv]()`. Exam adds only anti-repeat (`shapeOf`/`kd`, `exShp`) and A/B pairing.
+- «🇰🇭 គំរូប្រឡង» (`t:…`) comes from `exgen.js` (`REG["g|lesson"]`, `EXGEN.make`), a separate set of templates. `exgen.js` has **no `kd` tags** (0). The MCQ bank in `quiz.js` is separate too.
+- Split by syllabus point exists only in `exam.js` `PTK` (hand-written, `s.pt`, «🎯 ចំណុចមេរៀន»): **grade 10, 7 lessons only** (11, 12, 21, 22, 23, 31, 32). Some points have `k:[]` (10·23#3, 31#1, 32#3, 32#5). Items without `kd` (PISA) are not filtered. If no matching form is found in 40×3 tries, `mkItem` silently falls back to the whole lesson (`exam.js` ~line 93).
+- Real sub-points already exist in `CUR[g].W` (used by `quiz.js` `ptsOf` and p21 `lpPts`), but generators are not linked to them.
+- So today the split is lesson × level (1–4, 5/6, PISA); by sub-point only for grade 10, as an option.
+
+### Planned steps (do in order, one grade at a time, start with grade 9 or 12)
+1. **One sub-point ID** from `CUR[g].W`: `g|lesson|point` (same key style as p21, e.g. `12_11#3`).
+2. **Tag `pt` on every form** next to `kd` (e.g. `{kd:"s10_fq1", pt:3}`), and in `exgen.js` templates (`pt:[…]` per `REG` entry). Generate `PTK` from these tags and remove the hand-written table.
+3. **Exam by sub-point:** a section keeps `s.pts=[…]` (several points). `mkItem` filters strictly, and warns when no form matches instead of silently using the whole lesson.
+4. **Separate exam bank from practice:** mark forms `use:"exam"|"practice"` (today `ex` only flags special forms), so exams use exam-level forms and do not share them with the practice page.
+5. **Blueprint per exam:** `sub-point × level × item count × points`; A/B pairing stays by `kd` (keep `abMap` sync and print CSS rules unchanged).
+6. **`tests/ptcov.js`:** fails if any sub-point in `CUR[g].W` has no form at some required level (like `tests/practice.js`, which requires ≥4 forms per lesson × level). Run it from `tests/run.sh`.
+
+### Constraints when implementing
+- Do not change scoring (`EXP.total`, `monthly.js` `maxes`/`scaleC`) — see the QA rules.
+- Never renumber level keys. New generators must keep unique `kd`, no retry loops that can fail to terminate.
+- After code changes: `python3 tools/bump.py`, `./tests/run.sh` (all `bad 0`), bump `sw.js` `C`.
+
 ## Status
 - ✅ **All planned code tasks are completed.** No code work is pending.
 - Optional future work: starter hub content for grades 11, 10, 8, 7 and Cambridge (planned next, one grade at a time) (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
