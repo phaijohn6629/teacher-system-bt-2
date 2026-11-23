@@ -1740,8 +1740,7 @@ var ahInit=0;
 function ahMonth(){var d=new Date(),y=d.getFullYear(),m=d.getMonth(),z=function(n){return("0"+n).slice(-2)};return[y+"-"+z(m+1)+"-01",y+"-"+z(m+1)+"-"+z(new Date(y,m+1,0).getDate())]}
 function renderA(){
   var isAdmin=(isAdm());
-  if(!ahInit){ahInit=1;var r0=ahMonth();$("ahF").value=r0[0];$("ahG").value=r0[1]}
-  if(!isAdmin)ahT=who.id;else if(!ahT)ahT=who.id;
+  if(!isAdmin)ahT=who.id;else if(!ahT)ahT="*";   /* Admin៖ លំនាំដើម = គ្រូទាំងអស់ · កាលបរិច្ឆេទទទេ = បង្ហាញទាំងអស់ */
   $("ahT").innerHTML=(isAdmin?"<option value='*'"+(ahT==="*"?" selected":"")+">គ្រូទាំងអស់</option>":"")+data.filter(function(t){return isAdmin||t.id===who.id}).map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===ahT?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
   var fk=$("ahK").value||"*",fl2=$("ahL").value||"*";
   $("ahK").innerHTML=catOpts(fk,true);$("ahL").innerHTML=lvOpts(fl2,true);
@@ -1783,7 +1782,7 @@ function ahOpen(e,owner){
   $("dlgAh").showModal();
 }
 $("ahA").onclick=function(){ahOpen(null)};
-$("ahAll").onclick=function(){$("ahF").value="";$("ahG").value="";renderA()};
+$("ahAll").onclick=function(){$("ahF").value="";$("ahG").value="";$("ahK").value="*";$("ahL").value="*";if(isAdm())ahT="*";renderA()};
 $("cxAh").onclick=function(){$("dlgAh").close()};
 $("okAh").onclick=function(){
   var t=$("dAhT").value.trim(),d=$("dAhD").value,k=$("dAhK").value.trim();
