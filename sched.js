@@ -299,7 +299,9 @@ function wrSync(){
   var rec=getRec(false);
   if(!rec){if(!Object.keys(by).length)return;rec=getRec(true);ch=true}
   rec.days=rec.days||{};
-  /* ពិដាន «ប្រធានក្រុម» ≤ ៤ ម៉ោង/សប្ដាហ៍ (ច័ន្ទ→អាទិត្យ) · ម៉ោងលើស → «មូលដ្ឋាន» (xb) · មូលដ្ឋានលើស ១៨ → «លើស ក្នុង» (xs) */
+  /* ពិដាន «ប្រធានក្រុម» ≤ ៤ ម៉ោង · «អនុប្រធាន» ≤ ២ ម៉ោង/សប្ដាហ៍ (ច័ន្ទ→អាទិត្យ) · ម៉ោងលើស → «មូលដ្ឋាន» (xb) · មូលដ្ឋានលើស ១៨ → «លើស ក្នុង» (xs)
+     អនុប្រធាន (តួនាទីក្នុងបញ្ជីគ្រូ) → ជួរ h.v (la→va) · ផ្សេងទៀត → ជួរ h.l */
+  var vice=(teacherOf(tsT).rl||"")==="អនុប្រធាន",col=vice?"v":"l",ak=vice?"va":"la",oc=vice?"l":"v",oak=vice?"la":"va",CAP=vice?2:4;
   var r2=function(x){return Math.round(x*100)/100},raw={},plan={},seen={};
   (wr.r[tsT]||[]).forEach(function(e){var mi=tmin(e.b)-tmin(e.a);if(e.d&&mi>0)raw[e.d]=(raw[e.d]||0)+mi/60});
   for(var q=1;q<=n;q++){
@@ -308,7 +310,7 @@ function wrSync(){
     var used=0,R=0;
     for(var k=0;k<7;k++){
       var dt=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+k),inM=dt.getMonth()===m-1&&dt.getFullYear()===y,dd=dt.getDate();
-      var rw=r2(raw[iso(dt.getFullYear(),dt.getMonth()+1,dd)]||0),l=r2(Math.min(rw,Math.max(0,4-used))),xb=r2(rw-l),b0=0;
+      var rw=r2(raw[iso(dt.getFullYear(),dt.getMonth()+1,dd)]||0),l=r2(Math.min(rw,Math.max(0,CAP-used))),xb=r2(rw-l),b0=0;
       used+=l;
       if(inM){var c0=rec.days[dd];if(c0){fixDay(c0,y,m,dd);b0=num(c0.h&&c0.h.b)-num(c0.xb)+num(c0.xs)}else b0=num(defDay(tsT,y,m,dd).h.b)}
       else if(dt.getDay())b0=schedPer(tsT,k).b;
@@ -324,13 +326,14 @@ function wrSync(){
       h0.b=r2(num(h0.b)-ob+os+pl.xb-pl.xs);h0.i=r2(num(h0.i)-os+pl.xs);
       if(pl.xb)cd.xb=pl.xb;else delete cd.xb;if(pl.xs)cd.xs=pl.xs;else delete cd.xs;ch=true;
     }
+    if(cd&&cd.h&&cd[oak]!=null){if(cd.h[oc]===cd[oak])cd.h[oc]=0;delete cd[oak];ch=true}   /* ប្ដូរតួនាទី → ដកម៉ោងស្វ័យប្រវត្តិចេញពីជួរចាស់ */
     if(b){
       var hh=pl.l,tx=b.t.join("\n");
       if(!cd){cd=rec.days[d]=defDay(tsT,y,m,d);ch=true;if(pl.xb){cd.h.b=r2(num(cd.h.b)+pl.xb-pl.xs);cd.h.i=r2(num(cd.h.i)+pl.xs);cd.xb=pl.xb;if(pl.xs)cd.xs=pl.xs}}
-      if(hh||cd.la!=null){if(cd.h.l!==hh||cd.la!==hh){cd.h.l=hh;cd.la=hh;ch=true}if(!hh&&cd.la===0){delete cd.la;ch=true}}
+      if(hh||cd[ak]!=null){if(cd.h[col]!==hh||cd[ak]!==hh){cd.h[col]=hh;cd[ak]=hh;ch=true}if(!hh&&cd[ak]===0){delete cd[ak];ch=true}}
       if(tx&&(!cd.w||cd.w===cd.wa)&&(cd.w!==tx||cd.wa!==tx)){cd.w=tx;cd.wa=tx;ch=true}
-    }else if(cd&&cd.la!=null){
-      if(cd.h.l===cd.la)cd.h.l=0;delete cd.la;
+    }else if(cd&&cd[ak]!=null){
+      if(cd.h[col]===cd[ak])cd.h[col]=0;delete cd[ak];
       if(cd.wa!=null){if(cd.w===cd.wa)cd.w="";delete cd.wa}
       ch=true;
     }
