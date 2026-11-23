@@ -1234,3 +1234,8 @@ body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-
 .qr-stc{display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);min-width:0}
 .qr-stc b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.88rem}.qr-stc small{color:var(--mute);font-size:.72rem;white-space:nowrap}
 .ms-subj{margin:4px 0 6px;font-size:.95em}
+
+/* ===== របាយការណ៍ការងារ (.rpt)៖ ជួរ/រូប/ជើងក្រោមមិនដាច់ · ក្បាលតារាងឡើងវិញ · ស៊ុមបិទជិត ===== */
+.rpt table.ct{border-collapse:collapse}.rpt table.ct tr,.rpt img.wim{break-inside:avoid;page-break-inside:avoid}.rpt img.wim{max-height:52mm;object-fit:contain}
+.rpt thead{display:table-header-group}.rpt .cxf{break-inside:avoid;page-break-inside:avoid;overflow:visible}
+@media print{body.pm #prt .rpt{overflow:visible!important;height:auto!important}body.pm #prt .rpt tr{break-inside:avoid;page-break-inside:avoid}}

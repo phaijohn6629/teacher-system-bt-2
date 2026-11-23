@@ -1137,10 +1137,13 @@ function savePdf(html){
     var t=(document.querySelector("#tabs button[aria-selected=true]")||{}).textContent||"ឯកសារ",d=new Date();
     var name=t.replace(/^[០-៩]+\.\s*/,"").replace(/[\\/:*?"<>|&]+/g,"-").trim()+"-"+d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+".pdf";
     var done=function(){hold.remove()};
+    /* រង់ចាំរូបភាពផ្ទុករួច (ត្រូវដឹងកម្ពស់ជួរមុនកាត់ទំព័រ បើមិនដូច្នោះជួរ/ជើងក្រោមត្រូវកាត់) */
+    var imgs=[].slice.call(w.querySelectorAll("img")).filter(function(i){return!i.complete});
+    Promise.all(imgs.map(function(i){return new Promise(function(r){i.onload=i.onerror=r;setTimeout(r,4000)})})).then(function(){
     pdfLineFix(w);pdfPaginate(w,land?194:277,land?281:190);
     window.html2pdf().set({margin:land?8:10,filename:name,image:{type:"jpeg",quality:0.95},html2canvas:{scale:2,backgroundColor:"#ffffff",useCORS:true,scrollX:0,scrollY:0},
       jsPDF:{unit:"mm",format:"a4",orientation:land?"landscape":"portrait"},pagebreak:{mode:[]}})
-      .from(w).save().then(function(){done();notify("បានទាញយក PDF៖ "+name)},function(e){done();console.error(e);alert("មិនអាចបង្កើត PDF បានទេ។ សូមប្រើ «🖨️ បោះពុម្ព» ជំនួសវិញ។")});
+      .from(w).save().then(function(){done();notify("បានទាញយក PDF៖ "+name)},function(e){done();console.error(e);alert("មិនអាចបង្កើត PDF បានទេ។ សូមប្រើ «🖨️ បោះពុម្ព» ជំនួសវិញ។")});});
   }
   if(window.html2pdf)return (document.fonts?document.fonts.ready:Promise.resolve()).then(go);
   var s=document.createElement("script");s.src=H2P_URL;s.onload=function(){(document.fonts?document.fonts.ready:Promise.resolve()).then(go)};
@@ -1693,7 +1696,7 @@ function reportHTML(){
     return"<tr><td>"+fdd(e.d)+"</td><td>"+(dur(e.a,e.b)||"")+(e.a&&e.b?"<br>("+ft(e.a)+"-"+ft(e.b)+")"+ampm(e.b):"")+"</td><td style='text-align:left'>"+cc.map(function(x,i){return esc(x)}).join("<br>")+"</td><td>"+ims+"</td></tr>";
   }).join("");
   return"<div class='pg rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGO+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
+    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGOBT()+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>របាយការណ៍ការងារ"+esc(role)+"គណិតវិទ្យា ប្រចាំខែ"+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
     "<p style='text-indent:1.2cm;margin:6px 0'>គោរពជម្រាបជូនគណៈគ្រប់គ្រង សូមជូនរបាយការណ៍ការងារក្រុមបច្ចេកទេសគណិតវិទ្យា នៅ"+esc(I.school)+" សាលារៀនជំនាន់ថ្មី (NGS) មានដូចតទៅ៖</p>"+
     "<table class=ct style='width:100%'><thead><tr><th style='width:16%'>កាលបរិច្ឆេទ</th><th style='width:18%'>រយៈពេល</th><th>ខ្លឹមសារសកម្មភាព</th><th style='width:24%'>សកម្មភាព (រូបភាព...)</th></tr></thead><tbody>"+(rows||"<tr><td colspan=4>—</td></tr>")+"</tbody></table>"+
