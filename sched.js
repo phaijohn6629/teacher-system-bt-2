@@ -253,10 +253,11 @@ function fixDay(cd,y,m,n){
   var di=(wd+6)%7,N=schedPer(tsT,di),h=cd.h;
   if(!cd.ha){
     var L=legacyPer(tsT,di),P=splitSched(tsT,true).d[di];
-    if(!num(h.o)&&!num(h.u)&&num(h.b)===L.b&&num(h.i)===L.o)cd.ha=1;
-    else if(num(h.b)===P.b&&num(h.i)===P.i&&num(h.o)===P.o&&!num(h.u))cd.ha=1;
+    var xb=num(cd.xb),xs=num(cd.xs),hb=num(h.b)-xb+xs,hi=num(h.i)-xs;   /* ដកម៉ោងដែលរុញមកពី «ប្រធានក្រុម» មុនប្រៀបធៀប */
+    if(!num(h.o)&&!num(h.u)&&hb===L.b&&hi===L.o)cd.ha=1;
+    else if(hb===P.b&&hi===P.i&&num(h.o)===P.o&&!num(h.u))cd.ha=1;
   }
-  if(cd.ha){h.b=N.b;h.i=N.i;h.o=N.o;h.u=N.u}
+  if(cd.ha){h.b=N.b+num(cd.xb)-num(cd.xs);h.i=N.i+num(cd.xs);h.o=N.o;h.u=N.u}
   return cd;
 }
 function curDay(rec,y,m,n){
@@ -298,11 +299,34 @@ function wrSync(){
   var rec=getRec(false);
   if(!rec){if(!Object.keys(by).length)return;rec=getRec(true);ch=true}
   rec.days=rec.days||{};
+  /* ពិដាន «ប្រធានក្រុម» ≤ ៤ ម៉ោង/សប្ដាហ៍ (ច័ន្ទ→អាទិត្យ) · ម៉ោងលើស → «មូលដ្ឋាន» (xb) · មូលដ្ឋានលើស ១៨ → «លើស ក្នុង» (xs) */
+  var r2=function(x){return Math.round(x*100)/100},raw={},plan={},seen={};
+  (wr.r[tsT]||[]).forEach(function(e){var mi=tmin(e.b)-tmin(e.a);if(e.d&&mi>0)raw[e.d]=(raw[e.d]||0)+mi/60});
+  for(var q=1;q<=n;q++){
+    var off=(new Date(y,m-1,q).getDay()+6)%7,mon=new Date(y,m-1,q-off),mk=mon.getTime();
+    if(seen[mk])continue;seen[mk]=1;
+    var used=0,R=0;
+    for(var k=0;k<7;k++){
+      var dt=new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+k),inM=dt.getMonth()===m-1&&dt.getFullYear()===y,dd=dt.getDate();
+      var rw=r2(raw[iso(dt.getFullYear(),dt.getMonth()+1,dd)]||0),l=r2(Math.min(rw,Math.max(0,4-used))),xb=r2(rw-l),b0=0;
+      used+=l;
+      if(inM){var c0=rec.days[dd];if(c0){fixDay(c0,y,m,dd);b0=num(c0.h&&c0.h.b)-num(c0.xb)+num(c0.xs)}else b0=num(defDay(tsT,y,m,dd).h.b)}
+      else if(dt.getDay())b0=schedPer(tsT,k).b;
+      var tb=b0+xb,bd=Math.max(0,Math.min(tb,NORM-R)),xs=Math.min(xb,r2(tb-bd));
+      R+=b0+xb-xs;
+      if(inM)plan[dd]={l:l,xb:xb,xs:xs};
+    }
+  }
   for(var d=1;d<=n;d++){
-    var b=by[d],cd=rec.days[d];
+    var b=by[d],cd=rec.days[d],pl=plan[d]||{l:0,xb:0,xs:0};
+    if(cd&&cd.h&&(num(cd.xb)!==pl.xb||num(cd.xs)!==pl.xs)){
+      var h0=cd.h,ob=num(cd.xb),os=num(cd.xs);
+      h0.b=r2(num(h0.b)-ob+os+pl.xb-pl.xs);h0.i=r2(num(h0.i)-os+pl.xs);
+      if(pl.xb)cd.xb=pl.xb;else delete cd.xb;if(pl.xs)cd.xs=pl.xs;else delete cd.xs;ch=true;
+    }
     if(b){
-      var hh=Math.round(b.h*100)/100,tx=b.t.join("\n");
-      if(!cd){cd=rec.days[d]=defDay(tsT,y,m,d);ch=true}
+      var hh=pl.l,tx=b.t.join("\n");
+      if(!cd){cd=rec.days[d]=defDay(tsT,y,m,d);ch=true;if(pl.xb){cd.h.b=r2(num(cd.h.b)+pl.xb-pl.xs);cd.h.i=r2(num(cd.h.i)+pl.xs);cd.xb=pl.xb;if(pl.xs)cd.xs=pl.xs}}
       if(hh||cd.la!=null){if(cd.h.l!==hh||cd.la!==hh){cd.h.l=hh;cd.la=hh;ch=true}if(!hh&&cd.la===0){delete cd.la;ch=true}}
       if(tx&&(!cd.w||cd.w===cd.wa)&&(cd.w!==tx||cd.wa!==tx)){cd.w=tx;cd.wa=tx;ch=true}
     }else if(cd&&cd.la!=null){
