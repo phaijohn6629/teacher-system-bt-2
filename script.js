@@ -1278,8 +1278,27 @@ function stackBar(label,o,cv){
     (cv&&cv.miss&&cv.miss.length?"<div class=sbm>ខ្វះ៖ "+cv.miss.map(function(m){return esc(m.l)+" ("+m.k+" នាក់)"}).join(" · ")+"</div>":"")+"</div>";
 }
 /* ===== ភាពពេញលេញនៃការបញ្ចូលពិន្ទុ — បង្ហាញតែប៉ុណ្ណោះ មិនប៉ះ gof/fl/cnt ===== */
-function vcov(c,p){
-  var miss=[],o=cnt(c,p),d=0;for(var g in o)d+=o[g];
+/* របៀបមើលបណ្តោះអាសន្ន (ស្ថានភាពអេក្រង់តែប៉ុណ្ណោះ — មិនរក្សាទុក) */
+var vprov=false,vSigT="",vSigC="",vSigB="";
+/* ពិន្ទុសិស្ស ១ នាក់ → {g:និទ្ទេស, pct:%} ឬ null។ ផ្លូវការ = gof/met (មិនកែ) · បណ្តោះអាសន្ន = រាប់តែជួរដែលមានពិន្ទុរួច (អនុគមន៍ដាច់ដោយឡែក, ហៅ gr តែអានប៉ុណ្ណោះ) */
+function vstu(s,c,p,prov){
+  var mx=rs.mx[parseInt(c.n)]||100;
+  if(!prov){
+    var g=gof(s,c,p);if(!g)return null;
+    var cols=p===3?ac(c,1).length+ac(c,2).length:ac(c,p).length;
+    return{g:g,pct:cols?met(s,c,p)/(mx*cols)*100:0};
+  }
+  var sum=0,k=0;
+  [[1,"a"],[2,"b"]].forEach(function(q){
+    if(p!==3&&p!==q[0])return;
+    ac(c,q[0]).forEach(function(j){var v=(s[q[1]]||[])[j];if(v!==""&&v!=null){sum+=+v||0;k++}});
+  });
+  return k?{g:gr(sum,k,c),pct:sum/(mx*k)*100}:null;
+}
+/* ភាពពេញលេញនៃការបញ្ចូលពិន្ទុ — បង្ហាញតែប៉ុណ្ណោះ */
+function vcov(c,p,prov){
+  var miss=[],d=0;
+  c.st.forEach(function(s){if(vstu(s,c,p,prov))d++});
   [[1,"a",SM1,"ឆ១"],[2,"b",SM2,"ឆ២"]].forEach(function(q){
     if(p!==3&&p!==q[0])return;
     ac(c,q[0]).forEach(function(j){
@@ -1289,9 +1308,23 @@ function vcov(c,p){
   });
   return{n:c.st.length,d:d,miss:miss};
 }
-function vagg(cl,p){
-  var r={o:{A:0,B:0,C:0,D:0,E:0,F:0},n:0,d:0,inc:[]};
-  cl.forEach(function(c){var q=cnt(c,p),v=vcov(c,p);for(var g in q)r.o[g]+=q[g];r.n+=v.n;r.d+=v.d;if(v.miss.length)r.inc.push({n:c.n,m:v.miss})});
+function vagg(cl,p,prov){
+  var r={o:{A:0,B:0,C:0,D:0,E:0,F:0},n:0,d:0,inc:[],ps:0,pn:0,m:null};
+  cl.forEach(function(c){
+    var v=vcov(c,p,prov);
+    c.st.forEach(function(s){var q=vstu(s,c,p,prov);if(q){r.o[q.g]++;r.ps+=q.pct;r.pn++}});
+    r.n+=v.n;r.d+=v.d;if(v.miss.length)r.inc.push({n:c.n,m:v.miss});
+  });
+  r.m=r.pn?r.ps/r.pn:null;
+  return r;
+}
+function vrow(l,a){return{l:l,o:a.o,n:a.n,d:a.d,m:a.m}}
+function vmf(m){return m==null||isNaN(m)?"—":m.toFixed(1)+"%"}
+/* ក្រុមថ្នាក់តាមកម្រិត (៧–១២ ពីឈ្មោះថ្នាក់; ផ្សេងៗ = 0) */
+function vglv(cl){var m={};cl.forEach(function(c){var g=parseInt(c.n),k=g>=7&&g<=12?g:0;(m[k]=m[k]||[]).push(c)});return m}
+function vlevels(cl,p,prov){
+  var m=vglv(cl),r=[];
+  [7,8,9,10,11,12,0].forEach(function(g){if(m[g])r.push({g:g,l:g?"ថ្នាក់ទី "+kn(g):"ផ្សេងៗ",k:m[g].length,a:vagg(m[g],p,prov)})});
   return r;
 }
 function vmiss(inc,max){
@@ -1301,12 +1334,12 @@ function vmiss(inc,max){
   }).join("<br>")+(inc.length>max?"<br>… +"+(inc.length-max)+" ថ្នាក់ទៀត":"");
 }
 function vrt(o,d){return d?{ac:(o.A+o.B+o.C)/d*100,pass:(d-o.F)/d*100,f:o.F/d*100}:null}
-function pbar(lb,cls,v){return"<div class=pbr><span class=pbl>"+lb+"</span><div class=pbt>"+(v==null?"":"<i class='"+cls+"' style='width:"+v.toFixed(1)+"%'></i>")+"</div><span class=pbv>"+(v==null?"—":v.toFixed(1)+"%")+"</span></div>"}
+function pbar(lb,cls,v){return"<div class=pbr><span class=pbl>"+lb+"</span><div class=pbt>"+(v==null?"":"<i class='"+cls+"' style='width:"+Math.max(0,Math.min(100,v)).toFixed(1)+"%'></i>")+"</div><span class=pbv>"+(v==null?"—":v.toFixed(1)+"%")+"</span></div>"}
 function pcmp(rows){
   return rows.map(function(r){
     var t=vrt(r.o,r.d);
     return"<div class=pbg><div class=pbh><b>"+esc(r.l)+"</b><span class=pbn>"+r.d+"/"+r.n+" នាក់ មាននិទ្ទេស</span></div>"+
-      (t?pbar("A–C","gA",t.ac)+pbar("ជាប់ A–E","gB",t.pass)+pbar("ធ្លាក់ F","gF",t.f):"<div class=pbn>មិនទាន់មានទិន្នន័យពេញ</div>")+"</div>";
+      (t?pbar("A–C","gA",t.ac)+pbar("ជាប់ A–E","gB",t.pass)+pbar("ធ្លាក់ F","gF",t.f)+(r.m==null||isNaN(r.m)?"":pbar("មធ្យម %","gm",r.m)):"<div class=pbn>មិនទាន់មានទិន្នន័យពេញ</div>")+"</div>";
   }).join("");
 }
 function lgd(){return"<div class=lgd>"+"ABCDEF".split("").map(function(g){return"<span><i class='sw g"+g+"'></i>"+g+"</span>"}).join("")+"</div>"}
@@ -1337,39 +1370,55 @@ function trendSVG(c,p){
 function renderV(){
   if(!data.some(function(t){return t.id===rt})&&data.length)rt=data[0].id;
   var isAdmin=(isAdm()),cl=rs.c[rt]||[];if(rc>=cl.length)rc=0;
-  $("vt").innerHTML=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join("");
-  $("vc").innerHTML=clsOpts(cl,false);
-  $("vp").value=rp;
+  /* idempotent: មិនសង់ select/មាតិកាឡើងវិញ បើគ្មានអ្វីប្រែ (refreshView ហៅគ្រប់ពេល sync) */
+  var sT=data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===rt?" selected":"")+">"+esc(t.name)+"</option>"}).join(""),sC=clsOpts(cl,false);
+  if(sT!==vSigT||!$("vt").options.length){$("vt").innerHTML=sT;vSigT=sT}
+  if(sC!==vSigC||!$("vc").options.length){$("vc").innerHTML=sC;vSigC=sC}
+  if($("vp").value!==String(rp))$("vp").value=rp;
+  if($("vpv")&&$("vpv").checked!==vprov)$("vpv").checked=vprov;
   var PN=["","ឆមាសទី១","ឆមាសទី២","ប្រចាំឆ្នាំ"][rp],c=cl[rc],h="";
+  if(vprov)h+="<div class=pvw>⚠️ របៀបមើលបណ្តោះអាសន្ន — រាប់តែជួរដែលមានពិន្ទុរួច · មិនមែនលទ្ធផលផ្លូវការ (តារាងសិស្សពូកែ/ត្រូវការជំនួយនៅតែជាលទ្ធផលផ្លូវការ)</div>";
+  var NT=vprov?"«មាននិទ្ទេស» = សិស្សមានពិន្ទុយ៉ាងតិច ១ ជួរ · និទ្ទេស និងមធ្យម % គណនាលើជួរដែលមានពិន្ទុតែប៉ុណ្ណោះ។":"«មាននិទ្ទេស» = សិស្សដែលបានបញ្ចូលពិន្ទុគ្រប់ជួរសកម្ម · អត្រាគណនាលើសិស្សមាននិទ្ទេសតែប៉ុណ្ណោះ។";
   /* ទិដ្ឋភាពទូទៅ */
-  var TT={o:{A:0,B:0,C:0,D:0,E:0,F:0},n:0,d:0,cl:0,bad:0},ov="",nrow=0,trows=[];
+  var TT={o:{A:0,B:0,C:0,D:0,E:0,F:0},n:0,d:0,cl:0,bad:0,ps:0,pn:0},ov="",nrow=0,trows=[],vis=[];
   data.forEach(function(t){
     if(!isAdmin&&t.id!==who.id)return;
-    var cn=(rs.c[t.id]||[]),a=vagg(cn,rp),r=vrt(a.o,a.d);
-    nrow++;TT.n+=a.n;TT.d+=a.d;TT.cl+=cn.length;if(a.inc.length)TT.bad++;for(var g in a.o)TT.o[g]+=a.o[g];
-    if(cn.length)trows.push({l:t.name,o:a.o,n:a.n,d:a.d});
-    ov+="<tr><td class=nm>"+esc(t.name)+"</td><td>"+cn.length+"</td><td>"+a.n+"</td><td"+(a.d<a.n?" style='color:var(--danger)'":"")+">"+a.d+"/"+a.n+"</td><td>"+(r?r.pass.toFixed(1)+"%":"—")+"</td><td>"+(r?r.ac.toFixed(1)+"%":"—")+"</td><td>"+(r?r.f.toFixed(1)+"%":"—")+"</td><td style='font-size:.8rem;text-align:left'>"+(a.inc.length?vmiss(a.inc):a.n?"✓ ពេញ":"—")+"</td></tr>";
+    var cn=(rs.c[t.id]||[]),a=vagg(cn,rp,vprov),r=vrt(a.o,a.d);
+    vis=vis.concat(cn);
+    nrow++;TT.n+=a.n;TT.d+=a.d;TT.cl+=cn.length;TT.ps+=a.ps;TT.pn+=a.pn;if(a.inc.length)TT.bad++;for(var g in a.o)TT.o[g]+=a.o[g];
+    if(cn.length)trows.push(vrow(t.name,a));
+    ov+="<tr><td class=nm>"+esc(t.name)+"</td><td>"+cn.length+"</td><td>"+a.n+"</td><td"+(a.d<a.n?" style='color:var(--danger)'":"")+">"+a.d+"/"+a.n+"</td><td>"+(r?r.pass.toFixed(1)+"%":"—")+"</td><td>"+(r?r.ac.toFixed(1)+"%":"—")+"</td><td>"+(r?r.f.toFixed(1)+"%":"—")+"</td><td>"+vmf(a.m)+"</td><td style='font-size:.8rem;text-align:left'>"+(a.inc.length?vmiss(a.inc):a.n?"✓ ពេញ":"—")+"</td></tr>";
   });
-  if(nrow>1){var rt0=vrt(TT.o,TT.d);ov+="<tr style='font-weight:700'><td class=nm>សរុបសាលា</td><td>"+TT.cl+"</td><td>"+TT.n+"</td><td>"+TT.d+"/"+TT.n+"</td><td>"+(rt0?rt0.pass.toFixed(1)+"%":"—")+"</td><td>"+(rt0?rt0.ac.toFixed(1)+"%":"—")+"</td><td>"+(rt0?rt0.f.toFixed(1)+"%":"—")+"</td><td style='font-size:.8rem;text-align:left'>"+(TT.bad?TT.bad+" គ្រូមិនទាន់ពេញ":"✓ ពេញ")+"</td></tr>"}
-  h+="<div class=card><h3>ទិដ្ឋភាពទូទៅ — "+PN+"</h3><p class=note style='margin:0 0 8px'>«មាននិទ្ទេស» = សិស្សដែលបានបញ្ចូលពិន្ទុគ្រប់ជួរសកម្ម · អត្រាគណនាលើសិស្សមាននិទ្ទេសតែប៉ុណ្ណោះ។</p><div class=wrap><table style='min-width:640px'><thead><tr><th>គ្រូ</th><th>ថ្នាក់</th><th>សិស្ស</th><th>មាននិទ្ទេស</th><th>អត្រាជាប់ (A–E)</th><th>A–C</th><th>ធ្លាក់ (F)</th><th>ខ្វះជួរ (ថ្នាក់៖ ជួរ (នាក់))</th></tr></thead><tbody>"+(ov||"<tr><td colspan=8 class=empty>គ្មានទិន្នន័យ</td></tr>")+"</tbody></table></div></div>";
+  var TA={o:TT.o,n:TT.n,d:TT.d,m:TT.pn?TT.ps/TT.pn:null};
+  if(nrow>1){var rt0=vrt(TT.o,TT.d);ov+="<tr style='font-weight:700'><td class=nm>សរុបសាលា</td><td>"+TT.cl+"</td><td>"+TT.n+"</td><td>"+TT.d+"/"+TT.n+"</td><td>"+(rt0?rt0.pass.toFixed(1)+"%":"—")+"</td><td>"+(rt0?rt0.ac.toFixed(1)+"%":"—")+"</td><td>"+(rt0?rt0.f.toFixed(1)+"%":"—")+"</td><td>"+vmf(TA.m)+"</td><td style='font-size:.8rem;text-align:left'>"+(TT.bad?TT.bad+" គ្រូមិនទាន់ពេញ":"✓ ពេញ")+"</td></tr>"}
+  h+="<div class='card vbig'><h3>ទិដ្ឋភាពទូទៅ — "+PN+"</h3><p class=note style='margin:0 0 8px'>"+NT+"</p><div class=wrap><table style='min-width:700px'><thead><tr><th>គ្រូ</th><th>ថ្នាក់</th><th>សិស្ស</th><th>មាននិទ្ទេស</th><th>អត្រាជាប់ (A–E)</th><th>A–C</th><th>ធ្លាក់ (F)</th><th>មធ្យម %</th><th>ខ្វះជួរ (ថ្នាក់៖ ជួរ (នាក់))</th></tr></thead><tbody>"+(ov||"<tr><td colspan=9 class=empty>គ្មានទិន្នន័យ</td></tr>")+"</tbody></table></div></div>";
+  /* តាមកម្រិតថ្នាក់ */
+  var LV=vlevels(vis,rp,vprov);
+  if(LV.length){
+    var lr="";LV.forEach(function(x){var q=vrt(x.a.o,x.a.d);lr+="<tr><td class=nm>"+x.l+"</td><td>"+x.k+"</td><td>"+x.a.n+"</td><td"+(x.a.d<x.a.n?" style='color:var(--danger)'":"")+">"+x.a.d+"/"+x.a.n+"</td><td>"+(q?q.pass.toFixed(1)+"%":"—")+"</td><td>"+(q?q.ac.toFixed(1)+"%":"—")+"</td><td>"+(q?q.f.toFixed(1)+"%":"—")+"</td><td>"+vmf(x.a.m)+"</td></tr>"});
+    var q0=vrt(TT.o,TT.d);
+    lr+="<tr style='font-weight:700'><td class=nm>សរុបសាលា</td><td>"+TT.cl+"</td><td>"+TT.n+"</td><td>"+TT.d+"/"+TT.n+"</td><td>"+(q0?q0.pass.toFixed(1)+"%":"—")+"</td><td>"+(q0?q0.ac.toFixed(1)+"%":"—")+"</td><td>"+(q0?q0.f.toFixed(1)+"%":"—")+"</td><td>"+vmf(TA.m)+"</td></tr>";
+    h+="<div class='card vbig'><h3>ការវិភាគតាមកម្រិតថ្នាក់ — "+PN+"</h3><div class=wrap><table style='min-width:560px'><thead><tr><th>កម្រិត</th><th>ថ្នាក់</th><th>សិស្ស</th><th>មាននិទ្ទេស</th><th>ជាប់ (A–E)</th><th>A–C</th><th>ធ្លាក់ (F)</th><th>មធ្យម %</th></tr></thead><tbody>"+lr+"</tbody></table></div>"+pcmp(LV.map(function(x){return vrow(x.l,x.a)}).concat([vrow("សរុបសាលា",TA)]))+"</div>";
+  }
   /* ការបែងចែកនិទ្ទេស */
+  var CA=vagg(cl,rp,vprov);
   h+="<div class=card><h3>ការបែងចែកនិទ្ទេសតាមថ្នាក់ — "+esc(teacherOf(rt).name||"")+" ("+PN+")</h3>"+lgd()+
-    (cl.length?cl.map(function(x){return stackBar(x.n,cnt(x,rp),vcov(x,rp))}).join("")+stackBar("សរុប",vagg(cl,rp).o,{n:vagg(cl,rp).n}):"<p class=empty>គ្មានថ្នាក់</p>")+"</div>";
+    (cl.length?cl.map(function(x){return stackBar(x.n,vagg([x],rp,vprov).o,vcov(x,rp,vprov))}).join("")+stackBar("សរុប",CA.o,{n:CA.n}):"<p class=empty>គ្មានថ្នាក់</p>")+"</div>";
   /* ប្រៀបធៀបឆមាស (គ្រូ) */
-  if(cl.length)h+="<div class=card><h3>ប្រៀបធៀបឆមាស — គ្រូ "+esc(teacherOf(rt).name||"")+" (គ្រប់ថ្នាក់)</h3>"+pcmp([[1,"ឆមាសទី១"],[2,"ឆមាសទី២"],[3,"ប្រចាំឆ្នាំ"]].map(function(x){var a=vagg(cl,x[0]);return{l:x[1],o:a.o,n:a.n,d:a.d}}))+"</div>";
+  if(cl.length)h+="<div class=card><h3>ប្រៀបធៀបឆមាស — គ្រូ "+esc(teacherOf(rt).name||"")+" (គ្រប់ថ្នាក់)</h3>"+pcmp([[1,"ឆមាសទី១"],[2,"ឆមាសទី២"],[3,"ប្រចាំឆ្នាំ"]].map(function(x){return vrow(x[1],vagg(cl,x[0],vprov))}))+"</div>";
   /* ប្រៀបធៀបតាមគ្រូ */
-  if(trows.length>1)h+="<div class=card><h3>ប្រៀបធៀបតាមគ្រូ — "+PN+"</h3>"+pcmp(trows.concat([{l:"សរុបសាលា",o:TT.o,n:TT.n,d:TT.d}]))+"</div>";
+  if(trows.length>1)h+="<div class=card><h3>ប្រៀបធៀបតាមគ្រូ — "+PN+"</h3>"+pcmp(trows.concat([vrow("សរុបសាលា",TA)]))+"</div>";
   if(c){
     var rk=ranks(c,rp),list=c.st.map(function(s,i){return{i:i,s:s,r:rk[i],g:gof(s,c,rp),ab:abp(s,rp)}});
     var mxs=rs.mx[parseInt(c.n)]||100;
-    h+="<div class=card><h3>ប្រៀបធៀបឆមាស — ថ្នាក់ «"+esc(c.n)+"»</h3>"+pcmp([[1,"ឆមាសទី១"],[2,"ឆមាសទី២"],[3,"ប្រចាំឆ្នាំ"]].map(function(x){var a=vagg([c],x[0]);return{l:x[1],o:a.o,n:a.n,d:a.d}}))+"</div>";
+    h+="<div class=card><h3>ប្រៀបធៀបឆមាស — ថ្នាក់ «"+esc(c.n)+"»</h3>"+pcmp([[1,"ឆមាសទី១"],[2,"ឆមាសទី២"],[3,"ប្រចាំឆ្នាំ"]].map(function(x){return vrow(x[1],vagg([c],x[0],vprov))}))+"</div>";
     h+="<div class=card><h3>មធ្យមភាគថ្នាក់ «"+esc(c.n)+"» តាមខែ (% នៃពិន្ទុអតិបរមា)</h3>"+(trendSVG(c,rp)||"<p class=empty>គ្មានទិន្នន័យ</p>")+"</div>";
     var top=list.filter(function(x){return x.r!==""}).sort(function(a,b){return a.r-b.r}).slice(0,5);
     h+="<div class=card><h3>សិស្សពូកែ ៥ នាក់ដំបូង — "+esc(c.n)+" ("+PN+")</h3><div class=wrap><table style='min-width:420px'><thead><tr><th>ចំ.ថ្នាក់</th><th>ឈ្មោះ</th><th>ពិន្ទុសរុប</th><th>និទ្ទេស</th></tr></thead><tbody>"+(top.length?top.map(function(x){return"<tr><td>"+x.r+"</td><td class=nm>"+esc(x.s.n)+"</td><td>"+met(x.s,c,rp)+"</td><td>"+gbadge(x.g)+"</td></tr>"}).join(""):"<tr><td colspan=4 class=empty>មិនទាន់មានសិស្សបញ្ចប់ការបញ្ចូលពិន្ទុ</td></tr>")+"</tbody></table></div></div>";
     var risk=list.filter(function(x){return x.g==="F"||x.g==="E"||x.ab[1]>=5});
     h+="<div class=card><h3>សិស្សត្រូវការការជួយជំនួយ — "+esc(c.n)+" ("+PN+")</h3><p class=note style='margin:0 0 8px'>និទ្ទេស E ឬ F ឬអវត្តមានគ្មានច្បាប់ចាប់ពី ៥ ថ្ងៃឡើង។</p><div class=wrap><table style='min-width:480px'><thead><tr><th>ឈ្មោះ</th><th>និទ្ទេស</th><th>ពិន្ទុសរុប</th><th>អវត្តមាន (ច្បាប់/គ្មានច្បាប់)</th></tr></thead><tbody>"+(risk.length?risk.map(function(x){return"<tr><td class=nm>"+esc(x.s.n)+"</td><td>"+gbadge(x.g)+"</td><td>"+(met(x.s,c,rp)===""?"—":met(x.s,c,rp))+"</td><td>"+x.ab[0]+" / <b style='color:"+(x.ab[1]>=5?"var(--danger)":"inherit")+"'>"+x.ab[1]+"</b></td></tr>"}).join(""):"<tr><td colspan=4 class=empty>មិនមានសិស្សត្រូវការការជួយជំនួយ 🎉</td></tr>")+"</tbody></table></div></div>";
   }
-  $("vbody").innerHTML=h;
+  if(h!==vSigB||!$("vbody").firstChild){$("vbody").innerHTML=h;vSigB=h}
 }
 /* បោះពុម្ពក្រាហ្វិក និងវិភាគ (ប្រើមាតិកាដែលបង្ហាញនៅលើអេក្រង់) */
 $("vpr").onclick=function(){
@@ -1384,6 +1433,7 @@ $("vpr").onclick=function(){
 $("vt").onchange=function(){rt=this.value;rc=0;renderV()};
 $("vc").onchange=function(){clsPick(this.value,renderV)};
 $("vp").onchange=function(){rp=+this.value;renderV()};
+$("vpv").onchange=function(){vprov=this.checked;renderV()};
 
 /* ===== ផ្ទាំងទី ៧៖ បញ្ជីសិស្ស និងអវត្តមាន ===== */
 var pv=1,pmo=0;
