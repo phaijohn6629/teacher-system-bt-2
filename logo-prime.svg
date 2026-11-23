@@ -1,8 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Rean Math Prime">
-<polygon points="64,7 113.5,35.5 113.5,92.5 64,121 14.5,92.5 14.5,35.5" fill="#1E3A8A" stroke="#1E3A8A" stroke-width="7" stroke-linejoin="round"/>
-<polygon points="64,15 106.6,39.5 106.6,88.5 64,113 21.4,88.5 21.4,39.5" fill="none" stroke="#D97706" stroke-width="2.4" stroke-linejoin="round"/>
-<g transform="translate(2 0)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="6">
-<path d="M60 47L74 66 88 47" stroke="#D97706"/>
-<path d="M36 79V47H50a8.5 8.5 0 0 1 0 17H36M48 64L60 79V47M88 47V79" stroke="#fff"/>
-</g>
+<svg id="rm-prime-logo" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rean Math Prime">
+  <style>
+    .rm-draw {
+      stroke-dasharray: 900;
+      stroke-dashoffset: 900;
+      animation: rmDrawIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .rm-gold-curve {
+      stroke-dasharray: 520;
+      stroke-dashoffset: 520;
+      animation: rmGoldSweep 1.25s cubic-bezier(0.22, 1, 0.36, 1) 0.18s forwards;
+    }
+    .rm-pi {
+      stroke-dasharray: 320;
+      stroke-dashoffset: 320;
+      animation: rmPiReveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+    }
+    @keyframes rmDrawIn {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    @keyframes rmGoldSweep {
+      0% {
+        stroke-dashoffset: 520;
+      }
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+    @keyframes rmPiReveal {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rm-draw, .rm-gold-curve, .rm-pi {
+        animation: none;
+        stroke-dashoffset: 0;
+      }
+    }
+  </style>
+  <rect width="680" height="340" fill="#1E3A8A"/>
+  <g transform="translate(18,-1)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path class="rm-gold-curve" d="M252 170 C282 225 300 262 345 262 H434" stroke="#D97706" stroke-width="12"/>
+    <g class="rm-draw" stroke="#FFFFFF" stroke-width="12">
+      <path d="M205 262 V80 H262 A45 45 0 0 1 262 170 H205"/>
+      <path d="M350 170 V80 L395 140 L440 80 V262"/>
+    </g>
+    <g class="rm-pi" stroke="#D97706" stroke-width="9">
+      <path d="M356 198 Q388 190 422 198"/>
+      <path d="M375 198 Q373 225 366 244"/>
+      <path d="M406 198 V228 Q406 246 424 244"/>
+    </g>
+  </g>
 </svg>

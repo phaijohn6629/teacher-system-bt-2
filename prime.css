@@ -33,7 +33,7 @@
   header .hdr-acts button{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
   header .hdr-acts .profile-trigger{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.3)}
   .profile-trigger .avatar{background:var(--prime-gold)}
-  .prime-logo{width:42px;height:42px;flex:0 0 auto}
+  .prime-logo{width:84px;height:42px;flex:0 0 auto;object-fit:contain}
   header .brand{gap:12px}
   header .brand-txt{display:flex;flex-direction:column;gap:1px}
   header .brand-name{line-height:1.25;font-size:1rem;letter-spacing:.02em}
@@ -46,7 +46,7 @@
 }
 /* ទំព័រ Login */
 .prime-lg{display:flex;align-items:center;gap:12px;margin:0 0 6px}
-.prime-lg img{width:64px;height:64px;flex:0 0 auto}
+.prime-lg img{width:96px;height:48px;flex:0 0 auto;border-radius:8px}
 .prime-nm{font-family:"Khmer OS Muol Light","Moul",system-ui,sans-serif;font-size:1.15rem;line-height:1.4;color:var(--brand)}
 .login-box h2{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:var(--ink)!important;font-size:1.05rem}
 :root[data-theme="light"] .login-box{box-shadow:0 8px 24px rgba(30,58,138,.12)}
