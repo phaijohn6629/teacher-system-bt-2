@@ -533,13 +533,16 @@ window.loadMathGradeSlides = async function (grade = "G10") {
 
 /* ===== 🎞️ ស្លាយបង្រៀន (Math Teaching Studio) — ផ្ទាំងជ្រើសរើសថ្នាក់ · ជំពូក · មេរៀន ===== */
 (function () {
-  var GR = ["G10", "G11", "G12"], cur = "G10", cache = {}, q = "";
+  var GR = ["G7", "G8", "G9", "G10", "G11", "G12"], cur = "G10", cache = {}, q = "";
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function okUrl(u) { return typeof u === "string" && u.indexOf(MATH_SLIDES_BASE_URL) === 0 && u.indexOf('"') < 0 && u.indexOf("'") < 0; }
   function $(id) { return document.getElementById(id); }
   function cleanTitle(l, ch) {
     var t = String(l.title || l.code || ""), p = String(ch.title || "");
+    var p2 = p.replace(/^ជំពូកទី[^៖]*៖\s*/, ""); // «ជំពូកទី១៖ X» → «X» (G7/G8 topic ចាប់ផ្ដើមដោយឈ្មោះជំពូកគ្មានលេខ)
     if (p && t.indexOf(p) === 0) t = t.slice(p.length).trim();
+    else if (p2 && t.indexOf(p2) === 0) t = t.slice(p2.length).trim();
+    t = t.replace(/^[\s—–\-:៖]+/, "");   // លុបសញ្ញា — ឬ - ដែលនៅសល់ខាងដើម
     return t || String(l.code || "");
   }
   function ensure() {
