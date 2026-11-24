@@ -297,4 +297,44 @@ var gA=PEXAM.grade(sA);ok7(gA.aw===2&&gA.awS===450,"grade carries aw/awS");
 ok7(PEXAM.grade(PEXAM.start(9,3,{now:T7}).st.sec===0?(function(){var z=PEXAM.start(9,3,{now:T7}).st;for(var k=0;k<6;k++)PEXAM.submitSec(z,k,T7+1);return z})():null).aw===0,"aw defaults 0");
 PEXAM.cancel(9,3,"AW");PEXAM.cancel(9,3,"");
 
+/* ===== ថ្នាក់ទី ១២ ===== */
+localStorage=Store(5e6);load("lsguard.js");
+var G12=PX_.GR[12].G,n12=0,w12=0,big12=0;
+function ok12(c,m){if(!c)B("G12 "+m)}
+Object.keys(G12).forEach(function(l){for(var r=0;r<20;r++){
+  var P;try{P=PEXAM.build(12,+l)}catch(e){B("G12 BUILD l"+l+" "+e);break}n12++;
+  if(P.secs.length!==6||PEXAM.total(P)!==24||P.g!==12){B("G12 SHAPE l"+l);continue}
+  var s0=PEXAM.pack(P),R=PEXAM.unpack(s0);if(!R||PEXAM.pack(R)!==s0){B("G12 ROUNDTRIP l"+l);continue}
+  var seen={};
+  R.secs.forEach(function(S){if(S.qs.length!==4)B("G12 NQ l"+l+" v"+S.v);S.qs.forEach(function(q){
+    if(seen[q.q])B("G12 DUPQ l"+l);seen[q.q]=1;
+    if(/undefined|NaN|\[object/.test(q.q+JSON.stringify(q.a)+q.s))B("G12 BADVAL l"+l+" v"+S.v+" "+q.kd);
+    if(!bal(q.q)||!bal(q.s))B("G12 BAL l"+l+" v"+S.v+" "+q.kd);
+    q.a.forEach(function(a){var c=PX_.check(a.v,a.v,a.k);if(!c.ok)B("G12 CHK l"+l+" v"+S.v+" "+q.kd+" "+a.v)});
+    if(q.fig&&window.FIG){var h=FIG.svg(q.fig);if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("G12 FIG l"+l+" "+q.kd)}
+  })});
+  var x=PEXAM.start(12,+l,{now:T0,sc:"Z"});if(!x.saved)B("G12 not saved l"+l);
+  var len=(localStorage.getItem("pex_12_"+l+"_Z")||"").length;w12=Math.max(w12,len);
+  x.st.P.secs.forEach(function(S){S.qs.forEach(function(q){if(q.fig.length>PEXAM.FIGMAX)big12++})});
+  var L=PEXAM.load(12,+l,"Z",T0+1000);if(!L||JSON.stringify(L)!==JSON.stringify(x.st))B("G12 refresh l"+l);
+  PEXAM.cancel(12,+l,"Z")}});
+ok12(w12<250000,"worst saved "+w12);
+var t12=mk(12,22,{now:T0});
+ok12([480,720,960,1200,1440,1440].every(function(v,i){return PEXAM.limit(t12,i)===v}),"limits g12");
+ok12(PEXAM.totalLimit(t12)===104*60,"total 104 min "+PEXAM.totalLimit(t12));
+var E12={on:true,g:12,l:22,t:T7+1e6,p:75},g12=PEXAM.gate({ex:E12},T7);
+ok12(g12.ok&&g12.g===12&&g12.l===22&&Math.abs(g12.pp-.75)<1e-9,"gate g12");
+ok12(PEXAM.gate({ex:{on:true,g:12}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:11,l:3}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:9,l:3}},T7).g===9,"gate cfg g12");
+ok12(PEXAM.gate({ex:E12},T7+1e6).why==="expired"&&PEXAM.gate({ex:E12},T7+2e6,true).ok,"gate g12 expiry/resume");
+/* keys ដាច់ពីថ្នាក់ទី ៩ */
+PEXAM.start(9,3,{now:T0,sc:"K"});PEXAM.start(12,22,{now:T0,sc:"K"});
+ok12(localStorage.getItem("pex_9_3_K")&&localStorage.getItem("pex_12_22_K")&&PEXAM.key(12,22)==="pex_12_22","separate keys");
+PEXAM.cancel(9,3,"K");PEXAM.cancel(12,22,"K");
+/* លទ្ធផល/វិញ្ញាបនបត្រ បង្ហាញ «ថ្នាក់ទី១២» */
+var z12=PEXAM.start(12,22,{now:T7,sc:"C",cls:"12NGS-B",who:{k:"S1",n:"សិស្ស ក"}}).st;for(var k12=0;k12<6;k12++)PEXAM.submitSec(z12,k12,T7+1);
+var rec12=PEXAM.mkRec(z12,PEXAM.grade(z12),T7+2),h12="";try{h12=PEXAM.cert.html(rec12)}catch(e){B("G12 cert threw "+e)}
+ok12(rec12.g===12&&h12.indexOf("ថ្នាក់ទី១២")>=0,"cert shows ថ្នាក់ទី១២");
+PEXAM.cancel(12,22,"C");
+print("pexam g12: builds "+n12+" worst "+w12+"B bigFig "+big12);
+
 print("pexam: made "+made+" figs "+figs+" maxbytes "+maxB+" bad "+bad);

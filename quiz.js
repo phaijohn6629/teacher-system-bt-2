@@ -941,14 +941,15 @@ function renderPrac(){
 }
 /* 🏁 ប្រឡង ៦ កម្រិត (ថ្នាក់ទី ៩ · practice.html#c=កូដ) · pcls.ex = {on,g,l,t,p,ext:[{k,n,h}]} · ប្រើ updateDoc (dotted path) មិនប៉ះវាល pcls ផ្សេង
    h = SHA-256(កូដ|លេខសម្គាល់|លេខសម្ងាត់) · លេខសម្ងាត់បង្ហាញម្តងគត់ · ទ្វារទន់ (មើល pexam.js gate/enter) */
+function pcExG(p){var g=parseInt(p&&p.g)||parseInt(p&&p.cls)||0;return g===12?12:9}
 function pcExOf(p){return p&&p.ex&&typeof p.ex==="object"?p.ex:{}}
 function pcLocalDt(ms){if(typeof ms!=="number"||!isFinite(ms))return"";var d=new Date(ms),z=function(n){return("0"+n).slice(-2)};return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+"T"+z(d.getHours())+":"+z(d.getMinutes())}
 function pcExHtml(p,g){
-  if(g!==9)return"";
-  var e=pcExOf(p),C=window.CUR&&window.CUR[9],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],ext=Array.isArray(e.ext)?e.ext:[];
+  if(g!==9&&g!==12)return"";
+  var e=pcExOf(p),C=window.CUR&&window.CUR[g],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],ext=Array.isArray(e.ext)?e.ext:[];
   var on=e.on===true,exp=typeof e.t==="number"&&Date.now()>=e.t;
   return"<div class='card pc-link pc-ex'><div class=pc-lr><b>🏁 ប្រឡង ៦ កម្រិត (កម្រិត ១–៥ + PISA)</b> <span class='pc-st"+(on&&!exp?" on":"")+"'>"+(on?(exp?"⌛ ផុតម៉ោងកំណត់":"✅ កំពុងបើក"):"⏸️ បានបិទ")+"</span></div>"+
-    "<div class=bar style='margin:6px 0'><label>មេរៀន៖ <select id=pxL>"+L.map(function(n){return"<option value="+n+(+e.l===+n?" selected":"")+">"+esc(lsName(9,n))+"</option>"}).join("")+"</select></label>"+
+    "<div class=bar style='margin:6px 0'><label>មេរៀន៖ <select id=pxL>"+L.map(function(n){return"<option value="+n+(+e.l===+n?" selected":"")+">"+esc(lsName(g,n))+"</option>"}).join("")+"</select></label>"+
     "<label>ម៉ោងបិទ៖ <input type=datetime-local id=pxT value='"+esc(pcLocalDt(e.t))+"'></label>"+
     "<label>ពិន្ទុជាប់ ≥ <input type=number id=pxP min=50 max=100 step=1 value="+(+e.p>=50&&+e.p<=100?+e.p:80)+" style='width:5em'> %</label></div>"+
     "<div class=bar style='margin:6px 0'><button type=button data-qa=pcxtg>"+(on?"⏸️ បិទប្រឡង":"▶️ បើកប្រឡង")+"</button><button type=button data-qa=pcxsv>💾 រក្សាទុកការកំណត់</button></div>"+
@@ -977,12 +978,12 @@ function pcExDel(i){
 }
 function pcExAct(a,p){
   var e=pcExOf(p),f=pcExForm();
-  if(a==="pcxsv"){if(!(f.l>0)){alert("សូមជ្រើសមេរៀន");return}pcExSave(p,{g:9,l:f.l,t:f.t,p:f.p},"បានរក្សាទុកការកំណត់ប្រឡង");return}
+  if(a==="pcxsv"){if(!(f.l>0)){alert("សូមជ្រើសមេរៀន");return}pcExSave(p,{g:pcExG(p),l:f.l,t:f.t,p:f.p},"បានរក្សាទុកការកំណត់ប្រឡង");return}
   if(a==="pcxtg"){
     var on=e.on!==true;if(on&&!(f.l>0)){alert("សូមជ្រើសមេរៀន");return}
     if(on&&f.t!=null&&f.t<=Date.now()){alert("ម៉ោងបិទបានកន្លងហើយ · សូមកំណត់ម៉ោងបិទថ្មី ឬសម្អាតវាល");return}
     if(on&&!p.open){alert("តំណថ្នាក់កំពុងបិទ · សូមបើកតំណថ្នាក់ជាមុនសិន (▶️ បើកតំណវិញ)");return}
-    pcExSave(p,{g:9,l:f.l,t:f.t,p:f.p,on:on},on?"បានបើកប្រឡង":"បានបិទប្រឡង");return}
+    pcExSave(p,{g:pcExG(p),l:f.l,t:f.t,p:f.p,on:on},on?"បានបើកប្រឡង":"បានបិទប្រឡង");return}
   if(a==="pcxadd"){
     var nm=(($("pxN")||{}).value||"").trim().slice(0,60);if(!nm){alert("សូមវាយឈ្មោះសិស្ស");return}
     var ext=(Array.isArray(e.ext)?e.ext:[]).slice();if(ext.length>=60){alert("ច្រើនពេក (អតិបរមា ៦០)");return}
