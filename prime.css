@@ -77,19 +77,15 @@
 }
 @media print{.wb-ang{display:none!important}}
 
-/* Hero Banner — ចលនារស្មីថ្ងៃរះលើកំពូលប្រាសាទ (transform + opacity ប៉ុណ្ណោះ · វដ្ត ១១ វិនាទី) */
+/* Hero Banner — ពន្លឺសមរាត្រីលើកំពូលប៉មកណ្តាល (ពន្លឺនៅក្នុង SVG ដូច្នេះចំកណ្តាលប៉មជានិច្ច · opacity + transform តិចតួច · ១១ វិនាទី) */
 @media screen{
-  .welcome-banner{isolation:isolate}
-  .welcome-banner::after{display:block;content:"";position:absolute;right:12%;bottom:0;left:auto;top:auto;width:340px;max-width:70%;height:100%;border-radius:0;pointer-events:none;z-index:-1;
-    background:radial-gradient(ellipse 50% 70% at 50% 18%,rgba(255,226,150,.95) 0%,rgba(255,200,100,.55) 28%,rgba(255,200,100,0) 70%);
-    transform-origin:50% 100%;opacity:0;will-change:transform,opacity;
-    animation:wbSunrise 11s ease-in-out infinite}
-  @media (max-width:700px){.welcome-banner::after{right:4%;width:240px}}
+  .welcome-banner>.wb-ang{overflow:visible}
+  .wb-ang .wb-sun{transform-box:fill-box;transform-origin:50% 50%;opacity:0;will-change:transform,opacity;animation:wbSunrise 11s ease-in-out infinite}
 }
 @keyframes wbSunrise{
-  0%{opacity:0;transform:translateY(34%) scale(.7)}
-  42%{opacity:1;transform:translateY(0) scale(1)}
-  58%{opacity:1;transform:translateY(0) scale(1.04)}
-  100%{opacity:0;transform:translateY(34%) scale(.7)}
+  0%{opacity:0;transform:scale(.9)}
+  45%{opacity:1;transform:scale(1)}
+  60%{opacity:1;transform:scale(1.03)}
+  100%{opacity:0;transform:scale(.9)}
 }
-@media (prefers-reduced-motion:reduce){.welcome-banner::after{animation:none!important;opacity:.55;transform:none;will-change:auto}}
+@media (prefers-reduced-motion:reduce){.wb-ang .wb-sun{animation:none!important;opacity:.55;transform:none;will-change:auto}}
