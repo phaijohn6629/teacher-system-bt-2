@@ -471,6 +471,14 @@
 - Open points (resolved as above) about ch. 4: confirm whether «O» should really count as extra hours, whether «សមាជិក» should share the ប្រធានក្រុម column/cap, and who adds `YHOL` holidays each year (none of these were changed in code).
 - Pending items to confirm with the user: Admin password-reset procedure; whether to link the book from the app (would need `sw.js`/CSP/`?v=` review); the «របៀបប្រើសៀវភៅ» page 3 holds only the print tip (cosmetic).
 
+### ✅ ប្រវត្តិការងារ - Rean Math Prime & សៀវភៅណែនាំ កំណែ ១.០ (កត់ត្រា 2026-11-24 · គ្មានការកែកូដ · មិនប៉ះ `sw.js`/`?v=`)
+- សមិទ្ធផល៖ រៀបចំប្រព័ន្ធ Rean Math Prime (p0–p21) និងសៀវភៅណែនាំ ១២៤ ទំព័រ (A4, ក្របមុខ-ក្រោយ, លេខទំព័រខ្មែរឆ្លាស់ឆ្វេង-ស្តាំជាវង់ផុសអណ្តែត, SVG ស្អាត, ទាញយក PDF បាន)។
+- ចំណុចកែលម្អបន្ត (កំណែ ១.១)៖
+  1. ចែករំលែកការត្រួតពិនិត្យតាមតួនាទី និងប្រមូលមតិពីក្រុម Telegram ជំនួសការធ្វើតែម្នាក់ឯង។
+  2. រក្សាស្តង់ដារបោះពុម្ព (A4, Scale 100%, បិទ Headers/footers, Chrome ≥ 131) ជាឯកភាព។
+  3. រំលឹកទម្លាប់ទាញ PDF ភ្លាមក្រោយកែមុខងារ local និងធ្វើ Backup ទៀងទាត់។
+  4. ធ្វើបច្ចុប្បន្នភាព PDF តាមកំណែធំ/ឆមាស ជំនួសការកែញឹកញាប់។
+
 ## Status
 - ✅ **All planned code tasks are completed.** No code work is pending.
 - Optional future work: starter hub content for grades 11, 10, 8, 7 and Cambridge (planned next, one grade at a time) (currently generic tips); give grades 7, 8, 10, 11 and 12 their own Level 2/Level 4 forms (key 5/6, currently back-filled) and 6–10 forms per level like grade 9; richer PISA for those grades (`P4`/`pisa12.js`); add forms to the Cambridge (English) grades.
