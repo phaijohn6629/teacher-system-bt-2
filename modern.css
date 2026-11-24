@@ -526,9 +526,9 @@ html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!
 /* ផ្ទៃខាងក្រោយក្បាលទំព័រ៖ ពន្លឺព្រលិច + សិស្សអង្គុយជួរជាមួយ Laptop (កណ្ដាល ព្រិលចុងទាំងសងខាង · តុបតែងប៉ុណ្ណោះ) */
 header .hdr-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
 header .hdr-bg svg { width: 100%; height: 100%; display: block; }
-header .hb-kid { fill: #fcd34d; opacity: .6; }
+header .hb-kh { stroke: #fcd34d; opacity: .55; }
 header > .brand, header > .hdr-acts { position: relative; z-index: 1; }
 :root[data-theme="light"] header .hdr-bg { opacity: .85; }
-:root[data-theme="light"] header .hb-kid { fill: #b45309; opacity: .45; }
-@media (max-width: 700px) { header .hdr-bg { opacity: .7; } header .hb-kid { opacity: .4; } }
+:root[data-theme="light"] header .hb-kh { stroke: #b45309; opacity: .4; }
+@media (max-width: 700px) { header .hdr-bg { opacity: .7; } header .hb-kh { opacity: .35; } }
 @media print { header .hdr-bg { display: none !important; } }
