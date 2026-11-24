@@ -41,7 +41,24 @@ function headSrc(cb){
   if(faceKey===ph&&face)return cb(face);
   cartoonize(ph,function(u){face=u;faceKey=ph;cb(u)});
 }
+/* Cartoon របស់ Admin (ផៃ ចន)៖ inline SVG គ្រូគណិតវិទ្យា — មិនយករូបពី profile */
+function adminSvg(){
+  return"<svg viewBox='0 0 60 100' class='wk-svg wk-adm' role=img aria-hidden=true>"+
+   "<g class=wk-legL><path d='M26 70 L24 90' /><path d='M24 91 L18 93' class=wk-shoe /></g><g class=wk-legR><path d='M34 70 L36 90' /><path d='M36 91 L42 93' class=wk-shoe /></g>"+
+   "<g class=wk-armL><path d='M18 50 L10 66' /><rect x=2 y=60 width=11 height=8 rx=1.2 fill='#fef3c7' stroke='#1f2937' stroke-width=1 /><path d='M7.5 60 L7.5 68' stroke='#b45309' stroke-width=1 /><circle cx=10 cy=67 r=3.2 class=wk-hand /></g><g class=wk-armR><path d='M42 50 L50 66' /><path d='M50 67 L58.5 47' class=wk-ptr /><circle cx=58.5 cy=47 r=3.6 fill='#ef4444' stroke='#7f1d1d' stroke-width=1 /><circle cx=57.6 cy=46 r=1 fill='#fff' opacity=.7 /><circle cx=50 cy=67 r=3.2 class=wk-hand /></g>"+
+   "<rect x=17 y=43 width=26 height=30 rx=9 fill='#2563eb' stroke='#1f2937' stroke-width=1.2 />"+
+   "<path d='M30 44 L26 50 L30 54 L34 50 Z' fill='#fff' /><path d='M30 54 L28 66 L30 69 L32 66 Z' fill='#f59e0b' />"+
+   "<text x=30 y=63 text-anchor=middle font-size=7 font-weight=700 fill='#fff' opacity=.0>π</text>"+
+   "<rect x=26 y=36 width=8 height=9 rx=3 fill='#f5c9a0' />"+
+   "<circle cx=30 cy=24 r=19 fill='#fbd5b0' stroke='#1f2937' stroke-width=1.5 />"+
+   "<path d='M11 22 C11 6 22 2 31 2 C41 2 49 8 49 22 C45 14 38 11 30 11 C22 11 15 14 11 22 Z' fill='#1f2937' />"+
+   "<g class=wk-eyes fill=none stroke='#1f2937' stroke-width=1.4><circle cx=23 cy=25 r=5 fill='#fff' /><circle cx=37 cy=25 r=5 fill='#fff' /><path d='M28 25 L32 25' /></g>"+
+   "<circle cx=23.5 cy=25.5 r=1.8 fill='#1f2937' /><circle cx=36.5 cy=25.5 r=1.8 fill='#1f2937' />"+
+   "<path d='M24 34 Q30 39 36 34' fill=none stroke='#9a3412' stroke-width=1.6 stroke-linecap=round />"+
+   "<circle cx=17 cy=31 r=2.6 fill='#f9a8a8' opacity=.55 /><circle cx=43 cy=31 r=2.6 fill='#f9a8a8' opacity=.55 /></svg>";
+}
 function svg(img){
+  if(window.who&&who.role==="admin")return adminSvg();
   var ini=esc(Array.from(String((window.who&&who.name)||"?").trim())[0]||"?");
   return"<svg viewBox='0 0 60 100' class=wk-svg><defs><clipPath id=wkClip><circle cx=30 cy=24 r=20 /></clipPath>"+
    "<linearGradient id=wkShirt x1=0 y1=0 x2=1 y2=1><stop offset=0 stop-color='#6366f1'/><stop offset=1 stop-color='#ec4899'/></linearGradient></defs>"+
@@ -61,7 +78,7 @@ function mount(){
   el.onclick=function(){var bell=document.getElementById("ntBell");if(bell)bell.click()};
   b.appendChild(el);b.classList.add("has-wk");return el;
 }
-function paint(){if(!el)return;headSrc(function(u){el.querySelector(".wk-body").innerHTML=svg(u)})}
+function paint(){if(!el)return;if(window.who&&who.role==="admin"){el.querySelector(".wk-body").innerHTML=adminSvg();return}headSrc(function(u){el.querySelector(".wk-body").innerHTML=svg(u)})}
 function lane(){var b=el.parentNode;return Math.max(0,b.clientWidth-el.offsetWidth-8)}
 function step(t){
   raf=requestAnimationFrame(step);
