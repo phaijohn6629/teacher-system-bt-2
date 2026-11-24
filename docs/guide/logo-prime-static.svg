@@ -1,0 +1,24 @@
+<svg id="rm-prime-logo" viewBox="165 20 335 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rean Math Prime">
+  <style>.rm-draw,.rm-gold-curve,.rm-pi{stroke-dasharray:none!important;stroke-dashoffset:0!important;animation:none!important;opacity:1!important}</style>
+  <defs>
+    <radialGradient id="rm-glow-g" cx="341" cy="171" r="150" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D97706" stop-opacity="0.30"/>
+      <stop offset="0.55" stop-color="#D97706" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#D97706" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="680" height="340" fill="#1E3A8A"/>
+  <circle class="rm-glow" cx="341" cy="171" r="150" fill="url(#rm-glow-g)"/>
+  <g transform="translate(18,-1)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path class="rm-gold-curve" d="M252 170 C282 225 300 262 345 262 H434" stroke="#D97706" stroke-width="12"/>
+    <g class="rm-draw" stroke="#FFFFFF" stroke-width="12">
+      <path d="M205 262 V80 H262 A45 45 0 0 1 262 170 H205"/>
+      <path d="M350 170 V80 L395 140 L440 80 V262"/>
+    </g>
+    <g class="rm-pi" stroke="#D97706" stroke-width="9">
+      <path d="M356 198 Q388 190 422 198"/>
+      <path d="M375 198 Q373 225 366 244"/>
+      <path d="M406 198 V228 Q406 246 424 244"/>
+    </g>
+  </g>
+</svg>

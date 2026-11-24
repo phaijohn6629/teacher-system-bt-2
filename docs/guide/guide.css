@@ -50,10 +50,19 @@ figcaption{font-size:.9em;color:var(--mute);margin-top:4px}
 .toc ol{padding-left:1.4em}
 .qr1{columns:2;column-gap:24px}.qr1 h4{margin:.6em 0 .2em;break-after:avoid}
 @media (max-width:640px){body{font-size:16px}.page{padding:16px}.qr1{columns:1}}
-@page{size:A4;margin:16mm 14mm 18mm;@bottom-right{content:counter(page,khmer);font-family:"Khmer OS Muol Light","Moul",serif;font-size:8.5pt}}
-@page:left{@bottom-right{content:none}@bottom-left{content:counter(page,khmer);font-family:"Khmer OS Muol Light","Moul",serif;font-size:8.5pt}}
+@page{size:A4;margin:16mm 14mm 20mm}
+/* បាតទំព័រ៖ សៀវភៅសងខាង (សេស = លេខស្ដាំ · គូ = លេខឆ្វេង) */
+@page:right{
+ @bottom-right{content:counter(page,khmer);font-family:"Khmer OS Battambang","Battambang",serif;font-size:10pt;font-weight:700;color:#1e3a8a;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top}
+ @bottom-center{content:"";border-top:.4pt solid #9aa7c4}
+ @bottom-left{content:"Rean Math Prime · សៀវភៅណែនាំ";font-family:"Khmer OS Battambang","Battambang",serif;font-size:8pt;color:#5b6678;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top;white-space:nowrap}}
+@page:left{
+ @bottom-left{content:counter(page,khmer);font-family:"Khmer OS Battambang","Battambang",serif;font-size:10pt;font-weight:700;color:#1e3a8a;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top}
+ @bottom-center{content:"";border-top:.4pt solid #9aa7c4}
+ @bottom-right{content:"Rean Math Prime · សៀវភៅណែនាំ";font-family:"Khmer OS Battambang","Battambang",serif;font-size:8pt;color:#5b6678;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top;white-space:nowrap}}
+@page:first{@bottom-left{content:none;border:0;padding:0}@bottom-center{content:none;border:0}@bottom-right{content:none;border:0;padding:0}}
 @media print{
- body{background:#fff;font-size:11pt;line-height:1.8;color:#000}.book{max-width:none;padding:0}
+ body{background:#fff;font-size:10.4pt;line-height:1.7;color:#000}.book{max-width:none;padding:0}
  .page{border:0;border-radius:0;padding:0;margin:0;break-after:page}.page:last-child{break-after:auto}
  .noprint{display:none!important}a{color:#000;text-decoration:none}
  tr,figure,.box{break-inside:avoid}thead{display:table-header-group}
@@ -74,4 +83,18 @@ figcaption{font-size:.9em;color:var(--mute);margin-top:4px}
  #gtools{display:none!important}
  :root[data-theme="dark"],:root{color-scheme:light;--bg:#f6f8fb;--paper:#fff;--ink:#1c2433;--mute:#5b6678;--line:#d8dfeb;--brand:#1e3a8a;--soft:#e8eefb;--tip:#e8f6ee;--warn:#fff4e0;--bad:#fdecec;--role:#f1ebfb}
  body{background:#fff!important;color:#000!important}
+}
+/* បោះពុម្ព៖ fit A4 · កុំឱ្យដាច់កែម */
+@media print{
+ html,body{width:auto;margin:0;padding:0}
+ .book{width:auto;max-width:100%;margin:0;padding:0;box-sizing:border-box}
+ .page{box-sizing:border-box;max-width:100%;overflow:visible}
+ .page *{max-width:100%;box-sizing:border-box;overflow-wrap:anywhere}
+ table{width:100%;max-width:100%;table-layout:auto}
+ th,td{overflow-wrap:anywhere}
+ svg,figure svg{max-width:100%!important;height:auto}
+ .cover img{width:34mm;height:auto;max-width:none}
+ p,li{orphans:3;widows:3}
+ h1,h2,h3,h4{break-after:avoid}
+ .note-box,.box,figure,tr{break-inside:avoid}
 }
