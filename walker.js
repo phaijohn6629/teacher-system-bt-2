@@ -47,11 +47,11 @@ function adminSvg(){
    "<g class=wk-legL><path d='M26 70 L24 90' /><path d='M24 91 L18 93' class=wk-shoe /></g><g class=wk-legR><path d='M34 70 L36 90' /><path d='M36 91 L42 93' class=wk-shoe /></g>"+
    "<g class=wk-armL><path d='M18 50 L10 66' /><rect x=2 y=60 width=11 height=8 rx=1.2 fill='#fef3c7' stroke='#1f2937' stroke-width=1 /><path d='M7.5 60 L7.5 68' stroke='#b45309' stroke-width=1 /><circle cx=10 cy=67 r=3.2 class=wk-hand /></g><g class=wk-armR><path d='M42 50 L50 66' /><path d='M50 67 L58.5 47' class=wk-ptr /><circle cx=58.5 cy=47 r=3.6 fill='#ef4444' stroke='#7f1d1d' stroke-width=1 /><circle cx=57.6 cy=46 r=1 fill='#fff' opacity=.7 /><circle cx=50 cy=67 r=3.2 class=wk-hand /></g>"+
    "<rect x=17 y=43 width=26 height=30 rx=9 fill='#2563eb' stroke='#1f2937' stroke-width=1.2 />"+
-   "<path d='M30 44 L26 50 L30 54 L34 50 Z' fill='#fff' /><path d='M30 54 L28 66 L30 69 L32 66 Z' fill='#f59e0b' />"+
+   "<path d='M23.5 43.5 Q30 52 36.5 43.5 Z' fill='#f5c9a0' /><path d='M22.5 43.5 Q30 53 37.5 43.5' fill=none stroke='#1e3a8a' stroke-width=2.2 stroke-linecap=round />"+
    "<text x=30 y=63 text-anchor=middle font-size=7 font-weight=700 fill='#fff' opacity=.0>π</text>"+
    "<rect x=26 y=36 width=8 height=9 rx=3 fill='#f5c9a0' />"+
    "<circle cx=30 cy=24 r=19 fill='#fbd5b0' stroke='#1f2937' stroke-width=1.5 />"+
-   "<path d='M11 22 C11 6 22 2 31 2 C41 2 49 8 49 22 C45 14 38 11 30 11 C22 11 15 14 11 22 Z' fill='#1f2937' />"+
+   "<g class=wk-hair fill='#1f2937'><circle cx=13.5 cy=18 r=5.5 /><circle cx=16 cy=11 r=6.5 /><circle cx=23 cy=6.5 r=7 /><circle cx=31 cy=5 r=7.5 /><circle cx=39 cy=6.5 r=7 /><circle cx=44.5 cy=11.5 r=6.5 /><circle cx=46.5 cy=18 r=5.5 /><circle cx=21 cy=13.5 r=4.2 /><circle cx=29 cy=12.5 r=4.2 /><circle cx=37 cy=13.5 r=4.2 /></g><path d='M18 9 q3 -3 6 0 M27 6 q3 -3 6 0 M36 8 q3 -3 6 0 M22 14 q2.5 2 5 0 M31 14 q2.5 2 5 0' fill=none stroke='#475569' stroke-width=1 stroke-linecap=round />"+
    "<g class=wk-eyes fill=none stroke='#1f2937' stroke-width=1.4><circle cx=23 cy=25 r=5 fill='#fff' /><circle cx=37 cy=25 r=5 fill='#fff' /><path d='M28 25 L32 25' /></g>"+
    "<circle cx=23.5 cy=25.5 r=1.8 fill='#1f2937' /><circle cx=36.5 cy=25.5 r=1.8 fill='#1f2937' />"+
    "<path d='M24 34 Q30 39 36 34' fill=none stroke='#9a3412' stroke-width=1.6 stroke-linecap=round />"+
