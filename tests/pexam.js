@@ -269,7 +269,7 @@ function ok7(c,m){if(!c)B("S7 "+m)}
 var T7=1.8e12,E9={on:true,g:9,l:3,t:T7+1e6,p:75,ext:[{k:"X01",n:"ក",h:"ab"}]};
 var g1=PEXAM.gate({ex:E9},T7);ok7(g1.ok&&g1.g===9&&g1.l===3&&g1.dl===T7+1e6&&Math.abs(g1.pp-.75)<1e-9&&g1.ext.length===1,"gate ok");
 ok7(!PEXAM.gate(null,T7).ok&&PEXAM.gate({},T7).why==="off"&&PEXAM.gate({ex:{on:false,g:9,l:3}},T7).why==="off"&&PEXAM.gate({ex:{on:"true",g:9,l:3}},T7).why==="off","gate off");
-ok7(PEXAM.gate({ex:{on:true,g:10,l:3}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:9}},T7).why==="cfg","gate cfg");
+ok7(PEXAM.gate({ex:{on:true,g:13,l:3}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:9}},T7).why==="cfg","gate cfg");
 ok7(PEXAM.gate({ex:E9},T7+1e6).why==="expired"&&PEXAM.gate({ex:E9},T7+1e6-1).ok,"gate expiry boundary");
 ok7(PEXAM.gate({ex:E9},T7+2e6,true).ok,"gate expired but saved state → resume allowed");
 ok7(PEXAM.gate({ex:{on:true,g:9,l:3,t:null}},T7*2).ok&&PEXAM.gate({ex:{on:true,g:9,l:3}},T7).dl===null,"no deadline = open");
@@ -324,7 +324,7 @@ ok12([480,720,960,1200,1440,1440].every(function(v,i){return PEXAM.limit(t12,i)=
 ok12(PEXAM.totalLimit(t12)===104*60,"total 104 min "+PEXAM.totalLimit(t12));
 var E12={on:true,g:12,l:22,t:T7+1e6,p:75},g12=PEXAM.gate({ex:E12},T7);
 ok12(g12.ok&&g12.g===12&&g12.l===22&&Math.abs(g12.pp-.75)<1e-9,"gate g12");
-ok12(PEXAM.gate({ex:{on:true,g:12}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:11,l:3}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:9,l:3}},T7).g===9,"gate cfg g12");
+ok12(PEXAM.gate({ex:{on:true,g:12}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:6,l:3}},T7).why==="cfg"&&PEXAM.gate({ex:{on:true,g:9,l:3}},T7).g===9,"gate cfg g12");
 ok12(PEXAM.gate({ex:E12},T7+1e6).why==="expired"&&PEXAM.gate({ex:E12},T7+2e6,true).ok,"gate g12 expiry/resume");
 /* keys ដាច់ពីថ្នាក់ទី ៩ */
 PEXAM.start(9,3,{now:T0,sc:"K"});PEXAM.start(12,22,{now:T0,sc:"K"});
@@ -336,5 +336,44 @@ var rec12=PEXAM.mkRec(z12,PEXAM.grade(z12),T7+2),h12="";try{h12=PEXAM.cert.html(
 ok12(rec12.g===12&&h12.indexOf("ថ្នាក់ទី១២")>=0,"cert shows ថ្នាក់ទី១២");
 PEXAM.cancel(12,22,"C");
 print("pexam g12: builds "+n12+" worst "+w12+"B bigFig "+big12);
+
+/* ===== ថ្នាក់ទី ៧ · ៨ · ១០ · ១១ ===== */
+localStorage=Store(5e6);load("lsguard.js");
+var NOP=eval("("+/var PEX_NOPISA=(\{[^;]*\});/.exec(read("quiz.js"))[1]+")");
+[7,8,10,11].forEach(function(g){
+  var GG=PX_.GR[g].G,n=0,w=0,big=0,kh="ថ្នាក់ទី"+["០","១","២","៣","៤","៥","៦","៧","៨","៩"][Math.floor(g/10)%10]+["០","១","២","៣","៤","៥","៦","៧","៨","៩"][g%10];
+  if(g<10)kh="ថ្នាក់ទី"+["០","១","២","៣","៤","៥","៦","៧","៨","៩"][g];
+  function okg(c,m){if(!c)B("G"+g+" "+m)}
+  Object.keys(GG).forEach(function(l){var np=!GG[l][4];if(np!==(NOP[g]||[]).indexOf(+l)>=0)B("G"+g+" NOPISA list mismatch l"+l);if(np){try{PEXAM.build(g,+l);B("G"+g+" l"+l+" built without PISA")}catch(e){}return}for(var r=0;r<20;r++){
+    var P;try{P=PEXAM.build(g,+l)}catch(e){B("G"+g+" BUILD l"+l+" "+e);break}n++;
+    if(P.secs.length!==6||PEXAM.total(P)!==24||P.g!==g){B("G"+g+" SHAPE l"+l);continue}
+    var s0=PEXAM.pack(P),R=PEXAM.unpack(s0);if(!R||PEXAM.pack(R)!==s0){B("G"+g+" ROUNDTRIP l"+l);continue}
+    var seen={};
+    R.secs.forEach(function(S){if(S.qs.length!==4)B("G"+g+" NQ l"+l);S.qs.forEach(function(q){
+      if(seen[q.q])B("G"+g+" DUPQ l"+l);seen[q.q]=1;
+      if(/undefined|NaN|\[object/.test(q.q+JSON.stringify(q.a)+q.s))B("G"+g+" BADVAL l"+l+" v"+S.v+" "+q.kd);
+      if(!bal(q.q)||!bal(q.s))B("G"+g+" BAL l"+l+" v"+S.v+" "+q.kd);
+      q.a.forEach(function(a){var c=PX_.check(a.v,a.v,a.k);if(!c.ok)B("G"+g+" CHK l"+l+" v"+S.v+" "+q.kd+" "+a.v)});
+      if(q.fig&&window.FIG){var h=FIG.svg(q.fig);if(h.indexOf("<svg")<0||h.indexOf("fig-err")>=0||/NaN|undefined|Infinity/.test(h))B("G"+g+" FIG l"+l+" "+q.kd)}
+    })});
+    var x=PEXAM.start(g,+l,{now:T0,sc:"Z"});if(!x.saved)B("G"+g+" not saved l"+l);
+    w=Math.max(w,(localStorage.getItem("pex_"+g+"_"+l+"_Z")||"").length);
+    x.st.P.secs.forEach(function(S){S.qs.forEach(function(q){if(q.fig.length>PEXAM.FIGMAX)big++})});
+    var L=PEXAM.load(g,+l,"Z",T0+1000);if(!L||JSON.stringify(L)!==JSON.stringify(x.st))B("G"+g+" refresh l"+l);
+    PEXAM.cancel(g,+l,"Z")}});
+  okg(w<250000,"worst saved "+w);
+  var l0=+Object.keys(GG).filter(function(l){return GG[l][4]})[0],t=mk(g,l0,{now:T0}),exp=g<=9?[360,540,720,900,1080,1080]:[480,720,960,1200,1440,1440];
+  okg(exp.every(function(v,i){return PEXAM.limit(t,i)===v})&&PEXAM.totalLimit(t)===(g<=9?78:104)*60,"limits/total");
+  var E={on:true,g:g,l:l0,t:T7+1e6,p:75},gg=PEXAM.gate({ex:E},T7);
+  okg(gg.ok&&gg.g===g&&gg.l===l0,"gate");
+  okg(PEXAM.gate({ex:{on:true,g:g}},T7).why==="cfg","gate no lesson");
+  okg(PEXAM.key(g,l0)==="pex_"+g+"_"+l0,"key");
+  var z=PEXAM.start(g,l0,{now:T7,sc:"C",cls:g+"NGS-A",who:{k:"S1",n:"សិស្ស ក"}}).st;for(var k=0;k<6;k++)PEXAM.submitSec(z,k,T7+1);
+  var rec=PEXAM.mkRec(z,PEXAM.grade(z),T7+2),h="";try{h=PEXAM.cert.html(rec)}catch(e){B("G"+g+" cert threw "+e)}
+  okg(rec.g===g&&h.indexOf(kh)>=0,"cert shows "+kh);PEXAM.cancel(g,l0,"C");
+  print("pexam g"+g+": lessons "+Object.keys(GG).length+" builds "+n+" worst "+w+"B bigFig "+big)
+});
+okg2=function(c,m){if(!c)B("GRADES "+m)};
+[6,13,"x",null,9.5].forEach(function(g){okg2(PEXAM.gate({ex:{on:true,g:g,l:3}},T7).why==="cfg","gate rejects g="+g)});
 
 print("pexam: made "+made+" figs "+figs+" maxbytes "+maxB+" bad "+bad);

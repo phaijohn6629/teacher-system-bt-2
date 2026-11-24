@@ -531,13 +531,13 @@ function mount(o){
 
 
 /* ================= 🔐 ទ្វារចូលប្រឡង (ជំហាន ៧) =================
-   pcls/{code}.ex = {on, g:9|12, l:មេរៀន, t:ម៉ោងបិទ(ms)|null, p:ពិន្ទុជាប់ %, ext:[{k,n,h}]} · គ្រូកំណត់ក្នុង quiz.js
+   pcls/{code}.ex = {on, g:7–12, l:មេរៀន, t:ម៉ោងបិទ(ms)|null, p:ពិន្ទុជាប់ %, ext:[{k,n,h}]} · គ្រូកំណត់ក្នុង quiz.js
    ទ្វារទន់ (client-only)៖ h = SHA-256(code|k|ពាក្យសម្ងាត់) · ខុស ៥ ដង → ចាក់សោ ៣០ វិនាទី (រក្សាក្នុង localStorage) · មិនសរសេរចូល prt */
 var LOCK_N=5,LOCK_MS=30000;
 function gate(cls,now,saved){
   now=now==null?Date.now():now;var e=cls&&cls.ex;
   if(!e||e.on!==true)return{ok:false,why:"off",msg:"ប្រឡង ៦ កម្រិតមិនទាន់បើកទេ · សូមសួរគ្រូរបស់អ្នក"};
-  if((+e.g!==9&&+e.g!==12)||!(+e.l>0))return{ok:false,why:"cfg",msg:"ការកំណត់ប្រឡងមិនត្រឹមត្រូវ · សូមសួរគ្រូរបស់អ្នក"};
+  if(!(+e.g>=7&&+e.g<=12&&+e.g%1===0)||!(+e.l>0))return{ok:false,why:"cfg",msg:"ការកំណត់ប្រឡងមិនត្រឹមត្រូវ · សូមសួរគ្រូរបស់អ្នក"};
   var dl=typeof e.t==="number"&&isFinite(e.t)?e.t:null;
   if(dl!=null&&now>=dl&&!saved)return{ok:false,why:"expired",msg:"ប្រឡងនេះបានបិទហើយ (ផុតម៉ោងកំណត់)"};
   return{ok:true,g:+e.g,l:+e.l,dl:dl,pp:ppOf((+e.p||80)/100),ext:Array.isArray(e.ext)?e.ext:[]};

@@ -1037,12 +1037,12 @@ function clFlush(){
 }
 window.addEventListener("online",function(){clFlush()});
 /* 🏁 ប្រឡង ៦ កម្រិត (ថ្នាក់ទី ៩ · តាមតំណ #c= · គ្រូបើកក្នុង pcls.ex) · pexam.js ផ្ទុកតាមតម្រូវការ */
-function exOn(){var e=CL.cls&&CL.cls.ex;return !!(e&&e.on===true&&(+e.g===9||+e.g===12)&&+e.l>0&&!(typeof e.t==="number"&&Date.now()>=e.t))}
+function exOn(){var e=CL.cls&&CL.cls.ex;return !!(e&&e.on===true&&+e.g>=7&&+e.g<=12&&+e.g%1===0&&+e.l>0&&!(typeof e.t==="number"&&Date.now()>=e.t))}
 function exBtn(l){return S.g===+(CL.cls&&CL.cls.ex&&CL.cls.ex.g)&&exOn()&&+CL.cls.ex.l===l?"<button type=button data-a=pex style='background:#1e3a8a;color:#fff;font-weight:700'>🏁 ប្រឡង ៦ កម្រិត</button>":""}
-function pexLoad(){return window.PEXAM?Promise.resolve():new Promise(function(ok,no){var s=document.createElement("script");s.src="pexam.js?v=4";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function pexLoad(){return window.PEXAM?Promise.resolve():new Promise(function(ok,no){var s=document.createElement("script");s.src="pexam.js?v=5";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function pexGo(auto){
   var e=CL.cls&&CL.cls.ex;if(!e||!CL.code)return home();
-  var eg=+e.g===12?12:9;S.g=eg;location.hash=HS("g="+eg+"&l="+(+e.l||0)+"&px=1");
+  var eg=+e.g>=7&&+e.g<=12?+e.g:9;S.g=eg;location.hash=HS("g="+eg+"&l="+(+e.l||0)+"&px=1");
   $("app").innerHTML="<p style='text-align:center;margin-top:40px'>កំពុងផ្ទុកប្រឡង…</p>";
   pexLoad().then(function(){PEXAM.enter({cls:CL.cls,code:CL.code,me:CL.me,auto:!!auto,onExit:function(){home()}})},function(){alert("មិនអាចផ្ទុកប្រឡងបានទេ · សូមពិនិត្យអ៊ីនធឺណិត");home()});
 }

@@ -941,12 +941,15 @@ function renderPrac(){
 }
 /* 🏁 ប្រឡង ៦ កម្រិត (ថ្នាក់ទី ៩ · practice.html#c=កូដ) · pcls.ex = {on,g,l,t,p,ext:[{k,n,h}]} · ប្រើ updateDoc (dotted path) មិនប៉ះវាល pcls ផ្សេង
    h = SHA-256(កូដ|លេខសម្គាល់|លេខសម្ងាត់) · លេខសម្ងាត់បង្ហាញម្តងគត់ · ទ្វារទន់ (មើល pexam.js gate/enter) */
-function pcExG(p){var g=parseInt(p&&p.g)||parseInt(p&&p.cls)||0;return g===12?12:9}
+function pcExG(p){var g=parseInt(p&&p.g)||parseInt(p&&p.cls)||0;return g>=7&&g<=12?g:9}
+/* មេរៀនគ្មានកម្រិត PISA (key 4) → ប្រឡង ៦ កម្រិតបង្កើតមិនបាន · លាក់ពីបញ្ជី (តេស្ត tests/pexam.js ផ្ទៀងផ្ទាត់ឱ្យត្រូវគ្នា) */
+var PEX_NOPISA={10:[94],11:[16,82]};
+function pexOk(g,n){return(PEX_NOPISA[g]||[]).indexOf(+n)<0}
 function pcExOf(p){return p&&p.ex&&typeof p.ex==="object"?p.ex:{}}
 function pcLocalDt(ms){if(typeof ms!=="number"||!isFinite(ms))return"";var d=new Date(ms),z=function(n){return("0"+n).slice(-2)};return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+"T"+z(d.getHours())+":"+z(d.getMinutes())}
 function pcExHtml(p,g){
-  if(g!==9&&g!==12)return"";
-  var e=pcExOf(p),C=window.CUR&&window.CUR[g],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],ext=Array.isArray(e.ext)?e.ext:[];
+  if(!(g>=7&&g<=12))return"";
+  var e=pcExOf(p),C=window.CUR&&window.CUR[g],L=C?Object.keys(C.LS).filter(function(n){return pexOk(g,n)}).sort(function(a,b){return a-b}):[],ext=Array.isArray(e.ext)?e.ext:[];
   var on=e.on===true,exp=typeof e.t==="number"&&Date.now()>=e.t;
   return"<div class='card pc-link pc-ex'><div class=pc-lr><b>🏁 ប្រឡង ៦ កម្រិត (កម្រិត ១–៥ + PISA)</b> <span class='pc-st"+(on&&!exp?" on":"")+"'>"+(on?(exp?"⌛ ផុតម៉ោងកំណត់":"✅ កំពុងបើក"):"⏸️ បានបិទ")+"</span></div>"+
     "<div class=bar style='margin:6px 0'><label>មេរៀន៖ <select id=pxL>"+L.map(function(n){return"<option value="+n+(+e.l===+n?" selected":"")+">"+esc(lsName(g,n))+"</option>"}).join("")+"</select></label>"+
