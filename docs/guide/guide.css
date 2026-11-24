@@ -53,14 +53,12 @@ figcaption{font-size:.9em;color:var(--mute);margin-top:4px}
 @page{size:A4;margin:16mm 14mm 20mm}
 /* បាតទំព័រ៖ សៀវភៅសងខាង (សេស = លេខស្ដាំ · គូ = លេខឆ្វេង) */
 @page:right{
- @bottom-right{content:counter(page,khmer);font-family:"Khmer OS Battambang","Battambang",serif;font-size:10pt;font-weight:700;color:#1e3a8a;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top}
- @bottom-center{content:"";border-top:.4pt solid #9aa7c4}
- @bottom-left{content:"Rean Math Prime · សៀវភៅណែនាំ";font-family:"Khmer OS Battambang","Battambang",serif;font-size:8pt;color:#5b6678;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top;white-space:nowrap}}
+ @bottom-right{content:counter(page,khmer);font-family:"Khmer OS Battambang","Battambang",serif;font-size:10pt;font-weight:700;color:#1e3a8a;width:17mm;text-align:center;line-height:6.2mm;vertical-align:top;padding-top:1.4mm;border-top:.4pt solid #9aa7c4;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 70'%3E%3Crect x='6' y='9' width='118' height='56' rx='28' fill='%231e3a8a' fill-opacity='.10'/%3E%3Crect x='7' y='7' width='116' height='56' rx='28' fill='%231e3a8a' fill-opacity='.10'/%3E%3Crect x='6' y='4' width='118' height='56' rx='28' fill='%23eef2ff' stroke='%23b4c6f5' stroke-width='2'/%3E%3C/svg%3E") no-repeat center 0.8mm/14mm 7.5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ @bottom-left{content:"Rean Math Prime · សៀវភៅណែនាំ";font-family:"Khmer OS Battambang","Battambang",serif;font-size:8pt;color:#5b6678;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top;white-space:nowrap;width:165mm}}
 @page:left{
- @bottom-left{content:counter(page,khmer);font-family:"Khmer OS Battambang","Battambang",serif;font-size:10pt;font-weight:700;color:#1e3a8a;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top}
- @bottom-center{content:"";border-top:.4pt solid #9aa7c4}
- @bottom-right{content:"Rean Math Prime · សៀវភៅណែនាំ";font-family:"Khmer OS Battambang","Battambang",serif;font-size:8pt;color:#5b6678;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top;white-space:nowrap}}
-@page:first{@bottom-left{content:none;border:0;padding:0}@bottom-center{content:none;border:0}@bottom-right{content:none;border:0;padding:0}}
+ @bottom-left{content:counter(page,khmer);font-family:"Khmer OS Battambang","Battambang",serif;font-size:10pt;font-weight:700;color:#1e3a8a;width:17mm;text-align:center;line-height:6.2mm;vertical-align:top;padding-top:1.4mm;border-top:.4pt solid #9aa7c4;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 70'%3E%3Crect x='6' y='9' width='118' height='56' rx='28' fill='%231e3a8a' fill-opacity='.10'/%3E%3Crect x='7' y='7' width='116' height='56' rx='28' fill='%231e3a8a' fill-opacity='.10'/%3E%3Crect x='6' y='4' width='118' height='56' rx='28' fill='%23eef2ff' stroke='%23b4c6f5' stroke-width='2'/%3E%3C/svg%3E") no-repeat center 0.8mm/14mm 7.5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ @bottom-right{content:"Rean Math Prime · សៀវភៅណែនាំ";font-family:"Khmer OS Battambang","Battambang",serif;font-size:8pt;color:#5b6678;border-top:.4pt solid #9aa7c4;padding-top:2.5mm;vertical-align:top;white-space:nowrap;width:165mm}}
+@page:first{@bottom-left{content:none;border:0;padding:0;background:none}@bottom-center{content:none;border:0}@bottom-right{content:none;border:0;padding:0;background:none}}
 @media print{
  body{background:#fff;font-size:10.4pt;line-height:1.7;color:#000}.book{max-width:none;padding:0}
  .page{border:0;border-radius:0;padding:0;margin:0;break-after:page}.page:last-child{break-after:auto}
