@@ -2746,7 +2746,7 @@ function buildFnav(){
   var m=$("allMenu");if(!m){m=document.createElement("div");m.id="allMenu";m.hidden=true;m.setAttribute("role","dialog");m.setAttribute("aria-label","មុខងារទាំងអស់");document.body.appendChild(m);
     m.onclick=function(e){var b=e.target.closest("button[data-p]");if(b){m.hidden=true;show(b.dataset.p);return}if(e.target===m||e.target.closest(".am-x"))m.hidden=true};
     document.addEventListener("keydown",function(e){if(e.key==="Escape")m.hidden=true})}
-  m.innerHTML="<div class=am-box><div class=am-h><b>មុខងារទាំងអស់</b><button type=button class=am-x aria-label='បិទ'>✕</button></div><div class=am-g>"+FN.map(function(x){return"<button type=button data-p='"+x[0]+"'><span aria-hidden=true>"+x[1]+"</span><em>"+esc(full[x[0]]||x[2])+"</em></button>"}).join("")+"</div></div>";
+  m.innerHTML="<div class=am-box><div class=am-h><b>មុខងារទាំងអស់</b><button type=button class=am-x aria-label='បិទ'>✕</button></div><div class=am-g>"+FN.map(function(x){return"<button type=button data-p='"+x[0]+"'><span aria-hidden=true>"+x[1]+"</span><em>"+esc(full[x[0]]||x[2])+"</em></button>"}).join("")+"<a class=am-guide href=\"docs/guide/\" target=\"_blank\" rel=\"noopener\"><span aria-hidden=true>📖</span><em>សៀវភៅណែនាំ</em></a></div></div>";
 }
 document.addEventListener("click",function(e){var g=e.target.closest(".gseg button[data-go]");if(g)show(g.dataset.go)});
 $("fnav").onclick=function(e){
@@ -2759,7 +2759,7 @@ function buildSnav(){
   [].forEach.call(document.querySelectorAll("#tabs button"),function(b){full[b.dataset.p]=b.textContent.replace(/^[០-៩]+\.\s*/,"")});
   $("snList").innerHTML=SNG.map(function(g){
     return"<div class=sn-g><div class=sn-h>"+esc(g[0])+"</div>"+g[1].map(function(p){return"<button type=button class=sn-i data-p='"+p+"'><span aria-hidden=true>"+ic[p]+"</span><em>"+esc(full[p]||"")+"</em></button>"}).join("")+"</div>"}).join("");
-  $("snList").insertAdjacentHTML("beforeend","<div class=sn-g><button type=button class=sn-i id=snSet><span aria-hidden=true>⚙️</span><em>ការកំណត់</em></button></div>");
+  $("snList").insertAdjacentHTML("beforeend","<div class=sn-g><button type=button class=sn-i id=snSet><span aria-hidden=true>⚙️</span><em>ការកំណត់</em></button><a class=\"sn-i sn-guide\" href=\"docs/guide/\" target=\"_blank\" rel=\"noopener\"><span aria-hidden=true>📖</span><em>សៀវភៅណែនាំ</em></a></div>");
 }
 function snTop(){var h=document.querySelector("#appSection header");$("snav").style.top=Math.max(0,h?h.getBoundingClientRect().bottom:0)+"px"}
 (function(){

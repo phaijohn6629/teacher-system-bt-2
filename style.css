@@ -1294,3 +1294,8 @@ body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-
 @keyframes whfade{from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.wh-ptr{transition:none}.wh-win.live b,.wh-tr,.wh-card,.wh-win.done{animation:none}}
 .wh-win.done b,.wh-win.live b{font-family:'Khmer OS Muol Light','Moul','Khmer OS Muol',serif;font-weight:400;font-size:1.45rem;line-height:1.9}
+
+.sn-guide{text-decoration:none;box-sizing:border-box}
+.am-guide{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;background:var(--soft);border:1px solid var(--border-glow);border-radius:16px;color:var(--ink);text-decoration:none;box-sizing:border-box}
+.am-guide span{font-size:1.6rem}.am-guide em{font-style:normal;font-size:.8rem;text-align:center;line-height:1.35}
+body.mon #allMenu{display:none!important}
