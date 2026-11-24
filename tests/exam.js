@@ -101,4 +101,7 @@ var S3=solSteps("$a=\\dfrac{-2-(4)}{-3-(-5)}=\\dfrac{-6}{2}=-3$");ok(S3.length==
 ok(solSteps("").length===0&&solSteps(null).length===0,"solSteps empty");
 ok(/stp:!!E\.stp/.test(X)&&/data-ex=opn/.test(X)&&/EXP\.splitPts/.test(X)&&/opTarget\(g\)\{return g>=11\?25:g===10\?30:20\}/.test(X),"exam.js wires open-format panel (20/30/25)");
 ok(/total:total,splitPts/.test(EXPsrc)&&/function total\(P\)\{return\(P\.secs\|\|\[\]\)\.reduce\(function\(s,x\)\{return s\+\(\+x\.pts\|\|0\)\},0\)\}/.test(EXPsrc),"EXP.total unchanged (sum of secs pts)");
+var HT=read("exam.html");
+ok(/data-ef=lx/.test(X)&&/\[1,2,3,4,5\]\.map/.test(X)&&/lx:lxOf\(E\)/.test(X)&&/exLxDef_/.test(X),"exam.js: lx 1–5 option, default per teacher, published in exm");
+ok(/function lockOut/.test(HT)&&/AC\.lv>=LX\(\)/.test(HT)&&/const LX=/.test(HT),"exam.html: lock after lx leaves, 0 = legacy record-only");
 print("exam: checks "+n+" bad "+bad);

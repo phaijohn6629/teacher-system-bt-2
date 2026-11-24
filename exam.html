@@ -84,6 +84,7 @@ function rand(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Arra
 
 let M=null,me=null,K="",endMs=0,tick=0,over=false,acOn=false,AC={lv:0,lt:0,cp:0},awayAt=0,seq=0,pushT=0;
 /* ---------- ១. ព័ត៌មានប្រឡង ---------- */
+const LX=()=>{const v=M&&+M.lx;return v>=1&&v<=5?v:0};   /* ០ = ប្រឡងចាស់ (កត់ត្រាតែប៉ុណ្ណោះ) */
 function hdr(){$("tt").textContent=M.t||"ប្រឡង";$("ts").textContent=(M.sch||"")+" · ថ្នាក់ "+(M.cls||"")+" · "+kn(M.dur)+" នាទី";document.title=M.t||"ប្រឡង"}
 /* ⚡ Refresh ពេលកំពុងប្រឡង → បង្ហាញវិញ្ញាសាភ្លាមពី localStorage (exm_ · exp_ · exk_) មិនរង់ចាំបណ្ដាញ · ម៉ោង/បិទ ពិនិត្យនៅពីក្រោយ */
 function fastResume(){
@@ -109,7 +110,7 @@ async function start(){
   app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${M.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
     <label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>
     <p class=note>• មើលប្រធានលើទូរស័ព្ទ ហើយ<b>សរសេរចម្លើយលើក្រដាស</b>របស់អ្នក<br>• អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ<br>• ឈ្មោះមួយបើកបានតែលើឧបករណ៍មួយ</p>
-    <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ថតអេក្រង់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។</div>
+    <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ថតអេក្រង់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។${LX()?`<br>⚠️ <b>ច្បាប់៖</b> អនុញ្ញាតឱ្យចាកចេញបានមិនលើស <b>${kn(LX())} ដង</b>។ លើសនេះ វិញ្ញាសានឹង<b>បិទដោយស្វ័យប្រវត្តិ</b> (រួមទាំងការ Refresh ទំព័រក៏រាប់ជាការចាកចេញដែរ)។`:""}</div>
     <p id=er class=acn hidden></p><button class=btn id=go>📄 បើកវិញ្ញាសា</button></div>`;
   $("go").onclick=go;
 }
@@ -139,8 +140,9 @@ function show(P,reload){
     <p class=note style="text-align:center">✍️ សរសេរចម្លើយលើក្រដាស · អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ</p>`;
   math($("pp"));if(EXP.fit)EXP.fit($("pp"));if(EXP.shrink)EXP.shrink($("pp"));
   AC=Object.assign({lv:0,lt:0,cp:0},JSON.parse(LS.get("ac_"+K)||"null")||{});seq=+LS.get("sq_"+K)||0;acOn=true;
-  if(reload&&LS.get("rl_"+K)){AC.lv++;acSave();warn("អ្នកបានបិទ ឬផ្ទុកទំព័រឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+")")}
+  if(reload&&LS.get("rl_"+K)){AC.lv++;acSave();if(!(LX()&&AC.lv>=LX()))warn("អ្នកបានបិទ ឬផ្ទុកទំព័រឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+(LX()?"/"+kn(LX()):"")+")")}
   LS.set("rl_"+K,"1");
+  if(LX()&&AC.lv>=LX()){lockOut();return true}
   const f=()=>{const s=Math.max(0,Math.round((endMs-Date.now())/1000)),t=$("tm");if(t){t.textContent="⏱ "+kn(Math.floor(s/60))+":"+kn(String(s%60).padStart(2,"0"));t.classList.toggle("low",s<=300)}
     if(!s){clearInterval(tick);timeUp()}};
   tick=setInterval(f,1000);f();
@@ -157,6 +159,9 @@ function show(P,reload){
     return false;
   }
 }
+/* 🔒 ចាកចេញលើសកំណត់ → បិទវិញ្ញាសា · ចម្លើយដែលសរសេរលើក្រដាសនៅដដែល · ចំនួនត្រូវបានផ្ញើទៅគ្រូរួចហើយ */
+function lockOut(){if(over&&document.querySelector(".lkmsg"))return;over=true;clearInterval(tick);clearInterval(show.poll);acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();
+  msg("🔒","វិញ្ញាសាត្រូវបានបិទ",`អ្នកបានចាកចេញពីទំព័រប្រឡងលើសកំណត់ (${kn(AC.lv)}/${kn(LX())} ដង)។ ចម្លើយដែលអ្នកបានសរសេរលើក្រដាសត្រូវបានរក្សា · សូមប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ។<span class=lkmsg></span>`)}
 function timeUp(t){if(over)return;over=true;clearInterval(show.poll);acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();msg("⏰",t||"អស់ម៉ោងប្រឡង","សូមឈប់សរសេរ ហើយប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
 /* ---------- ៣. ការពារការលួចមើល ---------- */
 function acSave(){LS.set("ac_"+K,JSON.stringify(AC));push()}
@@ -167,7 +172,8 @@ function warn(t,sub){let w=document.querySelector(".ac");if(!w){w=document.creat
   w.innerHTML=`<div><div class=big>⚠️</div><div style="font-weight:700;font-size:1.05rem">${t}</div><p class=note>${sub}</p><button class=btn id=acOk>យល់ព្រម</button></div>`;$("acOk").onclick=()=>w.remove()}
 function away(){if(!acOn||over||awayAt)return;awayAt=Date.now()}
 function back(){if(!acOn||over||!awayAt)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;AC.lv++;AC.lt+=Math.round(d);acSave();
-  warn("អ្នកបានចាកចេញពីទំព័រប្រឡង (លើកទី "+kn(AC.lv)+")","រយៈពេល "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ")}
+  if(LX()&&AC.lv>=LX()){lockOut();return}
+  warn("អ្នកបានចាកចេញពីទំព័រប្រឡង (លើកទី "+kn(AC.lv)+(LX()?"/"+kn(LX()):"")+")","រយៈពេល "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ"+(LX()?" · "+(LX()-AC.lv===1?"<b>⛔ ចាកចេញម្ដងទៀត វិញ្ញាសានឹងបិទ!</b>":"នៅសល់ "+kn(LX()-AC.lv)+" ដង មុនវិញ្ញាសាបិទ"):""))}
 document.addEventListener("visibilitychange",()=>{document.hidden?away():back()});
 window.addEventListener("blur",away);window.addEventListener("focus",back);window.addEventListener("pagehide",away);
 const no=e=>{if(!acOn||over)return;const inp=e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="SELECT");if(e.type==="contextmenu"||e.type==="selectstart"||e.type==="dragstart"){if(!inp)e.preventDefault();return}

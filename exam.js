@@ -100,9 +100,11 @@ function fill(s,g,which){
   for(var i=0;i<s.n;i++)out.push(mkItem(g,s.ls,s.lv,out,ref&&ref[i]?shapeOf(ref[i]):"",s.pt));s[key]=out;
 }
 function newSec(g,ls){var T=window.EXGEN&&EXGEN.list(g+"|"+ls),s={ls:ls,lv:T&&T.length?"t:"+T[0].id:2,n:2,pts:4,inst:g>100?"":"ដោះស្រាយលំហាត់ខាងក្រោម៖"};fill(s,g);if(X.E&&X.E.ab)fill(s,g,"itB");return s}
+function lxDef(){var v=0;try{v=+localStorage.getItem("exLxDef_"+(window.who&&who.id||""))}catch(e){}return v>=1&&v<=5?v:3}   /* លំនាំដើម ៣ ដង · ចងចាំតាមគ្រូម្នាក់ៗ */
+function lxOf(E){var v=+E.lx;return v>=1&&v<=5?v:3}
 function newExam(){
   var c=(rs.c&&rs.c[who.id]||[])[0],g=c?parseInt(c.n):0,t=teacherOf(who.id)||{},ck="";try{ck=localStorage.getItem("exCk")||""}catch(e){}
-  var d=new Date(),E={id:uid(),o:who.id,cls:c?c.n:"",title:TITLES[0],mo:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2),sub:t.sub||"គណិតវិទ្យា",dur:45,date:today(),place:"រាជធានីភ្នំពេញ",au:t.name||who.name||"",ck:ck,ab:false,secs:[],cr:new Date().toISOString()};
+  var d=new Date(),E={id:uid(),o:who.id,cls:c?c.n:"",title:TITLES[0],mo:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2),sub:t.sub||"គណិតវិទ្យា",dur:45,date:today(),place:"រាជធានីភ្នំពេញ",au:t.name||who.name||"",ck:ck,ab:false,lx:lxDef(),secs:[],cr:new Date().toISOString()};
   var L=lsList(g),first=L[0]&&L[0][1][0];if(first)E.secs.push(newSec(g,first[0]));
   return E;
 }
@@ -224,6 +226,7 @@ function editor(){
     "<div><label>អ្នកចេញវិញ្ញាសា</label><input data-ef=au value='"+esc(E.au)+"'></div>"+
     "<div><label>បានឃើញ និងពិនិត្យ</label><input data-ef=ck value='"+esc(E.ck)+"' placeholder='ឈ្មោះនាយក/នាយករង'></div>"+
     "<div><label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-ef=ab"+(E.ab?" checked":"")+" style='width:auto;margin:0'> វិញ្ញាសា ក/ខ (លេខខុសគ្នា)</label><small class=note>សិស្សអង្គុយជិតគ្នាទទួលវិញ្ញាសាខុសគ្នា</small></div>"+
+    "<div><label>🚫 ចំនួនដងអតិបរមាដែលចាកចេញពី Tab បាន</label><select data-ef=lx style='width:auto'>"+[1,2,3,4,5].map(function(n){return"<option value="+n+(lxOf(E)===n?" selected":"")+">"+kn(n)+" ដង</option>"}).join("")+"</select><small class=note>លើសកំណត់ → វិញ្ញាសាត្រូវបិទស្វ័យប្រវត្តិ (គ្រូឃើញក្នុងបញ្ជី 🔒)</small></div>"+
     "</div></div>"+
     "<div class=card><h3 style='margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small>"+(E.ab?"<span style='display:inline-flex;gap:4px;align-items:center;margin-left:auto'><small class=note style='margin:0'>✏️ កំពុងកែ ៖</small><button type=button data-ex='pv|a' class='"+(pvOf(E)==="a"?"primary":"")+"'>វិញ្ញាសា ក</button><button type=button data-ex='pv|b' class='"+(pvOf(E)==="b"?"primary":"")+"'>វិញ្ញាសា ខ</button></span>":"")+"</h3>"+
     (g===12&&window.EXGEN&&EXGEN.bac?"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px'><button type=button class=primary data-ex='bac|a' style='flex:1'>📋 វិញ្ញាសាត្រៀមបាក់ឌុប (៧ ផ្នែក · តាមសៀវភៅ)</button><button type=button data-ex='bac|b' style='flex:1'>📋 គំរូសាកល្បង NGS (៨ ផ្នែក)</button></div>":"")+
@@ -307,7 +310,7 @@ function goOnline(){
   goingOn=true;
   var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){
     return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:abFor(E,c,s,i)}});
-  Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,names:names,sch:inf().school}),
+  Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,lx:lxOf(E),names:names,sch:inf().school}),
     F.setDoc(F.doc(window.db,"exq",E.id+"_"+code),{o:E.o,t:E.id,j:pub(E)})]).then(function(){
     E.on={open:true,code:code,endMs:endMs};
     try{save(true)}catch(x){console.error("save:",x)}
@@ -337,8 +340,8 @@ function hm(at){var d=at&&at.toDate?at.toDate():null;return d?kn(("0"+d.getHours
 function viewList(){
   var c=myCls().filter(function(x){return x.n===X.E.cls})[0],tot=c?c.st.length:0;
   return"<div class=note style='margin:4px 0'>កំពុងមើល <b>"+kn(X.views.length)+"/"+kn(tot)+"</b> នាក់ · 🚩 = ចាកចេញពីផ្ទាំង (ឧ. ទៅរក AI) ឬព្យាយាមចម្លង</div>"+
-    (X.views.length?"<div class=ex-vl>"+X.views.slice().sort(function(a,b){return(b.lv||0)+(b.cp||0)-(a.lv||0)-(a.cp||0)}).map(function(v){var bad=(v.lv||0)+(v.cp||0);
-      return"<span class='ex-v"+(bad?" bad":"")+"'>"+esc(v.sn)+" <small>"+hm(v.at)+(v.lv?" · 🚩 ចាកចេញ "+kn(v.lv)+" ដង ("+kn(v.lt||0)+" វិ)":"")+(v.cp?" · 📋 "+kn(v.cp):"")+"</small><button type=button data-ex='vr|"+esc(v.sid)+"' title='អនុញ្ញាតឱ្យបើកលើឧបករណ៍ផ្សេង'>🔄</button></span>"}).join("")+"</div>":"");
+    (X.views.length?"<div class=ex-vl>"+X.views.slice().sort(function(a,b){return(b.lv||0)+(b.cp||0)-(a.lv||0)-(a.cp||0)}).map(function(v){var bad=(v.lv||0)+(v.cp||0),lk=v.lv>=lxOf(X.E);
+      return"<span class='ex-v"+(bad?" bad":"")+"'>"+esc(v.sn)+" <small>"+hm(v.at)+(lk?" · 🔒 បិទស្វ័យប្រវត្តិ":"")+(v.lv?" · 🚩 ចាកចេញ "+kn(v.lv)+"/"+kn(lxOf(X.E))+" ដង ("+kn(v.lt||0)+" វិ)":"")+(v.cp?" · 📋 "+kn(v.cp):"")+"</small><button type=button data-ex='vr|"+esc(v.sid)+"' title='អនុញ្ញាតឱ្យបើកលើឧបករណ៍ផ្សេង'>🔄</button></span>"}).join("")+"</div>":"");
 }
 function onlineBox(){
   var E=X.E;
@@ -434,6 +437,7 @@ function onInput(e){
     if(f==="stp"){E.stp=t.checked;save();prev();return}
     if(f==="opT"||f==="opN"){E[f]=Math.max(0,+t.value||0);save();return}
     if(f==="opW"){E.opW=t.value==="eq"?"eq":"lv";save();return}
+    if(f==="lx"){E.lx=Math.min(5,Math.max(1,+t.value||3));try{localStorage.setItem("exLxDef_"+who.id,String(E.lx))}catch(e){}save();if(E.on&&E.on.open&&window.FB)window.FB.updateDoc(window.FB.doc(window.db,"exm",E.id),{lx:E.lx}).then(function(){notify("បានកែចំនួនដងចាកចេញ")},function(){});return}
     if(f==="ab"){E.ab=t.checked;if(E.ab)E.secs.forEach(function(s){fill(s,gOf(E),"itB")});save();editor();return}
     if(f==="cls"){var og=gOf(E);E.cls=t.value;if(gOf(E)!==og&&E.secs.length&&confirm("ថ្នាក់ថ្មីជាកម្រិតផ្សេង។ បង្កើតផ្នែកទាំងអស់ឡើងវិញតាមកម្រិតថ្នាក់ថ្មី?")){var L=lsList(gOf(E)),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(gOf(E),f0[0])]:[]}save();editor();return}
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
