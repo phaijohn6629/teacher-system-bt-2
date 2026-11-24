@@ -925,6 +925,7 @@ function renderPrac(){
   h+="<div class='card pc-link'><div class=pc-lr><b>🔗 តំណហ្វឹកហាត់ថ្នាក់ "+esc(c.n)+"</b> <span class='pc-st"+(p.open?" on":"")+"'>"+(p.open?"✅ កំពុងបើក":"⏸️ បានបិទ")+"</span></div>"+
     "<input readonly value='"+esc(u)+"' onclick='this.select()'>"+
     "<div class=bar style='margin:6px 0 0'><button type=button data-qa=pccp>📋 ចម្លងតំណ</button><button type=button data-qa=pcqr>📱 QR</button><button type=button data-qa=pcnm title='ប្រើបញ្ជីឈ្មោះសិស្សបច្ចុប្បន្នរបស់ថ្នាក់'>🔄 ធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+kn(p.names.length)+")</button><button type=button data-qa=pctg>"+(p.open?"⏸️ បិទតំណ":"▶️ បើកតំណវិញ")+"</button></div></div>";
+  h+=pcExHtml(p,g);
   if(!rows){$("qzBody").innerHTML=h+"<p class=note>កំពុងផ្ទុកតារាង…</p>";pcRows(p.id).then(renderPrac);return}
   var C=window.CUR&&window.CUR[g],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],done=0;
   var cnt=function(r,l){var n=0;if(r&&r.t)[1,2,3,4,5,6].forEach(function(v){if(r.t[l+"-"+v])n++});return n};   /* កម្រិត ១–៥ + PISA */
@@ -938,6 +939,61 @@ function renderPrac(){
     "<p class=note>🏆 មួយ = កម្រិតមួយដែលឆ្លើយត្រូវទាំងអស់ (អតិបរមា ៥ ក្នុងមួយមេរៀន · ៦ បើមានកម្រិត 🌐 PISA)។ ដាក់ម៉ៅស៍លើក្បាលជួរ ដើម្បីមើលឈ្មោះមេរៀនពេញ។</p>";
   setBody(h);
 }
+/* 🏁 ប្រឡង ៦ កម្រិត (ថ្នាក់ទី ៩ · practice.html#c=កូដ) · pcls.ex = {on,g,l,t,p,ext:[{k,n,h}]} · ប្រើ updateDoc (dotted path) មិនប៉ះវាល pcls ផ្សេង
+   h = SHA-256(កូដ|លេខសម្គាល់|លេខសម្ងាត់) · លេខសម្ងាត់បង្ហាញម្តងគត់ · ទ្វារទន់ (មើល pexam.js gate/enter) */
+function pcExOf(p){return p&&p.ex&&typeof p.ex==="object"?p.ex:{}}
+function pcLocalDt(ms){if(typeof ms!=="number"||!isFinite(ms))return"";var d=new Date(ms),z=function(n){return("0"+n).slice(-2)};return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+"T"+z(d.getHours())+":"+z(d.getMinutes())}
+function pcExHtml(p,g){
+  if(g!==9)return"";
+  var e=pcExOf(p),C=window.CUR&&window.CUR[9],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],ext=Array.isArray(e.ext)?e.ext:[];
+  var on=e.on===true,exp=typeof e.t==="number"&&Date.now()>=e.t;
+  return"<div class='card pc-link pc-ex'><div class=pc-lr><b>🏁 ប្រឡង ៦ កម្រិត (កម្រិត ១–៥ + PISA)</b> <span class='pc-st"+(on&&!exp?" on":"")+"'>"+(on?(exp?"⌛ ផុតម៉ោងកំណត់":"✅ កំពុងបើក"):"⏸️ បានបិទ")+"</span></div>"+
+    "<div class=bar style='margin:6px 0'><label>មេរៀន៖ <select id=pxL>"+L.map(function(n){return"<option value="+n+(+e.l===+n?" selected":"")+">"+esc(lsName(9,n))+"</option>"}).join("")+"</select></label>"+
+    "<label>ម៉ោងបិទ៖ <input type=datetime-local id=pxT value='"+esc(pcLocalDt(e.t))+"'></label>"+
+    "<label>ពិន្ទុជាប់ ≥ <input type=number id=pxP min=50 max=100 step=1 value="+(+e.p>=50&&+e.p<=100?+e.p:80)+" style='width:5em'> %</label></div>"+
+    "<div class=bar style='margin:6px 0'><button type=button data-qa=pcxtg>"+(on?"⏸️ បិទប្រឡង":"▶️ បើកប្រឡង")+"</button><button type=button data-qa=pcxsv>💾 រក្សាទុកការកំណត់</button></div>"+
+    "<p class=note style='margin:4px 0'>សិស្សក្នុងបញ្ជីថ្នាក់ចូលតាមឈ្មោះ · សិស្សក្រៅបញ្ជីប្រើលេខសម្គាល់ + លេខសម្ងាត់ (បង្ហាញម្តងគត់ពេលបង្កើត)។ លទ្ធផលស្ថិតលើឧបករណ៍សិស្ស (មិនផ្ញើមកគ្រូ)។</p>"+
+    "<div class=bar style='margin:6px 0'><input id=pxN placeholder='ឈ្មោះសិស្សក្រៅបញ្ជី' maxlength=60 autocomplete=off><button type=button data-qa=pcxadd>＋ បន្ថែម + បង្កើតលេខសម្ងាត់</button></div>"+
+    (ext.length?"<table class=pc-tb><thead><tr><th>លេខសម្គាល់</th><th>ឈ្មោះ</th><th></th></tr></thead><tbody>"+ext.map(function(x,i){return"<tr><td>"+esc(x.k)+"</td><td class=nm>"+esc(x.n)+"</td><td><button type=button data-qa=pcxdel data-pxd="+i+" title='លុប'>🗑️</button></td></tr>"}).join("")+"</tbody></table>":"")+"</div>";
+}
+function pcExForm(){
+  var l=+($("pxL")||{}).value,tv=($("pxT")||{}).value,pv=Math.round(+($("pxP")||{}).value);
+  var t=tv?new Date(tv).getTime():null;if(t!=null&&!isFinite(t))t=null;
+  return{l:l,t:t,p:pv>=50&&pv<=100?pv:80};
+}
+function pcSha(code,k,pw){
+  var sub=window.crypto&&crypto.subtle;if(!sub||!window.TextEncoder)return Promise.reject("nosubtle");
+  return sub.digest("SHA-256",new TextEncoder().encode(code+"|"+k+"|"+pw)).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return("0"+x.toString(16)).slice(-2)}).join("")});
+}
+function pcPw(){var A="ABCDEFGHJKMNPQRSTUVWXYZ23456789",a=new Uint8Array(8),o="";crypto.getRandomValues(a);for(var i=0;i<8;i++)o+=A[a[i]%A.length];return o}
+function pcExSave(p,patch,msg){
+  var u={};Object.keys(patch).forEach(function(k){u["ex."+k]=patch[k]});
+  return FB.updateDoc(FB.doc(db,"pcls",p.id),u).then(function(){p.ex=Object.assign({},pcExOf(p),patch);renderPrac();if(msg)notify(msg)},function(e){alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ":"មិនអាចរក្សាទុកបានទេ")});
+}
+function pcExDel(i){
+  var cl=myClasses(who.id),c=cl[PC.ci],p=c&&PC.list.filter(function(x){return x.cls===c.n})[0];if(!p)return;
+  var ext=(pcExOf(p).ext||[]).slice(),x=ext[i];if(!x||!confirm("លុបសិស្សក្រៅបញ្ជី «"+x.n+"» ("+x.k+")?"))return;
+  ext.splice(i,1);pcExSave(p,{ext:ext},"បានលុប");
+}
+function pcExAct(a,p){
+  var e=pcExOf(p),f=pcExForm();
+  if(a==="pcxsv"){if(!(f.l>0)){alert("សូមជ្រើសមេរៀន");return}pcExSave(p,{g:9,l:f.l,t:f.t,p:f.p},"បានរក្សាទុកការកំណត់ប្រឡង");return}
+  if(a==="pcxtg"){
+    var on=e.on!==true;if(on&&!(f.l>0)){alert("សូមជ្រើសមេរៀន");return}
+    if(on&&f.t!=null&&f.t<=Date.now()){alert("ម៉ោងបិទបានកន្លងហើយ · សូមកំណត់ម៉ោងបិទថ្មី ឬសម្អាតវាល");return}
+    if(on&&!p.open){alert("តំណថ្នាក់កំពុងបិទ · សូមបើកតំណថ្នាក់ជាមុនសិន (▶️ បើកតំណវិញ)");return}
+    pcExSave(p,{g:9,l:f.l,t:f.t,p:f.p,on:on},on?"បានបើកប្រឡង":"បានបិទប្រឡង");return}
+  if(a==="pcxadd"){
+    var nm=(($("pxN")||{}).value||"").trim().slice(0,60);if(!nm){alert("សូមវាយឈ្មោះសិស្ស");return}
+    var ext=(Array.isArray(e.ext)?e.ext:[]).slice();if(ext.length>=60){alert("ច្រើនពេក (អតិបរមា ៦០)");return}
+    var n=1,ids={};ext.forEach(function(x){ids[x.k]=1});while(ids["X"+("0"+n).slice(-2)])n++;var id="X"+("0"+n).slice(-2),pw;
+    try{pw=pcPw()}catch(x){alert("កម្មវិធីរុករកមិនគាំទ្រការបង្កើតលេខសម្ងាត់");return}
+    pcSha(p.id,id,pw).then(function(h){
+      ext.push({k:id,n:nm,h:h});
+      return pcExSave(p,{ext:ext},"បានបន្ថែម «"+nm+"»").then(function(){prompt("លេខសម្គាល់៖ "+id+"\nលេខសម្ងាត់៖ (បង្ហាញម្តងគត់ · ចម្លង ហើយប្រគល់ឱ្យសិស្ស)","លេខសម្គាល់ "+id+" · លេខសម្ងាត់ "+pw)});
+    },function(){alert("មិនអាចបង្កើតបានទេ")});
+  }
+}
 function pcAct(a){
   var cl=myClasses(who.id),c=cl[PC.ci];if(!c)return;var p=PC.list.filter(function(x){return x.cls===c.n})[0];
   if(a==="pcnew"){
@@ -946,6 +1002,7 @@ function pcAct(a){
     return;
   }
   if(!p)return;
+  if(/^pcx/.test(a)){pcExAct(a,p);return}
   if(a==="pccp"){var u=pcUrl(p.id);try{navigator.clipboard.writeText(u)}catch(x){}notify("បានចម្លងតំណ");return}
   if(a==="pcqr"){showLinkUrl(pcUrl(p.id),"🧮 តំណហ្វឹកហាត់ថ្នាក់ "+c.n);return}
   if(a==="pcrf"){delete PC.rows[p.id];renderPrac();return}
@@ -1027,6 +1084,7 @@ $("qzBody").addEventListener("click",function(e){
   if(b.dataset.qrs&&curTest){var t0=curTest,sid=b.dataset.qrs,nm=((t0.names||[]).filter(function(x){return x.k===sid})[0]||{}).n||sid;
     if(!confirm("អនុញ្ញាតឱ្យ «"+nm+"» ធ្វើតេស្តម្ដងទៀត?\n\nចម្លើយដែលបានផ្ញើ (បើមាន) នឹងត្រូវលុប ហើយសិស្សអាចចាប់ផ្ដើមថ្មីលើឧបករណ៍ណាមួយ។"))return;
     b.disabled=true;resetSt(t0,sid).then(function(){notify("✅ «"+nm+"» អាចធ្វើតេស្តម្ដងទៀតបាន")},function(e){b.disabled=false;alert("មិនអាចលុបបានទេ · "+qErr(e))});return}
+  if(b.dataset.qa==="pcxdel"){pcExDel(+b.dataset.pxd);return}
   var a=b.dataset.qa,t=curTest;
   if(a==="resetall"&&t){var nowMs2=Date.now(),L=stl.filter(function(x){return!subs.some(function(y){return y.sid===x.sid})&&(!t.open||(t.dur&&(function(){var d=x.at&&x.at.toDate?x.at.toDate():null;return d&&nowMs2>d.getTime()+(+t.dur+10)*60000})()))});
     if(!L.length)return;if(!confirm("អនុញ្ញាតឱ្យសិស្ស "+kn(L.length)+" នាក់ ដែលមិនបានផ្ញើ ធ្វើតេស្តម្ដងទៀត?\n\nការចាប់ផ្ដើមរបស់ពួកគេនឹងត្រូវលុប (ចម្លើយដែលបានផ្ញើរួច មិនប៉ះពាល់)។\nចំណាំ៖ តេស្តត្រូវតែ «បើក» ទើបសិស្សចាប់ផ្ដើមថ្មីបាន។"))return;

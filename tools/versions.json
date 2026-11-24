@@ -52,8 +52,8 @@
   "v": 1
  },
  "exam.js": {
-  "hash": "dcd87d03ae51bb3a896cc3b324b3b217726ac7c4",
-  "v": 111
+  "hash": "46b749637635cfb1ec010e9284336a1014eec569",
+  "v": 113
  },
  "excerpt.js": {
   "hash": "d10c45a469df085f31456db9a2a83cf2038ba932",
@@ -143,13 +143,17 @@
   "hash": "b0727924025923fcf2b45b36e403a9b8201f7092",
   "v": 11
  },
+ "pexam.js": {
+  "hash": "547bdff88774a9044b4a578f5f0565064c4c2f79",
+  "v": 3
+ },
  "pisa12.js": {
   "hash": "6bb48c733ac5f9532b191bf3dd337074c4cb8bc0",
   "v": 3
  },
  "practice.js": {
-  "hash": "f7d6f88dd625e62e8b242fa1542bfcfb63a0b5a6",
-  "v": 27
+  "hash": "4c6b3d0050a74b26da6eceebe6116f01370d2329",
+  "v": 29
  },
  "practice10.js": {
   "hash": "4bfd67589401d32de912e559fff8ad3a1c6b4956",
@@ -204,8 +208,8 @@
   "v": 1
  },
  "quiz.js": {
-  "hash": "4f5e99d31af58c4afc001cf8bab8cfb7da1bbaf6",
-  "v": 48
+  "hash": "e6f12e285972ec7b800a528a6e9f8d9e6976fa06",
+  "v": 49
  },
  "sched.js": {
   "hash": "d2a41b9c475b3f86fb62a75d4be9d86ddb4baa6d",

@@ -1010,7 +1010,7 @@ function clInit(code){
     CL.cls=c;if(GR[+c.g])S.g=+c.g;
     try{var me=JSON.parse(localStorage.getItem("pracMe_"+code)||"null");if(me&&c.names.some(function(x){return x.k===me.k}))CL.me=me}catch(e){}
     try{CL.q=JSON.parse(localStorage.getItem("pracQ_"+code)||"[]")}catch(e){CL.q=[]}
-    if(!CL.me)return pickMe();
+    if(!CL.me&&!/[#&]px=1/.test(location.hash))return pickMe();
     clFlush();route2();
   }).catch(function(e){
     console.error(e);CL.code="";
@@ -1020,7 +1020,7 @@ function clInit(code){
 function pickMe(){
   var c=CL.cls;
   $("app").innerHTML="<div class=hero><h1>👋 ថ្នាក់ "+esc(c.cls)+"</h1><p>ជ្រើសឈ្មោះរបស់អ្នក (ម្ដងគត់) · ពានរង្វាន់ដែលអ្នកទទួលបាន នឹងផ្ញើទៅគ្រូ</p></div>"+
-    "<input id=meQ class=meq placeholder='🔍 ស្វែងរកឈ្មោះ…' autocomplete=off><div class=mel>"+c.names.map(function(x){return"<button type=button data-me='"+esc(x.k)+"'>"+esc(x.n)+"</button>"}).join("")+"</div>";
+    "<input id=meQ class=meq placeholder='🔍 ស្វែងរកឈ្មោះ…' autocomplete=off><div class=mel>"+c.names.map(function(x){return"<button type=button data-me='"+esc(x.k)+"'>"+esc(x.n)+"</button>"}).join("")+"</div>"+(exOn()?"<p style='text-align:center'><button type=button data-a=pex style='background:#1e3a8a;color:#fff'>🏁 ប្រឡង ៦ កម្រិត (សិស្សក្រៅបញ្ជី ក៏បាន)</button></p>":"");
   $("meQ").oninput=function(){var q=this.value.trim().toLowerCase();[].forEach.call($("app").querySelectorAll("[data-me]"),function(b){b.hidden=q&&b.textContent.toLowerCase().indexOf(q)<0})};
 }
 function clSend(l,v){
@@ -1036,6 +1036,16 @@ function clFlush(){
   },function(e){console.warn("prt:",e)});
 }
 window.addEventListener("online",function(){clFlush()});
+/* 🏁 ប្រឡង ៦ កម្រិត (ថ្នាក់ទី ៩ · តាមតំណ #c= · គ្រូបើកក្នុង pcls.ex) · pexam.js ផ្ទុកតាមតម្រូវការ */
+function exOn(){var e=CL.cls&&CL.cls.ex;return !!(e&&e.on===true&&+e.g===9&&+e.l>0&&!(typeof e.t==="number"&&Date.now()>=e.t))}
+function exBtn(l){return S.g===9&&exOn()&&+CL.cls.ex.l===l?"<button type=button data-a=pex style='background:#1e3a8a;color:#fff;font-weight:700'>🏁 ប្រឡង ៦ កម្រិត</button>":""}
+function pexLoad(){return window.PEXAM?Promise.resolve():new Promise(function(ok,no){var s=document.createElement("script");s.src="pexam.js?v=3";s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function pexGo(auto){
+  var e=CL.cls&&CL.cls.ex;if(!e||!CL.code)return home();
+  S.g=9;location.hash=HS("g=9&l="+(+e.l||0)+"&px=1");
+  $("app").innerHTML="<p style='text-align:center;margin-top:40px'>កំពុងផ្ទុកប្រឡង…</p>";
+  pexLoad().then(function(){PEXAM.enter({cls:CL.cls,code:CL.code,me:CL.me,auto:!!auto,onExit:function(){home()}})},function(){alert("មិនអាចផ្ទុកប្រឡងបានទេ · សូមពិនិត្យអ៊ីនធឺណិត");home()});
+}
 function cupHtml(l){var p=prog()[l]||{};return lvls(l).map(function(v){return"<i class='cup"+(p[v]?" on":"")+" l"+v+"' title='"+lv(v)[0]+"'>🏆</i>"}).join("")}
 
 /* =================== បង្ហាញ =================== */
@@ -1081,7 +1091,7 @@ function solBtn(q,i){
 function draw(){
   var l=S.l,v=S.v;
   var h=document.documentElement.lang=T("km","en");
-  var h="<div class=bar><button type=button data-a=home>‹ "+T("មេរៀនទាំងអស់","All topics")+"</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='"+T("តំណ/QR សម្រាប់ចែករំលែក","Link / QR code")+"'>📱</button></div>"+
+  var h="<div class=bar><button type=button data-a=home>‹ "+T("មេរៀនទាំងអស់","All topics")+"</button><h1>"+esc(lname(l))+"</h1><span class=cups>"+cupHtml(l)+"</span><button type=button data-a=qr title='"+T("តំណ/QR សម្រាប់ចែករំលែក","Link / QR code")+"'>📱</button>"+exBtn(l)+"</div>"+
     "<div class=lv style='--n:"+lvls(l).length+"'>"+lvls(l).map(function(k){return"<button type=button class='l"+k+(k===v?" on":"")+"' data-v="+k+">"+lv(k)[0]+"<small>"+lv(k)[1]+"</small></button>"}).join("")+"</div>"+(window.HUB?HUB.html(S.g,l,v,lname(l),EN()):"")+"<ol class=qs>";
   S.qs.forEach(function(q,i){
     h+="<li class='q"+(q.st?" "+q.st:"")+"' id=q"+i+"><div class=qt>"+mathSafe(q.q)+"</div>"+(q.fig&&window.FIG?FIG.svg(q.fig):"")+"<div class=ans>"+
@@ -1161,6 +1171,7 @@ function bind(){
     var a=b.dataset.a;
     if(a==="chme"){if(confirm(T("ប្ដូរឈ្មោះ? (សូមជ្រើសតែឈ្មោះរបស់ខ្លួនឯងប៉ុណ្ណោះ)","Change name? (choose only your own name)"))){CL.me=null;try{localStorage.removeItem("pracMe_"+CL.code)}catch(e){}pickMe()}return}
     if(a==="solo"){location.hash="";return route()}
+    if(a==="pex")return pexGo(false);
     if(a==="home")home();else if(a==="check")doCheck();else if(a==="new")open(S.l,S.v);else if(a==="qr")qr();
     else if(a==="reset"){if(confirm(T("លុបពានរង្វាន់ថ្នាក់ទី"+kn(S.g)+" ទាំងអស់នៅលើឧបករណ៍នេះ?","Delete all trophies for "+gname(S.g)+" on this device?"))){try{localStorage.removeItem(PK())}catch(x){}home()}}
   });
@@ -1180,11 +1191,18 @@ function route(){
   route2();
 }
 function route2(){
+  if(CL.cls&&/[#&]px=1/.test(location.hash))return pexGo(true);   /* Refresh កណ្តាលប្រឡង → បន្តដោយស្វ័យប្រវត្តិ */
   var g=/g=(\d+)/.exec(location.hash),m=/l=(\d+)(?:&v=(\d))?/.exec(location.hash),lg=0;try{lg=+localStorage.getItem("pracG")||0}catch(x){}
   S.g=CL.cls&&GR[+CL.cls.g]?+CL.cls.g:g&&GR[+g[1]]?+g[1]:GR[lg]?lg:12;
   if(m&&GR[S.g].G[+m[1]])open(+m[1],+m[2]||1);else home();
 }
-window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S,GR:GR};
+window.PRACT={parse:parse,check:check,tex:tex,G:G,S:S,GR:GR,
+  /* 🏁 ជំនួយសម្រាប់ម៉ូដប្រឡង (pexam.js) · មិនប្តូរអាកប្បកិរិយាហាត់ធម្មតា */
+  X:{esc:esc,mathSafe:mathSafe,kn:kn,T:T,N:N,EN:EN,lv:lv,lvls:lvls,lname:lname,LVO:LVO,math:math,open:open,home:home,
+    kbFocus:function(i){lastInp=i;var k=$("kb");if(k)k.hidden=false},
+    pv:function(v,el){v=String(v||"").trim();if(!el)return;if(!v){el.innerHTML="";return}
+      try{var t=parse(v);if(window.katex)katex.render(tex(t),el,{throwOnError:false});else el.textContent=v;el.classList.remove("err")}
+      catch(e){el.textContent="⚠️ "+(EN()?"invalid":typeof e==="string"?e:"");el.classList.add("err")}}}};
 /* ជំនួយសម្រាប់ឯកសារថ្នាក់ផ្សេង (practice11.js …) */
 window.PX={LIM11:LIM11,Q:Q,A:A,ri:ri,nz:nz,pick:pick,fr:fr,sg:sg,co:co,poly:poly,polyT:polyT,cx:cx,cxf:cxf,cxT:cxT,cnk:cnk,sgp:sgp,v3:v3,gcd:gcd,G12:G,
   reg:function(g,o){fill56(o.G);GR[g]=o},start:function(){kb();bind();route()}};
