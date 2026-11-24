@@ -526,9 +526,11 @@ html.no-motion #loginPop *{animation-duration:.01s!important;animation-delay:0s!
 /* ផ្ទៃខាងក្រោយក្បាលទំព័រ៖ ពន្លឺព្រលិច + សិស្សអង្គុយជួរជាមួយ Laptop (កណ្ដាល ព្រិលចុងទាំងសងខាង · តុបតែងប៉ុណ្ណោះ) */
 header .hdr-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
 header .hdr-bg svg { width: 100%; height: 100%; display: block; }
-header .hb-kh { stroke: #fcd34d; opacity: .55; }
+header .hb-kh { stroke: #fde68a; opacity: .7; filter: drop-shadow(0 0 2px rgba(252,211,77,.75)); }
+@media (prefers-reduced-motion: no-preference) { header .hb-kh { animation: hbShim 6s ease-in-out infinite; } }
+@keyframes hbShim { 0%,100% { opacity: .55; } 50% { opacity: .85; } }
 header > .brand, header > .hdr-acts { position: relative; z-index: 1; }
 :root[data-theme="light"] header .hdr-bg { opacity: .85; }
-:root[data-theme="light"] header .hb-kh { stroke: #b45309; opacity: .4; }
-@media (max-width: 700px) { header .hdr-bg { opacity: .7; } header .hb-kh { opacity: .35; } }
+:root[data-theme="light"] header .hb-kh { stroke: #b45309; opacity: .5; filter: drop-shadow(0 0 2px rgba(245,158,11,.55)); }
+@media (max-width: 700px) { header .hdr-bg { opacity: .7; } header .hb-kh { opacity: .45; animation: none; } }
 @media print { header .hdr-bg { display: none !important; } }

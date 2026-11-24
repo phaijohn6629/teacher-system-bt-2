@@ -61,7 +61,7 @@
 /* Hero Banner — Spotlight អត្តសញ្ញាណខ្មែរ (ឆ្វេងខៀវចាស់ · ស្តាំពន្លឺរស្មីថ្ងៃរះ + ប្រាសាទអង្គរវត្ត ៥ ប៉ម) */
 @media screen{
   .welcome-banner{background:
-    radial-gradient(ellipse 52% 105% at 84% 108%,rgba(255,214,120,.62) 0%,rgba(125,180,255,.5) 30%,rgba(43,79,179,0) 72%),
+    radial-gradient(ellipse 52% 105% at 84% 108%,rgba(255,214,120,.76) 0%,rgba(135,190,255,.6) 32%,rgba(43,79,179,0) 72%),
     linear-gradient(100deg,#0f2158 0%,#16327f 45%,#2B4FB3 100%)}
   .welcome-banner::after{display:none}
   .welcome-banner::before{content:"";position:absolute;inset:0;right:0;bottom:0;left:auto;width:62%;height:auto;border-radius:0;pointer-events:none;z-index:0;
@@ -70,7 +70,7 @@
   .welcome-banner>.wb-ang{position:absolute;right:0;bottom:0;height:min(100%,170px);width:auto;max-width:60%;z-index:0;pointer-events:none;opacity:.92}
   @media (max-width:700px){
     .welcome-banner{background:
-      radial-gradient(ellipse 70% 80% at 92% 112%,rgba(255,214,120,.55) 0%,rgba(125,180,255,.4) 35%,rgba(43,79,179,0) 75%),
+      radial-gradient(ellipse 70% 80% at 92% 112%,rgba(255,214,120,.68) 0%,rgba(135,190,255,.5) 36%,rgba(43,79,179,0) 75%),
       linear-gradient(100deg,#0f2158 0%,#16327f 60%,#2B4FB3 100%)}
     .welcome-banner>.wb-ang{max-width:55%;height:min(70%,110px);opacity:.5}
   }
