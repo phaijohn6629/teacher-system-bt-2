@@ -72,7 +72,7 @@
     .welcome-banner{background:
       radial-gradient(ellipse 70% 80% at 92% 112%,rgba(255,214,120,.68) 0%,rgba(135,190,255,.5) 36%,rgba(43,79,179,0) 75%),
       linear-gradient(100deg,#0f2158 0%,#16327f 60%,#2B4FB3 100%)}
-    .welcome-banner>.wb-ang{max-width:55%;height:min(70%,110px);opacity:.5}
+    .welcome-banner>.wb-ang{max-width:55%;height:min(70%,110px);opacity:.78}
   }
 }
 @media print{.wb-ang{display:none!important}}
@@ -89,3 +89,4 @@
   100%{opacity:0;transform:scale(.9)}
 }
 @media (prefers-reduced-motion:reduce){.wb-ang .wb-sun{animation:none!important;opacity:.55;transform:none;will-change:auto}}
+html.no-motion .wb-ang .wb-sun{animation:none!important;opacity:.55;transform:none;will-change:auto}
