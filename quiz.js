@@ -943,7 +943,7 @@ function renderPrac(){
    h = SHA-256(កូដ|លេខសម្គាល់|លេខសម្ងាត់) · លេខសម្ងាត់បង្ហាញម្តងគត់ · ទ្វារទន់ (មើល pexam.js gate/enter) */
 function pcExG(p){var g=parseInt(p&&p.g)||parseInt(p&&p.cls)||0;return g>=7&&g<=12?g:9}
 /* មេរៀនគ្មានកម្រិត PISA (key 4) → ប្រឡង ៦ កម្រិតបង្កើតមិនបាន · លាក់ពីបញ្ជី (តេស្ត tests/pexam.js ផ្ទៀងផ្ទាត់ឱ្យត្រូវគ្នា) */
-var PEX_NOPISA={10:[94],11:[16,82]};
+var PEX_NOPISA={};
 function pexOk(g,n){return(PEX_NOPISA[g]||[]).indexOf(+n)<0}
 function pcExOf(p){return p&&p.ex&&typeof p.ex==="object"?p.ex:{}}
 function pcLocalDt(ms){if(typeof ms!=="number"||!isFinite(ms))return"";var d=new Date(ms),z=function(n){return("0"+n).slice(-2)};return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+"T"+z(d.getHours())+":"+z(d.getMinutes())}

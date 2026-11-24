@@ -9,7 +9,7 @@
    ======================================================================== */
 (function(){
 "use strict";
-var GENS=["pisa12.js?v=3","practice11.js?v=9","practice10.js?v=12","practice9.js?v=7","practice8.js?v=4","practice7.js?v=3"],GENE=["practiceen2.js?v=7","practiceen3.js?v=5"],GEN4=["practiceen4.js?v=9","practiceen5.js?v=7","practiceen6.js?v=5"],genP=null,kxP=null;
+var GENS=["pisa12.js?v=3","practice11.js?v=10","practice10.js?v=13","practice9.js?v=7","practice8.js?v=4","practice7.js?v=3"],GENE=["practiceen2.js?v=7","practiceen3.js?v=5"],GEN4=["practiceen4.js?v=9","practiceen5.js?v=7","practiceen6.js?v=5"],genP=null,kxP=null;
 var CAMG=[106,107,108,109,110,111,112];   /* 🇬🇧 ថ្នាក់ Cambridge (practiceen*.js) */
 var KX="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/",KXM={"\\R":"\\mathbb{R}","\\C":"\\mathbb{C}","\\N":"\\mathbb{N}","\\Z":"\\mathbb{Z}","\\Q":"\\mathbb{Q}"};
 var LVN={1:"កម្រិត ១ · មូលដ្ឋានគ្រឹះ",5:"កម្រិត ២ · មូលដ្ឋានបន្ថែម",2:"កម្រិត ៣ · មធ្យម",6:"កម្រិត ៤ · កម្រិតខ្ពស់",3:"កម្រិត ៥ · ពិបាក",4:"🌐 PISA · ជីវិតពិត"},LVO=[1,5,2,6,3,4];   /* គន្លឹះ 1–4 ដូចដើម (វិញ្ញាសាចាស់មិនខូច) · 5,6 = កម្រិត ២,៤ ថ្មី */
