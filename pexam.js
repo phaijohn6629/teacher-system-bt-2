@@ -28,11 +28,11 @@ function ord(){return window.PRACT&&PRACT.X?PRACT.X.LVO:[1,5,2,6,3,4]}
 function shape(q){return q.kd?"kd:"+q.kd:String(q.q).replace(/\$[^$]*\$/g,"").slice(0,24)}
 /* បង្កើតវគ្គមួយ៖ ៤ សំណួរ · ជៀសអត្ថបទដដែល (ទូទាំងប្រឡង) និងទម្រង់ដដែល (ក្នុងវគ្គ · បន្ធូរបន្ទាប់ពី ៤០ ដង)
    ជុំទី ១ ចៀស fig ធំ (> FIGMAX) ដើម្បីកុំឱ្យ localStorage ធ្ងន់ · បើនៅខ្វះ ជុំទី ២ (កំណត់ ៦០ ដង) ទទួល fig ធំ · មិនប៉ះ generator */
-function sec(gen,seenQ){
-  var out=[],kind={};
+function sec(gen,seenQ,nq,sel){
+  nq=nq||NQ;var out=[],kind={};
   function pass(max,lim){
-    for(var tries=0;out.length<NQ&&tries<max;tries++){
-      var q=gen();
+    for(var tries=0;out.length<nq&&tries<max;tries++){
+      var q=(sel?sel(out.length):gen)();
       if(!q||!q.q||!q.a||!q.a.length)continue;
       var t=shape(q);
       if(seenQ[q.q])continue;
@@ -42,7 +42,7 @@ function sec(gen,seenQ){
     }
   }
   pass(200,true);
-  if(out.length<NQ)pass(60,false);
+  if(out.length<nq)pass(60,false);
   return out;
 }
 /* ក្លូនសំណួរទៅជាទិន្នន័យសុទ្ធ (JSON) + វាលសម្រាប់ UI ក្រោយ (u = ចម្លើយសិស្ស) */
@@ -50,16 +50,48 @@ function clean(q){
   var c=JSON.parse(JSON.stringify({q:q.q,a:q.a.map(function(a){return{v:a.v,t:a.t,k:a.k,l:a.l}}),s:q.s==null?"":q.s,fig:q.fig==null?"":q.fig,kd:q.kd||""}));
   return c;
 }
+/* ===== ច្រើនមេរៀន (ជំហាន ១ ស្នូល) =====
+   MAXLS = ដែនកំណត់សុវត្ថិភាព (ល្បឿន + localStorage) · nqFor(n) = សំណួរ/កម្រិត៖ ១–៤ មេរៀន = ៤ · ៥–៨ = ៦ · ៩+ = ៨
+   l ជាលេខតែមួយ (ដូចដើម) ឬអារេលេខមេរៀន · ១ មេរៀន = ផ្លូវដើមទាំងស្រុង (key pex_{g}_{l} មិនប្តូរ) */
+var MAXLS=30;
+function nqFor(n){return n<=4?4:n<=8?6:8}
+function normLs(ls){
+  var a=Array.isArray(ls)?ls:[ls],o=[],seen={};
+  a.forEach(function(x){x=+x;if(x>0&&x%1===0&&!seen[x]){seen[x]=1;o.push(x)}});
+  return o.slice(0,MAXLS);
+}
+function lk(l){return Array.isArray(l)?(l.length>1?l.join("-"):String(l[0]||"")):String(l)}      /* គន្លឹះ key */
+function lkOf(o){return lk(o&&o.ls&&o.ls.length>1?o.ls:o.l)}
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+/* បែងចែកមេរៀនឱ្យតំណែងសំណួរ (nq/កម្រិត × ៦ កម្រិត)៖ ជួរបង្វិលចៃដន្យ ដូច្នេះគ្រប់មេរៀនត្រូវបានប្រើស្មើគ្នា · ក្នុងមួយកម្រិតមិនជាន់មេរៀនដដែល បើមេរៀន ≥ nq */
+function plan(ls,nq,nlv){
+  var q=[],rows=[],guard=0;
+  for(var r=0;r<nlv;r++){
+    var row=ls.length<=nq?ls.slice():[],hold=[];      /* មេរៀន ≤ nq៖ គ្រប់មេរៀនត្រូវមានក្នុងរាល់កម្រិត · ចំណែកលើសបំពេញពីជួរបង្វិល */
+    while(row.length<nq&&guard++<5000){
+      if(!q.length)q=shuf(ls.slice());
+      var x=q.shift();
+      if(ls.length>nq&&row.indexOf(x)>=0){hold.push(x);continue}
+      row.push(x);
+    }
+    q=hold.concat(q);rows.push(shuf(row));
+  }
+  return rows;
+}
 function build(g,l){
-  var GR=PRACT.GR[g];if(!GR||!GR.G[l])throw new Error("pexam: no lesson "+g+"/"+l);
-  var G=GR.G[l],seenQ={},secs=[];
-  ord().forEach(function(v){
-    if(!G[v])throw new Error("pexam: lesson "+g+"/"+l+" lacks level "+v);
-    var qs=sec(G[v],seenQ);
-    if(qs.length<NQ)throw new Error("pexam: level "+v+" gave "+qs.length+" questions");
+  var GR=PRACT.GR[g];if(!GR)throw new Error("pexam: no grade "+g);
+  var ls=normLs(l);if(!ls.length)throw new Error("pexam: no lesson");
+  ls.forEach(function(x){if(!GR.G[x])throw new Error("pexam: no lesson "+g+"/"+x)});
+  var multi=ls.length>1,nq=multi?nqFor(ls.length):NQ,seenQ={},secs=[],O=ord(),rows=multi?plan(ls,nq,O.length):null;
+  O.forEach(function(v,i){
+    ls.forEach(function(x){if(!GR.G[x][v])throw new Error("pexam: lesson "+g+"/"+x+" lacks level "+v)});
+    var qs=multi?sec(null,seenQ,nq,function(j){return GR.G[rows[i][j%rows[i].length]][v]}):sec(GR.G[ls[0]][v],seenQ);
+    if(qs.length<nq)throw new Error("pexam: level "+v+" gave "+qs.length+" questions");
     secs.push({v:v,qs:qs.map(clean)})
   });
-  return{v:1,g:+g,l:+l,secs:secs};
+  var P={v:1,g:+g,l:ls[0],secs:secs};
+  if(multi){P.ls=ls;P.nq=nq}
+  return P;
 }
 function total(P){return P.secs.reduce(function(n,s){return n+s.qs.length},0)}
 function ppOf(p){p=+p;return isFinite(p)&&p>=.5&&p<=1?p:PASS}                           /* ពិន្ទុគោលជាប់ (ប្រភាគ) · ក្រៅ ៥០–១០០% → ៨០% */
@@ -75,11 +107,11 @@ function unpack(s){try{var P=JSON.parse(s);return valid(P)?P:null}catch(e){retur
 
 /* ================= State ក្នុង localStorage ================= */
 function ls(){try{return localStorage}catch(e){return null}}
-function key(g,l,sc){return PFX+g+"_"+l+(sc?"_"+String(sc).replace(/[^A-Za-z0-9-]/g,""):"")}
+function key(g,l,sc){return PFX+g+"_"+lk(l)+(sc?"_"+String(sc).replace(/[^A-Za-z0-9-]/g,""):"")}
 function del(k){var st=ls();if(st)try{st.removeItem(k)}catch(e){}}
 function okState(st){
   return !!(st&&st.v===1&&valid(st.P)&&typeof st.startAt==="number"&&typeof st.secStart==="number"&&
-    typeof st.sec==="number"&&st.sec>=0&&st.sec<=st.P.secs.length&&Array.isArray(st.done)&&st.done.length===st.P.secs.length&&
+    (st.nq==null||st.nq>0)&&typeof st.sec==="number"&&st.sec>=0&&st.sec<=st.P.secs.length&&Array.isArray(st.done)&&st.done.length===st.P.secs.length&&
     st.ans&&typeof st.ans==="object"&&!Array.isArray(st.ans));
 }
 function expired(st,now){return now-st.startAt>EXPIRE}
@@ -97,7 +129,7 @@ function sweep(now){
 function save(st){
   var s=ls();if(!s)return false;
   var v;try{v=JSON.stringify(st)}catch(e){return false}
-  var k=key(st.g,st.l,st.sc);
+  var k=key(st.g,lkOf(st),st.sc);
   return window.LSG?LSG.set(s,k,v):(function(){try{s.setItem(k,v);return true}catch(e){return false}})();
 }
 /* បន្តពី localStorage (refresh/បិទផ្ទាំង) · ផុតកំណត់ ឬខូច → លុប ហើយត្រឡប់ null */
@@ -112,12 +144,12 @@ function load(g,l,sc,now){
 /* ចាប់ផ្តើមប្រឡងថ្មី (ជំនួស state ចាស់នៃ key ដូចគ្នា) · saved=false បើ storage ពេញ (ប្រឡងនៅតែដំណើរការក្នុងអង្គចងចាំ) */
 function start(g,l,o){
   o=o||{};var now=o.now==null?Date.now():o.now;sweep(now);
-  var st={v:1,g:+g,l:+l,sc:o.sc||"",who:o.who||null,cls:o.cls||"",P:build(g,l),ans:{},sec:0,done:[0,0,0,0,0,0],at:[0,0,0,0,0,0],au:[0,0,0,0,0,0],dl:typeof o.dl==="number"&&isFinite(o.dl)?o.dl:null,pp:ppOf(o.pp),seen:now,startAt:now,secStart:now};
+  var P0=build(g,l),st={v:1,g:+g,l:P0.l,ls:P0.ls||null,nq:P0.nq||NQ,sc:o.sc||"",who:o.who||null,cls:o.cls||"",P:P0,ans:{},sec:0,done:[0,0,0,0,0,0],at:[0,0,0,0,0,0],au:[0,0,0,0,0,0],dl:typeof o.dl==="number"&&isFinite(o.dl)?o.dl:null,pp:ppOf(o.pp),seen:now,startAt:now,secStart:now};
   return{st:st,saved:save(st)};
 }
 /* ===== ម៉ោង ===== */
-function limV(g,v){var t=(PEX_T[v]||180)*NQ;return g<=9?t:Math.round(t*4/3)}                          /* វិនាទី តាមថ្នាក់+កម្រិត */
-function limit(st,s){return limV(st.g,st.P.secs[s].v)}
+function limV(g,v,nq){var t=(PEX_T[v]||180)*(nq||NQ);return g<=9?t:Math.round(t*4/3)}                          /* វិនាទី តាមថ្នាក់+កម្រិត */
+function limit(st,s){return limV(st.g,st.P.secs[s].v,st.nq||st.P.nq)}
 function ndl(st){return typeof st.dl==="number"&&isFinite(st.dl)?st.dl:Infinity}
 function deadline(st,s){if(s==null)s=st.sec;return Math.min(st.secStart+limit(st,s)*1000,ndl(st))}                       /* ms · វគ្គបច្ចុប្បន្ន */
 function doSubmit(st,s,at,auto){
@@ -185,7 +217,7 @@ function awayIn(st,now){
   if(!(d>=AWAY_MS))return false;
   st.aw=(st.aw|0)+1;st.awS=(st.awS|0)+Math.round(d/1000);return true;
 }
-function finish(st){del(key(st.g,st.l,st.sc))}
+function finish(st){del(key(st.g,lkOf(st),st.sc))}
 function cancel(g,l,sc){del(key(g,l,sc))}
 
 /* ================= ពិន្ទុ + លទ្ធផល (ជំហាន ៥) ================= */
@@ -214,16 +246,16 @@ function grade(st){
     prev=at;c+=cs;tot+=ns;
   }
   var ne=need(tot,st.pp);
-  return{g:st.g,l:st.l,n:tot,c:c,need:ne,pct:r1(tot?c/tot*100:0),pass:c>=ne,perfect:c===tot&&tot>0,
+  return{g:st.g,l:st.l,ls:st.ls&&st.ls.length>1?st.ls:null,n:tot,c:c,need:ne,pct:r1(tot?c/tot*100:0),pass:c>=ne,perfect:c===tot&&tot>0,
     aw:st.aw|0,awS:st.awS|0,miss:Math.max(0,ne-c),elapsed:Math.max(0,Math.round(((st.at[n-1]||prev)-st.startAt)/1000)),auto:au,secs:secs};
 }
 var RPFX="pexr_";
-function rkey(g,l,sc){return RPFX+g+"_"+l+(sc?"_"+String(sc).replace(/[^A-Za-z0-9-]/g,""):"")}
+function rkey(g,l,sc){return RPFX+g+"_"+lk(l)+(sc?"_"+String(sc).replace(/[^A-Za-z0-9-]/g,""):"")}
 function okRes(o){return !!(o&&o.v===1&&typeof o.at==="number"&&o.res&&typeof o.res.c==="number"&&Array.isArray(o.res.secs)&&o.res.secs.length>0)}
-function mkRec(st,res,now){return{v:1,g:st.g,l:st.l,sc:st.sc||"",who:st.who||null,cls:st.cls||"",nm:"",at:now==null?Date.now():now,res:res}}
+function mkRec(st,res,now){return{v:1,g:st.g,l:st.l,ls:st.ls&&st.ls.length>1?st.ls:null,sc:st.sc||"",who:st.who||null,cls:st.cls||"",nm:"",at:now==null?Date.now():now,res:res}}
 function saveRec(rec){
   var s=ls();if(!s)return false;
-  var v=JSON.stringify(rec),k=rkey(rec.g,rec.l,rec.sc);
+  var v=JSON.stringify(rec),k=rkey(rec.g,lkOf(rec),rec.sc);
   return window.LSG?LSG.set(s,k,v):(function(){try{s.setItem(k,v);return true}catch(e){return false}})();
 }
 function saveRes(st,res,now){return saveRec(mkRec(st,res,now))}
@@ -242,7 +274,7 @@ var U=null;   /* ប្រឡងដែលកំពុងបង្ហាញ */
 function X(){return PRACT.X}
 function el(id){return document.getElementById(id)}
 function mmss(sec){sec=Math.max(0,sec|0);return X().N(Math.floor(sec/60)+":"+("0"+sec%60).slice(-2))}
-function minOf(g,v){return Math.round(limV(g,v)/60)}
+function minOf(g,v,nq){return Math.round(limV(g,v,nq)/60)}
 function css(){
   if(el("pexCss"))return;
   var c=document.createElement("style");c.id="pexCss";
@@ -251,6 +283,7 @@ function css(){
   ".pex-prog{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:6px 0 2px}.pex-prog i{height:8px;border-radius:4px;background:#e2e8f0}.pex-prog i.d{background:var(--ok)}.pex-prog i.c{background:var(--brand)}"+
   ".pex-t{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}.pex-t.low{color:var(--bad)}"+
   ".pex-ban{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#fffbeb;border:1px solid #fcd34d;font-size:15px}.pex-ban.bad{background:#fef2f2;border-color:#fca5a5}"+
+  ".pex-ml{background:#fff;border-radius:12px;padding:8px 14px;margin:0 0 12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.pex-ml summary{cursor:pointer;font-weight:700;color:#1e3a8a}.pex-ml ol{margin:6px 0 2px;padding-left:22px;max-height:40vh;overflow-y:auto;line-height:1.6;overflow-wrap:anywhere}"+
   ".pex-rules{background:#fff;border-radius:14px;padding:14px 16px 14px 34px;margin:0 0 14px;box-shadow:0 2px 8px rgba(30,58,138,.06)}.pex-rules li{margin:6px 0}"+
   ".pex-lv{width:100%;border-collapse:collapse;margin:8px 0}.pex-lv td{border-bottom:1px solid var(--line);padding:4px 6px}.pex-lv td:last-child{text-align:right;white-space:nowrap}"+
   "#app .qs{grid-template-columns:minmax(0,1fr)}.pex-q{min-width:0}.pex-q .qt{overflow-wrap:anywhere;overflow-x:auto;overflow-y:hidden;max-width:100%}.pex-q .ans{min-width:0}.pex-q .katex-display{overflow-x:auto;overflow-y:hidden;max-width:100%}.pex-q .fig svg{max-width:100%}"+
@@ -263,14 +296,26 @@ function css(){
   "#app.pex-lock,#app.pex-lock *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}#app.pex-lock input{-webkit-user-select:text;user-select:text}";
   document.head.appendChild(c);
 }
+/* ===== ឈ្មោះមេរៀន (ច្រើនមេរៀន) · o = {l, ls} (state/record/mount option) ===== */
+function lsOf(o){var a=o&&o.ls&&o.ls.length>1?normLs(o.ls):null;return a&&a.length>1?a:null}
+function nqOf(o){var a=lsOf(o);return a?nqFor(a.length):NQ}
+function cut(t,n){t=String(t);return t.length>n?t.slice(0,n-1)+"…":t}
+/* ខ្លី (ក្បាល pex-top · វិញ្ញាបនបត្រ)៖ ១ មេរៀន = ឈ្មោះ · ច្រើន = «N មេរៀន (១, ៣, ៥ …)» ឬឈ្មោះបើ ≤ ៣ និងខ្លី */
+function ltxt(o,max){
+  var x=X(),a=lsOf(o);max=max||90;if(!a)return x.lname(o.l);
+  var nm=a.map(function(n){return x.lname(n)});
+  if(a.length<=3){var j=nm.join(" · ");if(j.length<=max)return j}
+  var nums=a.length<=6?a.map(function(n){return x.kn(n)}).join(", "):a.slice(0,5).map(function(n){return x.kn(n)}).join(", ")+" … "+x.kn(a[a.length-1]);
+  return x.kn(a.length)+" មេរៀន (លេខ "+nums+")";
+}
 function banner(msg,bad){return msg?"<div class='pex-ban"+(bad?" bad":"")+"' role=status>"+X().esc(msg)+"</div>":""}
 function introHtml(g,l,msg){
-  var x=X(),n=NQ*ord().length,pp=ppOf(U&&U.o&&U.o.pp),ne=need(n,pp);
-  return "<div class=hero><h1>🏁 "+x.esc("ប្រឡង ៦ កម្រិត")+"</h1><p>"+x.esc(x.lname(l))+"</p></div>"+banner(msg,true)+
+  var x=X(),o0=U&&U.o,nq=nqOf(o0),n=nq*ord().length,pp=ppOf(U&&U.o&&U.o.pp),ne=need(n,pp);
+  return "<div class=hero><h1>🏁 "+x.esc("ប្រឡង ៦ កម្រិត")+"</h1><p>"+x.esc(ltxt({l:+(o0&&o0.l)||(Array.isArray(l)?l[0]:l),ls:o0&&o0.ls},120))+"</p></div>"+banner(msg,true)+(lsOf(o0)?"<details class=pex-ml><summary>"+x.esc("មើលបញ្ជីមេរៀន ("+x.kn(lsOf(o0).length)+")")+"</summary><ol>"+lsOf(o0).map(function(m){return"<li>"+x.esc(x.lname(m))+"</li>"}).join("")+"</ol></details>":"")+
   "<ol class=pex-rules>"+
-  "<li>"+x.esc("សំណួរសរុប "+x.kn(n)+" = "+x.kn(ord().length)+" វគ្គ × "+x.kn(NQ)+" សំណួរ (កម្រិត ១–៥ និង 🌐 PISA)")+"</li>"+
-  "<li>"+x.esc("ម៉ោងកំណត់ក្នុងមួយវគ្គ៖")+"<table class=pex-lv>"+ord().map(function(v){return"<tr><td>"+x.esc(x.lv(v)[0])+" <small>"+x.esc(x.lv(v)[1])+"</small></td><td>"+x.kn(minOf(g,v))+" នាទី</td></tr>"}).join("")+
-    "<tr><td><b>"+x.esc("សរុប")+"</b></td><td><b>"+x.kn(Math.round(ord().reduce(function(t,v){return t+limV(g,v)},0)/60))+" នាទី</b></td></tr></table></li>"+
+  "<li>"+x.esc("សំណួរសរុប "+x.kn(n)+" = "+x.kn(ord().length)+" វគ្គ × "+x.kn(nq)+" សំណួរ (កម្រិត ១–៥ និង 🌐 PISA)")+"</li>"+
+  "<li>"+x.esc("ម៉ោងកំណត់ក្នុងមួយវគ្គ៖")+"<table class=pex-lv>"+ord().map(function(v){return"<tr><td>"+x.esc(x.lv(v)[0])+" <small>"+x.esc(x.lv(v)[1])+"</small></td><td>"+x.kn(minOf(g,v,nq))+" នាទី</td></tr>"}).join("")+
+    "<tr><td><b>"+x.esc("សរុប")+"</b></td><td><b>"+x.kn(Math.round(ord().reduce(function(t,v){return t+limV(g,v,nq)},0)/60))+" នាទី</b></td></tr></table></li>"+
   "<li>"+x.esc("ជាប់ពិន្ទុ ≥ "+x.kn(Math.round(pp*100))+"% (យ៉ាងតិច "+x.kn(ne)+"/"+x.kn(n)+") ទើបទទួលវិញ្ញាបនបត្រ (ពានរង្វាន់ទទួលស្គាល់)")+"</li>"+
   "<li>"+x.esc("មិនបង្ហាញត្រូវ/ខុស ឬដំណោះស្រាយ រហូតដល់បញ្ជូនវគ្គចុងក្រោយ (PISA)")+"</li>"+
   "<li>"+x.esc("បញ្ជូនវគ្គហើយ មិនអាចត្រឡប់កែបានទេ · អស់ម៉ោងវគ្គ = បញ្ជូនស្វ័យប្រវត្តិ (ចម្លើយទទេ រាប់ជាខុស)")+"</li>"+
@@ -285,7 +330,7 @@ function qHtml(st,s,i){
 }
 function secHtml(st,msg,bad){
   var x=X(),s=st.sec,n=st.P.secs.length,v=st.P.secs[s].v,S=status(st);
-  return "<div class=pex-top id=pxTop><div class=pex-row><span><b>🏁 "+x.esc(x.lname(st.l))+"</b></span><button type=button data-px=quit title='"+x.esc("បោះបង់ប្រឡង")+"'>✕</button></div>"+
+  return "<div class=pex-top id=pxTop><div class=pex-row><span><b>🏁 "+x.esc(cut(ltxt(st,60),70))+"</b></span><button type=button data-px=quit title='"+x.esc("បោះបង់ប្រឡង")+"'>✕</button></div>"+
     "<div class=pex-row><span>"+x.esc("វគ្គ "+x.kn(s+1)+"/"+x.kn(n)+" · "+x.lv(v)[0])+" <small>"+x.esc(x.lv(v)[1])+"</small></span>"+
     "<span>⏱ <span class=pex-t id=pxTS>"+mmss(S.secLeft)+"</span> · "+x.esc("សរុប")+" <span class=pex-t id=pxTT>"+mmss(S.totalLeft)+"</span></span></div>"+
     "<div class=pex-prog>"+st.P.secs.map(function(_,k){return"<i class='"+(k<s?"d":k===s?"c":"")+"'></i>"}).join("")+"</div></div>"+
@@ -333,7 +378,7 @@ function certHtml(rec){
     "<h1 class=pc-h>"+e("វិញ្ញាបនបត្រ")+"</h1>"+
     "<p class=pc-l>"+e("សូមប្រគល់ជូន")+"</p>"+
     "<div class='pc-nm "+nmSize(nm.length)+"' id=pxNm>"+(nm?e(nm):"<span class=pc-dots>&nbsp;</span>")+"</div>"+
-    "<p class=pc-t>"+e("បានប្រឡង «ប្រឡង ៦ កម្រិត» (កម្រិត ១–៥ និង PISA) មេរៀន៖ ")+"<b>"+e(x.lname(rec.l))+"</b></p>"+
+    "<p class=pc-t>"+e("បានប្រឡង «ប្រឡង ៦ កម្រិត» (កម្រិត ១–៥ និង PISA) មេរៀន៖ ")+"<b>"+e(cut(ltxt(rec,110),130))+"</b></p>"+
     "<p class=pc-t2>"+e("ថ្នាក់ទី"+x.kn(rec.g)+(rec.cls?" · ថ្នាក់ "+rec.cls:""))+"</p>"+
     "<div class=pc-st><div class=pc-pct>"+e(x.kn(String(r.pct))+"%")+"</div><div class=pc-sd>"+
       e("ត្រូវ "+x.kn(r.c)+"/"+x.kn(r.n)+" សំណួរ")+"<br>"+e("រយៈពេលសរុប "+durKh(r.elapsed))+"</div></div>"+
@@ -461,8 +506,8 @@ function leave(){var cb=U&&U.o.onExit;if(U)leaveCert();teardown();if(typeof cb==
 function mount(o){
   o=o||{};
   if(U)teardown();
-  css();var g=+o.g,l=+o.l,x=X();
-  PRACT.S.g=g;                                   /* T/N/lv/lname ใช้ S.g */
+  css();var g=+o.g,l0=+o.l,la=lsOf(o),l=la||l0,x=X();
+  PRACT.S.g=g;l0=+o.l;                                   /* T/N/lv/lname ใช้ S.g */
   U={o:o,st:null,view:"",shown:-2,dirty:false,tm:0,kt:0,stop:null,bu:null,h:{},hash:location.hash};
   var app=el("app"),h=U.h;
   h.click=function(e){
@@ -475,14 +520,14 @@ function mount(o){
     if(a==="study"&&U.rec){
       var r=U.rec.res,w=r.secs.reduce(function(m,s2){return s2.pct<m.pct?s2:m},r.secs[0]);   /* កម្រិតទាបជាងគេ (ស្មើគ្នា → មុន) */
       var cb=U.o.onStudy,lv=w.v;teardown();
-      if(typeof cb==="function")return cb(g,l,lv);
-      x.open(l,lv);var hb=document.getElementById("hub");if(hb)hb.open=true;return}
+      if(typeof cb==="function")return cb(g,l0,lv);
+      x.open(l0,lv);var hb=document.getElementById("hub");if(hb)hb.open=true;return}
     if(a==="cert"&&U.rec){
       if(typeof U.o.onCert==="function")return U.o.onCert(U.rec,U);
       return showCert(U.rec)}
     if(a==="print"){try{flush2();window.print()}catch(err){if(window.console)console.error(err)}return}
     if(a==="back"&&U.rec){flush2();leaveCert();return showResult(U.rec,"")}
-    if(a==="quit"){if(confirm("បោះបង់ប្រឡងនេះ? ចម្លើយ និងម៉ោងទាំងអស់នឹងបាត់ ហើយមិនអាចបន្តបានទេ។")){cancel(U.st.g,U.st.l,U.st.sc);leave()}return}
+    if(a==="quit"){if(confirm("បោះបង់ប្រឡងនេះ? ចម្លើយ និងម៉ោងទាំងអស់នឹងបាត់ ហើយមិនអាចបន្តបានទេ។")){cancel(U.st.g,lkOf(U.st),U.st.sc);leave()}return}
     if(a==="submit"&&U.st){
       var st=U.st,s=st.sec,qs=st.P.secs[s].qs,empty=0;
       qs.forEach(function(q,i){var any=false;q.a.forEach(function(_,j){if(getAns(st,s,i,j).trim())any=true});if(!any)empty++});
@@ -537,10 +582,14 @@ var LOCK_N=5,LOCK_MS=30000;
 function gate(cls,now,saved){
   now=now==null?Date.now():now;var e=cls&&cls.ex;
   if(!e||e.on!==true)return{ok:false,why:"off",msg:"ប្រឡង ៦ កម្រិតមិនទាន់បើកទេ · សូមសួរគ្រូរបស់អ្នក"};
-  if(!(+e.g>=7&&+e.g<=12&&+e.g%1===0)||!(+e.l>0))return{ok:false,why:"cfg",msg:"ការកំណត់ប្រឡងមិនត្រឹមត្រូវ · សូមសួរគ្រូរបស់អ្នក"};
+  var G0=window.PRACT&&PRACT.GR&&PRACT.GR[+e.g],ls0=normLs(Array.isArray(e.ls)&&e.ls.length?e.ls:[e.l]);
+  if(ls0.length>1&&G0)ls0=ls0.filter(function(n){return G0.G[n]});          /* មេរៀនដែលគ្មាន generator → ដកចេញ */
+  ls0.sort(function(a,b){return a-b});
+  if(!ls0.length&&+e.l>0)ls0=[+e.l];
+  if(!(+e.g>=7&&+e.g<=12&&+e.g%1===0)||!ls0.length)return{ok:false,why:"cfg",msg:"ការកំណត់ប្រឡងមិនត្រឹមត្រូវ · សូមសួរគ្រូរបស់អ្នក"};
   var dl=typeof e.t==="number"&&isFinite(e.t)?e.t:null;
   if(dl!=null&&now>=dl&&!saved)return{ok:false,why:"expired",msg:"ប្រឡងនេះបានបិទហើយ (ផុតម៉ោងកំណត់)"};
-  return{ok:true,g:+e.g,l:+e.l,dl:dl,pp:ppOf((+e.p||80)/100),ext:Array.isArray(e.ext)?e.ext:[]};
+  return{ok:true,g:+e.g,l:ls0[0],ls:ls0.length>1?ls0:null,dl:dl,pp:ppOf((+e.p||80)/100),ext:Array.isArray(e.ext)?e.ext:[]};
 }
 function hex(buf){var a=new Uint8Array(buf),s2="";for(var i=0;i<a.length;i++)s2+=("0"+a[i].toString(16)).slice(-2);return s2}
 function sha(code,k,pw){
@@ -562,17 +611,17 @@ function enter(o){
   var gs0=gate(cls,now,true);
   if(!gs0.ok)return blocked(gs0,o);
   var who=meGet(code),saved=false,prog=false;
-  if(who){var sc0=scOf(code,who.k);prog=!!load(gs0.g,gs0.l,sc0,now);saved=prog||!!loadRes(gs0.g,gs0.l,sc0,now)}
+  if(who){var sc0=scOf(code,who.k),lk0=gs0.ls||gs0.l;prog=!!load(gs0.g,lk0,sc0,now);saved=prog||!!loadRes(gs0.g,lk0,sc0,now)}
   var gs=gate(cls,now,saved);if(!gs.ok)return blocked(gs,o);
   if(who&&(prog||(o.auto&&saved)))return go(who);   /* កំពុងប្រឡង → បន្ត · ចុចប៊ូតុងថ្មី → ជ្រើសឈ្មោះម្តងទៀត (ឧបករណ៍ចែករំលែក) */
   return login();
   function go(w){
     meSet(code,w);var sc=scOf(code,w.k);
-    return mount({g:gs.g,l:gs.l,sc:sc,who:w.ext?{k:w.k,n:w.n,ext:true}:{k:w.k,n:w.n},cls:cls.cls||"",dl:gs.dl,pp:gs.pp,onExit:o.onExit,onStudy:o.onStudy});
+    return mount({g:gs.g,l:gs.l,ls:gs.ls,sc:sc,who:w.ext?{k:w.k,n:w.n,ext:true}:{k:w.k,n:w.n},cls:cls.cls||"",dl:gs.dl,pp:gs.pp,onExit:o.onExit,onStudy:o.onStudy});
   }
   function login(msg,bad){
     var names=Array.isArray(cls.names)?cls.names:[],lk=lkGet(code),cur=o.me&&o.me.k?o.me.k:"";
-    app.innerHTML="<div class=hero><h1>🏁 "+x.esc("ប្រឡង ៦ កម្រិត")+"</h1><p>"+x.esc("ថ្នាក់ "+(cls.cls||"")+" · "+x.lname(gs.l))+"</p></div>"+banner(msg,bad)+
+    app.innerHTML="<div class=hero><h1>🏁 "+x.esc("ប្រឡង ៦ កម្រិត")+"</h1><p>"+x.esc("ថ្នាក់ "+(cls.cls||"")+" · "+cut(ltxt(gs,90),110))+"</p></div>"+banner(msg,bad)+
     "<div class=pex-login><label>"+x.esc("ឈ្មោះក្នុងបញ្ជីថ្នាក់")+"<select id=pxWho><option value=''>"+x.esc("— ជ្រើសឈ្មោះ —")+"</option>"+
       names.map(function(n){return"<option value='"+x.esc(n.k)+"'"+(n.k===cur?" selected":"")+">"+x.esc(n.n)+"</option>"}).join("")+
       "<option value='@ext'>"+x.esc("👤 សិស្សក្រៅបញ្ជី (ប្រើលេខសម្គាល់ + លេខសម្ងាត់)")+"</option></select></label>"+
@@ -607,7 +656,7 @@ function blocked(g,o){
   el("pxBk2").onclick=function(){var cb=o&&o.onExit;if(typeof cb==="function")cb();else location.reload()};
 }
 
-window.PEXAM={awayOut:awayOut,awayIn:awayIn,AWAY_MS:AWAY_MS,gate:gate,enter:enter,sha:sha,xk:xk,scOf:scOf,ppOf:ppOf,NQ:NQ,PASS:PASS,FIGMAX:FIGMAX,EXPIRE:EXPIRE,build:build,total:total,need:need,pack:pack,unpack:unpack,
+window.PEXAM={awayOut:awayOut,awayIn:awayIn,AWAY_MS:AWAY_MS,gate:gate,enter:enter,sha:sha,xk:xk,scOf:scOf,ppOf:ppOf,NQ:NQ,MAXLS:MAXLS,nqFor:nqFor,normLs:normLs,lk:lk,lkOf:lkOf,plan:plan,PASS:PASS,FIGMAX:FIGMAX,EXPIRE:EXPIRE,build:build,total:total,need:need,pack:pack,unpack:unpack,
   PEX_T:PEX_T,limit:limit,totalLimit:totalLimit,tick:tick,status:status,watch:watch,deadline:deadline,
   ui:{mount:mount,unmount:teardown,active:function(){return !!U}},limV:limV,
   grade:grade,cert:{html:certHtml,dur:durKh,date:dateKh,listed:listed},saveRec:saveRec,mkRec:mkRec,rkey:rkey,loadRes:loadRes,saveRes:saveRes,clearRes:clearRes,WEAK:WEAK,

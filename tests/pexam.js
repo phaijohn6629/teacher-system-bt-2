@@ -376,4 +376,64 @@ var NOP=eval("("+/var PEX_NOPISA=(\{[^;]*\});/.exec(read("quiz.js"))[1]+")");
 okg2=function(c,m){if(!c)B("GRADES "+m)};
 [6,13,"x",null,9.5].forEach(function(g){okg2(PEXAM.gate({ex:{on:true,g:g,l:3}},T7).why==="cfg","gate rejects g="+g)});
 
+/* ===== ច្រើនមេរៀន (ជំហាន ១) ===== */
+(function(){
+  var M=function(c,m){if(!c)B("MULTI "+m)},T=1e12;
+  M(PEXAM.nqFor(1)===4&&PEXAM.nqFor(4)===4&&PEXAM.nqFor(5)===6&&PEXAM.nqFor(8)===6&&PEXAM.nqFor(9)===8&&PEXAM.nqFor(30)===8,"nqFor");
+  M(PEXAM.normLs([3,"3",0,-1,2.5,"x",5,3]).join()==="3,5","normLs");
+  M(PEXAM.normLs(Array.from?Array.from({length:50},function(_,i){return i+1}):[]).length===PEXAM.MAXLS,"MAXLS cap");
+  M(PEXAM.lk(7)==="7"&&PEXAM.lk([7])==="7"&&PEXAM.lk([1,3,5])==="1-3-5","lk");
+  [7,8,9,10,11,12].forEach(function(g){
+    var G=PX_.GR[g].G,all=Object.keys(G).map(Number).filter(function(l){return G[l][4]}).sort(function(a,b){return a-b});
+    [[all[0]],all.slice(0,2),all.slice(0,3),all.slice(0,5),all.slice(0,9),all.slice(0,PEXAM.MAXLS)].forEach(function(ls){
+      var n=ls.length,nq=n>1?PEXAM.nqFor(n):4,tag="g"+g+" n"+n;
+      for(var r=0;r<(n>5?3:8);r++){
+        var P;try{P=PEXAM.build(g,ls)}catch(e){B("MULTI build "+tag+" "+e);return}
+        M(P.secs.length===6&&P.secs.every(function(S){return S.qs.length===nq}),"shape "+tag);
+        M(PEXAM.total(P)===6*nq,"total "+tag);
+        M(P.l===ls[0],"l first "+tag);
+        if(n>1){M(P.nq===nq&&P.ls.join()===ls.join(),"meta "+tag)}else M(P.ls===undefined&&P.nq===undefined,"single has no meta "+tag);
+        var seen={};P.secs.forEach(function(S){S.qs.forEach(function(q){if(seen[q.q])B("MULTI DUPQ "+tag);seen[q.q]=1})});
+        var R=PEXAM.unpack(PEXAM.pack(P));M(R&&PEXAM.pack(R)===PEXAM.pack(P),"roundtrip "+tag);
+      }
+      /* គ្របដណ្តប់មេរៀន៖ បើមេរៀន ≤ nq គ្រប់មេរៀនត្រូវនៅក្នុងរាល់កម្រិត */
+      var pl=PEXAM.plan(ls,nq,6);M(pl.length===6&&pl.every(function(r){return r.length===nq}),"plan shape "+tag);
+      if(n>1&&n<=nq)M(pl.every(function(r){return ls.every(function(x){return r.indexOf(x)>=0})}),"plan covers per level "+tag);
+      if(n>nq){var u={};pl.forEach(function(r){r.forEach(function(x){u[x]=1});M(new Set(r).size===nq,"plan unique in level "+tag)});
+        M(Object.keys(u).length>=Math.min(n,nq*6)-0,"plan coverage "+tag+" "+Object.keys(u).length)}
+      /* state + ម៉ោង + key */
+      var z=PEXAM.start(g,ls,{now:T,sc:"C",cls:"x",who:{k:"S1",n:"ក"}}).st,tl=PEXAM.totalLimit(z),base=PEXAM.limV(g,1)*6;
+      M(z.nq===nq&&PEXAM.limit(z,0)===PEXAM.limV(g,1,nq),"limit uses nq "+tag);
+      var exp=0;[1,5,2,6,3,4].forEach(function(v){exp+=PEXAM.limV(g,v,nq)});M(tl===exp,"totalLimit "+tag);
+      M(PEXAM.key(g,PEXAM.lkOf(z),"C")===(n>1?"pex_"+g+"_"+ls.join("-")+"_C":"pex_"+g+"_"+ls[0]+"_C"),"key "+tag);
+      for(var k=0;k<6;k++)PEXAM.submitSec(z,k,T+1);
+      var gr=PEXAM.grade(z);M(gr&&gr.n===6*nq&&gr.need===PEXAM.need(6*nq,.8),"grade n "+tag);
+      var rec=PEXAM.mkRec(z,gr,T+2);M(PEXAM.rkey(g,PEXAM.lkOf(rec),"C")===PEXAM.rkey(g,n>1?ls:ls[0],"C"),"rkey "+tag);
+      PEXAM.cancel(g,PEXAM.lkOf(z),"C");
+    });
+  });
+  var bad1=0;try{PEXAM.build(9,[])}catch(e){bad1=1}M(bad1,"empty lessons throws");
+  bad1=0;try{PEXAM.build(9,[1,9999])}catch(e){bad1=1}M(bad1,"unknown lesson throws");
+})();
+
+/* ===== ដំណាក់កាលទី ៣៖ gate/cert ច្រើនមេរៀន ===== */
+(function(){
+  var M=function(c,m){if(!c)B("MULTI3 "+m)},T=1e12,g=9,G=PX_.GR[g].G,all=Object.keys(G).map(Number).filter(function(l){return G[l][4]}).sort(function(a,b){return a-b});
+  var a=all[0],b=all[1],c=all[2];
+  var r=PEXAM.gate({ex:{on:true,g:g,l:a,ls:[c,a,b,a,99999],p:80}},T);
+  M(r.ok&&r.l===a&&r.ls&&r.ls.join()===[a,b,c].join(),"gate ls filtered+sorted "+JSON.stringify(r.ls));
+  r=PEXAM.gate({ex:{on:true,g:g,l:b,ls:[b]}},T);M(r.ok&&r.l===b&&r.ls===null,"gate single ls");
+  r=PEXAM.gate({ex:{on:true,g:g,l:b}},T);M(r.ok&&r.l===b&&r.ls===null,"gate legacy l");
+  r=PEXAM.gate({ex:{on:true,g:g,l:a,ls:[99998,99999]}},T);M(r.ok&&r.l===a&&r.ls===null,"gate bad ls falls back to l");
+  r=PEXAM.gate({ex:{on:true,g:g,ls:[]}},T);M(r.why==="cfg","gate empty");
+  [[a,b],[a,b,c],all.slice(0,12)].forEach(function(ls){
+    var z=PEXAM.start(g,ls,{now:T,sc:"C",cls:"9A",who:{k:"S1",n:"សិស្ស ក"}}).st;for(var k=0;k<6;k++)PEXAM.submitSec(z,k,T+1);
+    var rec=PEXAM.mkRec(z,PEXAM.grade(z),T+2),h=PEXAM.cert.html(rec);
+    M(h.indexOf("មេរៀន")>=0&&rec.ls.join()===ls.join(),"cert multi "+ls.length);
+    if(ls.length>3)M(/\d+ មេរៀន|[០-៩]+ មេរៀន \(លេខ/.test(h)||h.indexOf("មេរៀន (លេខ")>=0,"cert long list summarised");
+    M(h.length<20000,"cert size "+ls.length);
+    PEXAM.cancel(g,PEXAM.lkOf(z),"C");
+  });
+})();
+
 print("pexam: made "+made+" figs "+figs+" maxbytes "+maxB+" bad "+bad);

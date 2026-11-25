@@ -1301,3 +1301,14 @@ body.pm #prt .cuprint .cup tbody.cuw,body.pm #prt .cuprint .cup tbody.cuo{break-
 .am-guide{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;background:var(--soft);border:1px solid var(--border-glow);border-radius:16px;color:var(--ink);text-decoration:none;box-sizing:border-box}
 .am-guide span{font-size:1.6rem}.am-guide em{font-style:normal;font-size:.8rem;text-align:center;line-height:1.35}
 body.mon #allMenu{display:none!important}
+
+/* 🏁 ប្រឡង ៦ កម្រិត · ជ្រើសច្រើនមេរៀន (បញ្ជី checkbox ក្នុង details) */
+.pc-xd{margin:6px 0;border:1px solid var(--line,#cbd5e1);border-radius:10px;padding:6px 10px;background:var(--card,transparent)}
+.pc-xd>summary{cursor:pointer;padding:4px 0;line-height:1.5}.pc-xd>summary span{color:var(--mute)}
+.pc-xb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}.pc-xb small{color:var(--mute)}
+.pc-xl{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px 12px;max-height:min(46vh,340px);overflow-y:auto;overscroll-behavior:contain;padding:4px 2px}
+.pc-xl label{display:flex;gap:8px;align-items:flex-start;padding:5px 4px;border-radius:6px;cursor:pointer;line-height:1.45;min-width:0}
+.pc-xl label:hover{background:color-mix(in srgb,#1e3a8a 8%,transparent)}
+.pc-link .pc-xl input{width:auto;margin:.25em 0 0;flex:0 0 auto;transform:scale(1.15)}
+.pc-xl span{min-width:0;overflow-wrap:anywhere}
+@media(max-width:560px){.pc-xl{grid-template-columns:minmax(0,1fr);max-height:50vh}.pc-xb button{flex:1 1 40%}.pc-xl label{padding:8px 4px}}
