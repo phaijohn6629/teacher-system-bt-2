@@ -565,6 +565,8 @@ function repHead(hn){
   var m={"ម៉េត បញ្ញារិទ្ធ":D,"ផៃ ចន":P};
   return{n:n,t:m[n]||(t&&String(t.rl||"").replace(/[\u200b\u200c\u200d\s]/g,"")==="ប្រធាន"?P:D)};
 }
+/* អ្នកត្រួតពិនិត្យកណ្ដាល៖ បើ «ម៉េត បញ្ញារិទ្ធ» ជាអ្នករៀបចំ → «ផៃ ចន» (ប្រធានក្រុមបច្ចេកទេស) · ករណីផ្សេង → លំនាំដើម «ម៉េត បញ្ញារិទ្ធ» (ជ.ប្រធាន) */
+function repSigner(name){var n=String(name||"").replace(/\s+/g," ").trim();return n==="ម៉េត បញ្ញារិទ្ធ"?"ផៃ ចន":"ម៉េត បញ្ញារិទ្ធ"}
 function repFoot(id,name,hn){
   var H=repHead(hn);
   var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
@@ -1809,7 +1811,7 @@ function reportHTML(){
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>របាយការណ៍ការងារ"+esc(role)+"គណិតវិទ្យា ប្រចាំខែ"+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
     "<p style='text-indent:1.2cm;margin:6px 0'>គោរពជម្រាបជូនគណៈគ្រប់គ្រង សូមជូនរបាយការណ៍ការងារក្រុមបច្ចេកទេសគណិតវិទ្យា នៅ"+esc(I.school)+" សាលារៀនជំនាន់ថ្មី (NGS) មានដូចតទៅ៖</p>"+
     "<table class=ct style='width:100%'><thead><tr><th style='width:16%'>កាលបរិច្ឆេទ</th><th style='width:18%'>រយៈពេល</th><th>ខ្លឹមសារសកម្មភាព</th><th style='width:24%'>សកម្មភាព (រូបភាព...)</th></tr></thead><tbody>"+(rows||"<tr><td colspan=4>—</td></tr>")+"</tbody></table>"+
-    repFoot(wt,t.name)+"</div>";
+    repFoot(wt,t.name,repSigner(t.name))+"</div>";
 }
 $("wpr").onclick=function(){if(!wlist().length){alert("មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។");return}window.SCHX.fontsOk().then(function(){doPrint(reportHTML())})};
 $("wex").onclick=function(){
