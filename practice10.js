@@ -41,12 +41,7 @@ G[22]={1:function(){var c=ri(1,4),a=ri(1,4),b=ri(1,4);
     return Q("គេឱ្យសំណុំសកល $U$ មាន $n(U)="+N+"$ ធាតុ ហើយ $n(A)="+a+"$ ។ គណនា $n(A^c)$ (សំណុំបំពេញនៃ $A$)",[A(N-a,null,"num","n(A^c) =")],"$n(A^c)=n(U)-n(A)="+N+"-"+a+"="+(N-a)+"$",GFV({k:1,lab:{a:String(a),out:"?"},cap:["n(U) = "+N]}))},
   3:function(){var c=ri(1,5),a=ri(1,5),b=ri(1,5);
     return Q("គេឱ្យ $n(A)="+(c+a)+"$ , $n(B)="+(c+b)+"$ និង $n(A\\cup B)="+(c+a+b)+"$ ។ គណនា $n(A\\cap B)$",[A(c,null,"num","n(A∩B) =")],"$n(A\\cap B)=n(A)+n(B)-n(A\\cup B)="+(c+a)+"+"+(c+b)+"-"+(c+a+b)+"="+c+"$",GFV({k:2,lab:{a:"?",ab:"?",b:"?"},cap:["n(A) = "+(c+a)+" · n(B) = "+(c+b),"n(A ∪ B) = "+(c+a+b)],shade:["ab"]}))}};
-G[23]={1:function(){var a=ri(-10,10);
-    return Q("គណនាតម្លៃដាច់ខាត $|"+a+"|$", [A(Math.abs(a),null,"num","|"+a+"| =")], "$|"+a+"|="+Math.abs(a)+"$")},
-  2:function(){var a=ri(2,20);
-    return Q("ដោះស្រាយសមីការ $|x|="+a+"$", [A(a,null,"num","x₁ ="),A(-a,null,"num","x₂ =")], "$x="+a+"$ ឬ $x="+(-a)+"$")},
-  3:function(){var a=ri(2,10),b=ri(1,5);
-    return Q("ដោះស្រាយវិសមីការ $|x|\\le "+a+"$", [A(-a,null,"num","a ="),A(a,null,"num","b =")], "$-"+a+"\\le x\\le "+a+"$")}};
+G[23]={};   /* ទម្រង់ទាំងអស់ត្រូវបានកំណត់ក្នុងប្លុក «២.៣ ចំនួន» ខាងក្រោម (vx 1·5·2·6·3) */
 /* ===== ជំពូកទី៣ សមីការ និងវិសមីការ ===== */
 G[31]={1:function(){var r1=nz(-6,6),r2=nz(-6,6);while(r1===r2)r2=nz(-6,6);var lo=Math.min(r1,r2),hi=Math.max(r1,r2);
     return Q("ដោះស្រាយ $x^2"+co(-(r1+r2),"x")+sg(r1*r2,0)+"=0$ (ឫសតូចជាមុន)",[A(lo,null,"num","x₁ ="),A(hi,null,"num","x₂ =")],"$(x"+sg(-lo,0)+")(x"+sg(-hi,0)+")=0$","y=x^2"+co(-(r1+r2),"x")+sg(r1*r2,0))},
@@ -367,7 +362,10 @@ Object.keys(P4).forEach(function(l){var L=P4[l];if(G[l])G[l][4]=function(){retur
 /* ===== ពិពិធកម្មទម្រង់លំហាត់ (២០២៦-១១) — មេរៀន×កម្រិតនីមួយៗ ≥ ៤ ទម្រង់ · គណនាផ្ទាល់ · រកអញ្ញាត · បញ្ហាជីវិតពិត · ត្រិះរិះ =====
    ជ្រើសចម្លើយមុន រួចបង្កើតទិន្នន័យ · kd = s10_… · vx(l,lv,[…]) → ទម្រង់ថ្មីនីមួយៗមានឱកាសស្មើទម្រង់ដើម · តក្កវិទ្យា ៖ 1 = ពិត · 0 = មិនពិត */
 function K(kd,q,a,s,f){var o=Q(q,a,s,f);o.kd=kd;return o}
-function vx(l,lv,L){if(!G[l])G[l]={};if(!G[l][lv])G[l][lv]=function(){};var o=G[l][lv];G[l][lv]=function(){var i=Math.floor(Math.random()*(L.length+1));return i<L.length?L[i]():o()}}
+var VXF={};   /* មេរៀន ២.៣ មានទម្រង់ច្រើន ⇒ បញ្ចូលក្នុងបញ្ជីតែមួយ (ឱកាសស្មើគ្នា) ជំនួសឱ្យការរុំជាន់ៗ ដែលធ្វើឱ្យទម្រង់ចាស់កម្រលេចមុខ */
+function vx(l,lv,L){if(!G[l])G[l]={};
+  if(l===23){var key=lv;if(!VXF[key]){VXF[key]={L:[]};G[l][lv]=function(){var S=VXF[key];return S.L[Math.floor(Math.random()*S.L.length)]()}}VXF[key].L=VXF[key].L.concat(L);return}
+  if(!G[l][lv])G[l][lv]=function(){};var o=G[l][lv];G[l][lv]=function(){var i=Math.floor(Math.random()*(L.length+1));return i<L.length?L[i]():o()}}
 function ang(v){return v+"^\\circ"}
 function mo(v){return String(v).replace(/\B(?=(\d{3})+(?!\d))/g,"\\,")}
 function fx(f){return f.d===1?String(f.n):(f.n<0?"-":"")+"\\dfrac{"+Math.abs(f.n)+"}{"+f.d+"}"}
@@ -478,52 +476,80 @@ vx(22,2,[
 vx(22,3,[
  function(){var t=set10Three();return K("set10_3v",t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)}]);
 P4[22].push(function(){var t=set10Three();return Q(t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)});
-/* ២.៣ ចំនួន */
+/* ២.៣ ចំនួន (កែ ២០២៦-១១-២៥) — ៦ កម្រិត តាមសៀវភៅក្រសួង · ប្រអប់បំពេញចម្លើយ (គ្មាន MCQ) · kd = g10n_… ឬ s10_/abs10_
+   ចំណុច ១ ចំនួនពិត · តម្លៃដាច់ខាត · ចំណែកថ្នាក់ | ចំណុច ២ រ៉ាឌីកាល់ | ចំណុច ៣ ប្រព័ន្ធរបាប់គោល ១០ · ២
+   កម្រិតបង្ហាញ ១–៥ = គន្លឹះ 1·5·2·6·3 (មិនប្តូរលេខគន្លឹះ) · PISA = P4[23] */
+function cf(n){return n===1?"":String(n)}
+function shf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function b2(n){return n.toString(2)}
+function bt(s){return"("+s+")_2"}
+var NSET=[["5","n"],["12","n"],["0","w"],["-3","z"],["-8","z"],["\\dfrac{3}{4}","q"],["0{,}25","q"],["-1{,}5","q"],["0{,}\\overline{3}","q"],["\\sqrt{2}","i"],["\\pi","i"],["\\sqrt{7}","i"],["\\sqrt{16}","n"]];
+var CLS=[["0",1],["3",1],["\\pi",0],["\\sqrt{8}",0],["\\sqrt{0{,}16}",1],["\\sqrt{25}",1],["\\sqrt{0{,}09}",1],["\\dfrac{2}{3}",1],["-\\dfrac{7}{5}",1],["\\sqrt{12}",0],["\\sqrt{3}",0],["0{,}\\overline{7}",1],["\\sqrt{\\dfrac{9}{4}}",1],["\\sqrt{\\dfrac{2}{9}}",0],["-\\sqrt{5}",0]];
+var CMP2=[];[2,3,5,6,7].forEach(function(p){for(var q=5;q<=30;q++)if(Math.sqrt(q)%1!==0&&Math.abs(1+Math.sqrt(p)-Math.sqrt(q))>.1)CMP2.push([p,q])});
+var CMP1=[];[[2,7,3,3],[3,5,2,7],[2,5,3,2],[4,3,3,5],[5,2,2,6],[3,6,4,2],[2,11,5,2],[6,3,3,7]].forEach(function(e){CMP1.push(e)});
 vx(23,1,[
- function(){var k=pick(NS.slice(0,5)),a=ri(1,5),b=ri(1,5);return K("s10_rad1","សរសេរ $\\sqrt{"+(a*a*k)+"}+\\sqrt{"+(b*b*k)+"}$ ជា $c\\sqrt{"+k+"}$ ។ រក $c$",[A(a+b,null,"num","c =")],"$"+(a===1?"":a)+"\\sqrt{"+k+"}+"+(b===1?"":b)+"\\sqrt{"+k+"}="+(a+b)+"\\sqrt{"+k+"}$")},
- function(){var a=nz(-15,15),b=nz(-15,15);return K("s10_absv","គណនា $|"+a+"-("+b+")|$",[A(Math.abs(a-b),null,"num","=")],"$|"+(a-b)+"|="+Math.abs(a-b)+"$")},
- function(){var a=ri(-6,3),b=a+ri(2,9);return K("s10_cnt","តើមានចំនួនគត់ប៉ុន្មាន ក្នុងចន្លោះ $["+a+";"+b+")$ ?",[A(b-a,null,"num","=")],"$\\{"+a+",\\dots,"+(b-1)+"\\}$ ⇒ $"+(b-a)+"$")}]);
-vx(23,2,[
- function(){var a=ri(2,6),k=pick(NS);return K("s10_rat","គណនា $("+a+"\\sqrt{"+k+"})^2$",[A(a*a*k,null,"num","=")],"$"+(a*a)+"\\times"+k+"="+(a*a*k)+"$")},
- function(){var a=ri(2,9),k=pick(NS);return K("s10_mulr","គណនា $("+a+"+\\sqrt{"+k+"})("+a+"-\\sqrt{"+k+"})$",[A(a*a-k,null,"num","=")],"$"+a+"^2-"+k+"="+(a*a-k)+"$")},
- function(){var a=ri(-6,6),b=ri(1,8);return K("s10_dist","ដោះស្រាយ $|x"+sg(-a,0)+"|="+b+"$ ($x_1<x_2$)",[A(a-b,null,"num","x₁ ="),A(a+b,null,"num","x₂ =")],"$x"+sg(-a,0)+"=\\pm"+b+"$ ⇒ $"+(a-b)+"$ ឬ $"+(a+b)+"$")}]);
-vx(23,3,[
- function(){var b=ri(1,3),k=pick(NS.filter(function(v){return v!==b*b})),d=k-b*b,m=nz(1,4),a=d*m;return K("s10_conj","សម្រួលភាគបែង $\\dfrac{"+a+"}{\\sqrt{"+k+"}-"+b+"}$",[A(m+"*(sqrt("+k+")+"+b+")",(m===1?"":m===-1?"-":m)+"(\\sqrt{"+k+"}+"+b+")","num","=")],"គុណនឹងកន្សោមឆ្លាស់ ៖ $\\dfrac{"+a+"(\\sqrt{"+k+"}+"+b+")}{"+k+"-"+(b*b)+"}$")},
- function(){var P=pick([[3,2],[5,2],[5,3],[6,2],[7,2],[7,3],[6,5],[7,5]]),p=P[0],q=P[1];return K("s10_nest","សម្រួល $\\sqrt{"+(p+q)+"+2\\sqrt{"+(p*q)+"}}$",[A("sqrt("+p+")+sqrt("+q+")","\\sqrt{"+p+"}+\\sqrt{"+q+"}","num","=")],"$"+(p+q)+"+2\\sqrt{"+(p*q)+"}=(\\sqrt{"+p+"}+\\sqrt{"+q+"})^2$")},
- function(){var a=nz(1,4),b=ri(-9,9),c=ri(1,9),s=fr(-2*b,a);return K("s10_abse","រកផលបូកឫសនៃ $|"+co(a,"x",true)+sg(b,0)+"|="+c+"$",[A(s.s,s.t,"num","=")],"$"+a+"x"+sg(b,0)+"=\\pm"+c+"$ ⇒ ផលបូក $="+s.t+"$")}]);
-/* ២.៣ ចំនួនពិត · តម្លៃដាច់ខាត (abs10_)៖ ជ្រើសឫស/ចន្លោះមុន រួចបង្កើតមេគុណ */
-function abs10X(k){return k?"x"+sg(-k,0):"x"}
-function kx(m,v){return(m===1?"":m===-1?"-":m)+v}
-function abs10Sol(a,b,c,d){var out=[],x1=fr(d-b,a-c),x2=fr(-(b+d),a+c);   /* |ax+b|=cx+d */
-  var ok=function(f){var v=c*f.n/f.d+d;return v>=0};
-  if(a!==c&&ok(x1))out.push(x1);if(a+c!==0&&ok(x2)&&!(out.length&&out[0].n*x2.d===x2.n*out[0].d))out.push(x2);return out}
-vx(23,1,[
+ function(){var t=ri(0,1),a=ri(2,20),b=ri(2,20);
+   if(t===0)return K("g10n_abs1","គណនាតម្លៃដាច់ខាត $|-"+a+"|$ ហើយ $|"+a+"-(-"+a+")|$ ",[A(a,null,"num","|-"+a+"| ="),A(2*a,null,"num","|"+a+"-(-"+a+")| =")],"$|-a|=a$ ⇒ $|-"+a+"|="+a+"$ · $|"+a+"-(-"+a+")|=|"+(2*a)+"|="+(2*a)+"$");
+   return K("g10n_abs1","គណនា $|"+(a+b)+"-"+(a+b+1)+"|+|-"+b+"|$",[A(1+b,null,"num","=")],"$|-1|+|-"+b+"|=1+"+b+"="+(1+b)+"$")},
  function(){var a=nz(-9,9),b=nz(-9,9),c=nz(-9,9),t=ri(0,1),v;
    if(t===0){v=Math.abs(a-b)+Math.abs(c);return K("abs10_val","គណនា $|"+a+"-"+sgp(b)+"|+|"+c+"|$",[A(v,null,"num","=")],"$|"+(a-b)+"|+|"+c+"|="+Math.abs(a-b)+"+"+Math.abs(c)+"="+v+"$")}
    var d=nz(-9,9);v=Math.abs(a)*Math.abs(b)-Math.abs(c-d);return K("abs10_val","គណនា $|"+a+"|\\cdot|"+b+"|-|"+c+"-"+sgp(d)+"|$",[A(v,null,"num","=")],"$"+Math.abs(a)+"\\cdot"+Math.abs(b)+"-|"+(c-d)+"|="+v+"$")},
- function(){var k1=ri(-5,3),k2=k1+ri(2,6),t=ri(0,3),a,b,cond;
-   if(t===0){a=2;b=-(k1+k2);cond="x>"+k2}else if(t===1){a=-2;b=k1+k2;cond="x<"+k1}else if(t===2){a=0;b=k2-k1;cond=k1+"<x<"+k2}else{var e=pick([1,-1]),kk=nz(-6,6);a=e;b=-e*kk;
-     return K("abs10_cond","ដោយដឹងថា $"+(e===1?"x>"+kk:"x<"+kk)+"$ ។ សរសេរ $|x"+sg(-kk,0)+"|$ ជាទម្រង់ $ax+b$ ។ រក $a$ និង $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"$x"+sg(-kk,0)+(e===1?">0":"<0")+"$ ⇒ $|x"+sg(-kk,0)+"|="+(e===1?"":"-")+"(x"+sg(-kk,0)+")="+kx(a,"x")+sg(b,0)+"$")}
-   return K("abs10_cond","ដោយដឹងថា $"+cond+"$ ។ សរសេរ $|"+abs10X(k1)+"|+|"+abs10X(k2)+"|$ ជាទម្រង់ $ax+b$ ។ រក $a$ និង $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],"ដោះសញ្ញាតម្លៃដាច់ខាតតាមលក្ខខណ្ឌ ⇒ $"+(a?kx(a,"x"):"")+(a?sg(b,0):b)+"$")},
- function(){var rat=Math.random()<.5,t=ri(0,1),tx,v;
-   if(t===0){var m=ri(2,9),n=rat?m*m:m*m+ri(1,2*m);tx="\\sqrt{"+n+"}";v=rat?1:0}
-   else{var P=[2,3,5,7],p=pick(P),q=pick(P.filter(function(z){return z!==p})),mm=ri(1,3);if(rat){tx="\\sqrt{"+p+"}\\times\\sqrt{"+(p*mm*mm)+"}";v=1}else{tx="\\sqrt{"+p+"}\\times\\sqrt{"+q+"}";v=0}}
-   return K("abs10_cls","តើ $"+tx+"$ ជាចំនួនសនិទានឬទេ? (ឆ្លើយ $1$ = ជា · $0$ = មិនមែន)",[A(v,null,"num","តម្លៃ =")],v?"តម្លៃគឺចំនួនគត់ ⇒ សនិទាន":"មិនអាចសរសេរជាប្រភាគ ⇒ អសនិទាន")}]);
-vx(23,2,[
+ function(){var k=ri(2,12),s=pick([1,-1]);return K("g10n_sq","ដោយដឹងថា $|a|="+k+"$ ។ គណនា $a^2$ (ប្រើ $|a|^2=a^2$)",[A(k*k,null,"num","a² =")],"$a^2=|a|^2="+k+"^2="+(k*k)+"$")},
+ function(){var it=shf(CLS).slice(0,6),r=it.filter(function(e){return e[1]}).length;
+   return K("g10n_cls","ក្នុងចំនួន $"+it.map(function(e){return e[0]}).join(" ;\\ ")+"$ តើមានប៉ុន្មានជាចំនួនសនិទាន ($\\mathbb Q$) ហើយប៉ុន្មានជាចំនួនអសនិទាន ($\\mathbb I$) ?",[A(r,null,"num","សនិទាន ="),A(6-r,null,"num","អសនិទាន =")],"សនិទាន ៖ ចំនួនគត់ ប្រភាគ ទសភាគកំណត់ ឬខួប និងឫសនៃការ៉េប្រាកដ · អសនិទាន ៖ ទសភាគអនន្តគ្មានខួប ($\\pi$ ឬ $\\sqrt{\\text{មិនមែនការ៉េប្រាកដ}}$) ⇒ សនិទាន $"+r+"$ · អសនិទាន $"+(6-r)+"$")},
+ function(){var cnt=0,it=shf(NSET).slice(0,6);it.forEach(function(e){if(e[1]==="n"||e[1]==="w"||e[1]==="z")cnt++});
+   return K("g10n_zc","ក្នុងចំនួន $"+it.map(function(e){return e[0]}).join(" ;\\ ")+"$ តើមានប៉ុន្មានជាចំនួនគត់ ($\\mathbb Z$) ?",[A(cnt,null,"num","ចំនួន =")],"ចំនួនគត់គឺ $\\dots,-2,-1,0,1,2,\\dots$ (រួមទាំង $0$ និងអវិជ្ជមាន) ⇒ មាន $"+cnt+"$ ចំនួន")},
+ function(){var kk=nz(-6,6),e=pick([1,-1]);
+   return K("g10n_cond","ដោយដឹងថា $"+(e===1?"x>"+kk:"x<"+kk)+"$ ។ សរសេរ $|x"+sg(-kk,0)+"|$ ជាទម្រង់ $ax+b$ ។ រក $a$ និង $b$",[A(e,null,"num","a ="),A(-e*kk,null,"num","b =")],"$x"+sg(-kk,0)+(e===1?">0":"<0")+"$ ⇒ $|x"+sg(-kk,0)+"|="+(e===1?"":"-")+"(x"+sg(-kk,0)+")="+(e===1?"":"-")+"x"+sg(-e*kk,0)+"$")}]);
+vx(23,5,[
+ function(){var t=ri(0,1),k=ri(2,12),a=ri(-6,6),b=ri(1,8);
+   if(t===0)return K("g10n_abeq","ដោះស្រាយសមីការ $|x|="+k+"$ ($x_1<x_2$)",[A(-k,null,"num","x₁ ="),A(k,null,"num","x₂ =")],"$|x|="+k+"$ ⇒ $x="+k+"$ ឬ $x="+(-k)+"$");
+   return K("g10n_abeq","ដោះស្រាយ $|x"+sg(-a,0)+"|="+b+"$ ($x_1<x_2$)",[A(a-b,null,"num","x₁ ="),A(a+b,null,"num","x₂ =")],"$x"+sg(-a,0)+"=\\pm"+b+"$ ⇒ $x="+(a-b)+"$ ឬ $x="+(a+b)+"$")},
  function(){var a=ri(1,4),m=ri(-5,5),r=ri(1,5),b=-a*m,c=a*r,x1=m-r,x2=m+r,t=ri(0,1);
    return K("abs10_eq","ដោះស្រាយ $|"+polyT([a,b])+"|="+c+"$ ។ "+(t?"រក $x_1<x_2$":"រកផលបូក $S=x_1+x_2$ និងផលគុណ $P=x_1x_2$ នៃឫស"),t?[A(x1,null,"num","x₁ ="),A(x2,null,"num","x₂ =")]:[A(x1+x2,null,"num","S ="),A(x1*x2,null,"num","P =")],"$"+polyT([a,b])+"=\\pm"+c+"$ ⇒ $x="+x1+"$ ឬ $x="+x2+"$"+(t?"":" ⇒ $S="+(x1+x2)+"$ , $P="+x1*x2+"$"))},
- function(){var a=ri(-6,6),r=ri(1,7),t=ri(0,1),lt=Math.random()<.5;
-   if(t===0)return K("abs10_ineq","ដោះស្រាយ $|x"+sg(-a,0)+"|"+(lt?"<":">")+r+"$ ។ ចម្លើយ "+(lt?"$\\alpha<x<\\beta$":"$x<\\alpha$ ឬ $x>\\beta$")+" ។ រក $\\alpha$ និង $\\beta$",[A(a-r,null,"num","α ="),A(a+r,null,"num","β =")],"$|x-a|"+(lt?"<":">")+"r$ ⇒ $"+(lt?(a-r)+"<x<"+(a+r):"x<"+(a-r)+"\\ \\text{ឬ}\\ x>"+(a+r))+"$")
-   var q=ri(1,4),m=ri(-4,4),r2=ri(1,4),b=-q*m,c=q*r2;return K("abs10_ineq","ដោះស្រាយ $|"+polyT([q,b])+"|"+(lt?"<":">")+c+"$ ។ ចម្លើយ "+(lt?"$\\alpha<x<\\beta$":"$x<\\alpha$ ឬ $x>\\beta$")+" ។ រក $\\alpha$ និង $\\beta$",[A(m-r2,null,"num","α ="),A(m+r2,null,"num","β =")],"$"+polyT([q,b])+(lt?"\\in(-"+c+";"+c+")":"<-"+c+"\\ \\text{ឬ}\\ >"+c)+"$ ⇒ $\\alpha="+(m-r2)+"$ , $\\beta="+(m+r2)+"$")}]);
+ function(){var p=ri(2,6),k=pick([2,3,5,6,7]);return K("g10n_sx","សរសេរ $\\sqrt{"+(p*p*k)+"}$ ជាទម្រង់ $a\\sqrt b$ ($b$ តូចបំផុត)",[A(p,null,"num","a ="),A(k,null,"num","b =")],"$\\sqrt{"+(p*p*k)+"}=\\sqrt{"+(p*p)+"\\times"+k+"}="+p+"\\sqrt{"+k+"}$")},
+ function(){var p=ri(2,4),q=ri(1,5),k=pick([2,3,5,6,7]),c=fr(2*p-2*q+1,2);
+   return K("g10n_sx2","គណនា $\\sqrt{"+(p*p*k)+"}-\\sqrt{"+(q*q*k)+"}+\\sqrt{\\dfrac{"+k+"}{4}}=c\\sqrt{"+k+"}$ ។ រក $c$",[A(c.s,c.t,"num","c =")],"$"+p+"\\sqrt{"+k+"}-"+cf(q)+"\\sqrt{"+k+"}+\\dfrac{1}{2}\\sqrt{"+k+"}=("+p+"-"+q+"+\\dfrac12)\\sqrt{"+k+"}$ ⇒ $c="+c.t+"$")},
+ function(){var t=ri(0,1),v,q,s;
+   if(t===0){var e=pick(CMP1),L=e[0]*e[0]*e[1],R=e[2]*e[2]*e[3];if(L===R)e=[2,7,3,3],L=28,R=27;v=L>R?1:0;
+     return K("g10n_cmpr","ប្រៀបធៀប $"+cf(e[0])+"\\sqrt{"+e[1]+"}$ និង $"+cf(e[2])+"\\sqrt{"+e[3]+"}$ ។ ឆ្លើយ $1$ បើ ចំនួនទី១ ធំជាង · $0$ បើ តូចជាង",[A(v,null,"num","ចម្លើយ =")],"យកទៅការ៉េ ៖ $"+L+"$ និង $"+R+"$ ⇒ "+(v?"ចំនួនទី១ ធំជាង ⇒ ១":"ចំនួនទី១ តូចជាង ⇒ ០"))}
+   var c=pick(CMP2);v=1+Math.sqrt(c[0])>Math.sqrt(c[1])?1:0;
+   return K("g10n_cmpr","ប្រៀបធៀប $1+\\sqrt{"+c[0]+"}$ និង $\\sqrt{"+c[1]+"}$ ។ ឆ្លើយ $1$ បើ ចំនួនទី១ ធំជាង · $0$ បើ តូចជាង",[A(v,null,"num","ចម្លើយ =")],"ចំនួនទាំងពីរវិជ្ជមាន ⇒ យកទៅការ៉េ ៖ $(1+\\sqrt{"+c[0]+"})^2="+(1+c[0])+"+2\\sqrt{"+c[0]+"}\\approx"+r2(1+c[0]+2*Math.sqrt(c[0]))+"$ និង $"+c[1]+"$ ⇒ "+(v?"១":"០"))},
+ function(){var a=ri(2,12);return K("g10n_rt1","គណនា $\\sqrt{(-"+a+")^2}$",[A(a,null,"num","=")],"$\\sqrt{a^2}=|a|$ ⇒ $\\sqrt{"+(a*a)+"}=|-"+a+"|="+a+"$")},
+ function(){var P=pick([[2,8],[3,12],[5,20],[2,18],[3,27],[7,28],[2,32]]),m=Math.round(Math.sqrt(P[0]*P[1]));return K("g10n_rt2","គណនា $\\sqrt{"+P[0]+"}\\times\\sqrt{"+P[1]+"}$ (ប្រើ $\\sqrt a\\sqrt b=\\sqrt{ab}$)",[A(m,null,"num","=")],"$\\sqrt{"+P[0]+"\\times"+P[1]+"}=\\sqrt{"+(m*m)+"}="+m+"$")}]);
+vx(23,2,[
+ function(){var a=ri(1,5),b=ri(1,5),c=ri(1,5),d=ri(1,5),A1=2*a*c-3*b*d,B1=b*c-a*d;
+   return K("g10n_exp1","ពន្លាត និងសម្រួល $("+cf(a)+"\\sqrt2+"+cf(b)+"\\sqrt3)("+cf(c)+"\\sqrt2-"+cf(d)+"\\sqrt3)$ ជាទម្រង់ $A+B\\sqrt6$ ។ រក $A$ និង $B$",[A(A1,null,"num","A ="),A(B1,null,"num","B =")],"$"+(2*a*c)+"-"+(a*d)+"\\sqrt6+"+(b*c)+"\\sqrt6-"+(3*b*d)+"$ ⇒ $A="+A1+"$ , $B="+B1+"$")},
+ function(){var P=pick([[2,3],[2,5],[3,5],[2,7],[3,7],[5,7]]),p=P[0],q=P[1],m=pick([1,-1]);
+   return K("g10n_sqb","ពន្លាត $(\\sqrt{"+p+"}"+(m===1?"+":"-")+"\\sqrt{"+q+"})^2$ ជាទម្រង់ $A+B\\sqrt{"+(p*q)+"}$ ។ រក $A$ និង $B$",[A(p+q,null,"num","A ="),A(2*m,null,"num","B =")],"$(\\sqrt a"+(m===1?"+":"-")+"\\sqrt b)^2=a+b"+(m===1?"+":"-")+"2\\sqrt{ab}$ ⇒ $A="+(p+q)+"$ , $B="+(2*m)+"$")},
+ function(){var a=ri(2,4),k=pick([2,3,5,7]),N=a*k;return K("g10n_rat1","បំបាត់រ៉ាឌីកាល់ពីភាគបែង $\\dfrac{1}{\\sqrt{"+(a*a*k)+"}}$ ។ សរសេរជា $\\dfrac{\\sqrt{"+k+"}}{N}$ ហើយរក $N$",[A(N,null,"num","N =")],"$\\sqrt{"+(a*a*k)+"}="+a+"\\sqrt{"+k+"}$ ⇒ $\\dfrac{1}{"+a+"\\sqrt{"+k+"}}=\\dfrac{\\sqrt{"+k+"}}{"+N+"}$")},
+ function(){var P=pick([[5,2],[3,2],[7,3],[5,3],[7,2]]),p=P[0],q=P[1],d=p-q;
+   return K("g10n_rat2","បំបាត់រ៉ាឌីកាល់ពីភាគបែង $\\dfrac{\\sqrt{"+p+"}}{\\sqrt{"+p+"}-\\sqrt{"+q+"}}=\\dfrac{A+\\sqrt{B}}{C}$ ។ រក $A$ , $B$ , $C$",[A(p,null,"num","A ="),A(p*q,null,"num","B ="),A(d,null,"num","C =")],"គុណនឹងកន្សោមឆ្លាស់ $\\sqrt{"+p+"}+\\sqrt{"+q+"}$ ⇒ $\\dfrac{"+p+"+\\sqrt{"+(p*q)+"}}{"+p+"-"+q+"}$ ⇒ $C="+d+"$")},
+ function(){var a=ri(2,9),k=pick(NS);return K("s10_mulr","គណនា $("+a+"+\\sqrt{"+k+"})("+a+"-\\sqrt{"+k+"})$",[A(a*a-k,null,"num","=")],"$"+a+"^2-"+k+"="+(a*a-k)+"$")},
+ function(){var b=ri(1,3),k=pick(NS.filter(function(v){return v!==b*b})),d=k-b*b,m=nz(1,4),a=d*m;return K("s10_conj","សម្រួលភាគបែង $\\dfrac{"+a+"}{\\sqrt{"+k+"}-"+b+"}$",[A(m+"*(sqrt("+k+")+"+b+")",(m===1?"":m===-1?"-":m)+"(\\sqrt{"+k+"}+"+b+")","num","=")],"គុណនឹងកន្សោមឆ្លាស់ ៖ $\\dfrac{"+a+"(\\sqrt{"+k+"}+"+b+")}{"+k+"-"+(b*b)+"}$")}]);
+vx(23,6,[
+ function(){var P=pick([[3,2],[5,2],[5,3],[6,2],[7,2],[7,3],[6,5],[7,5]]),p=P[0],q=P[1];return K("s10_nest","សម្រួល $\\sqrt{"+(p+q)+"+2\\sqrt{"+(p*q)+"}}$",[A("sqrt("+p+")+sqrt("+q+")","\\sqrt{"+p+"}+\\sqrt{"+q+"}","num","=")],"$"+(p+q)+"+2\\sqrt{"+(p*q)+"}=(\\sqrt{"+p+"}+\\sqrt{"+q+"})^2$")},
+ function(){var P=pick([[3,2],[5,2],[5,3],[7,2],[7,3],[8,3],[6,5],[7,5]]),p=P[0],q=P[1];return K("g10n_nm","សម្រួល $\\sqrt{"+(p+q)+"-2\\sqrt{"+(p*q)+"}}$ (ប្រើ $\\sqrt{(a+b)-2\\sqrt{ab}}=|\\sqrt a-\\sqrt b|$)",[A("sqrt("+p+")-sqrt("+q+")","\\sqrt{"+p+"}-\\sqrt{"+q+"}","num","=")],"$"+(p+q)+"-2\\sqrt{"+(p*q)+"}=(\\sqrt{"+p+"}-\\sqrt{"+q+"})^2$ ហើយ $\\sqrt{"+p+"}>\\sqrt{"+q+"}$ ⇒ $\\sqrt{"+p+"}-\\sqrt{"+q+"}$")},
+ function(){var P=pick([[6,1],[5,2],[10,1],[3,2],[7,2],[5,1],[3,1],[7,1]]),p=P[0],q=P[1],qs=q===1?"1":"\\sqrt{"+q+"}";
+   return K("g10n_nest3","សម្រួល $\\sqrt{"+(p+q)+"+\\sqrt{"+(4*p*q)+"}}$",[A(q===1?"sqrt("+p+")+1":"sqrt("+p+")+sqrt("+q+")","\\sqrt{"+p+"}+"+qs,"num","=")],"$\\sqrt{"+(4*p*q)+"}=2\\sqrt{"+(p*q)+"}$ ⇒ $"+(p+q)+"+2\\sqrt{"+(p*q)+"}=(\\sqrt{"+p+"}+"+qs+")^2$")},
+ function(){var n=[],i;n.push(ri(1,9));for(i=1;i<9;i++)n.push(ri(0,9));var N=n.join(""),nm=pick([[4,"ម៉ឺន"],[5,"សែន"],[6,"លាន"],[7,"កោដិ"],[8,"ដប់កោដិ"]]),d=n[8-nm[0]];
+   return K("g10n_nm10","ក្នុងចំនួន $"+mo(N)+"$ តើខ្ទង់ «"+nm[1]+"» (តម្លៃទីតាំង $10^{"+nm[0]+"}$) ជាលេខប៉ុន្មាន ?",[A(d,null,"num","ខ្ទង់ "+nm[1]+" =")],"ខ្ទង់ឯកតា $=10^0$ ពីស្តាំ · ខ្ទង់ "+nm[1]+" $=10^{"+nm[0]+"}$ ⇒ លេខ $"+d+"$")},
+ function(){var a=ri(1,9),b=ri(0,9),c=ri(0,9),d=ri(0,9),N=a*1000+b*100+c*10+d;return K("g10n_ex10","សរសេរចំនួនតាមទម្រង់ពន្លាត $"+a+"\\times10^3+"+b+"\\times10^2+"+c+"\\times10+"+d+"$ ជាចំនួនធម្មតា",[A(N,null,"num","N =")],"$"+(a*1000)+"+"+(b*100)+"+"+(c*10)+"+"+d+"="+N+"$")},
+ function(){var a=ri(1,9),b=ri(0,9),c=ri(0,9),d=ri(0,9);return K("g10n_exp4","សរសេរ $\\overline{"+a+b+c+d+"}_{10}$ ជាទម្រង់ពន្លាត $a\\times10^3+b\\times10^2+c\\times10+d$ ។ រក $a,b,c,d$",[A(a,null,"num","a ="),A(b,null,"num","b ="),A(c,null,"num","c ="),A(d,null,"num","d =")],"$"+a+b+c+d+"="+a+"\\times10^3+"+b+"\\times10^2+"+c+"\\times10+"+d+"$")}]);
 vx(23,3,[
- function(){var p=ri(1,3),q=ri(1,3);if(q===p)q=p+1;var a=p+q,c=p-q,x1=ri(-5,5),x2=ri(-5,5);while(x2===x1)x2++;var d=q*x1-p*x2,b=-p*x2-q*x1,lo=Math.min(x1,x2),hi=Math.max(x1,x2);
-   return K("abs10_2a","ដោះស្រាយ $|"+polyT([a,b])+"|=|"+polyT([c,d])+"|$ ។ រក $x_1<x_2$",[A(lo,null,"num","x₁ ="),A(hi,null,"num","x₂ =")],"$"+polyT([a,b])+"=\\pm("+polyT([c,d])+")$ ⇒ $x="+x1+"$ ឬ $x="+x2+"$")},
- function(){var a=nz(-4,4),c=pick([-3,-2,-1,1,2,3].filter(function(v){return Math.abs(v)!==Math.abs(a)})),b=ri(-6,6),x0=ri(-4,4),d=Math.abs(a*x0+b)-c*x0,S=abs10Sol(a,b,c,d),sum=S.reduce(function(u,v){return fr(u.n*v.d+v.n*u.d,u.d*v.d)},fr(0,1));
-   return K("abs10_lin","ដោះស្រាយ $|"+polyT([a,b])+"|="+polyT([c,d])+"$ ។ រកចំនួនឫស និងផលបូកនៃឫសទាំងអស់ (ត្រួតពិនិត្យលក្ខខណ្ឌ $"+polyT([c,d])+"\\ge0$)",[A(S.length,null,"num","ចំនួនឫស ="),A(sum.s,sum.t,"num","ផលបូក =")],"ករណី ១ ៖ $"+polyT([a,b])+"="+polyT([c,d])+"$ · ករណី ២ ៖ $"+polyT([a,b])+"=-("+polyT([c,d])+")$ · ទុកតែឫសដែល $"+polyT([c,d])+"\\ge0$ ⇒ "+S.length+" ឫស ផលបូក $="+sum.t+"$")},
- function(){var L=ri(10,80),e=ri(1,6);
-   return K("abs10_tol","📏 ផ្នែកម៉ាស៊ីនមួយមានប្រវែងកំណត់ $L="+L+"$ mm ដោយអាចមានកំហុស $\\varepsilon="+e+"$ mm ពោលគឺ $|x-"+L+"|\\le"+e+"$ ។ រកចន្លោះប្រវែងដែលទទួលយក $\\alpha\\le x\\le\\beta$ និងចំនួនប្រវែងជាចំនួនគត់ (mm) ដែលទទួលយក",[A(L-e,null,"num","α ="),A(L+e,null,"num","β ="),A(2*e+1,null,"num","ចំនួន =")],"$-"+e+"\\le x-"+L+"\\le"+e+"$ ⇒ $"+(L-e)+"\\le x\\le"+(L+e)+"$ · ចំនួនគត់ $="+(2*e)+"+1="+(2*e+1)+"$")},
- function(){var p=ri(1,5),L=ri(1,5)*100,e=p*L/100;
-   return K("abs10_tol","⚖️ កញ្ចប់ស្ករមួយមានទម្ងន់កំណត់ $"+L+"$ g ដោយអនុញ្ញាតកំហុស $"+p+"\\%$ ពោលគឺ $|x-"+L+"|\\le"+p+"\\%\\times"+L+"$ ។ រកទម្ងន់ទាបបំផុត $\\alpha$ និងខ្ពស់បំផុត $\\beta$ ដែលទទួលយក",[A(L-e,null,"num","α ="),A(L+e,null,"num","β =")],"$\\varepsilon="+p+"\\%\\times"+L+"="+e+"$ ⇒ $"+(L-e)+"\\le x\\le"+(L+e)+"$")}]);
+ function(){var n=ri(20,255),s=b2(n),e=s.split("").map(function(c,i){return c==="1"?"2^{"+(s.length-1-i)+"}":null}).filter(Boolean).join("+");return K("g10n_b2d","បំប្លែង $"+bt(s)+"$ ទៅគោល ១០ (ទម្រង់ពន្លាតគោល ២)",[A(n,null,"num","=")],"$"+bt(s)+"="+e+"="+n+"$")},
+ function(){var n=ri(9,70),s=b2(n);return K("g10n_d2b","បំប្លែង $"+n+"$ (គោល ១០) ទៅគោល ២ (ចែកនឹង $2$ ជាបន្តបន្ទាប់) ។ សរសេរតែលេខគោល ២",[A(s,bt(s),"num","(…)₂ =")],"ចែក $"+n+"$ នឹង $2$ ជាបន្តបន្ទាប់ ហើយយកសំណល់ពីក្រោមឡើងលើ ⇒ $"+bt(s)+"$")},
+ function(){var a=ri(5,30),b=ri(5,30),s=b2(a+b);return K("g10n_add2","គណនាក្នុងគោល ២ ៖ $"+bt(b2(a))+"+"+bt(b2(b))+"$ ។ សរសេរតែលេខគោល ២",[A(s,bt(s),"num","(…)₂ =")],"$"+bt(b2(a))+"="+a+"$ , $"+bt(b2(b))+"="+b+"$ ⇒ $"+(a+b)+"="+bt(s)+"$ (ឬបូកតាមខ្ទង់ ដោយ $1+1=10_2$)")},
+ function(){var a=ri(15,60),b=ri(3,a-3),s=b2(a-b);return K("g10n_sub2","គណនាក្នុងគោល ២ ៖ $"+bt(b2(a))+"-"+bt(b2(b))+"$ ។ សរសេរតែលេខគោល ២",[A(s,bt(s),"num","(…)₂ =")],"$"+bt(b2(a))+"="+a+"$ , $"+bt(b2(b))+"="+b+"$ ⇒ $"+(a-b)+"="+bt(s)+"$")}]);
+/* 🌍 PISA ២.៣ — ជីវិតពិត */
+P4[23].push(function(){var a=ri(1,9),b=ri(0,9),c=ri(0,9),d=ri(0,9),N=a*1000+b*100+c*10+d;
+    return Q("🖊️ រោងចក្រវេចខ្ចប់ប៊ិក $"+mo(N)+"$ ដើម ៖ ប្រអប់ធំដាក់ $1\\,000$ ដើម · ប្រអប់មធ្យម $100$ ដើម · កញ្ចប់តូច $10$ ដើម · ដែលសល់ជាប៊ិកមួយៗ (ប្រើចំនួនប្រអប់ឱ្យតិចបំផុត) ។ រកចំនួនប្រអប់ធំ មធ្យម កញ្ចប់តូច និងប៊ិកដែលសល់",[A(a,null,"num","ប្រអប់ធំ ="),A(b,null,"num","ប្រអប់មធ្យម ="),A(c,null,"num","កញ្ចប់តូច ="),A(d,null,"num","សល់ =")],"ទម្រង់ពន្លាតគោល ១០ ៖ $"+N+"="+a+"\\times10^3+"+b+"\\times10^2+"+c+"\\times10+"+d+"$")},
+ function(){var n=ri(20,100),s=b2(n),k=s.split("").filter(function(c){return c==="1"}).length;
+    return Q("🍬 ស្ករគ្រាប់ $"+n+"$ គ្រាប់ ត្រូវដាក់ក្នុងប្រអប់ដែលមានទំហំ $1,2,4,8,16,32,64$ គ្រាប់ ដោយប្រើប្រអប់ម្យ៉ាងមិនលើសមួយ ។ រកចំនួនប្រអប់ដែលត្រូវប្រើ និងសរសេរ $"+n+"$ ជាគោល ២",[A(k,null,"num","ចំនួនប្រអប់ ="),A(s,bt(s),"num","(…)₂ =")],"$"+n+"="+bt(s)+"$ ⇒ ខ្ទង់ $1$ មាន $"+k+"$ ⇒ ប្រើ $"+k+"$ ប្រអប់")},
+ function(){var a=ri(1,9),b=ri(0,9),c=ri(0,9),N=a*100000000+b*10000000+c*1000000;
+    return Q("🏛️ ថវិកាមួយមាន $"+a+"$ ដប់កោដិ $+\\ "+b+"$ កោដិ $+\\ "+c+"$ លាន រៀល (១ កោដិ $=10^7$ · ១ ដប់កោដិ $=10^8$ · ១ លាន $=10^6$) ។ រកថវិកាសរុបជារៀល",[A(N,null,"num","រៀល =")],"$"+a+"\\times10^8+"+b+"\\times10^7+"+c+"\\times10^6="+mo(N)+"$")},
+ function(){var c=ri(2,6),k=pick([2,5,10]),m=k===2?1:k===5?2:3;
+    return Q("🌳 ចំណតរថយន្តជាបន្ទាត់ត្រង់មួយ ត្រូវកាត់ចំណតរាងត្រីកោណកែងដែលជ្រុងកែងវែង $"+c+"$ m និង $"+(c*m)+"$ m ។ រកប្រវែងផ្លូវកាត់ (អ៊ីប៉ូតេនុស) ជា $a\\sqrt b$ m",[A(c,null,"num","a ="),A(k,null,"num","b =")],"$\\sqrt{"+c+"^2+"+(c*m)+"^2}=\\sqrt{"+(c*c*k)+"}="+c+"\\sqrt{"+k+"}$ m")});
 P4[23].push(function(){var L=ri(10,80),e=ri(1,6);return Q("📏 ផ្នែកម៉ាស៊ីនមួយមានប្រវែងកំណត់ $L="+L+"$ mm ដោយអាចមានកំហុស $\\varepsilon="+e+"$ mm ពោលគឺ $|x-"+L+"|\\le"+e+"$ ។ រកចន្លោះប្រវែងដែលទទួលយក $\\alpha\\le x\\le\\beta$",[A(L-e,null,"num","α ="),A(L+e,null,"num","β =")],"$"+(L-e)+"\\le x\\le"+(L+e)+"$")},
  function(){var a=ri(1,4),m=ri(10,30),r=ri(1,5),b=-a*m,c=a*r;return Q("🌡️ ឧបករណ៍ត្រួតសីតុណ្ហភាពរក្សា $T$ ឱ្យមាន $|"+polyT([a,b])+"|\\le"+c+"$ ។ រកសីតុណ្ហភាពទាបបំផុត $\\alpha$ និងខ្ពស់បំផុត $\\beta$ (°C)",[A(m-r,null,"num","α ="),A(m+r,null,"num","β =")],"$-"+c+"\\le"+polyT([a,b])+"\\le"+c+"$ ⇒ $"+(m-r)+"\\le T\\le"+(m+r)+"$")});
 /* ៣.១ សមីការដឺក្រេទី២ */

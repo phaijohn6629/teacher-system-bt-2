@@ -1966,7 +1966,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=1", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=13"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=6","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=2", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=13"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=8","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
@@ -2072,7 +2072,7 @@ function lpDetail(t){var k=String(t).split(" (")[0];return LPD[k]||LPD[Object.ke
    obj = វត្ថុបំណង ៣ វិស័យ (ប្រភេទ: បញ្ជីអក្សរ) · mat = សម្ភារៈ · dur = រយៈពេលសរុប (នាទី) · steps[5] = {n: ឈ្មោះជំហាន, t: នាទី, tc: សកម្មភាពគ្រូ[], ct: ខ្លឹមសារមេរៀន[], st: សកម្មភាពសិស្ស[]} */
 var lessonPlanDB={};   /* ទិន្នន័យថ្នាក់ទី១២ នៅក្នុង lp12.js (window.LP_DB) · lessonplans.js (LPX) */
 /* 📦 ផ្ទុកឯកសារទិន្នន័យតាមថ្នាក់ (lp{g}.js → window.LP_DB) ពេលគ្រូជ្រើសថ្នាក់ · បន្ថែមថ្នាក់ថ្មី = បន្ថែមឈ្មោះឯកសារ (មានលេខ ?v=) ក្នុង LPF + sw.js + tools/bump.py ស្វ័យប្រវត្តិ */
-var LPF={7:"lp7.js?v=13",8:"lp8.js?v=4",9:"lp9.js?v=4",10:"lp10.js?v=6",11:"lp11.js?v=7",12:"lp12.js?v=2"},LPP={};
+var LPF={7:"lp7.js?v=13",8:"lp8.js?v=4",9:"lp9.js?v=4",10:"lp10.js?v=7",11:"lp11.js?v=7",12:"lp12.js?v=2"},LPP={};
 function lpMerge(){
   if(window.LP_DB)Object.keys(LP_DB).forEach(function(k){lessonPlanDB[k]=LP_DB[k]});
   if(window.LPX)Object.keys(LPX).forEach(function(k){lessonPlanDB[k]=LPX[k]});   /* កិច្ចតែងការពី lessonplans.js មានអាទិភាពខ្ពស់ជាង */
