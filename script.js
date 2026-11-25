@@ -1204,7 +1204,7 @@ function pdfPaginate(w,pageH,contentW){
     }else el.style.marginTop=(parseFloat(getComputedStyle(el).marginTop)||0)+pad+"px";
   }
   [].forEach.call(w.querySelectorAll(".pg"),function(pg){
-    var items=pg.querySelectorAll("tbody,tr,.cxf,.sig,.card,.tsx-s,.wpf,.tsx-c,h2,h3,h4,.og,p,li,.cxi,.mt-ft,.mt-s,.mt-h,.mt-b,.mt-i,.mt-li,.mt-at");
+    var items=pg.querySelectorAll("tbody,tr,.cxf,.sig,.card,.tsx-s,.wpf,.tsx-c,h2,h3,h4,.og,p,li,.cxh,.cxi,.mt-ft,.mt-s,.mt-h,.mt-b,.mt-i,.mt-li,.mt-at");
     [].forEach.call(items,function(el){
       if(el.closest(".pdfpad")||el.closest("thead"))return;
       var P0=pg.getBoundingClientRect().top,r=el.getBoundingClientRect(),top=r.top-P0,h=r.height;

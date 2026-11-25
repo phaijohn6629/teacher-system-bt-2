@@ -1312,3 +1312,17 @@ body.mon #allMenu{display:none!important}
 .pc-link .pc-xl input{width:auto;margin:.25em 0 0;flex:0 0 auto;transform:scale(1.15)}
 .pc-xl span{min-width:0;overflow-wrap:anywhere}
 @media(max-width:560px){.pc-xl{grid-template-columns:minmax(0,1fr);max-height:50vh}.pc-xb button{flex:1 1 40%}.pc-xl label{padding:8px 4px}}
+
+/* ===== សម្រង់អត្ថបទ៖ បោះពុម្ព/PDF (មិនប៉ះ screen) ===== */
+.cxp .cxg{table-layout:fixed;width:100%}
+.cxp .cxg :is(th,td){overflow-wrap:break-word;word-break:break-word;break-inside:avoid;page-break-inside:avoid}
+.cxp .cxg td{padding:1.4mm 1.8mm;line-height:1.55}
+.cxp :is(.cxh,.cxi,.hd){break-inside:avoid;page-break-inside:avoid}
+.cxp :is(.cxh,.hd){break-after:avoid;page-break-after:avoid}
+@media print{
+  body.pm #prt .cxp .cxg{table-layout:fixed;width:100%}
+  body.pm #prt .cxp .cxg thead{display:table-header-group}
+  body.pm #prt .cxp .cxg :is(tr,td,th,tbody){break-inside:avoid;page-break-inside:avoid}
+  body.pm #prt .cxp :is(.cxh,.cxi,.cxf){break-inside:avoid;page-break-inside:avoid}
+  body.pm #prt .cxp .cxf{break-before:avoid;page-break-before:avoid}
+}
