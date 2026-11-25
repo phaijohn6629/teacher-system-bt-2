@@ -1195,7 +1195,7 @@ function pdfPaginate(w,pageH,contentW){
   function push(el,pad){
     if(el.tagName==="TR"||el.tagName==="TBODY"){
       var tbl=el.closest("table"),r0=tbl&&tbl.rows[0],nc=0;if(r0)[].forEach.call(r0.cells,function(c){nc+=c.colSpan});   /* colspan ត្រូវតែស្មើចំនួនជួរឈរ */
-      var tr=document.createElement("tr");tr.className="pdfpad";tr.innerHTML="<td colspan="+(nc||1)+" style='height:"+pad+"px;padding:0;border:0!important;background:none!important'></td>";
+      var tr=document.createElement("tr");tr.className="pdfpad";tr.innerHTML="<td colspan="+(nc||1)+" style='height:"+(pad+5)+"px;padding:0;border:0!important;background:none!important'></td>";
       if(el.tagName==="TR")el.parentNode.insertBefore(tr,el);
       else{var tb=document.createElement("tbody");tb.className="pdfpad";tb.appendChild(tr);el.parentNode.insertBefore(tb,el)}
       /* ក្បាលតារាងឡើងវិញនៅទំព័រថ្មី (ដូចការបោះពុម្ព) */
