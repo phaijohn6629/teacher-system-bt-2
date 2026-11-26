@@ -258,10 +258,10 @@ P4[33]=[function(){var x=ri(5,20),y=ri(5,20);
     return K("g10sysp_cash","💵 កាបូបមួយមានក្រដាសប្រាក់ $5\\,000$ រៀល និង $10\\,000$ រៀល សរុប $"+(x+y)+"$ សន្លឹក តម្លៃ $"+money(5000*x+10000*y)+"$ រៀល។ តើមានក្រដាសប្រាក់នីមួយៗប៉ុន្មានសន្លឹក?",
       [A(x,null,"num","៥០០០ ="),A(y,null,"num","១០០០០ =")],"$\\begin{cases}x+y="+(x+y)+"\\\\5000x+10000y="+(5000*x+10000*y)+"\\end{cases}$")}];
 P4[34]=[function(){var r1=ri(2,8),r2v=r1+ri(3,10);
-    return Q("💰 ប្រាក់ចំណេញ (លានរៀល) ពេលផលិត $x$ រយគ្រឿង៖ $P(x)=-x^2+"+(r1+r2v)+"x-"+(r1*r2v)+"$ ។ ចំណេញ ($P>0$) ពេល $a<x<b$ ។ រក $a$ និង $b$",
+    return K("g10ip_profit","💰 ប្រាក់ចំណេញ (លានរៀល) ពេលផលិត $x$ រយគ្រឿង៖ $P(x)=-x^2+"+(r1+r2v)+"x-"+(r1*r2v)+"$ ។ ចំណេញ ($P>0$) ពេល $a<x<b$ ។ រក $a$ និង $b$",
       [A(r1,null,"num","a ="),A(r2v,null,"num","b =")],"ឫស $x="+r1+"$ , $x="+r2v+"$ · $a<0$ ⇒ $P>0$ រវាងឫស","y=-x^2+"+(r1+r2v)+"x-"+(r1*r2v))},
   function(){
-    return Q("💉 វ៉ាក់សាំងត្រូវរក្សាទុកក្នុងសីតុណ្ហភាព $2\\le C\\le8$ ($^\\circ$C)។ ទូទឹកកកបង្ហាញជា $^\\circ$F ដែល $C=\\dfrac{5}{9}(F-32)$ ។ រកចន្លោះ $a\\le F\\le b$",
+    return K("g10ip_temp","💉 វ៉ាក់សាំងត្រូវរក្សាទុកក្នុងសីតុណ្ហភាព $2\\le C\\le8$ ($^\\circ$C)។ ទូទឹកកកបង្ហាញជា $^\\circ$F ដែល $C=\\dfrac{5}{9}(F-32)$ ។ រកចន្លោះ $a\\le F\\le b$",
       [A(35.6,null,"num","a ="),A(46.4,null,"num","b =")],"$2\\le\\frac59(F-32)\\le8\\iff3.6\\le F-32\\le14.4\\iff35.6\\le F\\le46.4$")}];
 P4[41]=[function(){var A0=[ri(-6,6),ri(-6,6)],B=[ri(-6,6),ri(-6,6)];
     return Q("🤝 មិត្តពីរនាក់ ផ្ទះនៅ $A"+pt(A0)+"$ និង $B"+pt(B)+"$ លើផែនទី (km)។ ពួកគេចង់ជួបគ្នាត្រង់ចំណុចកណ្ដាល $M$ ។ រក $M$",
@@ -977,6 +977,92 @@ vx(34,3,[
  function(){var a=ri(1,4),r1=ri(-5,2),b=-a*r1,c=ri(1,4),r2=r1+ri(1,6),d=-c*r2;return K("s10_sys2","ដោះស្រាយ $\\begin{cases}"+co(a,"x",true)+sg(b,0)+">0\\\\"+co(c,"x",true)+sg(d,0)+"<0\\end{cases}$ ៖ $\\alpha<x<\\beta$",[A(r1,null,"num","α ="),A(r2,null,"num","β =")],"$x>"+r1+"$ និង $x<"+r2+"$")},
  function(){var a=ri(-5,5),b=ri(1,6);return K("s10_abs","ដោះស្រាយ $|x"+sg(-a,0)+"|<"+b+"$ ៖ $\\alpha<x<\\beta$",[A(a-b,null,"num","α ="),A(a+b,null,"num","β =")],"$-"+b+"<x"+sg(-a,0)+"<"+b+"$ ⇒ $"+(a-b)+"<x<"+(a+b)+"$")},
  function(){var k=ri(2,6);return K("s10_mint","តើមានចំនួនគត់ $m$ ប៉ុន្មាន ដែល $x^2+2mx+"+(k*k)+">0$ ពិតគ្រប់ $x\\in\\mathbb R$ ?",[A(2*k-1,null,"num","=")],"$\\Delta'=m^2-"+(k*k)+"<0$ ⇒ $-"+k+"<m<"+k+"$ ⇒ $"+(2*k-1)+"$ ចំនួន")}]);
+/* ៣.៤ វិសមីការ (កែ ២០២៦-១១-២៦) — kd = g10i_… (PISA = g10ip_…) · ចម្លើយ fill-in (num) ទាំងអស់ · ចម្លើយជាគូ → «តូចមុន/α<β» ក្នុងសំណួរ
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) · AM-GM = ចំណុចទី ៦ */
+function fenceQ(kd,pre){var s=ri(3,15);
+  return K(kd,pre+"របងប្រវែង $"+(4*s)+"$ m ត្រូវព័ទ្ធជុំវិញដីរាងចតុកោណកែង (ប្រើអស់ប្រវែងរបង) ។ តាមវិសមភាព AM-GM ($ab\\le\\left(\\dfrac{a+b}{2}\\right)^2$) រកផ្ទៃក្រឡាធំបំផុត (m$^2$)",[A(s*s,null,"num","S អតិបរមា =")],
+    "$a+b="+(2*s)+"$ ⇒ $ab\\le\\left(\\dfrac{"+(2*s)+"}{2}\\right)^2="+(s*s)+"$ (សមភាពពេល $a=b="+s+"$)")}
+var G34={
+ bound:function(){var p=ri(-5,3),q=p+ri(2,6),m=nz(-4,4),n=ri(-6,6),u=m*p+n,v=m*q+n,lo=Math.min(u,v),hi=Math.max(u,v),e=co(m,"x",true)+sg(n,0);
+   return K("g10i_bound","គេដឹងថា $"+p+"<x<"+q+"$ ។ ដូច្នេះ $\\alpha<"+e+"<\\beta$ ។ រក $\\alpha$ និង $\\beta$ (គុណនឹងចំនួនអវិជ្ជមានត្រូវប្ដូរទិសដៅវិសមភាព)",[A(lo,null,"num","α ="),A(hi,null,"num","β =")],
+     "គុណនឹង $"+m+"$"+(m<0?" (ប្ដូរទិសដៅ)":"")+" រួចបូក $"+n+"$ ⇒ $"+lo+"<"+e+"<"+hi+"$")},
+ cnt:function(){var c=ri(-5,5),ms=[nz(-4,4),nz(-4,4),nz(-4,4),nz(-4,4)],n=0,L=[];
+   ms.forEach(function(m){if(m>0)n++;L.push("$"+co(m,"x",true)+sg(c,0)+"<"+co(m,"y",true)+sg(c,0)+"$")});
+   return K("g10i_cnt","គេដឹងថា $x<y$ ។ តើមានប៉ុន្មានក្នុងបួនវិសមភាពខាងក្រោម ដែលពិតជានិច្ច ៖ "+L.join(" , "),[A(n,null,"num","ចំនួន =")],
+     "គុណនឹងចំនួនវិជ្ជមានរក្សាទិសដៅ · គុណនឹងចំនួនអវិជ្ជមានប្ដូរទិសដៅ ⇒ ពិត $"+n+"$ ក្នុង ៤")},
+ sgn:function(){var a=nz(-5,5),b=ri(-12,12),r=fr(-b,a),k=a>0?Math.floor(-b/a)+1:Math.ceil(-b/a)-1;
+   return K("g10i_sgn","ដោះស្រាយ $"+co(a,"x",true)+sg(b,0)+">0$ (ឫស $x=-\\dfrac ba$) ។ រក"+(a>0?"ចំនួនគត់តូចបំផុត":"ចំនួនគត់ធំបំផុត")+"នៃ $x$ ដែលជាចម្លើយ",[A(k,null,"num","x =")],
+     "ឫស $x="+r.t+"$ ⇒ $x"+(a>0?">":"<")+r.t+"$ "+(a<0?"(ចែកនឹងចំនួនអវិជ្ជមាន ប្ដូរទិសដៅ) ":"")+"⇒ "+k)},
+ cnt1:function(){var a=nz(-4,4),b=ri(-8,8),N=ri(4,9),n=0,r=fr(-b,a);for(var x=-N;x<=N;x++)if(a*x+b>=0)n++;
+   return K("g10i_cnt1","តើមានចំនួនគត់ $x$ ប៉ុន្មាន ក្នុងចន្លោះ $["+(-N)+";"+N+"]$ ដែលផ្ទៀងផ្ទាត់ $"+co(a,"x",true)+sg(b,0)+"\\ge0$ ?",[A(n,null,"num","ចំនួន =")],
+     "ឫស $x="+r.t+"$ ⇒ $x"+(a>0?"\\ge":"\\le")+r.t+"$ ⇒ $"+n+"$ តម្លៃគត់")},
+ sysint:function(){var a=ri(-5,5),b=a+ri(-3,7),n=Math.max(0,b-a-1);
+   return K("g10i_sysint","ដោះស្រាយប្រព័ន្ធ $\\begin{cases}x"+sg(-a,0)+">0\\\\"+b+"-x>0\\end{cases}$ ។ តើមានចំនួនគត់ $x$ ប៉ុន្មានជាចម្លើយ? (បើគ្មានចម្លើយ $\\emptyset$ សរសេរ $0$)",[A(n,null,"num","ចំនួន =")],
+     "$x>"+a+"$ និង $x<"+b+"$ ⇒ "+(b>a?"$"+a+"<x<"+b+"$":"$\\emptyset$")+" ⇒ $"+n+"$")},
+ abseq:function(){var a=ri(1,3),h=ri(-5,5),w=ri(1,5),B=-a*h,C=a*w;
+   return K("g10i_abseq","ដោះស្រាយ $|"+co(a,"x",true)+sg(B,0)+"|="+C+"$ ។ រកឫសតូច និងឫសធំ",[A(h-w,null,"num","x₁ ="),A(h+w,null,"num","x₂ =")],
+     "$"+co(a,"x",true)+sg(B,0)+"=\\pm"+C+"$ ⇒ $x="+(h-w)+"$ ឬ $x="+(h+w)+"$")},
+ abslt:function(){var a=ri(1,3),h=ri(-5,5),w=ri(1,5),B=-a*h,C=a*w;
+   return K("g10i_abslt","ដោះស្រាយ $|"+co(a,"x",true)+sg(B,0)+"|\\le"+C+"$ ៖ ចម្លើយ $\\alpha\\le x\\le\\beta$ ។ រក $\\alpha$ និង $\\beta$",[A(h-w,null,"num","α ="),A(h+w,null,"num","β =")],
+     "$-"+C+"\\le"+co(a,"x",true)+sg(B,0)+"\\le"+C+"$ ⇒ $"+(h-w)+"\\le x\\le"+(h+w)+"$")},
+ absgt:function(){var a=ri(1,3),h=ri(-5,5),w=ri(1,5),B=-a*h,C=a*w;
+   return K("g10i_absgt","ដោះស្រាយ $|"+co(a,"x",true)+sg(B,0)+"|>"+C+"$ ៖ ចម្លើយ $x<\\alpha$ ឬ $x>\\beta$ ។ រក $\\alpha$ និង $\\beta$",[A(h-w,null,"num","α ="),A(h+w,null,"num","β =")],
+     "$"+co(a,"x",true)+sg(B,0)+"<-"+C+"$ ឬ $"+co(a,"x",true)+sg(B,0)+">"+C+"$ ⇒ $x<"+(h-w)+"$ ឬ $x>"+(h+w)+"$")},
+ abscnt:function(){var a=ri(1,3),h=ri(-5,5),w=ri(2,6),B=-a*h,C=a*w;
+   return K("g10i_abscnt","តើមានចំនួនគត់ $x$ ប៉ុន្មានដែលផ្ទៀងផ្ទាត់ $|"+co(a,"x",true)+sg(B,0)+"|<"+C+"$ ?",[A(2*w-1,null,"num","ចំនួន =")],
+     "$-"+C+"<"+co(a,"x",true)+sg(B,0)+"<"+C+"$ ⇒ $"+(h-w)+"<x<"+(h+w)+"$ ⇒ $"+(2*w-1)+"$ តម្លៃគត់")},
+ d0:function(){var a=ri(1,3),h=nz(-6,6),f=polyT([a,-2*a*h,a*h*h]),one=Math.random()<.5;
+   return K("g10i_d0",one?"វិសមីការ $"+f+"\\le0$ ($\\Delta=0$) មានចម្លើយតែមួយ $x=h$ ។ រក $h$":"វិសមីការ $"+f+">0$ ($\\Delta=0$) ពិតគ្រប់ $x$ លើកលែង $x=h$ ។ រក $h$",[A(h,null,"num","h =")],
+     "$"+f+"="+a+"(x"+sg(-h,0)+")^2$ ⇒ "+(one?"$\\le0$ លុះត្រា $x="+h+"$":"$>0$ លើកលែង $x="+h+"$"))},
+ dneg:function(){var h=nz(-5,5),k=ri(1,9),gt=Math.random()<.5,f=polyT([1,-2*h,h*h+k]);
+   return K("g10i_dneg","តើមានចំនួនគត់ $x$ ប៉ុន្មានក្នុង $[-5;5]$ ដែលផ្ទៀងផ្ទាត់ $"+f+(gt?">0":"<0")+"$ ?",[A(gt?11:0,null,"num","ចំនួន =")],
+     "$\\Delta="+(-4*k)+"<0$ និង $a>0$ ⇒ $f(x)>0$ ជានិច្ច ⇒ "+(gt?"ពិតគ្រប់ $11$ តម្លៃ":"គ្មានចម្លើយ ($0$)"))},
+ frac:function(){var p=ri(-6,3),q=p+ri(1,6);
+   return K("g10i_frac","ដោះស្រាយ $\\dfrac{x"+sg(-p,0)+"}{x"+sg(-q,0)+"}\\ge0$ ($x\\ne"+q+"$) ៖ ចម្លើយ $x\\le\\alpha$ ឬ $x>\\beta$ ។ រក $\\alpha$ និង $\\beta$",[A(p,null,"num","α ="),A(q,null,"num","β =")],
+     "តារាងសញ្ញា ⇒ $x\\le"+p+"$ ឬ $x>"+q+"$ (មិនយក $x="+q+"$)")},
+ cub:function(){var r=shr(3).sort(function(x,y){return x-y});
+   return K("g10i_cub","ដោះស្រាយ $"+polyT(pm(r))+"<0$ ($f(x)=(x-r_1)(x-r_2)(x-r_3)$) ៖ ចម្លើយ $x<\\alpha$ ឬ $\\beta<x<\\gamma$ ។ រក $\\alpha,\\beta,\\gamma$",[A(r[0],null,"num","α ="),A(r[1],null,"num","β ="),A(r[2],null,"num","γ =")],
+     "ដាក់កត្តា $(x"+sg(-r[0],0)+")(x"+sg(-r[1],0)+")(x"+sg(-r[2],0)+")<0$ ⇒ $x<"+r[0]+"$ ឬ $"+r[1]+"<x<"+r[2]+"$")},
+ mall:function(){var h=ri(2,7);
+   return K("g10i_mall","រក $m$ ជាចំនួនគត់តូចបំផុត ដើម្បីឱ្យ $x^2-"+(2*h)+"x+m>0$ ពិតគ្រប់ $x\\in\\mathbb R$ (ត្រូវ $\\Delta'<0$)",[A(h*h+1,null,"num","m =")],
+     "$\\Delta'="+(h*h)+"-m<0$ ⇒ $m>"+(h*h)+"$ ⇒ $m="+(h*h+1)+"$")},
+ mpos:function(){var k=ri(2,7);
+   return K("g10i_mpos","រក $m$ ជាចំនួនគត់តូចបំផុត ដើម្បីឱ្យ $x^2-2mx+"+(k*k)+"=0$ មានឫសវិជ្ជមានទាំងពីរ (ត្រូវ $\\Delta'\\ge0$ , $S>0$ , $P>0$)",[A(k,null,"num","m =")],
+     "$\\Delta'=m^2-"+(k*k)+"\\ge0$ , $S=2m>0$ , $P="+(k*k)+">0$ ⇒ $m\\ge"+k+"$")},
+ min:function(){var h=nz(-6,6),c=ri(-5,9);
+   return K("g10i_min","បំពេញជាការ៉េ រកតម្លៃអប្បបរមានៃ $"+polyT([1,-2*h,c])+"$ និងតម្លៃ $x$ ដែលបានអប្បបរមា",[A(c-h*h,null,"num","អប្បបរមា ="),A(h,null,"num","x =")],
+     "$"+polyT([1,-2*h,h*h])+"+("+(c-h*h)+")=(x"+sg(-h,0)+")^2"+sg(c-h*h,0)+"\\ge"+(c-h*h)+"$ ⇒ អប្បបរមា "+(c-h*h)+" ពេល $x="+h+"$")},
+ cs:function(){var a=nz(-4,4),b=nz(-4,4),x=nz(-4,4),y=nz(-4,4);
+   return K("g10i_cs","គណនា $(a^2+b^2)(x^2+y^2)-(ax+by)^2$ ដែល $a="+a+"$ , $b="+b+"$ , $x="+x+"$ , $y="+y+"$ (ដឹងថាវាស្មើ $(ay-bx)^2\\ge0$)",[A((a*y-b*x)*(a*y-b*x),null,"num","=")],
+     "$(ay-bx)^2=("+(a*y)+"-("+(b*x)+"))^2="+((a*y-b*x)*(a*y-b*x))+"$")},
+ amgm:function(){var m=ri(1,7);
+   return K("g10i_amgm","ចំពោះ $x>0$ រកតម្លៃអប្បបរមានៃ $x+\\dfrac{"+(m*m)+"}{x}$ និងតម្លៃ $x$ ដែលសមភាពពិត (AM-GM)",[A(2*m,null,"num","អប្បបរមា ="),A(m,null,"num","x =")],
+     "$\\dfrac{x+\\frac{"+(m*m)+"}{x}}{2}\\ge\\sqrt{"+(m*m)+"}="+m+"$ ⇒ $\\ge"+(2*m)+"$ ពេល $x=\\dfrac{"+(m*m)+"}{x}$ ⇒ $x="+m+"$")},
+ amgm2:function(){var a=ri(1,4),m=ri(1,5),b=a*m*m;
+   return K("g10i_amgm2","ចំពោះ $x>0$ រកតម្លៃអប្បបរមានៃ $"+co(a,"x",true)+"+\\dfrac{"+b+"}{x}$ និងតម្លៃ $x$ ដែលសមភាពពិត",[A(2*a*m,null,"num","អប្បបរមា ="),A(m,null,"num","x =")],
+     "$\\ge2\\sqrt{"+a+"x\\cdot\\frac{"+b+"}{x}}=2\\sqrt{"+(a*b)+"}="+(2*a*m)+"$ ពេល $"+a+"x=\\dfrac{"+b+"}{x}$ ⇒ $x="+m+"$")},
+ prodmax:function(){var k=ri(2,12);
+   return K("g10i_pmax","ចំពោះ $a>0$ , $b>0$ ដែល $a+b="+(2*k)+"$ ។ តាម AM-GM រកតម្លៃធំបំផុតនៃ $ab$ និងតម្លៃ $a$ ពេលនោះ",[A(k*k,null,"num","ab អតិបរមា ="),A(k,null,"num","a =")],
+     "$\\sqrt{ab}\\le\\dfrac{a+b}{2}="+k+"$ ⇒ $ab\\le"+(k*k)+"$ ពេល $a=b="+k+"$")},
+ rect:function(){return fenceQ("g10i_rect","")}
+};
+vx(34,1,[G34.bound,G34.cnt,G34.sgn,G34.cnt1,G34.sysint,G34.abseq]);
+vx(34,2,[G34.absgt,G34.abslt,G34.abscnt,G34.d0,G34.dneg,G34.frac,G34.prodmax]);
+vx(34,3,[G34.cub,G34.mall,G34.mpos,G34.min,G34.cs,G34.amgm,G34.amgm2,G34.rect]);
+(function(){var g1=G[34][1],g2=G[34][2];
+  function lvs(lv,L){G[34][lv]=function(){return pick(L)()}}
+  lvs(5,[G34.bound,G34.cnt,G34.sgn,G34.cnt1,G34.sysint,G34.abseq,G34.d0,g1]);
+  lvs(6,[G34.absgt,G34.abslt,G34.abscnt,G34.dneg,G34.frac,G34.min,G34.amgm,G34.prodmax,g2]);
+})();
+P4[34].push(
+ function(){return fenceQ("g10ip_fence","🌾 ")},
+ function(){var s=[ri(55,95),ri(55,95),ri(55,95)],T=ri(70,85),need=4*T-s[0]-s[1]-s[2];if(need>100){s=[T,T,T];need=T}
+   return K("g10ip_avg","📚 សិស្សមួយបានពិន្ទុតេស្ត $"+s[0]+"$ , $"+s[1]+"$ , $"+s[2]+"$ ក្នុង ៣ មុខវិជ្ជា ។ ដើម្បីឱ្យមធ្យមភាគ ៤ មុខវិជ្ជា $\\ge"+T+"$ តើមុខវិជ្ជាទី ៤ ត្រូវបានពិន្ទុយ៉ាងតិចប៉ុន្មាន? ($\\dfrac{"+s.join("+")+"+x}{4}\\ge"+T+"$)",[A(need,null,"num","x ≥")],
+     "$"+(s[0]+s[1]+s[2])+"+x\\ge"+(4*T)+"$ ⇒ $x\\ge"+need+"$")},
+ function(){var L=ri(20,80),t=ri(1,5);return K("g10ip_tol","🔩 ដំបងដែកមួយត្រូវមានប្រវែង $"+L+"$ mm ដោយអនុញ្ញាតកំហុស $|x-"+L+"|\\le"+t+"$ ។ រកប្រវែងអប្បបរមា និងអតិបរមា (mm)",[A(L-t,null,"num","អប្បបរមា ="),A(L+t,null,"num","អតិបរមា =")],
+     "$-"+t+"\\le x-"+L+"\\le"+t+"$ ⇒ $"+(L-t)+"\\le x\\le"+(L+t)+"$")},
+ function(){var m=ri(2,8);return K("g10ip_cost","🏭 តម្លៃមធ្យមក្នុងមួយឯកតា (រយរៀល) នៅពេលផលិត $x$ ឯកតា គឺ $C(x)=x+\\dfrac{"+(m*m)+"}{x}$ ($x>0$) ។ រកចំនួន $x$ ដែលតម្លៃមធ្យមតូចបំផុត និងតម្លៃតូចបំផុតនោះ",[A(m,null,"num","x ="),A(2*m,null,"num","C អប្បបរមា =")],
+     "AM-GM ⇒ $C(x)\\ge2\\sqrt{"+(m*m)+"}="+(2*m)+"$ ពេល $x="+m+"$")});
 /* ៤.១ កូអរដោនេ */
 vx(41,1,[
  function(){var T=pick(TR),a=T[0]*pick([1,-1]),b=T[1]*pick([1,-1]);return K("s10_d0","គណនាចម្ងាយ $OA$ ដែល $A("+a+";"+b+")$",[A(T[2],null,"num","=")],"$\\sqrt{"+(a*a)+"+"+(b*b)+"}="+T[2]+"$")},

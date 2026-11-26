@@ -58,7 +58,11 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v170`, `script.js?v=234`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v171`, `script.js?v=235`)
+
+### ✅ Grade 10 lesson 3.4 «វិសមីការ» aligned, AM-GM added as point 6 (2026-11-26) — `curriculum10.js`, `practice10.js` (`G34` block before «៤.១»), `hubdata.js`, `exam.js` `PTK["10|34"]`
+- `curriculum10.js`: new point «6. មធ្យមនព្វន្ត និងមធ្យមធរណីមាត្រ (AM-GM)». To keep lesson 34 at 18 h, points 5 and 6 are 1 h each (were 2 h for point 5).
+- Hub: 6 sub-topics + 🌐 PISA (first summaries for this lesson). 21 new forms `g10i_…` (properties, sign of ax+b, absolute value, Δ=0/Δ<0, cubic, fractions, parameter m, completing the square, Cauchy identity, AM-GM, fence). Keys 5/6 own lists; levels 1/3/5 now have 10/11/12 forms. PISA `P4[34]` = 6 forms `g10ip_…` (old 2 got `kd`). `PTK["10|34"]` has 6 points, all kd mapped; PISA unmapped. Book pages 122–146 were not available; content follows the user's outline.
 
 ### ✅ Grade 10 lesson 3.3 «ប្រព័ន្ធសមីការ» aligned (2026-11-26) — `practice10.js` (`G33` block before «៣.៤»), `hubdata.js`, `exam.js` `PTK["10|33"]`
 - Hub: 2 sub-topics (3 unknowns · linear + quadratic with 2 unknowns) + 🌐 PISA (first summaries for this lesson). 11 new forms `g10sys_…` (3-unknown elimination, no-solution `0=c`, parameters `m,n`/`a`, linear+quadratic substitution, symmetric S·P, field, right triangle by hypotenuse+sum or area). Keys 5/6 own lists; levels 1/3/5 now have 7/8/9 forms. PISA `P4[33]` = 6 forms `g10sysp_…` (old 2 got `kd`). `s10_nl` no longer uses a retry loop. `PTK["10|33"]` is new (2 points, all kd mapped; PISA unmapped). Pairs of answers always say «តូចមុន» or `x>0`. Book pages 116–121 were not available; content follows the user's outline.
