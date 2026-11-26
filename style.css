@@ -350,7 +350,7 @@ body.pm .pg.land{page-break-inside:avoid}
 #cxG tr.cxbad td{background:rgba(239,68,68,.08)}
 #cxG small.cxw{color:#dc2626;font-weight:700}#cxG small.cxx{color:#059669;font-weight:700}
 .cxwarn{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);font-size:.9rem}.cxwarn button{margin-left:8px;padding:4px 10px}
-.cxg td.ccl{white-space:normal;overflow-wrap:anywhere;font-size:9.5pt}
+.cxg td.ccl{white-space:nowrap;font-size:9.5pt}
 .cxg tbody{break-inside:avoid;page-break-inside:avoid}
 /* PDF (html2pdf)៖ ទំព័រនីមួយៗចាប់ផ្ដើមទំព័រថ្មី */
 .pdfhold{position:fixed;left:-10000px;top:0}.pdfw{background:#fff;color:#000}
@@ -1317,6 +1317,8 @@ body.mon #allMenu{display:none!important}
 .cxp .cxg{table-layout:fixed;width:100%}
 .cxp .cxg :is(th,td){overflow-wrap:break-word;word-break:break-word;break-inside:avoid;page-break-inside:avoid}
 .cxp .cxg td{padding:1.4mm 1.8mm;line-height:1.55}
+.cxp .cxg td.ccl{white-space:nowrap;overflow-wrap:normal;word-break:keep-all;font-size:9pt}
+.cxp .cxf .sn,.cxp .cxf .sb b{white-space:nowrap}
 .cxp :is(.cxh,.cxi,.hd){break-inside:avoid;page-break-inside:avoid}
 .cxp :is(.cxh,.hd){break-after:avoid;page-break-after:avoid}
 @media print{

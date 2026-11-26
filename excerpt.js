@@ -381,7 +381,7 @@ function cxPrintHTML(){
    "<div class=cxh><img src='"+LOGOBT()+"' class=cxlogo style='border-radius:50%' alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
     "<div class=moul style='font-size:13pt'>សម្រង់អត្ថបទប្រចាំខែ</div><div class=cxper>"+esc(per)+"</div></div></div>"+
    "<div class=cxi><div><span>បុគ្គលិកឈ្មោះ៖</span> <b>"+esc(t.name||"")+"</b></div><div><span>មុខវិជ្ជា៖</span> <b>"+esc(rec.sb||t.sub||"គណិតវិទ្យា")+"</b></div><div><span>ថ្នាក់៖</span> <b>"+esc(cl.join(", "))+"</b></div></div>"+
-   "<table class=cxg><thead><tr><th style='width:18%'>កាលបរិច្ឆេទ</th><th style='width:13%'>ថ្នាក់</th><th style='width:13%'>ម៉ោង</th><th>ខ្លឹមសារមេរៀន</th><th style='width:17%'>អវត្តមានសិស្ស</th></tr></thead>"+
+   "<table class=cxg><thead><tr><th style='width:17%'>កាលបរិច្ឆេទ</th><th style='width:15%'>ថ្នាក់</th><th style='width:13%'>ម៉ោង</th><th>ខ្លឹមសារមេរៀន</th><th style='width:17%'>អវត្តមានសិស្ស</th></tr></thead>"+
    (rows.length?rows.map(function(r,i){
      var n=0;if(i&&rows[i-1].d===r.d)n=-1;else while(i+n<rows.length&&rows[i+n].d===r.d)n++;   /* ថ្ងៃដូចគ្នា → បញ្ចូលក្រឡាកាលបរិច្ឆេទ */
      return(n<0?"":"<tbody>")+"<tr>"+(n<0?"":"<td class=cd"+(n>1?" rowspan="+n:"")+">"+esc(cxDateTxt(r.d))+"</td>")+"<td class='cp ccl'><b>"+esc(r.cls||"")+"</b></td><td class=cp>"+cxPLabel(r.p)+(cxPTime(r.p)?"<br><small>"+cxPTime(r.p)+"</small>":"")+"</td><td class=cc>"+esc(r.c||"").replace(/\n/g,"<br>")+"</td><td class=ca>"+esc(r.a||"").replace(/\n/g,"<br>")+"</td></tr>"+(i+1<rows.length&&rows[i+1].d===r.d?"":"</tbody>")}).join(""):"<tbody><tr><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr></tbody>")+
