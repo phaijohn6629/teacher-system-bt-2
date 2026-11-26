@@ -1343,3 +1343,16 @@ body.mon #allMenu{display:none!important}
 .pdfw .cxp .cxg th:nth-child(1){width:15%!important}.pdfw .cxp .cxg th:nth-child(2){width:13%!important}.pdfw .cxp .cxg th:nth-child(3){width:16%!important}.pdfw .cxp .cxg th:nth-child(4){width:38%!important}.pdfw .cxp .cxg th:nth-child(5){width:18%!important}
 
 .cxp .cxlogo{border-radius:0!important;object-fit:contain}.cxp .cxh,.cxp .cxi,.cxp .cxg{max-width:100%;box-sizing:border-box}
+
+/* PDF (html2canvas)៖ word-break:break-word បំបែកអក្សរខ្មែរជាតួៗ (ស្រៈ/ជើងជាន់គ្នា) → ប្រើ normal */
+.pdfw .cxp,.pdfw .cxp :is(td,th,div,b,small,span){word-break:normal!important;overflow-wrap:normal!important;letter-spacing:0!important;font-kerning:none;line-height:1.75}
+.pdfw .cxp .cxlogo{background:#fff!important;border-radius:0}
+
+/* សម្រង់អត្ថបទ៖ Print A4 portrait 10mm · មេទាំងអស់ block/static/visible */
+@page cxpg{size:A4 portrait;margin:10mm}
+@media print{
+  body.pm #prt .pg.cxp{page:cxpg;position:static!important;transform:none!important;width:100%!important;max-width:100%!important;margin:0!important;box-sizing:border-box!important}
+  body.pm #prt .cxp :is(.cxh,.cxi,.cxg){width:100%!important;max-width:100%!important;box-sizing:border-box!important}
+  html,body.pm{position:static!important;transform:none!important}
+  body.pm #prt .cxp .cxg tr{break-inside:avoid!important;page-break-inside:avoid!important}
+}

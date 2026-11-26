@@ -378,7 +378,7 @@ function cxPrintHTML(){
   var wl=ft.klu==="1"?((ft.d&&ft.kt)?ft.kt:KhCal.fmt(wa[0],wa[1],wa[2])):"",sig=(ft.sgo==="0")?"":getSig(cxT);
   var rows=(rec.rows||[]).filter(function(r){return cxOk(r)}),cl=[];rows.forEach(function(r){if(r.cls&&cl.indexOf(r.cls)<0)cl.push(r.cls)});cl.sort();
   return"<div class='pg cxp'>"+"<div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-   "<div class=cxh><img src='logo-bt.jpg' class=cxlogo alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
+   "<div class=cxh><img src='logo-bt.png' class=cxlogo alt=''><div class=cxt><div class=moul style='font-size:12pt'>សាលារៀនជំនាន់ថ្មី</div><div class=en style='font-size:10pt;margin:2px 0 4px'>New Generation School</div>"+
     "<div class=moul style='font-size:13pt'>សម្រង់អត្ថបទប្រចាំខែ</div><div class=cxper>"+esc(per)+"</div></div></div>"+
    "<div class=cxi><div><span>បុគ្គលិកឈ្មោះ៖</span> <b>"+esc(t.name||"")+"</b></div><div><span>មុខវិជ្ជា៖</span> <b>"+esc(rec.sb||t.sub||"គណិតវិទ្យា")+"</b></div><div><span>ថ្នាក់៖</span> <b>"+esc(cl.join(", "))+"</b></div></div>"+
    "<table class=cxg><thead><tr><th style='width:17%'>កាលបរិច្ឆេទ</th><th style='width:15%'>ថ្នាក់</th><th style='width:13%'>ម៉ោង</th><th>ខ្លឹមសារមេរៀន</th><th style='width:17%'>អវត្តមានសិស្ស</th></tr></thead>"+
