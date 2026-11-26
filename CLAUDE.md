@@ -58,7 +58,14 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-16 · `sw.js` cache = `ngs-app-v129`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v158`, `script.js?v=222`)
+
+### ✅ Grade 10 lesson 2.3 «ចំនួន» (2026-11-25/26) — `practice10.js`, `hubdata.js`, `data/summaries_data.json`, `curriculum10.js`, `exam.js` `PTK["10|23"]`
+- 3 syllabus groups, 6 levels (keys 1·5·2·6·3 + PISA `P4[23]`), fill-in answers only (no MCQ), `kd` = `g10n_…`/`abs10_`/`s10_`:
+  1. ចំនួនពិត · បន្ទាត់ចំនួន · តម្លៃដាច់ខាត · ចំណែកថ្នាក់ ($\mathbb N=\{1,2,3,\dots\}$, $0\in W$, $0\notin\mathbb N$).
+  2. កន្សោមរ៉ាឌីកាល់ (ឫសការេ · ផលគុណ/ចែក · ប្រៀបធៀប · បំបាត់រ៉ាឌីកាល់ពីភាគបែង · រ៉ាឌីកាល់ពីរជាន់) — also in `curriculum10.js` (`L(2,23,1,"2. កន្សោមរ៉ាឌីកាល់|…")`).
+  3. ប្រព័ន្ធរបាប់គោល ១០ · ២ (correct spelling «របាប់»; 0 hits of «របប់» in all files).
+- `pdfPaginate` item list now includes `.hd` (national-motto block) so it never splits at a page edge. Not yet verified in a real browser PDF.
 
 ### ✅ Seat plan (ប្លង់តុ) — `classorg.js`
 - The «🪑 ប្លង់តុ» tab renders correctly. The old crash came from seat plans saved without `abMap`. `seat()` now adds it when missing.
