@@ -16,3 +16,10 @@ tools/localize_backup_*.json
 
 # Observation restore data (private, local only)
 obs_restore_*.json
+
+# 🔐 TikTok (tools/upload_tiktok.py) — មិនត្រូវ push ជាដាច់ខាត
+.env
+.env.*
+!.env.example
+tiktok_token.json
+tools/tiktok_uploads.json
