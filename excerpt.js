@@ -392,7 +392,7 @@ function cxPrintHTML(){
 }
 $("cxPr").onclick=function(){
   var rec=cxRec(false);if(!rec||!rec.rows.length){alert("មិនទាន់មានជួរក្នុងខែនេះទេ");return}
-  fontsOk().then(function(){$("prt").innerHTML=cxPrintHTML();document.body.classList.add("pm");requestAnimationFrame(function(){requestAnimationFrame(function(){window.print()})})});   /* Print ផ្ទាល់ (Save as PDF) — html2canvas ធ្វើឱ្យអក្សរខ្មែរខូច */
+  fontsOk().then(function(){doPrintNow(cxPrintHTML())});   /* ជម្រើស PDF / បោះពុម្ព (outChoose) */
 };
 $("cxCsv").onclick=function(){
   var rec=cxRec(false),rows=(rec&&rec.rows)||[],q=function(s){return'"'+String(s||"").replace(/"/g,'""')+'"'};
