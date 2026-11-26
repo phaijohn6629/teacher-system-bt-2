@@ -1328,3 +1328,11 @@ body.mon #allMenu{display:none!important}
   body.pm #prt .cxp :is(.cxh,.cxi,.cxf){break-inside:avoid;page-break-inside:avoid}
   body.pm #prt .cxp .cxf{break-before:avoid;page-break-before:avoid}
 }
+
+/* សម្រង់អត្ថបទ៖ container ជុំវិញតារាងត្រូវជា block/visible ដើម្បី thead ឡើងវិញ និង tbody មិនដាច់ */
+@media print{
+  body.pm,body.pm #prt,body.pm #prt .pg.cxp{display:block!important;overflow:visible!important;height:auto!important}
+  body.pm #prt .cxp .cxg{border-collapse:collapse;display:table!important}
+  body.pm #prt .cxp .cxg thead{display:table-header-group!important}
+  body.pm #prt .cxp .cxg tbody{display:table-row-group!important;break-inside:avoid;page-break-inside:avoid}
+}
