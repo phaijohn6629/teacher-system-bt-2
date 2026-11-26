@@ -58,7 +58,10 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v169`, `script.js?v=233`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v170`, `script.js?v=234`)
+
+### ✅ Grade 10 lesson 3.3 «ប្រព័ន្ធសមីការ» aligned (2026-11-26) — `practice10.js` (`G33` block before «៣.៤»), `hubdata.js`, `exam.js` `PTK["10|33"]`
+- Hub: 2 sub-topics (3 unknowns · linear + quadratic with 2 unknowns) + 🌐 PISA (first summaries for this lesson). 11 new forms `g10sys_…` (3-unknown elimination, no-solution `0=c`, parameters `m,n`/`a`, linear+quadratic substitution, symmetric S·P, field, right triangle by hypotenuse+sum or area). Keys 5/6 own lists; levels 1/3/5 now have 7/8/9 forms. PISA `P4[33]` = 6 forms `g10sysp_…` (old 2 got `kd`). `s10_nl` no longer uses a retry loop. `PTK["10|33"]` is new (2 points, all kd mapped; PISA unmapped). Pairs of answers always say «តូចមុន» or `x>0`. Book pages 116–121 were not available; content follows the user's outline.
 
 ### ✅ Grade 10 lesson 3.2 «សមីការអសនិទាន និងដឺក្រេលំដាប់ខ្ពស់» aligned (2026-11-26) — `practice10.js` (`G32` block before «៣.៣»), `hubdata.js`, `exam.js` `PTK["10|32"]`
 - Hub: 5 sub-topics + 🌐 PISA. 22 new forms `g10h_…` (fake roots, multi-radical, remainder/factor theorem, double and complex roots, box volume, complex-root coefficients), all fill-in. Keys 5/6 own lists (no `fill56`); levels 1/3/5 now have 9/11/13 forms. PISA `P4[32]` = 6 forms `g10hp_…` (old 2 got `kd`). `PTK["10|32"]` has 5 points, none empty; PISA `kd` unmapped. Box-volume items ask for the smallest integer `x` because the cubic can have two roots inside the domain. Book pages 104–115 were not available; content follows the user's outline.

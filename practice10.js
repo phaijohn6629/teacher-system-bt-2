@@ -252,10 +252,10 @@ P4[32]=[function(){var v=ri(2,8)*1;
     return K("g10hp_fall","🪂 ថ្មមួយធ្លាក់ពីកំពូលអគារកម្ពស់ $"+h+"$ m ។ ចម្ងាយធ្លាក់ $h=5t^2$ ⇒ $t=\\sqrt{\\dfrac h5}$ ។ តើថ្មធ្លាក់ដល់ដីក្រោយប៉ុន្មានវិនាទី?",
       [A(t,null,"num","t =")],"$t=\\sqrt{\\dfrac{"+h+"}{5}}=\\sqrt{"+(t*t)+"}="+t+"$ s")}];
 P4[33]=[function(){var x=ri(5,20),y=ri(5,20);
-    return Q("🏨 សណ្ឋាគារមួយមានបន្ទប់ ២ គ្រែ និង ៣ គ្រែ សរុប $"+(x+y)+"$ បន្ទប់ និងគ្រែសរុប $"+(2*x+3*y)+"$ ។ តើមានបន្ទប់ ២ គ្រែ និង ៣ គ្រែ ប៉ុន្មាន?",
+    return K("g10sysp_hotel","🏨 សណ្ឋាគារមួយមានបន្ទប់ ២ គ្រែ និង ៣ គ្រែ សរុប $"+(x+y)+"$ បន្ទប់ និងគ្រែសរុប $"+(2*x+3*y)+"$ ។ តើមានបន្ទប់ ២ គ្រែ និង ៣ គ្រែ ប៉ុន្មាន?",
       [A(x,null,"num","២ គ្រែ ="),A(y,null,"num","៣ គ្រែ =")],"$\\begin{cases}x+y="+(x+y)+"\\\\2x+3y="+(2*x+3*y)+"\\end{cases}$ ⇒ $y="+y+"$ , $x="+x+"$")},
   function(){var x=ri(5,30),y=ri(5,30);
-    return Q("💵 កាបូបមួយមានក្រដាសប្រាក់ $5\\,000$ រៀល និង $10\\,000$ រៀល សរុប $"+(x+y)+"$ សន្លឹក តម្លៃ $"+money(5000*x+10000*y)+"$ រៀល។ តើមានក្រដាសប្រាក់នីមួយៗប៉ុន្មានសន្លឹក?",
+    return K("g10sysp_cash","💵 កាបូបមួយមានក្រដាសប្រាក់ $5\\,000$ រៀល និង $10\\,000$ រៀល សរុប $"+(x+y)+"$ សន្លឹក តម្លៃ $"+money(5000*x+10000*y)+"$ រៀល។ តើមានក្រដាសប្រាក់នីមួយៗប៉ុន្មានសន្លឹក?",
       [A(x,null,"num","៥០០០ ="),A(y,null,"num","១០០០០ =")],"$\\begin{cases}x+y="+(x+y)+"\\\\5000x+10000y="+(5000*x+10000*y)+"\\end{cases}$")}];
 P4[34]=[function(){var r1=ri(2,8),r2v=r1+ri(3,10);
     return Q("💰 ប្រាក់ចំណេញ (លានរៀល) ពេលផលិត $x$ រយគ្រឿង៖ $P(x)=-x^2+"+(r1+r2v)+"x-"+(r1*r2v)+"$ ។ ចំណេញ ($P>0$) ពេល $a<x<b$ ។ រក $a$ និង $b$",
@@ -904,12 +904,66 @@ vx(33,1,[
  function(){var p=ri(1,5),q=ri(1,6),k=ri(2,8);return K("s10_ratio","ដោះស្រាយ $\\dfrac xy=\\dfrac{"+p+"}{"+q+"}$ និង $x+y="+((p+q)*k)+"$",[A(p*k,null,"num","x ="),A(q*k,null,"num","y =")],"$x="+p+"k$ , $y="+q+"k$ ⇒ $k="+k+"$")}]);
 vx(33,2,[
  function(){var a=nz(-5,5),b=nz(-5,5),c=nz(-5,5),d=nz(-5,5);return K("s10_det","គណនាដេទែរមីណង់ $D$ នៃប្រព័ន្ធ $\\begin{cases}"+co(a,"x",true)+co(b,"y")+"=1\\\\"+co(c,"x",true)+co(d,"y")+"=2\\end{cases}$",[A(a*d-b*c,null,"num","D =")],"$D=ad-bc="+(a*d)+"-("+(b*c)+")="+(a*d-b*c)+"$")},
- function(){var x=ri(-5,5),y=ri(-5,5);while(y<=x)y=ri(-5,6);return K("s10_nl","ដោះស្រាយ $\\begin{cases}x+y="+(x+y)+"\\\\x^2+y^2="+(x*x+y*y)+"\\end{cases}$ ដែល $x<y$",[A(x,null,"num","x ="),A(y,null,"num","y =")],"$xy=\\dfrac{(x+y)^2-(x^2+y^2)}{2}="+(x*y)+"$ ⇒ ឫសនៃ $t^2"+co(-(x+y),"t")+sg(x*y,0)+"=0$")},
+ function(){var x=ri(-5,5),y=x+ri(1,6);return K("s10_nl","ដោះស្រាយ $\\begin{cases}x+y="+(x+y)+"\\\\x^2+y^2="+(x*x+y*y)+"\\end{cases}$ ដែល $x<y$",[A(x,null,"num","x ="),A(y,null,"num","y =")],"$xy=\\dfrac{(x+y)^2-(x^2+y^2)}{2}="+(x*y)+"$ ⇒ ឫសនៃ $t^2"+co(-(x+y),"t")+sg(x*y,0)+"=0$")},
  function(){var c=ri(5,15),y=ri(3,10),k=ri(2,4),f=k*(c+y)-y;return K("s10_age","ឥឡូវ ឪពុកមានអាយុ $"+f+"$ ឆ្នាំ ។ ក្រោយ $"+y+"$ ឆ្នាំ អាយុឪពុកស្មើ $"+k+"$ ដងនៃអាយុកូន ។ រកអាយុកូនឥឡូវ",[A(c,null,"num","=")],"$"+f+"+"+y+"="+k+"(x+"+y+")$ ⇒ $x="+c+"$")}]);
 vx(33,3,[
  function(){var x=ri(-4,6),y=ri(-4,6),z=ri(-4,6);return K("s10_3var","ដោះស្រាយ $\\begin{cases}x+y+z="+(x+y+z)+"\\\\x-y="+(x-y)+"\\\\y-z="+(y-z)+"\\end{cases}$",[A(x,null,"num","x ="),A(y,null,"num","y ="),A(z,null,"num","z =")],"$x=y"+sg(x-y,0)+"$ , $z=y"+sg(z-y,0)+"$ ⇒ $3y"+sg(x-y+z-y,0)+"="+(x+y+z)+"$ ⇒ $y="+y+"$")},
  function(){var a=nz(-3,3),b=nz(-3,3),k=pick([2,3,-2]),c=ri(-6,6),d=k*c+nz(-3,3);return K("s10_param","រក $m$ ដើម្បីឱ្យប្រព័ន្ធ $\\begin{cases}"+co(a,"x",true)+co(b,"y")+"="+c+"\\\\"+co(k*a,"x",true)+"+my="+d+"\\end{cases}$ គ្មានចម្លើយ",[A(k*b,null,"num","m =")],"$D=0$ ⇒ $"+a+"m="+(k*a*b)+"$ ⇒ $m="+(k*b)+"$ ហើយ $"+d+"\\ne"+(k*c)+"$")},
  function(){var A1=pick([10,20]),B1=pick([30,40,50]),x=ri(1,10),y=x*pick([1,2,3]),c=(A1*x+B1*y)/(x+y);while(c!==Math.round(c)){y++;c=(A1*x+B1*y)/(x+y)}return K("s10_mixs","លាយទឹកអំបិល $"+A1+"\\%$ ជាមួយ $"+B1+"\\%$ បានល្បាយ $"+(x+y)+"$ l កំហាប់ $"+c+"\\%$ ។ ប្រើប្រភេទនីមួយៗប៉ុន្មាន l?",[A(x,null,"num",A1+"% ="),A(y,null,"num",B1+"% =")],"$\\begin{cases}x+y="+(x+y)+"\\\\"+A1+"x+"+B1+"y="+(c*(x+y))+"\\end{cases}$")}]);
+/* ៣.៣ ប្រព័ន្ធសមីការ (កែ ២០២៦-១១-២៦) — kd = g10sys_… (PISA = g10sysp_…) · ចម្លើយ fill-in (num) ទាំងអស់ · ចម្លើយជាគូ ២ ឬ ៣ → កំណត់ «តូចមុន» ក្នុងសំណួរ
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+var TRI=[[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[20,21,29],[7,24,25],[12,16,20],[9,40,41]];
+function fieldQ(kd,pre){var a=ri(20,120),b=a+ri(1,60),S=a+b,P=a*b;
+  return K(kd,pre+"ដីចម្ការរាងចតុកោណកែងមួយមានបរិមាត្រ $"+(2*S)+"$ m និងផ្ទៃក្រឡា $"+mo(P)+"\\text{ m}^2$ ។ រកទទឹង (តូច) និងបណ្ដោយ (ធំ)",[A(a,null,"num","ទទឹង ="),A(b,null,"num","បណ្ដោយ =")],
+    "$x+y="+S+"$ , $xy="+P+"$ ⇒ $t^2-"+S+"t+"+P+"=0$ ⇒ $t="+a+"$ ឬ $t="+b+"$")}
+function triQ(kd,pre,area){var T=pick(TRI),a=T[0],b=T[1],c=T[2],s=a+b;
+  var q=area?"ត្រីកោណកែងមួយមានអ៊ីប៉ូតេនុស $"+c+"$ និងផ្ទៃក្រឡា $"+(a*b/2)+"$ ($a^2+b^2="+(c*c)+"$ , $ab="+(a*b)+"$) ។ រកជ្រុងកែងទាំងពីរ (តូចមុន)":"ត្រីកោណកែងមួយមានអ៊ីប៉ូតេនុស $"+c+"$ និងផលបូកជ្រុងកែងទាំងពីរ $"+s+"$ ($a+b="+s+"$ , $a^2+b^2="+(c*c)+"$) ។ រកជ្រុងកែងទាំងពីរ (តូចមុន)";
+  var sol=area?"$(a+b)^2="+(c*c)+"+4\\cdot"+(a*b/2)+"="+(s*s)+"$ ⇒ $a+b="+s+"$":"$ab=\\dfrac{"+s+"^2-"+c+"^2}{2}="+(a*b)+"$";
+  return K(kd,pre+q,[A(a,null,"num","a ="),A(b,null,"num","b =")],sol+" ⇒ $t^2-"+s+"t+"+(a*b)+"=0$ ⇒ $t="+a+"$ ឬ $t="+b+"$")}
+var G33={
+ pair:function(){var x=ri(-6,9),y=ri(-6,9),z=ri(-6,9),a=x+y,b=y+z,c=x+z;
+   return K("g10sys_pair","ដោះស្រាយ $\\begin{cases}x+y="+a+"\\\\y+z="+b+"\\\\x+z="+c+"\\end{cases}$ ។ គណនា $x+y+z$ និង $z$",[A(x+y+z,null,"num","x+y+z ="),A(z,null,"num","z =")],
+     "បូកទាំងបី ⇒ $2(x+y+z)="+(a+b+c)+"$ ⇒ $x+y+z="+(x+y+z)+"$ ⇒ $z=(x+y+z)-(x+y)="+z+"$")},
+ inf:function(){var a=nz(-4,4),b=nz(-4,4),c=ri(-8,8),k=pick([2,3,-2,-3]);
+   return K("g10sys_inf","រក $m$ និង $n$ ដើម្បីឱ្យប្រព័ន្ធ $\\begin{cases}"+co(a,"x",true)+co(b,"y")+"="+c+"\\\\"+co(k*a,"x",true)+"+my=n\\end{cases}$ មានឫសរាប់មិនអស់",[A(k*b,null,"num","m ="),A(k*c,null,"num","n =")],
+     "សមីការទី ២ ត្រូវតែជា $"+k+"\\times$ សមីការទី ១ ⇒ $m="+(k*b)+"$ , $n="+(k*c)+"$")},
+ sq:function(){var x=nz(-7,7),y=nz(-7,7);return K("g10sys_sq","គេដឹងថា $x+y="+(x+y)+"$ និង $xy="+(x*y)+"$ ។ គណនា $x^2+y^2$ (មិនចាំបាច់ដោះស្រាយ)",[A((x+y)*(x+y)-2*x*y,null,"num","=")],"$x^2+y^2=(x+y)^2-2xy="+((x+y)*(x+y))+"-("+(2*x*y)+")="+((x+y)*(x+y)-2*x*y)+"$")},
+ elim3:function(){var x=ri(-4,8),y=ri(-4,8),z=ri(-4,8),b=ri(2,4),c=ri(1,4);if(b-3-c-b*c===0){b=2;c=3}
+   var S=x+y+z,T=x+b*y-z,U=c*x-y+z;
+   return K("g10sys_elim","ដោះស្រាយ $\\begin{cases}x+y+z="+S+"\\\\x"+co(b,"y")+"-z="+T+"\\\\"+co(c,"x",true)+"-y+z="+U+"\\end{cases}$ (បូកសមីការ (១)+(២) និង (២)+(៣) ដើម្បីបំបាត់ $z$)",[A(x,null,"num","x ="),A(y,null,"num","y ="),A(z,null,"num","z =")],
+     "(១)+(២) ⇒ $2x"+co(1+b,"y")+"="+(S+T)+"$ · (២)+(៣) ⇒ "+co(1+c,"x",true)+co(b-1,"y")+"="+(T+U)+" ⇒ $x="+x+"$ , $y="+y+"$ , $z="+z+"$")},
+ lin2:function(){var r1=ri(-5,3),r2=r1+ri(1,6),d=r1+r2,N=r1*r1+r2*r2;
+   return K("g10sys_lin2","ដោះស្រាយ $\\begin{cases}y=x"+sg(-d,0)+"\\\\x^2+y^2="+N+"\\end{cases}$ ។ ចម្លើយ $(x_1;y_1)$ , $(x_2;y_2)$ ដែល $x_1<x_2$",[A(r1,null,"num","x₁ ="),A(-r2,null,"num","y₁ ="),A(r2,null,"num","x₂ ="),A(-r1,null,"num","y₂ =")],
+     "ជំនួស $y$ ⇒ $x^2+(x"+sg(-d,0)+")^2="+N+"$ ⇒ $x^2"+co(-d,"x")+sg((d*d-N)/2,0)+"=0$ ⇒ $x="+r1+"$ ឬ $x="+r2+"$ ⇒ $y="+(-r2)+"$ ឬ $y="+(-r1)+"$")},
+ diff:function(){var y=ri(1,8),d=ri(1,6),x=y+d,P=x*y;
+   return K("g10sys_diff","ដោះស្រាយ $\\begin{cases}x-y="+d+"\\\\xy="+P+"\\end{cases}$ ។ រកចម្លើយដែល $x>0$ និង $y>0$",[A(x,null,"num","x ="),A(y,null,"num","y =")],
+     "$x=y+"+d+"$ ⇒ $y^2+"+d+"y-"+P+"=0$ ⇒ $y="+y+"$ ឬ $y=-"+x+"$ ⇒ យក $y="+y+"$ , $x="+x+"$")},
+ prodsq:function(){var x=ri(1,9),y=x+ri(1,8);
+   return K("g10sys_prodsq","ពីរចំនួនវិជ្ជមានមានផលគុណ $"+(x*y)+"$ និងផលបូកការ៉េ $"+(x*x+y*y)+"$ ។ រកចំនួនទាំងពីរ (តូចមុន)",[A(x,null,"num","x ="),A(y,null,"num","y =")],
+     "$(x+y)^2=x^2+y^2+2xy="+(x*x+y*y)+"+"+(2*x*y)+"="+((x+y)*(x+y))+"$ ⇒ $x+y="+(x+y)+"$ ⇒ $t^2-"+(x+y)+"t+"+(x*y)+"=0$ ⇒ $"+x+"$ , $"+y+"$")},
+ none:function(){var S1=ri(2,15),S2=ri(2,15),k=nz(-9,9),R=S1+S2+k;
+   return K("g10sys_none","ប្រព័ន្ធ $\\begin{cases}x+y+z="+S1+"\\\\x-y+z="+S2+"\\\\2x+2z="+R+"\\end{cases}$ គ្មានចម្លើយ ($\\emptyset$) ។ បូក (១)+(២) បានសមីការមួយ យកសមីការ (៣) ដកនឹងវា ទទួលបាន $0=c$ ។ រក $c$",[A(k,null,"num","c =")],
+     "(១)+(២) ⇒ $2x+2z="+(S1+S2)+"$ · (៣)−នោះ ⇒ $0="+R+"-"+(S1+S2)+"="+k+"$ មិនពិត ⇒ $\\emptyset$")},
+ apos:function(){var s=ri(3,9);
+   return K("g10sys_apos","ប្រព័ន្ធ $\\begin{cases}x+y="+s+"\\\\x-y=a\\end{cases}$ ។ តើមានចំនួនគត់ $a$ ប៉ុន្មាន ដែលឱ្យ $x>0$ និង $y>0$ ?",[A(2*s-1,null,"num","ចំនួន =")],
+     "$x=\\dfrac{"+s+"+a}{2}>0$ , $y=\\dfrac{"+s+"-a}{2}>0$ ⇒ $-"+s+"<a<"+s+"$ ⇒ $"+(2*s-1)+"$ តម្លៃ")},
+ field:function(){return fieldQ("g10sys_field","")},
+ tri:function(){return triQ("g10sys_tri","",false)},
+ tria:function(){return triQ("g10sys_tria","",true)}
+};
+vx(33,1,[G33.pair,G33.inf,G33.sq]);
+vx(33,2,[G33.lin2,G33.diff,G33.prodsq,G33.elim3]);
+vx(33,3,[G33.none,G33.apos,G33.field,G33.tri,G33.tria]);
+(function(){var g1=G[33][1],g2=G[33][2];
+  function lvs(lv,L){G[33][lv]=function(){return pick(L)()}}
+  lvs(5,[G33.pair,G33.inf,G33.sq,G33.elim3,G33.field,g1]);
+  lvs(6,[G33.lin2,G33.diff,G33.prodsq,G33.none,G33.apos,G33.tri,g2]);
+})();
+P4[33].push(
+ function(){return fieldQ("g10sysp_field","🌾 ")},
+ function(){var T=pick(TRI),a=T[0],b=T[1],c=T[2];return K("g10sysp_tv","📺 អេក្រង់ទូរទស្សន៍មួយមានអង្កត់ទ្រូង $"+c+"$ អ៊ីញ ហើយផលបូកទទឹង និងកម្ពស់ $="+(a+b)+"$ អ៊ីញ ($a^2+b^2="+(c*c)+"$) ។ រកទទឹង និងកម្ពស់ (តូចមុន)",[A(a,null,"num","ទទឹង ="),A(b,null,"num","កម្ពស់ =")],"$ab=\\dfrac{"+(a+b)+"^2-"+c+"^2}{2}="+(a*b)+"$ ⇒ $t^2-"+(a+b)+"t+"+(a*b)+"=0$ ⇒ $"+a+"$ , $"+b+"$")},
+ function(){return triQ("g10sysp_plot","🏞️ ដីរាងត្រីកោណកែងមួយ ៖ ",true)},
+ function(){var y=ri(2,9),d=ri(1,5),x=y+d;return K("g10sysp_floor","🧱 បន្ទប់រាងចតុកោណកែងមួយ បណ្ដោយវែងជាងទទឹង $"+d+"$ m ហើយមានផ្ទៃក្រឡា $"+(x*y)+"$ m$^2$ (ប៉ះឥដ្ឋ) ។ រកទទឹង និងបណ្ដោយ",[A(y,null,"num","ទទឹង ="),A(x,null,"num","បណ្ដោយ =")],"$x-y="+d+"$ , $xy="+(x*y)+"$ ⇒ $y^2+"+d+"y-"+(x*y)+"=0$ ⇒ $y="+y+"$ , $x="+x+"$")});
 /* ៣.៤ វិសមីការ */
 vx(34,1,[
  function(){var c=ri(1,4),a=c+ri(1,4),b=ri(-9,9),d=ri(-9,9),k=fr(d-b,a-c);return K("s10_two_34","ដោះស្រាយ $"+a+"x"+sg(b,0)+">"+co(c,"x",true)+sg(d,0)+"$ ៖ ចម្លើយ $x>k$ ។ រក $k$",[A(k.s,k.t,"num","k =")],"$"+(a-c)+"x>"+(d-b)+"$ ⇒ $x>"+k.t+"$")},
