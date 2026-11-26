@@ -58,7 +58,13 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v163`, `script.js?v=227`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v164`, `script.js?v=228`)
+
+### ✅ Grade 10 lesson 1.1 «ពហុធា» aligned with the MoEYS book (2026-11-26) — `practice10.js`, `data/summaries_data.json`/`hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|11"]`
+- Hub: 5 sub-topics (ឯកធា · ពហុធា · រូបមន្តពន្លាត ៨ · ដាក់ជាផលគុណកត្តា · 🌐 PISA) with `lv`, sign-warning tips and worked examples.
+- `practice10.js` (`G11` block before «១.២ ចែកពហុធា»): 20 new forms, `kd` = `g10p_…` (PISA `g10pp_…`), fill-in only. Levels 2/4 (keys 5/6) now have their own lists (`lvs(5|6,[…])`, no `fill56`); PISA has 5 forms, all with `kd`.
+- `PTK["10|11"]` has 4 points (ឯកធា · ពហុធា · រូបមន្តពន្លាត · ដាក់កត្តា). PISA `kd` are deliberately **not** mapped (tests/practice.js scans levels 1,5,2,6,3 only).
+- Source book pages 1–21 were not available to the assistant; content follows the 4-part outline the user supplied.
 
 ### ✅ `$\square$` cleanup in `lp7.js`–`lp12.js` (2026-11-26)
 - Scanned every `\\square` per file and removed only the high-confidence leftovers (empty worksheet-header bullets such as `$\square$ឈ្មោះ : .`, bullets before «លំហាត់អនុវត្តន៍», trailing empty boxes, slide-header decoration). Nothing was guessed.

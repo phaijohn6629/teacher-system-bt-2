@@ -192,10 +192,10 @@ function r2(v){return Math.round(v*100)/100}
 function sum(a){return a.reduce(function(x,y){return x+y},0)}
 var P4={};
 P4[11]=[function(){var L=ri(20,40),W=ri(15,L-2),x=ri(2,Math.floor(W/2)-1),V=x*(L-2*x)*(W-2*x);
-    return Q("📦 ក្រដាសកាតុង $"+L+"\\times"+W+"$ cm កាត់ការ៉េជ្រុង $x$ ចេញពីជ្រុងទាំង ៤ ហើយបត់ជាប្រអប់។ មាឌ $V(x)=x("+L+"-2x)("+W+"-2x)$ ។ គណនា $V("+x+")$ ($\\text{cm}^3$)",
+    return K("g10pp_box","📦 ក្រដាសកាតុង $"+L+"\\times"+W+"$ cm កាត់ការ៉េជ្រុង $x$ ចេញពីជ្រុងទាំង ៤ ហើយបត់ជាប្រអប់។ មាឌ $V(x)=x("+L+"-2x)("+W+"-2x)$ ។ គណនា $V("+x+")$ ($\\text{cm}^3$)",
       [A(V,null,"num","V =")],"$"+x+"\\times"+(L-2*x)+"\\times"+(W-2*x)+"="+V+"$")},
   function(){var b=ri(10,30),c=ri(20,100),x=ri(2,b-2),P=-x*x+b*x-c;
-    return Q("🥭 អ្នកលក់ស្វាយ គណនាប្រាក់ចំណេញ (ពាន់រៀល) $P(x)=-x^2+"+b+"x-"+c+"$ ពេលលក់ $x$ គីឡូ។ គណនា $P("+x+")$ ។ (បើអវិជ្ជមាន = ខាត)",
+    return K("g10pp_profit","🥭 អ្នកលក់ស្វាយ គណនាប្រាក់ចំណេញ (ពាន់រៀល) $P(x)=-x^2+"+b+"x-"+c+"$ ពេលលក់ $x$ គីឡូ។ គណនា $P("+x+")$ ។ (បើអវិជ្ជមាន = ខាត)",
       [A(P,null,"num","P =")],"$-"+(x*x)+"+"+(b*x)+"-"+c+"="+P+"$")}];
 P4[12]=[function(){var m=ri(1,6),n=ri(1,8);
     return Q("🟩 ដីរាងចតុកោណកែង មានផ្ទៃក្រឡា $x^2"+co(m+n,"x")+sg(m*n,0)+"$ ($\\text{m}^2$) និងទទឹង $x+"+m+"$ m ។ រកបណ្ដោយជាកន្សោមនៃ $x$ (ចែកពហុធា)",
@@ -397,6 +397,66 @@ vx(11,2,[
 vx(11,3,[
  function(){var m=ri(2,3),p=nz(-6,6),q=nz(-6,6),e=[m,m*q+p,p*q];return K("s10_fq2","ដាក់ $"+polyT(e)+"$ ជាផលគុណកត្តា $("+m+"x+p)(x+q)$ ។ រក $p$ , $q$",[A(p,null,"num","p ="),A(q,null,"num","q =")],"គុណខ្វែង ⇒ $pq="+(p*q)+"$ , $"+m+"q+p="+(m*q+p)+"$ ⇒ $p="+p+"$ , $q="+q+"$")},
  function(){var a=nz(-4,4),c=a*a*a;return K("s10_fcube","ដាក់ $x^3"+sg(c,0)+"$ ជាផលគុណកត្តា $(x+a)(x^2+mx+n)$ ។ រក $a$ , $m$ , $n$",[A(a,null,"num","a ="),A(-a,null,"num","m ="),A(a*a,null,"num","n =")],"$x^3+a^3=(x+a)(x^2-ax+a^2)$ ដែល $a^3="+c+"$ ⇒ $a="+a+"$")}]);
+/* ១.១ ពហុធា (កែ ២០២៦-១១-២៦) — តាមសៀវភៅក្រសួង ៤ ចំណុច៖ ឯកធា · ពហុធា · រូបមន្តពន្លាត ៨ · ដាក់ជាផលគុណកត្តា
+   kd = g10p_… (PISA = g10pp_…) · ចម្លើយ fill-in (num) ទាំងអស់ · កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានទម្រង់ផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+function mnS(c,m,n,first){var a=Math.abs(c),s=c<0?"-":first?"":"+";return s+(a===1?"":a)+(m?"x"+(m>1?"^{"+m+"}":""):"")+(n?"y"+(n>1?"^{"+n+"}":""):"")}
+function cop(a,b){return gcd(a,Math.abs(b))===1}
+function pickC(a,lo,hi){var L=[];for(var v=lo;v<=hi;v++)if(v&&cop(a,v))L.push(v);return pick(L)}
+function tmS(T){var s="";T.forEach(function(z,i){s+=co(z[0],z[1]>1?"x^{"+z[1]+"}":z[1]===1?"x":"",i===0)||(z[1]===0?sg(z[0],i===0):"")});return s}
+var G11={
+ mono1:function(){var m=ri(1,4),n=ri(1,4),c=nz(-9,9);return K("g10p_mono1","គេឱ្យឯកធា $M="+mnS(c,m,n,true)+"$ ។ រកមេគុណ និងដឺក្រេនៃ $M$ (ដឺក្រេ = ផលបូកនិទស្សន្តនៃអថេរទាំងអស់)",[A(c,null,"num","មេគុណ ="),A(m+n,null,"num","ដឺក្រេ =")],"មេគុណ $="+c+"$ · ដឺក្រេ $="+m+"+"+n+"="+(m+n)+"$")},
+ msim:function(){var m=ri(1,4),n=ri(1,3);
+   if(Math.random()<.5){var a=nz(-9,9),b=nz(-9,9);while(a+b===0)b=nz(-9,9);return K("g10p_msim","គណនា $"+mnS(a,m,n,true)+mnS(b,m,n,false)+"$ ហើយសរសេរជា $k"+mnS(1,m,n,true)+"$ ។ រក $k$",[A(a+b,null,"num","k =")],"ឯកធាដូចគ្នា ⇒ បូកមេគុណ $"+a+"+"+sgp(b)+"="+(a+b)+"$")}
+   var k=ri(0,5),a2=nz(-5,5),b2=nz(-5,5);return K("g10p_msim","ឯកធា $"+a2+"x^{k+"+(m+1)+"}y^{"+n+"}$ និង $"+b2+"x^{"+(k+m+1)+"}y^{"+n+"}$ ជាឯកធាដូចគ្នា ។ រក $k$",[A(k,null,"num","k =")],"និទស្សន្ត $x$ ត្រូវស្មើគ្នា ⇒ $k+"+(m+1)+"="+(k+m+1)+"$ ⇒ $k="+k+"$")},
+ mmul:function(){var a=nz(-5,5),b=nz(-5,5),p=ri(1,3),q=ri(1,3),r=ri(1,3),s=ri(1,3);
+   return K("g10p_mmul","គណនា $("+mnS(a,p,q,true)+")("+mnS(b,r,s,true)+")$ ហើយសរសេរជា $cx^uy^v$ ។ រក $c$ , $u$ , $v$",[A(a*b,null,"num","c ="),A(p+r,null,"num","u ="),A(q+s,null,"num","v =")],"គុណមេគុណ $"+a+"\\times("+b+")="+(a*b)+"$ · បូកនិទស្សន្ត $u="+p+"+"+r+"$ , $v="+q+"+"+s+"$")},
+ mdiv:function(){var c=nz(-6,6),d=nz(-4,4),u=ri(0,3),v=ri(0,3),r=ri(1,2),s=ri(1,2);
+   return K("g10p_mdiv","គណនា $\\dfrac{"+mnS(c*d,u+r,v+s,true)+"}{"+mnS(d,r,s,true)+"}$ ហើយសរសេរជា $cx^uy^v$ ។ រក $c$ , $u$ , $v$",[A(c,null,"num","c ="),A(u,null,"num","u ="),A(v,null,"num","v =")],"ចែកមេគុណ $"+(c*d)+"\\div("+d+")="+c+"$ · ដកនិទស្សន្ត $u="+(u+r)+"-"+r+"="+u+"$ , $v="+(v+s)+"-"+s+"="+v+"$")},
+ pterm:function(){var t=ri(3,5),a=nz(-6,6),b=nz(-6,6),e=nz(-6,6),c=nz(-6,6),d=nz(-6,6),can=Math.random()<.5,f=can?-d:nz(-6,6);
+   while(b+e===0)e=nz(-6,6);var s=tmS(shf([[a,t],[b,t-1],[c,1],[d,0],[-a,t],[e,t-1],[f,0]])),nt=can?2:3;
+   return K("g10p_pterm","សម្រួល $P(x)="+s+"$ រួចរកដឺក្រេ និងចំនួនតួ (មិនសូន្យ) នៃពហុធាដែលបានសម្រួល",[A(t-1,null,"num","ដឺក្រេ ="),A(nt,null,"num","ចំនួនតួ =")],"តួដឺក្រេ $"+t+"$ លុបគ្នា ⇒ ដឺក្រេ $"+(t-1)+"$ · ចំនួនតួ $="+nt+"$")},
+ pord:function(){var c=[nz(-5,5),nz(-6,6),nz(-6,6),nz(-9,9)],s=tmS(shf([[c[0],3],[c[1],2],[c[2],1],[c[3],0]]));
+   return K("g10p_pord","រៀបពហុធា $P(x)="+s+"$ តាមលំដាប់ស្វ័យគុណចុះ ជាទម្រង់ $ax^3+bx^2+cx+d$ ហើយរក $a$ , $b$ , $c$ , $d$",cfAns(c),"លំដាប់ចុះ ⇒ $"+polyT(c)+"$")},
+ pmul:function(){var a=nz(-3,3),b=nz(-5,5),c=nz(-3,3),d=ri(-4,4),e=nz(-5,5),r=[a*c,a*d+b*c,a*e+b*d,b*e];
+   return K("g10p_pmul","គណនា $("+poly([a,b])+")("+poly([c,d,e])+")$"+cfAsk(r),cfAns(r),"គុណតួនីមួយៗ រួចបូកតួដូចគ្នា ⇒ $"+polyT(r)+"$")},
+ cube2:function(){var a=ri(2,3),b=ri(1,4),r=[a*a*a,-3*a*a*b,3*a*b*b,-b*b*b];
+   return K("g10p_cube2","ពន្លាត $("+poly([a,-b])+")^3$"+cfAsk(r),cfAns(r),"$(A-B)^3=A^3-3A^2B+3AB^2-B^3$ ដែល $A="+a+"x$ , $B="+b+"$ ⇒ $"+polyT(r)+"$")},
+ abc2:function(){var a=nz(-6,6),b=nz(-6,6),c=nz(-6,6),S=a+b+c,T=a*b+b*c+c*a,v=a*a+b*b+c*c;
+   return K("g10p_abc2","ដោយ $a+b+c="+S+"$ និង $ab+bc+ca="+T+"$ ។ គណនា $a^2+b^2+c^2$",[A(v,null,"num","=")],"$(a+b+c)^2=a^2+b^2+c^2+2(ab+bc+ca)$ ⇒ $a^2+b^2+c^2="+(S*S)+"-2("+T+")="+v+"$")},
+ calc:function(){var m=ri(20,90),n=ri(5,m-3);return K("g10p_calc","គណនាដោយប្រើរូបមន្ត $(a+b)(a-b)=a^2-b^2$ ៖ $"+m+"^2-"+n+"^2$",[A(m*m-n*n,null,"num","=")],"$("+m+"+"+n+")("+m+"-"+n+")="+(m+n)+"\\times"+(m-n)+"="+(m*m-n*n)+"$")},
+ cubval:function(){var a=nz(-5,5),b=nz(-5,5);while(a===b)b=nz(-5,5);
+   if(Math.random()<.5){var d=a-b,p=a*b;return K("g10p_cubval","ដោយ $a-b="+d+"$ និង $ab="+p+"$ ។ គណនា $a^3-b^3$",[A(a*a*a-b*b*b,null,"num","=")],"$a^3-b^3=(a-b)^3+3ab(a-b)="+(d*d*d)+"+3\\cdot"+sgp(p)+"\\cdot"+sgp(d)+"="+(a*a*a-b*b*b)+"$")}
+   var s=a+b,q=a*b;return K("g10p_cubval","ដោយ $a+b="+s+"$ និង $ab="+q+"$ ។ គណនា $a^3+b^3$",[A(a*a*a+b*b*b,null,"num","=")],"$a^3+b^3=(a+b)^3-3ab(a+b)="+(s*s*s)+"-3\\cdot"+sgp(q)+"\\cdot"+sgp(s)+"="+(a*a*a+b*b*b)+"$")},
+ tri2:function(){var a=nz(-4,4),b=nz(-4,4),r=[1,2*a,a*a+2*b,2*a*b,b*b];
+   return K("g10p_tri2","ពន្លាត $(x^2"+co(a,"x")+sg(b,0)+")^2$"+cfAsk(r),cfAns(r),"$(A+B+C)^2=A^2+B^2+C^2+2AB+2BC+2AC$ ⇒ $"+polyT(r)+"$")},
+ fgrp:function(){var a=ri(1,3),p=nz(-6,6);
+   return K("g10p_fgrp","ដាក់ $"+co(a,"x^2",true)+co(p,"x")+co(a,"xy")+co(p,"y")+"$ ជាផលគុណកត្តាតាមការផ្តុំតួ ជាទម្រង់ $(ax+p)(x+y)$ ។ រក $a$ , $p$",[A(a,null,"num","a ="),A(p,null,"num","p =")],"ផ្តុំ ⇒ $"+co(a,"x",true)+"(x+y)"+co(p,"")+"(x+y)=("+poly([a,p])+")(x+y)$")},
+ faux:function(){var m=ri(1,16),n=ri(1,16);if(m>n){var t=m;m=n;n=t}
+   return K("g10p_faux","ដាក់ $x^4"+co(-(m+n),"x^2")+"+"+(m*n)+"$ ជាផលគុណកត្តា $(x^2-m)(x^2-n)$ ដែល $m\\le n$ ។ រក $m$ , $n$ (តាង $t=x^2$)",[A(m,null,"num","m ="),A(n,null,"num","n =")],"តាង $t=x^2$ ⇒ $t^2-"+(m+n)+"t+"+(m*n)+"=(t-"+m+")(t-"+n+")$")},
+ faux2:function(){var p=nz(-6,6),q=nz(-6,6),a,b,c;if(p>q){var t=p;p=q;q=t}
+   a=p+ri(1,3);if(a===q)a++;b=p+q-a;c=a*b-p*q;
+   return K("g10p_faux2","ដាក់ $(x^2+x"+sg(a,0)+")(x^2+x"+sg(b,0)+")"+sg(-c,0)+"$ ជាទម្រង់ $(x^2+x+p)(x^2+x+q)$ ដែល $p\\le q$ ។ រក $p$ , $q$ (តាង $t=x^2+x$)",[A(p,null,"num","p ="),A(q,null,"num","q =")],"តាង $t=x^2+x$ ⇒ $(t"+sg(a,0)+")(t"+sg(b,0)+")"+sg(-c,0)+"=t^2"+co(p+q,"t")+sg(p*q,0)+"=(t"+sg(p,0)+")(t"+sg(q,0)+")$")},
+ f2v2:function(){var p=ri(2,3),a=nz(-4,4),b=nz(-4,4),c=nz(-4,4),d=nz(-4,4);
+   return K("g10p_f2v2","ដាក់ $"+co(p,"x^2",true)+co(p*c+a,"xy")+co(a*c,"y^2")+co(p*d+b,"x")+co(a*d+b*c,"y")+sg(b*d,0)+"$ ជាទម្រង់ $("+p+"x+ay+b)(x+cy+d)$ ។ រក $a$ , $b$ , $c$ , $d$",[A(a,null,"num","a ="),A(b,null,"num","b ="),A(c,null,"num","c ="),A(d,null,"num","d =")],"ប្រៀបធៀបមេគុណ ⇒ $("+p+"x"+co(a,"y")+sg(b,0)+")(x"+co(c,"y")+sg(d,0)+")$")},
+ fdc:function(){var a=ri(1,4),b=ri(1,5),m=Math.random()<.5?b:-b;
+   return K("g10p_fdc","ដាក់ $"+co(a*a*a,"x^3",true)+sg(m*m*m,0)+"$ ជាផលគុណកត្តា $(ax+m)(a^2x^2+nx+m^2)$ ដែល $a>0$ ។ រក $a$ , $m$ , $n$",[A(a,null,"num","a ="),A(m,null,"num","m ="),A(-a*m,null,"num","n =")],"$A^3"+(m<0?"-":"+")+b+"^3=(A"+(m<0?"-":"+")+b+")(A^2"+(m<0?"+":"-")+b+"A+"+(b*b)+")$ ដែល $A="+co(a,"x",true)+"$ ⇒ $n="+(-a*m)+"$")},
+ fq3:function(){var a=ri(1,4),c=ri(a+1,5),b=pickC(a,-6,6),d=pickC(c,-6,6),e=[a*c,a*d+b*c,b*d];
+   return K("g10p_fq3","ដាក់ $"+polyT(e)+"$ ជាផលគុណកត្តា $(ax+b)(cx+d)$ ដែល $0<a<c$ ។ រក $a$ , $b$ , $c$ , $d$",[A(a,null,"num","a ="),A(b,null,"num","b ="),A(c,null,"num","c ="),A(d,null,"num","d =")],"$ac="+(a*c)+"$ , $bd="+(b*d)+"$ , $ad+bc="+(a*d+b*c)+"$ ⇒ $("+poly([a,b])+")("+poly([c,d])+")$")},
+ fgcd2:function(){var m=ri(1,3),n=ri(1,3),g=ri(2,6),a=ri(1,4),b=pickC(a,-4,4);
+   return K("g10p_fgcd2","រកកត្តារួមធំបំផុតនៃ $"+mnS(g*a,m+1,n,true)+mnS(g*b,m,n+1,false)+"$ ជាទម្រង់ $gx^my^n$ ដែល $g>0$ ។ រក $g$ , $m$ , $n$",[A(g,null,"num","g ="),A(m,null,"num","m ="),A(n,null,"num","n =")],"ជ.ជ.ម.នៃមេគុណ $="+g+"$ · និទស្សន្តតូចបំផុត $m="+m+"$ , $n="+n+"$")}
+};
+vx(11,1,[G11.mono1,G11.msim,G11.pord]);
+vx(11,2,[G11.cube2,G11.abc2,G11.calc,G11.pmul]);
+vx(11,3,[G11.faux,G11.faux2,G11.f2v2,G11.fdc,G11.tri2,G11.cubval,G11.fgrp,G11.fq3]);
+(function(){var g1=G[11][1],g2=G[11][2];
+  function lvs(lv,L){G[11][lv]=function(){return pick(L)()}}
+  lvs(5,[G11.mmul,G11.mdiv,G11.pterm,G11.pmul,G11.fgcd2,g1]);
+  lvs(6,[G11.cube2,G11.calc,G11.fgrp,G11.fq3,G11.cubval,G11.abc2,g2]);
+})();
+P4[11].push(
+ function(){var a=ri(2,9),b=a+ri(1,4),x=ri(5,20);return K("g10pp_land","🌳 សួនរាងការ៉េជ្រុង $x$ ម ត្រូវពង្រីកទៅជាចតុកោណកែងប្រវែង $(x+"+a+")$ ម ទទឹង $(x+"+b+")$ ម ។ ផ្ទៃបន្ថែម $S=(x+"+a+")(x+"+b+")-x^2=mx+n$ ។ រក $m$ , $n$ ហើយគណនា $S$ ពេល $x="+x+"$ (ម$^2$)",[A(a+b,null,"num","m ="),A(a*b,null,"num","n ="),A((a+b)*x+a*b,null,"num","S =")],"$S=x^2+"+(a+b)+"x+"+(a*b)+"-x^2="+(a+b)+"x+"+(a*b)+"$ ⇒ $S="+((a+b)*x+a*b)+"$")},
+ function(){var L=ri(6,15),W=ri(4,L-1),x=ri(1,3);return K("g10pp_path","🏊 អាងចតុកោណកែង $"+L+"\\times"+W+"$ ម មានផ្លូវដើរទទឹង $x$ ម ជុំវិញ ។ ផ្ទៃផ្លូវ $S=("+L+"+2x)("+W+"+2x)-"+(L*W)+"=ax^2+bx$ ។ រក $a$ , $b$ ហើយគណនា $S$ ពេល $x="+x+"$ (ម$^2$)",[A(4,null,"num","a ="),A(2*(L+W),null,"num","b ="),A(4*x*x+2*(L+W)*x,null,"num","S =")],"ពន្លាត ⇒ $S=4x^2+"+(2*(L+W))+"x$ ⇒ $S="+(4*x*x+2*(L+W)*x)+"$")},
+ function(){var p=ri(1,9),q=ri(p,12);return K("g10pp_fac","📐 ដីចតុកោណកែងមួយមានផ្ទៃ $A=x^2+"+(p+q)+"x+"+(p*q)+"$ ម$^2$ ។ ដាក់ $A$ ជាផលគុណកត្តា $(x+p)(x+q)$ ដែល $p\\le q$ ដើម្បីរកប្រវែង និងទទឹង ។ រក $p$ , $q$",[A(p,null,"num","p ="),A(q,null,"num","q =")],"$p+q="+(p+q)+"$ , $pq="+(p*q)+"$ ⇒ $A=(x+"+p+")(x+"+q+")$")});
 /* ១.២ ចែកពហុធា */
 /* ១.២ ចំណុច ២ ប្រមាណវិធីលើប្រភាគសនិទាន (ចម្លើយជាលេខ · រើសចម្លើយមុន) */
 vx(12,1,[
