@@ -1336,3 +1336,8 @@ body.mon #allMenu{display:none!important}
   body.pm #prt .cxp .cxg thead{display:table-header-group!important}
   body.pm #prt .cxp .cxg tbody{display:table-row-group!important;break-inside:avoid;page-break-inside:avoid}
 }
+
+/* PDF (html2pdf)៖ ទទឹងតារាងសម្រង់អត្ថបទសមក្នុង A4 · ភាគរយជួរឈរ */
+.pdfw,.pdfw .pg,.pdfw .cxp{box-sizing:border-box;max-width:100%}
+.pdfw .cxp .cxg{width:100%!important;table-layout:fixed;box-sizing:border-box}
+.pdfw .cxp .cxg th:nth-child(1){width:15%!important}.pdfw .cxp .cxg th:nth-child(2){width:13%!important}.pdfw .cxp .cxg th:nth-child(3){width:16%!important}.pdfw .cxp .cxg th:nth-child(4){width:38%!important}.pdfw .cxp .cxg th:nth-child(5){width:18%!important}
