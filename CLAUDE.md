@@ -58,7 +58,14 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v158`, `script.js?v=222`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v163`, `script.js?v=227`)
+
+### ✅ `$\square$` cleanup in `lp7.js`–`lp12.js` (2026-11-26)
+- Scanned every `\\square` per file and removed only the high-confidence leftovers (empty worksheet-header bullets such as `$\square$ឈ្មោះ : .`, bullets before «លំហាត់អនុវត្តន៍», trailing empty boxes, slide-header decoration). Nothing was guessed.
+- Remaining counts: `lp7.js` 21 · `lp8.js` 54 · `lp9.js` 26 · `lp10.js` 53 · `lp11.js` 49 · `lp12.js` 0 · `lessonplans.js` 0.
+- What is left is either **intentional answer blanks** (e.g. `lp8.js` L1162 exponents `3^{\square}`, L1298 area/volume blanks, L1887) or **pictures, diagram labels and variation tables** that the `.docx` conversion could not read. Those must be checked against the original `.docx` (kept outside the repo) before changing; do not delete them blindly.
+- Not yet reviewed against the `.docx`: `lp11.js` L1298/L1329 variation tables, `lp9.js` L27/L740/L771, `lp7.js` L182/L404/L1515/L1720/L1736/L1764/L1980/L2011/L522/L1975/L1639, `lp8.js` figure labels (L337, L418, L449, L465) and L120/L1047/L1174, `lp10.js` vector figure labels and tables.
+- Note: `tests/pexam.js` is randomized and occasionally reports `bad 1`; re-run `./tests/run.sh` before treating it as a real failure (8/8 isolated runs on the unchanged code were `bad 0`).
 
 ### ✅ Grade 10 lesson 2.3 «ចំនួន» (2026-11-25/26) — `practice10.js`, `hubdata.js`, `data/summaries_data.json`, `curriculum10.js`, `exam.js` `PTK["10|23"]`
 - 3 syllabus groups, 6 levels (keys 1·5·2·6·3 + PISA `P4[23]`), fill-in answers only (no MCQ), `kd` = `g10n_…`/`abs10_`/`s10_`:
