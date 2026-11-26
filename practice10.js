@@ -246,10 +246,10 @@ P4[31]=[function(){var v=ri(2,6)*5;
     return K("g10qp_field","🌾 ដីស្រែរាងចតុកោណកែង មានបរិមាត្រ $"+P+"$ m និងផ្ទៃក្រឡា $"+S+"\\text{ m}^2$ ។ ទទឹង និងបណ្ដោយជាឫសនៃ $x^2-"+(P/2)+"x+"+S+"=0$ ។ រកទទឹង (តូច) និងបណ្ដោយ (ធំ)",
       [A(a,null,"num","ទទឹង ="),A(b,null,"num","បណ្ដោយ =")],"$\\Delta="+((P/2)*(P/2)-4*S)+"$ ⇒ $x="+a+"$ ឬ $x="+b+"$")}];
 P4[32]=[function(){var v=ri(2,8)*1;
-    return Q("🌊 ល្បឿនរលកទឹកក្នុងទឹករាក់ $v=\\sqrt{10d}$ (m/s · $d$ = ជម្រៅ m)។ បើរលកមានល្បឿន $"+v+"$ m/s តើទឹកជម្រៅប៉ុន្មានម៉ែត្រ?",
+    return K("g10hp_wave","🌊 ល្បឿនរលកទឹកក្នុងទឹករាក់ $v=\\sqrt{10d}$ (m/s · $d$ = ជម្រៅ m)។ បើរលកមានល្បឿន $"+v+"$ m/s តើទឹកជម្រៅប៉ុន្មានម៉ែត្រ?",
       [A(v*v/10,null,"num","d =")],"$\\sqrt{10d}="+v+"\\Rightarrow10d="+(v*v)+"\\Rightarrow d="+(v*v/10)+"$ m")},
   function(){var t=ri(1,6),h=5*t*t;
-    return Q("🪂 ថ្មមួយធ្លាក់ពីកំពូលអគារកម្ពស់ $"+h+"$ m ។ ចម្ងាយធ្លាក់ $h=5t^2$ ⇒ $t=\\sqrt{\\dfrac h5}$ ។ តើថ្មធ្លាក់ដល់ដីក្រោយប៉ុន្មានវិនាទី?",
+    return K("g10hp_fall","🪂 ថ្មមួយធ្លាក់ពីកំពូលអគារកម្ពស់ $"+h+"$ m ។ ចម្ងាយធ្លាក់ $h=5t^2$ ⇒ $t=\\sqrt{\\dfrac h5}$ ។ តើថ្មធ្លាក់ដល់ដីក្រោយប៉ុន្មានវិនាទី?",
       [A(t,null,"num","t =")],"$t=\\sqrt{\\dfrac{"+h+"}{5}}=\\sqrt{"+(t*t)+"}="+t+"$ s")}];
 P4[33]=[function(){var x=ri(5,20),y=ri(5,20);
     return Q("🏨 សណ្ឋាគារមួយមានបន្ទប់ ២ គ្រែ និង ៣ គ្រែ សរុប $"+(x+y)+"$ បន្ទប់ និងគ្រែសរុប $"+(2*x+3*y)+"$ ។ តើមានបន្ទប់ ២ គ្រែ និង ៣ គ្រែ ប៉ុន្មាន?",
@@ -817,6 +817,86 @@ vx(32,3,[
  function(){var p=ri(1,4),q=ri(1,6),b=q-p*p,c=-p*p*q;return K("s10_trin","ដោះស្រាយ $x^4"+co(b,"x^2")+sg(c,0)+"=0$ ។ រកឫសវិជ្ជមាន",[A(p,null,"num","x =")],"តាង $t=x^2\\ge0$ ៖ $(t-"+(p*p)+")(t+"+q+")=0$ ⇒ $t="+(p*p)+"$ (យក) ⇒ $x="+p+"$")},
  function(){var a=ri(1,6),s=ri(1,6);return K("s10_ab_32","ដោះស្រាយ $x^3-"+a+"x^2-"+(s*s)+"x+"+(a*s*s)+"=0$ ។ រកឫសធំបំផុត",[A(Math.max(a,s),null,"num","x =")],"ដាក់ជាក្រុម ៖ $(x-"+a+")(x^2-"+(s*s)+")=0$ ⇒ $x="+a+"$ ឬ $\\pm"+s+"$")},
  function(){var m=ri(2,6),k=m*m-1,x=(1+m)*(1+m);return K("s10_sqx","ដោះស្រាយ $x-2\\sqrt x-"+k+"=0$",[A(x,null,"num","x =")],"តាង $t=\\sqrt x\\ge0$ ៖ $t^2-2t-"+k+"=0$ ⇒ $t="+(1+m)+"$ (យក) ⇒ $x="+x+"$")}]);
+/* ៣.២ សមីការអសនិទាន និងដឺក្រេលំដាប់ខ្ពស់ (កែ ២០២៦-១១-២៦) — kd = g10h_… (PISA = g10hp_…) · ចម្លើយ fill-in (num) ទាំងអស់
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+function pm(r){var c=[1];r.forEach(function(x){var d=c.concat([0]);for(var i=0;i<c.length;i++)d[i+1]-=x*c[i];c=d});return c}
+function shr(n){return[-4,-3,-2,-1,1,2,3,4].sort(function(){return Math.random()-.5}).slice(0,n)}
+function boxQ(kd,pre){var L=2*ri(4,9),W=L+2*ri(1,4),x0=ri(1,L/2-1),V=x0*(L-2*x0)*(W-2*x0),m=x0;
+  for(var x=1;x<L/2;x++)if(x*(L-2*x)*(W-2*x)===V){m=x;break}
+  return K(kd,pre+"កាត់ជ្រុងការ៉េ $x$ cm ពីជ្រុងទាំងបួននៃក្រដាសកាតុងចតុកោណកែង $"+L+"\\times"+W+"$ cm រួចបត់ធ្វើជាប្រអប់គ្មានគម្រប ដែលមានមាឌ $"+V+"$ cm$^3$ ($x(" +L+"-2x)("+W+"-2x)="+V+"$ , $0<x<"+(L/2)+"$) ។ រក $x$ ជាចំនួនគត់តូចបំផុត",
+    [A(m,null,"num","x =")],"ពន្លាត ⇒ $4x^3-"+(2*(L+W))+"x^2+"+(L*W)+"x-"+V+"=0$ · ជំនួស $x=1,2,\\dots$ ក្នុង $0<x<"+(L/2)+"$ ⇒ $x="+m+"$")}
+function cubQ(kd,pre){var a=ri(1,4),b=a+ri(1,4),x0=ri(1,6),V=x0*(x0+a)*(x0+b);
+  return K(kd,pre+"មានបណ្ដោយ $(x+"+b+")$ ទទឹង $(x+"+a+")$ និងកម្ពស់ $x$ (cm) មានមាឌ $"+V+"$ cm$^3$ ។ រក $x>0$",
+    [A(x0,null,"num","x =")],"$x(x+"+a+")(x+"+b+")="+V+"$ ⇒ $x^3+"+(a+b)+"x^2+"+(a*b)+"x-"+V+"=0$ ⇒ $x="+x0+"$ (ផលគុណកើនតាម $x$ ⇒ ឫសវិជ្ជមានតែមួយ)")}
+function diagQ(kd,pre,sub){var T=pick([[3,4,5],[6,8,10],[5,12,13],[8,15,17],[9,12,15],[20,21,29]]),d=T[1]-T[0];
+  return K(kd,pre+sub.replace("#d",d).replace("#D",T[2])+" ។ តាង $x$ ($x>0$) ⇒ $\\sqrt{x^2+(x+"+d+")^2}="+T[2]+"$ ។ រក $x$",
+    [A(T[0],null,"num","x =")],"លើកការ៉េ ⇒ $2x^2+"+(2*d)+"x"+sg(d*d-T[2]*T[2],0)+"=0$ ⇒ $x="+T[0]+"$ ឬ $x=-"+T[1]+"$ ⇒ បដិសេធ $x<0$")}
+var G32={
+ neg:function(){var k=ri(-4,9),a=ri(1,6);return K("g10h_neg","ដោះស្រាយ $\\sqrt{x"+sg(k,0)+"}=-"+a+"$ ។ តើសមីការនេះមានឫសពិតប៉ុន្មាន?",[A(0,null,"num","ចំនួនឫស =")],"$\\sqrt{x"+sg(k,0)+"}\\ge0$ ចំណែកអង្គខាងស្តាំ $=-"+a+"<0$ ⇒ គ្មានឫសពិត ($0$)")},
+ fake:function(){var m=ri(0,4),r=m+ri(1,5),s=2*m-1-r,Z=(r-m)*(r-m)+r;
+   return K("g10h_fake","ដោះស្រាយ $\\sqrt{"+Z+"-x}=x"+sg(-m,0)+"$ ។ លក្ខខណ្ឌ $x"+sg(-m,0)+"\\ge0$ ត្រូវផ្ទៀងផ្ទាត់ ។ រកឫសពិត",[A(r,null,"num","x =")],
+     "លើកការ៉េ ⇒ $"+Z+"-x=(x"+sg(-m,0)+")^2$ ⇒ $x="+r+"$ ឬ $x="+s+"$ · លក្ខខណ្ឌ $x\\ge"+m+"$ ⇒ បដិសេធ $x="+s+"$ ⇒ $x="+r+"$")},
+ sum2:function(){var p=ri(1,5),q=ri(1,5),x=ri(1,9),a=p*p-x,b=q*q-x;
+   return K("g10h_sum2","ដោះស្រាយ $\\sqrt{x"+sg(a,0)+"}+\\sqrt{x"+sg(b,0)+"}="+(p+q)+"$",[A(x,null,"num","x =")],
+     "ដាក់ $\\sqrt{x"+sg(a,0)+"}="+(p+q)+"-\\sqrt{x"+sg(b,0)+"}$ ហើយលើកការ៉េ ⇒ $\\sqrt{x"+sg(b,0)+"}="+q+"$ ⇒ $x"+sg(b,0)+"="+(q*q)+"$ ⇒ $x="+x+"$")},
+ diff2:function(){var p=ri(2,6),q=ri(1,p-1),x=ri(1,9),a=p*p-x,b=q*q-x;
+   return K("g10h_diff2","ដោះស្រាយ $\\sqrt{x"+sg(a,0)+"}-\\sqrt{x"+sg(b,0)+"}="+(p-q)+"$",[A(x,null,"num","x =")],
+     "ដាក់ $\\sqrt{x"+sg(a,0)+"}="+(p-q)+"+\\sqrt{x"+sg(b,0)+"}$ ហើយលើកការ៉េ ⇒ $\\sqrt{x"+sg(b,0)+"}="+q+"$ ⇒ $x="+x+"$")},
+ diag:function(){return diagQ("g10h_diag","","ចតុកោណកែងមួយមានបណ្ដោយវែងជាងទទឹង $#d$ cm និងអង្កត់ទ្រូង $#D$ cm")},
+ cx3:function(){var a=ri(1,4),f=fr(-a,2);
+   return K("g10h_cx3","ដោះស្រាយ $x^3="+(a*a*a)+"$ ក្នុងសំណុំចំនួនកុំផ្លិច ($x^3-"+(a*a*a)+"=(x-"+a+")(x^2"+(a===1?"+":"+"+a)+"x+"+(a*a)+")$) ។ រកឫសពិត និងផ្នែកពិតនៃឫសកុំផ្លិច",[A(a,null,"num","ឫសពិត ="),A(f.s,f.t,"num","ផ្នែកពិត =")],
+     "$x="+a+"$ ឬ $x^2"+(a===1?"+":"+"+a)+"x+"+(a*a)+"=0$ ⇒ $x=\\dfrac{-"+a+"\\pm"+(a===1?"":a)+"\\sqrt3\\,i}{2}$ ⇒ ផ្នែកពិត $="+f.t+"$")},
+ cnt4:function(){var t1=nz(-6,6),t2=nz(-6,6);while(t1===t2)t2=nz(-6,6);var n=2*((t1>0?1:0)+(t2>0?1:0));
+   return K("g10h_cnt4","តើសមីការ $x^4"+co(-(t1+t2),"x^2")+sg(t1*t2,0)+"=0$ មានឫសពិតប៉ុន្មាន? (តាង $t=x^2\\ge0$)",[A(n,null,"num","ចំនួនឫស =")],
+     "$(t"+sg(-t1,0)+")(t"+sg(-t2,0)+")=0$ ⇒ $t="+t1+"$ ឬ $t="+t2+"$ · $t>0$ ឱ្យឫសពិត $2$ · $t<0$ គ្មានឫសពិត ⇒ សរុប $"+n+"$")},
+ zero:function(){var r1=nz(-5,5),r2=nz(-5,5);while(r2===r1)r2=nz(-5,5);var lo=Math.min(0,r1,r2),hi=Math.max(0,r1,r2);
+   return K("g10h_zero","ដោះស្រាយ $"+polyT([1,-(r1+r2),r1*r2,0])+"=0$ ។ រកឫសតូចបំផុត និងឫសធំបំផុត",[A(lo,null,"num","តូចបំផុត ="),A(hi,null,"num","ធំបំផុត =")],
+     "ដាក់កត្តារួម $x$ ⇒ $x(x"+sg(-r1,0)+")(x"+sg(-r2,0)+")=0$ ⇒ $x=0,"+r1+","+r2+"$")},
+ x4:function(){var a=ri(1,4);return K("g10h_x4","ដោះស្រាយ $x^4="+Math.pow(a,4)+"$ ក្នុងសំណុំចំនួនកុំផ្លិច ($x^4-"+Math.pow(a,4)+"=(x^2-"+(a*a)+")(x^2+"+(a*a)+")$) ។ រកឫសពិតវិជ្ជមាន និងផ្នែកនិមិត្តវិជ្ជមាននៃឫសកុំផ្លិច",[A(a,null,"num","ឫសពិត ="),A(a,null,"num","ផ្នែកនិមិត្ត =")],
+   "$x^2="+(a*a)+"$ ⇒ $x=\\pm"+a+"$ · $x^2=-"+(a*a)+"$ ⇒ $x=\\pm"+a+"i$")},
+ rem:function(){var c=[nz(-3,3),ri(-4,4),ri(-5,5),ri(-6,6)],a=nz(-3,3),r=((c[0]*a+c[1])*a+c[2])*a+c[3];
+   return K("g10h_rem","រកសំណល់នៃការចែក $f(x)="+polyT(c)+"$ នឹង $x"+sg(-a,0)+"$ (ទ្រឹស្តីបទសំណល់ $R=f(\\alpha)$)",[A(r,null,"num","R =")],"$R=f("+a+")="+r+"$")},
+ remlin:function(){var m=pick([1,3,5,-1,-3]),c=[nz(-3,3),ri(-4,4),ri(-5,5),ri(-6,6)],n=c[0]*m*m*m+2*c[1]*m*m+4*c[2]*m+8*c[3],f=fr(n,8);
+   return K("g10h_remlin","រកសំណល់នៃការចែក $f(x)="+polyT(c)+"$ នឹង $2x"+sg(-m,0)+"$ (ប្រើ $R=f\\left(\\tfrac{"+m+"}{2}\\right)$)",[A(f.s,f.t,"num","R =")],"$R=f\\left(\\tfrac{"+m+"}{2}\\right)="+f.t+"$")},
+ fk:function(){var al=nz(-3,3),p=ri(-4,4),q=ri(-5,5),k=-(al*al*al+p*al*al+q*al);
+   return K("g10h_fk","រក $k$ ដើម្បីឱ្យ $x"+sg(-al,0)+"$ ជាកត្តានៃ $f(x)=x^3"+co(p,"x^2")+co(q,"x")+sg(k,0)+"$ (ទ្រឹស្តីបទកត្តា $f("+al+")=0$)",[A(k,null,"num","k =")],"$f("+al+")="+(al*al*al+p*al*al+q*al)+"+k=0$ ⇒ $k="+k+"$")},
+ fk2:function(){var al=nz(-3,3),be=nz(-3,3);while(be===al)be=nz(-3,3);var ga=nz(-3,3),p=-(al+be+ga),q=al*be+al*ga+be*ga,c=-al*be*ga;
+   return K("g10h_fk2","រក $p$ និង $q$ ដើម្បីឱ្យ $f(x)=x^3+px^2+qx"+sg(c,0)+"$ ចែកដាច់នឹង $(x"+sg(-al,0)+")(x"+sg(-be,0)+")$ (មាន $f("+al+")=0$ និង $f("+be+")=0$)",[A(p,null,"num","p ="),A(q,null,"num","q =")],
+     "ឫសទីបី $\\gamma$ ៖ $\\alpha\\beta\\gamma=-("+c+")$ ⇒ $\\gamma="+ga+"$ ⇒ $p=-("+al+sg(be,0)+sg(ga,0)+")="+p+"$ , $q="+q+"$")},
+ rem2:function(){var al=nz(-3,3),be=nz(-3,3);while(be===al)be=nz(-3,3);var a=nz(-4,4),b=ri(-6,6),fa=a*al+b,fb=a*be+b;
+   return K("g10h_rem2","$f(x)$ ចែកនឹង $x"+sg(-al,0)+"$ មានសំណល់ $"+fa+"$ ហើយចែកនឹង $x"+sg(-be,0)+"$ មានសំណល់ $"+fb+"$ ។ សំណល់នៃការចែក $f(x)$ នឹង $(x"+sg(-al,0)+")(x"+sg(-be,0)+")$ មានទម្រង់ $R(x)=ax+b$ ។ រក $a$ និង $b$",[A(a,null,"num","a ="),A(b,null,"num","b =")],
+     "$f("+al+")="+al+"a+b="+fa+"$ · $f("+be+")="+be+"a+b="+fb+"$ ⇒ $a="+a+"$ , $b="+b+"$ ⇒ $R(x)="+co(a,"x",true)+sg(b,0)+"$")},
+ remv:function(){var al=nz(-3,3),be=nz(-3,3);while(be===al)be=nz(-3,3);var a=nz(-4,4),b=ri(-6,6),x0=ri(-5,5),fa=a*al+b,fb=a*be+b;
+   return K("g10h_remv","$f(x)$ ចែកនឹង $x"+sg(-al,0)+"$ មានសំណល់ $"+fa+"$ ហើយចែកនឹង $x"+sg(-be,0)+"$ មានសំណល់ $"+fb+"$ ។ សំណល់នៃការចែក $f(x)$ នឹង $(x"+sg(-al,0)+")(x"+sg(-be,0)+")$ គឺ $R(x)=ax+b$ ។ គណនា $R("+x0+")$",[A(a*x0+b,null,"num","R("+x0+") =")],
+     "$a="+a+"$ , $b="+b+"$ (ពី $R("+al+")="+fa+"$ និង $R("+be+")="+fb+"$) ⇒ $R("+x0+")="+(a*x0+b)+"$")},
+ deg3:function(){var r=shr(3),al=r[0],be=Math.min(r[1],r[2]),ga=Math.max(r[1],r[2]);
+   return K("g10h_deg3","ដោះស្រាយ $"+polyT(pm(r))+"=0$ ដោយដឹងថា $x="+al+"$ ជាឫសមួយ ។ រកឫសពីរទៀត (តូចមុន)",[A(be,null,"num","x₂ ="),A(ga,null,"num","x₃ =")],
+     "ចែកនឹង $x"+sg(-al,0)+"$ ⇒ $x^2"+co(-(be+ga),"x")+sg(be*ga,0)+"=0$ ⇒ $x="+be+"$ ឬ $x="+ga+"$")},
+ dbl:function(){var a=nz(-4,4),b=nz(-4,4);while(b===a)b=nz(-4,4);
+   return K("g10h_dbl","ដោះស្រាយ $"+polyT([1,-(2*a+b),a*a+2*a*b,-a*a*b])+"=0$ ដោយដឹងថា $x="+b+"$ ជាឫសមួយ ហើយមានឫសឌុបមួយទៀត ។ រកឫសឌុប",[A(a,null,"num","ឫសឌុប =")],
+     "ចែកនឹង $x"+sg(-b,0)+"$ ⇒ $"+polyT([1,-2*a,a*a])+"=(x"+sg(-a,0)+")^2=0$ ⇒ ឫសឌុប $x="+a+"$")},
+ deg4:function(){var r=shr(4).sort(function(x,y){return x-y}),o=[r[1],r[2]],g=[r[0],r[3]];
+   return K("g10h_deg4","ដោះស្រាយ $"+polyT(pm(r))+"=0$ ដោយដឹងថា $x="+g[0]+"$ និង $x="+g[1]+"$ ជាឫស ។ រកឫសពីរទៀត (តូចមុន)",[A(o[0],null,"num","x₁ ="),A(o[1],null,"num","x₂ =")],
+     "ចែកនឹង $(x"+sg(-g[0],0)+")(x"+sg(-g[1],0)+")$ ⇒ $"+polyT(pm(o))+"=0$ ⇒ $x="+o[0]+"$ ឬ $x="+o[1]+"$")},
+ cpx:function(){var p=ri(1,3),q=ri(1,3),a=q*q-3*p*p,b=-(p*p*p-3*p*q*q)-a*p;
+   return K("g10h_cpx","សមីការ $x^3+ax+b=0$ មានឫសកុំផ្លិច $x="+p+"+"+(q===1?"":q)+"i$ ។ រក $a$ និង $b$ (ជំនួសឫសចូល ផ្នែកពិត $=0$ និងផ្នែកនិមិត្ត $=0$)",[A(a,null,"num","a ="),A(b,null,"num","b =")],
+     "$z^3=("+(p*p*p-3*p*q*q)+")+("+(3*p*p*q-q*q*q)+")i$ ⇒ ផ្នែកនិមិត្ត៖ $"+(3*p*p*q-q*q*q)+"+"+q+"a=0$ ⇒ $a="+a+"$ · ផ្នែកពិត៖ $"+(p*p*p-3*p*q*q)+"+"+p+"a+b=0$ ⇒ $b="+b+"$")},
+ box:function(){return boxQ("g10h_box","")},
+ cub:function(){return cubQ("g10h_cub","ប្រអប់ចតុកោណបួនជ្រុង")}
+};
+vx(32,1,[G32.neg,G32.cx3,G32.rem,G32.fk,G32.zero]);
+vx(32,2,[G32.fake,G32.sum2,G32.cnt4,G32.remlin,G32.deg3,G32.dbl,G32.x4]);
+vx(32,3,[G32.diff2,G32.diag,G32.fk2,G32.rem2,G32.remv,G32.deg4,G32.cpx,G32.box,G32.cub]);
+(function(){var g1=G[32][1],g2=G[32][2];
+  function lvs(lv,L){G[32][lv]=function(){return pick(L)()}}
+  lvs(5,[G32.neg,G32.cx3,G32.rem,G32.fk,G32.zero,G32.x4,g1]);
+  lvs(6,[G32.fake,G32.sum2,G32.cnt4,G32.remlin,G32.deg3,G32.dbl,G32.diag,G32.cub,g2]);
+})();
+P4[32].push(
+ function(){return boxQ("g10hp_box","📦 ")},
+ function(){var v=ri(1,6)*10,d=v*v/20;return K("g10hp_brake","🚗 ល្បឿនរថយន្តពីស្នាមហ្វ្រាំង $v=\\sqrt{20d}$ (km/h · $d$ = ប្រវែងស្នាមហ្វ្រាំងគិតជា m) ។ បើល្បឿន $"+v+"$ km/h តើស្នាមហ្វ្រាំងវែងប៉ុន្មានម៉ែត្រ?",[A(d,null,"num","d =")],"$\\sqrt{20d}="+v+"\\Rightarrow20d="+(v*v)+"\\Rightarrow d="+d+"$ m")},
+ function(){return diagQ("g10hp_ladder","🪜 ","ជណ្ដើរមួយប្រវែង $#D$ m ផ្អៀងនឹងជញ្ជាំង ចម្ងាយពីជើងជណ្ដើរដល់ជញ្ជាំងខ្លីជាងកម្ពស់ដែលជណ្ដើរឡើងដល់ $#d$ m")},
+ function(){return cubQ("g10hp_tank","💧 អាងទឹករាងប្រអប់ចតុកោណបួនជ្រុង")});
 /* ៣.៣ ប្រព័ន្ធសមីការ */
 vx(33,1,[
  function(){var x=ri(-5,6),y=ri(-5,6),a=nz(-3,3),b=y-a*x,c=nz(1,4),d=nz(-3,3);return K("s10_sub_33","ដោះស្រាយ $\\begin{cases}y="+co(a,"x",true)+sg(b,0)+"\\\\"+co(c,"x",true)+co(d,"y")+"="+(c*x+d*y)+"\\end{cases}$",[A(x,null,"num","x ="),A(y,null,"num","y =")],"ជំនួស $y$ ⇒ $x="+x+"$ , $y="+y+"$")},
