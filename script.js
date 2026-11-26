@@ -1160,7 +1160,7 @@ function savePdf(html){
     var imgs=[].slice.call(w.querySelectorAll("img")).filter(function(i){return!i.complete});
     Promise.all(imgs.map(function(i){return new Promise(function(r){i.onload=i.onerror=r;setTimeout(r,4000)})})).then(function(){
     pdfLineFix(w);pdfPaginate(w,land?194:277,land?281:190);
-    window.html2pdf().set({margin:land?8:10,filename:name,image:{type:"jpeg",quality:0.95},html2canvas:{scale:2,backgroundColor:"#ffffff",useCORS:true,scrollX:0,scrollY:0,windowWidth:Math.ceil(w.getBoundingClientRect().width)+2,width:Math.ceil(w.getBoundingClientRect().width)},
+    window.html2pdf().set({margin:land?8:10,filename:name,image:{type:"jpeg",quality:0.95},html2canvas:{scale:2,backgroundColor:"#ffffff",useCORS:true,scrollX:0,scrollY:0},
       jsPDF:{unit:"mm",format:"a4",orientation:land?"landscape":"portrait"},pagebreak:{mode:[]}})
       .from(w).save().then(function(){done();notify("បានទាញយក PDF៖ "+name)},function(e){done();console.error(e);alert("មិនអាចបង្កើត PDF បានទេ។ សូមប្រើ «🖨️ បោះពុម្ព» ជំនួសវិញ។")});});
   }
