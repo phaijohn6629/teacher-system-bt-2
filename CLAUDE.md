@@ -58,7 +58,10 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v164`, `script.js?v=228`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v165`, `script.js?v=229`)
+
+### ✅ Grade 10 lesson 1.2 «ចែកពហុធា · GCD/LCM · ប្រភាគសនិទាន» aligned (2026-11-26) — `practice10.js` (`G12` block before «២.១ តក្កវិទ្យា»), `hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|12"]`
+- Hub: 5 sub-topics + 🌐 PISA. 15 new forms `g10d_…`; PISA `P4[12]` rewritten (5 forms, `g10dp_…`, all `num`). Keys 5/6 have their own lists. `PTK["10|12"]` has 6 points; PISA `kd` stay unmapped. Book pages 22–34 were not available; content follows the outline the user supplied.
 
 ### ✅ Grade 10 lesson 1.1 «ពហុធា» aligned with the MoEYS book (2026-11-26) — `practice10.js`, `data/summaries_data.json`/`hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|11"]`
 - Hub: 5 sub-topics (ឯកធា · ពហុធា · រូបមន្តពន្លាត ៨ · ដាក់ជាផលគុណកត្តា · 🌐 PISA) with `lv`, sign-warning tips and worked examples.

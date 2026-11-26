@@ -197,12 +197,21 @@ P4[11]=[function(){var L=ri(20,40),W=ri(15,L-2),x=ri(2,Math.floor(W/2)-1),V=x*(L
   function(){var b=ri(10,30),c=ri(20,100),x=ri(2,b-2),P=-x*x+b*x-c;
     return K("g10pp_profit","🥭 អ្នកលក់ស្វាយ គណនាប្រាក់ចំណេញ (ពាន់រៀល) $P(x)=-x^2+"+b+"x-"+c+"$ ពេលលក់ $x$ គីឡូ។ គណនា $P("+x+")$ ។ (បើអវិជ្ជមាន = ខាត)",
       [A(P,null,"num","P =")],"$-"+(x*x)+"+"+(b*x)+"-"+c+"="+P+"$")}];
-P4[12]=[function(){var m=ri(1,6),n=ri(1,8);
-    return Q("🟩 ដីរាងចតុកោណកែង មានផ្ទៃក្រឡា $x^2"+co(m+n,"x")+sg(m*n,0)+"$ ($\\text{m}^2$) និងទទឹង $x+"+m+"$ m ។ រកបណ្ដោយជាកន្សោមនៃ $x$ (ចែកពហុធា)",
-      [A("x+"+n,null,"expr","បណ្ដោយ =")],"$(x^2"+co(m+n,"x")+sg(m*n,0)+")\\div(x+"+m+")=x+"+n+"$")},
+P4[12]=[function(){var m=ri(1,6),n=ri(1,8),k=ri(2,9);
+    return K("g10dp_land","🟩 ដីរាងចតុកោណកែង មានផ្ទៃក្រឡា $x^2"+co(m+n,"x")+sg(m*n,0)+"$ ($\\text{m}^2$) និងទទឹង $x+"+m+"$ m ។ ចែកពហុធា បានបណ្ដោយ $x+n$ m ។ រក $n$ ហើយគណនាបណ្ដោយពេល $x="+k+"$ (m)",
+      [A(n,null,"num","n ="),A(k+n,null,"num","បណ្ដោយ =")],"$(x^2"+co(m+n,"x")+sg(m*n,0)+")\\div(x+"+m+")=x+"+n+"$ ⇒ $"+k+"+"+n+"="+(k+n)+"$")},
   function(){var a=ri(2,6),c=[1,ri(-3,5),ri(0,8)],r=(c[0]*a+c[1])*a+c[2];
-    return Q("🍬 ចំនួនស្ករគ្រាប់ $P(x)=x^2"+co(c[1],"x")+(c[2]?"+"+c[2]:"")+"$ ត្រូវចែកជាកញ្ចប់ៗ កញ្ចប់មួយមាន $x-"+a+"$ គ្រាប់។ រកចំនួនស្ករដែលនៅសល់ (សំណល់នៃ $P(x)\\div(x-"+a+")$)",
-      [A(r,null,"num","សំណល់ =")],"ទ្រឹស្ដីបទសំណល់៖ $R=P("+a+")="+r+"$")}];
+    return K("g10dp_candy","🍬 ចំនួនស្ករគ្រាប់ $P(x)=x^2"+co(c[1],"x")+(c[2]?"+"+c[2]:"")+"$ ត្រូវចែកជាកញ្ចប់ៗ កញ្ចប់មួយមាន $x-"+a+"$ គ្រាប់។ រកចំនួនស្ករដែលនៅសល់ (សំណល់នៃ $P(x)\\div(x-"+a+")$)",
+      [A(r,null,"num","សំណល់ =")],"ទ្រឹស្ដីបទសំណល់៖ $R=P("+a+")="+r+"$")},
+  function(){var a=ri(1,6),b=ri(1,8),w=ri(2,9);
+    return K("g10dp_box","📦 ប្រអប់មួយមានមាឌ $V=W^3+"+(a+b)+"W^2+"+(a*b)+"W$ (m$^3$) និងផ្ទៃបាត $W(W+"+a+")$ (m$^2$) ។ កម្ពស់ $h=V\\div\\big(W(W+"+a+")\\big)=W+b$ ។ រក $b$ ហើយគណនាកម្ពស់ពេល $W="+w+"$ (m)",
+      [A(b,null,"num","b ="),A(w+b,null,"num","h =")],"$V=W(W+"+a+")(W+"+b+")$ ⇒ $h=W+"+b+"$ ⇒ $"+w+"+"+b+"="+(w+b)+"$")},
+  function(){var t=shf([1,2,3,4,5,6,7,8,9]),p=t[0],q=t[1],r=t[2],w=ri(2,9);
+    return K("g10dp_gcd","📏 ក្រុមការងារមានខ្សែពីរ ប្រវែង $"+polyT([1,p+q,p*q])+"$ m និង $"+polyT([1,p+r,p*r])+"$ m ។ ពួកគេកាត់ជាបំណែកប្រវែងស្មើគ្នាធំបំផុតជាកន្សោម $x+m$ ។ រក $m$ ហើយគណនាចំនួនបំណែកនៃខ្សែទី ១ ពេល $x="+w+"$",
+      [A(p,null,"num","m ="),A(w+q,null,"num","ចំនួនបំណែក =")],"ដាក់កត្តា ⇒ $(x+"+p+")(x+"+q+")$ និង $(x+"+p+")(x+"+r+")$ ⇒ GCD $=x+"+p+"$ ⇒ ខ្សែទី ១ មាន $x+"+q+"="+(w+q)+"$ បំណែក")},
+  function(){var a=ri(1,9);
+    return K("g10dp_rate","🚰 ម៉ាស៊ីនបូម A បំពេញអាងមួយពេញក្នុង $x$ ម៉ោង ហើយម៉ាស៊ីនបូម B ក្នុង $(x+"+a+")$ ម៉ោង ។ អត្រាបំពេញរួមក្នុង ១ ម៉ោងគឺ $\\dfrac{1}{x}+\\dfrac{1}{x+"+a+"}=\\dfrac{mx+n}{x(x+"+a+")}$ ។ រក $m$ , $n$",
+      [A(2,null,"num","m ="),A(a,null,"num","n =")],"$\\dfrac{(x+"+a+")+x}{x(x+"+a+")}=\\dfrac{2x+"+a+"}{x(x+"+a+")}$")}];
 P4[21]=[function(){var a=ri(12,25),g=Math.random()<.5,v=a>=18||g;
     return Q("🎬 ច្បាប់រោងកុន៖ «ចូលមើលបាន <b>បើ</b> អាយុ $\\ge18$ ឆ្នាំ <b>ឬ</b> មានអាណាព្យាបាលមកជាមួយ»។ សុខាអាយុ $"+a+"$ ឆ្នាំ ហើយ"+(g?"មាន":"គ្មាន")+"អាណាព្យាបាល។ តើសុខាចូលបានទេ? ($1$ = បាន · $0$ = មិនបាន)",
       [A(v?1:0,null,"num","=")],"$p\\lor q$ ៖ $p$ "+(a>=18?"ពិត":"មិនពិត")+" · $q$ "+(g?"ពិត":"មិនពិត")+" ⇒ "+(v?"ពិត":"មិនពិត"))},
@@ -480,6 +489,49 @@ vx(12,3,[
  function(){var m=2*ri(-4,4),n=ri(-6,6),r1=1+m+n,r2=1-m+n;return K("s10_two_12","$P(x)=x^2+mx+n$ ចែកនឹង $x-1$ សល់ $"+r1+"$ ហើយចែកនឹង $x+1$ សល់ $"+r2+"$ ។ រក $m$ និង $n$",[A(m,null,"num","m ="),A(n,null,"num","n =")],"$\\begin{cases}1+m+n="+r1+"\\\\1-m+n="+r2+"\\end{cases}$ ⇒ $m="+m+"$ , $n="+n+"$")},
  function(){var a=nz(-5,5),b=nz(-5,5);while(b===a)b++;return K("s10_mn","រក $m$ និង $n$ ដើម្បីឱ្យ $x^2+mx+n$ ចែកដាច់នឹង $x"+sg(-a,0)+"$ និង $x"+sg(-b,0)+"$",[A(-(a+b),null,"num","m ="),A(a*b,null,"num","n =")],"$x^2+mx+n=(x"+sg(-a,0)+")(x"+sg(-b,0)+")$ ⇒ $m="+(-(a+b))+"$ , $n="+(a*b)+"$")},
  function(){var a=nz(-3,3),k=nz(-4,4),b=ri(-6,6),c=-(k*a*a+b*a);return K("s10_kq","រក $k$ ដើម្បីឱ្យ $kx^2"+co(b,"x")+sg(c,0)+"$ ចែកដាច់នឹង $x"+sg(-a,0)+"$",[A(k,null,"num","k =")],"$P("+a+")=0$ ⇒ $"+(a*a)+"k"+sg(b*a,0)+sg(c,0)+"=0$ ⇒ $k="+k+"$")}]);
+/* ១.២ ចែកពហុធា · GCD/LCM · ប្រភាគសនិទាន (កែ ២០២៦-១១-២៦) — kd = g10d_… (PISA = g10dp_…) · ចម្លើយ fill-in (num) ទាំងអស់
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+function dfx(e,v){return e===1?v:v+"^{"+e+"}"}
+function trio(){var L=shf([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]);return L.slice(0,3)}
+var G12={
+ deg:function(){var m=ri(3,7),n=ri(1,m-1);return K("g10d_deg","$A$ ជាពហុធាដឺក្រេ $"+m+"$ ហើយ $B$ ជាពហុធាដឺក្រេ $"+n+"$ ។ ពេលចែក $A=B\\times Q+R$ រកដឺក្រេនៃ $Q$ និងដឺក្រេធំបំផុតដែលអាចមាននៃ $R$",[A(m-n,null,"num","ដឺក្រេ Q ="),A(n-1,null,"num","ដឺក្រេ R ធំបំផុត =")],"$\\deg Q="+m+"-"+n+"="+(m-n)+"$ · $\\deg R<"+n+"$ ⇒ ធំបំផុត $"+(n-1)+"$")},
+ q1:function(){var b=nz(-3,3),c=nz(-3,3),u=ri(1,3),v=ri(-4,4),r=ri(-4,4),s=ri(-6,6),P=[u,v+b*u,b*v+c*u+r,c*v+s];
+   return K("g10d_q1","ចែក $"+polyT(P)+"$ នឹង $"+polyT([1,b,c])+"$ ។ រកផលចែក $Q(x)=ux+v$ និងសំណល់ $R(x)=rx+s$",[A(u,null,"num","u ="),A(v,null,"num","v ="),A(r,null,"num","r ="),A(s,null,"num","s =")],"$A=BQ+R$ ⇒ $Q(x)="+polyT([u,v])+"$ , $R(x)="+polyT([r,s])+"$ (ដឺក្រេ $R<2$)")},
+ q2:function(){var b=nz(-3,3),c=nz(-3,3),u=ri(-3,3),v=ri(-4,4),r=ri(-4,4),s=ri(-6,6),P=[1,u+b,v+b*u+c,b*v+c*u+r,c*v+s];
+   return K("g10d_q2","ចែក $"+polyT(P)+"$ នឹង $"+polyT([1,b,c])+"$ ។ រកផលចែក $Q(x)=x^2+ux+v$ និងសំណល់ $R(x)=rx+s$",[A(u,null,"num","u ="),A(v,null,"num","v ="),A(r,null,"num","r ="),A(s,null,"num","s =")],"$A=BQ+R$ ⇒ $Q(x)="+polyT([1,u,v])+"$ , $R(x)="+polyT([r,s])+"$ (ដឺក្រេ $R<2$)")},
+ findp:function(){var a=nz(-4,4),u=nz(-3,3),v=ri(-4,4),w=ri(-5,5),r=ri(-6,6),P=[u,v+a*u,w+a*v,a*w+r];
+   return K("g10d_findp","ចែក $P(x)$ នឹង $x"+sg(a,0)+"$ បានផលចែក $Q(x)="+polyT([u,v,w])+"$ និងសំណល់ $"+r+"$ ។ រក $P(x)$"+cfAsk(P),cfAns(P),"$P=BQ+R=(x"+sg(a,0)+")("+polyT([u,v,w])+")"+sg(r,0)+"="+polyT(P)+"$")},
+ findp2:function(){var b=nz(-3,3),c=nz(-3,3),u=nz(-3,3),v=ri(-4,4),r=ri(-4,4),s=ri(-6,6),P=[u,v+b*u,b*v+c*u+r,c*v+s];
+   return K("g10d_findp2","ចែក $P(x)$ នឹង $"+polyT([1,b,c])+"$ បានផលចែក $Q(x)="+polyT([u,v])+"$ និងសំណល់ $R(x)="+polyT([r,s])+"$ ។ រក $P(x)$"+cfAsk(P),cfAns(P),"$P=BQ+R=("+polyT([1,b,c])+")("+polyT([u,v])+")+("+polyT([r,s])+")="+polyT(P)+"$")},
+ gcdm:function(){var C=[6,8,9,10,12,15,18,20,24,30],c1=pick(C),c2=pick(C),p=ri(1,4),q=ri(1,4),r=ri(1,4),s=ri(1,4),g=gcd(c1,c2),l=lcm(c1,c2);
+   return K("g10d_gcdm","រកតួចែករួមធំបំផុត (GCD) និងពហុគុណរួមតូចបំផុត (LCM) នៃ $"+mnS(c1,p,q,true)+"$ និង $"+mnS(c2,r,s,true)+"$ ។ សរសេរ $\\text{GCD}=gx^my^n$ និង $\\text{LCM}=Lx^uy^v$ ។ រក $g$ , $m$ , $n$ , $L$ , $u$ , $v$",[A(g,null,"num","g ="),A(Math.min(p,r),null,"num","m ="),A(Math.min(q,s),null,"num","n ="),A(l,null,"num","L ="),A(Math.max(p,r),null,"num","u ="),A(Math.max(q,s),null,"num","v =")],"GCD ៖ ជ.ជ.ម.នៃមេគុណ $"+g+"$ · និទស្សន្តតូចបំផុត · LCM ៖ ម.រ.ត.នៃមេគុណ $"+l+"$ · និទស្សន្តធំបំផុត")},
+ gcdf:function(){var a=ri(1,3),b=ri(1,3),c=ri(1,3),d=ri(1,3),t=trio(),p=t[0],q=t[1],r=t[2];
+   return K("g10d_gcdf","គេឱ្យ $A="+dfx(a,"x")+"(x"+sg(p,0)+")"+(b>1?"^{"+b+"}":"")+"(x"+sg(q,0)+")$ និង $B="+dfx(c,"x")+"(x"+sg(p,0)+")"+(d>1?"^{"+d+"}":"")+"(x"+sg(r,0)+")$ ។ GCD $=x^i(x"+sg(p,0)+")^j$ និង LCM $=x^k(x"+sg(p,0)+")^l(x"+sg(q,0)+")(x"+sg(r,0)+")$ ។ រក $i$ , $j$ , $k$ , $l$",[A(Math.min(a,c),null,"num","i ="),A(Math.min(b,d),null,"num","j ="),A(Math.max(a,c),null,"num","k ="),A(Math.max(b,d),null,"num","l =")],"GCD ៖ និទស្សន្តតូចបំផុតនៃកត្តារួម · LCM ៖ និទស្សន្តធំបំផុតនៃកត្តារួម និងកត្តាមិនរួមទាំងអស់")},
+ gcdex:function(){var t=trio(),p=t[0],q=t[1],r=t[2];
+   return K("g10d_gcdex","គេឱ្យ $A="+polyT([1,p+q,p*q])+"$ និង $B="+polyT([1,p+r,p*r])+"$ ។ ដាក់ជាកត្តា ហើយរក GCD $=x+m$ និង LCM ដែលមានតួថេរ $n$ ($\\text{LCM}$ ជាពហុធាដឺក្រេ $3$ មានមេគុណនាំមុខ $1$) ។ រក $m$ , $n$",[A(p,null,"num","m ="),A(p*q*r,null,"num","n =")],"$A=(x"+sg(p,0)+")(x"+sg(q,0)+")$ , $B=(x"+sg(p,0)+")(x"+sg(r,0)+")$ ⇒ GCD $=x"+sg(p,0)+"$ · LCM $=(x"+sg(p,0)+")(x"+sg(q,0)+")(x"+sg(r,0)+")$ ⇒ $n="+p+"\\cdot"+sgp(q)+"\\cdot"+sgp(r)+"="+(p*q*r)+"$")},
+ rcd:function(){var a=nz(-5,5),t=trio(),p=t[0],q=t[1];
+   return K("g10d_rcd","តម្រូវភាគបែងរួម ៖ $\\dfrac{"+a+"}{x"+sg(p,0)+"}=\\dfrac{mx+n}{(x"+sg(p,0)+")(x"+sg(q,0)+")}$ ។ រក $m$ , $n$",[A(a,null,"num","m ="),A(a*q,null,"num","n =")],"គុណភាគយកនឹង $(x"+sg(q,0)+")$ ⇒ $"+a+"(x"+sg(q,0)+")="+poly([a,a*q])+"$")},
+ rsame:function(){var a=nz(-5,5),b=nz(-6,6),c=nz(-5,5),d=nz(-6,6),p=nz(-6,6),mn=Math.random()<.5,m=mn?a-c:a+c,n=mn?b-d:b+d;
+   return K("g10d_rsame","គណនា $\\dfrac{"+poly([a,b])+"}{x"+sg(p,0)+"}"+(mn?"-":"+")+"\\dfrac{"+poly([c,d])+"}{x"+sg(p,0)+"}=\\dfrac{mx+n}{x"+sg(p,0)+"}$ ។ រក $m$ , $n$",[A(m,null,"num","m ="),A(n,null,"num","n =")],"ភាគបែងដូចគ្នា ⇒ "+(mn?"$("+poly([a,b])+")-("+poly([c,d])+")$ (ប្ដូរសញ្ញាគ្រប់តួនៃភាគយកទីពីរ)":"$("+poly([a,b])+")+("+poly([c,d])+")$")+" $="+poly([m,n])+"$")},
+ rsub:function(){var a=nz(-5,5),b=nz(-5,5),t=trio(),p=t[0],q=t[1];
+   return K("g10d_rsub","គណនា $\\dfrac{"+a+"}{x"+sg(p,0)+"}-\\dfrac{"+b+"}{x"+sg(q,0)+"}=\\dfrac{mx+n}{(x"+sg(p,0)+")(x"+sg(q,0)+")}$ ។ រក $m$ , $n$",[A(a-b,null,"num","m ="),A(a*q-b*p,null,"num","n =")],"ភាគយក $="+a+"(x"+sg(q,0)+")-("+b+")(x"+sg(p,0)+")="+poly([a-b,a*q-b*p])+"$")},
+ rmul:function(){var a=ri(1,7),L=[],i;for(i=-7;i<=7;i++)if(i&&i!==-a)L.push(i);var b=pick(L);
+   return K("g10d_rmul","គណនា $\\dfrac{x^2-"+(a*a)+"}{"+polyT([1,b,0])+"}\\cdot\\dfrac{x}{x+"+a+"}$ ជាទម្រង់ $\\dfrac{x+m}{x+n}$ ។ រក $m$ , $n$",[A(-a,null,"num","m ="),A(b,null,"num","n =")],"$\\dfrac{(x-"+a+")(x+"+a+")}{x(x"+sg(b,0)+")}\\cdot\\dfrac{x}{x+"+a+"}=\\dfrac{x-"+a+"}{x"+sg(b,0)+"}$")},
+ rdiv2:function(){var a=nz(-6,6),b=ri(1,6);
+   return K("g10d_rdiv2","គណនា $\\dfrac{x"+sg(a,0)+"}{x^2-"+(b*b)+"}:\\dfrac{x"+sg(a,0)+"}{x+"+b+"}$ ជាទម្រង់ $\\dfrac{1}{x+m}$ ។ រក $m$",[A(-b,null,"num","m =")],"$\\dfrac{x"+sg(a,0)+"}{(x-"+b+")(x+"+b+")}\\cdot\\dfrac{x+"+b+"}{x"+sg(a,0)+"}=\\dfrac{1}{x-"+b+"}$")},
+ rcomp:function(){var a=nz(-6,6);
+   return K("g10d_rcomp","សម្រួលប្រភាគច្រើនជាន់ $\\dfrac{x-\\dfrac{"+(a*a)+"}{x}}{1"+(a<0?"+":"-")+"\\dfrac{"+Math.abs(a)+"}{x}}$ ជាទម្រង់ $x+m$ ។ រក $m$",[A(a,null,"num","m =")],"ភាគយក $=\\dfrac{x^2-"+(a*a)+"}{x}$ · ភាគបែង $=\\dfrac{x"+sg(-a,0)+"}{x}$ ⇒ $\\dfrac{(x"+sg(-a,0)+")(x"+sg(a,0)+")}{x"+sg(-a,0)+"}=x"+sg(a,0)+"$")},
+ rcomp2:function(){var a=ri(2,9);
+   return K("g10d_rcomp2","សម្រួល $\\dfrac{\\dfrac{1}{x}-\\dfrac{1}{"+a+"}}{x-"+a+"}$ ជាទម្រង់ $\\dfrac{-1}{mx}$ ។ រក $m$",[A(a,null,"num","m =")],"ភាគយក $=\\dfrac{"+a+"-x}{"+a+"x}=\\dfrac{-(x-"+a+")}{"+a+"x}$ ⇒ $\\dfrac{-1}{"+a+"x}$")}
+};
+vx(12,1,[G12.deg,G12.rcd,G12.rsame,G12.gcdm,G12.findp]);
+vx(12,2,[G12.q1,G12.gcdf,G12.rsub,G12.rmul,G12.gcdex]);
+vx(12,3,[G12.q2,G12.findp2,G12.rcomp,G12.rcomp2,G12.rdiv2]);
+(function(){var g1=G[12][1],g2=G[12][2];
+  function lvs(lv,L){G[12][lv]=function(){return pick(L)()}}
+  lvs(5,[G12.deg,G12.findp,G12.gcdm,G12.rsame,G12.rcd,g1]);
+  lvs(6,[G12.q1,G12.gcdf,G12.gcdex,G12.rsub,G12.rmul,G12.rdiv2,g2]);
+})();
 /* ២.១ តក្កវិទ្យា (1 = ពិត · 0 = មិនពិត) */
 vx(21,1,[
  function(){var a=ri(1,9),b=ri(1,9),p=a>b;return K("s10_neg","សំណើ $p$ ៖ «$"+a+">"+b+"$» ។ តើ $\\overline{p}$ ពិតឬមិនពិត? ($1$/$0$)",[A(p?0:1,null,"num","តម្លៃ =")],"$p$ "+tv(p)+" ⇒ $\\overline p$ "+tv(!p))},
