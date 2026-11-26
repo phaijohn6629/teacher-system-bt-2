@@ -58,7 +58,10 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v167`, `script.js?v=231`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v168`, `script.js?v=232`)
+
+### ✅ Grade 10 lesson 3.1 «សមីការដឺក្រេទី២ + ចំនួនកុំផ្លិច» aligned (2026-11-26) — `practice10.js` (`G31` block before «៣.២»), `hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|31"]`
+- Hub: 5 sub-topics + 🌐 PISA (first summaries for this lesson). 17 new forms `g10q_…`; complex-number answers use two boxes (ផ្នែកពិត / ផ្នែកនិមិត្ត). Keys 5/6 own lists; PISA `P4[31]` = 5 forms `g10qp_…`. `PTK["10|31"]` has 6 points (point 1 no longer empty); PISA `kd` unmapped. Book pages 81–103 were not available; content follows the user's outline.
 
 ### ✅ Grade 10 lesson 2.2 «សំណុំ» aligned (2026-11-26) — `practice10.js` (`G22` block before «២.៣ ចំនួន»), `hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|22"]`
 - Hub: 5 sub-topics + 🌐 PISA. 9 new forms `g10s_…` (empty/infinite/equal sets, proper subsets, complement, disjoint, De Morgan counts, distributive/associative), keys 5/6 own lists, level 3 now 8 forms, PISA `P4[22]` = 5 forms `g10sp_…` (existing 3 got `kd`). `PTK["10|22"]` has 6 points; PISA `kd` unmapped. Spelling unified to «ដឺម៉ហ្គង់». Book pages 50–63 were not available; content follows the user's outline.

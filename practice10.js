@@ -240,10 +240,10 @@ P4[23]=[function(){var a=ri(20,60);
     return Q("📄 ក្រដាស A4 មានរាងចតុកោណកែង ដែលបណ្ដោយ $=\\sqrt2\\times$ ទទឹង។ បើទទឹង $"+s0+"$ cm តើបណ្ដោយប៉ុន្មាន cm? (បង្គត់ ១ ខ្ទង់ក្បៀសបាន)",
       [A(s0+"*sqrt(2)",s0+"\\sqrt2","num","cm =")],"$"+s0+"\\sqrt2\\approx"+(Math.round(s0*Math.SQRT2*10)/10)+"$ cm")}];
 P4[31]=[function(){var v=ri(2,6)*5;
-    return Q("⚽ បាល់ត្រូវបានទាត់ឡើង កម្ពស់ $h(t)=-5t^2+"+v+"t$ (m)។ ក្រោយប៉ុន្មានវិនាទី បាល់ធ្លាក់ដល់ដីវិញ ($h=0$ · $t>0$)?",
+    return K("g10qp_kick","⚽ បាល់ត្រូវបានទាត់ឡើង កម្ពស់ $h(t)=-5t^2+"+v+"t$ (m)។ ក្រោយប៉ុន្មានវិនាទី បាល់ធ្លាក់ដល់ដីវិញ ($h=0$ · $t>0$)?",
       [A(v/5,null,"num","t =")],"$-5t^2+"+v+"t=0\\iff t(-5t+"+v+")=0\\Rightarrow t="+(v/5)+"$ s","y=-5x^2+"+v+"x [0,"+(v/5)+"]")},
   function(){var a=ri(3,15),b=ri(a+1,25),P=2*(a+b),S=a*b;
-    return Q("🌾 ដីស្រែរាងចតុកោណកែង មានបរិមាត្រ $"+P+"$ m និងផ្ទៃក្រឡា $"+S+"\\text{ m}^2$ ។ ទទឹង និងបណ្ដោយជាឫសនៃ $x^2-"+(P/2)+"x+"+S+"=0$ ។ រកទទឹង (តូច) និងបណ្ដោយ (ធំ)",
+    return K("g10qp_field","🌾 ដីស្រែរាងចតុកោណកែង មានបរិមាត្រ $"+P+"$ m និងផ្ទៃក្រឡា $"+S+"\\text{ m}^2$ ។ ទទឹង និងបណ្ដោយជាឫសនៃ $x^2-"+(P/2)+"x+"+S+"=0$ ។ រកទទឹង (តូច) និងបណ្ដោយ (ធំ)",
       [A(a,null,"num","ទទឹង ="),A(b,null,"num","បណ្ដោយ =")],"$\\Delta="+((P/2)*(P/2)-4*S)+"$ ⇒ $x="+a+"$ ឬ $x="+b+"$")}];
 P4[32]=[function(){var v=ri(2,8)*1;
     return Q("🌊 ល្បឿនរលកទឹកក្នុងទឹករាក់ $v=\\sqrt{10d}$ (m/s · $d$ = ជម្រៅ m)។ បើរលកមានល្បឿន $"+v+"$ m/s តើទឹកជម្រៅប៉ុន្មានម៉ែត្រ?",
@@ -759,6 +759,51 @@ vx(31,3,[
  function(){var r1=nz(-6,6),r2=nz(-6,6),S=r1+r2,P=r1*r2;return K("s10_sym","$x_1,x_2$ ជាឫសនៃ $x^2"+co(-S,"x")+sg(P,0)+"=0$ ។ គណនា $x_1^2+x_2^2$ (មិនចាំបាច់ដោះស្រាយ)",[A(S*S-2*P,null,"num","=")],"$(x_1+x_2)^2-2x_1x_2="+(S*S)+sg(-2*P,0)+"="+(S*S-2*P)+"$")},
  function(){var r1=nz(-6,6),r2=nz(-6,6);return K("s10_build","សរសេរសមីការ $x^2+bx+c=0$ ដែលមានឫស $"+r1+"$ និង $"+r2+"$ ។ រក $b$ និង $c$",[A(-(r1+r2),null,"num","b ="),A(r1*r2,null,"num","c =")],"$b=-(x_1+x_2)="+(-(r1+r2))+"$ · $c=x_1x_2="+(r1*r2)+"$")},
  function(){var w=ri(2,10),l=w+ri(1,8);return K("s10_word","ចតុកោណកែងមួយមានបរិមាត្រ $"+(2*(l+w))+"$ m និងផ្ទៃក្រឡា $"+(l*w)+"$ m² ។ គណនាបណ្ដោយ",[A(l,null,"num","=")],"$x$ , $y$ ជាឫសនៃ $t^2-"+(l+w)+"t+"+(l*w)+"=0$ ⇒ $"+l+"$ និង $"+w+"$")}]);
+/* ៣.១ សមីការដឺក្រេទី២ + ចំនួនកុំផ្លិច (កែ ២០២៦-១១-២៦) — kd = g10q_… (PISA = g10qp_…) · ចម្លើយ fill-in (num) ទាំងអស់ · ចម្លើយកុំផ្លិច = ប្រអប់ផ្នែកពិត + ផ្នែកនិមិត្ត
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+function cxS(a,b){var s="";if(a!==0)s+=a;if(b!==0)s+=(b<0?"-":(s?"+":""))+(Math.abs(b)===1?"":Math.abs(b))+"i";return s||"0"}
+function cxA(re,im){return[A(re,null,"num","ផ្នែកពិត ="),A(im,null,"num","ផ្នែកនិមិត្ត =")]}
+var CIS=[[1,0],[0,1],[-1,0],[0,-1]];
+var G31={
+ ipow:function(){var n=ri(4,30),r=CIS[n%4];return K("g10q_i","គណនា $i^{"+n+"}$ ដោយ $i^2=-1$ ($i^4=1$) ហើយសរសេរជា $a+bi$",cxA(r[0],r[1]),"$"+n+"=4\\cdot"+Math.floor(n/4)+"+"+(n%4)+"$ ⇒ $i^{"+n+"}=i^{"+(n%4)+"}="+cxS(r[0],r[1])+"$")},
+ sqrtneg:function(){var s=pick([2,3,5,7]),k=ri(2,6),n=k*k*s;return K("g10q_sq","សរសេរ $\\sqrt{-"+n+"}=k\\sqrt{s}\\,i$ ដែល $k>0$ ហើយ $s$ មិនមានកត្តាការ៉េ ។ រក $k$ និង $s$",[A(k,null,"num","k ="),A(s,null,"num","s =")],"$\\sqrt{-"+n+"}=\\sqrt{"+n+"}\\,i=\\sqrt{"+(k*k)+"\\cdot"+s+"}\\,i="+k+"\\sqrt{"+s+"}\\,i$")},
+ eqc:function(){var x=ri(-6,6),y=ri(-6,6),a=nz(-6,6),b=nz(-6,6);return K("g10q_eqc","ចំនួនកុំផ្លិចស្មើគ្នា $a+bi=c+di\\iff a=c,\\ b=d$ ។ រក $x$ និង $y$ ដើម្បីឱ្យ $(x"+sg(a,0)+")+(y"+sg(b,0)+")i="+cxS(x+a,y+b)+"$",[A(x,null,"num","x ="),A(y,null,"num","y =")],"$x"+sg(a,0)+"="+(x+a)+"$ ⇒ $x="+x+"$ · $y"+sg(b,0)+"="+(y+b)+"$ ⇒ $y="+y+"$")},
+ cadd:function(){var a=nz(-8,8),b=nz(-8,8),c=nz(-8,8),d=nz(-8,8),m=Math.random()<.5,re=m?a-c:a+c,im=m?b-d:b+d;
+   return K("g10q_cadd","គណនា $("+cxS(a,b)+")"+(m?"-":"+")+"("+cxS(c,d)+")$ ហើយសរសេរជា $a+bi$",cxA(re,im),"បូក/ដកផ្នែកពិត និងផ្នែកនិមិត្ត ⇒ $"+cxS(re,im)+"$")},
+ cmul:function(){var a=nz(-5,5),b=nz(-5,5),c=nz(-5,5),d=nz(-5,5);
+   return K("g10q_cmul","គណនា $("+cxS(a,b)+")("+cxS(c,d)+")$ ហើយសរសេរជា $a+bi$ (ប្រើ $i^2=-1$)",cxA(a*c-b*d,a*d+b*c),"$(ac-bd)+(ad+bc)i="+cxS(a*c-b*d,a*d+b*c)+"$")},
+ conj:function(){var a=nz(-7,7),b=nz(-7,7);return K("g10q_conj","ចំនួនកុំផ្លិច $z="+cxS(a,b)+"$ ។ ចំនួនឆ្លាស់ $\\overline{z}=a-bi$ ។ រកផ្នែកនិមិត្តនៃ $\\overline{z}$ និងគណនា $z\\cdot\\overline{z}$",[A(-b,null,"num","ផ្នែកនិមិត្តនៃ z̄ ="),A(a*a+b*b,null,"num","z·z̄ =")],"$\\overline z="+cxS(a,-b)+"$ · $z\\overline z=a^2+b^2="+(a*a)+"+"+(b*b)+"="+(a*a+b*b)+"$")},
+ cdiv:function(){var u=ri(-4,4),v=ri(-4,4),c=nz(-3,3),d=nz(-3,3),nr=u*c-v*d,ni=u*d+v*c;
+   return K("g10q_cdiv","គណនា $\\dfrac{"+cxS(nr,ni)+"}{"+cxS(c,d)+"}$ (គុណភាគយក និងភាគបែងនឹងចំនួនឆ្លាស់ $"+cxS(c,-d)+"$) ហើយសរសេរជា $a+bi$",cxA(u,v),"$\\dfrac{ac+bd}{c^2+d^2}+\\dfrac{bc-ad}{c^2+d^2}i="+cxS(u,v)+"$")},
+ cr:function(){var p=ri(-4,4),q=ri(1,5);return K("g10q_cr","ដោះស្រាយ $"+polyT([1,-2*p,p*p+q*q])+"=0$ ក្នុងសំណុំចំនួនកុំផ្លិច ($\\Delta<0$) ។ សរសេរឫស $x=p\\pm qi$ ដែល $q>0$ ។ រក $p$ និង $q$",[A(p,null,"num","p ="),A(q,null,"num","q =")],"$\\Delta="+(4*p*p-4*(p*p+q*q))+"<0$ ⇒ $x=\\dfrac{"+(2*p)+"\\pm\\sqrt{"+(-4*q*q)+"}}{2}="+p+"\\pm "+q+"i$")},
+ pure2:function(){var k=ri(2,9);return K("g10q_pure2","ដោះស្រាយ $x^2+"+(k*k)+"=0$ ក្នុងចំនួនកុំផ្លិច ។ ឫសជា $x=\\pm ki$ ដែល $k>0$ ។ រក $k$",[A(k,null,"num","k =")],"$x^2=-"+(k*k)+"$ ⇒ $x=\\pm\\sqrt{"+(k*k)+"}\\,i=\\pm"+k+"i$")},
+ sqc:function(){var h=nz(-6,6),c=ri(-9,9),n=h*h-c;return K("g10q_sqc","បំពេញជាការ៉េ ៖ $"+polyT([1,2*h,c])+"=0\\iff(x+h)^2=n$ ។ រក $h$ និង $n$",[A(h,null,"num","h ="),A(n,null,"num","n =")],"$"+polyT([1,2*h,h*h])+"=(x"+sg(h,0)+")^2$ ⇒ $n="+(h*h)+"-"+sgp(c)+"="+n+"$")},
+ dp:function(){var a=ri(2,4),bp=nz(-5,5),c=ri(-6,6);return K("g10q_dp","សមីការ $"+polyT([a,2*bp,c])+"=0$ មាន $b=2b'$ ។ រក $b'$ ហើយគណនា $\\Delta'=b'^2-ac$",[A(bp,null,"num","b' ="),A(bp*bp-a*c,null,"num","Δ' =")],"$b'="+bp+"$ ⇒ $\\Delta'="+(bp*bp)+"-"+sgp(a)+"\\cdot"+sgp(c)+"="+(bp*bp-a*c)+"$")},
+ abc0:function(){var a=ri(1,3),r2=nz(-6,6),t=Math.random()<.5,b,c,q;
+   if(t){b=-a*(1+r2);c=a*r2;q="$a+b+c=0$ ⇒ $x_1=1$ , $x_2=\\dfrac ca="+r2+"$"}else{b=a*(1-r2);c=-a*r2;q="$a-b+c=0$ ⇒ $x_1=-1$ , $x_2=-\\dfrac ca="+r2+"$"}
+   return K("g10q_abc0","សមីការ $"+polyT([a,b,c])+"=0$ មានឫសមួយស្មើ $"+(t?1:-1)+"$ (ដោយ $a"+(t?"+":"-")+"b+c=0$) ។ រកឫសមួយទៀត",[A(r2,null,"num","x₂ =")],q)},
+ fact:function(){var a=ri(2,3),al=nz(-5,5),be=nz(-5,5);if(al>be){var t=al;al=be;be=t}
+   return K("g10q_fact","ដាក់ $"+polyT([a,-a*(al+be),a*al*be])+"$ ជាទម្រង់ $a(x-\\alpha)(x-\\beta)$ ដែល $\\alpha\\le\\beta$ ។ រក $a$ , $\\alpha$ , $\\beta$",[A(a,null,"num","a ="),A(al,null,"num","α ="),A(be,null,"num","β =")],"ឫសគឺ $"+al+"$ និង $"+be+"$ ⇒ $"+a+"(x"+sg(-al,0)+")(x"+sg(-be,0)+")$")},
+ sp:function(){var x1=nz(-9,9),x2=nz(-9,9);while(x2===x1)x2=nz(-9,9);if(x1>x2){var t=x1;x1=x2;x2=t}
+   return K("g10q_sp","រកពីរចំនួន $u\\le v$ ដែលមានផលបូក $"+(x1+x2)+"$ និងផលគុណ $"+(x1*x2)+"$ (ជាឫសនៃ $x^2-Sx+P=0$)",[A(x1,null,"num","u ="),A(x2,null,"num","v =")],"$x^2"+co(-(x1+x2),"x")+sg(x1*x2,0)+"=0$ ⇒ $"+x1+"$ , $"+x2+"$")},
+ ss:function(){var al=nz(-6,6),be=nz(-6,6),f=fr(al+be,al*be);
+   return K("g10q_ss","$\\alpha$ , $\\beta$ ជាឫសនៃ $x^2"+co(-(al+be),"x")+sg(al*be,0)+"=0$ ។ គណនា $\\dfrac1\\alpha+\\dfrac1\\beta$ (មិនចាំបាច់ដោះស្រាយ)",[A(f.s,f.t,"num","=")],"$\\dfrac{\\alpha+\\beta}{\\alpha\\beta}=\\dfrac{S}{P}=\\dfrac{"+(al+be)+"}{"+(al*be)+"}="+f.t+"$")},
+ cons:function(){var n=ri(2,15);return K("g10q_cons","ពីរចំនួនគត់វិជ្ជមានជាប់គ្នា មានផលគុណ $"+(n*(n+1))+"$ ។ តាងចំនួនតូចជា $x$ ($x(x+1)="+(n*(n+1))+"$) ។ រក $x$",[A(n,null,"num","x =")],"$x^2+x-"+(n*(n+1))+"=0$ ⇒ $x="+n+"$ ($x>0$)")},
+ garden:function(){var w=ri(3,20),d=ri(2,12);return K("g10q_garden","ចម្ការចតុកោណកែងមួយ បណ្ដោយវែងជាងទទឹង $"+d+"$ m ហើយមានផ្ទៃ $"+(w*(w+d))+"$ m$^2$ ។ តាងទទឹង $x$ ($x(x+"+d+")="+(w*(w+d))+"$) ។ រកទទឹង $x$ (m)",[A(w,null,"num","x =")],"$x^2+"+d+"x-"+(w*(w+d))+"=0$ ⇒ $x="+w+"$ ($x>0$)")},
+ ball:function(){var t1=ri(4,10),t2=ri(1,3),v=5*(t1-t2),h0=5*t1*t2;return K("g10q_ball","បាល់ត្រូវបានបោះឡើងពីកម្ពស់ $"+h0+"$ m ។ កម្ពស់ $h(t)=-5t^2+"+v+"t+"+h0+"$ (m) ។ រកពេលវេលា $t>0$ ដែលបាល់ធ្លាក់ដល់ដី ($h=0$) (វិនាទី)",[A(t1,null,"num","t =")],"$-5t^2+"+v+"t+"+h0+"=0$ ⇒ $t^2-"+(t1-t2)+"t-"+(t1*t2)+"=0$ ⇒ $(t-"+t1+")(t+"+t2+")=0$ ⇒ $t="+t1+"$")}
+};
+vx(31,1,[G31.ipow,G31.sqrtneg,G31.eqc,G31.cadd,G31.pure2]);
+vx(31,2,[G31.conj,G31.cmul,G31.cr,G31.sqc,G31.dp]);
+vx(31,3,[G31.cdiv,G31.abc0,G31.fact,G31.sp,G31.ss,G31.ball]);
+(function(){var g1=G[31][1],g2=G[31][2];
+  function lvs(lv,L){G[31][lv]=function(){return pick(L)()}}
+  lvs(5,[G31.ipow,G31.sqrtneg,G31.eqc,G31.cadd,G31.pure2,G31.cons,g1]);
+  lvs(6,[G31.conj,G31.cmul,G31.cr,G31.sqc,G31.dp,G31.garden,g2]);
+})();
+P4[31].push(
+ function(){var L=ri(10,25),W=ri(6,L-1),x=ri(1,4);return K("g10qp_path","🌳 ចម្ការចតុកោណកែង $"+L+"\\times"+W+"$ ម មានផ្លូវដើរទទឹង $x$ ម ជុំវិញ ។ ផ្ទៃសរុបរួមទាំងផ្លូវ $("+L+"+2x)("+W+"+2x)="+((L+2*x)*(W+2*x))+"$ m$^2$ ។ រក $x$ (m)",[A(x,null,"num","x =")],"$4x^2+"+(2*(L+W))+"x-"+((L+2*x)*(W+2*x)-L*W)+"=0$ ⇒ $x="+x+"$ ($x>0$)")},
+ function(){var W=ri(3,15),L=W+ri(1,10);return K("g10qp_rect","📐 ចតុកោណកែងមួយមានបរិមាត្រ $"+(2*(L+W))+"$ m និងផ្ទៃ $"+(L*W)+"$ m$^2$ ។ ផលបូកនៃបណ្ដោយ និងទទឹង $="+(L+W)+"$ ។ រកទទឹង $w$ និងបណ្ដោយ $\\ell$ ដែល $w<\\ell$",[A(W,null,"num","w ="),A(L,null,"num","ℓ =")],"$x^2-"+(L+W)+"x+"+(L*W)+"=0$ ⇒ $"+W+"$ , $"+L+"$")},
+ function(){var t1=ri(3,8),t2=ri(1,2),v=5*(t1-t2),h0=5*t1*t2;return K("g10qp_ground","🎾 ប្រដាប់ក្មេងលេងត្រូវបាញ់ឡើងពីដំបូលកម្ពស់ $"+h0+"$ m ដោយកម្ពស់ $h(t)=-5t^2+"+v+"t+"+h0+"$ (m) ។ តើប៉ុន្មានវិនាទីក្រោយមក វាធ្លាក់ដល់ដី?",[A(t1,null,"num","t =")],"$h=0$ ⇒ $(t-"+t1+")(t+"+t2+")=0$ ⇒ $t="+t1+"$")});
 /* ៣.២ សមីការអសនិទាន និងដឺក្រេខ្ពស់ */
 vx(32,1,[
  function(){var x=ri(1,9),a=ri(2,5),c=ri(1,a-1),b=ri(0,9),d=a*x+b-c*x;return K("s10_sq2","ដោះស្រាយ $\\sqrt{"+a+"x"+sg(b,0)+"}=\\sqrt{"+co(c,"x",true)+sg(d,0)+"}$",[A(x,null,"num","x =")],"$"+a+"x"+sg(b,0)+"="+c+"x"+sg(d,0)+"$ ⇒ $x="+x+"$ (ផ្ទៀងផ្ទាត់ ៖ ក្រោមឫស $="+(a*x+b)+"\\ge0$)")},
