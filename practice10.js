@@ -213,11 +213,20 @@ P4[12]=[function(){var m=ri(1,6),n=ri(1,8),k=ri(2,9);
     return K("g10dp_rate","🚰 ម៉ាស៊ីនបូម A បំពេញអាងមួយពេញក្នុង $x$ ម៉ោង ហើយម៉ាស៊ីនបូម B ក្នុង $(x+"+a+")$ ម៉ោង ។ អត្រាបំពេញរួមក្នុង ១ ម៉ោងគឺ $\\dfrac{1}{x}+\\dfrac{1}{x+"+a+"}=\\dfrac{mx+n}{x(x+"+a+")}$ ។ រក $m$ , $n$",
       [A(2,null,"num","m ="),A(a,null,"num","n =")],"$\\dfrac{(x+"+a+")+x}{x(x+"+a+")}=\\dfrac{2x+"+a+"}{x(x+"+a+")}$")}];
 P4[21]=[function(){var a=ri(12,25),g=Math.random()<.5,v=a>=18||g;
-    return Q("🎬 ច្បាប់រោងកុន៖ «ចូលមើលបាន <b>បើ</b> អាយុ $\\ge18$ ឆ្នាំ <b>ឬ</b> មានអាណាព្យាបាលមកជាមួយ»។ សុខាអាយុ $"+a+"$ ឆ្នាំ ហើយ"+(g?"មាន":"គ្មាន")+"អាណាព្យាបាល។ តើសុខាចូលបានទេ? ($1$ = បាន · $0$ = មិនបាន)",
+    return K("g10lp_cinema","🎬 ច្បាប់រោងកុន៖ «ចូលមើលបាន <b>បើ</b> អាយុ $\\ge18$ ឆ្នាំ <b>ឬ</b> មានអាណាព្យាបាលមកជាមួយ»។ សុខាអាយុ $"+a+"$ ឆ្នាំ ហើយ"+(g?"មាន":"គ្មាន")+"អាណាព្យាបាល។ តើសុខាចូលបានទេ? ($1$ = បាន · $0$ = មិនបាន)",
       [A(v?1:0,null,"num","=")],"$p\\lor q$ ៖ $p$ "+(a>=18?"ពិត":"មិនពិត")+" · $q$ "+(g?"ពិត":"មិនពិត")+" ⇒ "+(v?"ពិត":"មិនពិត"))},
   function(){var s=ri(60,100),b=ri(0,8),v=s>=80&&b<=3;
-    return Q("🎓 អាហារូបករណ៍៖ «ទទួលបាន <b>បើ</b> ពិន្ទុ $\\ge80$ <b>និង</b> អវត្តមាន $\\le3$ ដង»។ ដារ៉ាបានពិន្ទុ $"+s+"$ អវត្តមាន $"+b+"$ ដង។ តើដារ៉ាទទួលបានទេ? ($1$/$0$)",
-      [A(v?1:0,null,"num","=")],"$p\\land q$ ៖ $p$ "+(s>=80?"ពិត":"មិនពិត")+" · $q$ "+(b<=3?"ពិត":"មិនពិត")+" ⇒ "+(v?"ពិត":"មិនពិត"))}];
+    return K("g10lp_scholar","🎓 អាហារូបករណ៍៖ «ទទួលបាន <b>បើ</b> ពិន្ទុ $\\ge80$ <b>និង</b> អវត្តមាន $\\le3$ ដង»។ ដារ៉ាបានពិន្ទុ $"+s+"$ អវត្តមាន $"+b+"$ ដង។ តើដារ៉ាទទួលបានទេ? ($1$/$0$)",
+      [A(v?1:0,null,"num","=")],"$p\\land q$ ៖ $p$ "+(s>=80?"ពិត":"មិនពិត")+" · $q$ "+(b<=3?"ពិត":"មិនពិត")+" ⇒ "+(v?"ពិត":"មិនពិត"))},
+  function(){var p=Math.random()<.5,q=Math.random()<.5,v=!(p||q);
+    return K("g10lp_dm","🏪 ហាងមួយ «<b>បិទ</b> បើជាថ្ងៃអាទិត្យ <b>ឬ</b> ថ្ងៃបុណ្យ» ហើយបើកក្នុងករណីផ្សេង (ដឺម៉ហ្គង់ ៖ $\\overline{p\\vee q}=\\overline{p}\\wedge\\overline{q}$) ។ ថ្ងៃនេះ ៖ ថ្ងៃអាទិត្យ "+(p?"ពិត":"មិនពិត")+" · ថ្ងៃបុណ្យ "+(q?"ពិត":"មិនពិត")+" ។ តើហាងបើកទេ? ($1$ = បើក · $0$ = បិទ)",
+      [A(v?1:0,null,"num","=")],"$\\overline{p\\vee q}=\\overline{p}\\wedge\\overline{q}$ ⇒ "+(v?"ពិត (បើក)":"មិនពិត (បិទ)"))},
+  function(){var cs=Math.random()<.5;
+    return K("g10lp_rule","🔋 ច្បាប់ ៖ «បើទូរស័ព្ទសាកពេញ នោះភ្លើងពណ៌បៃតង» ($p\\Rightarrow q$) ។ ឃើញថា "+(cs?"ភ្លើង <b>មិន</b>ពណ៌បៃតង ($\\overline{q}$ ពិត)។ តើអាចសន្និដ្ឋានបានថា ទូរស័ព្ទ <b>មិន</b>ទាន់សាកពេញ ($\\overline{p}$ ពិត) ឬទេ?":"ភ្លើងពណ៌បៃតង ($q$ ពិត)។ តើអាចសន្និដ្ឋានបានថា ទូរស័ព្ទសាកពេញ ($p$ ពិត) ឬទេ?")+" ($1$ = អាច · $0$ = មិនអាច)",
+      [A(cs?1:0,null,"num","=")],cs?"ផ្ទុយពីសម្មតិកម្ម $\\overline{q}\\Rightarrow\\overline{p}$ ពិត ⇒ អាចសន្និដ្ឋាន ($1$)":"សំណើច្រាស $q\\Rightarrow p$ មិនពិតជានិច្ច ⇒ មិនអាចសន្និដ្ឋាន ($0$)")},
+  function(){var P=ri(40,60),L=ri(3,5),D=[],i,n=0,ex=[];for(i=0;i<6;i++){var pr=ri(20,100),lf=ri(1,8);D.push("("+pr+" , "+lf+")");if(pr>P&&lf<L){n++;ex.push("("+pr+" , "+lf+")")}}
+    return K("g10lp_cex","🛒 ហាងអះអាងថា «ផលិតផលណាតម្លៃលើស $"+P+"$ ដុល្លារ នោះមានអាយុកាល $\\ge"+L+"$ ឆ្នាំ» ។ ទិន្នន័យ (តម្លៃ , អាយុកាល) ៖ "+D.join(" ")+" ។ រាប់ចំនួនឧទាហរណ៍ផ្ទុយ (តម្លៃ $>"+P+"$ ប៉ុន្តែអាយុកាល $<"+L+"$)",
+      [A(n,null,"num","ចំនួន =")],n?"ឧទាហរណ៍ផ្ទុយ ៖ "+ex.join(" ")+" ⇒ $"+n+"$":"គ្មានឧទាហរណ៍ផ្ទុយ ⇒ $0$")}];
 P4[22]=[function(){var E=ri(15,30),F=ri(8,20),U=E+F-ri(2,Math.min(E,F)-1);
     return Q("🗣️ ក្នុងថ្នាក់មួយ សិស្សរៀនអង់គ្លេស $"+E+"$ នាក់ រៀនបារាំង $"+F+"$ នាក់ ហើយសិស្សដែលរៀនយ៉ាងហោចណាស់មួយភាសា មាន $"+U+"$ នាក់។ តើមានសិស្សប៉ុន្មាននាក់ រៀនទាំងពីរភាសា?",
       [A(E+F-U,null,"num","n(E∩F) =")],"$n(E\\cap F)=n(E)+n(F)-n(E\\cup F)="+E+"+"+F+"-"+U+"="+(E+F-U)+"$",GFV({k:2,names:["E","F"],lab:{a:"?",ab:"?",b:"?"},cap:["n(E) = "+E+" · n(F) = "+F,"n(E ∪ F) = "+U],shade:["ab"]}))},
@@ -546,6 +555,42 @@ vx(21,3,[
  function(){var a=ri(1,9),b=ri(1,9),p=a+b>9,q=a*b<20,v=!(p||q);return K("s10_dem","$p$ ៖ «$"+a+"+"+b+">9$» · $q$ ៖ «$"+a+"\\times"+b+"<20$» ។ តើ $\\overline{p\\lor q}$ ពិតឬមិនពិត? ($1$/$0$)",[A(v?1:0,null,"num","តម្លៃ =")],"ច្បាប់ដឺម៉័រហ្គង់ ៖ $\\overline{p\\lor q}=\\overline p\\land\\overline q$ ⇒ "+tv(v))},
  function(){var S=[ri(-3,0),ri(1,3),ri(4,6)],k=ri(0,20),v=S.every(function(x){return x*x>k});return K("s10_quant","តើសំណើ «$\\forall x\\in\\{"+S.join(",")+"\\},\\ x^2>"+k+"$» ពិតឬមិនពិត? ($1$/$0$)",[A(v?1:0,null,"num","តម្លៃ =")],"$x^2$ ៖ $"+S.map(function(x){return x*x}).join(",")+"$ ⇒ "+tv(v))},
  function(){var S=[ri(-5,-1),ri(0,2),ri(3,6)],a=nz(1,3),x0=pick(S.concat([7,-6])),b=-a*x0,v=S.indexOf(x0)>=0;return K("s10_exist","តើសំណើ «$\\exists x\\in\\{"+S.join(",")+"\\}:\\ "+co(a,"x",true)+sg(b,0)+"=0$» ពិតឬមិនពិត? ($1$/$0$)",[A(v?1:0,null,"num","តម្លៃ =")],"ឫស $x="+x0+"$ "+(v?"នៅក្នុង":"មិននៅក្នុង")+"សំណុំ ⇒ "+tv(v))}]);
+/* ២.១ តក្កវិទ្យា (កែ ២០២៦-១១-២៦) — kd = g10l_… (PISA = g10lp_…) · ចម្លើយ 1 = ពិត · 0 = មិនពិត ឬចំនួន · fill-in (num) ទាំងអស់
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+var PL=[function(a){return["$"+a+"$ ជាចំនួនគូ",a%2===0]},function(a){return["$"+a+">5$",a>5]},function(a){return["$"+a+"$ ចែកដាច់នឹង $3$",a%3===0]},function(a){return["$"+a+"<8$",a<8]},function(a){return["$"+a+"$ ជាចំនួនបឋម",isPr(a)]}];
+function pq(){var i=ri(0,PL.length-1),j=(i+1+ri(0,PL.length-2))%PL.length;return{p:PL[i](ri(1,12)),q:PL[j](ri(1,12))}}
+function bn(v){return v?1:0}
+function imp(p,q){return!p||q}
+function pqS(o){return"$p$ ៖ «"+o.p[0]+"» · $q$ ៖ «"+o.q[0]+"» ។ "}
+var TTF=[{t:"(p\\Rightarrow q)\\wedge(q\\Rightarrow p)",n:2,f:function(p,q){return imp(p,q)&&imp(q,p)}},{t:"\\overline{p\\wedge q}",n:2,f:function(p,q){return!(p&&q)}},{t:"p\\wedge\\overline{q}",n:2,f:function(p,q){return p&&!q}},{t:"\\overline{p}\\vee\\overline{q}",n:2,f:function(p,q){return!p||!q}},{t:"(p\\vee q)\\wedge\\overline{p\\wedge q}",n:2,f:function(p,q){return(p||q)&&!(p&&q)}},{t:"(p\\wedge q)\\Rightarrow r",n:3,f:function(p,q,r){return imp(p&&q,r)}},{t:"(p\\vee q)\\wedge r",n:3,f:function(p,q,r){return(p||q)&&r}},{t:"p\\Rightarrow(q\\Rightarrow r)",n:3,f:function(p,q,r){return imp(p,imp(q,r))}}];
+var G21={
+ dneg:function(){var o=pq();return K("g10l_dneg",pqS(o)+"គណនាតម្លៃភាពពិតនៃ $\\overline{\\overline{p}}$ ។ ($1$ = ពិត · $0$ = មិនពិត)",[A(bn(o.p[1]),null,"num","តម្លៃ =")],"$\\overline{\\overline{p}}=p$ ⇒ $p$ "+tv(o.p[1]))},
+ dmand:function(){var o=pq(),v=!(o.p[1]&&o.q[1]);return K("g10l_dmand",pqS(o)+"គណនា $\\overline{p\\wedge q}$ និង $\\overline{p}\\vee\\overline{q}$ ។ ($1$/$0$)",[A(bn(v),null,"num","$\\overline{p\\wedge q}$ ="),A(bn(!o.p[1]||!o.q[1]),null,"num","$\\overline{p}\\vee\\overline{q}$ =")],"ដឺម៉ហ្គង់ ៖ $\\overline{p\\wedge q}=\\overline{p}\\vee\\overline{q}$ ⇒ ទាំងពីរ "+tv(v))},
+ conv:function(){var o=pq(),v=imp(o.q[1],o.p[1]);return K("g10l_conv",pqS(o)+"សំណើច្រាសនៃ $p\\Rightarrow q$ គឺ $q\\Rightarrow p$ ។ គណនាតម្លៃភាពពិតរបស់វា ($1$/$0$)",[A(bn(v),null,"num","តម្លៃ =")],"$q\\Rightarrow p$ មិនពិតលុះត្រាតែ $q$ ពិត និង $p$ មិនពិត ⇒ "+tv(v))},
+ imp3:function(){var p=ri(0,1),q=ri(0,1);return K("g10l_imp3","ដោយ ត.$(p)="+p+"$ និង ត.$(q)="+q+"$ ។ គណនាតម្លៃភាពពិតនៃ $p\\Rightarrow q$ , សំណើច្រាស $q\\Rightarrow p$ និងសំណើផ្ទុយពីសម្មតិកម្ម $\\overline{q}\\Rightarrow\\overline{p}$ ($1$/$0$)",[A(bn(imp(p,q)),null,"num","$p\\Rightarrow q$ ="),A(bn(imp(q,p)),null,"num","$q\\Rightarrow p$ ="),A(bn(imp(!q,!p)),null,"num","$\\overline{q}\\Rightarrow\\overline{p}$ =")],"ផ្ទុយពីសម្មតិកម្ម មានតម្លៃដូច $p\\Rightarrow q$ ជានិច្ច ⇒ "+bn(imp(p,q)))},
+ iff:function(){var o=pq(),p=o.p[1],q=o.q[1];return K("g10l_iff",pqS(o)+"គណនា $p\\Rightarrow q$ , $q\\Rightarrow p$ និង $p\\Leftrightarrow q=(p\\Rightarrow q)\\wedge(q\\Rightarrow p)$ ($1$/$0$)",[A(bn(imp(p,q)),null,"num","$p\\Rightarrow q$ ="),A(bn(imp(q,p)),null,"num","$q\\Rightarrow p$ ="),A(bn(p===q),null,"num","$p\\Leftrightarrow q$ =")],"$p\\Leftrightarrow q$ ពិតលុះត្រាតែ $p$ និង $q$ មានតម្លៃភាពពិតដូចគ្នា ⇒ "+tv(p===q))},
+ nsc:function(){var k=ri(1,6),m=ri(1,6),c=ri(1,4),p,q,s;
+   if(c===1){p="$x>"+(k+2)+"$";q="$x>"+k+"$";s="$p\\Rightarrow q$ ពិត ប៉ុន្តែ $q\\Rightarrow p$ មិនពិត (ឧ. $x="+(k+1)+"$) ⇒ $p$ គ្រប់គ្រាន់ តែមិនចាំបាច់"}
+   else if(c===2){p="$x>"+k+"$";q="$x>"+(k+2)+"$";s="$q\\Rightarrow p$ ពិត ប៉ុន្តែ $p\\Rightarrow q$ មិនពិត (ឧ. $x="+(k+1)+"$) ⇒ $p$ ចាំបាច់ តែមិនគ្រប់គ្រាន់"}
+   else if(c===3){p="$x+"+k+"="+(k+m)+"$";q="$x="+m+"$";s="$p\\Leftrightarrow q$ ⇒ ចាំបាច់ និងគ្រប់គ្រាន់"}
+   else{p="$x^2>"+(k*k)+"$";q="$x>0$";s="$x=-"+(k+1)+"$ ធ្វើឱ្យ $p$ ពិត $q$ មិនពិត · $x=\\tfrac12$ ធ្វើឱ្យ $q$ ពិត $p$ មិនពិត ⇒ មិនចាំបាច់ មិនគ្រប់គ្រាន់"}
+   return K("g10l_nsc","សម្រាប់ចំនួនពិត $x$ ៖ $p$ ៖ «"+p+"» · $q$ ៖ «"+q+"» ។ កំណត់ទំនាក់ទំនង ៖ $1$ = $p$ គ្រប់គ្រាន់ តែមិនចាំបាច់ដើម្បី $q$ · $2$ = $p$ ចាំបាច់ តែមិនគ្រប់គ្រាន់ · $3$ = $p$ ចាំបាច់ និងគ្រប់គ្រាន់ · $4$ = មិនចាំបាច់ ក៏មិនគ្រប់គ្រាន់",[A(c,null,"num","កូដ =")],s)},
+ tt:function(){var F=pick(TTF),n=F.n,rows=1<<n,cnt=0;for(var i=0;i<rows;i++){var v=[];for(var j=n-1;j>=0;j--)v.push(!!((i>>j)&1));if(F.f.apply(null,v))cnt++}
+   return K("g10l_tt","សង់តារាងភាពពិតនៃ $"+F.t+"$ ("+(n===2?"$p,q$ ":"$p,q,r$ ")+"មាន $"+rows+"$ ជួរ) ។ រកចំនួនជួរដែលមានតម្លៃភាពពិត $1$",[A(cnt,null,"num","ចំនួនជួរពិត =")],"រាប់ជួរដែលតម្លៃចុងក្រោយ $=1$ ⇒ $"+cnt+"$ ក្នុងចំណោម $"+rows+"$")},
+ pdir:function(){var m=ri(1,9),n=ri(1,9);return K("g10l_pdir","សម្រាយដោយផ្ទាល់ ៖ បើ $x=2m+1$ និង $y=2n+1$ ជាចំនួនសេស នោះ $x+y=2k$ ជាចំនួនគូ ។ ចំពោះ $m="+m+"$ , $n="+n+"$ រក $x$ , $y$ និង $k$",[A(2*m+1,null,"num","x ="),A(2*n+1,null,"num","y ="),A(m+n+1,null,"num","k =")],"$x+y=(2m+1)+(2n+1)=2(m+n+1)$ ⇒ $k="+(m+n+1)+"$")},
+ pcp:function(){var n=ri(1,12),p=(n*n)%2===0,q=n%2===0;return K("g10l_pcp","បញ្ជាក់ «បើ $n^2$ គូ នោះ $n$ គូ» តាមសំណើផ្ទុយពីសម្មតិកម្ម ។ ចំពោះ $n="+n+"$ ៖ $p$ ៖ «$n^2$ គូ» · $q$ ៖ «$n$ គូ» ។ គណនា $\\overline{q}$ , $\\overline{p}$ និង $\\overline{q}\\Rightarrow\\overline{p}$ ($1$/$0$)",[A(bn(!q),null,"num","$\\overline{q}$ ="),A(bn(!p),null,"num","$\\overline{p}$ ="),A(bn(imp(!q,!p)),null,"num","$\\overline{q}\\Rightarrow\\overline{p}$ =")],"$n"+(q?"":"")+"="+n+"$ ⇒ $\\overline{q}\\Rightarrow\\overline{p}$ មានតម្លៃដូច $p\\Rightarrow q$ ដែលពិតជានិច្ច ⇒ $1$")},
+ pcon:function(){var k=pick([2,3,5,7]),c=ri(1,9);return K("g10l_pcon","សម្រាយតាមសំណើផ្ទុយពីការពិត ៖ ឧបមា $\\sqrt{"+k+"}=\\dfrac{a}{b}$ (ប្រភាគសម្រួលអស់) ⇒ $a^2="+k+"b^2$ ⇒ $a$ ចែកដាច់នឹង $"+k+"$ ។ ឧបមា $a="+k+"c$ ដែល $c="+c+"$ ។ គណនា $a^2$ និង $b^2$",[A(k*k*c*c,null,"num","a² ="),A(k*c*c,null,"num","b² =")],"$a="+(k*c)+"$ ⇒ $a^2="+(k*k*c*c)+"$ ⇒ $b^2=a^2\\div"+k+"="+(k*c*c)+"$ ⇒ $b$ ក៏ចែកដាច់នឹង $"+k+"$ ផ្ទុយនឹងប្រភាគសម្រួលអស់")},
+ pbic:function(){var a=ri(2,5),m=ri(-6,6),b=ri(-8,8),c=a*m+b;return K("g10l_pbic","សម្រាយតាមទ្វេលក្ខខណ្ឌ ៖ $"+poly([a,b])+"="+c+"\\iff x=m$ ។ រក $m$",[A(m,null,"num","m =")],"$"+poly([a,b])+"="+c+"\\iff "+a+"x="+(c-b)+"\\iff x="+m+"$")},
+ pcex:function(){var a=ri(1,3),b=ri(2,12),n=1;while(n<60&&n*n<a*n+b)n++;return K("g10l_pcex","សំណើ «គ្រប់ចំនួនគត់វិជ្ជមាន $n$ គេមាន $n^2<"+a+"n+"+b+"$» មិនពិត ។ រកឧទាហរណ៍ផ្ទុយតូចបំផុត $n$ (ចំនួនគត់វិជ្ជមានតូចបំផុតដែល $n^2\\ge"+a+"n+"+b+"$)",[A(n,null,"num","n =")],"សាក $n=1,2,\\dots$ ⇒ $n="+n+"$ ៖ $"+(n*n)+"\\ge"+(a*n+b)+"$")}
+};
+vx(21,1,[G21.dneg,G21.conv,G21.pdir]);
+vx(21,2,[G21.dmand,G21.imp3,G21.pcp,G21.pcex]);
+vx(21,3,[G21.iff,G21.nsc,G21.tt,G21.pcon,G21.pbic]);
+(function(){var g1=G[21][1],g2=G[21][2];
+  function lvs(lv,L){G[21][lv]=function(){return pick(L)()}}
+  lvs(5,[G21.dneg,G21.conv,G21.imp3,G21.pdir,G21.dmand,g1]);
+  lvs(6,[G21.iff,G21.nsc,G21.tt,G21.pcp,G21.pcex,G21.pbic,g2]);
+})();
 /* ២.២ សំណុំ */
 function rset(n,lo,hi){var s=[];while(s.length<n){var v=ri(lo,hi);if(s.indexOf(v)<0)s.push(v)}return s.sort(function(a,b){return a-b})}
 vx(22,1,[

@@ -58,7 +58,10 @@
 - `firestore.rules` is **not** deployed by git push: after changing it, an Admin must paste it into Firebase Console → Firestore → Rules → Publish.
 - Student pages (`test.html`, `exam.html`) use Firestore **Lite**, which has no timeout of its own: wrap every call with `to(promise, ms)` / `retry()`.
 
-## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v165`, `script.js?v=229`)
+## Current State (up to date as of 2026-11-26 · `sw.js` cache = `ngs-app-v166`, `script.js?v=230`)
+
+### ✅ Grade 10 lesson 2.1 «តក្កវិទ្យា» aligned (2026-11-26) — `practice10.js` (`G21` block before «២.២ សំណុំ»), `hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|21"]`
+- Hub: 5 sub-topics + 🌐 PISA, MoEYS notation ($\overline p$, $\wedge$, $\vee$, ត.(p)). 12 new forms `g10l_…` (answers 1/0 or counts), keys 5/6 own lists, PISA `P4[21]` = 5 forms `g10lp_…`. `PTK["10|21"]` has 5 points; PISA `kd` unmapped. Book pages 35–49 were not available; content follows the user's outline.
 
 ### ✅ Grade 10 lesson 1.2 «ចែកពហុធា · GCD/LCM · ប្រភាគសនិទាន» aligned (2026-11-26) — `practice10.js` (`G12` block before «២.១ តក្កវិទ្យា»), `hubdata.js`, `curriculum10.js`, `exam.js` `PTK["10|12"]`
 - Hub: 5 sub-topics + 🌐 PISA. 15 new forms `g10d_…`; PISA `P4[12]` rewritten (5 forms, `g10dp_…`, all `num`). Keys 5/6 have their own lists. `PTK["10|12"]` has 6 points; PISA `kd` stay unmapped. Book pages 22–34 were not available; content follows the outline the user supplied.
