@@ -228,10 +228,10 @@ P4[21]=[function(){var a=ri(12,25),g=Math.random()<.5,v=a>=18||g;
     return K("g10lp_cex","🛒 ហាងអះអាងថា «ផលិតផលណាតម្លៃលើស $"+P+"$ ដុល្លារ នោះមានអាយុកាល $\\ge"+L+"$ ឆ្នាំ» ។ ទិន្នន័យ (តម្លៃ , អាយុកាល) ៖ "+D.join(" ")+" ។ រាប់ចំនួនឧទាហរណ៍ផ្ទុយ (តម្លៃ $>"+P+"$ ប៉ុន្តែអាយុកាល $<"+L+"$)",
       [A(n,null,"num","ចំនួន =")],n?"ឧទាហរណ៍ផ្ទុយ ៖ "+ex.join(" ")+" ⇒ $"+n+"$":"គ្មានឧទាហរណ៍ផ្ទុយ ⇒ $0$")}];
 P4[22]=[function(){var E=ri(15,30),F=ri(8,20),U=E+F-ri(2,Math.min(E,F)-1);
-    return Q("🗣️ ក្នុងថ្នាក់មួយ សិស្សរៀនអង់គ្លេស $"+E+"$ នាក់ រៀនបារាំង $"+F+"$ នាក់ ហើយសិស្សដែលរៀនយ៉ាងហោចណាស់មួយភាសា មាន $"+U+"$ នាក់។ តើមានសិស្សប៉ុន្មាននាក់ រៀនទាំងពីរភាសា?",
+    return K("g10sp_lang","🗣️ ក្នុងថ្នាក់មួយ សិស្សរៀនអង់គ្លេស $"+E+"$ នាក់ រៀនបារាំង $"+F+"$ នាក់ ហើយសិស្សដែលរៀនយ៉ាងហោចណាស់មួយភាសា មាន $"+U+"$ នាក់។ តើមានសិស្សប៉ុន្មាននាក់ រៀនទាំងពីរភាសា?",
       [A(E+F-U,null,"num","n(E∩F) =")],"$n(E\\cap F)=n(E)+n(F)-n(E\\cup F)="+E+"+"+F+"-"+U+"="+(E+F-U)+"$",GFV({k:2,names:["E","F"],lab:{a:"?",ab:"?",b:"?"},cap:["n(E) = "+E+" · n(F) = "+F,"n(E ∪ F) = "+U],shade:["ab"]}))},
   function(){var T=ri(35,50),A0=ri(15,30),B0=ri(10,25),I=ri(2,Math.min(A0,B0)-2),N=T-(A0+B0-I);while(N<0){T++;N=T-(A0+B0-I)}
-    return Q("📱 ស្ទង់មតិសិស្ស $"+T+"$ នាក់៖ $"+A0+"$ នាក់ប្រើ Facebook · $"+B0+"$ នាក់ប្រើ Telegram · $"+I+"$ នាក់ប្រើទាំងពីរ។ (ក) ប្រើយ៉ាងហោចណាស់មួយ? (ខ) មិនប្រើទាំងពីរ?",
+    return K("g10sp_survey","📱 ស្ទង់មតិសិស្ស $"+T+"$ នាក់៖ $"+A0+"$ នាក់ប្រើ Facebook · $"+B0+"$ នាក់ប្រើ Telegram · $"+I+"$ នាក់ប្រើទាំងពីរ។ (ក) ប្រើយ៉ាងហោចណាស់មួយ? (ខ) មិនប្រើទាំងពីរ?",
       [A(A0+B0-I,null,"num","(ក) ="),A(N,null,"num","(ខ) =")],"$n(A\\cup B)="+A0+"+"+B0+"-"+I+"="+(A0+B0-I)+"$ · $"+T+"-"+(A0+B0-I)+"="+N+"$",GFV({k:2,names:["F","T"],lab:{a:"?",ab:String(I),b:"?",out:"?"},cap:["n(U) = "+T,"n(F) = "+A0+" · n(T) = "+B0]}))}];
 P4[23]=[function(){var a=ri(20,60);
     return Q("🧱 ការ៉ូរាងការ៉េជ្រុង $"+a+"$ cm ។ គេចង់កាត់តាមអង្កត់ទ្រូង។ តើអង្កត់ទ្រូងវែងប៉ុន្មាន cm? (សរសេរជា $a\\sqrt b$ ឬទសភាគ)",
@@ -632,7 +632,44 @@ vx(22,2,[
    return K("set10_dm","$n(U)="+U+"$ , $n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cap B)="+i+"$ ។ រក $n(\\overline A\\cap\\overline B)$ និង $n(\\overline A\\cup\\overline B)$ (ច្បាប់ដឺម៉័រហ្គង់)",[A(U-(a+b-i),null,"num","n(Ā∩B̄) ="),A(U-i,null,"num","n(Ā∪B̄) =")],"$\\overline A\\cap\\overline B=\\overline{A\\cup B}$ ⇒ $"+U+"-"+(a+b-i)+"="+(U-(a+b-i))+"$ · $\\overline A\\cup\\overline B=\\overline{A\\cap B}$ ⇒ $"+U+"-"+i+"="+(U-i)+"$",GFV({k:2,lab:{a:"?",ab:String(i),b:"?",out:"?"},cap:["n(U) = "+U,"n(A) = "+a+" · n(B) = "+b]}))}]);
 vx(22,3,[
  function(){var t=set10Three();return K("set10_3v",t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)}]);
-P4[22].push(function(){var t=set10Three();return Q(t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)});
+P4[22].push(function(){var t=set10Three();return K("g10sp_three",t.txt+"រកចំនួនសិស្ស ៖ រៀនតែ $M$ · រៀន $M$ និង $P$ ប៉ុន្តែមិនរៀន $C$ · មិនរៀនមុខវិជ្ជាណាមួយ · រៀនតែមួយមុខ",t.a,t.s,t.f)});
+/* ២.២ សំណុំ (កែ ២០២៦-១១-២៦) — kd = g10s_… (PISA = g10sp_…) · ចម្លើយ fill-in (num) ទាំងអស់ (១ = ពិត/អនន្ត · ០ = មិនពិត)
+   កម្រិតបង្ហាញ ២ (គន្លឹះ 5) និង ៤ (គន្លឹះ 6) មានបញ្ជីផ្ទាល់ខ្លួន (មិនប្រើ fill56) */
+function sst(a){return"$\\{"+a.join(" , ")+"\\}$"}
+function inter(a,b){return a.filter(function(x){return b.indexOf(x)>=0})}
+function uni(a,b){return a.concat(b.filter(function(x){return a.indexOf(x)<0}))}
+var INF=[["$\\{x\\in\\mathbb N\\mid x<9\\}$",0],["$\\{x\\in\\mathbb Z\\mid |x|\\le4\\}$",0],["សំណុំចែកនៃ $12$",0],["សំណុំចំនួនបឋមតូចជាង $20$",0],["$\\{x\\in\\mathbb N\\mid x>5\\}$",1],["សំណុំពហុគុណនៃ $3$ ក្នុង $\\mathbb N$",1],["$\\{x\\in\\mathbb R\\mid0<x<1\\}$",1],["សំណុំចំនួនគូវិជ្ជមាន",1],["$\\{x\\in\\mathbb Z\\mid x<0\\}$",1],["សំណុំអក្សរក្នុងពាក្យ «គណិត»",0]];
+var G22={
+ emp:function(){var m=ri(1,9),sq=Math.random()<.5,k=sq?m*m:m*m+ri(1,2*m),n=sq?1:0;
+   return K("g10s_emp","គេឱ្យសំណុំ $A=\\{x\\in\\mathbb N\\mid x^2="+k+"\\}$ ។ រកចំនួនធាតុ $n(A)$ (បើ $A=\\emptyset$ នោះ $n(A)=0$)",[A(n,null,"num","n(A) =")],sq?"$x="+m+"$ ជាចំនួនគត់ធម្មជាតិ ⇒ $A=\\{"+m+"\\}$ ⇒ $n(A)=1$":"គ្មានចំនួនគត់ណាដែល $x^2="+k+"$ ⇒ $A=\\emptyset$ ⇒ $n(A)=0$")},
+ inf:function(){var L=shf(INF).slice(0,5),n=L.filter(function(e){return e[1]}).length;
+   return K("g10s_inf","ក្នុងចំណោមសំណុំ ៖ (១) "+L[0][0]+" (២) "+L[1][0]+" (៣) "+L[2][0]+" (៤) "+L[3][0]+" (៥) "+L[4][0]+" ។ តើមានប៉ុន្មានជាសំណុំអនន្ត? (សំណុំរាប់អស់ មានចំនួនធាតុកំណត់)",[A(n,null,"num","ចំនួនសំណុំអនន្ត =")],L.map(function(e,i){return"("+(i+1)+") "+(e[1]?"អនន្ត":"រាប់អស់")}).join(" · ")+" ⇒ $"+n+"$")},
+ eq:function(){var m=ri(2,4),n=ri(0,5),x0=ri(1,8),v=m*x0+n,p=v+ri(1,3),q=v+ri(4,7);
+   return K("g10s_eq","គេឱ្យ $A=\\{"+poly([m,n])+" , "+p+" , "+q+"\\}$ និង $B=\\{"+v+" , "+p+" , "+q+"\\}$ ។ រក $x$ ដើម្បីឱ្យ $A=B$",[A(x0,null,"num","x =")],"$A=B$ ⇒ $"+poly([m,n])+"="+v+"$ ⇒ $x="+x0+"$")},
+ psub:function(){var n=ri(2,6);return K("g10s_psub","សំណុំ $A$ មាន $"+n+"$ ធាតុ ។ រកចំនួនសំណុំរងផ្ទាល់នៃ $A$ ($B\\subset A$ ដែល $B\\ne A$) និងចំនួនសំណុំរងផ្ទាល់មិនទទេ",[A(Math.pow(2,n)-1,null,"num","សំណុំរងផ្ទាល់ ="),A(Math.pow(2,n)-2,null,"num","មិនទទេ =")],"សំណុំរងទាំងអស់ $2^{"+n+"}="+Math.pow(2,n)+"$ ⇒ ដក $A$ ⇒ $"+(Math.pow(2,n)-1)+"$ ⇒ ដក $\\emptyset$ ទៀត ⇒ $"+(Math.pow(2,n)-2)+"$")},
+ comp:function(){var U=ri(20,60),a=ri(3,U-3);return K("g10s_comp","ដោយ $n(U)="+U+"$ និង $n(A)="+a+"$ ។ រក $n(\\overline{A})$ , $n(A\\cap\\overline{A})$ និង $n(A\\cup\\overline{A})$",[A(U-a,null,"num","n(Ā) ="),A(0,null,"num","n(A∩Ā) ="),A(U,null,"num","n(A∪Ā) =")],"$n(\\overline A)=n(U)-n(A)="+(U-a)+"$ · $A\\cap\\overline A=\\emptyset$ ⇒ $0$ · $A\\cup\\overline A=U$ ⇒ $"+U+"$")},
+ disj:function(){var a=ri(3,20),b=ri(3,20);return K("g10s_disj","សំណុំ $A$ និង $B$ ដាច់គ្នា ($A\\cap B=\\emptyset$) ដែល $n(A)="+a+"$ និង $n(B)="+b+"$ ។ រក $n(A\\cap B)$ និង $n(A\\cup B)$",[A(0,null,"num","n(A∩B) ="),A(a+b,null,"num","n(A∪B) =")],"ដាច់គ្នា ⇒ $n(A\\cap B)=0$ ⇒ $n(A\\cup B)="+a+"+"+b+"="+(a+b)+"$")},
+ dm2:function(){var U=ri(30,80),a=ri(10,25),b=ri(10,25),c=ri(2,Math.min(a,b)-2);if(a+b-c>U)U=a+b-c+ri(1,10);
+   return K("g10s_dm2","$n(U)="+U+"$ , $n(A)="+a+"$ , $n(B)="+b+"$ , $n(A\\cap B)="+c+"$ ។ រក $n(\\overline{A\\cup B})$ និង $n(\\overline{A\\cap B})$",[A(U-(a+b-c),null,"num","មិនក្នុង A∪B ="),A(U-c,null,"num","មិនក្នុង A∩B =")],"$n(A\\cup B)="+(a+b-c)+"$ ⇒ $n(\\overline{A\\cup B})="+(U-(a+b-c))+"$ · $n(\\overline{A\\cap B})="+U+"-"+c+"="+(U-c)+"$ (ដឺម៉ហ្គង់)")},
+ dist:function(){var A1=rset(ri(4,6),1,12),B1=rset(ri(4,6),1,12),C1=rset(ri(4,6),1,12),t=Math.random()<.5,l,r;
+   if(t){l=inter(A1,uni(B1,C1));r=uni(inter(A1,B1),inter(A1,C1))}else{l=uni(A1,inter(B1,C1));r=inter(uni(A1,B1),uni(A1,C1))}
+   return K("g10s_dist","គេឱ្យ $A="+sst(A1).slice(1,-1)+"$ , $B="+sst(B1).slice(1,-1)+"$ , $C="+sst(C1).slice(1,-1)+"$ ។ រក $n\\big("+(t?"A\\cap(B\\cup C)":"A\\cup(B\\cap C)")+"\\big)$ និង $n\\big("+(t?"(A\\cap B)\\cup(A\\cap C)":"(A\\cup B)\\cap(A\\cup C)")+"\\big)$",[A(l.length,null,"num","ខាងឆ្វេង ="),A(r.length,null,"num","ខាងស្ដាំ =")],"លក្ខណៈបំបែក ⇒ ពីរមានចំនួនធាតុស្មើគ្នា $="+l.length+"$")},
+ assoc:function(){var A1=rset(ri(4,6),1,12),B1=rset(ri(4,6),1,12),C1=rset(ri(4,6),1,12),n1=uni(A1,uni(B1,C1)).length,n2=inter(A1,inter(B1,C1)).length;
+   return K("g10s_assoc","គេឱ្យ $A="+sst(A1).slice(1,-1)+"$ , $B="+sst(B1).slice(1,-1)+"$ , $C="+sst(C1).slice(1,-1)+"$ ។ ដោយប្រើលក្ខណៈផ្តុំ រក $n\\big(A\\cup(B\\cup C)\\big)$ និង $n\\big((A\\cap B)\\cap C\\big)$",[A(n1,null,"num","n(A∪B∪C) ="),A(n2,null,"num","n(A∩B∩C) =")],"លក្ខណៈផ្តុំ ⇒ $A\\cup(B\\cup C)=(A\\cup B)\\cup C$ មាន $"+n1+"$ ធាតុ · ប្រសព្វទាំងបី មាន $"+n2+"$ ធាតុ")}
+};
+vx(22,1,[G22.emp,G22.inf,G22.psub]);
+vx(22,2,[G22.comp,G22.dm2,G22.eq,G22.disj]);
+vx(22,3,[G22.dist,G22.assoc,G22.dm2,G22.eq]);
+(function(){var g1=G[22][1],g2=G[22][2];
+  function lvs(lv,L){G[22][lv]=function(){return pick(L)()}}
+  lvs(5,[G22.emp,G22.inf,G22.disj,G22.comp,G22.psub,g1]);
+  lvs(6,[G22.eq,G22.dm2,G22.dist,G22.assoc,G22.comp,g2]);
+})();
+P4[22].push(
+ function(){var N=ri(40,120),a=ri(10,N-20),c=ri(5,Math.min(a,N-a-5)),b=ri(c+2,N-a+c-2),u=a+b-c;
+   return K("g10sp_cust","🛍️ ស្ទង់មតិអតិថិជន $"+N+"$ នាក់៖ $"+a+"$ នាក់ទិញនំ · $"+b+"$ នាក់ទិញភេសជ្ជៈ · $"+c+"$ នាក់ទិញទាំងពីរ។ (ក) ទិញតែនំ? (ខ) មិនទិញអ្វីសោះ?",[A(a-c,null,"num","(ក) ="),A(N-u,null,"num","(ខ) =")],"តែនំ $="+a+"-"+c+"="+(a-c)+"$ · ទិញយ៉ាងតិចមួយ $="+u+"$ ⇒ មិនទិញ $="+N+"-"+u+"="+(N-u)+"$")},
+ function(){var N=ri(300,900),a=ri(50,150),b=ri(50,150);
+   return K("g10sp_comp","🚌 សាលាមានសិស្ស $"+N+"$ នាក់ ។ $"+a+"$ នាក់ជិះម៉ូតូ និង $"+b+"$ នាក់ជិះកង់ (គ្មានអ្នកណាជិះទាំងពីរ ដូច្នេះដាច់គ្នា) ។ (ក) មិនជិះម៉ូតូ? (ខ) ដើរជើង (មិនជិះទាំងពីរ)?",[A(N-a,null,"num","(ក) ="),A(N-a-b,null,"num","(ខ) =")],"$n(\\overline A)="+N+"-"+a+"="+(N-a)+"$ · $n(A\\cup B)="+a+"+"+b+"="+(a+b)+"$ ⇒ $"+N+"-"+(a+b)+"="+(N-a-b)+"$")});
 /* ២.៣ ចំនួន (កែ ២០២៦-១១-២៥) — ៦ កម្រិត តាមសៀវភៅក្រសួង · ប្រអប់បំពេញចម្លើយ (គ្មាន MCQ) · kd = g10n_… ឬ s10_/abs10_
    ចំណុច ១ ចំនួនពិត · តម្លៃដាច់ខាត · ចំណែកថ្នាក់ | ចំណុច ២ រ៉ាឌីកាល់ | ចំណុច ៣ ប្រព័ន្ធរបាប់គោល ១០ · ២
    កម្រិតបង្ហាញ ១–៥ = គន្លឹះ 1·5·2·6·3 (មិនប្តូរលេខគន្លឹះ) · PISA = P4[23] */
