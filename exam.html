@@ -34,6 +34,7 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 .paper,.paper *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .acn{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:8px 12px;font-size:.85rem;margin-top:10px}
 .ac{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.6);padding:16px}
+.pvb #app{filter:blur(8px);pointer-events:none;user-select:none}.pvo{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(185,28,28,.88);color:#fff;padding:24px;text-align:center;font-weight:700;font-size:1.1rem}
 .ac>div{background:#fff;border-radius:18px;padding:22px;max-width:380px;text-align:center}.ac .big{font-size:2.6rem}
 .net{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:60;background:#1e293b;color:#fff;border-radius:999px;padding:8px 16px;font-size:.85rem;max-width:92vw;text-align:center}
 @media print{body{display:none}}
@@ -110,7 +111,7 @@ async function start(){
   app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${M.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
     <label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>
     <p class=note>• មើលប្រធានលើទូរស័ព្ទ ហើយ<b>សរសេរចម្លើយលើក្រដាស</b>របស់អ្នក<br>• អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ<br>• ឈ្មោះមួយបើកបានតែលើឧបករណ៍មួយ</p>
-    <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ថតអេក្រង់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។${LX()?`<br>⚠️ <b>ច្បាប់៖</b> អនុញ្ញាតឱ្យចាកចេញបានមិនលើស <b>${kn(LX())} ដង</b>។ លើសនេះ វិញ្ញាសានឹង<b>បិទដោយស្វ័យប្រវត្តិ</b> (រួមទាំងការ Refresh ទំព័រក៏រាប់ជាការចាកចេញដែរ)។`:""}</div>
+    <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ថតអេក្រង់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។<ul style="margin:6px 0 6px 18px;padding:0;text-align:left"><li>ហាមប្តូរ Tab ឬចាកចេញពីអេក្រង់ប្រឡង។</li><li>ហាមបំបែកអេក្រង់ (Split Screen) ឬបើកកម្មវិធីអណ្តែតពីលើ (Floating Window)។</li><li>ហាមប្រើមុខងារគូសរង្វង់ស្វែងរក (Circle to Search) ឬកម្មវិធី AI ជំនួយផ្សេងៗ។</li><li>ប្រព័ន្ធនឹងធ្វើឱ្យអេក្រង់ព្រាលដោយស្វ័យប្រវត្តិ និងរាប់ចូលជាការបំពានវិន័យ (ដល់កម្រិតកំណត់នឹងបញ្ជូនសន្លឹកប្រឡងដោយស្វ័យប្រវត្តិ)។</li></ul>${LX()?`<br>⚠️ <b>ច្បាប់៖</b> អនុញ្ញាតឱ្យចាកចេញបានមិនលើស <b>${kn(LX())} ដង</b>។ លើសនេះ វិញ្ញាសានឹង<b>បិទដោយស្វ័យប្រវត្តិ</b> (រួមទាំងការ Refresh ទំព័រក៏រាប់ជាការចាកចេញដែរ)។`:""}</div>
     <p id=er class=acn hidden></p><button class=btn id=go>📄 បើកវិញ្ញាសា</button></div>`;
   $("go").onclick=go;
 }
@@ -171,11 +172,20 @@ function push(now){clearTimeout(pushT);pushT=setTimeout(async()=>{const dv=LS.ge
 function warn(t,sub){let w=document.querySelector(".ac");if(!w){w=document.createElement("div");w.className="ac";document.body.appendChild(w)}
   w.innerHTML=`<div><div class=big>⚠️</div><div style="font-weight:700;font-size:1.05rem">${t}</div><p class=note>${sub}</p><button class=btn id=acOk>យល់ព្រម</button></div>`;$("acOk").onclick=()=>w.remove()}
 function away(){if(!acOn||over||awayAt)return;awayAt=Date.now()}
-function back(){if(!acOn||over||!awayAt)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;AC.lv++;AC.lt+=Math.round(d);acSave();
+function back(){if(!acOn||over||!awayAt||spl)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;AC.lv++;AC.lt+=Math.round(d);acSave();
   if(LX()&&AC.lv>=LX()){lockOut();return}
   warn("អ្នកបានចាកចេញពីទំព័រប្រឡង (លើកទី "+kn(AC.lv)+(LX()?"/"+kn(LX()):"")+")","រយៈពេល "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ"+(LX()?" · "+(LX()-AC.lv===1?"<b>⛔ ចាកចេញម្ដងទៀត វិញ្ញាសានឹងបិទ!</b>":"នៅសល់ "+kn(LX()-AC.lv)+" ដង មុនវិញ្ញាសាបិទ"):""))}
-document.addEventListener("visibilitychange",()=>{document.hidden?away():back()});
-window.addEventListener("blur",away);window.addEventListener("focus",back);window.addEventListener("pagehide",away);
+/* 🛡️ Blur/Split-Screen → ព្រាលសំណួរភ្លាម + ផ្ទាំងក្រហម · រាប់ចូល AC.lv តែមួយ (awayAt ការពាររាប់ជាន់ blur+visibilitychange) */
+let spl=false,blurred=false;
+function pvUpd(){const on=acOn&&!over&&(spl||blurred||document.hidden);document.body.classList.toggle("pvb",on);let o=$("pvo");
+  if(on&&!o){o=document.createElement("div");o.id="pvo";o.className="pvo";o.innerHTML="<div>⚠️ ប្រព័ន្ធរកឃើញការចាកចេញ ឬបំបែកអេក្រង់!<br>សូមបើកពេញអេក្រង់ដើម្បីបន្ត</div>";document.body.appendChild(o)}else if(!on&&o)o.remove()}
+function splitChk(){if(!acOn||over){if(spl){spl=false}pvUpd();return}
+  const ae=document.activeElement,typ=ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"),mob=matchMedia("(pointer:coarse)").matches;
+  const bad=mob&&!typ&&window.outerHeight>0&&screen.availHeight>0&&window.outerHeight/screen.availHeight<0.78;
+  if(bad&&!spl){spl=true;away()}else if(!bad&&spl){spl=false;back()}pvUpd()}
+document.addEventListener("visibilitychange",()=>{document.hidden?away():back();pvUpd()});
+window.addEventListener("blur",()=>{blurred=true;away();pvUpd()});window.addEventListener("focus",()=>{blurred=false;back();pvUpd()});window.addEventListener("pagehide",away);
+window.addEventListener("resize",splitChk);window.addEventListener("orientationchange",()=>setTimeout(splitChk,400));setInterval(splitChk,2000);
 const no=e=>{if(!acOn||over)return;const inp=e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="SELECT");if(e.type==="contextmenu"||e.type==="selectstart"||e.type==="dragstart"){if(!inp)e.preventDefault();return}
   e.preventDefault();AC.cp++;acSave();warn("មិនអនុញ្ញាតឱ្យចម្លងវិញ្ញាសាទេ","ការព្យាយាមនេះត្រូវបានកត់ត្រា (លើកទី "+kn(AC.cp)+")")};
 ["copy","cut","paste","contextmenu","selectstart","dragstart"].forEach(t=>document.addEventListener(t,no,true));
