@@ -1998,7 +1998,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=8", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=13"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=16","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=8", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=14"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=16","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];

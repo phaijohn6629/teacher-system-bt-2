@@ -138,8 +138,8 @@ $("cuNow").onclick=function(){
   var r=document.querySelector("#cuBody tr[data-wk='"+w+"']");if(r)r.scrollIntoView({behavior:"smooth",block:"center"});
 };
 /* ---------- ជើងក្រោម (រក្សាទុកក្នុងកម្មវិធីរុករក) ---------- */
-var FK="cuFt-v1",FT={pl:"រាជធានីភ្នំពេញ",d:"",kt:"",pre:"",pc:"",hd:"ផៃ ចន",dr:"សម្ប កំសាន្ត"};
-try{var sv=JSON.parse(localStorage.getItem(FK)||"null");if(sv)for(var k in sv)FT[k]=sv[k]}catch(x){}
+var FK="cuFt-v1",FT={pl:"រាជធានីភ្នំពេញ",d:"",kt:"",pre:"",pc:"",hd:"ផៃ ចន",dr:"គីម មិថុនា"};
+try{var sv=JSON.parse(localStorage.getItem(FK)||"null");if(sv)for(var k in sv)FT[k]=sv[k];if(FT.dr==="សម្ប កំសាន្ត")FT.dr="គីម មិថុនា"}catch(x){}
 function saveFT(){try{localStorage.setItem(FK,JSON.stringify(FT))}catch(x){}}
 function ftDates(){
   var t=FT.d&&/^\d{4}-\d{2}-\d{2}$/.test(FT.d)?FT.d.split("-").map(Number):null,n=new Date(),ref=t||[n.getFullYear(),n.getMonth()+1,n.getDate()];
@@ -153,7 +153,7 @@ function footHtml(){
   var D=ftDates();
   return"<div class=cuf><div class=cuf1>"+esc2(D.lun)+"</div><div class=cuf1>"+esc2(D.gre)+"</div>"+
    "<div class=cuk>"+
-   "<div class=cuk3><div class=cuh3>បានឃើញ និងឯកភាព<br><b>ជ.នាយកវិទ្យាល័យ</b><br><b>នាយករងទទួលបន្ទុកសាលារៀនជំនាន់ថ្មី</b></div><div class=cugp style='height:22mm'></div><b class=cunm>"+esc2(FT.dr)+"</b></div>"+
+   "<div class=cuk3><div class=cuh3>បានឃើញ និងឯកភាព<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b></div><div class=cugp style='height:22mm'></div><b class=cunm>"+esc2(FT.dr)+"</b></div>"+
    "<div class=cuk2><div class=cuh3>បានឃើញ និងពិនិត្យ<br><b>ប្រធានក្រុមបច្ចេកទេស</b></div><div class=cugp style='height:20mm'></div><b class=cunm>"+esc2(FT.hd)+"</b></div>"+
    "<div class=cuk1><div class=cuh3><b>អ្នករៀបចំកម្មវិធី</b></div><div class=cugp style='height:17mm'></div><b class=cunm>"+esc2(preName())+"</b></div>"+
    "</div></div>";
