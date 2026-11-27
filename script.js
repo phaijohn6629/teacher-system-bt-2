@@ -3096,7 +3096,7 @@ function validBackup(o){
   return objs.every(function(k){return o[k]==null||typeof o[k]==="object"});
 }
 /* Backup៖ ទិន្នន័យក្នុង memory (ទម្រង់ចាស់ · Restore បាន) + Admin៖ គ្រប់ collection ពី Cloud (cloud.{collection}.{id}) */
-var BKC=["app","cfg","users","tasks","rs","wr","ah","sched","ts","cx","mc","mclog","lsn","sig","profiles","lib","exrows","obsrows","qb","qbq","qimg","pcls","prt","mt","plc","tests","tkeys","subs","timg","mcp","hub","att","exams"];
+var BKC=["app","cfg","users","tasks","rs","wr","ah","sched","ts","cx","mc","mclog","lsn","sig","profiles","lib","exrows","obsrows","qb","qbq","qimg","pcls","xcls","prt","mt","plc","tests","tkeys","subs","timg","mcp","hub","att","exams"];
 function bkCloud(){
   var F=window.FB,out={},err=[];if(!F||!window.db||!F.getDocs)return Promise.resolve({cloud:null,err:["offline"]});
   var one=function(c,q){return F.getDocs(q||F.collection(window.db,c)).then(function(sn){var o=out[c]||(out[c]={});sn.forEach(function(d){o[d.id]=d.data()})}).catch(function(e){err.push(c+": "+(e.code||e.message))})};

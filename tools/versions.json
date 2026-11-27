@@ -52,8 +52,8 @@
   "v": 1
  },
  "exam.js": {
-  "hash": "87f3ec3b0afaa3079f698e98b1b70bd770bf153f",
-  "v": 143
+  "hash": "029dac2e2ac8e5aa0c4849eff3ada2bbefcdbc5a",
+  "v": 144
  },
  "excerpt.js": {
   "hash": "871c599d699c90904b473d1282ba7fd822651947",
@@ -208,16 +208,16 @@
   "v": 2
  },
  "quiz.js": {
-  "hash": "f0b415e8cfaaaad79da29c60341d67f61c1d6425",
-  "v": 53
+  "hash": "c1a7eed1e73f5a11168eeedc86808fb0d3074d0c",
+  "v": 54
  },
  "sched.js": {
   "hash": "d2a41b9c475b3f86fb62a75d4be9d86ddb4baa6d",
   "v": 29
  },
  "script.js": {
-  "hash": "739a636a0b5674fdce54c4119db110f57a3fdfda",
-  "v": 244
+  "hash": "c7be7a1e538fdc455a288956a89de80bf3023e6b",
+  "v": 245
  },
  "slide_presenter.css": {
   "hash": "d0465ba9612c92a6bf85988f1bac8094256d33c2",
@@ -228,8 +228,8 @@
   "v": 5
  },
  "storeadm.js": {
-  "hash": "7e7525271a314501027e8838ddbb8db9c11c9e7d",
-  "v": 2
+  "hash": "f0adaa11fc7d782641bec9c5dce829f136761e46",
+  "v": 3
  },
  "style.css": {
   "hash": "340a4849310dc5f2738577c83c051770956c485b",
@@ -246,5 +246,9 @@
  "wheel.js": {
   "hash": "160df31ca31a4112603e4750965af5648ca55796",
   "v": 3
+ },
+ "xclass.js": {
+  "hash": "244f5d36f17dc12cfcf4dc6bb8b32a15da6f7eab",
+  "v": 2
  }
 }

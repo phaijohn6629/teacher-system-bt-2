@@ -86,8 +86,13 @@ function pickView(){
   $("tools").hidden=true;$("sub").textContent="វិទ្យាល័យបឹងត្របែក";
   const live=new Set((open||[]).map(x=>norm(x.m.cls)));
   const groups=[7,8,9,10,11,12].map(g=>({g,l:CLASSES.filter(c=>parseInt(c)===g)})).filter(x=>x.l.length);
+  /* 🟢 ថ្នាក់បន្ថែម / សិស្សក្រៅប្រព័ន្ធ៖ ថ្នាក់ដែលមានវិញ្ញាសាកំពុងបើក ហើយមិនមែនជាថ្នាក់ផ្លូវការ (exm.ext ឬមិនមានក្នុង CLASSES) */
+  const off=new Set(CLASSES.map(norm)), extL=[];
+  (open||[]).forEach(x=>{const c=String(x.m.cls||"").trim();if(c&&!off.has(norm(c))&&!extL.some(y=>norm(y)===norm(c)))extL.push(c)});
+  const extH=extL.length?`<h3 class="gh">🟢 ថ្នាក់បន្ថែម · កំពុងបើកវិញ្ញាសា</h3><div class="cls">${extL.map(c=>`<button data-c="${esc(c)}">🟢 ${esc(c)}</button>`).join("")}</div>`:"";
   app.innerHTML=`<div class="card"><h2 style="margin:0 0 4px;font-size:1.05rem">🏫 ជ្រើសរើសថ្នាក់របស់អ្នក</h2>
    <p class="note" style="margin:0">ជ្រើសម្ដងគត់ · កម្មវិធីនឹងចងចាំ · 🟢 = មានវិញ្ញាសាកំពុងបើក</p>
+   ${extH}
    ${groups.map(x=>`<h3 class="gh">ថ្នាក់ទី ${kn(x.g)}</h3><div class="cls">${x.l.map(c=>`<button data-c="${esc(c)}">${live.has(norm(c))?"🟢 ":""}${esc(c)}</button>`).join("")}</div>`).join("")}
    <h3 class="gh">ថ្នាក់ផ្សេង (វាយដោយដៃ)</h3>
    <input type="text" id="cin" placeholder="ឧ. 10NGS-C" autocomplete="off" autocapitalize="characters">

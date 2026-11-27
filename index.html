@@ -680,19 +680,20 @@
 <script>/* រូបឡូហ្គោ៖ ទាញជាឯកសារ (cache បាន) រួចបម្លែងជា data URI សម្រាប់ផ្ទាំងបោះពុម្ព */
 [].forEach.call(document.querySelectorAll("img[data-inl]"),function(im){try{fetch(im.getAttribute("src")).then(function(r){return r.blob()}).then(function(b){var f=new FileReader();f.onload=function(){im.src=f.result;if(im.id==="ngsLogo"&&"LOGO" in window)window.LOGO=f.result};f.readAsDataURL(b)}).catch(function(){})}catch(e){}});</script>
 <script src="lsguard.js?v=2"></script>
-<script src="storeadm.js?v=2"></script>
+<script src="storeadm.js?v=3"></script>
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
 <script src="lessonplans.js?v=4"></script>
-<script src="script.js?v=244"></script>
+<script src="script.js?v=245"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=9"></script>
 <script src="sched.js?v=29"></script>
 <script src="fig.js?v=7"></script>
-<script src="quiz.js?v=53"></script>
+<script src="xclass.js?v=2"></script>
+<script src="quiz.js?v=54"></script>
 <script src="ptauto.js?v=2"></script>
 <script src="expaper.js?v=27"></script>
-<script src="exam.js?v=143"></script>
+<script src="exam.js?v=144"></script>
 <script src="monthly.js?v=11"></script>
 <script src="classorg.js?v=19"></script>
 <script src="timer.js?v=1"></script>

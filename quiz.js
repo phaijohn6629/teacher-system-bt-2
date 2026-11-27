@@ -172,7 +172,7 @@ function nLs(g,n){
 function cntChanged(g){if(CNT[g]&&!CNT[g].ok)return;delete CNT[g]}
 function needG(){
   if(QV==="bank")return fG&&fL?[kOf(fG,fL)]:[];
-  if(QV==="make"){var c=myClasses(mk.tid||who.id)[mk.ci||0],g=c?parseInt(c.n):0;return g?Object.keys(mk.ls).filter(function(k){return mk.ls[k]}).map(function(k){return kOf(g,k)}):[]}
+  if(QV==="make"){var c=myClasses(mk.tid||who.id)[mk.ci||0],g=c?XC.gc(c):0;return g?Object.keys(mk.ls).filter(function(k){return mk.ls[k]}).map(function(k){return kOf(g,k)}):[]}
   return[];
 }
 /* ---------- ចំណុចនៃមេរៀន (ពីកម្មវិធីសិក្សាលម្អិត CUR[g].W · «1. ឫសការ៉េ» → [1,"ឫសការ៉េ"]) · q.pt = លេខចំណុច (0/គ្មាន = មិនទាន់កំណត់) ---------- */
@@ -531,14 +531,14 @@ function texPreview(Q,fname){
 }
 
 /* ===================== 🧪 បង្កើតតេស្ត ===================== */
-function myClasses(tid){return(rs.c&&rs.c[tid])||[]}
+function myClasses(tid){return((rs.c&&rs.c[tid])||[]).concat(window.XC?XC.of(tid):[])}
 function renderMake(){
   if(!ready(needG())&&!qbErr)return renderQuiz();
   var adm=isAdm();if(!mk.tid)mk.tid=who.id;
-  var cl=myClasses(mk.tid);if(mk.ci>=cl.length)mk.ci=0;var c=cl[mk.ci],g=c?parseInt(c.n):0,C=window.CUR&&window.CUR[g];
+  var cl=myClasses(mk.tid);if(mk.ci>=cl.length)mk.ci=0;var c=cl[mk.ci],g=c?XC.gc(c):0,C=window.CUR&&window.CUR[g];
   var pool=allQ().filter(function(q){return q.g===g});
   var h="<div class=bar>"+(adm?"<label>គ្រូ៖</label><select id=qmT>"+data.map(function(t){return"<option value='"+esc(t.id)+"'"+(t.id===mk.tid?" selected":"")+">"+esc(t.name)+"</option>"}).join("")+"</select>":"")+
-    "<label>ថ្នាក់៖</label><select id=qmC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===mk.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
+    "<label>ថ្នាក់៖</label><select id=qmC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===mk.ci?" selected":"")+">"+esc(x.n)+XC.tag(x)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
     "<label>ចំណងជើង៖</label><input id=qmTi value='"+esc(mk.title||("តេស្ត "+(c?c.n:"")))+"' style='flex:1 1 220px'>"+
     "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
     "<div class=bar><label class=qm-pcl><input type=checkbox id=qmPc"+(mk.pc?" checked":"")+"> 🔑 ត្រូវការលេខកូដចូល</label><span class=note style='margin:0'>លេខ ៤ ខ្ទង់ បង្ហាញពេលបើកតេស្ត · គ្រូសរសេរលើក្ដារខៀន → អ្នកនៅក្រៅថ្នាក់ (មានតែតំណ) ធ្វើមិនបាន</span></div>"+
@@ -577,7 +577,7 @@ function ptBox(g,n,pool){
 }
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 function doShuffle(){
-  var cl=myClasses(mk.tid),c=cl[mk.ci],g=c&&parseInt(c.n);if(!c)return;
+  var cl=myClasses(mk.tid),c=cl[mk.ci],g=c&&XC.gc(c);if(!c)return;
   if(!Object.keys(mk.ls).some(function(k){return mk.ls[k]})){alert("សូមជ្រើសមេរៀនយ៉ាងតិចមួយ");return}
   var pool=allQ().filter(function(q){return q.g===g&&inMk(q)}),out=[],short=[];
   [1,2,3].forEach(function(v){var a=shuffle(pool.filter(function(q){return q.lv===v})),n=+mk.n[v]||0;if(a.length<n)short.push(LV[v]+" ខ្វះ "+kn(n-a.length));out=out.concat(a.slice(0,n))});
@@ -602,10 +602,10 @@ function openTest2(){
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
   mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)};if(q.sl)keys[q.id].s=String(q.sl).slice(0,4000)});
   var names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
-  var kind=mk.kind||"g",mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
+  var kind=c.isExternal?"g":(mk.kind||"g"),mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
   var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
   if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return Promise.resolve();
-  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:parseInt(c.n),dur:Math.round(+$("qmD").value||0),lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
+  var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:XC.gc(c),ext:!!c.isExternal,dur:Math.round(+$("qmD").value||0),lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
   var v2=openTest2.v2,pc=v2&&mk.pc?genPc():"";if(v2){T.v=2;T.pc=!!pc}else notify("⚠️ សូម Admin Publish firestore.rules កំណែថ្មី ដើម្បីបើកការការពារតេស្ត (លេខកូដ · មួយឈ្មោះមួយឧបករណ៍)");
   if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
@@ -893,7 +893,7 @@ function renderQuiz(ext){   /* ext = ហៅពី refreshView (Cloud sync) → �
   if(!who)return;
   if(ext===true&&QV!=="exam"){var ae=document.activeElement,qb0=$("qzBody");if(ae&&qb0&&qb0.contains(ae)&&/^(SELECT|INPUT|TEXTAREA)$/.test(ae.tagName))return}
   [].forEach.call($("qzSeg").querySelectorAll("[data-qv]"),function(b){b.setAttribute("aria-selected",b.dataset.qv===QV)});drvBtn();
-  if(!renderQuiz.g0){renderQuiz.g0=1;var c0=myClasses(who.id)[0],g0=c0?parseInt(c0.n):0;if(!fG&&GR.indexOf(g0)>=0)fG=g0}   /* ចាប់ផ្ដើមនៅថ្នាក់របស់គ្រូ (ទាញតែថ្នាក់នោះ) */
+  if(!renderQuiz.g0){renderQuiz.g0=1;var c0=myClasses(who.id)[0],g0=c0?XC.gc(c0):0;if(!fG&&GR.indexOf(g0)>=0)fG=g0}   /* ចាប់ផ្ដើមនៅថ្នាក់របស់គ្រូ (ទាញតែថ្នាក់នោះ) */
   var gs=needG();
   if((QV==="bank"||QV==="make")&&window.FB&&window.db)loadLegacy();   /* នៅពីក្រោយ · មិនរង់ចាំ */
   if(!ready(gs)&&!qbErr){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";ensureK(gs).then(renderQuiz);return}
@@ -913,8 +913,8 @@ function pcLoad(){return qGet("pcls",["o","==",who.id]).then(function(sn){var a=
 function pcRows(code){return qGet("prt",["c","==",code]).then(function(sn){var o={};sn.forEach(function(d){var v=d.data();o[v.k]=v});PC.rows[code]=o},function(e){console.error("prt:",e);PC.rows[code]={}})}
 function renderPrac(){
   if(!PC.list){$("qzBody").innerHTML="<p class=note>កំពុងផ្ទុក…</p>";pcLoad().then(renderPrac);return}
-  var cl=myClasses(who.id);if(PC.ci>=cl.length)PC.ci=0;var c=cl[PC.ci],g=c?parseInt(c.n):0;
-  var h="<div class=bar><label>ថ្នាក់៖</label><select id=pcC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===PC.ci?" selected":"")+">"+esc(x.n)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
+  var cl=myClasses(who.id);if(PC.ci>=cl.length)PC.ci=0;var c=cl[PC.ci],g=c?XC.gc(c):0;
+  var h="<div class=bar><label>ថ្នាក់៖</label><select id=pcC>"+(cl.length?cl.map(function(x,i){return"<option value="+i+(i===PC.ci?" selected":"")+">"+esc(x.n)+XC.tag(x)+" ("+kn(x.st.length)+" នាក់)</option>"}).join(""):"<option>— មិនទាន់មានថ្នាក់ —</option>")+"</select>"+
     "<a href='practice.html' target=_blank rel=noopener class=qz-prac style='margin-left:0'>🧮 បើកទំព័រហ្វឹកហាត់បន្ថែម</a></div>"+
     (PC.err?"<p class=cxwarn>⚠️ "+esc(PC.err)+"</p>":"")+
     "<p class=note style='margin:0 0 10px'>សិស្សបើកតំណ/QR របស់ថ្នាក់ → ជ្រើសឈ្មោះខ្លួន (ម្ដង) → ហាត់។ ពេលឆ្លើយត្រូវទាំងកម្រិត ពានរង្វាន់ 🏆 ចូលតារាងខាងក្រោម។</p>";
@@ -1029,7 +1029,7 @@ function pcExAct(a,p){
 function pcAct(a){
   var cl=myClasses(who.id),c=cl[PC.ci];if(!c)return;var p=PC.list.filter(function(x){return x.cls===c.n})[0];
   if(a==="pcnew"){
-    var code=uid().slice(-10),doc={o:who.id,cls:c.n,g:parseInt(c.n)||0,names:pcNames(c),open:true,cr:new Date().toISOString()};PC.busy=true;renderPrac();
+    var code=uid().slice(-10),doc={o:who.id,cls:c.n,g:XC.gc(c)||0,ext:!!c.isExternal,names:pcNames(c),open:true,cr:new Date().toISOString()};PC.busy=true;renderPrac();
     FB.setDoc(FB.doc(db,"pcls",code),doc).then(function(){PC.busy=false;PC.list.push(Object.assign({id:code},doc));PC.rows[code]={};renderPrac();notify("បានបង្កើតតំណហ្វឹកហាត់")},function(e){PC.busy=false;renderPrac();alert(e&&e.code==="permission-denied"?"គ្មានសិទ្ធិ · សូម Admin Publish firestore.rules កំណែថ្មី (មាន pcls/prt)":"មិនអាចបង្កើតបានទេ")});
     return;
   }

@@ -41,7 +41,7 @@ function katex(){
 function math(el){return katex().then(function(){try{renderMathInElement(el,{delimiters:[{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false}],throwOnError:false,macros:KXM})}catch(e){}})}
 function today(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-function myCls(){return(rs.c&&rs.c[X.E&&X.E.o||who.id])||[]}
+function myCls(){var t=X.E&&X.E.o||who.id;return((rs.c&&rs.c[t])||[]).concat(window.XC?XC.of(t):[])}
 function body(){return $("qzBody")}
 function lsList(g){var G=window.PRACT&&PRACT.GR[g];return G?G.les:[]}
 function lsTitle(g,ls){var t="";lsList(g).forEach(function(c){c[1].forEach(function(x){if(+x[0]===+ls)t=x[1]})});return t}
@@ -105,13 +105,13 @@ function newSec(g,ls){var T=window.EXGEN&&EXGEN.list(g+"|"+ls),s={ls:ls,lv:T&&T.
 function lxDef(){var v=0;try{v=+localStorage.getItem("exLxDef_"+(window.who&&who.id||""))}catch(e){}return v>=1&&v<=5?v:3}   /* លំនាំដើម ៣ ដង · ចងចាំតាមគ្រូម្នាក់ៗ */
 function lxOf(E){var v=+E.lx;return v>=1&&v<=5?v:3}
 function newExam(){
-  var c=(rs.c&&rs.c[who.id]||[])[0],g=c?parseInt(c.n):0,t=teacherOf(who.id)||{},ck="";try{ck=localStorage.getItem("exCk")||""}catch(e){}
+  var c=(rs.c&&rs.c[who.id]||[])[0],g=c?XC.gc(c):0,t=teacherOf(who.id)||{},ck="";try{ck=localStorage.getItem("exCk")||""}catch(e){}
   var d=new Date(),E={id:uid(),o:who.id,cls:c?c.n:"",title:TITLES[0],mo:d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2),sub:t.sub||"គណិតវិទ្យា",dur:45,date:today(),place:"រាជធានីភ្នំពេញ",au:t.name||who.name||"",ck:ck,ab:false,lx:lxDef(),secs:[],cr:new Date().toISOString()};
   var L=lsList(g),first=L[0]&&L[0][1][0];if(first)E.secs.push(newSec(g,first[0]));
   return E;
 }
-function gOf(E){return E.fmt==="cam"?(+E.camg||110):parseInt(E.cls)||0}
-function camDef(E){var c=parseInt(E.cls)||0;return 100+(c>=6&&c<=12?c:10)}
+function gOf(E){return E.fmt==="cam"?(+E.camg||110):XC.gn(E.cls)}
+function camDef(E){var c=XC.gn(E.cls);return 100+(c>=6&&c<=12?c:10)}
 function resetSecs(E){var g=gOf(E),L=lsList(g),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(g,f0[0])]:[];if(E.ab)E.secs.forEach(function(s){fill(s,g,"itB")})}
 function P(E){return{camg:E.camg,gt:E.fmt==="cam"&&window.PRACT&&PRACT.GR[gOf(E)]?PRACT.GR[gOf(E)].title:"",calc:E.calc!==false,font:E.font||"os",fmt:E.fmt||"",trk:E.trk||"",stp:!!E.stp,school:inf().school,title:E.title,mo:E.mo,sub:E.sub,cls:E.cls,dur:E.dur,date:E.date,place:E.place,au:E.au,ck:E.ck,secs:E.secs}}
 /* 📐 ទម្រង់បើក៖ ពិន្ទុសរុបតាមថ្នាក់ (៧–៩ = ២០ · ១០ = ៣០ · ១១–១២ = ២៥) · បែងស្មើលើចំនួនលំហាត់ (EXP.splitPts) → បូកត្រូវពិន្ទុវិញ្ញាសា */
@@ -213,7 +213,7 @@ function editor(){
     "<button type=button class=primary data-ex=online>📱 "+(on?"កំពុងប្រឡងអនឡាញ":"បើកប្រឡងអនឡាញ")+"</button></div>";
   if(on)h+=onlineBox();
   h+="<div class=ex-grid><div class=card><h3 style='margin-top:0'>ក្បាល និងជើងវិញ្ញាសា</h3><div class=fg>"+
-    "<div><label>ថ្នាក់</label><select data-ef=cls>"+cl.map(function(c){return"<option"+(c.n===E.cls?" selected":"")+">"+esc(c.n)+"</option>"}).join("")+(cl.some(function(c){return c.n===E.cls})?"":"<option selected>"+esc(E.cls)+"</option>")+"</select></div>"+
+    "<div><label>ថ្នាក់</label><select data-ef=cls>"+cl.map(function(c){return"<option"+(c.n===E.cls?" selected":"")+" value=\""+esc(c.n)+"\">"+esc(c.n)+XC.tag(c)+"</option>"}).join("")+(cl.some(function(c){return c.n===E.cls})?"":"<option selected>"+esc(E.cls)+"</option>")+"</select></div>"+
     "<div><label>ពុម្ពអក្សរ</label><select data-ef=font>"+Object.keys(EXP.FONTS).map(function(k){return"<option value="+k+((E.font||"os")===k?" selected":"")+">"+esc(EXP.FONTS[k].n)+"</option>"}).join("")+"</select></div>"+
     "<div><label>ទម្រង់ក្បាលវិញ្ញាសា</label><select data-ef=fmt><option value=''>🏫 ប្រឡងសាលា (ឈ្មោះសិស្ស · ហត្ថលេខា)</option><option value=bac"+(E.fmt==="bac"?" selected":"")+">📋 ទម្រង់បាក់ឌុប (មណ្ឌល · បន្ទប់ · តុ)</option><option value=dip"+(E.fmt==="dip"?" selected":"")+">🎓 ទម្រង់ឌីប្លូម ថ្នាក់ទី៩ (មណ្ឌល · បន្ទប់ · តុ)</option><option value=cam"+(E.fmt==="cam"?" selected":"")+">🇬🇧 Cambridge style (English · ក្រដាសសំណួរ + Mark scheme)</option></select></div>"+
     (E.fmt==="cam"?"<div><label>🇬🇧 កម្រិត Cambridge</label><select data-ef=camg>"+CAMG.filter(function(c){return PRACT.GR[c]}).map(function(c){return"<option value="+c+(c===gOf(E)?" selected":"")+">"+esc(PRACT.GR[c].title)+"</option>"}).join("")+"</select></div>"+
@@ -312,7 +312,7 @@ function goOnline(){
   goingOn=true;
   var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){
     return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:abFor(E,c,s,i)}});
-  Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,lx:lxOf(E),names:names,sch:inf().school}),
+  Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,ext:!!c.isExternal,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,lx:lxOf(E),names:names,sch:inf().school}),
     F.setDoc(F.doc(window.db,"exq",E.id+"_"+code),{o:E.o,t:E.id,j:pub(E)})]).then(function(){
     E.on={open:true,code:code,endMs:endMs};
     try{save(true)}catch(x){console.error("save:",x)}

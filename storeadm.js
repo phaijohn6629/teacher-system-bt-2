@@ -9,7 +9,7 @@
 (function(){
 "use strict";
 var COLS=["app","cfg","users","tasks","rs","wr","ah","sched","ts","cx","att","mc","mcp","mclog","lsn","hub","sig","profiles","lib","exrows","obsrows",
-  "qb","qbq","qimg","pcls","prt","mt","plc","tests","tkeys","subs","st","rcpt","timg","exams","exm","exq","exv","errs"];
+  "qb","qbq","qimg","pcls","xcls","prt","mt","plc","tests","tkeys","subs","st","rcpt","timg","exams","exm","exq","exv","errs"];
 var BIG=["exams","qimg","timg","lsn","mc","profiles","sig","lib","mt","plc","qb","tests","rs","tasks"];
 var R={cnt:null,big:null,busy:""};
 function F(){return window.FB}

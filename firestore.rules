@@ -339,6 +339,18 @@ service cloud.firestore {
         && request.resource.data.r == resource.data.r + 1;
       allow delete: if isAdmin() || isOwner(resource.data.o);
     }
+    // ➕ xcls/{id} = ថ្នាក់បន្ថែម / សិស្សក្រៅប្រព័ន្ធ (xclass.js) · ម្ចាស់ ឬ Admin តែប៉ុណ្ណោះ (សិស្សមិនអានដោយផ្ទាល់ · បញ្ជីឈ្មោះចេញតាម exm ពេលបើកវិញ្ញាសា)
+    function xclOk(d) {
+      return d.o is string && d.n is string && d.n.size() >= 1 && d.n.size() <= 30
+        && d.g is int && d.g >= 7 && d.g <= 12 && d.isExternal == true
+        && d.st is list && d.st.size() <= 300 && (!('kd' in d) || (d.kd is string && d.kd.size() <= 30));
+    }
+    match /xcls/{id} {
+      allow read: if isAdmin() || isOwner(resource.data.o);
+      allow create: if (isAdmin() || isOwner(request.resource.data.o)) && xclOk(request.resource.data);
+      allow update: if (isAdmin() || isOwner(resource.data.o)) && request.resource.data.o == resource.data.o && xclOk(request.resource.data);   // 🛡️ មិនផ្ទេរ o
+      allow delete: if isAdmin() || isOwner(resource.data.o);
+    }
     match /pcls/{code} {
       allow get: if resource.data.open == true || active();
       allow list: if active();
