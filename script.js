@@ -1874,7 +1874,7 @@ function reportHTML(){
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:6px 0 0'>របាយការណ៍អនុវត្តតួនាទី ភារកិច្ចរបស់ប្រធាន/អនុប្រធានក្រុមបច្ចេកទេស</h2>"+
     "<h2 class=moul style='text-align:center;font-size:12pt;margin:2px 0 8px'>ប្រចាំខែ "+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
     "<div style='margin:2px 0 8px;line-height:1.9'><div>ឈ្មោះ៖ <span class=moul style='font-size:11pt'>"+esc(nm)+"</span></div><div>មុខវិជ្ជា៖ "+esc(m.s||"គណិតវិទ្យា")+"</div><div>តួនាទីជា៖ "+esc(rl)+"</div></div>"+
-    "<table class='ct wrt' style='width:100%;table-layout:fixed'><colgroup><col style='width:5%'><col style='width:11%'><col style='width:12%'><col style='width:34%'><col style='width:19%'><col style='width:19%'></colgroup><thead><tr><th style='"+th+"'>ល.រ</th><th style='"+th+"'>កាលបរិច្ឆេទ</th><th style='"+th+"'>រយៈពេល</th><th style='"+th+"'>បរិយាយការងារ</th><th style='"+th+"'>ភាគីពាក់ព័ន្ធ</th><th style='"+th+"'>លទ្ធផល</th></tr></thead><tbody>"+(rows||"<tr><td colspan=6>—</td></tr>")+"</tbody></table>"+
+    "<table class='ct wrt' style='width:100%;table-layout:fixed'><colgroup><col style='width:6%'><col style='width:12%'><col style='width:13%'><col style='width:31%'><col style='width:19%'><col style='width:19%'></colgroup><thead><tr><th style='"+th+"'>ល.រ</th><th style='"+th+"'>កាលបរិច្ឆេទ</th><th style='"+th+"'>រយៈពេល</th><th style='"+th+"'>បរិយាយការងារ</th><th style='"+th+"'>ភាគីពាក់ព័ន្ធ</th><th style='"+th+"'>លទ្ធផល</th></tr></thead><tbody>"+(rows||"<tr><td colspan=6>—</td></tr>")+"</tbody></table>"+
     reportFoot(sg?sg.id:(nm===t.name?wt:""),nm,m.k||"គីម មិថុនា")+"</div>";
 }
 $("wpr").onclick=function(){if(!wlist().length){alert("មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។");return}window.SCHX.fontsOk().then(function(){doPrint(reportHTML())})};
