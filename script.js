@@ -1154,7 +1154,7 @@ var FONTS_READY=false;
   setTimeout(done,6000);
 })();
 /* បំបែកពាក្យខ្មែរ (ZWSP ត្រឹមចន្លោះពាក្យ) មុនបោះពុម្ព/PDF · បរាជ័យ → ប្រើ html ដើម */
-function khSeg(h){try{return window.KHSEG?KHSEG.html(h):h}catch(e){return h}}
+function khSeg(h,boxes){try{return window.KHSEG?KHSEG.html(h,boxes):h}catch(e){return h}}
 function realPrint(html){
   html=khSeg(html);
   $("prt").innerHTML=html;document.body.classList.add("pm");
@@ -1183,7 +1183,7 @@ function outChoose(html){
   var b=m.querySelector("[data-pc=pdf]");if(b)b.focus();
 }
 function savePdf(html){
-  html=khSeg(html);
+  html=khSeg(html,true);
   notify("កំពុងបង្កើត PDF…");
   function go(){
     var land=/class=["']?pg\b[^"'>]*\b(land|osum)\b/.test(html),w=document.createElement("div");

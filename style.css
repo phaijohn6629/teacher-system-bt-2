@@ -1370,6 +1370,6 @@ body.mon #allMenu{display:none!important}
 /* PDF (html2canvas)៖ ដូច .cxp — overflow-wrap/break-word ធ្វើឱ្យអក្សរខ្មែរជាន់គ្នា → ប្រើ normal + គ្មាន kerning */
 .pdfw .rpt.wrn,.pdfw .rpt.wrn :is(td,th,div,b,span,h2){word-break:normal!important;overflow-wrap:normal!important;letter-spacing:0!important;font-kerning:none;line-height:1.75}
 
-/* ឯកសារបោះពុម្ព៖ បំបែកបន្ទាត់ខ្មែរត្រឹមចន្លោះពាក្យ (ZWSP ពី khseg.js) · មិនកាត់កណ្ដាលពាក្យ ស្រៈ ឬជើង · កុំ justify ក្នុងក្រឡាតូចៗ */
-.pg,#prt .pg{word-break:normal;overflow-wrap:break-word;line-break:auto;hyphens:manual}
-.pg :is(td,th) .mt-p,.pg :is(td,th)[style*="justify"],.pg td.cell-j{text-align:left!important;text-justify:auto}
+/* ឯកសារបោះពុម្ពពិត (@media print ប៉ុណ្ណោះ — មិនប៉ះ html2canvas/PDF ដែលកាត់តាមតួអក្សរពេល overflow-wrap:break-word) · ZWSP ពី khseg.js ជាចំណុចបំបែកពាក្យ */
+@media print{.pg,#prt .pg{word-break:normal;line-break:auto;hyphens:manual}
+.pg :is(td,th) .mt-p,.pg :is(td,th)[style*="justify"],.pg td.cell-j{text-align:left!important;text-justify:auto}}

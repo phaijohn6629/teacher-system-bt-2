@@ -27,23 +27,48 @@
         break;
       }
     }
-    if(cost[0]>=1e9)return run;
-    var out="",prevK=false;i=0;
-    while(i<n){j=nx[i];b=kn[i];if(prevK&&b)out+="​";out+=run.slice(i,j);prevK=!!b;i=j}
-    return out;
+    if(cost[0]>=1e9)return {};
+    var br={},prevK=false;i=0;
+    while(i<n){j=nx[i];b=kn[i];if(prevK&&b)br[i]=1;prevK=!!b;i=j}
+    return br;
+  }
+  /* ព្រំដែនពាក្យរបស់ browser (ICU, Intl.Segmenter km) — html2canvas (PDF) មិនស្គាល់ការបំបែកពាក្យខ្មែររបស់ browser ហើយកាត់តាមតួអក្សរ
+     (ដ|ែល · ោយ · ៀន) → ដាក់ ZWSP គ្រប់ព្រំដែនទាំងនោះ ដើម្បីឱ្យ chunk នីមួយៗ = ពាក្យមួយ */
+  var SG=null;try{if(window.Intl&&Intl.Segmenter)SG=new Intl.Segmenter("km",{granularity:"word"})}catch(e){}
+  function icu(run,br){
+    if(!SG)return;
+    var it=SG.segment(run)[Symbol.iterator](),r;
+    while(!(r=it.next()).done){var x=r.value.index;if(x>0&&st(run.charCodeAt(x))&&run.charCodeAt(x-1)!==0x17D2)br[x]=1}
+  }
+  function mark(run){
+    var br=seg(run),o="",last=0,k,idx=[];
+    icu(run,br);
+    for(k in br)idx.push(+k);idx.sort(function(a,b){return a-b});
+    for(k=0;k<idx.length;k++){o+=run.slice(last,idx[k])+"\u200B";last=idx[k]}
+    return o+run.slice(last);
   }
   function text(s){
-    s=String(s==null?"":s);if(s.length<4||s.indexOf("​")>=0)return s;
-    return s.replace(/[ក-៿]{4,}/g,seg);
+    s=String(s==null?"":s);if(s.length<2||s.indexOf("\u200B")>=0)return s;
+    return s.replace(/[\u1780-\u17FF]{2,}/g,mark);
   }
-  function html(h){
+  /* boxes=true (PDF/html2canvas)៖ ZWSP ធ្វើឱ្យ html2canvas គូរអក្សរជាន់គ្នា → រុំពាក្យនីមួយៗក្នុង <span inline-block> (ចំណុចបំបែកបន្ទាត់ = រវាង span) */
+  function html(h,boxes){
     var t=document.createElement("template");t.innerHTML=h;
     var w=document.createTreeWalker(t.content,NodeFilter.SHOW_TEXT,null),a=[],n;
     while((n=w.nextNode()))a.push(n);
     a.forEach(function(x){
       var p=x.parentNode,tg=p&&p.nodeName;
       if(tg==="SCRIPT"||tg==="STYLE"||tg==="TEXTAREA")return;
-      var v=x.nodeValue,r=text(v);if(r!==v)x.nodeValue=r;
+      var v=x.nodeValue,r=text(v);
+      if(!boxes){if(r!==v)x.nodeValue=r;return}
+      if(r.indexOf("\u200B")<0)return;
+      var f=document.createDocumentFragment(),last=0,re=/[\u1780-\u17FF\u200B]+/g,m;
+      function put(tx){if(tx)f.appendChild(document.createTextNode(tx))}
+      while((m=re.exec(r))){
+        put(r.slice(last,m.index));last=re.lastIndex;
+        m[0].split("\u200B").forEach(function(wd){if(!wd)return;var sp=document.createElement("span");sp.style.display="inline-block";sp.textContent=wd;f.appendChild(sp)});
+      }
+      put(r.slice(last));p.replaceChild(f,x);
     });
     return t.innerHTML;
   }
