@@ -128,14 +128,20 @@ async function go(){
   let P=null;
   try{const d=await retry(()=>getDoc(doc(db,"exq",id+"_"+pc)),"កំពុងបើកវិញ្ញាសា",5);if(!d.exists())return back("⛔ លេខកូដមិនត្រឹមត្រូវ");P=JSON.parse(d.data().j)}
   catch(e){return back(e&&e.code==="permission-denied"?"⛔ លេខកូដមិនត្រឹមត្រូវ ឬប្រឡងបានបិទ/អស់ម៉ោង":"📶 អ៊ីនធឺណិតខ្សោយ · សូមព្យាយាមម្ដងទៀត")}
-  /* មួយឈ្មោះ មួយឧបករណ៍ */
-  let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=devId();LS.set("dv_"+K,dv)}
-  let tmo=false;   /* ផុតម៉ោង ប៉ុន្តែអាចសរសេរដល់រួច → ការបដិសេធលើកក្រោយ = របស់ឧបករណ៍នេះ */
+  /* មួយឈ្មោះ មួយឧបករណ៍ · dv_K រក្សាទុកតែក្រោយជោគជ័យ (មុននេះរក្សាមុន → ចុចលើកទី ២ ចូលបានដោយគ្មានការពិនិត្យ) */
+  const dv0=LS.get("dv_"+K),dev=devId(),dv=dv0||dev;
+  let tmo=false;
+  const mineNow=async()=>{/* អានឯកសារ exv ដែលមានស្រាប់ → ដូច dv របស់យើង = ឧបករណ៍ដដែល */
+    try{const d=await retry(()=>getDoc(doc(db,"exv",K)),"កំពុងពិនិត្យឧបករណ៍",3,9000);const sv=d.exists()?d.data().dv:null;
+      if(!sv)return false;if(sv===dv||sv===dev){try{await to(updateDoc(doc(db,"exv",K),{k2:sv+"|"+Date.now()}),9000)}catch(x){}return sv}return false}catch(x){return false}};
+  let okDv=dv;
   try{await retry(()=>to(setDoc(doc(db,"exv",K),{t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp(),lv:0,lt:0,cp:0}),12000).catch(e=>{if(e&&e.code==="deadline-exceeded")tmo=true;throw e}),"កំពុងចុះឈ្មោះ",3,0)}
-  catch(e){let mine=false;
-    if(e&&e.code==="permission-denied"&&!had&&!tmo){/* ឈ្មោះមានរួចហើយ៖ សាកថាជាឧបករណ៍ដដែល (dv = deviceId) ដោយ updateDoc k2 = dv|លេខ */
-      try{await to(updateDoc(doc(db,"exv",K),{k2:dv+"|"+Date.now()}),9000);mine=true}catch(x){}}
-    if(e&&e.code==="permission-denied"&&!had&&!tmo&&!mine)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។")}
+  catch(e){
+    if(e&&e.code==="permission-denied"&&!tmo){/* ឯកសារមានរួចហើយ (setDoc→update ត្រូវបដិសេធ) */
+      const sv=await mineNow();
+      if(!sv)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។");
+      okDv=sv}}
+  LS.set("dv_"+K,okDv);
   LS.set("exk_"+id,k);LS.set("exp_"+id,JSON.stringify(P));
   fsOn();
   if(!show(P,false))back("⚠️ មិនអាចបង្ហាញវិញ្ញាសាបានទេ · សូមព្យាយាមម្ដងទៀត");
