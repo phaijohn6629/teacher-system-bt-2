@@ -36,6 +36,7 @@ body{margin:0;font-family:"Khmer OS Siemreap","Siemreap","Kantumruy Pro",system-
 input[type=text]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}
 .cls{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
 .cls button{border:1.5px solid #c7d2fe;background:#eef2ff;color:var(--brand);border-radius:12px;padding:12px 8px;font:inherit;font-weight:700;cursor:pointer}
+.gh{margin:14px 0 0;font-size:.92rem;color:var(--brand)}
 .ex h3{margin:0 0 4px;font-size:1.05rem}
 .meta{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
 .chip{background:#eef2ff;color:var(--brand);border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700}
@@ -79,14 +80,18 @@ async function load(){
   s.forEach(d=>{const m=d.data();if(m&&m.open===true&&(+m.endMs||0)>now)out.push({id:d.id,m})});
   return out;
 }
+/* បញ្ជីថ្នាក់ = script.js `CL` (ដកបុព្វបទ «M-») → ត្រូវនឹង exm.cls (= c.n) ១០០% · ប្ដូរ CL ត្រូវប្ដូរទីនេះផង */
+const CLASSES="7NGS-B,7NGS-C,7NGS-P,7NGS-BO,7NGS-CO,7NGS-PO,8NGS-B,8NGS-C,8NGS-P1,8NGS-P2,8NGS-P3,8NGS-BO,9NGS-B1,9NGS-B2,9NGS-C1,9NGS-C2,9NGS-P1,9NGS-P2,9NGS-P3,9NGS-BO,9NGS-CO,10NGS-B,10NGS-C,10NGS-P1,10NGS-P2,10NGS-P3,11NGS-C,11NGS-P,12NGS-A,12NGS-B,10GT-Ele/Electro-Y1,10GT-ICT-Y1,11GT-ICT-Y2".split(",");
 function pickView(){
   $("tools").hidden=true;$("sub").textContent="វិទ្យាល័យបឹងត្របែក";
-  const known=[...new Map((open||[]).map(x=>[norm(x.m.cls),x.m.cls])).values()].filter(Boolean).sort((a,b)=>String(a).localeCompare(String(b),"km",{numeric:true}));
+  const live=new Set((open||[]).map(x=>norm(x.m.cls)));
+  const groups=[7,8,9,10,11,12].map(g=>({g,l:CLASSES.filter(c=>parseInt(c)===g)})).filter(x=>x.l.length);
   app.innerHTML=`<div class="card"><h2 style="margin:0 0 4px;font-size:1.05rem">🏫 ជ្រើសរើសថ្នាក់របស់អ្នក</h2>
-   <p class="note" style="margin:0">ជ្រើសម្ដងគត់ · កម្មវិធីនឹងចងចាំ</p>
-   ${known.length?`<div class="cls">${known.map(c=>`<button data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div><p class="note" style="margin:10px 0 0">ថ្នាក់ខាងលើមានវិញ្ញាសាកំពុងបើក។ បើរកមិនឃើញ សូមវាយឈ្មោះថ្នាក់ខាងក្រោម។</p>`:`<p class="note" style="margin:10px 0 0">ឥឡូវមិនមានវិញ្ញាសាកំពុងបើកទេ · សូមវាយឈ្មោះថ្នាក់របស់អ្នក</p>`}
-   <input type="text" id="cin" placeholder="ឧ. 10NGS-C" autocomplete="off" autocapitalize="characters" style="margin-top:10px">
-   <button class="btn" id="cok">✅ យល់ព្រម</button></div>`;
+   <p class="note" style="margin:0">ជ្រើសម្ដងគត់ · កម្មវិធីនឹងចងចាំ · 🟢 = មានវិញ្ញាសាកំពុងបើក</p>
+   ${groups.map(x=>`<h3 class="gh">ថ្នាក់ទី ${kn(x.g)}</h3><div class="cls">${x.l.map(c=>`<button data-c="${esc(c)}">${live.has(norm(c))?"🟢 ":""}${esc(c)}</button>`).join("")}</div>`).join("")}
+   <h3 class="gh">ថ្នាក់ផ្សេង (វាយដោយដៃ)</h3>
+   <input type="text" id="cin" placeholder="ឧ. 10NGS-C" autocomplete="off" autocapitalize="characters">
+   <button class="btn alt" id="cok">✅ យល់ព្រម</button></div>`;
   app.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>setCls(b.dataset.c));
   $("cok").onclick=()=>{const v=$("cin").value.trim();if(v)setCls(v)};
   $("cin").onkeydown=e=>{if(e.key==="Enter")$("cok").click()};
