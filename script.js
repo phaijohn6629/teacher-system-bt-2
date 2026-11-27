@@ -1869,11 +1869,11 @@ function reportHTML(){
     return"<tr><td>"+kn(i+1)+"</td><td>"+fdd(e.d)+"</td><td>"+(dur(e.a,e.b)||"")+(e.a&&e.b?"<br>("+ft(e.a)+"-"+ft(e.b)+")"+ampm(e.b):"")+"</td><td style='text-align:left'>"+cc.map(esc).join("<br>")+(ims?"<div>"+ims+"</div>":"")+"</td><td style='text-align:left'>"+ml(e.p)+"</td><td style='text-align:left'>"+ml(e.r)+"</td></tr>";
   }).join("");
   var th="background:#FFF2CC!important;-webkit-print-color-adjust:exact;print-color-adjust:exact";
-  return"<div class='pg rpt osum wrn'><div class=hd style='text-align:center'><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div style='margin:4px 0 6px;text-align:left'><div class=moul>"+esc(I.school)+"</div><div class=moul style='font-size:11pt'>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div>"+
+  return"<div class='pg rpt wrn'><div class=hd style='text-align:center'><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+    "<div class=wsch style='margin:4px 0 6px;text-align:left'><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div class=moul style='font-size:11pt;text-align:left'>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div>"+
     "<h2 class=moul style='text-align:center;font-size:13pt;margin:6px 0 0'>របាយការណ៍អនុវត្តតួនាទី ភារកិច្ចរបស់ប្រធាន/អនុប្រធានក្រុមបច្ចេកទេស</h2>"+
     "<h2 class=moul style='text-align:center;font-size:12pt;margin:2px 0 8px'>ប្រចាំខែ "+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
-    "<div style='margin:2px 0 8px;line-height:1.9'><div>ឈ្មោះ៖ <b>"+esc(nm)+"</b></div><div>មុខវិជ្ជា៖ "+esc(m.s||"គណិតវិទ្យា")+"</div><div>តួនាទីជា៖ "+esc(rl)+"</div></div>"+
+    "<div style='margin:2px 0 8px;line-height:1.9'><div>ឈ្មោះ៖ <span class=moul style='font-size:11pt'>"+esc(nm)+"</span></div><div>មុខវិជ្ជា៖ "+esc(m.s||"គណិតវិទ្យា")+"</div><div>តួនាទីជា៖ "+esc(rl)+"</div></div>"+
     "<table class='ct wrt' style='width:100%;table-layout:fixed'><colgroup><col style='width:5%'><col style='width:11%'><col style='width:12%'><col style='width:34%'><col style='width:19%'><col style='width:19%'></colgroup><thead><tr><th style='"+th+"'>ល.រ</th><th style='"+th+"'>កាលបរិច្ឆេទ</th><th style='"+th+"'>រយៈពេល</th><th style='"+th+"'>បរិយាយការងារ</th><th style='"+th+"'>ភាគីពាក់ព័ន្ធ</th><th style='"+th+"'>លទ្ធផល</th></tr></thead><tbody>"+(rows||"<tr><td colspan=6>—</td></tr>")+"</tbody></table>"+
     reportFoot(sg?sg.id:(nm===t.name?wt:""),nm,m.k||"គីម មិថុនា")+"</div>";
 }
