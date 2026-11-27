@@ -604,8 +604,8 @@ function repFoot(id,name,hn){
   var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
   var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
   return"<div class='cxf rsg'>"+
-   "<div class='rc rc1'><div class=rt>បានឃើញ និងឯកភាព</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div><div class='rn moul'>គីម មិថុនា</div></div>"+
-   "<div class='rc rc2'><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>"+esc(H.t)+"</div><div class=rs></div><div class='rn moul'>"+esc(H.n)+"</div></div>"+
+   "<div class='rc rc1'><div class=rt>បានឃើញ និងឯកភាព</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div></div>"+
+   "<div class='rc rc2'><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>"+esc(H.t)+"</div><div class=rs></div></div>"+
    "<div class='rc rc3'>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នករៀបចំរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
 }
 $("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
@@ -1153,7 +1153,10 @@ var FONTS_READY=false;
   if(document.readyState==="complete")go();else window.addEventListener("load",go);
   setTimeout(done,6000);
 })();
+/* បំបែកពាក្យខ្មែរ (ZWSP ត្រឹមចន្លោះពាក្យ) មុនបោះពុម្ព/PDF · បរាជ័យ → ប្រើ html ដើម */
+function khSeg(h){try{return window.KHSEG?KHSEG.html(h):h}catch(e){return h}}
 function realPrint(html){
+  html=khSeg(html);
   $("prt").innerHTML=html;document.body.classList.add("pm");
   var go=function(){window.print();setTimeout(prtClean,120000)};
   if(FONTS_READY||!(window.SCHX&&SCHX.fontsOk))go();   /* synchronous */
@@ -1180,6 +1183,7 @@ function outChoose(html){
   var b=m.querySelector("[data-pc=pdf]");if(b)b.focus();
 }
 function savePdf(html){
+  html=khSeg(html);
   notify("កំពុងបង្កើត PDF…");
   function go(){
     var land=/class=["']?pg\b[^"'>]*\b(land|osum)\b/.test(html),w=document.createElement("div");
@@ -1856,7 +1860,7 @@ function LOGOBT(){return(document.querySelector(".brand-logo")||{}).src||new URL
 function reportFoot(id,name,left){
   var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
   var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
-  return"<div class='cxf rsg2'><div class=rc><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div><div class='rn moul'>"+esc(left||"")+"</div></div>"+
+  return"<div class='cxf rsg2'><div class=rc><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div></div>"+
    "<div class=rc>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នកធ្វើរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
 }
 function reportHTML(){
@@ -2030,7 +2034,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=8", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=15"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=16","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=8", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=16"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=16","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
@@ -2574,7 +2578,7 @@ function lpFooter(){
   $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
   var lu="";try{lu=window.KhCal?KhCal.fmt(yy,mm+1,dd):""}catch(e){}$("lpSL").textContent=lu;
   var tn=lpMe()||"…";$("lpST").textContent=tn;$("lpHT").textContent=tn;
-  $("lpSM").textContent=lpNm("lpMg");$("lpSH").textContent=lpNm("lpTh");$("lpSHT").textContent=lpHeadTitle();lpPages();
+  $("lpSM").textContent="";$("lpSH").textContent="";$("lpSHT").textContent=lpHeadTitle();lpPages();
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */
 /* 🖨️ បោះពុម្ពភ្លាមៗពី #lpSheets ដែលមានស្រាប់លើអេក្រង់ (គ្មាន clone · គ្មាន setTimeout មុន print → Safari មិនទប់ស្កាត់ user gesture) ·
