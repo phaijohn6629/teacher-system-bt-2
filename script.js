@@ -1127,7 +1127,7 @@ function cardHTML(c,i,RK){
     "<table class=ct style='margin-top:8px'><thead><tr><th colspan=4 style='text-align:left'>អវត្តមាន (ថ្ងៃ)</th></tr><tr><th></th><th>មានច្បាប់</th><th>គ្មានច្បាប់</th><th>សរុប</th></tr></thead><tbody>"+
     [["ឆមាសទី១",a1],["ឆមាសទី២",a2],["ប្រចាំឆ្នាំ",ab]].map(function(x){return"<tr><td style='text-align:left'>"+x[0]+"</td><td>"+x[1][0]+"</td><td>"+x[1][1]+"</td><td><b>"+(x[1][0]+x[1][1])+"</b></td></tr>"}).join("")+"</tbody></table>"+
     "<p class=note style='margin:8px 0 0'>កម្រិតនិទ្ទេស៖ "+rs.pc.map(function(v,j){return"ABCDE"[j]+" ≥ "+v+"%"}).join(" · ")+" · F ក្រោម "+rs.pc[4]+"% (នៃពិន្ទុអតិបរមា)</p>"+
-    "<div class=sig><div>មតិមាតា-បិតា ឬអ្នកអាណាព្យាបាល<br><br><br><br>ហត្ថលេខា</div><div>គ្រូបង្រៀន<br><br><br><br><b>"+esc(t.name||"")+"</b></div><div>នាយក/នាយិកាសាលា<br><br><br><br>ហត្ថលេខា</div></div></div>";
+    "<div class=sig><div>មតិមាតា-បិតា ឬអ្នកអាណាព្យាបាល<br><br><br><br>ហត្ថលេខា</div><div>គ្រូបង្រៀន<br><br><br><br>ហត្ថលេខា</div><div>នាយក/នាយិកាសាលា<br><br><br><br>ហត្ថលេខា</div></div></div>";
 }
 function cardsFor(c,idx){
   var RK={1:ranks(c,1),2:ranks(c,2),3:ranks(c,3)};
