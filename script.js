@@ -586,8 +586,8 @@ function wpFoot(id,name,lbl,mid){
   var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
   return"<div class=cxf><div class=moul style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងឯកភាព<br>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div>"+
    (mid?"<div class='moul cxm' style='font-size:10.5pt;line-height:1.7'>បានឃើញ និងពិនិត្យ<br>ប្រធានក្រុមបច្ចេកទេស</div>":"")+
-   "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>"+esc(lbl||"ហត្ថលេខា និងឈ្មោះ")+"</div>"+
-   "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"<b>"+esc(name||"")+"</b></div></div></div>";
+   "<div class=cxr>"+(wl?"<div class=lu>"+esc(wl)+"</div>":"")+"<div class=gd>រាជធានីភ្នំពេញ "+esc(wg)+"</div><div class=sn>"+esc(lbl||"ហត្ថលេខា")+"</div>"+
+   "<div class=sb>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"<span style='width:30mm;display:inline-block'></span>")+"</div></div></div>";
 }
 /* ជើងក្រោមរបាយការណ៍ការងារ៖ ៣ ជួរឈរ ចុះបន្តិចម្ដងៗពីស្តាំទៅឆ្វេង (ស្តាំខ្ពស់ជាងគេ) */
 /* ចំណងជើងជួរកណ្ដាល៖ «ប្រធានក្រុមបច្ចេកទេស» (ប្រធាន) ឬ «ជ.ប្រធានក្រុមបច្ចេកទេស» (អនុប្រធាន) តាមឈ្មោះ/តួនាទី · លំនាំដើម = ម៉េត បញ្ញារិទ្ធ (ជ.ប្រធាន) */
@@ -606,7 +606,7 @@ function repFoot(id,name,hn){
   return"<div class='cxf rsg'>"+
    "<div class='rc rc1'><div class=rt>បានឃើញ និងឯកភាព</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div></div>"+
    "<div class='rc rc2'><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>"+esc(H.t)+"</div><div class=rs></div></div>"+
-   "<div class='rc rc3'>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នករៀបចំរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
+   "<div class='rc rc3'>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នករៀបចំរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div></div></div>";
 }
 $("kpr").onclick=function(){var X=window.SCHX;X.fontsOk().then(function(){X.doPrintNow(kPrintHTML())})};
 $("mo").innerHTML=MK.map(function(m,i){return"<option value="+i+">"+m+"</option>"}).join("");
@@ -1861,7 +1861,7 @@ function reportFoot(id,name,left){
   var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
   var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
   return"<div class='cxf rsg2'><div class=rc><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div></div>"+
-   "<div class=rc>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នកធ្វើរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
+   "<div class=rc>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នកធ្វើរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div></div></div>";
 }
 function reportHTML(){
   var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"",m=wmGet();
@@ -2034,7 +2034,7 @@ $("lbG").onclick=function(e){
 
 /* មុខងារប្ដូរផ្ទាំង (Tabs) */
 /* ទាញយក JavaScript តែពេលបើកផ្ទាំងដែលត្រូវការ (Lazy Loading) · បន្ទាប់ពីទំព័រទំនេរ ទាញទុកជាមុនដើម្បីប្ដូរផ្ទាំងបានលឿន */
-var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=8", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=16"],mt:["meetings.js?v=15"],ls:["lessons.js?v=5","hubdata.js?v=16","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
+var LAZY={cur:["curriculum7.js?v=4", "curriculum8.js?v=1", "curriculum9.js?v=1", "curriculum10.js?v=8", "curriculum11.js?v=2", "curriculum12.js?v=1", "curriculum.js?v=17"],mt:["meetings.js?v=16"],ls:["lessons.js?v=5","hubdata.js?v=16","hubdata_en.js?v=3","hub.js?v=24","lessonedit.js?v=5"]};
 var NEED={p21:["cur"],p13:["cur"],p14:["cur"],p15:["cur"],p17:["cur"],p18:["cur"],p19:["mt"],p20:["ls"]},lzP={},lzD={};
 function lazy(g){
   if(lzP[g])return lzP[g];
@@ -2577,7 +2577,7 @@ function lpFooter(){
   if(m){dd=+m[3];mm=+m[2]-1;yy=+m[1]}
   $("lpSD").textContent="រាជធានីភ្នំពេញ, ថ្ងៃទី"+kn(dd)+" ខែ"+M[mm]+" ឆ្នាំ"+kn(yy);
   var lu="";try{lu=window.KhCal?KhCal.fmt(yy,mm+1,dd):""}catch(e){}$("lpSL").textContent=lu;
-  var tn=lpMe()||"…";$("lpST").textContent=tn;$("lpHT").textContent=tn;
+  var tn=lpMe()||"…";$("lpST").textContent="";$("lpHT").textContent=tn;
   $("lpSM").textContent="";$("lpSH").textContent="";$("lpSHT").textContent=lpHeadTitle();lpPages();
 }
 /* 🖨️ បោះពុម្ព / PDF ៖ ច្បាប់ចម្លងក្រដាស A4 (ដកលេខសម្គាល់ជាន់គ្នា) ក្នុង #prt · @page ឈ្មោះ «lpdoc» ដាក់ «ទំព័រទី N» ខ្មែរ ៖ សេស = ស្ដាំ · គូ = ឆ្វេង (style.css) */

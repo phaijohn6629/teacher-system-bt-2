@@ -158,7 +158,7 @@ function footHtml(){
    "<div class=cuk>"+
    "<div class=cuk3><div class=cuh3>បានឃើញ និងឯកភាព<br><b>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</b></div><div class=cugp style='height:22mm'></div><b class=cunm></b></div>"+
    "<div class=cuk2><div class=cuh3>បានឃើញ និងពិនិត្យ<br><b>"+hdTitle()+"</b></div><div class=cugp style='height:20mm'></div><b class=cunm></b></div>"+
-   "<div class=cuk1><div class=cuh3><b>អ្នករៀបចំកម្មវិធី</b></div><div class=cugp style='height:17mm'></div><b class=cunm>"+esc2(preName())+"</b></div>"+
+   "<div class=cuk1><div class=cuh3><b>អ្នករៀបចំកម្មវិធី</b></div><div class=cugp style='height:17mm'></div><b class=cunm></b></div>"+
    "</div></div>";
 }
 function renderFoot(){
