@@ -237,16 +237,48 @@ function loginPop(){
   var close=function(){if(!d.isConnected)return;d.classList.add("out");setTimeout(function(){d.remove()},350)};
   d.onclick=close;setTimeout(close,2800);
 }
+/* ===== 🛡️ Security: ចាក់សោពេលវាយលេខសម្ងាត់ខុស + កត់ត្រា security_alerts ===== */
+var SECK="loginFail",SEC_WARN=3,SEC_LOCK=5,SEC_MIN=5;
+function secGet(){try{return JSON.parse(localStorage.getItem(SECK))||{n:0,until:0}}catch(e){return{n:0,until:0}}}
+function secSet(o){try{localStorage.setItem(SECK,JSON.stringify(o))}catch(e){}}
+function secLeft(){var u=secGet().until||0;return u>Date.now()?u-Date.now():0}
+function secStudents(){
+  var r=[];try{for(var i=0;i<localStorage.length&&r.length<5;i++){var k=localStorage.key(i);
+    if(k&&k.indexOf("cur_")===0){var v=String(localStorage.getItem(k)||"").slice(0,40);if(v&&r.indexOf(v)<0)r.push(v)}}}catch(e){}
+  return r.join(", ");
+}
+/* ផ្ញើកំណត់ត្រា (ស្រាល · មិនរារាំងអ្វី · បរាជ័យស្ងាត់) */
+function secAlert(type,id,n){
+  try{
+    window.FBREADY.then(function(){
+      var rid="a"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+      return window.FB.setDoc(window.FB.doc(window.db,"security_alerts",rid),{
+        at:window.FB.serverTimestamp(),ts:Date.now(),ty:String(type).slice(0,200),id:String(id||"").slice(0,40),n:n|0,
+        ua:String(navigator.userAgent||"").slice(0,300),sc:(screen.width||0)+"x"+(screen.height||0),stu:secStudents().slice(0,200),rd:false});
+    }).catch(function(){});
+  }catch(e){}
+}
+function secFail(id){
+  var o=secGet();o.n=(o.n||0)+1;
+  var adm=/^T001$|ADMIN/i.test(id)||(typeof usersById!=="undefined"&&usersById[id]&&usersById[id].role==="admin");
+  if(o.n===SEC_WARN)secAlert("វាយលេខសម្ងាត់"+(adm?" Admin":"គ្រូ")+" ខុស "+SEC_WARN+" ដង",id,o.n);
+  if(o.n>=SEC_LOCK){o.until=Date.now()+SEC_MIN*6e4;secAlert("ចាក់សោ "+SEC_MIN+" នាទី (វាយខុស "+o.n+" ដង)",id,o.n);o.n=0}
+  secSet(o);
+}
 $("btnLogin").onclick=function(){
   var id=$("loginId").value.trim().toUpperCase(),pass=$("loginPass").value,btn=$("btnLogin");
+  var lk=secLeft();
+  if(lk>0){var m=Math.ceil(lk/6e4);alert("🔒 វាយលេខសម្ងាត់ខុសច្រើនដងពេក។ សូមរង់ចាំ "+m+" នាទីទៀត រួចសាកម្ដងទៀត។");return}
   if(!id||!pass){alert("សូមបញ្ចូលលេខសម្គាល់ និងលេខសម្ងាត់!");return}
   btn.disabled=true;
   var rem=!!($("loginRem")&&$("loginRem").checked);
   window.FBREADY.then(function(){return window.FB.setRemember(rem).catch(function(){})})
     .then(function(){return window.FB.signInWithEmailAndPassword(window.FB.auth,idEmail(id),pass)})
-    .then(function(){$("loginPass").value="";window._justLogin=true;
+    .then(function(){secSet({n:0,until:0});$("loginPass").value="";window._justLogin=true;
       try{if(rem)localStorage.setItem("remUntil",String(Date.now()+30*864e5));else localStorage.removeItem("remUntil")}catch(e){}})
-    .catch(function(e){notifyErr(e)})
+    .catch(function(e){
+      if(/invalid-credential|wrong-password|invalid-login/.test((e&&e.code)||""))secFail(id);
+      notifyErr(e);if(secLeft()>0)alert("🔒 វាយខុស "+SEC_LOCK+" ដង · ចាក់សោ "+SEC_MIN+" នាទី")})
     .then(function(){btn.disabled=false});
 };
 ["loginId","loginPass"].forEach(function(i){$(i).onkeydown=function(e){if(e.key==="Enter")$("btnLogin").onclick()}});
@@ -2892,6 +2924,34 @@ function syStart(){var d=new Date(),y=d.getMonth()+1>=10?d.getFullYear():d.getFu
 function allCls(ids){var o=[];ids.forEach(function(id){(rs.c&&rs.c[id]||[]).forEach(function(c){o.push({c:c,o:id})})});return o}
 function dCard(num,lbl,col){return"<div class=modern-card><h3 class=dnum style='font-size:28px;color:"+col+"'>"+kn(num)+"</h3><p style='color:var(--text-muted)'>"+esc(lbl)+"</p></div>"}
 function dEmpty(t){return"<p class=note style='margin:0'>"+t+"</p>"}
+/* ===== 🚨 Security Alert លើ Dashboard (Admin) ===== */
+var SEC={list:[],on:false,open:false};
+function secRender(adm){
+  var B=$("dSec");if(!B)return;
+  if(!adm){B.hidden=true;return}
+  if(!SEC.on&&window.FB&&window.db){SEC.on=true;
+    try{window.FB.onSnapshot(window.FB.collection(window.db,"security_alerts"),function(sn){
+      SEC.list=sn.docs.map(function(d){var x=d.data();x._id=d.id;return x}).sort(function(a,b){return(b.ts||0)-(a.ts||0)});secRender(true);
+    },function(){SEC.on=false})}catch(e){SEC.on=false}}
+  var un=SEC.list.filter(function(x){return !x.rd}).length;
+  if(!SEC.list.length){B.hidden=true;B.innerHTML="";return}
+  B.hidden=false;
+  var rows=SEC.list.slice(0,30).map(function(x){
+    var t=x.ts?new Date(x.ts).toLocaleString("en-GB"):"";
+    return"<div style='padding:6px 0;border-top:1px solid #fca5a5;"+(x.rd?"opacity:.6":"")+"'><b>"+(x.rd?"":"🔴 ")+esc(x.ty)+"</b> · "+esc(t)+"<div class=note style='margin:0'>ID៖ "+esc(x.id||"-")+" · "+esc(x.sc||"")+" · សិស្សធ្លាប់ប្រើឧបករណ៍៖ "+esc(x.stu||"-")+"<br>"+esc(x.ua||"")+"</div></div>"}).join("");
+  var h="<div style='border:2px solid #dc2626;background:#fef2f2;color:#7f1d1d;border-radius:12px;padding:10px 14px'>"+
+    "<div style='display:flex;gap:8px;flex-wrap:wrap;align-items:center'><b>🚨 ការជូនដំណឹងសុវត្ថិភាព"+(un?" · <span style='background:#dc2626;color:#fff;border-radius:99px;padding:1px 9px'>"+un+" ថ្មី</span>":" · អានរួច")+"</b>"+
+    "<button class=btn data-sec=tog>"+(SEC.open?"លាក់":"មើលលម្អិត")+"</button>"+
+    (un?"<button class=btn data-sec=rd>✓ បានពិនិត្យ</button>":"")+
+    "<button class=btn data-sec=clr>🗑 សម្អាត</button></div>"+(SEC.open?rows:"")+"</div>";
+  if(B.dataset.h!==h){B.dataset.h=h;B.innerHTML=h}
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest&&e.target.closest("[data-sec]");if(!b)return;var a=b.dataset.sec,F=window.FB;
+  if(a==="tog"){SEC.open=!SEC.open;secRender(true)}
+  if(a==="rd")SEC.list.filter(function(x){return !x.rd}).forEach(function(x){F.updateDoc(F.doc(window.db,"security_alerts",x._id),{rd:true}).catch(function(){})});
+  if(a==="clr"){if(!confirm("លុបកំណត់ត្រាសុវត្ថិភាពទាំងអស់?"))return;SEC.list.forEach(function(x){F.deleteDoc(F.doc(window.db,"security_alerts",x._id)).catch(function(){})})}
+});
 function renderDash(){
   if(!who||$("p0").hidden)return;
   var adm=isAdm(),me=who.id,hr=new Date().getHours(),g=hr<12?["Good Morning","☀️"]:hr<17?["Good Afternoon","🌤️"]:["Good Evening","🌙"],now=new Date();
@@ -2954,6 +3014,7 @@ function renderDash(){
   $("dLib").innerHTML="<h3>📚 ឯកសារជំនួយថ្មីៗ</h3>"+(ll.length?ll.map(function(x){
     var u=safeUrl(x.k);
     return"<div class=up-row><div class=up-d style='font-size:1.3rem'>"+(LBI[+x.c]||"📎")+"</div><div style='min-width:0;flex:1'><div><b>"+esc(x.t)+"</b></div><div class=note style='margin:0'>"+esc(LBC[+x.c]||"")+" · "+esc(lvt(x.l))+" · "+esc(tn(x.o)||x.by||"")+"</div></div>"+(u?"<a class=lnk href='"+esc(u)+"' target=_blank rel='noopener noreferrer'>បើក</a>":"")+"</div>"}).join(""):dEmpty("មិនទាន់មានឯកសារទេ។"));
+  secRender(adm);
   /* Admin៖ ចំណុចត្រូវយកចិត្តទុកដាក់ */
   var A=$("dAdm");A.hidden=!adm;
   if(adm){

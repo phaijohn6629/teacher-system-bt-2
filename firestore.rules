@@ -530,6 +530,20 @@ service cloud.firestore {
     }
 
     // ហាមផ្សេងទៀតទាំងអស់
+    // 🚨 security_alerts: Login (គ្មាន auth) សរសេរបានតែ create ជាមួយទម្រង់តឹងរ៉ឹង · Admin តែប៉ុណ្ណោះអាន/កែ rd/លុប
+    match /security_alerts/{aid} {
+      allow create: if request.resource.data.keys().hasOnly(['at','ts','ty','id','n','ua','sc','stu','rd'])
+        && request.resource.data.at == request.time
+        && request.resource.data.ty is string && request.resource.data.ty.size() <= 200
+        && request.resource.data.id is string && request.resource.data.id.size() <= 40
+        && request.resource.data.n is int && request.resource.data.n >= 0 && request.resource.data.n <= 1000
+        && request.resource.data.ua is string && request.resource.data.ua.size() <= 300
+        && request.resource.data.sc is string && request.resource.data.sc.size() <= 30
+        && request.resource.data.stu is string && request.resource.data.stu.size() <= 200
+        && request.resource.data.ts is int && request.resource.data.rd == false;
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin() && changedOnly(['rd']);
+    }
     match /{document=**} {
       allow read, write: if false;
     }
