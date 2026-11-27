@@ -15,7 +15,7 @@
 <script>/* 📲 PWA · ?nosw = បិទ service worker និងលុប cache (ករណីបន្ទាន់) */if("serviceWorker"in navigator){if(/[?&]nosw/.test(location.search)){navigator.serviceWorker.getRegistrations().then(function(rs){rs.forEach(function(r){r.unregister()})});if(window.caches)caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})})}else window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){var t=0,u=function(){if(Date.now()-t>6e4){t=Date.now();try{r.update()}catch(e){}}};document.addEventListener("visibilitychange",function(){if(!document.hidden)u()});window.addEventListener("focus",u)}).catch(function(e){console.warn("sw:",e)})})}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;500;700&family=Moul&family=Battambang:wght@400;700&family=Siemreap&family=Content:wght@400;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css"><script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
-<link rel="stylesheet" href="style.css?v=164">
+<link rel="stylesheet" href="style.css?v=165">
 <link rel="stylesheet" href="modern.css?v=30">
 <link rel="stylesheet" href="prime.css?v=14">
 
@@ -419,7 +419,13 @@
     <button id="wex">នាំចេញជា Excel (CSV)</button>
     <input type="file" id="wfile" accept="image/*" multiple hidden>
   </div>
-  <div class="wrap"><table id="wtb" style="min-width:700px"></table></div>
+  <div class="bar">
+    <label for="wnm">ឈ្មោះក្នុងរបាយការណ៍៖</label><select id="wnm" style="flex:0 0 auto;width:auto"></select>
+    <label for="wsb">មុខវិជ្ជា៖</label><input type="text" id="wsb" style="flex:0 0 150px;width:150px">
+    <label for="wrl">តួនាទីជា៖</label><select id="wrl" style="flex:0 0 auto;width:auto"></select>
+    <label for="wkm">ហត្ថលេខាខាងឆ្វេង៖</label><input type="text" id="wkm" style="flex:0 0 150px;width:150px">
+  </div>
+  <div class="wrap"><table id="wtb" style="min-width:900px"></table></div>
   <p class="note">💡 បញ្ចូលសកម្មភាពតាមថ្ងៃ ប្រព័ន្ធគណនារយៈពេលដោយស្វ័យប្រវត្តិ ហើយបោះពុម្ពតាមទម្រង់របាយការណ៍ប្រចាំខែ។ រូបភាពដែលភ្ជាប់ត្រូវបានប្រើតែពេលបោះពុម្ពប៉ុណ្ណោះ (មិនរក្សាទុកក្នុង Cloud ទេ)។</p>
 </section>
 
@@ -678,7 +684,7 @@
 <script src="khcal.js?v=1"></script>
 <script src="asc_pdf.js?v=2"></script>
 <script src="lessonplans.js?v=4"></script>
-<script src="script.js?v=240"></script>
+<script src="script.js?v=241"></script>
 <script src="colmap.js?v=1"></script>
 <script src="walker.js?v=9"></script>
 <script src="sched.js?v=29"></script>

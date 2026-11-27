@@ -1767,6 +1767,22 @@ function tmSel(k,v,ro){
   ms.forEach(function(j){o+="<option value="+j+(j===mi?" selected":"")+">"+("0"+j).slice(-2)+"</option>"});
   return o+"</select>";
 }
+/* ព័ត៌មានក្បាលរបាយការណ៍ (ឈ្មោះ · មុខវិជ្ជា · តួនាទី · អ្នកត្រួតពិនិត្យខាងឆ្វេង) · រក្សាទុកក្នុងឧបករណ៍នេះ */
+var WNM=["ផៃ ចន","ម៉េត បញ្ញារិទ្ធ"],WRL=["ប្រធានក្រុមបច្ចេកទេស","អនុប្រធានក្រុមបច្ចេកទេស"];
+function wmGet(){var o={};try{o=JSON.parse(localStorage.getItem("wrMeta")||"{}")||{}}catch(e){}return o}
+function wmSet(k,v){var o=wmGet();o[k]=v;try{localStorage.setItem("wrMeta",JSON.stringify(o))}catch(e){}}
+function wMeta(){
+  var t=teacherOf(wt)||{},m=wmGet(),nm=m.n||t.name||"",rl=m.r||((String(t.rl||"").replace(/[\u200b\u200c\u200d\s]/g,"")==="អនុប្រធាន")?WRL[1]:WRL[0]);
+  var N=[];[t.name].concat(WNM).forEach(function(x){if(x&&N.indexOf(x)<0)N.push(x)});if(nm&&N.indexOf(nm)<0)N.push(nm);
+  var h="<option value=''"+">(តាមគណនី)</option>";
+  var sel=$("wnm"),sr=$("wrl"),sb=$("wsb"),sk=$("wkm");if(!sel)return;
+  var hn="<option value=''>(តាមគណនី)</option>"+N.map(function(x){return"<option value='"+esc(x)+"'"+(m.n===x?" selected":"")+">"+esc(x)+"</option>"}).join("");
+  if(sel.dataset.sig!==hn){sel.innerHTML=hn;sel.dataset.sig=hn}sel.value=m.n||"";
+  var hr=WRL.map(function(x){return"<option"+(x===rl?" selected":"")+">"+x+"</option>"}).join("");
+  if(sr.dataset.sig!==hr){sr.innerHTML=hr;sr.dataset.sig=hr}sr.value=rl;
+  if(document.activeElement!==sb)sb.value=m.s||"គណិតវិទ្យា";
+  if(document.activeElement!==sk)sk.value=m.k||"គីម មិថុនា";
+}
 function renderW(){
   var isAdmin=(isAdm());
   if(!wt||(!isAdmin&&wt!==who.id))wt=who.id;
@@ -1775,17 +1791,23 @@ function renderW(){
   var ro=!(isAdmin||who.id===wt);
   $("wadd").style.display=ro?"none":"inline-block";
   var L=wlist(),b="";
-  L.forEach(function(e){
-    b+="<tr><td><input type=date data-w='"+e.u+"|d' value='"+esc(e.d)+"' style='width:150px' "+(ro?"readonly":"")+"></td><td><div class=wtm><span>ចាប់ផ្ដើម</span>"+tmSel(e.u+"|a",e.a,ro)+"</div><div class=wtm><span>បញ្ចប់</span>"+tmSel(e.u+"|b",e.b,ro)+"</div><div class=note style='margin:2px 0 0' id='wd-"+e.u+"'>"+dur(e.a,e.b)+"</div></td><td><textarea rows=3 data-w='"+e.u+"|c' style='min-width:260px;margin:0' placeholder='ខ្លឹមសារសកម្មភាព (មួយចំណុចក្នុងមួយបន្ទាត់)' "+(ro?"readonly":"")+">"+esc(e.c||"")+"</textarea></td><td class=acts>"+(ro?"":"<button data-wi='"+e.u+"'>🖼️ រូបភាព"+(wimg[e.u]&&wimg[e.u].length?" ("+wimg[e.u].length+")":"")+"</button> <button class=danger data-wd='"+e.u+"'>លុប</button>")+"</td></tr>";
+  L.forEach(function(e,i){
+    var ta=function(k,ph,w){return"<td><textarea rows=3 data-w='"+e.u+"|"+k+"' style='min-width:"+w+"px;margin:0' placeholder='"+ph+"' "+(ro?"readonly":"")+">"+esc(e[k]||"")+"</textarea></td>"};
+    b+="<tr><td style='text-align:center'>"+kn(i+1)+"</td><td><input type=date data-w='"+e.u+"|d' value='"+esc(e.d)+"' style='width:150px' "+(ro?"readonly":"")+"></td><td><div class=wtm><span>ចាប់ផ្ដើម</span>"+tmSel(e.u+"|a",e.a,ro)+"</div><div class=wtm><span>បញ្ចប់</span>"+tmSel(e.u+"|b",e.b,ro)+"</div><div class=note style='margin:2px 0 0' id='wd-"+e.u+"'>"+dur(e.a,e.b)+"</div></td>"+
+      ta("c","បរិយាយការងារ (មួយចំណុចក្នុងមួយបន្ទាត់)",240)+ta("p","ភាគីពាក់ព័ន្ធ",140)+ta("r","លទ្ធផល",140)+
+      "<td class=acts>"+(ro?"":"<button data-wi='"+e.u+"'>🖼️ រូបភាព"+(wimg[e.u]&&wimg[e.u].length?" ("+wimg[e.u].length+")":"")+"</button> <button class=danger data-wd='"+e.u+"'>លុប</button>")+"</td></tr>";
   });
-  $("wtb").innerHTML="<thead><tr><th>កាលបរិច្ឆេទ</th><th>ម៉ោង (ចាប់ផ្ដើម/បញ្ចប់)</th><th>ខ្លឹមសារសកម្មភាព</th><th></th></tr></thead><tbody>"+(b||"<tr><td colspan=4 class=empty>មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។ ចុច «+ បន្ថែមសកម្មភាព»។</td></tr>")+"</tbody>";
+  $("wtb").innerHTML="<thead><tr><th>ល.រ</th><th>កាលបរិច្ឆេទ</th><th>រយៈពេល (ចាប់ផ្ដើម/បញ្ចប់)</th><th>បរិយាយការងារ</th><th>ភាគីពាក់ព័ន្ធ</th><th>លទ្ធផល</th><th></th></tr></thead><tbody>"+(b||"<tr><td colspan=7 class=empty>មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។ ចុច «+ បន្ថែមសកម្មភាព»។</td></tr>")+"</tbody>";
+  wMeta();
 }
 $("wt").onchange=function(){wt=this.value;renderW()};
+$("wnm").onchange=function(){wmSet("n",this.value);wMeta()};$("wrl").onchange=function(){wmSet("r",this.value)};
+$("wsb").oninput=function(){wmSet("s",this.value)};$("wkm").oninput=function(){wmSet("k",this.value)};
 $("wm").onchange=function(){wmo=this.value||wmo;renderW()};
 $("wadd").onclick=function(){
   var arr=wr.r[wt]=wr.r[wt]||[],today=new Date(),d=wmo+"-"+("0"+Math.min(today.getDate(),28)).slice(-2);
   if(today.toISOString().slice(0,7)===wmo)d=today.getFullYear()+"-"+("0"+(today.getMonth()+1)).slice(-2)+"-"+("0"+today.getDate()).slice(-2);
-  arr.push({u:"w"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),d:d,a:"",b:"",c:""});
+  arr.push({u:"w"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),d:d,a:"",b:"",c:"",p:"",r:""});
   savW();renderW();
 };
 $("wtb").addEventListener("change",function(e){
@@ -1831,23 +1853,33 @@ $("wfile").onchange=function(e){
 var LOGO=(document.getElementById("ngsLogo")||{}).src||new URL("logo-ngs.jpg",location.href).href;
 function LOGOBTP(){return new URL("logo-bt.png",location.href).href}   /* ឡូហ្គោ BT ផ្ទៃថ្លា (របាយការណ៍ការងារ) */
 function LOGOBT(){return(document.querySelector(".brand-logo")||{}).src||new URL("logo-bt.jpg",location.href).href}
+function reportFoot(id,name,left){
+  var X=window.SCHX,tdy=new Date(),wg="ថ្ងៃទី"+kn(tdy.getDate())+" ខែ"+M[tdy.getMonth()]+" ឆ្នាំ"+kn(tdy.getFullYear());
+  var wl=window.KhCal?KhCal.fmt(tdy.getFullYear(),tdy.getMonth()+1,tdy.getDate()):"",sig=X?X.getSig(id):"";
+  return"<div class='cxf rsg2'><div class=rc><div class=rt>បានឃើញ និងត្រួតពិនិត្យ</div><div class='rb moul'>ជ.គណៈគ្រប់គ្រងសាលារៀនជំនាន់ថ្មី</div><div class=rs></div><div class='rn moul'>"+esc(left||"")+"</div></div>"+
+   "<div class=rc>"+(wl?"<div class=rt>"+esc(wl)+"</div>":"")+"<div class=rt>រាជធានីភ្នំពេញ, "+esc(wg)+"</div><div class='rb moul'>អ្នកធ្វើរបាយការណ៍</div><div class=rs>"+(sig?"<img src='"+safeSrc(sig)+"' class=sgi alt=''>":"")+"</div><div class='rn moul'>"+esc(name||"")+"</div></div></div>";
+}
 function reportHTML(){
-  var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"";
-  var role=(t.rl||"សមាជិក")+"ក្រុមបច្ចេកទេស";
-  var rows=L.map(function(e){
+  var t=teacherOf(wt),I=inf(),L=wlist(),p=wmo.split("-"),mn=M[+p[1]-1]||"",m=wmGet();
+  var nm=m.n||t.name||"",rl=m.r||((String(t.rl||"").replace(/[\u200b\u200c\u200d\s]/g,"")==="អនុប្រធាន")?WRL[1]:WRL[0]);
+  var sg=data.filter(function(x){return x&&String(x.name||"").replace(/\s+/g," ").trim()===String(nm).replace(/\s+/g," ").trim()})[0];
+  var rows=L.map(function(e,i){
     var cc=(e.c||"").split(/\r?\n/).filter(Boolean),ims=(wimg[e.u]||[]).map(function(s){return"<img src='"+safeSrc(s)+"' class=wim>"}).join("");
-    return"<tr><td>"+fdd(e.d)+"</td><td>"+(dur(e.a,e.b)||"")+(e.a&&e.b?"<br>("+ft(e.a)+"-"+ft(e.b)+")"+ampm(e.b):"")+"</td><td style='text-align:left'>"+cc.map(function(x,i){return esc(x)}).join("<br>")+"</td><td>"+ims+"</td></tr>";
+    var ml=function(x){return String(x||"").split(/\r?\n/).filter(Boolean).map(esc).join("<br>")};
+    return"<tr><td>"+kn(i+1)+"</td><td>"+fdd(e.d)+"</td><td>"+(dur(e.a,e.b)||"")+(e.a&&e.b?"<br>("+ft(e.a)+"-"+ft(e.b)+")"+ampm(e.b):"")+"</td><td style='text-align:left'>"+cc.map(esc).join("<br>")+(ims?"<div>"+ims+"</div>":"")+"</td><td style='text-align:left'>"+ml(e.p)+"</td><td style='text-align:left'>"+ml(e.r)+"</td></tr>";
   }).join("");
-  return"<div class='pg rpt'><div class=hd><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
-    "<div style='display:flex;align-items:center;gap:10px;margin:6px 0 10px'><img src='"+LOGOBTP()+"' class=logo alt=''><div><div class=moul style='text-align:left'>"+esc(I.school)+"</div><div>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div></div>"+
-    "<h2 class=moul style='text-align:center;font-size:13pt;margin:10px 0'>របាយការណ៍ការងារ"+esc(role)+"គណិតវិទ្យា ប្រចាំខែ"+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
-    "<p style='text-indent:1.2cm;margin:6px 0'>គោរពជម្រាបជូនគណៈគ្រប់គ្រង សូមជូនរបាយការណ៍ការងារក្រុមបច្ចេកទេសគណិតវិទ្យា នៅ"+esc(I.school)+" សាលារៀនជំនាន់ថ្មី (NGS) មានដូចតទៅ៖</p>"+
-    "<table class=ct style='width:100%'><thead><tr><th style='width:16%'>កាលបរិច្ឆេទ</th><th style='width:18%'>រយៈពេល</th><th>ខ្លឹមសារសកម្មភាព</th><th style='width:24%'>សកម្មភាព (រូបភាព...)</th></tr></thead><tbody>"+(rows||"<tr><td colspan=4>—</td></tr>")+"</tbody></table>"+
-    repFoot(wt,t.name,repSigner(t.name))+"</div>";
+  var th="background:#FFF2CC!important;-webkit-print-color-adjust:exact;print-color-adjust:exact";
+  return"<div class='pg rpt osum wrn'><div class=hd style='text-align:center'><div class=moul>ព្រះរាជាណាចក្រកម្ពុជា</div><div class=moul style='font-size:11pt'>ជាតិ សាសនា ព្រះមហាក្សត្រ</div></div>"+
+    "<div style='margin:4px 0 6px;text-align:left'><div class=moul>"+esc(I.school)+"</div><div class=moul style='font-size:11pt'>កម្មវិធីសាលារៀនជំនាន់ថ្មី</div></div>"+
+    "<h2 class=moul style='text-align:center;font-size:13pt;margin:6px 0 0'>របាយការណ៍អនុវត្តតួនាទី ភារកិច្ចរបស់ប្រធាន/អនុប្រធានក្រុមបច្ចេកទេស</h2>"+
+    "<h2 class=moul style='text-align:center;font-size:12pt;margin:2px 0 8px'>ប្រចាំខែ "+mn+" ឆ្នាំ"+kn(p[0])+"</h2>"+
+    "<div style='margin:2px 0 8px;line-height:1.9'><div>ឈ្មោះ៖ <b>"+esc(nm)+"</b></div><div>មុខវិជ្ជា៖ "+esc(m.s||"គណិតវិទ្យា")+"</div><div>តួនាទីជា៖ "+esc(rl)+"</div></div>"+
+    "<table class='ct wrt' style='width:100%;table-layout:fixed'><colgroup><col style='width:5%'><col style='width:11%'><col style='width:12%'><col style='width:34%'><col style='width:19%'><col style='width:19%'></colgroup><thead><tr><th style='"+th+"'>ល.រ</th><th style='"+th+"'>កាលបរិច្ឆេទ</th><th style='"+th+"'>រយៈពេល</th><th style='"+th+"'>បរិយាយការងារ</th><th style='"+th+"'>ភាគីពាក់ព័ន្ធ</th><th style='"+th+"'>លទ្ធផល</th></tr></thead><tbody>"+(rows||"<tr><td colspan=6>—</td></tr>")+"</tbody></table>"+
+    reportFoot(sg?sg.id:(nm===t.name?wt:""),nm,m.k||"គីម មិថុនា")+"</div>";
 }
 $("wpr").onclick=function(){if(!wlist().length){alert("មិនទាន់មានសកម្មភាពក្នុងខែនេះទេ។");return}window.SCHX.fontsOk().then(function(){doPrint(reportHTML())})};
 $("wex").onclick=function(){
-  var rows=[["កាលបរិច្ឆេទ","ម៉ោងចាប់ផ្ដើម","ម៉ោងបញ្ចប់","រយៈពេល","ខ្លឹមសារសកម្មភាព"]].concat(wlist().map(function(e){return[fdd(e.d),e.a||"",e.b||"",dur(e.a,e.b),(e.c||"").replace(/\r?\n/g," | ")]}));
+  var rows=[["ល.រ","កាលបរិច្ឆេទ","ម៉ោងចាប់ផ្ដើម","ម៉ោងបញ្ចប់","រយៈពេល","បរិយាយការងារ","ភាគីពាក់ព័ន្ធ","លទ្ធផល"]].concat(wlist().map(function(e,i){return[i+1,fdd(e.d),e.a||"",e.b||"",dur(e.a,e.b),(e.c||"").replace(/\r?\n/g," | "),(e.p||"").replace(/\r?\n/g," | "),(e.r||"").replace(/\r?\n/g," | ")]}));
   dlCSV(rows,"work-report-"+wmo+".csv");
 };
 
