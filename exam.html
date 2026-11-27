@@ -15,10 +15,10 @@
 :root{--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#1e3a8a;--g:linear-gradient(135deg,#1e3a8a,#6366f1)}
 *{box-sizing:border-box}
 body{margin:0;font-family:"Khmer OS Siemreap","Siemreap","Kantumruy Pro",system-ui,sans-serif;background:#eef2ff;color:var(--ink);line-height:1.6}
-.top{background:var(--g);color:#fff;padding:18px 16px 46px;text-align:center}
-.top h1{margin:0;font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap","Kantumruy Pro",serif;font-weight:400;font-size:1.1rem;line-height:1.8}
-.top p{margin:2px 0 0;opacity:.9;font-size:.9rem}
-.wrap{max-width:860px;margin:-30px auto 40px;padding:0 12px}
+.top{background:var(--g);color:#fff;padding:8px 14px 16px;text-align:center;position:sticky;top:0;z-index:20}
+.top h1{margin:0;font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap","Kantumruy Pro",serif;font-weight:400;font-size:1rem;line-height:1.5}
+.top p{margin:0;opacity:.9;font-size:.8rem}
+.wrap{max-width:860px;margin:-8px auto 40px;padding:0 12px}
 .card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(30,58,138,.15);margin-bottom:14px}
 label{display:block;font-weight:700;margin:6px 0}
 select,input,button{font:inherit}
@@ -28,8 +28,8 @@ select,input[type=text]{width:100%;padding:10px 12px;border:1.5px solid var(--li
 .btn:disabled{opacity:.5}
 .msg{text-align:center;padding:30px 10px}.msg .big{font-size:3rem}
 .note{color:var(--mute);font-size:.85rem}
-.bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:12px;font-weight:700}
-.timer{font-variant-numeric:tabular-nums;color:#b91c1c;font-size:1.1rem}.timer.low{animation:bl 1s infinite}@keyframes bl{50%{opacity:.35}}
+.bar{position:sticky;top:var(--th,60px);z-index:19;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 10px;background:#fff;border-radius:14px;padding:6px 12px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:12px;font-weight:700}
+.fsb{border:1px solid #c7d2fe;background:#eef2ff;color:#1e3a8a;border-radius:10px;padding:3px 9px;font-size:.8rem;font-weight:700;cursor:pointer}.gd{flex-basis:100%;font-size:.78rem;font-weight:600;color:#92400e;background:#fef3c7;border-radius:8px;padding:2px 8px;text-align:center}.gd.on{color:#166534;background:#dcfce7}.timer{font-variant-numeric:tabular-nums;color:#b91c1c;font-size:1.1rem}.timer.low{animation:bl 1s infinite}@keyframes bl{50%{opacity:.35}}
 .paper{background:#fff;border-radius:14px;padding:18px 16px;box-shadow:0 10px 30px rgba(30,58,138,.12);overflow-x:auto}
 .paper,.paper *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .acn{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:12px;padding:8px 12px;font-size:.85rem;margin-top:10px}
@@ -81,9 +81,12 @@ window.addEventListener("unhandledrejection",e=>{console.error(e.reason);window.
 window.addEventListener("error",e=>{console.error(e.error||e.message);window.bootFail()});
 async function retry(fn,label,max,ms=9000){let d=1500;for(let i=0;;i++){try{const v=await to(fn(),ms);net("");return v}catch(e){if(!isNet(e)||(max&&i+1>=max))throw e;net("📶 អ៊ីនធឺណិតខ្សោយ · "+label+"…");await waitOnline(d);d=Math.min(d*2,15000)}}}
 function net(t){const n=$("net");n.hidden=!t;n.textContent=t||""}
+function devId(){let d=LS.get("rmp_dev_id");if(!d||d.length<16){d=rand();try{localStorage.setItem("rmp_dev_id",d)}catch(e){}}return d}
+function fsOn(){try{const el=document.documentElement,f=el.requestFullscreen||el.webkitRequestFullscreen;if(!f)return;const r=f.call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+function armed(){return acOn&&!over&&Date.now()>=graceEnd}
 function rand(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")}
 
-let M=null,me=null,K="",endMs=0,tick=0,over=false,acOn=false,AC={lv:0,lt:0,cp:0},awayAt=0,seq=0,pushT=0;
+let M=null,me=null,K="",endMs=0,tick=0,over=false,acOn=false,AC={lv:0,lt:0,cp:0},awayAt=0,seq=0,pushT=0,graceEnd=0,badAt=0,gdT=0;
 /* ---------- ១. ព័ត៌មានប្រឡង ---------- */
 const LX=()=>{const v=M&&+M.lx;return v>=1&&v<=5?v:0};   /* ០ = ប្រឡងចាស់ (កត់ត្រាតែប៉ុណ្ណោះ) */
 function hdr(){$("tt").textContent=M.t||"ប្រឡង";$("ts").textContent=(M.sch||"")+" · ថ្នាក់ "+(M.cls||"")+" · "+kn(M.dur)+" នាទី";document.title=M.t||"ប្រឡង"}
@@ -126,21 +129,27 @@ async function go(){
   try{const d=await retry(()=>getDoc(doc(db,"exq",id+"_"+pc)),"កំពុងបើកវិញ្ញាសា",5);if(!d.exists())return back("⛔ លេខកូដមិនត្រឹមត្រូវ");P=JSON.parse(d.data().j)}
   catch(e){return back(e&&e.code==="permission-denied"?"⛔ លេខកូដមិនត្រឹមត្រូវ ឬប្រឡងបានបិទ/អស់ម៉ោង":"📶 អ៊ីនធឺណិតខ្សោយ · សូមព្យាយាមម្ដងទៀត")}
   /* មួយឈ្មោះ មួយឧបករណ៍ */
-  let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=rand();LS.set("dv_"+K,dv)}
+  let dv=LS.get("dv_"+K);const had=!!dv;if(!dv){dv=devId();LS.set("dv_"+K,dv)}
   let tmo=false;   /* ផុតម៉ោង ប៉ុន្តែអាចសរសេរដល់រួច → ការបដិសេធលើកក្រោយ = របស់ឧបករណ៍នេះ */
   try{await retry(()=>to(setDoc(doc(db,"exv",K),{t:id,sid:me.k,sn:me.n,dv:dv,at:serverTimestamp(),lv:0,lt:0,cp:0}),12000).catch(e=>{if(e&&e.code==="deadline-exceeded")tmo=true;throw e}),"កំពុងចុះឈ្មោះ",3,0)}
-  catch(e){if(e&&e.code==="permission-denied"&&!had&&!tmo)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។")}
+  catch(e){let mine=false;
+    if(e&&e.code==="permission-denied"&&!had&&!tmo){/* ឈ្មោះមានរួចហើយ៖ សាកថាជាឧបករណ៍ដដែល (dv = deviceId) ដោយ updateDoc k2 = dv|លេខ */
+      try{await to(updateDoc(doc(db,"exv",K),{k2:dv+"|"+Date.now()}),9000);mine=true}catch(x){}}
+    if(e&&e.code==="permission-denied"&&!had&&!tmo&&!mine)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។")}
   LS.set("exk_"+id,k);LS.set("exp_"+id,JSON.stringify(P));
-  try{const el=document.documentElement,r=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}
+  fsOn();
   if(!show(P,false))back("⚠️ មិនអាចបង្ហាញវិញ្ញាសាបានទេ · សូមព្យាយាមម្ដងទៀត");
 }
 /* ---------- ២. បង្ហាញវិញ្ញាសា + ម៉ោងរាប់ថយក្រោយ ---------- */
 function show(P,reload){
   try{
-  app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span></div><div class=paper id=pp>${EXP.html(P,P.ab?{v:me.ab==="ខ"?"b":"a",lbl:me.ab==="ខ"?"ខ":"ក"}:{})}</div>
+  app.innerHTML=`<style>${EXP.css}</style><div class=bar><span>${esc(me.n)}</span><span class=timer id=tm></span><button class=fsb id=fsb type=button>⛶ ពេញអេក្រង់</button><div class=gd id=gd></div></div><div class=paper id=pp>${EXP.html(P,P.ab?{v:me.ab==="ខ"?"b":"a",lbl:me.ab==="ខ"?"ខ":"ក"}:{})}</div>
     <p class=note style="text-align:center">✍️ សរសេរចម្លើយលើក្រដាស · អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ</p>`;
+  const tp=document.querySelector(".top");document.documentElement.style.setProperty("--th",(tp?tp.offsetHeight:60)+"px");
+  const fb=$("fsb");if(fb){if(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen)fb.onclick=fsOn;else fb.hidden=true}
   math($("pp"));if(EXP.fit)EXP.fit($("pp"));if(EXP.shrink)EXP.shrink($("pp"));
   AC=Object.assign({lv:0,lt:0,cp:0},JSON.parse(LS.get("ac_"+K)||"null")||{});seq=+LS.get("sq_"+K)||0;acOn=true;
+  {let g0=+LS.get("gs_"+K)||0;if(!g0){g0=Date.now();LS.set("gs_"+K,String(g0))}graceEnd=g0+60000;gdTick()}
   if(reload&&LS.get("rl_"+K)){AC.lv++;acSave();if(!(LX()&&AC.lv>=LX()))warn("អ្នកបានបិទ ឬផ្ទុកទំព័រឡើងវិញ","ត្រូវបានរាប់ជាការចាកចេញ (លើកទី "+kn(AC.lv)+(LX()?"/"+kn(LX()):"")+")")}
   LS.set("rl_"+K,"1");
   if(LX()&&AC.lv>=LX()){lockOut();return true}
@@ -161,6 +170,10 @@ function show(P,reload){
   }
 }
 /* 🔒 ចាកចេញលើសកំណត់ → បិទវិញ្ញាសា · ចម្លើយដែលសរសេរលើក្រដាសនៅដដែល · ចំនួនត្រូវបានផ្ញើទៅគ្រូរួចហើយ */
+/* 🛡️ ៦០ វិនាទីដំបូង៖ មិនទាន់រាប់ពិន័យ · គ្រប់ម៉ោង → ចាប់ផ្តើមពេញលេញ */
+function gdTick(){clearTimeout(gdT);const g=$("gd");if(!g||over)return;const s=Math.ceil((graceEnd-Date.now())/1000);
+  if(s>0){g.className="gd";g.textContent="🛡️ ប្រព័ន្ធការពារនឹងចាប់ផ្តើមដំណើរការក្នុង "+kn(s)+" វិនាទី";gdT=setTimeout(gdTick,500);return}
+  g.className="gd on";g.textContent="🛡️ ប្រព័ន្ធការពារកំពុងដំណើរការ";if(!gdTick.d){gdTick.d=1;if(document.hidden||blurred)away();pvUpd();gdT=setTimeout(()=>{g.hidden=true},3000)}}
 function lockOut(){if(over&&document.querySelector(".lkmsg"))return;over=true;clearInterval(tick);clearInterval(show.poll);acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();
   msg("🔒","វិញ្ញាសាត្រូវបានបិទ",`អ្នកបានចាកចេញពីទំព័រប្រឡងលើសកំណត់ (${kn(AC.lv)}/${kn(LX())} ដង)។ ចម្លើយដែលអ្នកបានសរសេរលើក្រដាសត្រូវបានរក្សា · សូមប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ។<span class=lkmsg></span>`)}
 function timeUp(t){if(over)return;over=true;clearInterval(show.poll);acOn=false;push(true);LS.del("exp_"+id);const w=document.querySelector(".ac");if(w)w.remove();msg("⏰",t||"អស់ម៉ោងប្រឡង","សូមឈប់សរសេរ ហើយប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
@@ -171,18 +184,19 @@ function push(now){clearTimeout(pushT);pushT=setTimeout(async()=>{const dv=LS.ge
   try{await retry(()=>updateDoc(doc(db,"exv",K),{lv:AC.lv,lt:Math.min(AC.lt,86400),cp:AC.cp,k2:dv+"|"+seq}),"កំពុងរក្សាទុក",4)}catch(e){}},now?0:2500)}
 function warn(t,sub){let w=document.querySelector(".ac");if(!w){w=document.createElement("div");w.className="ac";document.body.appendChild(w)}
   w.innerHTML=`<div><div class=big>⚠️</div><div style="font-weight:700;font-size:1.05rem">${t}</div><p class=note>${sub}</p><button class=btn id=acOk>យល់ព្រម</button></div>`;$("acOk").onclick=()=>w.remove()}
-function away(){if(!acOn||over||awayAt)return;awayAt=Date.now()}
-function back(){if(!acOn||over||!awayAt||spl)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;AC.lv++;AC.lt+=Math.round(d);acSave();
+function away(){if(!armed()||awayAt)return;awayAt=Date.now()}
+function back(){if(!armed()||!awayAt||spl)return;const d=(Date.now()-awayAt)/1000;awayAt=0;if(d<1)return;AC.lv++;AC.lt+=Math.round(d);acSave();
   if(LX()&&AC.lv>=LX()){lockOut();return}
   warn("អ្នកបានចាកចេញពីទំព័រប្រឡង (លើកទី "+kn(AC.lv)+(LX()?"/"+kn(LX()):"")+")","រយៈពេល "+kn(AC.lt)+" វិនាទី · គ្រូនឹងឃើញចំនួននេះ"+(LX()?" · "+(LX()-AC.lv===1?"<b>⛔ ចាកចេញម្ដងទៀត វិញ្ញាសានឹងបិទ!</b>":"នៅសល់ "+kn(LX()-AC.lv)+" ដង មុនវិញ្ញាសាបិទ"):""))}
 /* 🛡️ Blur/Split-Screen → ព្រាលសំណួរភ្លាម + ផ្ទាំងក្រហម · រាប់ចូល AC.lv តែមួយ (awayAt ការពាររាប់ជាន់ blur+visibilitychange) */
 let spl=false,blurred=false;
-function pvUpd(){const on=acOn&&!over&&(spl||blurred||document.hidden);document.body.classList.toggle("pvb",on);let o=$("pvo");
+function pvUpd(){const on=armed()&&(spl||blurred||document.hidden);document.body.classList.toggle("pvb",on);let o=$("pvo");
   if(on&&!o){o=document.createElement("div");o.id="pvo";o.className="pvo";o.innerHTML="<div>⚠️ ប្រព័ន្ធរកឃើញការចាកចេញ ឬបំបែកអេក្រង់!<br>សូមបើកពេញអេក្រង់ដើម្បីបន្ត</div>";document.body.appendChild(o)}else if(!on&&o)o.remove()}
-function splitChk(){if(!acOn||over){if(spl){spl=false}pvUpd();return}
+function splitChk(){if(!armed()){spl=false;badAt=0;pvUpd();return}
   const ae=document.activeElement,typ=ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"),mob=matchMedia("(pointer:coarse)").matches;
-  const bad=mob&&!typ&&window.outerHeight>0&&screen.availHeight>0&&window.outerHeight/screen.availHeight<0.78;
-  if(bad&&!spl){spl=true;away()}else if(!bad&&spl){spl=false;back()}pvUpd()}
+  const bad=mob&&!typ&&window.outerHeight>0&&screen.availHeight>0&&window.outerHeight/screen.availHeight<0.62;
+  /* ត្រូវជាប់គ្នា ≥ ៣.៥ វិនាទី (២ វដ្ត) ទើបរាប់ */
+  if(bad){if(!badAt)badAt=Date.now();if(!spl&&Date.now()-badAt>=3500){spl=true;away()}}else{badAt=0;if(spl){spl=false;back()}}pvUpd()}
 document.addEventListener("visibilitychange",()=>{document.hidden?away():back();pvUpd()});
 window.addEventListener("blur",()=>{blurred=true;away();pvUpd()});window.addEventListener("focus",()=>{blurred=false;back();pvUpd()});window.addEventListener("pagehide",away);
 window.addEventListener("resize",splitChk);window.addEventListener("orientationchange",()=>setTimeout(splitChk,400));setInterval(splitChk,2000);
