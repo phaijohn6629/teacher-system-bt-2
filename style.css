@@ -1367,3 +1367,5 @@ body.mon #allMenu{display:none!important}
 .rsg2 .rb{font-size:9pt}.rsg2 .rn{font-size:10pt}.rsg2 .rs{height:18mm;display:flex;align-items:flex-end;justify-content:center}.rsg2 .rs .sgi{max-height:17mm}
 .rsg2 .rc:first-child{margin-top:6mm}
 .rpt.wrn .wsch,.rpt.wrn .wsch .moul{text-align:left!important}
+/* PDF (html2canvas)៖ ដូច .cxp — overflow-wrap/break-word ធ្វើឱ្យអក្សរខ្មែរជាន់គ្នា → ប្រើ normal + គ្មាន kerning */
+.pdfw .rpt.wrn,.pdfw .rpt.wrn :is(td,th,div,b,span,h2){word-break:normal!important;overflow-wrap:normal!important;letter-spacing:0!important;font-kerning:none;line-height:1.75}
