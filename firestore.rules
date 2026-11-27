@@ -429,6 +429,13 @@ service cloud.firestore {
     //   rcpt/{t}_{សិស្ស} = បង្កាន់ដៃ (បង្កើតជាមួយ subs ក្នុង batch តែមួយ) → សិស្សពិនិត្យបានថាផ្ញើដល់ពិតមែន (អ៊ីនធឺណិតខ្សោយ)
     function tdoc(t) { return get(/databases/$(database)/documents/tests/$(t)).data; }
     function onRoster(t, k, n) { return {'k': k, 'n': n} in tdoc(t).get('names', []); }
+    // 🌐 Guest Mode (tests/exm.guest == true)៖ សិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯង
+    //   sid = 'g_' + ១២ តួ hex ដំបូងនៃ dv (rmp_dev_id) → ១ ឧបករណ៍ = ១ ឯកសារក្នុងមួយតេស្ត/ប្រឡង (ការពារ spam) · ឈ្មោះ ≤ ៩០ តួ
+    function guestOk(guest, k, n, dv) {
+      return guest == true && k is string && k.matches('g_[0-9a-f]{12}')
+        && dv is string && dv.size() >= 16 && dv.size() <= 64 && dv.matches(k.replace('g_', '') + '.*')
+        && n is string && n.size() > 0 && n.size() <= 90;
+    }
     function stOk(sid, dv, t) {
       return exists(/databases/$(database)/documents/st/$(sid))
         && get(/databases/$(database)/documents/st/$(sid)).data.dv == dv
@@ -452,7 +459,8 @@ service cloud.firestore {
         && request.resource.data.sn is string && request.resource.data.sn.size() <= 100
         && request.resource.data.a is map && request.resource.data.a.size() <= 200
         && tdoc(request.resource.data.t).open == true
-        && onRoster(request.resource.data.t, request.resource.data.sid, request.resource.data.sn)
+        && (onRoster(request.resource.data.t, request.resource.data.sid, request.resource.data.sn)
+          || guestOk(tdoc(request.resource.data.t).get('guest', false), request.resource.data.sid, request.resource.data.sn, request.resource.data.get('dv', '')))
         && (tdoc(request.resource.data.t).get('v', 1) < 2
           || stOk(sid, request.resource.data.get('dv', ''), request.resource.data.t));
       allow read: if active();
@@ -468,7 +476,8 @@ service cloud.firestore {
         && request.resource.data.dv is string && request.resource.data.dv.size() >= 16 && request.resource.data.dv.size() <= 64
         && tdoc(request.resource.data.t).open == true
         && tdoc(request.resource.data.t).get('v', 1) >= 2
-        && onRoster(request.resource.data.t, request.resource.data.sid, request.resource.data.sn)
+        && (onRoster(request.resource.data.t, request.resource.data.sid, request.resource.data.sn)
+          || guestOk(tdoc(request.resource.data.t).get('guest', false), request.resource.data.sid, request.resource.data.sn, request.resource.data.dv))
         && (tdoc(request.resource.data.t).get('pc', false) != true
           || request.resource.data.get('pc', '') == get(/databases/$(database)/documents/tkeys/$(request.resource.data.t)).data.get('pc', '#'));
       allow read: if active();
@@ -529,7 +538,8 @@ service cloud.firestore {
         && request.resource.data.dv is string && request.resource.data.dv.size() >= 16 && request.resource.data.dv.size() <= 64
         && request.resource.data.lv == 0 && request.resource.data.cp == 0 && request.resource.data.lt == 0
         && exmLive(request.resource.data.t)
-        && {'k': request.resource.data.sid, 'n': request.resource.data.sn} in exmDoc(request.resource.data.t).get('names', []);
+        && ({'k': request.resource.data.sid, 'n': request.resource.data.sn} in exmDoc(request.resource.data.t).get('names', [])
+          || guestOk(exmDoc(request.resource.data.t).get('guest', false), request.resource.data.sid, request.resource.data.sn, request.resource.data.dv));
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lv','lt','cp','k2'])
         && request.resource.data.k2 is string
         && request.resource.data.k2.matches(resource.data.dv + '[|][0-9]+')

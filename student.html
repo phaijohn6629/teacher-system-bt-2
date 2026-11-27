@@ -82,6 +82,13 @@ async function load(){
 }
 /* បញ្ជីថ្នាក់ = script.js `CL` (ដកបុព្វបទ «M-») → ត្រូវនឹង exm.cls (= c.n) ១០០% · ប្ដូរ CL ត្រូវប្ដូរទីនេះផង */
 const CLASSES="7NGS-B,7NGS-C,7NGS-P,7NGS-BO,7NGS-CO,7NGS-PO,8NGS-B,8NGS-C,8NGS-P1,8NGS-P2,8NGS-P3,8NGS-BO,9NGS-B1,9NGS-B2,9NGS-C1,9NGS-C2,9NGS-P1,9NGS-P2,9NGS-P3,9NGS-BO,9NGS-CO,10NGS-B,10NGS-C,10NGS-P1,10NGS-P2,10NGS-P3,11NGS-C,11NGS-P,12NGS-A,12NGS-B,10GT-Ele/Electro-Y1,10GT-ICT-Y1,11GT-ICT-Y2".split(",");
+/* 🌐 ប្រឡងបើកទូលាយ (Guest)៖ exm.open==true && exm.guest==true → សិស្សក្រៅប្រព័ន្ធចុចចូលបានភ្លាម (វាយឈ្មោះខ្លួនឯងក្នុង exam.html) */
+function guestHtml(){
+  const g=(open||[]).filter(x=>x.m.guest===true).sort((a,b)=>(+a.m.endMs)-(+b.m.endMs));
+  if(!g.length)return"";
+  return `<div class="card ex" style="border:2px solid #86efac"><h3 style="margin:0 0 6px;font-size:1.02rem">🟢 🌐 ប្រឡងបើកទូលាយ (Guest)</h3><p class="note" style="margin:0 0 4px">សម្រាប់សិស្សក្រៅប្រព័ន្ធ · វាយឈ្មោះខ្លួនឯងដើម្បីចូលប្រឡង</p>
+  ${g.map(({id,m})=>{const left=Math.max(0,Math.round((+m.endMs-Date.now())/60000));return `<a class="btn" style="text-align:left" href="exam.html?e=${encodeURIComponent(id)}">🟢 🌐 ${esc(m.t||"ប្រឡង")} <span style="font-weight:400;font-size:.82rem;display:block">⏱ ${kn(+m.dur||0)} នាទី · នៅសល់ ${kn(left)} នាទី${m.cls?" · "+esc(m.cls):""}</span></a>`}).join("")}</div>`;
+}
 function pickView(){
   $("tools").hidden=true;$("sub").textContent="វិទ្យាល័យបឹងត្របែក";
   const live=new Set((open||[]).map(x=>norm(x.m.cls)));
@@ -90,7 +97,7 @@ function pickView(){
   const off=new Set(CLASSES.map(norm)), extL=[];
   (open||[]).forEach(x=>{const c=String(x.m.cls||"").trim();if(c&&!off.has(norm(c))&&!extL.some(y=>norm(y)===norm(c)))extL.push(c)});
   const extH=extL.length?`<h3 class="gh">🟢 ថ្នាក់បន្ថែម · កំពុងបើកវិញ្ញាសា</h3><div class="cls">${extL.map(c=>`<button data-c="${esc(c)}">🟢 ${esc(c)}</button>`).join("")}</div>`:"";
-  app.innerHTML=`<div class="card"><h2 style="margin:0 0 4px;font-size:1.05rem">🏫 ជ្រើសរើសថ្នាក់របស់អ្នក</h2>
+  app.innerHTML=guestHtml()+`<div class="card"><h2 style="margin:0 0 4px;font-size:1.05rem">🏫 ជ្រើសរើសថ្នាក់របស់អ្នក</h2>
    <p class="note" style="margin:0">ជ្រើសម្ដងគត់ · កម្មវិធីនឹងចងចាំ · 🟢 = មានវិញ្ញាសាកំពុងបើក</p>
    ${extH}
    ${groups.map(x=>`<h3 class="gh">ថ្នាក់ទី ${kn(x.g)}</h3><div class="cls">${x.l.map(c=>`<button data-c="${esc(c)}">${live.has(norm(c))?"🟢 ":""}${esc(c)}</button>`).join("")}</div>`).join("")}
@@ -104,9 +111,9 @@ function pickView(){
 function setCls(c){cls=String(c).trim().slice(0,30);LS.set(KEY,cls);open=null;home()}
 function listView(){
   $("tools").hidden=false;$("sub").textContent="ថ្នាក់ "+cls;
-  const mine=(open||[]).filter(x=>norm(x.m.cls)===norm(cls)).sort((a,b)=>(+a.m.endMs)-(+b.m.endMs));
-  if(!mine.length){app.innerHTML=`<div class="card msg"><div class="big">📭</div><h2>មិនទាន់មានវិញ្ញាសាប្រឡងកំពុងបើកសម្រាប់ថ្នាក់ ${esc(cls)} ទេ</h2><p class="note">ពេលគ្រូបើកវិញ្ញាសា សូមចុច «🔄 ពិនិត្យវិញ្ញាសាថ្មី»</p></div>`;return}
-  app.innerHTML=mine.map(({id,m})=>{const left=Math.max(0,Math.round((+m.endMs-Date.now())/60000));
+  const gh=guestHtml(),mine=(open||[]).filter(x=>norm(x.m.cls)===norm(cls)&&x.m.guest!==true).sort((a,b)=>(+a.m.endMs)-(+b.m.endMs));
+  if(!mine.length){app.innerHTML=gh+`<div class="card msg"><div class="big">📭</div><h2>មិនទាន់មានវិញ្ញាសាប្រឡងកំពុងបើកសម្រាប់ថ្នាក់ ${esc(cls)} ទេ</h2><p class="note">ពេលគ្រូបើកវិញ្ញាសា សូមចុច «🔄 ពិនិត្យវិញ្ញាសាថ្មី»</p></div>`;return}
+  app.innerHTML=gh+mine.map(({id,m})=>{const left=Math.max(0,Math.round((+m.endMs-Date.now())/60000));
     return `<div class="card ex"><h3>${esc(m.t||"ប្រឡង")}</h3><div class="meta"><span class="chip">🏫 ${esc(m.cls)}</span><span class="chip">⏱ ${kn(+m.dur||0)} នាទី</span><span class="chip g">🟢 កំពុងបើក · នៅសល់ ${kn(left)} នាទី</span></div>
     <a class="btn" href="exam.html?e=${encodeURIComponent(id)}">✍️ ចូលប្រឡង</a></div>`}).join("");
 }

@@ -11,7 +11,7 @@
 "use strict";
 var QB_PAGE=40,qbShow=QB_PAGE;   /* បង្ហាញលំហាត់ម្ដង ៤០ (KaTeX គូររូបមន្តលឿនជាង) */
 var LV={1:"ងាយ",2:"មធ្យម",3:"ពិបាក"},QV="bank",qb={},fG=0,fL="",fV=0,fP=-1,mine=false;   /* fP = តម្រងចំណុច (-1 ទាំងអស់ · 0 មិនទាន់កំណត់) */
-var mk={tid:"",ci:0,ls:{},pt:{},pc:true,n:{1:5,2:3,3:2},dur:30,lx:3,title:"",items:null,kind:"g",mo:""},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
+var mk={tid:"",ci:0,ls:{},pt:{},pc:true,n:{1:5,2:3,3:2},dur:30,lx:3,title:"",items:null,kind:"g",mo:"",guest:false},tests=[],curTest=null,subUn=null,subs=[],keyOf={};
 /* ប្រភេទតេស្ត៖ g = ទូទៅ (មិនរាប់ពិន្ទុ) · t1/t2 = តេស្តលើកទី១/ទី២ (ចូល «ពិន្ទុប្រចាំខែ» ១៥% ដោយស្វ័យប្រវត្តិ) */
 var KIND={g:"តេស្តទូទៅ",t1:"តេស្តលើកទី១",t2:"តេស្តលើកទី២",c:"ប្រឡងទម្រង់បិទ"};   /* c = ចូល «ប្រឡងបិទ» ក្នុងពិន្ទុប្រចាំខែ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន) */
 function curMo(){var d=new Date();return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)}
@@ -543,7 +543,8 @@ function renderMake(){
     "<label>រយៈពេល (នាទី)៖</label><input id=qmD type=number min=0 value="+mk.dur+" style='width:80px;flex:0 0 80px'></div>"+
     "<div class=bar><label class=qm-pcl><input type=checkbox id=qmPc"+(mk.pc?" checked":"")+"> 🔑 ត្រូវការលេខកូដចូល</label><span class=note style='margin:0'>លេខ ៤ ខ្ទង់ បង្ហាញពេលបើកតេស្ត · គ្រូសរសេរលើក្ដារខៀន → អ្នកនៅក្រៅថ្នាក់ (មានតែតំណ) ធ្វើមិនបាន</span></div>"+
     "<div class=bar><label>🚫 សិស្សចាកចេញពីផ្ទាំងតេស្ត៖</label><select id=qmX>"+[[0,"កត់ត្រា និងព្រមានតែប៉ុណ្ណោះ"],[1,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ១"],[2,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ២"],[3,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៣"],[5,"ផ្ញើស្វ័យប្រវត្តិ ពេលចាកចេញលើកទី ៥"]].map(function(o){return"<option value="+o[0]+(o[0]===mk.lx?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select><span class=note style='margin:0'>ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់ → កត់ត្រា និងបង្ហាញក្នុងលទ្ធផល 🚩</span></div>"+
-    "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK>"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
+    "<div class=bar><label class=qm-pcl><input type=checkbox id=qmGu"+(mk.guest?" checked":"")+"> 🌐 អនុញ្ញាតឱ្យសិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯង (Guest Mode)</label><span class=note style='margin:0'>សិស្សភ្ញៀវវាយឈ្មោះពេញ · មានស្លាក [ភ្ញៀវ] ក្នុងលទ្ធផល · ជា «តេស្តទូទៅ» ជានិច្ច (មិនចូលពិន្ទុប្រចាំខែ) · ត្រូវការការការពារ v2</span></div>"+
+    "<div class=bar><label>ប្រភេទតេស្ត៖</label><select id=qmK"+(mk.guest?" disabled":"")+">"+Object.keys(KIND).map(function(k){return"<option value="+k+(k===mk.kind?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
     (mk.kind!=="g"?"<label>ខែ៖</label><input id=qmM type=month value='"+(mk.mo||curMo())+"' style='width:160px;flex:0 0 160px'><span class=note style='margin:0'>📌 ពិន្ទុនឹងចូល «🗓️ ពិន្ទុប្រចាំខែ › "+(mk.kind==="c"?"ប្រឡងបិទ» ដោយស្វ័យប្រវត្តិ (បំប្លែងតាមពិន្ទុអតិបរមា · គ្រូកែបាន)":KIND[mk.kind]+"» ដោយស្វ័យប្រវត្តិ")+"</span>":"<span class=note style='margin:0'>តេស្តទូទៅ មិនរាប់ចូលពិន្ទុសកម្មភាពប្រចាំខែទេ</span>")+"<button type=button data-qa=goexam style='margin-left:auto' title='វិញ្ញាសាសរសេរលើក្រដាស · បោះពុម្ព ឬមើលអនឡាញ'>📝 ប្រឡងទម្រង់បើក →</button></div>";
   if(!c){setBody(h+"<p class=note>សូមបង្កើតថ្នាក់ និងបញ្ចូលសិស្សជាមុន។</p>");return}
   if(!C){setBody(h+"<p class=note>ថ្នាក់ «"+esc(c.n)+"» មិនទាន់មានកម្មវិធីសិក្សា។</p>");return}
@@ -602,10 +603,13 @@ function openTest2(){
   var id=uid().slice(-8),items=mk.items.map(function(q){var o={id:q.id,t:q.t,q:q.q};if(q.t==="mc")o.ch=q.ch;if(q.fg)o.fg=q.fg;if(q.im)o.im=1;return o}),keys={};
   mk.items.forEach(function(q){keys[q.id]=q.t==="mc"?{t:"mc",a:+q.a}:{t:"num",a:String(q.a)};if(q.sl)keys[q.id].s=String(q.sl).slice(0,4000)});
   var names=c.st.map(function(s,i){return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n}});
-  var kind=c.isExternal?"g":(mk.kind||"g"),mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
+  var guest=!!($("qmGu")&&$("qmGu").checked)||!!mk.guest;
+  if(guest&&!openTest2.v2){alert("🌐 Guest Mode ត្រូវការ firestore.rules កំណែថ្មី (v2) · សូម Admin Publish ជាមុន");return Promise.resolve()}
+  var kind=(c.isExternal||guest)?"g":(mk.kind||"g"),mo=kind==="g"?"":(($("qmM")||{}).value||curMo());
   var dup=kind==="g"?null:tests.filter(function(t){return t.o===mk.tid&&t.cls===c.n&&t.kind===kind&&t.mo===mo})[0];
   if(dup&&!confirm("ថ្នាក់ "+c.n+" មាន «"+KIND[kind]+"» "+moName(mo)+" រួចហើយ («"+dup.title+"»)។\n\nបើបង្កើតថ្មី ពិន្ទុប្រចាំខែនឹងប្រើតេស្តថ្មីនេះជំនួស ហើយតេស្តចាស់ក្លាយជា «តេស្តទូទៅ»។ បន្តទេ?"))return Promise.resolve();
   var T={o:mk.tid,title:$("qmTi").value.trim()||("តេស្ត "+c.n),cls:c.n,g:XC.gc(c),ext:!!c.isExternal,dur:Math.round(+$("qmD").value||0),lx:+(($("qmX")||{}).value||0),open:true,names:names,items:items,cr:new Date().toISOString(),kind:kind,mo:mo};
+  if(guest)T.guest=true;
   var v2=openTest2.v2,pc=v2&&mk.pc?genPc():"";if(v2){T.v=2;T.pc=!!pc}else notify("⚠️ សូម Admin Publish firestore.rules កំណែថ្មី ដើម្បីបើកការការពារតេស្ត (លេខកូដ · មួយឈ្មោះមួយឧបករណ៍)");
   if(dup)window.FB.updateDoc(window.FB.doc(window.db,"tests",dup.id),{kind:"g",mo:""}).catch(function(){});
   var FB=window.FB;
@@ -766,8 +770,8 @@ function renderRes(){
   var progLive=prog.filter(function(x){return!stale(x)}),progStale=prog.filter(stale);
   var miss=(t.names||[]).filter(function(x){return!done[x.k]&&!inP[x.k]}),v2=(t.v||1)>=2;
   h="<div class=bar><button type=button data-qa=back>‹ តេស្តទាំងអស់</button><b style='font-size:1.05rem'>"+esc(t.title)+"</b><span class=note style='margin:0'>"+esc(t.cls)+"</span>"+
-    "<select id=qrK title='ប្រភេទតេស្ត' style='width:auto;margin:0'>"+Object.keys(KIND).map(function(k){return"<option value="+k+((t.kind||"g")===k?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>"+
-    ((t.kind||"g")!=="g"?"<input id=qrM type=month value='"+(t.mo||curMo())+"' style='width:150px;margin:0'>":"")+
+    (t.guest?"<span class=qz-kind k-g title='តេស្តភ្ញៀវ · មិនចូលពិន្ទុប្រចាំខែ'>🌐 Guest</span>":"<select id=qrK title='ប្រភេទតេស្ត' style='width:auto;margin:0'>"+Object.keys(KIND).map(function(k){return"<option value="+k+((t.kind||"g")===k?" selected":"")+">"+KIND[k]+"</option>"}).join("")+"</select>")+
+    ((t.kind||"g")!=="g"&&!t.guest?"<input id=qrM type=month value='"+(t.mo||curMo())+"' style='width:150px;margin:0'>":"")+
     "<button type=button data-qa=link>🔗 តំណ/QR</button><button type=button data-qa=toggle>"+(t.open?"🔒 បិទតេស្ត":"🔓 បើកតេស្តវិញ")+"</button>"+
     "<button type=button data-qa=csv>⬇️ Excel</button><span class=qr-cert title='Certificate = ពានរង្វាន់ពិសេស៖ បើកដោយដៃ · តេស្តបិទ · សិស្ស ≥ ៥ នាក់ · ≥ ១០ លំហាត់ · ខ្សែ ≥ ៧០%' style='display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap'><label class=note style='margin:0'><input type=checkbox id=qrCo"+(certOn(t)?" checked":"")+"> 🎓 បើក Certificate</label>"+(certOn(t)?(certGate(t,R)?"<span class=note style='margin:0;color:#b45309'>🔒 "+esc(certGate(t,R))+"</span>":"<button type=button data-qa=cert>🎓 បោះពុម្ព ("+kn(certKind(t,R).length)+")</button><label class=note style='margin:0'>ខ្សែ ≥ <input id=qrCp type=number min="+CERT_PCT_MIN+" max=100 value='"+certPct()+"' style='width:60px;margin:0'>%</label>"):"")+"</span><button type=button class=primary data-qa=drive>💾 រក្សាទុកក្នុង Drive</button><button type=button class=danger data-qa=del>🗑️</button></div>"+
     (v2?"<div class=qr-sec>🔒 <b>តេស្តមានការការពារ</b> · មួយឈ្មោះ មួយឧបករណ៍ · ផ្ញើបានក្នុងរយៈពេលកំណត់"+(t.dur?" (+១០ នាទី)":"")+(t.pc?" · 🔑 លេខកូដចូល <b class=qz-pcb>"+esc(pcOf[t.id]||"…")+"</b>":"")+"</div>":"<div class=qr-sec off>ℹ️ តេស្តនេះបង្កើតមុនការការពារថ្មី (គ្មានលេខកូដ · គ្មានការកំណត់ឧបករណ៍)</div>")+
@@ -924,7 +928,7 @@ function renderPrac(){
   var u=pcUrl(p.id),rows=PC.rows[p.id];
   h+="<div class='card pc-link'><div class=pc-lr><b>🔗 តំណហ្វឹកហាត់ថ្នាក់ "+esc(c.n)+"</b> <span class='pc-st"+(p.open?" on":"")+"'>"+(p.open?"✅ កំពុងបើក":"⏸️ បានបិទ")+"</span></div>"+
     "<input readonly value='"+esc(u)+"' onclick='this.select()'>"+
-    "<div class=bar style='margin:6px 0 0'><button type=button data-qa=pccp>📋 ចម្លងតំណ</button><button type=button data-qa=pcqr>📱 QR</button><button type=button data-qa=pcnm title='ប្រើបញ្ជីឈ្មោះសិស្សបច្ចុប្បន្នរបស់ថ្នាក់'>🔄 ធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+kn(p.names.length)+")</button><button type=button data-qa=pctg>"+(p.open?"⏸️ បិទតំណ":"▶️ បើកតំណវិញ")+"</button></div></div>";
+    "<div class=bar style='margin:6px 0 0'><button type=button data-qa=pccp>📋 ចម្លងតំណ</button><button type=button data-qa=pcqr>📱 QR</button><button type=button data-qa=pcnm title='ប្រើបញ្ជីឈ្មោះសិស្សបច្ចុប្បន្នរបស់ថ្នាក់'>🔄 ធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+kn(p.names.length)+")</button><button type=button data-qa=pctg>"+(p.open?"⏸️ បិទតំណ":"▶️ បើកតំណវិញ")+"</button><button type=button data-qa=pcgu title='អនុញ្ញាតឱ្យសិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯងដើម្បីហាត់'>"+(p.guest?"🌐 Guest៖ បើក ✅":"🌐 Guest៖ បិទ")+"</button></div></div>";
   h+=pcExHtml(p,g);
   if(!rows){$("qzBody").innerHTML=h+"<p class=note>កំពុងផ្ទុកតារាង…</p>";pcRows(p.id).then(renderPrac);return}
   var C=window.CUR&&window.CUR[g],L=C?Object.keys(C.LS).sort(function(a,b){return a-b}):[],done=0;
@@ -934,6 +938,8 @@ function renderPrac(){
     return"<tr><td>"+kn(i+1)+"</td><td class=nm>"+esc(x.n)+"</td>"+L.map(function(l){var n=cnt(r,l);return"<td class='pc-c n"+n+"' title='"+esc(lsName(g,l))+"'>"+(n?(n>3?"🏆×"+kn(n):"🏆".repeat(n)):"")+"</td>"}).join("")+
       "<td class=pc-t><b>"+kn(tot)+"</b></td><td class=pc-d>"+(last?kn(new Date(last).toLocaleDateString("en-GB")):"—")+"</td></tr>";
   }).join("");
+  Object.keys(rows).filter(function(k){return/^g_/.test(k)}).forEach(function(k,j){var r=rows[k],tot=0,last=0;if(r&&r.t)Object.keys(r.t).forEach(function(q){tot++;if(r.t[q]>last)last=r.t[q]});
+    body+="<tr><td>🌐</td><td class=nm>"+esc(r.n||k)+"</td>"+L.map(function(l){var n=cnt(r,l);return"<td class='pc-c n"+n+"'>"+(n?(n>3?"🏆×"+kn(n):"🏆".repeat(n)):"")+"</td>"}).join("")+"<td class=pc-t><b>"+kn(tot)+"</b></td><td class=pc-d>"+(last?kn(new Date(last).toLocaleDateString("en-GB")):"—")+"</td></tr>"});
   h+="<div class=bar><b>🏆 កំណត់ត្រាហ្វឹកហាត់</b><span class=note style='margin:0'>សិស្សបានហ្វឹកហាត់ "+kn(done)+" / "+kn(p.names.length)+" នាក់</span><button type=button data-qa=pcrf>🔄 ផ្ទុកឡើងវិញ</button></div>"+
     "<div class=wrap><table class=pc-tb><thead><tr><th>ល.រ</th><th>ឈ្មោះ</th>"+L.map(function(l){return"<th title='"+esc(lsName(g,l))+"'>"+esc(lsName(g,l).replace(/^ជំពូកទី\S+ · /,"").replace(/^មេរៀនទី\S+ /,"").slice(0,14))+"</th>"}).join("")+"<th>សរុប</th><th>ចុងក្រោយ</th></tr></thead><tbody>"+body+"</tbody></table></div>"+
     "<p class=note>🏆 មួយ = កម្រិតមួយដែលឆ្លើយត្រូវទាំងអស់ (អតិបរមា ៥ ក្នុងមួយមេរៀន · ៦ បើមានកម្រិត 🌐 PISA)។ ដាក់ម៉ៅស៍លើក្បាលជួរ ដើម្បីមើលឈ្មោះមេរៀនពេញ។</p>";
@@ -1038,6 +1044,7 @@ function pcAct(a){
   if(a==="pccp"){var u=pcUrl(p.id);try{navigator.clipboard.writeText(u)}catch(x){}notify("បានចម្លងតំណ");return}
   if(a==="pcqr"){showLinkUrl(pcUrl(p.id),"🧮 តំណហ្វឹកហាត់ថ្នាក់ "+c.n);return}
   if(a==="pcrf"){delete PC.rows[p.id];renderPrac();return}
+  if(a==="pcgu"){var gv=!p.guest;FB.updateDoc(FB.doc(db,"pcls",p.id),{guest:gv}).then(function(){p.guest=gv;renderPrac();notify(gv?"បានបើក Guest Mode · សិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯងបាន":"បានបិទ Guest Mode")},function(){alert("មិនអាចប្ដូរបានទេ")});return}
   if(a==="pcnm"){var nm=pcNames(c);FB.updateDoc(FB.doc(db,"pcls",p.id),{names:nm}).then(function(){p.names=nm;renderPrac();notify("បានធ្វើបច្ចុប្បន្នភាពបញ្ជីឈ្មោះ ("+nm.length+" នាក់)")},function(){alert("មិនអាចធ្វើបច្ចុប្បន្នភាពបានទេ")});return}
   if(a==="pctg"){var o=!p.open;FB.updateDoc(FB.doc(db,"pcls",p.id),{open:o}).then(function(){p.open=o;renderPrac();notify(o?"បានបើកតំណ":"បានបិទតំណ · សិស្សមិនអាចផ្ញើពានរង្វាន់បានទេ")},function(){alert("មិនអាចប្ដូរបានទេ")})}
 }
@@ -1090,6 +1097,7 @@ $("qzBody").addEventListener("change",function(e){
   else if(id==="qmT"){mk.tid=el.value;mk.ci=0;mk.ls={};mk.pt={};mk.items=null;renderMake()}else if(id==="qmC"){mk.ci=+el.value;mk.ls={};mk.pt={};mk.items=null;renderMake()}
   else if(id==="qmPc")mk.pc=el.checked;else if(id==="qmTi")mk.title=el.value;else if(id==="qmD")mk.dur=+el.value||0;else if(id==="qmX")mk.lx=+el.value||0;
   else if(id==="qmK"){mk.kind=el.value;mk.title=($("qmTi")||{}).value||mk.title;renderMake()}else if(id==="qmM")mk.mo=el.value;
+  else if(id==="qmGu"){mk.guest=el.checked;mk.title=($("qmTi")||{}).value||mk.title;if(mk.guest)mk.kind="g";renderMake()}
   else if(id==="qrCo"&&curTest){try{localStorage.setItem("certOn_"+curTest.id,el.checked?"1":"0")}catch(x){}renderRes()}
   else if(id==="qrCp"&&curTest){var cv=parseFloat(el.value);if(isFinite(cv)&&cv>=CERT_PCT_MIN&&cv<=100){try{localStorage.setItem("certPct",String(cv))}catch(x){}}renderRes()}
   else if((id==="qrK"||id==="qrM")&&curTest){

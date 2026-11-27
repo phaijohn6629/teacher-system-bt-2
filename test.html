@@ -109,6 +109,10 @@ function rand(){const a=new Uint8Array(16);(crypto||window.msCrypto).getRandomVa
 
 let T=null,me=null,K="",ans={},t0=0,tick=0,sent=false,V2=false;
 const kOf=k=>id+"_"+k;
+/* 🌐 Guest Mode (T.guest)៖ សិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯង · sid = "g_" + ១២ តួដំបូងនៃ rmp_dev_id (Rules ពិនិត្យ dv ត្រូវគ្នា → ១ ឧបករណ៍ = ១ សិស្សភ្ញៀវ) */
+function devId(){let d=LS.get("rmp_dev_id");if(!d||d.length<16){d=rand();try{localStorage.setItem("rmp_dev_id",d)}catch(e){}}return d}
+const gOf=k=>{const g=LS.json("gst_"+id,null);return g&&g.k===k?g:null};
+const findMe=(c,k)=>c.names.find(x=>x.k===k)||(c.guest?gOf(k):null);
 /* ការធ្វើតេស្តថ្មី (គ្រូអនុញ្ញាតឱ្យធ្វើម្ដងទៀត) → លុបស្ថានភាពចាស់ក្នុងឧបករណ៍ */
 function clearAttempt(key){["ans_","ac_","st_","t0_","pend_","sent_"].forEach(p=>LS.del(p+key))}
 
@@ -129,7 +133,7 @@ function fastResume(){
   if(noFast)return false;
   const c=LS.json("T_"+id,null),last=LS.get("cur_"+id);
   if(!c||!last||!c.open||!Array.isArray(c.names)||!Array.isArray(c.items)||!c.items.length)return false;
-  const lm=c.names.find(x=>x.k===last);if(!lm)return false;
+  const lm=findMe(c,last);if(!lm)return false;
   const k=kOf(lm.k),v2=(c.v||1)>=2,pend=LS.get("pend_"+k);
   if(!pend&&(!LS.get("t0_"+k)||LS.get("sent_"+k)||(v2&&!LS.get("stok_"+k))))return false;
   T=c;V2=v2;me=lm;K=k;header();
@@ -157,21 +161,32 @@ async function start(){
   if(r.cached)net("📶 គ្មានអ៊ីនធឺណិត · ប្រើតេស្តដែលបានផ្ទុកពីមុន");
   header();
   /* ឧបករណ៍នេះមានការផ្ញើកំពុងរង់ចាំ → បន្តផ្ញើភ្លាម */
-  const last=LS.get("cur_"+id),lm=last&&T.names.find(x=>x.k===last);
+  const last=LS.get("cur_"+id),lm=last&&findMe(T,last),lmG=!!(lm&&T.guest&&gOf(lm.k)&&!T.names.some(x=>x.k===lm.k)),G0=lmG?gOf(lm.k):null;
   if(lm&&LS.get("pend_"+kOf(lm.k))){me=lm;K=kOf(me.k);sent=true;return deliver(LS.json("pend_"+K,{}).p)}
   const resume=lm&&LS.get("t0_"+kOf(lm.k))&&!LS.get("sent_"+kOf(lm.k));
-  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${T.names.map(x=>`<option value="${esc(x.k)}"${lm&&x.k===lm.k?" selected":""}>${esc(x.n)}</option>`).join("")}</select>
+  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${T.names.map(x=>`<option value="${esc(x.k)}"${lm&&x.k===lm.k?" selected":""}>${esc(x.n)}</option>`).join("")}${T.guest?`<option value="__g"${lmG?" selected":""}>🌐 ខ្ញុំជាសិស្សក្រៅប្រព័ន្ធ (វាយឈ្មោះខ្លួនឯង)</option>`:""}</select>${T.guest?`<div id=gbox style="margin-top:10px"${lmG||!T.names.length?"":" hidden"}><label for=gn>👤 ឈ្មោះពេញ (ចាំបាច់)</label><input type=text id=gn maxlength=50 autocomplete=off value="${esc(G0?G0.gn:"")}"><label for=gr style="margin-top:8px">🏫 សាលា / លេខសម្គាល់ / លេខទូរស័ព្ទ (ជាជម្រើស)</label><input type=text id=gr maxlength=20 autocomplete=off value="${esc(G0?G0.gr:"")}"></div>`:""}
     ${V2&&T.pc?`<label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>`:""}
     <p class=note>• ធ្វើបានតែម្ដងគត់ · ផ្ញើហើយមិនអាចកែវិញបានទេ${V2?"<br>• ឈ្មោះមួយធ្វើបានតែលើឧបករណ៍មួយ · ជ្រើសឈ្មោះខ្លួនឯងឱ្យត្រូវ":""}${T.dur?"<br>• មានរយៈពេល "+kn(T.dur)+" នាទី · អស់ម៉ោងនឹងផ្ញើដោយស្វ័យប្រវត្តិ":""}<br>• អ៊ីនធឺណិតដាច់ក៏អាចបន្តធ្វើបាន · ចម្លើយរក្សាទុកក្នុងទូរស័ព្ទ</p>
     <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ចម្លងលំហាត់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។${T.lx?"<br>⚠️ ចាកចេញគ្រប់ <b>"+kn(T.lx)+"</b> ដង តេស្តនឹង<b>ផ្ញើដោយស្វ័យប្រវត្តិ</b>ភ្លាម។":""}</div>
     <p id=er class=acn hidden></p>
-    <button class=btn id=go${lm?"":" disabled"}>${resume?"▶️ បន្តធ្វើតេស្ត":"ចាប់ផ្ដើមធ្វើតេស្ត"}</button></div>`;
-  $("nm").onchange=e=>{$("go").disabled=!e.target.value;$("go").textContent=LS.get("t0_"+kOf(e.target.value))&&!LS.get("sent_"+kOf(e.target.value))?"▶️ បន្តធ្វើតេស្ត":"ចាប់ផ្ដើមធ្វើតេស្ត"};
+    <button class=btn id=go${lm||(T.guest&&!T.names.length)?"":" disabled"}>${resume?"▶️ បន្តធ្វើតេស្ត":"ចាប់ផ្ដើមធ្វើតេស្ត"}</button></div>`;
+  if(T.guest&&!T.names.length)$("nm").value="__g";
+  $("nm").onchange=e=>{if($("gbox"))$("gbox").hidden=e.target.value!=="__g";$("go").disabled=!e.target.value;if(e.target.value==="__g")return;$("go").textContent=LS.get("t0_"+kOf(e.target.value))&&!LS.get("sent_"+kOf(e.target.value))?"▶️ បន្តធ្វើតេស្ត":"ចាប់ផ្ដើមធ្វើតេស្ត"};
   $("go").onclick=go;
 }
 function err(t){const e=$("er");if(e){e.innerHTML=t;e.hidden=!t}}
 async function go(){
-  const k=$("nm").value;if(!k)return;me=T.names.find(x=>x.k===k);K=kOf(k);
+  let k=$("nm").value;if(!k)return;
+  if(k==="__g"&&T.guest){
+    const gn=($("gn").value||"").replace(/\s+/g," ").trim().slice(0,50),gr=($("gr").value||"").replace(/\s+/g," ").trim().slice(0,20);
+    if(!gn)return err("សូមវាយឈ្មោះពេញរបស់អ្នក");
+    const gk="g_"+devId().slice(0,12),old=gOf(gk);
+    /* ឧបករណ៍នេះធ្លាប់ចាប់ផ្ដើមរួច → រក្សាឈ្មោះដើម (កុំឱ្យឈ្មោះក្នុង st និង subs ខុសគ្នា) */
+    const g=old&&LS.get("t0_"+kOf(gk))?old:{k:gk,gn,gr,n:gn+(gr?" ("+gr+")":"")+" [ភ្ញៀវ]"};
+    LS.set("gst_"+id,JSON.stringify(g));LS.set("dv_"+kOf(gk),devId());
+    me=g;k=gk;
+  }else me=T.names.find(x=>x.k===k);
+  if(!me)return;K=kOf(k);
   const b=$("go");b.disabled=true;const bt=b.textContent;b.textContent="កំពុងពិនិត្យ…";err("");
   const back=t=>{b.disabled=false;b.textContent=bt;err(t);me=null};
   /* ផ្ញើរួចហើយ? (v2៖ ពិនិត្យបង្កាន់ដៃ · គ្រូលុប = អនុញ្ញាតឱ្យធ្វើម្ដងទៀត) */

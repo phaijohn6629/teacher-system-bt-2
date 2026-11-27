@@ -83,6 +83,9 @@ async function retry(fn,label,max,ms=9000){let d=1500;for(let i=0;;i++){try{cons
 function net(t){const n=$("net");n.hidden=!t;n.textContent=t||""}
 function devId(){let d=LS.get("rmp_dev_id");if(!d||d.length<16){d=rand();try{localStorage.setItem("rmp_dev_id",d)}catch(e){}}return d}
 function fsOn(){try{const el=document.documentElement,f=el.requestFullscreen||el.webkitRequestFullscreen;if(!f)return;const r=f.call(el);if(r&&r.catch)r.catch(()=>{})}catch(e){}}
+/* 🌐 Guest Mode (M.guest)៖ សិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯង · sid = "g_" + ១២ តួដំបូងនៃ rmp_dev_id (Rules ពិនិត្យ dv → ១ ឧបករណ៍ = ១ សិស្សភ្ញៀវ) */
+const gOf=k=>{try{const g=JSON.parse(LS.get("exg_"+id)||"null");return g&&g.k===k?g:null}catch(e){return null}};
+const findMe=(m,k)=>m.names.find(x=>x.k===k)||(m.guest?gOf(k):null);
 function armed(){return acOn&&!over&&Date.now()>=graceEnd}
 function rand(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("")}
 
@@ -95,7 +98,7 @@ function fastResume(){
   let M0=null,P=null;try{M0=JSON.parse(LS.get("exm_"+id)||"null");P=JSON.parse(LS.get("exp_"+id)||"null")}catch(e){return false}
   const k0=LS.get("exk_"+id);
   if(!M0||!P||!k0||!M0.open||!Array.isArray(M0.names)||!(+M0.endMs>Date.now()))return false;
-  const m0=M0.names.find(x=>x.k===k0);if(!m0)return false;
+  const m0=findMe(M0,k0);if(!m0)return false;
   M=M0;endMs=+M.endMs;hdr();me=m0;K=id+"_"+me.k;return show(P,true);
 }
 async function start(){
@@ -109,13 +112,15 @@ async function start(){
   if(!Array.isArray(M.names))M.names=[];
   hdr();
   /* បើកឡើងវិញលើឧបករណ៍ដដែល → បន្តភ្លាម */
-  const k0=LS.get("exk_"+id),p0=LS.get("exp_"+id),m0=k0&&M.names.find(x=>x.k===k0);
+  const k0=LS.get("exk_"+id),p0=LS.get("exp_"+id),m0=k0&&findMe(M,k0);
   if(m0&&p0){let P=null;try{P=JSON.parse(p0)}catch(e){LS.del("exp_"+id)}if(P){me=m0;K=id+"_"+me.k;if(show(P,true))return}}
-  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${M.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}</select>
+  app.innerHTML=`<div class=card><label for=nm>ជ្រើសឈ្មោះរបស់អ្នក</label><select id=nm><option value="">— ឈ្មោះសិស្ស —</option>${M.names.map(x=>`<option value="${esc(x.k)}">${esc(x.n)}</option>`).join("")}${M.guest?`<option value="__g">🌐 ខ្ញុំជាសិស្សក្រៅប្រព័ន្ធ (វាយឈ្មោះខ្លួនឯង)</option>`:""}</select>${M.guest?`<div id=gbox style="margin-top:10px"${M.names.length?" hidden":""}><label for=gn>👤 ឈ្មោះពេញ (ចាំបាច់)</label><input type=text id=gn maxlength=50 autocomplete=off><label for=gr style="margin-top:8px">🏫 សាលា / លេខសម្គាល់ / លេខទូរស័ព្ទ (ជាជម្រើស)</label><input type=text id=gr maxlength=20 autocomplete=off></div>`:""}
     <label for=pc style="margin-top:12px">🔑 លេខកូដចូល (គ្រូនឹងប្រាប់)</label><input id=pc class=code inputmode=numeric maxlength=6 autocomplete=off>
     <p class=note>• មើលប្រធានលើទូរស័ព្ទ ហើយ<b>សរសេរចម្លើយលើក្រដាស</b>របស់អ្នក<br>• អស់ម៉ោង ប្រធាននឹងលាក់ដោយស្វ័យប្រវត្តិ<br>• ឈ្មោះមួយបើកបានតែលើឧបករណ៍មួយ</p>
     <div class=acn>🚫 <b>កុំចាកចេញពីទំព័រនេះ</b> (ប្ដូរ Tab · បើកកម្មវិធីផ្សេង · ថតអេក្រង់)។ ប្រព័ន្ធកត់ត្រារាល់ការចាកចេញ ហើយគ្រូនឹងឃើញ។<ul style="margin:6px 0 6px 18px;padding:0;text-align:left"><li>ហាមប្តូរ Tab ឬចាកចេញពីអេក្រង់ប្រឡង។</li><li>ហាមបំបែកអេក្រង់ (Split Screen) ឬបើកកម្មវិធីអណ្តែតពីលើ (Floating Window)។</li><li>ហាមប្រើមុខងារគូសរង្វង់ស្វែងរក (Circle to Search) ឬកម្មវិធី AI ជំនួយផ្សេងៗ។</li><li>ប្រព័ន្ធនឹងធ្វើឱ្យអេក្រង់ព្រាលដោយស្វ័យប្រវត្តិ និងរាប់ចូលជាការបំពានវិន័យ (ដល់កម្រិតកំណត់នឹងបញ្ជូនសន្លឹកប្រឡងដោយស្វ័យប្រវត្តិ)។</li></ul>${LX()?`<br>⚠️ <b>ច្បាប់៖</b> អនុញ្ញាតឱ្យចាកចេញបានមិនលើស <b>${kn(LX())} ដង</b>។ លើសនេះ វិញ្ញាសានឹង<b>បិទដោយស្វ័យប្រវត្តិ</b> (រួមទាំងការ Refresh ទំព័រក៏រាប់ជាការចាកចេញដែរ)។`:""}</div>
     <p id=er class=acn hidden></p><button class=btn id=go>📄 បើកវិញ្ញាសា</button></div>`;
+  if(M.guest&&!M.names.length)$("nm").value="__g";
+  $("nm").onchange=e=>{if($("gbox"))$("gbox").hidden=e.target.value!=="__g"};
   $("go").onclick=go;
 }
 function ended(t){LS.del("exp_"+id);msg("⏰",t,"សូមប្រគល់ក្រដាសចម្លើយឱ្យគ្រូ")}
@@ -123,7 +128,17 @@ function err(t){const e=$("er");if(e){e.innerHTML=t;e.hidden=!t}}
 async function go(){
   const k=$("nm").value,pc=$("pc").value.replace(/[០-៩]/g,d=>"០១២៣៤៥៦៧៨៩".indexOf(d)).trim();
   if(!k)return err("សូមជ្រើសឈ្មោះរបស់អ្នក");if(!/^\d{6}$/.test(pc))return err("🔑 សូមបញ្ចូលលេខកូដ ៦ ខ្ទង់ដែលគ្រូប្រាប់");
-  me=M.names.find(x=>x.k===k);K=id+"_"+k;const b=$("go");b.disabled=true;b.textContent="កំពុងបើក…";err("");
+  let kk=k;
+  if(k==="__g"&&M.guest){
+    const gn=($("gn").value||"").replace(/\s+/g," ").trim().slice(0,50),gr=($("gr").value||"").replace(/\s+/g," ").trim().slice(0,20);
+    if(!gn)return err("សូមវាយឈ្មោះពេញរបស់អ្នក");
+    kk="g_"+devId().slice(0,12);const old=gOf(kk);
+    /* ឧបករណ៍នេះធ្លាប់ចុះឈ្មោះរួច → រក្សាឈ្មោះដើម (ត្រូវនឹង exv ដែលមានស្រាប់) */
+    me=old||{k:kk,gn,gr,n:gn+(gr?" ("+gr+")":"")+" [ភ្ញៀវ]"};
+    LS.set("exg_"+id,JSON.stringify(me));
+  }else me=M.names.find(x=>x.k===k);
+  if(!me)return err("សូមជ្រើសឈ្មោះរបស់អ្នក");
+  K=id+"_"+kk;const b=$("go");b.disabled=true;b.textContent="កំពុងបើក…";err("");
   const back=t=>{b.disabled=false;b.textContent="📄 បើកវិញ្ញាសា";err(t)};
   let P=null;
   try{const d=await retry(()=>getDoc(doc(db,"exq",id+"_"+pc)),"កំពុងបើកវិញ្ញាសា",5);if(!d.exists())return back("⛔ លេខកូដមិនត្រឹមត្រូវ");P=JSON.parse(d.data().j)}
@@ -142,7 +157,7 @@ async function go(){
       if(!sv)return back("⛔ ឈ្មោះនេះកំពុងបើកនៅ<b>ឧបករណ៍ផ្សេង</b>រួចហើយ។ បើនេះជាឈ្មោះរបស់អ្នក សូមប្រាប់គ្រូភ្លាម។");
       okDv=sv}}
   LS.set("dv_"+K,okDv);
-  LS.set("exk_"+id,k);LS.set("exp_"+id,JSON.stringify(P));
+  LS.set("exk_"+id,kk);LS.set("exp_"+id,JSON.stringify(P));
   fsOn();
   if(!show(P,false))back("⚠️ មិនអាចបង្ហាញវិញ្ញាសាបានទេ · សូមព្យាយាមម្ដងទៀត");
 }

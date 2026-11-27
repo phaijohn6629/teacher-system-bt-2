@@ -1008,7 +1008,7 @@ function clInit(code){
   }).then(function(d){
     if(!d.exists())throw"nf";var c=d.data();if(!c.open)throw"closed";
     CL.cls=c;if(GR[+c.g])S.g=+c.g;
-    try{var me=JSON.parse(localStorage.getItem("pracMe_"+code)||"null");if(me&&c.names.some(function(x){return x.k===me.k}))CL.me=me}catch(e){}
+    try{var me=JSON.parse(localStorage.getItem("pracMe_"+code)||"null");if(me&&(c.names.some(function(x){return x.k===me.k})||(c.guest===true&&me.gu&&/^g_[0-9a-f]{12}$/.test(me.k))))CL.me=me}catch(e){}
     try{CL.q=JSON.parse(localStorage.getItem("pracQ_"+code)||"[]")}catch(e){CL.q=[]}
     if(!CL.me&&!/[#&]px=1/.test(location.hash))return pickMe();
     clFlush();route2();
@@ -1020,7 +1020,7 @@ function clInit(code){
 function pickMe(){
   var c=CL.cls;
   $("app").innerHTML="<div class=hero><h1>👋 ថ្នាក់ "+esc(c.cls)+"</h1><p>ជ្រើសឈ្មោះរបស់អ្នក (ម្ដងគត់) · ពានរង្វាន់ដែលអ្នកទទួលបាន នឹងផ្ញើទៅគ្រូ</p></div>"+
-    "<input id=meQ class=meq placeholder='🔍 ស្វែងរកឈ្មោះ…' autocomplete=off><div class=mel>"+c.names.map(function(x){return"<button type=button data-me='"+esc(x.k)+"'>"+esc(x.n)+"</button>"}).join("")+"</div>"+(exOn()?"<p style='text-align:center'><button type=button data-a=pex style='background:#1e3a8a;color:#fff'>🏁 ប្រឡង ៦ កម្រិត (សិស្សក្រៅបញ្ជី ក៏បាន)</button></p>":"");
+    "<input id=meQ class=meq placeholder='🔍 ស្វែងរកឈ្មោះ…' autocomplete=off><div class=mel>"+c.names.map(function(x){return"<button type=button data-me='"+esc(x.k)+"'>"+esc(x.n)+"</button>"}).join("")+"</div>"+(c.guest===true?"<div class=card style='margin:12px 0;padding:12px;border:2px solid #86efac'><b>🟢 🌐 សិស្សក្រៅប្រព័ន្ធ (Guest)</b><input id=gnm maxlength=50 placeholder='👤 ឈ្មោះពេញ (ចាំបាច់)' autocomplete=off style='width:100%;margin-top:6px'><input id=grf maxlength=20 placeholder='🏫 សាលា / លេខសម្គាល់ / ទូរស័ព្ទ (ជាជម្រើស)' autocomplete=off style='width:100%;margin-top:6px'><button type=button data-a=pgst style='margin-top:8px;background:#166534;color:#fff;width:100%'>✅ ចាប់ផ្តើមហាត់ជាភ្ញៀវ</button></div>":"")+(exOn()?"<p style='text-align:center'><button type=button data-a=pex style='background:#1e3a8a;color:#fff'>🏁 ប្រឡង ៦ កម្រិត (សិស្សក្រៅបញ្ជី ក៏បាន)</button></p>":"");
   $("meQ").oninput=function(){var q=this.value.trim().toLowerCase();[].forEach.call($("app").querySelectorAll("[data-me]"),function(b){b.hidden=q&&b.textContent.toLowerCase().indexOf(q)<0})};
 }
 function clSend(l,v){
@@ -1170,6 +1170,12 @@ function bind(){
     if(b.dataset.v)return open(S.l,+b.dataset.v);
     if(b.dataset.sol!=null){var q=S.qs[+b.dataset.sol];q.show=!q.show;return draw()}
     var a=b.dataset.a;
+    if(a==="pgst"&&CL.cls&&CL.cls.guest===true){   /* 🌐 Guest៖ k = g_ + ១២ តួនៃ rmp_dev_id */
+      var gn=(($("gnm")||{}).value||"").replace(/\s+/g," ").trim().slice(0,50),gr=(($("grf")||{}).value||"").replace(/\s+/g," ").trim().slice(0,20);
+      if(!gn){alert("សូមវាយឈ្មោះពេញរបស់អ្នក");return}
+      var dv="";try{dv=localStorage.getItem("rmp_dev_id")||"";if(dv.length<16){var ar=new Uint8Array(16);crypto.getRandomValues(ar);dv=Array.from(ar,function(x){return x.toString(16).padStart(2,"0")}).join("");localStorage.setItem("rmp_dev_id",dv)}}catch(x){}
+      if(dv.length<16){alert("កម្មវិធីរុករកមិនអនុញ្ញាតឱ្យរក្សាទុកទិន្នន័យ");return}
+      var gm={k:"g_"+dv.slice(0,12),n:gn+(gr?" ("+gr+")":"")+" [ភ្ញៀវ]",gu:1};CL.me=gm;try{localStorage.setItem("pracMe_"+CL.code,JSON.stringify(gm))}catch(x){}clFlush();return home()}
     if(a==="chme"){if(confirm(T("ប្ដូរឈ្មោះ? (សូមជ្រើសតែឈ្មោះរបស់ខ្លួនឯងប៉ុណ្ណោះ)","Change name? (choose only your own name)"))){CL.me=null;try{localStorage.removeItem("pracMe_"+CL.code)}catch(e){}pickMe()}return}
     if(a==="solo"){location.hash="";return route()}
     if(a==="pex")return pexGo(false);

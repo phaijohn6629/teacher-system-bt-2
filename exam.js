@@ -20,7 +20,7 @@ function ld(src){return new Promise(function(ok,no){var s=document.createElement
 function tmo(p,ms){return Promise.race([p,new Promise(function(_,no){setTimeout(function(){no({code:"timeout"})},ms)})])}
 function retryBtn(){return" <button type=button data-ex=reload>🔄 ផ្ទុកម្ដងទៀត</button>"}
 /* ⚡ ម៉ាស៊ីនលំហាត់៖ ទាញព្រមគ្នាទាំងអស់ (async=false = ដំណើរការតាមលំដាប់) ជំនួសឱ្យការរង់ចាំម្ដងមួយ */
-function ENG(){return["practice.js?v=32","exgen.js?v=20"].concat(GENS,["practiceen.js?v=25"],GENE,GEN4)}
+function ENG(){return["practice.js?v=33","exgen.js?v=20"].concat(GENS,["practiceen.js?v=25"],GENE,GEN4)}
 function engReady(){return!!(window.PRACT&&PRACT.GR&&PRACT.GR[7]&&PRACT.GR[112]&&PRACT.GR[110]&&PRACT.GR[110].G[31]&&window.EXGEN&&window.CAMPAPERS&&CAMPAPERS[112])}
 function gen(){
   if(engReady())return Promise.resolve();
@@ -228,6 +228,7 @@ function editor(){
     "<div><label>អ្នកចេញវិញ្ញាសា</label><input data-ef=au value='"+esc(E.au)+"'></div>"+
     "<div><label>បានឃើញ និងពិនិត្យ</label><input data-ef=ck value='"+esc(E.ck)+"' placeholder='ឈ្មោះនាយក/នាយករង'></div>"+
     "<div><label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-ef=ab"+(E.ab?" checked":"")+" style='width:auto;margin:0'> វិញ្ញាសា ក/ខ (លេខខុសគ្នា)</label><small class=note>សិស្សអង្គុយជិតគ្នាទទួលវិញ្ញាសាខុសគ្នា</small></div>"+
+    "<div><label style='display:flex;gap:6px;align-items:center'><input type=checkbox data-ef=guest"+(E.guest?" checked":"")+(ro?" disabled":"")+" style='width:auto;margin:0'> 🌐 អនុញ្ញាតឱ្យសិស្សក្រៅប្រព័ន្ធវាយឈ្មោះខ្លួនឯង (Guest Mode)</label><small class=note>សិស្សភ្ញៀវវាយឈ្មោះពេញ (+ សាលា/លេខទូរស័ព្ទ ជាជម្រើស) ហើយមានស្លាក [ភ្ញៀវ] ក្នុងបញ្ជីអ្នកមើល · ត្រូវការលេខកូដដូចសិស្សធម្មតា · មិនប៉ះពាល់ពិន្ទុប្រចាំខែ</small></div>"+
     "<div><label>🚫 ចំនួនដងអតិបរមាដែលចាកចេញពី Tab បាន</label><select data-ef=lx style='width:auto'>"+[1,2,3,4,5].map(function(n){return"<option value="+n+(lxOf(E)===n?" selected":"")+">"+kn(n)+" ដង</option>"}).join("")+"</select><small class=note>លើសកំណត់ → វិញ្ញាសាត្រូវបិទស្វ័យប្រវត្តិ (គ្រូឃើញក្នុងបញ្ជី 🔒)</small></div>"+
     "</div></div>"+
     "<div class=card><h3 style='margin-top:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap'>ផ្នែកនៃវិញ្ញាសា <small class=note>សរុប "+kn(EXP.total(E))+" ពិន្ទុ</small>"+(E.ab?"<span style='display:inline-flex;gap:4px;align-items:center;margin-left:auto'><small class=note style='margin:0'>✏️ កំពុងកែ ៖</small><button type=button data-ex='pv|a' class='"+(pvOf(E)==="a"?"primary":"")+"'>វិញ្ញាសា ក</button><button type=button data-ex='pv|b' class='"+(pvOf(E)==="b"?"primary":"")+"'>វិញ្ញាសា ខ</button></span>":"")+"</h3>"+
@@ -307,12 +308,12 @@ var goingOn=false;
 function goOnline(){
   if(goingOn)return;
   var E=X.E,F=window.FB,c=myCls().filter(function(x){return x.n===E.cls})[0];
-  if(!c||!c.st.length){alert("ថ្នាក់ «"+E.cls+"» មិនទាន់មានបញ្ជីឈ្មោះសិស្សទេ");return}
+  if(!c||(!c.st.length&&!E.guest)){alert("ថ្នាក់ «"+E.cls+"» មិនទាន់មានបញ្ជីឈ្មោះសិស្សទេ (ឬបើក 🌐 Guest Mode ដើម្បីឱ្យសិស្សវាយឈ្មោះខ្លួនឯង)");return}
   if(!confirm("បើកប្រឡងអនឡាញ «"+EXP.head(E)+"» ឥឡូវនេះ?\n\n• រយៈពេល "+E.dur+" នាទី (ចាប់ពីពេលនេះ)\n• សិស្សមើលប្រធានលើទូរស័ព្ទ ហើយសរសេរចម្លើយលើក្រដាស\n• អស់ម៉ោង → ប្រធានលាក់ដោយស្វ័យប្រវត្តិ"))return;
   goingOn=true;
   var code=code6(),endMs=Date.now()+(+E.dur||45)*60000,names=c.st.map(function(s,i){
     return{k:String(s.id||("n"+(i+1))).replace(/[^A-Za-z0-9_-]/g,"_"),n:s.n,ab:abFor(E,c,s,i)}});
-  Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,ext:!!c.isExternal,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,lx:lxOf(E),names:names,sch:inf().school}),
+  Promise.all([F.setDoc(F.doc(window.db,"exm",E.id),{o:E.o,t:EXP.head(E),cls:E.cls,ext:!!c.isExternal,sub:E.sub,dur:+E.dur||45,endMs:endMs,open:true,lx:lxOf(E),names:names,guest:!!E.guest,sch:inf().school}),
     F.setDoc(F.doc(window.db,"exq",E.id+"_"+code),{o:E.o,t:E.id,j:pub(E)})]).then(function(){
     E.on={open:true,code:code,endMs:endMs};
     try{save(true)}catch(x){console.error("save:",x)}
@@ -341,7 +342,7 @@ function left(end){var s=Math.max(0,Math.round((end-Date.now())/1000));return s?
 function hm(at){var d=at&&at.toDate?at.toDate():null;return d?kn(("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)):"…"}
 function viewList(){
   var c=myCls().filter(function(x){return x.n===X.E.cls})[0],tot=c?c.st.length:0;
-  return"<div class=note style='margin:4px 0'>កំពុងមើល <b>"+kn(X.views.length)+"/"+kn(tot)+"</b> នាក់ · 🚩 = ចាកចេញពីផ្ទាំង (ឧ. ទៅរក AI) ឬព្យាយាមចម្លង</div>"+
+  return"<div class=note style='margin:4px 0'>កំពុងមើល <b>"+kn(X.views.filter(function(v){return!/^g_/.test(v.sid||"")}).length)+"/"+kn(tot)+"</b> នាក់"+(X.E.guest?" + 🌐 ភ្ញៀវ <b>"+kn(X.views.filter(function(v){return/^g_/.test(v.sid||"")}).length)+"</b> នាក់":"")+" · 🚩 = ចាកចេញពីផ្ទាំង (ឧ. ទៅរក AI) ឬព្យាយាមចម្លង</div>"+
     (X.views.length?"<div class=ex-vl>"+X.views.slice().sort(function(a,b){return(b.lv||0)+(b.cp||0)-(a.lv||0)-(a.cp||0)}).map(function(v){var bad=(v.lv||0)+(v.cp||0),lk=v.lv>=lxOf(X.E);
       return"<span class='ex-v"+(bad?" bad":"")+"'>"+esc(v.sn)+" <small>"+hm(v.at)+(lk?" · 🔒 បិទស្វ័យប្រវត្តិ":"")+(v.lv?" · 🚩 ចាកចេញ "+kn(v.lv)+"/"+kn(lxOf(X.E))+" ដង ("+kn(v.lt||0)+" វិ)":"")+(v.cp?" · 📋 "+kn(v.cp):"")+"</small><button type=button data-ex='vr|"+esc(v.sid)+"' title='អនុញ្ញាតឱ្យបើកលើឧបករណ៍ផ្សេង'>🔄</button></span>"}).join("")+"</div>":"");
 }
@@ -440,6 +441,7 @@ function onInput(e){
     if(f==="opT"||f==="opN"){E[f]=Math.max(0,+t.value||0);save();return}
     if(f==="opW"){E.opW=t.value==="eq"?"eq":"lv";save();return}
     if(f==="lx"){E.lx=Math.min(5,Math.max(1,+t.value||3));try{localStorage.setItem("exLxDef_"+who.id,String(E.lx))}catch(e){}save();if(E.on&&E.on.open&&window.FB)window.FB.updateDoc(window.FB.doc(window.db,"exm",E.id),{lx:E.lx}).then(function(){notify("បានកែចំនួនដងចាកចេញ")},function(){});return}
+    if(f==="guest"){E.guest=t.checked;save();if(E.on&&E.on.open&&window.FB)window.FB.updateDoc(window.FB.doc(window.db,"exm",E.id),{guest:!!E.guest}).then(function(){notify(E.guest?"បានបើក Guest Mode":"បានបិទ Guest Mode")},function(){alert("មិនអាចកែ Guest Mode បានទេ")});return}
     if(f==="ab"){E.ab=t.checked;if(E.ab)E.secs.forEach(function(s){fill(s,gOf(E),"itB")});save();editor();return}
     if(f==="cls"){var og=gOf(E);E.cls=t.value;if(gOf(E)!==og&&E.secs.length&&confirm("ថ្នាក់ថ្មីជាកម្រិតផ្សេង។ បង្កើតផ្នែកទាំងអស់ឡើងវិញតាមកម្រិតថ្នាក់ថ្មី?")){var L=lsList(gOf(E)),f0=L[0]&&L[0][1][0];E.secs=f0?[newSec(gOf(E),f0[0])]:[]}save();editor();return}
     E[f]=f==="dur"?Math.max(5,+t.value||45):t.value;save();prev();if(f==="title"||f==="mo"){var b=body().querySelector(".bar b");if(b)b.textContent=EXP.head(E)}return}
