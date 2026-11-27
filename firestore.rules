@@ -496,7 +496,7 @@ service cloud.firestore {
     function exmLive(id) { return exmDoc(id).open == true && request.time.toMillis() < exmDoc(id).endMs + 300000; }
     match /exm/{id} {
       allow get: if resource.data.open == true || active();
-      allow list: if active();
+      allow list: if active() || resource.data.open == true;   // 📲 student.html៖ query where(open==true) ដោយមិនបាច់ Login
       allow create: if isAdmin() || isOwner(request.resource.data.o);
       allow update: if isAdmin() || (isOwner(resource.data.o) && request.resource.data.o == resource.data.o);   // 🛡️ ម្ចាស់មិនអាចផ្ទេរ o
       allow delete: if isAdmin() || isOwner(resource.data.o);

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<!-- 🛡️ CSP៖ ដូច exam.html — Script បានតែពីគម្រោង · cdnjs · Firebase · គ្មាន iframe -->
+<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://www.gstatic.com; frame-src 'none'; default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://accounts.google.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://*.googleapis.com https://www.gstatic.com https://cdnjs.cloudflare.com https://accounts.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Rian Math សិស្ស</title>
+<link rel="manifest" href="manifest-student.json">
+<meta name="theme-color" content="#1E3A8A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rian Math សិស្ស">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&family=Siemreap&family=Kantumruy+Pro:wght@400;500;700&family=Moul&display=swap">
+<style>
+@font-face{font-family:"Khmer OS Muol Light";src:local("Khmer OS Muol Light"),local("KhmerOSmuollight"),url(fonts/khmer-os-muol-light.ttf) format("truetype");font-display:swap}
+:root{--ink:#0f172a;--mute:#64748b;--line:#e2e8f0;--brand:#1e3a8a;--g:linear-gradient(135deg,#1e3a8a,#6366f1)}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Khmer OS Siemreap","Siemreap","Kantumruy Pro",system-ui,sans-serif;background:#eef2ff;color:var(--ink);line-height:1.6;padding-bottom:env(safe-area-inset-bottom)}
+.top{background:var(--g);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 18px;text-align:center;position:sticky;top:0;z-index:20}
+.top h1{margin:0;font-family:"Khmer OS Muol Light","Moul","Khmer OS Siemreap","Siemreap",serif;font-weight:400;font-size:1rem;line-height:1.5}
+.top p{margin:0;opacity:.9;font-size:.8rem}
+.tools{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.tb{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.15);color:#fff;border-radius:999px;padding:5px 12px;font-size:.82rem;font-weight:700;cursor:pointer}
+.wrap{max-width:560px;margin:-8px auto 40px;padding:0 12px}
+.card{background:#fff;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(30,58,138,.15);margin-bottom:14px}
+.msg{text-align:center;padding:30px 12px}.msg .big{font-size:3rem}.msg h2{margin:6px 0;font-size:1.05rem}
+.note{color:var(--mute);font-size:.85rem}
+.btn{display:block;text-align:center;text-decoration:none;border:0;border-radius:14px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--g);color:#fff;width:100%;font-size:1rem;margin-top:12px}
+.btn.alt{background:#eef2ff;color:var(--brand);border:1.5px solid #c7d2fe}
+input[type=text]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:#fff}
+.cls{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
+.cls button{border:1.5px solid #c7d2fe;background:#eef2ff;color:var(--brand);border-radius:12px;padding:12px 8px;font:inherit;font-weight:700;cursor:pointer}
+.ex h3{margin:0 0 4px;font-size:1.05rem}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+.chip{background:#eef2ff;color:var(--brand);border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700}
+.chip.g{background:#dcfce7;color:#166534}
+.inst{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:40;max-width:540px;margin:auto;background:#1e293b;color:#fff;border-radius:16px;padding:12px 40px 12px 14px;font-size:.88rem;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.inst button.x{position:absolute;top:6px;right:8px;background:none;border:0;color:#fff;font-size:1.2rem;cursor:pointer}
+.inst .btn{margin-top:8px;padding:8px 12px;font-size:.9rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="top"><h1>Rian Math សិស្ស</h1><p id="sub">វិទ្យាល័យបឹងត្របែក</p>
+  <div class="tools" id="tools" hidden><button class="tb" id="chg">🏫 ប្តូរថ្នាក់</button><button class="tb" id="rfs">🔄 ពិនិត្យវិញ្ញាសាថ្មី</button></div></div>
+<div class="wrap" id="app"><div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div></div>
+<div class="inst" id="inst" hidden><button class="x" id="instx" aria-label="បិទ">×</button><div id="insttxt"></div><button class="btn" id="instbtn" hidden>📲 ដំឡើង App</button></div>
+<script>
+/* 📲 Service worker ដូច index.html (scope ./) ដើម្បីបើកលឿន · សិស្សអាចមិនធ្លាប់បើក index.html */
+if("serviceWorker"in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+</script>
+<script type="module">
+/* ========================================================================
+   Student PWA · ជ្រើសថ្នាក់ម្ដងរួចចងចាំ (localStorage rmp_stu_cls) · បង្ហាញតែវិញ្ញាសាដែលគ្រូកំពុងបើក (exm.open==true)
+   query៖ exm where open==true (rules អនុញ្ញាត list តែពេល open==true · មិនបាច់ Login) → lọc ថ្នាក់ និង endMs នៅក្នុង client
+   ចូលប្រឡង → exam.html?e={id} (scope ./ ដូចគ្នា → នៅក្នុង App តែមួយ)
+   ======================================================================== */
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getFirestore,collection,query,where,getDocs}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-lite.js";
+const db=getFirestore(initializeApp({apiKey:"AIzaSyAtfudfLGNHCFYUwGxLM8_lfSZ-jYWQ6J8",authDomain:"math-teacher-system-bt.firebaseapp.com",projectId:"math-teacher-system-bt",
+  storageBucket:"math-teacher-system-bt.firebasestorage.app",messagingSenderId:"134725787928",appId:"1:134725787928:web:50343e4b7c7247833c3e6d"}));
+const $=x=>document.getElementById(x),app=$("app");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const kn=n=>String(n).replace(/\d/g,d=>"០១២៣៤៥៦៧៨៩"[d]);
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const KEY="rmp_stu_cls", norm=s=>String(s||"").replace(/\s+/g,"").toUpperCase();
+const to=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j({code:"deadline-exceeded"}),ms))]);
+let cls=(LS.get(KEY)||"").trim(), open=null, busy=false;
+
+async function load(){
+  const q=query(collection(db,"exm"),where("open","==",true));
+  const s=await to(getDocs(q),12000), now=Date.now(), out=[];
+  s.forEach(d=>{const m=d.data();if(m&&m.open===true&&(+m.endMs||0)>now)out.push({id:d.id,m})});
+  return out;
+}
+function pickView(){
+  $("tools").hidden=true;$("sub").textContent="វិទ្យាល័យបឹងត្របែក";
+  const known=[...new Map((open||[]).map(x=>[norm(x.m.cls),x.m.cls])).values()].filter(Boolean).sort((a,b)=>String(a).localeCompare(String(b),"km",{numeric:true}));
+  app.innerHTML=`<div class="card"><h2 style="margin:0 0 4px;font-size:1.05rem">🏫 ជ្រើសរើសថ្នាក់របស់អ្នក</h2>
+   <p class="note" style="margin:0">ជ្រើសម្ដងគត់ · កម្មវិធីនឹងចងចាំ</p>
+   ${known.length?`<div class="cls">${known.map(c=>`<button data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div><p class="note" style="margin:10px 0 0">ថ្នាក់ខាងលើមានវិញ្ញាសាកំពុងបើក។ បើរកមិនឃើញ សូមវាយឈ្មោះថ្នាក់ខាងក្រោម។</p>`:`<p class="note" style="margin:10px 0 0">ឥឡូវមិនមានវិញ្ញាសាកំពុងបើកទេ · សូមវាយឈ្មោះថ្នាក់របស់អ្នក</p>`}
+   <input type="text" id="cin" placeholder="ឧ. 10NGS-C" autocomplete="off" autocapitalize="characters" style="margin-top:10px">
+   <button class="btn" id="cok">✅ យល់ព្រម</button></div>`;
+  app.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>setCls(b.dataset.c));
+  $("cok").onclick=()=>{const v=$("cin").value.trim();if(v)setCls(v)};
+  $("cin").onkeydown=e=>{if(e.key==="Enter")$("cok").click()};
+}
+function setCls(c){cls=String(c).trim().slice(0,30);LS.set(KEY,cls);open=null;home()}
+function listView(){
+  $("tools").hidden=false;$("sub").textContent="ថ្នាក់ "+cls;
+  const mine=(open||[]).filter(x=>norm(x.m.cls)===norm(cls)).sort((a,b)=>(+a.m.endMs)-(+b.m.endMs));
+  if(!mine.length){app.innerHTML=`<div class="card msg"><div class="big">📭</div><h2>មិនទាន់មានវិញ្ញាសាប្រឡងកំពុងបើកសម្រាប់ថ្នាក់ ${esc(cls)} ទេ</h2><p class="note">ពេលគ្រូបើកវិញ្ញាសា សូមចុច «🔄 ពិនិត្យវិញ្ញាសាថ្មី»</p></div>`;return}
+  app.innerHTML=mine.map(({id,m})=>{const left=Math.max(0,Math.round((+m.endMs-Date.now())/60000));
+    return `<div class="card ex"><h3>${esc(m.t||"ប្រឡង")}</h3><div class="meta"><span class="chip">🏫 ${esc(m.cls)}</span><span class="chip">⏱ ${kn(+m.dur||0)} នាទី</span><span class="chip g">🟢 កំពុងបើក · នៅសល់ ${kn(left)} នាទី</span></div>
+    <a class="btn" href="exam.html?e=${encodeURIComponent(id)}">✍️ ចូលប្រឡង</a></div>`}).join("");
+}
+function errView(){
+  $("tools").hidden=!cls;
+  app.innerHTML=`<div class="card msg"><div class="big">📶</div><h2>មិនអាចផ្ទុកបានទេ</h2><p class="note">សូមពិនិត្យអ៊ីនធឺណិត រួចព្យាយាមម្ដងទៀត</p><button class="btn" id="rt">🔄 ព្យាយាមម្ដងទៀត</button></div>`;
+  $("rt").onclick=home;
+}
+async function home(){
+  if(busy)return;busy=true;
+  if(!cls){app.innerHTML=`<div class="card msg"><div class="big">⏳</div>កំពុងផ្ទុក…</div>`;try{open=await load()}catch(e){open=[]}busy=false;return pickView()}
+  $("tools").hidden=false;$("sub").textContent="ថ្នាក់ "+cls;
+  app.innerHTML=`<div class="card msg"><div class="big">⏳</div>កំពុងពិនិត្យវិញ្ញាសា…</div>`;
+  try{open=await load();busy=false;listView()}catch(e){console.error(e);busy=false;errView()}
+}
+$("chg").onclick=()=>{open=null;LS.del(KEY);cls="";home()};
+$("rfs").onclick=home;
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cls&&!busy)home()});
+home();
+
+/* ---------- 📲 ណែនាំដំឡើង Add to Home Screen ---------- */
+const standalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+let dip=null;
+function inst(){
+  const box=$("inst");
+  if(standalone||LS.get("rmp_stu_inst")==="x"){box.hidden=true;return}
+  if(ios)$("insttxt").textContent="📲 ដើម្បីប្រឡងពេញអេក្រង់ស្អាត សូមបើកតាម Safari រួចចុច Share > Add to Home Screen";
+  else if(dip){$("insttxt").textContent="📲 ដំឡើង App ដើម្បីប្រឡងពេញអេក្រង់ស្អាត";$("instbtn").hidden=false}
+  else $("insttxt").textContent="📲 ដើម្បីប្រឡងពេញអេក្រង់ស្អាត សូមចុច Menu (⋮) > Add to Home Screen";
+  box.hidden=false;
+}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;inst()});
+window.addEventListener("appinstalled",()=>{$("inst").hidden=true});
+$("instbtn").onclick=async()=>{if(!dip)return;dip.prompt();try{await dip.userChoice}catch(e){}dip=null;$("inst").hidden=true};
+$("instx").onclick=()=>{LS.set("rmp_stu_inst","x");$("inst").hidden=true};
+window.matchMedia("(display-mode: standalone)").addEventListener&&window.matchMedia("(display-mode: standalone)").addEventListener("change",e=>{if(e.matches)$("inst").hidden=true});
+inst();
+</script>
+</body>
+</html>
